@@ -82,7 +82,50 @@
   <button class="reset" id="reset">처음부터 다시 풀기</button>
 </section>
 
-<section id="paneViz" hidden></section>
+<section id="paneViz" hidden>
+
+  <p class="note">
+    본문 설명은 <code>0903.md</code> 에 있습니다. 여기서는 <b>움직여 보는 것</b>만 합니다.
+  </p>
+
+  <div class="q">
+    <h3>α-포도당 ↔ β-포도당</h3>
+    <p class="note">
+      1번 탄소의 OH가 고리 <b>아래</b>면 α, <b>위</b>면 β입니다.
+      이 차이 하나가 녹말과 셀룰로오스를 가릅니다.
+    </p>
+    <svg viewBox="0 0 300 200" width="100%" style="max-width:340px;display:block;margin:0 auto" aria-label="포도당 고리 구조">
+      <polygon points="70,115 105,83 175,83 212,115 175,147 105,147"
+               fill="none" stroke="currentColor" stroke-width="2"/>
+      <text x="134" y="78" font-size="13" fill="currentColor">O</text>
+      <text x="219" y="119" font-size="12" fill="currentColor">C1</text>
+      <text x="60" y="106" font-size="12" fill="currentColor">C4</text>
+      <line x1="70" y1="115" x2="40" y2="115" stroke="currentColor" stroke-width="2"/>
+      <text x="6" y="119" font-size="12" fill="currentColor">HO</text>
+      <g stroke="currentColor" stroke-width="2">
+        <line id="oh1line" x1="212" y1="115" x2="212" y2="62"/>
+      </g>
+      <text id="oh1text" x="200" y="54" font-size="13" fill="currentColor">OH</text>
+    </svg>
+    <button class="reset" id="flip">α ↔ β 뒤집기</button>
+    <div class="fb ok" id="glucoseInfo" style="margin-top:12px"></div>
+  </div>
+
+  <div class="q">
+    <h3>포화 ↔ 불포화 지방산</h3>
+    <p class="note">
+      이중결합 개수를 늘려 보세요. 사슬이 꺾이고, 틈이 생기고, 유동성이 올라갑니다.
+    </p>
+    <svg viewBox="0 0 300 180" width="100%" style="max-width:340px;display:block;margin:0 auto" aria-label="지방산 사슬">
+      <text x="2" y="44" font-size="11" fill="currentColor">COOH</text>
+      <polyline id="chain" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linejoin="round" stroke-linecap="round"/>
+    </svg>
+    <input type="range" id="dbl" min="0" max="3" value="0" step="1" aria-label="이중결합 개수">
+    <div class="fb ok" id="fatInfo"></div>
+  </div>
+
+</section>
 
 </div>
 
@@ -382,6 +425,52 @@ function tab(showQuiz){
 }
 $("#tabQuiz").addEventListener("click", () => tab(true));
 $("#tabViz").addEventListener("click", () => tab(false));
+
+/* ── 시각화 1: 알파/베타 포도당 ── */
+let isBeta = false;
+function drawGlucose(){
+  const line = $("#oh1line"), txt = $("#oh1text");
+  if (isBeta){ line.setAttribute("y2", "62");  txt.setAttribute("y", "54"); }
+  else       { line.setAttribute("y2", "168"); txt.setAttribute("y", "186"); }
+  $("#glucoseInfo").innerHTML = isBeta
+    ? "<b>베타-포도당</b> — OH가 고리 <b>위</b>를 향합니다. 베타-1,4 결합으로 이어지면 "
+      + "<b>셀룰로오스</b>(식물 세포벽)가 됩니다. 사람의 아밀레이스는 베타 결합을 끊지 못하므로 "
+      + "소화되지 않습니다 = <b>식이섬유</b>. 소는 장 속 세균과 공생해 끊습니다."
+    : "<b>알파-포도당</b> — OH가 고리 <b>아래</b>를 향합니다. 알파-1,4 결합으로 이어지면 "
+      + "<b>녹말</b>(식물 저장)이나 <b>글리코겐</b>(동물 저장)이 됩니다. "
+      + "아밀레이스가 이 결합을 끊어 엿당으로 만듭니다.";
+}
+$("#flip").addEventListener("click", () => { isBeta = !isBeta; drawGlucose(); });
+drawGlucose();
+
+/* ── 시각화 2: 포화/불포화 ── */
+function chainPoints(nDouble){
+  const nC = 18, seg = 14, kinkAt = [5, 9, 13].slice(0, nDouble);
+  let x = 40, y = 40, dir = 0;
+  const pts = [[x, y]];
+  for (let i = 1; i <= nC; i++){
+    if (kinkAt.indexOf(i) >= 0) dir += 20;
+    const a = (dir + (i % 2 ? -12 : 12)) * Math.PI / 180;
+    x += seg * Math.cos(a); y += seg * Math.sin(a);
+    pts.push([x, y]);
+  }
+  return pts.map(p => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
+}
+function drawFat(){
+  const n = +$("#dbl").value;
+  $("#chain").setAttribute("points", chainPoints(n));
+  const phase = n === 0 ? "상온에서 <b>고체</b> — 지방(버터·동물성)"
+              : n === 1 ? "꺾이기 시작합니다 — 중간"
+              : "상온에서 <b>액체</b> — 기름(올리브유·식물성)";
+  $("#fatInfo").innerHTML =
+    "이중결합 <b>" + n + "개</b> · " +
+    (n === 0 ? "<b>포화</b>지방산" : "<b>불포화</b>지방산") + "<br>" +
+    "유동성 " + "\u25cf".repeat(n + 1) + "\u25cb".repeat(3 - n) + " \u2192 " + phase +
+    (n > 0 ? "<br>꺾인 자리에 틈이 생겨 촘촘히 쌓이지 못합니다. 추운 지방에 사는 생물일수록 "
+           + "불포화 비율이 높아 세포막이 얼지 않습니다." : "");
+}
+$("#dbl").addEventListener("input", drawFat);
+drawFat();
 
 render();
 </script>
