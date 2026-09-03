@@ -52,21 +52,16 @@ def validate_metadata(chapters: list[dict], total_pages: int = 522) -> bool:
 def split_pdf(src_path: str, out_dir: str, chapters: list[dict]) -> list[str]:
     """PyMuPDF(fitz)를 사용하여 원본 PDF를 메타데이터 범위에 따라 분할 저장."""
     os.makedirs(out_dir, exist_ok=True)
-    src_doc = fitz.open(src_path)
     output_paths = []
-    try:
+    with fitz.open(src_path) as src_doc:
         for item in chapters:
             start_idx = item["start"] - 1
             end_idx = item["end"] - 1
             out_path = os.path.join(out_dir, item["filename"])
-            
-            new_doc = fitz.open()
-            new_doc.insert_pdf(src_doc, from_page=start_idx, to_page=end_idx)
-            new_doc.save(out_path, garbage=3, deflate=True)
-            new_doc.close()
+            with fitz.open() as new_doc:
+                new_doc.insert_pdf(src_doc, from_page=start_idx, to_page=end_idx)
+                new_doc.save(out_path, garbage=3, deflate=True)
             output_paths.append(out_path)
-    finally:
-        src_doc.close()
     return output_paths
 
 def main():
