@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>0903 생명과학 · 1장 연습</title>
+<style>
+  :root{
+    --bg:#fbfaf8; --fg:#22201d; --muted:#6b6560; --line:#e2ddd6;
+    --card:#fff; --ok:#1f7a4d; --okbg:#e8f5ee; --no:#b3261e; --nobg:#fdecea;
+    --accent:#2f5d8a; --warn:#8a5a00; --warnbg:#fdf3e0;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#17161a; --fg:#e8e5e0; --muted:#9d968e; --line:#332f36;
+      --card:#201e24; --ok:#5ec98d; --okbg:#12301f; --no:#f2857c; --nobg:#331a18;
+      --accent:#8ab4e8; --warn:#e8c07a; --warnbg:#2e2415;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+       font:16px/1.65 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+  .wrap{max-width:760px;margin:0 auto;padding:24px 18px 80px}
+  header h1{font-size:20px;margin:0 0 4px}
+  header p{margin:0;color:var(--muted);font-size:13px}
+  nav{display:flex;gap:8px;margin:20px 0}
+  nav button{flex:1;padding:9px;border:1px solid var(--line);background:var(--card);
+             color:var(--fg);border-radius:8px;cursor:pointer;font-size:14px}
+  nav button[aria-selected="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .bar{height:5px;background:var(--line);border-radius:3px;overflow:hidden;margin:14px 0}
+  .bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s}
+  .score{font-size:13px;color:var(--muted);margin-bottom:14px}
+  .q{background:var(--card);border:1px solid var(--line);border-radius:10px;
+     padding:16px;margin-bottom:14px}
+  .q h3{margin:0 0 10px;font-size:15px;font-weight:600;line-height:1.55}
+  .q h3 span.num{color:var(--muted);font-weight:400;margin-right:6px}
+  .tag{display:inline-block;font-size:11px;padding:2px 7px;border-radius:20px;
+       background:var(--warnbg);color:var(--warn);margin-left:6px;vertical-align:2px;
+       font-weight:500;white-space:nowrap}
+  .opt{display:block;width:100%;text-align:left;margin:6px 0;padding:10px 12px;
+       border:1px solid var(--line);border-radius:8px;background:transparent;
+       color:var(--fg);cursor:pointer;font-size:14px;line-height:1.5;font-family:inherit}
+  .opt:hover:not(:disabled){border-color:var(--accent)}
+  .opt:disabled{cursor:default;opacity:.7}
+  .opt.ok{background:var(--okbg);border-color:var(--ok);color:var(--ok);opacity:1;font-weight:600}
+  .opt.no{background:var(--nobg);border-color:var(--no);color:var(--no);opacity:1}
+  .fb{margin-top:10px;padding:11px 13px;border-radius:8px;font-size:13.5px;line-height:1.65}
+  .fb.ok{background:var(--okbg);border-left:3px solid var(--ok)}
+  .fb.no{background:var(--nobg);border-left:3px solid var(--no)}
+  .fb .ref{display:block;margin-top:7px;color:var(--muted);font-size:12.5px}
+  .fb .keynote{display:block;margin-top:7px;padding:8px 10px;border-radius:6px;
+               background:var(--warnbg);color:var(--warn);font-size:12.5px}
+  .reset{margin-top:18px;padding:9px 16px;border:1px solid var(--line);
+         background:var(--card);color:var(--fg);border-radius:8px;cursor:pointer;
+         font-size:14px;font-family:inherit}
+  .note{font-size:13px;color:var(--muted);margin:0 0 14px;line-height:1.6}
+  section[hidden]{display:none}
+  input[type=range]{width:100%;margin:12px 0;accent-color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>0903 생명과학 · 1장 생물분자와 세포</h1>
+  <p>강의 범위 1.1.2 ~ 1.2.4 · 본문 설명은 <code>0903.md</code> 참조</p>
+</header>
+
+<nav>
+  <button id="tabQuiz" aria-selected="true">문제 풀기</button>
+  <button id="tabViz" aria-selected="false">구조 보기</button>
+</nav>
+
+<section id="paneQuiz">
+  <p class="note">
+    <code>1강 합본</code> 40문항 중 <b>이번 회차로 풀 수 있는 24문항</b>입니다.
+    나머지 16문항은 아직 안 배웠거나 결석한 회차 범위라 뺐습니다 — <code>0903.md</code> 부록 매핑표를 보세요.
+  </p>
+  <div class="bar"><i id="prog"></i></div>
+  <div class="score" id="score"></div>
+  <div id="quiz"></div>
+  <button class="reset" id="reset">처음부터 다시 풀기</button>
+</section>
+
+<section id="paneViz" hidden>
+
+  <p class="note">
+    본문 설명은 <code>0903.md</code> 에 있습니다. 여기서는 <b>움직여 보는 것</b>만 합니다.
+  </p>
+
+  <div class="q">
+    <h3>α-포도당 ↔ β-포도당</h3>
+    <p class="note">
+      1번 탄소의 OH가 고리 <b>아래</b>면 α, <b>위</b>면 β입니다.
+      이 차이 하나가 녹말과 셀룰로오스를 가릅니다.
+    </p>
+    <svg viewBox="0 0 300 200" width="100%" style="max-width:340px;display:block;margin:0 auto" aria-label="포도당 고리 구조">
+      <polygon points="70,115 105,83 175,83 212,115 175,147 105,147"
+               fill="none" stroke="currentColor" stroke-width="2"/>
+      <text x="134" y="78" font-size="13" fill="currentColor">O</text>
+      <text x="219" y="119" font-size="12" fill="currentColor">C1</text>
+      <text x="60" y="106" font-size="12" fill="currentColor">C4</text>
+      <line x1="70" y1="115" x2="40" y2="115" stroke="currentColor" stroke-width="2"/>
+      <text x="6" y="119" font-size="12" fill="currentColor">HO</text>
+      <g stroke="currentColor" stroke-width="2">
+        <line id="oh1line" x1="212" y1="115" x2="212" y2="62"/>
+      </g>
+      <text id="oh1text" x="200" y="54" font-size="13" fill="currentColor">OH</text>
+    </svg>
+    <button class="reset" id="flip">α ↔ β 뒤집기</button>
+    <div class="fb ok" id="glucoseInfo" style="margin-top:12px"></div>
+  </div>
+
+  <div class="q">
+    <h3>포화 ↔ 불포화 지방산</h3>
+    <p class="note">
+      이중결합 개수를 늘려 보세요. 사슬이 꺾이고, 틈이 생기고, 유동성이 올라갑니다.
+    </p>
+    <svg viewBox="0 0 300 180" width="100%" style="max-width:340px;display:block;margin:0 auto" aria-label="지방산 사슬">
+      <text x="2" y="44" font-size="11" fill="currentColor">COOH</text>
+      <polyline id="chain" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linejoin="round" stroke-linecap="round"/>
+    </svg>
+    <input type="range" id="dbl" min="0" max="3" value="0" step="1" aria-label="이중결합 개수">
+    <div class="fb ok" id="fatInfo"></div>
+  </div>
+
+</section>
+
+</div>
+
+<script>
+/* ─── 회차마다 이 블록만 교체 ──────────────────────────────── */
+const META = { date:"0903", chapter:"1장 생물분자와 세포", range:"1.1.2 ~ 1.2.4" };
+
+const QUIZ = [
+  { n:1,
+    q:"원소의 원자번호가 가리키는 것은?",
+    opts:["양성자 수","양성자 수 + 전자 수","양성자 수 + 전자 수 + 중성자 수","중성자 수","전자 수"],
+    answer:0,
+    why:"원자번호의 정의는 양성자 수입니다. 중성 원자에서는 전자 수와 값이 같지만, 이온이 되면 전자 수만 변하고 원자번호는 변하지 않습니다.",
+    trap:{ 4:"교수님이 나트륨을 '원자번호 11, 전자 11개'라고 전자 수로 설명해서 헷갈리기 쉽습니다. 중성일 때만 같습니다." },
+    ref:"§1-1 원자의 구조" },
+
+  { n:3,
+    q:"물 분자를 구성하는 수소와 산소 사이에 공유하는 전자는 불균등하게 배분되어 있다. 이 때문에 물 분자는 (   ) 이다.",
+    opts:["극성","비공유성","이온성","비극성","소수성"],
+    answer:0,
+    why:"산소의 전기음성도가 커서 전자가 산소 쪽으로 쏠립니다. 산소는 부분 음전하, 수소는 부분 양전하를 띠고, 굽은 구조와 겹쳐 분자 전체가 극성이 됩니다.",
+    trap:{ 2:"전자를 완전히 주고받은 것이 아니라 치우쳐 공유한 것이므로 이온결합이 아닙니다.",
+           4:"극성이므로 오히려 친수성입니다." },
+    ref:"§1-3 전기음성도와 극성" },
+
+  { n:4,
+    q:"다음 중 수소결합으로 서로 연결될 수 있는 것은 무엇인가?",
+    opts:["두 이온","두 극성 분자","두 비극성 분자","극성분자와 비극성 분자"],
+    answer:1,
+    why:"수소결합은 부분 양전하를 띤 H와 부분 음전하를 띤 원자 사이의 인력입니다. 양쪽 모두 부분 전하가 있어야 하므로 둘 다 극성이어야 합니다.",
+    trap:{ 0:"이온끼리 직접 당기는 것은 이온결합입니다.",
+           2:"비극성 분자에는 부분 전하가 없어 당길 상대가 없습니다.",
+           3:"한쪽에 부분 전하가 없으면 인력이 생기지 않습니다." },
+    ref:"§1-4 수소결합" },
+
+  { n:5,
+    q:"다음 중 수소와 탄소의 사슬로만 이루어진 분자는?",
+    opts:["폴리펩티드","탄수화물","탄화수소","다당류"],
+    answer:2,
+    why:"이름 그대로 탄소(炭)와 수소(水素)만으로 이루어진 것이 탄화수소입니다. C-H는 비극성 공유결합이므로 전체가 비극성이고, 그래서 기름이 물과 섞이지 않습니다.",
+    trap:{ 0:"폴리펩타이드에는 질소(아미노기)와 산소(카복실기)가 들어 있습니다.",
+           1:"탄수화물은 산소를 포함합니다 (C:H:O = 1:2:1).",
+           3:"다당류도 탄수화물이므로 산소를 포함합니다." },
+    ref:"§1-3 전기음성도와 극성" },
+
+  { n:6,
+    q:"살아있는 모든 세포의 경계를 이루는 생체막의 기본이 되는 2중층을 형성하는 분자는?",
+    opts:["단백질","탄수화물","콜레스테롤","인지질","지방"],
+    answer:3,
+    why:"인지질은 친수성 머리(인산기)와 소수성 꼬리(지방산 2개)를 함께 가져, 물에 넣으면 머리는 물 쪽으로 꼬리는 안쪽으로 향하며 저절로 이중층을 이룹니다.",
+    trap:{ 2:"콜레스테롤은 이중층 사이사이에 끼어 막을 안정화할 뿐, 이중층 자체를 만들지는 않습니다.",
+           4:"중성지방은 지방산이 3개라 친수성 머리가 없어 이중층을 만들지 못합니다." },
+    ref:"§4-3 인지질과 세포막" },
+
+  { n:9,
+    q:"양성자는 ____ 전하를 갖고, 원소의 ____ 와/과 같다.",
+    opts:["음, 전기음성도","양, 이온전하","음, 극성","양, 원자번호","음, 원자번호"],
+    answer:3,
+    why:"양성자는 양전하를 띠고, 그 개수가 곧 원자번호입니다.",
+    trap:{ 1:"이온전하는 전자를 잃거나 얻은 결과이지 양성자 수와 같지 않습니다." },
+    ref:"§1-1 원자의 구조" },
+
+  { n:10,
+    q:"중성 수용액의 pH는?",
+    opts:["9","1","5","14","7"],
+    answer:4,
+    why:"중성은 H⁺ 농도와 OH⁻ 농도가 같은 상태이고, 그때 pH가 7입니다. 7보다 작으면 산성, 크면 염기성입니다.",
+    trap:{},
+    keyNote:"이 문항은 교수님이 강의하지 않았고 강의노트와 교재 1장에도 없습니다. 0903.md 맨 끝 '📎 강의 밖 보충' 참조.",
+    ref:"📎 보충 pH" },
+
+  { n:12,
+    q:"다음 중 한 원자가 다른 원자와 화학적 결합을 형성하지 않는 것은?",
+    opts:["원자가 궤도에 전자가 하나만 있을 때","양성자의 수가 중성자의 수와 같을 때","양성자의 수가 전자의 수와 같을 때","원자가 궤도에 전자의 수가 최대치일 때","원자가 궤도에서 가질 수 있는 최대 전자 수보다 더 적게 갖고 있을 때"],
+    answer:3,
+    why:"최외각이 꽉 차 있으면 더 받을 것도 내줄 것도 없으므로 결합할 이유가 없습니다. 옥텟 규칙의 반대편 결론입니다.",
+    trap:{ 0:"1개만 있으면 오히려 잃기 쉬워 반응성이 큽니다.",
+           2:"양성자 수 = 전자 수는 그냥 중성 원자라는 뜻이고, 결합 여부와 무관합니다.",
+           4:"덜 찼다는 것은 결합할 여지가 있다는 뜻입니다." },
+    ref:"§1-1 원자의 구조" },
+
+  { n:13,
+    q:"물 분자에서 산소가 전기적으로 강한 음성을 띈다는 것이 의미하는 바는?",
+    opts:["전자가 핵으로 접근하지 못하게 하고, 최외각으로 전자를 날려버린다","원자 밖으로 전자를 쉽게 날려버린다","비극성이다","더 강하게 전자를 끌어당긴다"],
+    answer:3,
+    why:"전기음성도가 크다는 것은 공유 전자를 더 강하게 끌어당긴다는 뜻입니다. 교수님 표현으로 '산소는 전자를 좋아한다'입니다.",
+    trap:{ 1:"전자를 내보내는 것이 아니라 끌어오는 것입니다.",
+           2:"전자가 한쪽으로 쏠리므로 오히려 극성이 생깁니다." },
+    ref:"§1-3 전기음성도와 극성" },
+
+  { n:15,
+    q:"다음 중 비극성인 것은?",
+    opts:["음이온","중성 이온","부분적 전하가 없는 분자","양이온"],
+    answer:2,
+    why:"비극성은 분자 안에 부분 전하(δ+, δ-)가 생기지 않은 상태입니다. 전자가 어느 한쪽으로 쏠리지 않았다는 뜻입니다.",
+    trap:{ 0:"이온은 전하 자체를 띠므로 비극성이 아닙니다.",
+           3:"이온은 전하 자체를 띠므로 비극성이 아닙니다." },
+    ref:"§1-3 전기음성도와 극성" },
+
+  { n:18,
+    q:"다음 중 원자핵을 구성하는 것은?",
+    opts:["전자","전자와 양성자","중성자와 양성자","중성자","양성자"],
+    answer:2,
+    why:"핵은 양성자와 중성자로 이루어집니다. 전자는 핵 바깥 궤도를 돌고, 너무 가벼워 원자 질량에 사실상 기여하지 않습니다.",
+    trap:{ 4:"양성자만으로는 부족합니다. 중성자도 핵에 포함됩니다." },
+    ref:"§1-1 원자의 구조" },
+
+  { n:20,
+    q:"단백질은 ____ (으)로 작용을 한다.",
+    opts:["효소","유전물질","세포벽 성분","광합성 색소"],
+    answer:0,
+    why:"단백질의 3차 구조가 기질을 인식하는 모양을 만들기 때문에 효소로 작용합니다. 설탕 분해 효소는 설탕을 붙잡을 구조를, 지질 분해 효소는 지질을 붙잡을 구조를 가집니다.",
+    trap:{ 1:"유전물질은 핵산(DNA)입니다." },
+    keyNote:"원문은 보기가 없는 빈칸 채우기 문항입니다(답이 '효소'로 인쇄되어 있음). 연습을 위해 보기를 구성했습니다.",
+    ref:"§5-4 구조와 기능, 그리고 변성" },
+
+  { n:23,
+    q:"서로 다른 단백질들은 ____ 의 서로 다른 서열로 구성되어 있다.",
+    opts:["아미노산","지방","당","글리세롤"],
+    answer:0,
+    why:"단백질은 아미노산 중합체이고, 그 서열이 1차 구조입니다. 1차 구조가 3차 구조를 결정하고 3차 구조가 기능을 결정합니다.",
+    trap:{ 2:"당이 이어진 것은 다당류입니다." },
+    ref:"§5-2 1차 구조와 3차 구조" },
+
+  { n:24,
+    q:"다음 중 지질에 속하지 않는 것은?",
+    opts:["섬유소","스테로이드","지방","인지질","콜레스테롤"],
+    answer:0,
+    why:"섬유소(셀룰로오스)는 베타-포도당이 이어진 다당류, 즉 탄수화물입니다. 나머지는 모두 지질입니다(콜레스테롤은 스테로이드의 한 종류).",
+    trap:{ 4:"콜레스테롤은 스테로이드이고, 스테로이드는 지질 3종 중 하나입니다." },
+    ref:"§3-4 α결합과 β결합 — 녹말 vs 셀룰로오스" },
+
+  { n:25,
+    q:"거의 모든 중성지방은 ____ (으)로 구성되어 있다.",
+    opts:["탄수화물과 단백질","글리세롤과 지방산","포화 산소 원자","복합탄수화물"],
+    answer:1,
+    why:"중성지질은 글리세롤 1분자에 지방산 3분자가 결합한 것입니다. 지방산이 셋이라 트라이글리세라이드라고도 합니다.",
+    trap:{},
+    ref:"§4-1 중성지질" },
+
+  { n:26,
+    q:"[그림: 물 분자 — 산소에 δ-, 두 수소에 δ+ 가 표시되어 있음] 만약 이 분자 2개 이상이 서로 근처에 있으면 어떻게 상호 결합하는가?",
+    opts:["두 산소 원자 사이의 공유결합","두 개의 수소 원자 사이의 수소결합","수소원자와 산소원자 사이의 수소결합","수소이온이 산소이온과 이온결합"],
+    answer:2,
+    why:"한 물 분자의 부분 양전하를 띤 수소와, 다른 물 분자의 부분 음전하를 띤 산소 사이에 인력이 생깁니다. 이것이 수소결합입니다.",
+    trap:{ 1:"수소끼리는 둘 다 부분 양전하라 서로 밀어냅니다.",
+           3:"물은 이온으로 완전히 갈라진 것이 아니라 부분 전하만 띱니다." },
+    ref:"§1-4 수소결합" },
+
+  { n:27,
+    q:"화성의 생명체가 지구의 생명체와 기본적으로 비슷하다면, 고분자는 어떤 원소를 기초로 하고 있을 것인가?",
+    opts:["탄소","수소","인","질소","산소"],
+    answer:0,
+    why:"지구 생명체는 탄소 기반입니다. 탄소는 공유결합을 4개 만들 수 있어 다양한 사슬과 고리를 형성하고, 그것이 모든 생물분자의 뼈대가 됩니다.",
+    trap:{ 1:"수소와 산소도 많지만 골격을 이루는 뼈대 원소는 탄소입니다." },
+    ref:"§1-1 원자의 구조" },
+
+  { n:28,
+    q:"다음 중 다당류를 구성하는 것은?",
+    opts:["아미노산","당","뉴클레오티드","지방산"],
+    answer:1,
+    why:"다당류는 단당류(당)가 길게 이어진 중합체입니다. 녹말과 글리코겐은 포도당이, 셀룰로오스는 베타-포도당이 이어진 것입니다.",
+    trap:{ 0:"아미노산이 이어지면 단백질입니다.",
+           3:"지방산은 지질의 구성 성분입니다." },
+    ref:"§3-3 다당류 — 녹말·글리코겐" },
+
+  { n:29,
+    q:"단백질은 (   ) 의 중합체이다.",
+    opts:["지방산","당","아미노산","뉴클레오티드"],
+    answer:2,
+    why:"단백질은 아미노산이 펩타이드 결합으로 길게 이어진 중합체입니다. 생물을 구성하는 아미노산은 총 20가지입니다.",
+    trap:{ 1:"당의 중합체는 다당류입니다." },
+    ref:"§5-1 아미노산과 펩타이드 결합" },
+
+  { n:31,
+    q:"이중 나선 DNA의 상보적인 단일 뉴클레오타이드 사슬들이 서로 결합하는 데 작용하는 화학결합은?",
+    opts:["극성 공유결합","이온결합","수소결합","비극성 공유결합"],
+    answer:2,
+    why:"DNA 두 가닥은 염기 사이의 수소결합으로 붙어 있습니다. 약한 결합이라 복제나 전사 때 지퍼처럼 풀렸다 닫힐 수 있습니다.",
+    trap:{ 0:"공유결합이면 너무 강해서 두 가닥이 풀리지 못합니다." },
+    ref:"§1-4 수소결합" },
+
+  { n:34,
+    q:"다음 물에 대한 설명 중 옳은 것을 고르시오.",
+    opts:["H⁺ 와 OH⁻ 이온으로 해리된다","산성 pH를 가진다","다른 분자들과 강한 공유결합을 형성한다","효소로 작용한다","좋은 용질이다"],
+    answer:0,
+    why:"물은 극히 일부가 H⁺ 와 OH⁻ 로 해리되며, 두 농도가 같아 중성(pH 7)입니다.",
+    trap:{ 1:"물은 중성입니다. pH 7.",
+           2:"물이 다른 분자와 맺는 것은 수소결합이며, 공유결합보다 약합니다.",
+           3:"효소로 작용하는 것은 단백질입니다.",
+           4:"함정입니다. 물은 좋은 <b>용매</b>(녹이는 쪽)이지 용질(녹는 쪽)이 아닙니다." },
+    keyNote:"원본 PDF에서 이 문항의 수식 객체가 깨져 두 이온이 모두 '+'로 보입니다. 실제로는 H⁺ 와 OH⁻ 입니다.",
+    ref:"§2-2 극성 용매" },
+
+  { n:36,
+    q:"다음 용어들 중 다른 보기들과 가장 공통점이 없는 것은 무엇인가?",
+    opts:["단당류","트라이글리세리드","지방","스테로이드","인지질"],
+    answer:0,
+    why:"나머지 넷은 모두 지질입니다. 단당류만 탄수화물이라 무리에서 빠집니다.",
+    trap:{ 1:"트라이글리세라이드는 중성지질의 다른 이름입니다.",
+           3:"스테로이드는 지질 3종 중 하나입니다." },
+    ref:"§4-1 중성지질" },
+
+  { n:37,
+    q:"살아 있는 모든 세포의 경계를 이루는 생체막의 기본이 되는 2중층을 형성하는 분자는?",
+    opts:["콜레스테롤","탄수화물","인지질","지방","단백질"],
+    answer:2,
+    why:"6번과 같은 내용을 보기 순서만 바꿔 다시 물은 문항입니다. 인지질의 친수성 머리와 소수성 꼬리가 물속에서 저절로 이중층을 만듭니다.",
+    trap:{ 0:"콜레스테롤은 이중층 사이에 끼어 막을 안정화할 뿐입니다.",
+           4:"막단백질은 이중층에 박혀 있는 것이지 이중층 자체가 아닙니다." },
+    ref:"§4-3 인지질과 세포막" },
+
+  { n:38,
+    q:"스테로이드의 일종인 콜레스테롤은 지질로 구분되는데, 무엇을 갖고 있기 때문인가?",
+    opts:["탄수화물","지방산","탄화수소","글리세롤"],
+    answer:2,
+    why:"콜레스테롤은 탄소 고리 4개로 이루어진 탄화수소 구조입니다. 탄화수소는 비극성이라 물에 녹지 않고, 그래서 지질로 분류됩니다. 교수님도 '콜레스테롤도 탄소 고리이기 때문에 물에 잘 안 녹겠죠, 소수성이란 말이에요'라고 설명했습니다.",
+    trap:{ 1:"콜레스테롤에는 지방산이 없습니다. 지방산을 가진 것은 중성지질과 인지질입니다.",
+           3:"글리세롤을 가진 것도 중성지질과 인지질입니다. 스테로이드는 완전히 다른 고리 구조입니다." },
+    keyNote:"주의 — 인쇄된 답안지에는 '지방산'으로 표시되어 있으나 오류로 판단됩니다. 콜레스테롤 분자에는 지방산이 없습니다. 답안지를 그대로 외우지 마세요.",
+    ref:"§4-4 스테로이드와 콜레스테롤" }
+];
+/* ─── 아래 엔진은 회차마다 그대로 재사용 ────────────────────── */
+
+const $ = s => document.querySelector(s);
+const MARK = "①②③④⑤";
+const state = { done:0, correct:0 };
+
+function render(){
+  $("#quiz").innerHTML = "";
+  state.done = 0; state.correct = 0;
+  QUIZ.forEach(item => $("#quiz").appendChild(card(item)));
+  updateScore();
+}
+
+function card(item){
+  const el = document.createElement("div");
+  el.className = "q";
+
+  const h = document.createElement("h3");
+  const num = document.createElement("span");
+  num.className = "num";
+  num.textContent = item.n + ".";
+  h.appendChild(num);
+  h.appendChild(document.createTextNode(item.q));
+  if (item.keyNote){
+    const t = document.createElement("span");
+    t.className = "tag";
+    t.textContent = "주의";
+    h.appendChild(t);
+  }
+  el.appendChild(h);
+
+  const fb = document.createElement("div");
+  const buttons = item.opts.map((text, i) => {
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.textContent = (MARK[i] || (i + 1) + ".") + " " + text;
+    b.addEventListener("click", () => choose(item, i, buttons, fb));
+    el.appendChild(b);
+    return b;
+  });
+  el.appendChild(fb);
+  return el;
+}
+
+function choose(item, picked, buttons, fb){
+  buttons.forEach(b => b.disabled = true);
+  buttons[item.answer].classList.add("ok");
+  const right = picked === item.answer;
+  if (!right) buttons[picked].classList.add("no");
+
+  fb.className = "fb " + (right ? "ok" : "no");
+  const head = right ? "<b>정답입니다.</b> " : "<b>오답입니다.</b> ";
+  const diag = (!right && item.trap && item.trap[picked]) ? item.trap[picked] + "<br>" : "";
+  const key = item.keyNote ? '<span class="keynote">' + item.keyNote + "</span>" : "";
+  fb.innerHTML = head + diag + item.why +
+                 '<span class="ref">→ 0903.md ' + item.ref + " 참조</span>" + key;
+
+  state.done++; if (right) state.correct++;
+  updateScore();
+}
+
+function updateScore(){
+  $("#score").textContent = state.done + " / " + QUIZ.length +
+                            " 풀이 · 정답 " + state.correct;
+  $("#prog").style.width = (state.done / QUIZ.length * 100) + "%";
+}
+
+$("#reset").addEventListener("click", render);
+
+function tab(showQuiz){
+  $("#tabQuiz").setAttribute("aria-selected", showQuiz);
+  $("#tabViz").setAttribute("aria-selected", !showQuiz);
+  $("#paneQuiz").hidden = !showQuiz;
+  $("#paneViz").hidden = showQuiz;
+}
+$("#tabQuiz").addEventListener("click", () => tab(true));
+$("#tabViz").addEventListener("click", () => tab(false));
+
+/* ── 시각화 1: 알파/베타 포도당 ── */
+let isBeta = false;
+function drawGlucose(){
+  const line = $("#oh1line"), txt = $("#oh1text");
+  if (isBeta){ line.setAttribute("y2", "62");  txt.setAttribute("y", "54"); }
+  else       { line.setAttribute("y2", "168"); txt.setAttribute("y", "186"); }
+  $("#glucoseInfo").innerHTML = isBeta
+    ? "<b>베타-포도당</b> — OH가 고리 <b>위</b>를 향합니다. 베타-1,4 결합으로 이어지면 "
+      + "<b>셀룰로오스</b>(식물 세포벽)가 됩니다. 사람의 아밀레이스는 베타 결합을 끊지 못하므로 "
+      + "소화되지 않습니다 = <b>식이섬유</b>. 소는 장 속 세균과 공생해 끊습니다."
+    : "<b>알파-포도당</b> — OH가 고리 <b>아래</b>를 향합니다. 알파-1,4 결합으로 이어지면 "
+      + "<b>녹말</b>(식물 저장)이나 <b>글리코겐</b>(동물 저장)이 됩니다. "
+      + "아밀레이스가 이 결합을 끊어 엿당으로 만듭니다.";
+}
+$("#flip").addEventListener("click", () => { isBeta = !isBeta; drawGlucose(); });
+drawGlucose();
+
+/* ── 시각화 2: 포화/불포화 ── */
+function chainPoints(nDouble){
+  const nC = 18, seg = 14, kinkAt = [5, 9, 13].slice(0, nDouble);
+  let x = 40, y = 40, dir = 0;
+  const pts = [[x, y]];
+  for (let i = 1; i <= nC; i++){
+    if (kinkAt.indexOf(i) >= 0) dir += 20;
+    const a = (dir + (i % 2 ? -12 : 12)) * Math.PI / 180;
+    x += seg * Math.cos(a); y += seg * Math.sin(a);
+    pts.push([x, y]);
+  }
+  return pts.map(p => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
+}
+function drawFat(){
+  const n = +$("#dbl").value;
+  $("#chain").setAttribute("points", chainPoints(n));
+  const phase = n === 0 ? "상온에서 <b>고체</b> — 지방(버터·동물성)"
+              : n === 1 ? "꺾이기 시작합니다 — 중간"
+              : "상온에서 <b>액체</b> — 기름(올리브유·식물성)";
+  $("#fatInfo").innerHTML =
+    "이중결합 <b>" + n + "개</b> · " +
+    (n === 0 ? "<b>포화</b>지방산" : "<b>불포화</b>지방산") + "<br>" +
+    "유동성 " + "\u25cf".repeat(n + 1) + "\u25cb".repeat(3 - n) + " \u2192 " + phase +
+    (n > 0 ? "<br>꺾인 자리에 틈이 생겨 촘촘히 쌓이지 못합니다. 추운 지방에 사는 생물일수록 "
+           + "불포화 비율이 높아 세포막이 얼지 않습니다." : "");
+}
+$("#dbl").addEventListener("input", drawFat);
+drawFat();
+
+render();
+</script>
+</body>
+</html>
