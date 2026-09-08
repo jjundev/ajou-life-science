@@ -188,9 +188,9 @@ def _quiz_literal(multi, items):
     if not items:
         return "set()"
     if multi:
-        parts = ['("%s", %d)' % (s, n) for s, n in sorted(items)]
+        parts = ['("%s", %d)' % (s, n) for s, n in sorted(set(items))]
     else:
-        parts = [str(n) for _, n in sorted(items, key=lambda t: t[1])]
+        parts = [str(n) for n in sorted({n for _, n in items})]
     return "{" + ", ".join(parts) + "}"
 
 

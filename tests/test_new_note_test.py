@@ -1,11 +1,23 @@
+import contextlib
 import importlib.util
+import io
 import os
+import sys
 import tempfile
 import unittest
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if REPO_ROOT not in sys.path:
+    sys.path.insert(0, REPO_ROOT)
 
 from scripts.new_note_test import main, parse_quiz_specs  # noqa: E402
+
+
+def _main_quiet(argv):
+    """생성기 출력(경로·오류 메시지)이 테스트 출력에 섞이지 않게 한다."""
+    sink = io.StringIO()
+    with contextlib.redirect_stdout(sink), contextlib.redirect_stderr(sink):
+        return main(argv)
 
 
 def _load(path, name):
@@ -38,7 +50,7 @@ class TestGeneratorEquivalence(unittest.TestCase):
                 self.skipTest(f"{rel} 이 없습니다.")
         with tempfile.TemporaryDirectory() as d:
             out = os.path.join(d, "test_note_0908.py")
-            rc = main(["0908",
+            rc = _main_quiet(["0908",
                        "--quiz", "7,8,11,14,17,22,30,33,35",
                        "--scope-terms", "세포골격,미세소관,중간섬유,확산,삼투,능동수송,촉진확산",
                        "--prior", "0903",
@@ -105,7 +117,7 @@ class TestGeneratorMultiSource(unittest.TestCase):
             _write(os.path.join(root, "정리노트", "0999.md"), FIXTURE_MD_MULTI)
             _write(os.path.join(root, "정리노트", "0999.html"), html_text)
             out = os.path.join(d, "t.py")
-            self.assertEqual(main(["0999", "--quiz", "1강:32", "--quiz", "2강:1", "--out", out]), 0)
+            self.assertEqual(_main_quiet(["0999", "--quiz", "1강:32", "--quiz", "2강:1", "--out", out]), 0)
             os.environ["NOTE_REPO_ROOT"] = root
             try:
                 return _run(_load(out, "gen_0999_" + str(id(html_text))))
@@ -115,9 +127,7 @@ class TestGeneratorMultiSource(unittest.TestCase):
     def test_multi_mode_accepts_complete_src(self):
         """src 가 모두 있으면 퀴즈 집합 검사 통과"""
         res = self._run_multi(FIXTURE_HTML_OK)
-        failed = {t.id().rsplit(".", 1)[-1] for t, _ in res.failures + res.errors}
-        self.assertNotIn("test_quiz_covers_exactly_this_lecture", failed)
-        self.assertNotIn("test_mapping_table_matches_quiz_set", failed)
+        self.assertTrue(res.wasSuccessful(), res.failures + res.errors)
 
     def test_multi_mode_rejects_missing_src(self):
         """src 가 하나라도 빠지면 퀴즈 집합 검사가 실패"""
@@ -132,9 +142,9 @@ class TestGeneratorCli(unittest.TestCase):
     def test_refuses_overwrite_without_force(self):
         with tempfile.TemporaryDirectory() as d:
             out = os.path.join(d, "t.py")
-            self.assertEqual(main(["0908", "--quiz", "7", "--out", out]), 0)
-            self.assertEqual(main(["0908", "--quiz", "7", "--out", out]), 2)
-            self.assertEqual(main(["0908", "--quiz", "7", "--out", out, "--force"]), 0)
+            self.assertEqual(_main_quiet(["0908", "--quiz", "7", "--out", out]), 0)
+            self.assertEqual(_main_quiet(["0908", "--quiz", "7", "--out", out]), 2)
+            self.assertEqual(_main_quiet(["0908", "--quiz", "7", "--out", out, "--force"]), 0)
 
     def test_parse_quiz_specs(self):
         multi, items = parse_quiz_specs(["7,8"])
@@ -150,7 +160,15 @@ class TestGeneratorCli(unittest.TestCase):
 
     def test_rejects_bad_mmdd(self):
         with tempfile.TemporaryDirectory() as d:
-            self.assertEqual(main(["910", "--quiz", "7", "--out", os.path.join(d, "t.py")]), 2)
+            self.assertEqual(_main_quiet(["910", "--quiz", "7", "--out", os.path.join(d, "t.py")]), 2)
+
+    def test_duplicate_numbers_are_collapsed(self):
+        """--quiz 7,7,8 → 생성 파일의 QUIZ 는 {7, 8}"""
+        with tempfile.TemporaryDirectory() as d:
+            out = os.path.join(d, "t.py")
+            self.assertEqual(_main_quiet(["0908", "--quiz", "7,7,8", "--out", out]), 0)
+            with open(out, encoding="utf-8") as f:
+                self.assertIn("QUIZ = {7, 8}", f.read())
 
 
 if __name__ == "__main__":

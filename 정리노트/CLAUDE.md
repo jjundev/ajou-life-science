@@ -104,7 +104,7 @@
 **퀴즈 항목 스키마**
 
 ```js
-{ n, q, opts, answer /* 0-based */, why, trap: {오답인덱스: 진단}, keyNote /* 선택 */, ref }
+{ n, src /* 선택, n 바로 다음 — §13 */, q, opts, answer /* 0-based */, why, trap: {오답인덱스: 진단}, keyNote /* 선택 */, ref }
 ```
 
 - `why` 는 예외 없이 답니다. 근거 없는 정답표는 암기만 유도하고, 보기가 살짝 바뀐 실제 시험에서 무너집니다.

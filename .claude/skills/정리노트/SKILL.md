@@ -11,6 +11,8 @@ description: 회차 강의 STT에서 정리노트/MMDD.md + MMDD.html + tests/te
 
 ## 0. 입력 확인
 
+Bash 호출은 서로 변수를 공유하지 않는다. `$MMDD` 를 쓰는 블록마다 첫 줄에 `MMDD=…` 를 다시 적는다.
+
 ```bash
 MMDD=0910
 ls STT/${MMDD}*.md                      # STT. 파일명은 불규칙 (0903_생명_full.md / 0908 생명.md)
@@ -34,6 +36,7 @@ STT 를 **전부** 읽는다. 발췌하지 않는다. 찾을 것:
 ## 2. ⚠️ 함정 수집
 
 ```bash
+MMDD=0910
 grep -nE "아닙니다|아니고|아니라|헷갈|틀린 그림|되물|나요\?|커지나|작아지나|쉬워지|어려워지|주의|다른 거냐" "STT/${MMDD}"*.md
 ```
 
@@ -91,6 +94,7 @@ for i, p in enumerate(d):
 2. **`정리노트/MMDD.html`** — 직전 회차 html 을 **복사**하고 상단 데이터 블록(`META`, `QUIZ`)과 헤더 문구만 바꾼다. 엔진은 건드리지 않는다. 스키마는 §11.
 3. **테스트** — 손으로 베끼지 않는다:
    ```bash
+   MMDD=0910
    python3 scripts/new_note_test.py $MMDD --quiz 7,8,11 --scope-terms 세포골격,확산 --prior 0908
    # 두 장: --quiz "1강:32,40" --quiz "2강:1,2"   /  📎 있으면 --supplement  /  결석이면 --no-recap
    ```
@@ -100,6 +104,7 @@ for i, p in enumerate(d):
 ## 6. 검증 (전부 통과해야 7 로)
 
 ```bash
+MMDD=0910
 python3 -m unittest discover tests 2>&1 | tail -3        # 전체
 awk '/^```/{f=!f;next} f && /[가-힣]/' 정리노트/$MMDD.md    # ASCII 블록 한글 → 비어야 함
 ```
@@ -113,10 +118,12 @@ awk '/^```/{f=!f;next} f && /[가-힣]/' 정리노트/$MMDD.md    # ASCII 블록
 ## 7. 완료
 
 ```bash
+MMDD=0910
 git checkout -b feat/note-$MMDD
 git add "STT/${MMDD}"*.md 정리노트/$MMDD.md 정리노트/$MMDD.html tests/test_note_$MMDD.py
 git commit -m "feat($MMDD): …"
-git add 정리노트/<직전>.md && git commit -m "docs(<직전>): reconcile forecast labels"
+PREV=0908   # 직전 회차
+git add 정리노트/$PREV.md && git commit -m "docs($PREV): reconcile forecast labels"
 git checkout main && git merge --no-ff feat/note-$MMDD -m "…"
 python3 -m unittest discover tests 2>&1 | tail -3
 git branch -d feat/note-$MMDD
