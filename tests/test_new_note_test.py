@@ -53,5 +53,105 @@ class TestGeneratorEquivalence(unittest.TestCase):
             self.assertEqual(res.testsRun, 10)
 
 
+# 다중 출처 fixture — 매핑표에 출처 열, 퀴즈 항목에 src 필드
+FIXTURE_MD_MULTI = """# 0999 테스트
+
+## ⏱ 30초 요약
+
+| 주제 | 한 줄 |
+|---|---|
+| a | b |
+
+## ⏪ 지난 회차 복습
+
+- 요점
+
+## ── 2장 시작 ──
+
+### §1 절
+
+본문.
+
+## ✂️ 여기서 강의가 끊겼습니다
+
+다음.
+
+## 부록. 문항 ↔ 개념 매핑
+
+[`0999.html`](0999.html)
+
+| 출처 | # | 무엇을 묻는가 | 노트 위치 | 상태 |
+|---|---|---|---|---|
+| 1강 | 32 | a | §1 절 | |
+| 2강 | 1 | b | §1 절 | |
+"""
+
+FIXTURE_HTML_OK = """<!doctype html><html><body><script>
+const QUIZ = [
+  { n:32, src:"1강", q:"a", opts:["x","y"], answer:0, why:"w", trap:{}, ref:"§1 절" },
+  { n:1, src:"2강", q:"b", opts:["x","y"], answer:0, why:"w", trap:{}, ref:"§1 절" }
+];
+</script></body></html>"""
+
+FIXTURE_HTML_MISSING_SRC = FIXTURE_HTML_OK.replace('{ n:1, src:"2강",', '{ n:1,')
+
+
+class TestGeneratorMultiSource(unittest.TestCase):
+    """다중 출처 모드 — (src, n) 쌍 비교와 src 누락 검출"""
+
+    def _run_multi(self, html_text):
+        with tempfile.TemporaryDirectory() as d:
+            root = os.path.join(d, "root")
+            _write(os.path.join(root, "정리노트", "0999.md"), FIXTURE_MD_MULTI)
+            _write(os.path.join(root, "정리노트", "0999.html"), html_text)
+            out = os.path.join(d, "t.py")
+            self.assertEqual(main(["0999", "--quiz", "1강:32", "--quiz", "2강:1", "--out", out]), 0)
+            os.environ["NOTE_REPO_ROOT"] = root
+            try:
+                return _run(_load(out, "gen_0999_" + str(id(html_text))))
+            finally:
+                os.environ.pop("NOTE_REPO_ROOT", None)
+
+    def test_multi_mode_accepts_complete_src(self):
+        """src 가 모두 있으면 퀴즈 집합 검사 통과"""
+        res = self._run_multi(FIXTURE_HTML_OK)
+        failed = {t.id().rsplit(".", 1)[-1] for t, _ in res.failures + res.errors}
+        self.assertNotIn("test_quiz_covers_exactly_this_lecture", failed)
+        self.assertNotIn("test_mapping_table_matches_quiz_set", failed)
+
+    def test_multi_mode_rejects_missing_src(self):
+        """src 가 하나라도 빠지면 퀴즈 집합 검사가 실패"""
+        res = self._run_multi(FIXTURE_HTML_MISSING_SRC)
+        failed = {t.id().rsplit(".", 1)[-1] for t, _ in res.failures}
+        self.assertIn("test_quiz_covers_exactly_this_lecture", failed)
+
+
+class TestGeneratorCli(unittest.TestCase):
+    """CLI 방어 — 덮어쓰기·형식 혼용·MMDD"""
+
+    def test_refuses_overwrite_without_force(self):
+        with tempfile.TemporaryDirectory() as d:
+            out = os.path.join(d, "t.py")
+            self.assertEqual(main(["0908", "--quiz", "7", "--out", out]), 0)
+            self.assertEqual(main(["0908", "--quiz", "7", "--out", out]), 2)
+            self.assertEqual(main(["0908", "--quiz", "7", "--out", out, "--force"]), 0)
+
+    def test_parse_quiz_specs(self):
+        multi, items = parse_quiz_specs(["7,8"])
+        self.assertFalse(multi)
+        self.assertEqual(items, [(None, 7), (None, 8)])
+        multi, items = parse_quiz_specs(["1강:32,40", "2강:1"])
+        self.assertTrue(multi)
+        self.assertEqual(items, [("1강", 32), ("1강", 40), ("2강", 1)])
+        with self.assertRaises(ValueError):
+            parse_quiz_specs(["7,8", "1강:3"])
+        with self.assertRaises(ValueError):
+            parse_quiz_specs(["abc"])
+
+    def test_rejects_bad_mmdd(self):
+        with tempfile.TemporaryDirectory() as d:
+            self.assertEqual(main(["910", "--quiz", "7", "--out", os.path.join(d, "t.py")]), 2)
+
+
 if __name__ == "__main__":
     unittest.main()
