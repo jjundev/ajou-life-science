@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>0908 생명과학 · 1장 연습</title>
+<style>
+  :root{
+    --bg:#fbfaf8; --fg:#22201d; --muted:#6b6560; --line:#e2ddd6;
+    --card:#fff; --ok:#1f7a4d; --okbg:#e8f5ee; --no:#b3261e; --nobg:#fdecea;
+    --accent:#2f5d8a; --warn:#8a5a00; --warnbg:#fdf3e0;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#17161a; --fg:#e8e5e0; --muted:#9d968e; --line:#332f36;
+      --card:#201e24; --ok:#5ec98d; --okbg:#12301f; --no:#f2857c; --nobg:#331a18;
+      --accent:#8ab4e8; --warn:#e8c07a; --warnbg:#2e2415;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+       font:16px/1.65 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+  .wrap{max-width:760px;margin:0 auto;padding:24px 18px 80px}
+  header h1{font-size:20px;margin:0 0 4px}
+  header p{margin:0;color:var(--muted);font-size:13px}
+  nav{display:flex;gap:8px;margin:20px 0}
+  nav button{flex:1;padding:9px;border:1px solid var(--line);background:var(--card);
+             color:var(--fg);border-radius:8px;cursor:pointer;font-size:14px}
+  nav button[aria-selected="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .bar{height:5px;background:var(--line);border-radius:3px;overflow:hidden;margin:14px 0}
+  .bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s}
+  .score{font-size:13px;color:var(--muted);margin-bottom:14px}
+  .q{background:var(--card);border:1px solid var(--line);border-radius:10px;
+     padding:16px;margin-bottom:14px}
+  .q h3{margin:0 0 10px;font-size:15px;font-weight:600;line-height:1.55}
+  .q h3 span.num{color:var(--muted);font-weight:400;margin-right:6px}
+  .tag{display:inline-block;font-size:11px;padding:2px 7px;border-radius:20px;
+       background:var(--warnbg);color:var(--warn);margin-left:6px;vertical-align:2px;
+       font-weight:500;white-space:nowrap}
+  .opt{display:block;width:100%;text-align:left;margin:6px 0;padding:10px 12px;
+       border:1px solid var(--line);border-radius:8px;background:transparent;
+       color:var(--fg);cursor:pointer;font-size:14px;line-height:1.5;font-family:inherit}
+  .opt:hover:not(:disabled){border-color:var(--accent)}
+  .opt:disabled{cursor:default;opacity:.7}
+  .opt.ok{background:var(--okbg);border-color:var(--ok);color:var(--ok);opacity:1;font-weight:600}
+  .opt.no{background:var(--nobg);border-color:var(--no);color:var(--no);opacity:1}
+  .fb{margin-top:10px;padding:11px 13px;border-radius:8px;font-size:13.5px;line-height:1.65}
+  .fb.ok{background:var(--okbg);border-left:3px solid var(--ok)}
+  .fb.no{background:var(--nobg);border-left:3px solid var(--no)}
+  .fb .ref{display:block;margin-top:7px;color:var(--muted);font-size:12.5px}
+  .fb .keynote{display:block;margin-top:7px;padding:8px 10px;border-radius:6px;
+               background:var(--warnbg);color:var(--warn);font-size:12.5px}
+  .reset{margin-top:18px;padding:9px 16px;border:1px solid var(--line);
+         background:var(--card);color:var(--fg);border-radius:8px;cursor:pointer;
+         font-size:14px;font-family:inherit}
+  .note{font-size:13px;color:var(--muted);margin:0 0 14px;line-height:1.6}
+  section[hidden]{display:none}
+  input[type=range]{width:100%;margin:12px 0;accent-color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>0908 생명과학 · 1장 생물분자와 세포 (3)</h1>
+  <p>강의 범위 1.2.4 단백질 4차구조 ~ 1.3 세포 · 본문 설명은 <code>0908.md</code> 참조</p>
+</header>
+
+<section id="paneQuiz" style="margin-top:20px">
+  <p class="note">
+    <code>1강 합본</code> 40문항 중 <b>이번 회차로 새로 풀리는 9문항</b>입니다.
+    핵산·세포·세포소기관 범위입니다. 앞 회차 문항은 <code>0903.md</code>·<code>0901.md</code> 를 보세요.<br>
+    막수송(32·40번)은 아직 안 배웠으니 다음 회차에.
+  </p>
+  <div class="bar"><i id="prog"></i></div>
+  <div class="score" id="score"></div>
+  <div id="quiz"></div>
+  <button class="reset" id="reset">처음부터 다시 풀기</button>
+</section>
+
+</div>
+
+<script>
+/* ─── 회차마다 이 블록만 교체 ──────────────────────────────── */
+const META = { date:"0908", chapter:"1장 생물분자와 세포", range:"1.2.4 4차구조 ~ 1.3 세포" };
+
+const QUIZ = [
+  { n:7,
+    q:"다음은 진핵세포의 세포소기관의 설명들이다. 잘못 설명한 것은?",
+    opts:["리보솜은 식균작용의 기능을 수행한다",
+          "미토콘드리아는 2개의 막으로 둘러싸여 있다",
+          "리소좀은 많은 종류의 가수분해효소를 가지고 있다",
+          "골지복합체에서는 단백질의 화학적 변형이 동반된다",
+          "활면소포체는 원형질막의 구성성분인 지질을 합성한다"],
+    answer:0,
+    why:"식균작용(밖의 것을 삼켜 분해)은 리소좀이 합니다. 리보솜은 단백질 합성 공장입니다. 이름만 비슷하고 기능은 정반대입니다.",
+    trap:{ 4:"활면소포체가 지질을 합성하는 것은 맞는 설명입니다." },
+    ref:"§5-2 내막계" },
+
+  { n:8,
+    q:"다음의 세포 구성 요소 중 원핵세포와 진핵세포 모두에서 발견되는 것이 아닌 것은?",
+    opts:["DNA","원형질막","리보솜","세포벽","소포체"],
+    answer:4,
+    why:"소포체(ER)는 막성 소기관이라 진핵세포에만 있습니다. 원핵세포에는 없습니다. DNA·원형질막·리보솜은 원핵에도 반드시 있습니다.",
+    trap:{ 3:"세포벽은 원핵세포에 있고, 식물·균류 진핵세포에도 있어 두 영역 모두에서 발견됩니다." },
+    ref:"§4 원핵세포와 진핵세포" },
+
+  { n:11,
+    q:"세포 소기관의 설명으로 옳지 않은 것은?",
+    opts:["활면소포체는 지질을 합성하는 장소이다",
+          "세포막은 인지질의 이중층으로 되어 있다",
+          "핵막은 이중막이다",
+          "핵에는 핵공이 있어 이를 통해 염색체가 자유로이 드나든다",
+          "미토콘드리아는 ATP를 만드는 전자전달사슬이 있다"],
+    answer:3,
+    why:"핵공을 드나드는 것은 RNA입니다. DNA는 소중해서 핵 밖으로 나가지 않고, 그 복사본인 RNA가 핵공을 통과합니다. 염색체는 드나들지 않습니다.",
+    trap:{ 2:"핵막이 이중막(이중층 두 겹)인 것은 맞는 설명입니다. 세포막의 이중층과 혼동하지 마세요." },
+    ref:"§5-1 핵" },
+
+  { n:14,
+    q:"다음 중 연속된 당-인산 사슬을 포함하는 고분자는?",
+    opts:["단백질","지질","핵산","다당류"],
+    answer:2,
+    why:"핵산은 당과 인산이 번갈아 공유결합한 골격(backbone)을 가집니다. 뉴클레오타이드의 당과 이웃 뉴클레오타이드의 인산기가 이어집니다.",
+    trap:{ 3:"다당류는 당끼리 이어진 것으로, 인산이 사슬에 들어가지 않습니다." },
+    ref:"§2-1 뉴클레오타이드의 구조" },
+
+  { n:17,
+    q:"원핵세포와 진핵세포 모두에서 발견되는 특징은?",
+    opts:["미토콘드리아","중심체","DNA","조면소포체","골지복합체"],
+    answer:2,
+    why:"DNA는 유전물질이라 원핵·진핵 모두에 반드시 있습니다. 나머지는 모두 막성 소기관 등으로 진핵세포에만 있습니다.",
+    trap:{ 0:"미토콘드리아는 막성 소기관이라 진핵세포에만 있습니다." },
+    ref:"§4 원핵세포와 진핵세포" },
+
+  { n:22,
+    q:"[그림: 물 분자] 광합성 진핵생물의 원형질막(세포막)에 대한 설명 중 옳지 않은 것은?",
+    opts:["세포 모양을 결정한다",
+          "이산화탄소와 물을 당으로 바꾼다",
+          "외부 환경으로부터 세포의 내용물을 격리시킨다",
+          "세포내로 특정 영양소가 들어올 수 있게 한다",
+          "세포 외부에서 특정 분자가 들어올 수 있게 한다"],
+    answer:1,
+    why:"이산화탄소와 물을 당으로 바꾸는 것은 광합성이고, 그것은 엽록체가 하는 일입니다. 세포막은 경계를 이루고 물질 출입을 조절할 뿐 광합성을 하지 않습니다.",
+    trap:{ 2:"외부로부터 내용물을 격리하는 것은 세포막의 핵심 기능입니다(옳은 설명)." },
+    ref:"§4 원핵세포와 진핵세포" },
+
+  { n:30,
+    q:"원핵세포는 다음 중 어느 것을 가지고 있는가?",
+    opts:["핵","골지체","소포체","세포벽","미토콘드리아"],
+    answer:3,
+    why:"원핵세포는 세포막 바깥에 세포벽을 가집니다. 핵·골지체·소포체·미토콘드리아는 모두 막성 구조라 진핵세포에만 있습니다.",
+    trap:{ 2:"소포체는 진핵세포 전용입니다. 원핵세포에는 없습니다." },
+    keyNote:"주의 — 인쇄된 답안지에는 '소포체'로 표시되어 있으나 오류로 판단됩니다. 소포체는 진핵세포에만 있습니다. 원핵세포가 가진 것은 세포벽입니다.",
+    ref:"§4 원핵세포와 진핵세포" },
+
+  { n:33,
+    q:"다음 중 핵산을 구성하는 것은?",
+    opts:["아미노산","뉴클레오타이드","지방산","단당류"],
+    answer:1,
+    why:"핵산(DNA·RNA)의 단위체는 뉴클레오타이드입니다. 염기·당·인산 세 부분으로 이루어집니다.",
+    trap:{ 0:"아미노산이 이어지면 단백질입니다." },
+    keyNote:"원문은 보기가 없는 빈칸 채우기 문항입니다(답이 '뉴클레오티드'로 인쇄되어 있음). 연습을 위해 보기를 구성했습니다.",
+    ref:"§2-1 뉴클레오타이드의 구조" },
+
+  { n:35,
+    q:"진핵세포는 ____ 점에서 원핵세포와 구별된다.",
+    opts:["진핵세포만이 원형질막을 가지고 있다는",
+          "진핵세포만이 DNA를 가지고 있다는",
+          "진핵세포만이 지구상에서 발견된다는",
+          "진핵세포만이 살아 있다고 생각된다는",
+          "진핵세포만이 핵을 가지고 있다는"],
+    answer:4,
+    why:"진핵과 원핵을 가르는 기준은 핵막으로 둘러싸인 핵의 유무입니다. 진핵(eu-karyote)은 '진짜 핵'을 가진다는 뜻입니다.",
+    trap:{ 0:"원형질막은 원핵세포에도 있습니다.",
+           1:"DNA도 원핵세포에 있습니다." },
+    ref:"§4 원핵세포와 진핵세포" }
+];
+/* ─── 아래 엔진은 회차마다 그대로 재사용 ────────────────────── */
+
+const $ = s => document.querySelector(s);
+const MARK = "①②③④⑤";
+const state = { done:0, correct:0 };
+
+function render(){
+  $("#quiz").innerHTML = "";
+  state.done = 0; state.correct = 0;
+  QUIZ.forEach(item => $("#quiz").appendChild(card(item)));
+  updateScore();
+}
+
+function card(item){
+  const el = document.createElement("div");
+  el.className = "q";
+
+  const h = document.createElement("h3");
+  const num = document.createElement("span");
+  num.className = "num";
+  num.textContent = item.n + ".";
+  h.appendChild(num);
+  h.appendChild(document.createTextNode(item.q));
+  if (item.keyNote){
+    const t = document.createElement("span");
+    t.className = "tag";
+    t.textContent = "주의";
+    h.appendChild(t);
+  }
+  el.appendChild(h);
+
+  const fb = document.createElement("div");
+  const buttons = item.opts.map((text, i) => {
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.textContent = (MARK[i] || (i + 1) + ".") + " " + text;
+    b.addEventListener("click", () => choose(item, i, buttons, fb));
+    el.appendChild(b);
+    return b;
+  });
+  el.appendChild(fb);
+  return el;
+}
+
+function choose(item, picked, buttons, fb){
+  buttons.forEach(b => b.disabled = true);
+  buttons[item.answer].classList.add("ok");
+  const right = picked === item.answer;
+  if (!right) buttons[picked].classList.add("no");
+
+  fb.className = "fb " + (right ? "ok" : "no");
+  const head = right ? "<b>정답입니다.</b> " : "<b>오답입니다.</b> ";
+  const diag = (!right && item.trap && item.trap[picked]) ? item.trap[picked] + "<br>" : "";
+  const key = item.keyNote ? '<span class="keynote">' + item.keyNote + "</span>" : "";
+  fb.innerHTML = head + diag + item.why +
+                 '<span class="ref">→ ' + META.date + '.md ' + item.ref + " 참조</span>" + key;
+
+  state.done++; if (right) state.correct++;
+  updateScore();
+}
+
+function updateScore(){
+  $("#score").textContent = state.done + " / " + QUIZ.length +
+                            " 풀이 · 정답 " + state.correct;
+  $("#prog").style.width = (state.done / QUIZ.length * 100) + "%";
+}
+
+$("#reset").addEventListener("click", render);
+
+render();
+</script>
+</body>
+</html>
