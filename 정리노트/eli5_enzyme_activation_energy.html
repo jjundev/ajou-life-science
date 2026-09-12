@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ELI5: 효소는 에너지를 주지도 않는데 왜 언덕이 낮아질까?</title>
+<style>
+:root {
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --ink: #0f172a;
+  --muted: #475569;
+  --line: #e2e8f0;
+  --blue: #2563eb;
+  --blue-bg: #eff6ff;
+  --emerald: #059669;
+  --emerald-bg: #ecfdf5;
+  --amber: #d97706;
+  --amber-bg: #fef3c7;
+  --rose: #e11d48;
+  --rose-bg: #fff1f2;
+  --purple: #7c3aed;
+  --purple-bg: #f5f3ff;
+  --dark: #0f172a;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.7 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  padding: 30px 16px 80px;
+}
+.wrap { max-width: 860px; margin: auto; }
+
+header {
+  background: linear-gradient(135deg, #1e293b 0%, #3b82f6 70%, #10b981 100%);
+  color: white;
+  border-radius: 28px;
+  padding: 36px 30px;
+  box-shadow: 0 20px 35px -10px rgba(37, 99, 235, 0.25);
+  margin-bottom: 30px;
+}
+.badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.22);
+  border: 1px solid rgba(255,255,255,0.4);
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+h1 {
+  font-size: clamp(24px, 4.5vw, 38px);
+  margin: 16px 0 10px;
+  font-weight: 850;
+  line-height: 1.25;
+  letter-spacing: -0.03em;
+}
+header p {
+  margin: 0;
+  font-size: 17px;
+  color: #e2e8f0;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 26px;
+  margin-bottom: 22px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+}
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0 0 14px;
+}
+
+.diagram-box {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  margin: 16px 0;
+}
+.diagram-box svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 720px;
+  margin: auto;
+}
+
+.grid { display: grid; gap: 16px; }
+.grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+.compare-box {
+  border-radius: 18px;
+  padding: 20px;
+  border: 1px solid;
+}
+.compare-box.bad {
+  background: var(--rose-bg);
+  border-color: #fecdd3;
+}
+.compare-box.good {
+  background: var(--emerald-bg);
+  border-color: #a7f3d0;
+}
+.compare-box h3 { margin: 0 0 8px; font-size: 17px; font-weight: 800; }
+.compare-box.bad h3 { color: #be123c; }
+.compare-box.good h3 { color: #047857; }
+
+.highlight-box {
+  background: linear-gradient(135deg, #fdf4ff 0%, #fff 100%);
+  border: 2px solid #f0abfc;
+  border-radius: 20px;
+  padding: 22px;
+  margin: 20px 0;
+}
+
+footer {
+  background: var(--dark);
+  color: #cbd5e1;
+  border-radius: 24px;
+  padding: 30px;
+  text-align: center;
+  margin-top: 40px;
+}
+footer strong { color: #38bdf8; font-size: 18px; display: block; margin-bottom: 6px; }
+
+@media (max-width: 680px) {
+  .grid.two { grid-template-columns: 1fr; }
+  header { padding: 26px 20px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="badge">💡 5살도 단번에 이해하는 과학 의문 풀이</span>
+  <h1>"효소가 에너지를 주지도 않는데,<br>어떻게 언덕(활성화 에너지)이 낮아져요?"</h1>
+  <p>에너지를 마법처럼 지워버린 걸까요? 아니면 에너지 보존 법칙을 어긴 걸까요? 비밀은 <strong>'지우개'가 아니라 '터널'</strong>에 있습니다!</p>
+</header>
+
+<!-- 비밀 1: 지우개 vs 터널 -->
+<div class="card">
+  <div class="card-title"><span style="font-size: 26px;">🏔️</span> 비밀 1. 산을 깎아낸 게 아니라, '터널'로 간 거예요!</div>
+  <p style="margin-top: 0;">우리는 흔히 <em>"언덕을 깎아 낮췄다"</em>고 말하지만, 효소는 기존 산봉우리의 흙을 파내어 산을 낮춘 게 아니에요. <strong>원래 산봉우리는 여전히 높이 그대로</strong> 서 있어요!</p>
+
+  <div class="diagram-box">
+    <!-- SVG: Mountain climbing vs Tunnel -->
+    <svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg">
+      <!-- Ground Line -->
+      <line x1="30" y1="190" x2="650" y2="190" stroke="#94a3b8" stroke-width="2"/>
+
+      <!-- Mountain Outline (Uncatalyzed Path) -->
+      <path d="M 60 190 Q 240 20 400 190" fill="#fee2e2" stroke="#ef4444" stroke-width="3" stroke-dasharray="6,4"/>
+      <text x="240" y="35" font-size="14" font-weight="bold" fill="#dc2626" text-anchor="middle">❌ 효소 없을 때: 해발 1000m 산꼭대기 직등!</text>
+      <text x="240" y="55" font-size="12" fill="#b91c1c" text-anchor="middle">(엄청난 에너지를 써서 낑낑 기어올라가야 함)</text>
+
+      <!-- Climber struggling -->
+      <circle cx="210" cy="80" r="10" fill="#dc2626"/>
+      <text x="210" y="75" font-size="16" text-anchor="middle">🥵</text>
+
+      <!-- Tunnel Path (Enzyme-catalyzed Path) -->
+      <path d="M 60 190 Q 240 120 400 190" fill="#dcfce7" stroke="#10b981" stroke-width="4"/>
+      <text x="240" y="145" font-size="14" font-weight="bold" fill="#047857" text-anchor="middle">✨ 효소가 열어준 길: 산허리 터널 (샛길!)</text>
+
+      <!-- Child walking happily -->
+      <circle cx="270" cy="155" r="10" fill="#059669"/>
+      <text x="270" y="152" font-size="16" text-anchor="middle">😄</text>
+
+      <!-- Start and Finish -->
+      <rect x="30" y="165" width="70" height="30" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+      <text x="65" y="185" font-size="12" font-weight="bold" fill="#1d4ed8" text-anchor="middle">출발 (집)</text>
+
+      <rect x="370" y="165" width="80" height="30" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+      <text x="410" y="185" font-size="12" font-weight="bold" fill="#b45309" text-anchor="middle">도착 (놀이터)</text>
+
+      <!-- Energy Conservation Bracket -->
+      <line x1="500" y1="180" x2="620" y2="180" stroke="#64748b" stroke-width="2"/>
+      <text x="560" y="150" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">에너지 보존 법칙 성립!</text>
+      <text x="560" y="170" font-size="12" fill="#475569" text-anchor="middle">집과 놀이터의 높낮이(ΔG)는</text>
+      <text x="560" y="195" font-size="12" font-weight="bold" fill="#2563eb" text-anchor="middle">산으로 가든 터널로 가든 똑같음!</text>
+    </svg>
+  </div>
+
+  <p>등산객이 <strong>터널(효소의 새로운 반응 경로)</strong>로 걸어갔다고 해서 지구의 에너지가 사라진 게 아니죠? 그냥 <strong>힘이 덜 드는 다른 길을 걸었을 뿐</strong>이에요!</p>
+</div>
+
+<!-- 비밀 2: 손잡아주는 도우미 -->
+<div class="card">
+  <div class="card-title"><span style="font-size: 26px;">🤝</span> 비밀 2. 외나무다리에서 손을 꼭 잡아줘요 (결합 에너지)</div>
+  <p>화학반응 중간에 원자들은 결합이 반쯤 찢어지는 <strong>극도로 무섭고 불안정한 순간(전이상태)</strong>을 지나야 해요. 혼자 건너려면 온몸이 벌벌 떨려서 엄청난 용기(높은 활성화 에너지)가 필요합니다.</p>
+
+  <div class="diagram-box">
+    <!-- SVG: Bridge without and with handrail -->
+    <svg viewBox="0 0 680 180" xmlns="http://www.w3.org/2000/svg">
+      <!-- Left side: Lonely bridge -->
+      <g transform="translate(40, 20)">
+        <rect x="10" y="80" width="220" height="12" rx="6" fill="#94a3b8"/>
+        <text x="120" y="115" font-size="13" font-weight="bold" fill="#dc2626" text-anchor="middle">혼자 건너는 아슬아슬 외나무다리</text>
+        <!-- Shaking child -->
+        <circle cx="120" cy="50" r="14" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+        <text x="120" y="55" font-size="14" text-anchor="middle">😱</text>
+        <text x="120" y="25" font-size="11" fill="#be123c" font-weight="bold" text-anchor="middle">너무 불안정해! (고에너지)</text>
+      </g>
+
+      <!-- Divider -->
+      <line x1="330" y1="20" x2="330" y2="160" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="4,4"/>
+
+      <!-- Right side: Supported by Enzyme -->
+      <g transform="translate(370, 20)">
+        <!-- Enzyme Hands holding -->
+        <path d="M 20 20 C 40 80, 200 80, 220 20" fill="none" stroke="#3b82f6" stroke-width="12" stroke-linecap="round" opacity="0.25"/>
+        <rect x="10" y="80" width="220" height="12" rx="6" fill="#94a3b8"/>
+        <text x="120" y="115" font-size="13" font-weight="bold" fill="#047857" text-anchor="middle">효소 일꾼이 양손을 꽉 잡아줌!</text>
+        <!-- Safe child -->
+        <circle cx="120" cy="50" r="14" fill="#dcfce7" stroke="#10b981" stroke-width="2"/>
+        <text x="120" y="55" font-size="14" text-anchor="middle">🥰</text>
+        <text x="120" y="25" font-size="11" fill="#047857" font-weight="bold" text-anchor="middle">안정되고 안 무서워! (저에너지)</text>
+        <text x="120" y="145" font-size="11" fill="#2563eb" text-anchor="middle">효소와 손잡을 때 생긴 힘(결합에너지)이 지탱해 줌</text>
+      </g>
+    </svg>
+  </div>
+
+  <p>효소의 품(활성부위)에 쏙 들어가면, 효소가 기질을 <strong>수많은 자석과 손잡이(수소결합 등)로 꼭 껴안아 줍니다.</strong><br>손을 잡는 순간 발생하는 안정감(결합 에너지)이 무서운 고비를 상쇄해 주기 때문에, 아이가 힘을 많이 들이지 않고도 다리를 쏙 건널 수 있는 거예요!</p>
+</div>
+
+<!-- 비밀 3: 공짜 점심이 아닌 완벽한 빚 청산 -->
+<div class="highlight-box">
+  <div class="card-title" style="color: #86198f;"><span style="font-size: 26px;">⚖️</span> 비밀 3. 에너지 보존 법칙을 100% 지키는 이유</div>
+  <div class="grid two">
+    <div class="compare-box bad">
+      <h3>❌ 만약 에너지 보존을 깼다면?</h3>
+      <p>효소가 기질에게 에너지를 선물로 줘서 자기가 닳아 없어지거나, 반응이 끝난 뒤 효소의 에너지가 변해야 해요.</p>
+    </div>
+    <div class="compare-box good">
+      <h3>✨ 실제 효소가 하는 일 (완벽 보존!)</h3>
+      <p>반응이 끝나면 생성물은 밖으로 나가고, <strong>효소는 처음에 들어왔던 모습 그대로 0.0001%도 변하지 않고 원상복구</strong>돼요! 잠시 손만 잡아줬다가 놓아준 것이라 계 전체의 에너지 총합은 한 톨도 달라지지 않아요.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <strong>5살 기억용 한 줄 카드</strong>
+  "효소는 산을 마법으로 지운 게 아니라 <strong>안전한 샛길(터널)</strong>을 열어준 것이고,<br>
+  다리를 건널 때 <strong>잠시 손만 꼭 잡아줬다가 원래대로 놓아준 것</strong>이라 에너지는 완벽하게 보존됩니다!"
+</footer>
+
+</div>
+</body>
+</html>

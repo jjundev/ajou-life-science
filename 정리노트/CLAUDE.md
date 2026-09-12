@@ -113,7 +113,7 @@
 
 ## 12. 스킬과 생성기
 
-절차는 `/정리노트 MMDD` 스킬(`.claude/skills/정리노트/SKILL.md`)이 맡는다. **규칙이 바뀌면 이 파일을, 절차가 바뀌면 SKILL.md를** 고친다. 둘에 같은 내용을 쓰지 않는다.
+절차는 `/summary-note MMDD` 스킬(`.claude/skills/summary-note/SKILL.md`)이 맡는다. **규칙이 바뀌면 이 파일을, 절차가 바뀌면 SKILL.md를** 고친다. 둘에 같은 내용을 쓰지 않는다.
 
 테스트 파일은 손으로 베끼지 않는다:
 

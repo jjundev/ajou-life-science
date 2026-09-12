@@ -1,9 +1,9 @@
 ---
-name: 정리노트
-description: 회차 강의 STT에서 정리노트/MMDD.md + MMDD.html + tests/test_note_MMDD.py 를 만든다. "/정리노트 MMDD", "MMDD 강의 듣고 왔어", "MMDD 정리노트 만들어줘" 에 쓴다. 규칙은 정리노트/CLAUDE.md 에 있고 이 스킬은 절차만 담는다. 4단계 게이트에서 반드시 멈춘다.
+name: summary-note
+description: 회차 강의 STT에서 정리노트/MMDD.md + MMDD.html + tests/test_note_MMDD.py 를 만든다. "/summary-note MMDD", "/정리노트 MMDD", "MMDD 강의 듣고 왔어", "MMDD 정리노트 만들어줘" 에 쓴다. 규칙은 정리노트/CLAUDE.md 에 있고 이 스킬은 절차만 담는다. 4단계 게이트에서 반드시 멈춘다.
 ---
 
-# 정리노트 — 회차 노트 작성 절차
+# summary-note — 회차 노트 작성 절차
 
 **규칙은 `정리노트/CLAUDE.md`다.** 여기엔 순서와 판단 기준만 있다. 먼저 CLAUDE.md 전체를 읽는다.
 
