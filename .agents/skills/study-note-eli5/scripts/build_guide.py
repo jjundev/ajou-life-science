@@ -191,10 +191,13 @@ def build(data_path: Path, out_dir: Path | None = None, force: bool = False) -> 
     data_dir = data_path.parent.resolve()
     note_path = (data_dir / meta["note"]).resolve()
     note_dir = note_path.parent
-    out_dir = (out_dir or note_dir).resolve()
+    default_out = (note_dir / "eli5") if (note_dir / "eli5").is_dir() else note_dir
+    out_dir = (out_dir or default_out).resolve()
+    meta_dir = (out_dir / "meta") if (out_dir / "meta").is_dir() else out_dir
     stem = meta["output_stem"]
-    out_html, out_cov = out_dir / f"{stem}.html", out_dir / f"{stem}.coverage.json"
-    out_lock = out_dir / f"{stem}.question-scope.json"
+    out_html = out_dir / f"{stem}.html"
+    out_cov = meta_dir / f"{stem}.coverage.json"
+    out_lock = meta_dir / f"{stem}.question-scope.json"
     errors: list[str] = []
     if out_html.exists() and not out_cov.exists() and not force:
         return {}, [f"refusing to overwrite {out_html.name}: not a build_guide output (no {out_cov.name}); use --force"]
@@ -331,6 +334,7 @@ def build(data_path: Path, out_dir: Path | None = None, force: bool = False) -> 
     if meta.get("overrides"):
         overrides = json.loads((data_dir / meta["overrides"]).read_text(encoding="utf-8"))
     out_dir.mkdir(parents=True, exist_ok=True)
+    meta_dir.mkdir(parents=True, exist_ok=True)
     lock, lock_errors = build_lock(note_path, out_lock, overrides, audits)
     if lock_errors:
         return {}, lock_errors

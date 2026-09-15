@@ -1,6 +1,6 @@
 """0910 ELI5 guide data — entry point for build_guide.py.
 
-Rebuild:  python3 .agents/skills/study-note-eli5/scripts/build_guide.py 정리노트/eli5-src/0910/guide.py
+Rebuild:  python3 .agents/skills/study-note-eli5/scripts/build_guide.py 정리노트/eli5/src/0910/guide.py
 """
 import guide_kit as kit
 from facts_a import SOURCES, CONCEPTS, BLOCKS, FACTS_A
@@ -31,9 +31,9 @@ def _deferred_facts(ident):
 DEFERRED = {i: (reason, later, _deferred_facts(i)) for i, (reason, later) in DEFERRED_REASONS.items()}
 
 META = dict(
-    note="../../0910.md",
-    overrides="../../0910.question-scope-overrides.json",
-    output_stem="0910-eli5-complete",
+    note="../../../0910.md",
+    overrides="../../meta/0910-eli5.question-scope-overrides.json",
+    output_stem="0910-eli5",
     prior_notes={"review-cell": "0908"},
     title="0910 생명과학 ELI5 · 세포호흡 학습 가이드",
     quiz_sources={

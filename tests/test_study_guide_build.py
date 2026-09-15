@@ -96,10 +96,10 @@ class BuildGuideTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             output = io.StringIO()
             with contextlib.redirect_stdout(output):
-                rc = build_main([str(ROOT / "정리노트/eli5-src/0910/guide.py"), "--out-dir", directory])
+                rc = build_main([str(ROOT / "정리노트/eli5/src/0910/guide.py"), "--out-dir", directory])
             self.assertEqual(rc, 0, output.getvalue())
-            self.assertEqual((Path(directory) / "0910-eli5-complete.html").read_bytes(),
-                             (ROOT / "정리노트/0910-eli5-complete.html").read_bytes())
+            self.assertEqual((Path(directory) / "0910-eli5.html").read_bytes(),
+                             (ROOT / "정리노트/eli5/0910-eli5.html").read_bytes())
 
 
 if __name__ == "__main__":

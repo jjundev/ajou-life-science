@@ -118,6 +118,37 @@ def question_review_errors(data: dict) -> list[str]:
     errors.extend(f"question review missing: {ident}" for ident in sorted(active - seen))
     return errors
 
+def find_source_base(manifest: Path, data: dict) -> Path:
+    base = manifest.parent
+    main_src = data.get("inventory", {}).get("main_source", "note")
+    sources = {s.get("id"): s.get("path") for s in data.get("inventory", {}).get("sources", [])}
+    main_path = sources.get(main_src)
+    if main_path and (base / main_path).exists():
+        return base
+    for p in [manifest.parent.parent, manifest.parent.parent.parent]:
+        if main_path and (p / main_path).exists():
+            return p
+    return manifest.parent
+
+
+def find_scope_source(scope_path: Path, scope: dict) -> Path:
+    rel = scope.get("source", {}).get("path", "")
+    if not rel:
+        return scope_path.parent
+    target_name = Path(rel).name
+    base = scope_path.parent
+    if (base / rel).exists():
+        return base / rel
+    if (base / target_name).exists():
+        return base / target_name
+    for p in [scope_path.parent.parent, scope_path.parent.parent.parent]:
+        if (p / rel).exists():
+            return p / rel
+        if (p / target_name).exists():
+            return p / target_name
+    return scope_path.parent / rel
+
+
 def run_coverage(
     artifact: Path,
     manifest: Path,
@@ -130,13 +161,14 @@ def run_coverage(
         html = artifact.read_text(encoding="utf-8")
     except (OSError, UnicodeError, json.JSONDecodeError) as error:
         return [f"cannot load inputs: {error}"]
-    errors = validate_inventory(data, manifest.parent)
+    base_dir = find_source_base(manifest, data)
+    errors = validate_inventory(data, base_dir)
     if scope_path is None:
         errors.append("coverage validation requires --scope")
     if scope_path is not None:
         try:
             scope = json.loads(scope_path.read_text(encoding="utf-8"))
-            source_path = scope_path.parent / scope.get("source", {}).get("path", "")
+            source_path = find_scope_source(scope_path, scope)
             errors.extend(validate_scope_lock(scope, source_path))
             if phase == "complete":
                 errors.extend(validate_scope_audit(scope))

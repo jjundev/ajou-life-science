@@ -66,14 +66,14 @@ class CliTests(unittest.TestCase):
             "questions": list(base_questions.values()),
         }
         lock["scope_sha256"] = scope_digest(lock)
-        scope = root / "정리노트/0910.question-scope.test.json"
+        scope = Path(tempfile.gettempdir()) / "0910.question-scope.test.json"
         try:
             scope.write_text(json.dumps(lock, ensure_ascii=False), encoding="utf-8")
             output = io.StringIO()
             with contextlib.redirect_stdout(output):
                 rc = main([
-                    str(root / "정리노트/0910-eli5-audited.html"),
-                    "--coverage", str(root / "정리노트/0910-eli5-audited.coverage.json"),
+                    str(root / "tests/fixtures/study_guide/0910-eli5-audited.html"),
+                    "--coverage", str(root / "tests/fixtures/study_guide/0910-eli5-audited.coverage.json"),
                     "--scope", str(scope), "--phase", "draft",
                 ])
             self.assertEqual(rc, 1)
@@ -120,8 +120,8 @@ class CliTests(unittest.TestCase):
             output = io.StringIO()
             with contextlib.redirect_stdout(output):
                 self.assertEqual(main([
-                    str(root / "정리노트/0910-eli5-audited.html"),
-                    "--coverage", str(root / "정리노트/0910-eli5-audited.coverage.json"),
+                    str(root / "tests/fixtures/study_guide/0910-eli5-audited.html"),
+                    "--coverage", str(root / "tests/fixtures/study_guide/0910-eli5-audited.coverage.json"),
                     "--scope", str(scope),
                 ]), 1)
             self.assertIn("scope question audit pending: 2강:1", output.getvalue())

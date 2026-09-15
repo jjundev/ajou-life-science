@@ -59,7 +59,7 @@ class QuestionScopeTests(unittest.TestCase):
     def test_six_declared_questions_cannot_cover_52_source_questions(self):
         scope = extract_question_scope(self.markdown)
         coverage = json.loads(
-            (ROOT / "정리노트/0910-eli5-audited.coverage.json").read_text(encoding="utf-8")
+            (ROOT / "tests/fixtures/study_guide/0910-eli5-audited.coverage.json").read_text(encoding="utf-8")
         )
         errors = validate_question_coverage(coverage, scope)
         self.assertIn("question universe mismatch: 46 missing, 0 unexpected", errors)
