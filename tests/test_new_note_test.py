@@ -5,6 +5,7 @@ import os
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if REPO_ROOT not in sys.path:
@@ -170,6 +171,42 @@ class TestGeneratorCli(unittest.TestCase):
             with open(out, encoding="utf-8") as f:
                 self.assertIn("QUIZ = {7, 8}", f.read())
 
+    def test_output_cannot_overwrite_generator_source_or_aliases(self):
+        for alias_kind in ('direct', 'symlink', 'hardlink'):
+            with self.subTest(alias=alias_kind), tempfile.TemporaryDirectory() as directory:
+                source = os.path.join(directory, 'new_note_test.py')
+                _write(source, '# temporary generator source\n')
+                output = source
+                if alias_kind != 'direct':
+                    output = os.path.join(directory, 'output-' + alias_kind)
+                    if alias_kind == 'symlink':
+                        os.symlink(source, output)
+                    else:
+                        os.link(source, output)
+                with open(source, 'rb') as source_file:
+                    before = source_file.read()
+                with patch('scripts.new_note_test.__file__', source):
+                    self.assertEqual(_main_quiet([
+                        '0999', '--quiz', '1', '--out', output, '--force'
+                    ]), 2)
+                with open(source, 'rb') as source_file:
+                    self.assertEqual(source_file.read(), before)
+
+        with tempfile.TemporaryDirectory() as directory:
+            source = os.path.join(directory, 'new_note_test.py')
+            _write(source, '# temporary generator source\n')
+            output = os.path.join(directory, 'generated.py')
+            with patch('scripts.new_note_test.__file__', source):
+                self.assertEqual(_main_quiet(['0999', '--quiz', '1', '--out', output]), 0)
+                with open(output, 'rb') as generated_file:
+                    first = generated_file.read()
+                self.assertEqual(_main_quiet(['0999', '--quiz', '1', '--out', output]), 2)
+                self.assertEqual(_main_quiet([
+                    '0999', '--quiz', '1', '--out', output, '--force'
+                ]), 0)
+                with open(output, 'rb') as generated_file:
+                    self.assertEqual(generated_file.read(), first)
+
 
 class TestMarkerData(unittest.TestCase):
     def test_json_data_full_qids_and_legacy_fallback(self):
@@ -218,6 +255,14 @@ runpy.run_path('scripts/new_note_test.py', run_name='__main__')
 '''
         result = subprocess.run([sys.executable, '-c', code], cwd=REPO_ROOT, capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stderr)
+        with tempfile.TemporaryDirectory() as directory:
+            output = os.path.join(directory, 'generated.py')
+            code = code.replace("sys.argv = ['new_note_test.py', '--help']",
+                                "sys.argv = ['new_note_test.py', '0999', '--quiz', '1', '--out', sys.argv[1]]")
+            result = subprocess.run([sys.executable, '-c', code, output], cwd=REPO_ROOT,
+                                    capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertTrue(os.path.isfile(output))
 
 
 if __name__ == "__main__":

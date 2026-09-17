@@ -433,6 +433,16 @@ def main(argv=None):
             print(error, file=sys.stderr)
             return 2
     out = a.out or os.path.join(REPO_ROOT, "tests", "test_note_%s.py" % a.mmdd)
+    source_path = os.path.realpath(__file__)
+    same_source = os.path.realpath(out) == source_path
+    if not same_source and os.path.exists(out):
+        try:
+            same_source = os.path.samefile(out, source_path)
+        except OSError:
+            same_source = False
+    if same_source:
+        print("출력이 생성기 소스를 덮어쓸 수 없습니다: %s" % out, file=sys.stderr)
+        return 2
     if web_entries is not None:
         try:
             from scripts.question_bank.__main__ import _protect_inputs
