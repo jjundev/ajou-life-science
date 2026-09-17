@@ -27,12 +27,14 @@ def resolve_local(base: Path, relative: str) -> Path:
     candidate = Path(relative)
     if candidate.is_absolute():
         raise ValueError("absolute path not allowed: " + relative)
-    requested = (base / candidate).resolve()
-    if not requested.is_relative_to(base):
-        raise ValueError("path outside root: " + relative)
 
     result = base
-    for component in requested.relative_to(base).parts:
+    for component in candidate.parts:
+        if component == "..":
+            result = result.parent.resolve()
+            if not result.is_relative_to(base):
+                raise ValueError("path outside root: " + relative)
+            continue
         matches: list[Path] = []
         if result.is_dir():
             normalized = unicodedata.normalize("NFC", component)
@@ -165,11 +167,15 @@ def _checked_file(
 ) -> Path | None:
     try:
         path = resolve_local(root, relative)
+        required_root = (
+            resolve_local(root, required_directory)
+            if required_directory is not None
+            else None
+        )
     except ValueError as error:
         errors.append(f"{label}: {error}")
         return None
-    if required_directory:
-        required_root = resolve_local(root, required_directory)
+    if required_root is not None:
         if not path.is_relative_to(required_root):
             errors.append(f"{label} must be under {required_directory}/: {relative}")
             return None

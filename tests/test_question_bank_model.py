@@ -124,6 +124,26 @@ class BankModelTests(unittest.TestCase):
                 any("source s1" in error and "under raw/" in error for error in errors)
             )
 
+    def test_required_raw_root_escape_is_reported_without_raising(self):
+        with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as outside:
+            base = Path(tmp)
+            _, bank = make_bank(base)
+            fixture = base / "raw/fixture.txt"
+            fixture.unlink()
+            fixture.parent.rmdir()
+            (base / "raw").symlink_to(Path(outside), target_is_directory=True)
+            source_file = base / "other.txt"
+            source_file.write_bytes(b"outside required directory")
+            source = bank["sources"][0]
+            source["path"] = "other.txt"
+            source["sha256"] = hashlib.sha256(source_file.read_bytes()).hexdigest()
+
+            errors = validate_bank(bank, base, repo_root=base)
+
+            self.assertTrue(
+                any("source s1" in error and "outside root" in error for error in errors)
+            )
+
     def test_asset_paths_cannot_escape_image_after_normalization(self):
         with tempfile.TemporaryDirectory() as tmp:
             base = Path(tmp)
@@ -363,6 +383,26 @@ class BankModelTests(unittest.TestCase):
             ):
                 with self.assertRaisesRegex(ValueError, "ambiguous"):
                     resolve_local(base, composed.name)
+
+    def test_resolve_local_checks_normalized_collision_before_symlink(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp).resolve()
+            target = base / "target"
+            target.mkdir()
+            (target / "target.txt").write_text("target", encoding="utf-8")
+            symlink = base / "caf\u00e9"
+            symlink.symlink_to(target, target_is_directory=True)
+            collision = base / "cafe\u0301"
+            original_iterdir = Path.iterdir
+
+            def colliding_entries(directory):
+                if directory == base:
+                    return iter([symlink, collision])
+                return original_iterdir(directory)
+
+            with patch.object(Path, "iterdir", autospec=True, side_effect=colliding_entries):
+                with self.assertRaisesRegex(ValueError, "ambiguous"):
+                    resolve_local(base, "caf\u00e9/target.txt")
 
     def test_canonical_digest_is_sorted_compact_utf8_json(self):
         self.assertEqual(
