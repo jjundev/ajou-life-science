@@ -135,6 +135,8 @@ def find_scope_source(scope_path: Path, scope: dict) -> Path:
     rel = scope.get("source", {}).get("path", "")
     if not rel:
         return scope_path.parent
+    if scope.get('schema_version') == 2:
+        return scope_path.parent / rel
     target_name = Path(rel).name
     base = scope_path.parent
     if (base / rel).exists():
@@ -169,7 +171,7 @@ def run_coverage(
         try:
             scope = json.loads(scope_path.read_text(encoding="utf-8"))
             source_path = find_scope_source(scope_path, scope)
-            errors.extend(validate_scope_lock(scope, source_path))
+            errors.extend(validate_scope_lock(scope, source_path, lock_path=scope_path))
             if phase == "complete":
                 errors.extend(validate_scope_audit(scope))
             scoped = {
@@ -186,7 +188,7 @@ def run_coverage(
             errors.extend(validate_question_coverage(data, scoped, allow_partial and partial))
             if allow_partial and partial:
                 errors.extend(partial_delivery_errors(html, data, scoped))
-        except (OSError, UnicodeError, json.JSONDecodeError, TypeError) as error:
+        except (OSError, UnicodeError, ValueError, TypeError) as error:
             errors.append(f"cannot load question scope: {error}")
     errors.extend(validate_html(html, data))
     if phase == "complete": errors.extend(validate_review(data, artifact))

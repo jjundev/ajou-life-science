@@ -102,8 +102,8 @@ def _as_map(items: object) -> tuple[dict[str, dict], list[str]]:
         result[item["id"]] = item
     return result, errors
 
-def validate_scope_lock(lock: object, note_path: Path) -> list[str]:
-    if not isinstance(lock, dict) or lock.get("schema_version") != 1:
+def validate_scope_lock(lock: object, note_path: Path, *, lock_path: Path | None = None) -> list[str]:
+    if not isinstance(lock, dict) or lock.get("schema_version") not in (1, 2):
         return ["invalid question scope lock"]
     errors = []
     source = lock.get("source")
@@ -114,6 +114,33 @@ def validate_scope_lock(lock: object, note_path: Path) -> list[str]:
         extracted = extract_question_scope(note_path.read_text(encoding="utf-8"))
     except (OSError, UnicodeError) as error:
         return [f"cannot read scope source: {error}"]
+    if lock['schema_version'] == 2:
+        if lock_path is None:
+            return ['scope v2 requires lock_path']
+        try:
+            from repo_bootstrap import enable_repo_imports
+            root = enable_repo_imports()
+            from scripts.question_bank.scope import load_web_scope, file_hash
+            web_source = lock['web_scope']
+            if (not isinstance(web_source, dict)
+                    or not isinstance(web_source.get('path'), str)
+                    or Path(web_source['path']).is_absolute()):
+                raise ValueError('web scope lock path must be relative')
+            manifest = (lock_path.parent / web_source['path']).resolve()
+            if file_hash(manifest) != lock['web_scope']['sha256']:
+                errors.append('web scope source hash mismatch')
+            entries, _ = load_web_scope(manifest, root)
+            paths = list(dict.fromkeys(Path(e['bank_path']) for e in entries))
+            import os
+            expected_banks = [{'path': os.path.relpath(p, lock_path.parent.resolve()), 'sha256': file_hash(p)} for p in paths]
+            if lock.get('banks') != expected_banks:
+                errors.append('question scope bank sources mismatch')
+            for entry in entries:
+                if entry['id'] in extracted:
+                    errors.append('question id collision: ' + entry['id'])
+                extracted[entry['id']] = {k: v for k, v in entry.items() if k != 'bank_path'}
+        except (OSError, UnicodeError, ValueError, KeyError, TypeError) as error:
+            return errors + [f'cannot load web scope: {error}']
     base, base_errors = _as_map(lock.get("base_questions"))
     final, final_errors = _as_map(lock.get("questions"))
     errors.extend(base_errors + final_errors)
@@ -124,6 +151,7 @@ def validate_scope_lock(lock: object, note_path: Path) -> list[str]:
     final_matches = set(final) == set(applied) and all(
         final[ident].get("status") == item.get("status")
         and final[ident].get("source_locator") == item.get("source_locator")
+        and (lock['schema_version'] == 1 or all(final[ident].get(k) == v for k, v in item.items()))
         for ident, item in applied.items()
     )
     if not final_matches:

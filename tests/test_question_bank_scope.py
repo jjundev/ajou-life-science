@@ -1,0 +1,313 @@
+import copy
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+import unittest
+from unittest.mock import patch
+
+from tests.question_bank_fixture import make_bank
+from scripts.question_bank.model import canonical_digest, question_payload
+from scripts import new_note_test
+from scripts.question_bank.__main__ import main as bank_cli
+
+ROOT = Path(__file__).resolve().parents[1]
+SCRIPTS = ROOT / '.agents/skills/study-note-eli5/scripts'
+sys.path.insert(0, str(SCRIPTS))
+from build_question_scope import build_lock
+from question_scope import validate_scope_lock, scope_digest
+
+
+def write_json(path, value):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(value, ensure_ascii=False), encoding='utf-8')
+
+
+def fixture(root, complete=True):
+    path, bank = make_bank(root / 'bank')
+    (root / 'evidence.md').write_text('# DNA\nDNA는 유전 정보를 저장한다.\n')
+    q = bank['questions'][0]
+    if complete:
+        q['review'] = {'status': 'verified', 'notes': 'fixture only',
+                       'payload_sha256': canonical_digest(question_payload(bank, q, path.parent, repo_root=root))}
+    write_json(path, bank)
+    scope = root / 'meta/scope.json'
+    manifest = {'schema_version': 1, 'banks': [{'path': '../bank/questions.json',
+        'sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
+        'questions': [{'id': q['id'], 'status': 'included', 'reason': None,
+            'prerequisite': None, 'refs': [{'path': 'evidence.md', 'section': 'DNA'}]}]}]}
+    write_json(scope, manifest)
+    return path, bank, scope, manifest
+
+
+class WebScopeTests(unittest.TestCase):
+    def load(self, scope, root):
+        from scripts.question_bank.scope import load_web_scope
+        return load_web_scope(scope, root)
+
+    def test_manifest_cannot_drop_bank_question_before_complete_check(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _, _, scope, manifest = fixture(root, False)
+            manifest['banks'][0]['questions'] = []
+            write_json(scope, manifest)
+            with self.assertRaisesRegex(ValueError, 'question universe'):
+                self.load(scope, root)
+
+    def test_runtime_paths_and_complete_bank_preserved(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path, bank, scope, manifest = fixture(root)
+            entries, banks = self.load(scope, root)
+            self.assertEqual(entries[0]['bank_path'], str(path.resolve()))
+            self.assertEqual(entries[0]['bank_id'], 'web-test-ch01')
+            self.assertEqual(banks, {'web-test-ch01': bank})
+            self.assertEqual(json.loads(scope.read_text()), manifest)
+
+    def test_rejects_duplicates_bad_status_deferred_missing_reason_or_prerequisite_and_bad_refs(self):
+        mutations = [lambda e: e.append(copy.deepcopy(e[0])),
+                     lambda e: e[0].update(status='unknown'),
+                     lambda e: e[0].update(status='deferred', prerequisite='next'),
+                     lambda e: e[0].update(status='deferred', reason='later'),
+                     lambda e: e[0].update(refs=[]),
+                     lambda e: e[0]['refs'][0].update(section='missing'),
+                     lambda e: e[0]['refs'][0].update(section='유전 정보를'),
+                     lambda e: e[0]['refs'][0].update(path='../outside.md')]
+        for mutate in mutations:
+            with self.subTest(mutate=mutate), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                _, _, scope, manifest = fixture(root)
+                mutate(manifest['banks'][0]['questions'])
+                write_json(scope, manifest)
+                with self.assertRaises(ValueError):
+                    self.load(scope, root)
+
+    def test_bank_raw_and_manifest_hash_tampering(self):
+        for target in ('bank', 'raw', 'hash'):
+            with self.subTest(target=target), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                path, _, scope, manifest = fixture(root)
+                if target == 'bank':
+                    path.write_bytes(path.read_bytes() + b' ')
+                elif target == 'raw':
+                    (path.parent / 'raw/fixture.txt').write_text('changed')
+                else:
+                    manifest['banks'][0]['sha256'] = '0' * 64
+                    write_json(scope, manifest)
+                with self.assertRaises(ValueError):
+                    self.load(scope, root)
+
+    def test_distinct_banks_same_number_and_duplicate_bank(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path, bank, scope, manifest = fixture(root)
+            second = copy.deepcopy(bank)
+            second['assessment']['id'] = 'web-other-ch01'
+            q = second['questions'][0]
+            q['id'] = 'web-other-ch01:q01'
+            q['review']['payload_sha256'] = canonical_digest(question_payload(second, q, path.parent, repo_root=root))
+            p2 = path.with_name('other.json')
+            write_json(p2, second)
+            row = copy.deepcopy(manifest['banks'][0])
+            row.update(path='../bank/other.json', sha256=hashlib.sha256(p2.read_bytes()).hexdigest())
+            row['questions'][0]['id'] = q['id']
+            manifest['banks'].append(row)
+            write_json(scope, manifest)
+            self.assertEqual([e['id'] for e in self.load(scope, root)[0]],
+                             ['web-test-ch01:q01', 'web-other-ch01:q01'])
+            manifest['banks'].append(copy.deepcopy(row))
+            write_json(scope, manifest)
+            with self.assertRaises(ValueError):
+                self.load(scope, root)
+
+    def test_v2_rebases_sources_and_detects_forged_universe_and_source_changes(self):
+        with tempfile.TemporaryDirectory(dir=ROOT / '.superpowers') as tmp:
+            root = Path(tmp)
+            _, _, scope, _ = fixture(root)
+            # Fixture evidence paths are repo-relative when integrated in the real repo.
+            self.rebase_fixture(root, scope)
+            note = root / 'note.md'
+            note.write_text('## 부록. 문항 ↔ 개념 매핑\n| 1강 | 18 | example |\n')
+            for out in (root / 'lock.json', root / 'far/away/lock.json'):
+                lock, errors = build_lock(note, out, [], {}, web_scope=Path('meta/scope.json'))
+                self.assertEqual(errors, [])
+                self.assertEqual(lock['schema_version'], 2)
+                self.assertEqual({e['id'] for e in lock['base_questions']}, {'1강:18', 'web-test-ch01:q01'})
+                self.assertNotIn('bank_path', json.dumps(lock))
+                self.assertEqual((out.parent / lock['web_scope']['path']).resolve(), scope)
+                self.assertEqual(validate_scope_lock(lock, note, lock_path=out), [])
+                absolute = copy.deepcopy(lock)
+                absolute['web_scope']['path'] = str(scope)
+                absolute['scope_sha256'] = scope_digest(absolute)
+                self.assertTrue(validate_scope_lock(absolute, note, lock_path=out))
+                lock['base_questions'].pop()
+                lock['questions'].pop()
+                lock['scope_sha256'] = scope_digest(lock)
+                self.assertTrue(validate_scope_lock(lock, note, lock_path=out))
+            scope.write_bytes(scope.read_bytes() + b' ')
+            self.assertTrue(validate_scope_lock(json.loads(out.read_text()), note, lock_path=out))
+
+    @staticmethod
+    def rebase_fixture(root, scope):
+        manifest = json.loads(scope.read_text())
+        path = (scope.parent / manifest['banks'][0]['path']).resolve()
+        bank = json.loads(path.read_text())
+        ref = (root / 'evidence.md').relative_to(ROOT).as_posix()
+        q = bank['questions'][0]
+        q['analysis']['requirements'][0]['evidence'][0]['path'] = ref
+        q['review']['payload_sha256'] = canonical_digest(question_payload(bank, q, path.parent, repo_root=ROOT))
+        write_json(path, bank)
+        manifest['banks'][0]['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+        manifest['banks'][0]['questions'][0]['refs'][0]['path'] = ref
+        write_json(scope, manifest)
+
+    def test_absolute_script_from_temp_cwd_and_legacy_without_jsonschema(self):
+        with tempfile.TemporaryDirectory(dir=ROOT / '.superpowers') as tmp, tempfile.TemporaryDirectory() as cwd:
+            root = Path(tmp)
+            _, _, scope, _ = fixture(root)
+            self.rebase_fixture(root, scope)
+            note = root / 'note.md'
+            note.write_text('## 부록. 문항 ↔ 개념 매핑\n| 1강 | 18 | example |\n')
+            output = root / 'output/lock.json'
+            p = subprocess.run([sys.executable, str(SCRIPTS / 'build_question_scope.py'), str(note), str(output), '--web-scope', str(scope)], cwd=cwd, capture_output=True, text=True)
+            self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+            self.assertEqual(len(json.loads(output.read_text())['questions']), 2)
+            generated = root / 'test_note_0999.py'
+            p = subprocess.run([sys.executable, str(ROOT / 'scripts/new_note_test.py'), '0999',
+                                '--web-scope', str(scope), '--out', str(generated)],
+                               cwd=cwd, capture_output=True, text=True)
+            self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+            self.assertIn('WEB_SCOPE =', generated.read_text())
+            code = '''import builtins, runpy, sys
+original = builtins.__import__
+def blocked(name, *args, **kwargs):
+    if name == 'jsonschema' or name.startswith('jsonschema.'):
+        raise ImportError('jsonschema unavailable')
+    return original(name, *args, **kwargs)
+builtins.__import__ = blocked
+sys.path.insert(0, sys.argv[1])
+sys.argv = sys.argv[2:]
+runpy.run_path(sys.argv[0], run_name='__main__')
+'''
+            for script, args in [('build_question_scope.py', [str(note), str(root / 'legacy.json')]),
+                                 ('build_guide.py', ['--help'])]:
+                p = subprocess.run([sys.executable, '-c', code, str(SCRIPTS), str(SCRIPTS / script), *args], cwd=cwd, capture_output=True, text=True)
+                self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+
+
+class NoteScopeCliTests(unittest.TestCase):
+    def test_note_meta_requires_mmdd_and_nonempty_title(self):
+        with tempfile.TemporaryDirectory(dir=ROOT / '.superpowers') as tmp:
+            root = Path(tmp)
+            _, _, scope, _ = fixture(root)
+            WebScopeTests.rebase_fixture(root, scope)
+            meta = root / 'meta.json'
+            for value in ({'date': '999', 'title': 'DNA'},
+                          {'date': '0999', 'title': '  '},
+                          {'date': '0999', 'title': 'DNA', 'unknown': True}):
+                with self.subTest(value=value):
+                    write_json(meta, value)
+                    self.assertEqual(bank_cli(['note', '--scope', str(scope), '--meta', str(meta),
+                                               '--output', str(root / 'note.html')]), 1)
+
+    def test_note_scope_cli_and_overwrite_input_alias_protection(self):
+        with tempfile.TemporaryDirectory(dir=ROOT / '.superpowers') as tmp:
+            root = Path(tmp)
+            bank_path, _, scope, _ = fixture(root)
+            WebScopeTests.rebase_fixture(root, scope)
+            meta = root / 'meta.json'
+            write_json(meta, {'date': '0999', 'title': 'DNA 퀴즈'})
+            template = root / 'template.html'
+            template.write_bytes((ROOT / '정리노트/_template.html').read_bytes())
+            output = root / 'note.html'
+            args = ['note', '--scope', str(scope), '--meta', str(meta), '--template', str(template)]
+            self.assertEqual(bank_cli(args + ['--output', str(output)]), 0)
+            data = new_note_test.parse_question_data(output.read_text())
+            self.assertEqual([q['qid'] for q in data[1]], ['web-test-ch01:q01'])
+            self.assertEqual(data[0]['title'], 'DNA 퀴즈')
+            self.assertEqual(data[0]['chapter'], 'N장 단원명')
+            self.assertEqual(data[1][0]['refs'][0]['href'], 'evidence.md#dna')
+            self.assertEqual(bank_cli(args + ['--output', str(output)]), 0)
+            for target in [scope, meta, template, bank_path, root / 'evidence.md', bank_path.parent / 'raw/fixture.txt']:
+                before = target.read_bytes()
+                for alias in ['direct', 'symlink', 'hardlink']:
+                    alias_path = root / ('alias-' + alias)
+                    if alias == 'direct':
+                        alias_path = target
+                    elif alias == 'symlink':
+                        alias_path.symlink_to(target)
+                    else:
+                        os.link(target, alias_path)
+                    try:
+                        self.assertEqual(bank_cli(args + ['--output', str(alias_path), '--force']), 1)
+                        self.assertEqual(target.read_bytes(), before)
+                    finally:
+                        if alias != 'direct':
+                            alias_path.unlink()
+
+    def test_generated_web_note_tests_use_full_qids_and_real_resources(self):
+        with tempfile.TemporaryDirectory(dir=ROOT / '.superpowers') as tmp:
+            root = Path(tmp)
+            _, _, scope, _ = fixture(root)
+            WebScopeTests.rebase_fixture(root, scope)
+            note_dir = root / '정리노트'
+            note_dir.mkdir()
+            meta = root / 'meta.json'
+            write_json(meta, {'date': '0999', 'title': 'DNA 퀴즈'})
+            html_path = note_dir / '0999.html'
+            self.assertEqual(bank_cli(['note', '--scope', str(scope), '--meta', str(meta),
+                                       '--output', str(html_path)]), 0)
+            html_path.write_text(html_path.read_text().replace(
+                '</body>', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"></svg></body>'))
+            (note_dir / '0999.md').write_text('''# 0999 테스트
+
+## ⏱ 30초 요약
+
+요약.
+
+## ⏪ 지난 회차 복습
+
+복습.
+
+## ✂️ 여기서 강의가 끝났습니다
+
+다음.
+
+## 부록. 문항 ↔ 개념 매핑
+
+[0999.html](0999.html)
+
+| 출처 | 문항 ID | 질문 요약 | 절 | 상태 |
+|---|---|---|---|---|
+| web-test-ch01 | web-test-ch01:q01 | 유전 정보 | DNA | included |
+''', encoding='utf-8')
+            generated = root / 'test_note_0999.py'
+            self.assertEqual(new_note_test.main(['0999', '--web-scope', str(scope),
+                                                 '--out', str(generated)]), 0)
+            spec = importlib.util.spec_from_file_location('generated_web_note_test', generated)
+            module = importlib.util.module_from_spec(spec)
+            old_root = os.environ.get('NOTE_REPO_ROOT')
+            os.environ['NOTE_REPO_ROOT'] = str(root)
+            try:
+                spec.loader.exec_module(module)
+                with open(os.devnull, 'w') as sink:
+                    result = unittest.TextTestRunner(stream=sink).run(
+                        unittest.defaultTestLoader.loadTestsFromModule(module))
+            finally:
+                if old_root is None:
+                    os.environ.pop('NOTE_REPO_ROOT', None)
+                else:
+                    os.environ['NOTE_REPO_ROOT'] = old_root
+            self.assertTrue(result.wasSuccessful(), result.failures + result.errors)
+            check = module.TestNoteHtml('test_single_file_no_external_deps')
+            for attack in ('<script src="evil.js"></script>', '<script>fetch ("evil")</script>',
+                           '<style>@import "evil.css"</style>',
+                           '<svg><image href="evil.svg"></image></svg>'):
+                with self.subTest(attack=attack):
+                    check.html = html_path.read_text().replace('</body>', attack + '</body>')
+                    with self.assertRaises(AssertionError):
+                        check.test_single_file_no_external_deps()

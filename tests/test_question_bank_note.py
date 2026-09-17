@@ -89,3 +89,12 @@ class NoteRenderTests(unittest.TestCase):
         for template in ['<script></script>', '/* QUESTION-DATA-START */' * 2 + '/* QUESTION-DATA-END */']:
             with self.assertRaises(ValueError):
                 render_note(template, {}, [])
+
+class LiteralMarkerRoundtripTests(unittest.TestCase):
+    def test_literal_start_and_end_markers_in_json_remain_data(self):
+        from scripts.new_note_test import parse_question_data
+        template = (ROOT / '정리노트/_template.html').read_text()
+        for marker in ['/* QUESTION-DATA-START */', '/* QUESTION-DATA-END */']:
+            with self.subTest(marker=marker):
+                meta, items = {'title': marker}, [{'q': marker}]
+                self.assertEqual(parse_question_data(render_note(template, meta, items)), (meta, items))

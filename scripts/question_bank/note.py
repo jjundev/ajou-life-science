@@ -74,7 +74,8 @@ def script_json(value: object) -> str:
     for old, new in [('&', '\\u0026'), ('<', '\\u003c'), ('>', '\\u003e'),
                      ('\u2028', '\\u2028'), ('\u2029', '\\u2029')]:
         text = text.replace(old, new)
-    return text
+    # Literal delimiter text belongs to JSON strings, never parser markers.
+    return text.replace('/* QUESTION-DATA-', r'\u002f* QUESTION-DATA-')
 
 
 def render_note(template: str, meta: dict, items: list[dict], figures: str = '') -> str:

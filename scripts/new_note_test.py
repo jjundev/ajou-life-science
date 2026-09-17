@@ -71,7 +71,7 @@ QUIZ = $QUIZ
 SCOPE_TERMS = $SCOPE_TERMS
 REQUIRED_SECTIONS = $REQUIRED_SECTIONS
 PRIOR = $PRIOR
-# MULTI: True 면 퀴즈 항목마다 src:"N강" 이 있어야 하고 QUIZ 는 (src, n) 쌍 집합.
+$WEB_CONSTANTS# MULTI: True 면 퀴즈 항목마다 src:"N강" 이 있어야 하고 QUIZ 는 (src, n) 쌍 집합.
 # ────────────────────────────────────────────────────────────────────────
 
 REPO_ROOT = os.environ.get("NOTE_REPO_ROOT") or os.path.abspath(
@@ -103,7 +103,7 @@ $PARSER_SOURCE
 def _html_quiz_set(html):
     data = parse_question_data(html)
     if data is not None:
-        if MULTI:
+$WEB_ITEM_FILTER        if MULTI:
             return {(item["src"], item["n"]) for item in data[1] if "src" in item and "n" in item}
         return {item["n"] for item in data[1] if "n" in item}
     if MULTI:
@@ -115,7 +115,7 @@ def _html_quiz_set(html):
 def _html_item_count(html):
     data = parse_question_data(html)
     if data is not None:
-        return len(data[1])
+$WEB_ITEM_FILTER        return len(data[1])
     return len(re.findall(r"\bn:\s*\d+", html))
 
 
@@ -174,7 +174,7 @@ class TestNoteHtml(unittest.TestCase):
 
     def test_single_file_no_external_deps(self):
         """file:// 에서 열리려면 외부 의존이 없어야 함"""
-        for bad in ["fetch(", "XMLHttpRequest", "<script src=", "<link rel=\"stylesheet\"",
+$RESOURCE_CHECK        for bad in ["fetch(", "XMLHttpRequest", "<script src=", "<link rel=\"stylesheet\"",
                     "cdn.", "http://", "https://", ".png", ".jpg", ".svg\""]:
             self.assertNotIn(bad, self.html, "외부 의존 '" + bad + "' 이 있습니다")
 
@@ -223,7 +223,7 @@ class TestCrossReferences(unittest.TestCase):
             self.assertNotIn(line, self.html, "html이 md 본문을 복사했습니다: " + line[:40])
 
 
-if __name__ == "__main__":
+${WEB_TESTS}if __name__ == "__main__":
     unittest.main()
 ''')
 
@@ -253,7 +253,103 @@ def _quiz_literal(multi, items):
     return "{" + ", ".join(parts) + "}"
 
 
-def render(mmdd, multi, items, scope_terms, prior, supplement, recap=True):
+def _web_generated_parts(entries):
+    if entries is None:
+        return '', '', '', ''
+    expected = {
+        entry['id']: {
+            'bank_id': entry['bank_id'],
+            'status': entry['status'],
+            'refs': entry['refs'],
+        }
+        for entry in entries
+    }
+    active = [entry['id'] for entry in entries if entry['status'] in ('included', 'review')]
+    constants = 'WEB_SCOPE = ' + repr({'questions': expected, 'active': active}) + '\n'
+    resource_check = r'''        from html.parser import HTMLParser
+        class ResourceParser(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.resources = []
+            def handle_starttag(self, tag, attrs):
+                values = dict(attrs)
+                attr = {'script':'src', 'link':'href', 'img':'src', 'source':'src',
+                        'video':'src', 'audio':'src', 'iframe':'src', 'embed':'src',
+                        'object':'data', 'image':'href', 'use':'href'}.get(tag)
+                value = values.get(attr) if attr else None
+                if tag in ('image', 'use'):
+                    value = value or values.get('xlink:href')
+                if value:
+                    self.resources.append((tag, value))
+        parser = ResourceParser()
+        parser.feed(self.html)
+        self.assertEqual(parser.resources, [], 'external resource elements: ' + repr(parser.resources))
+        for pattern in (r'\bfetch\s*\(', r'\bXMLHttpRequest\s*\(', r'\bWebSocket\s*\(',
+                        r'\bEventSource\s*\(', r'@import\b', r'url\s*\('):
+            self.assertIsNone(re.search(pattern, self.html),
+                              "external dependency pattern '" + pattern + "' exists")
+        return
+'''
+    item_filter = "        data = (data[0], [item for item in data[1] if not item.get('qid')])\n"
+    tests = r'''class TestWebQuestionScope(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        if not (os.path.isfile(MD_PATH) and os.path.isfile(HTML_PATH)):
+            raise unittest.SkipTest("both note files are required")
+        cls.md = _read(MD_PATH)
+        cls.html = _read(HTML_PATH)
+
+    def test_html_uses_each_active_full_qid_once(self):
+        qids = html_quiz_qids(self.html)
+        self.assertEqual(qids, WEB_SCOPE['active'])
+        self.assertEqual(len(qids), len(set(qids)), 'duplicate web qid in HTML')
+
+    def test_markdown_web_table_classifies_every_original_qid(self):
+        rows = []
+        for line in self.md.splitlines():
+            if not line.lstrip().startswith('|'):
+                continue
+            cells = [cell.strip() for cell in line.strip().strip('|').split('|')]
+            if len(cells) == 5 and cells[1] in WEB_SCOPE['questions']:
+                rows.append(cells)
+        self.assertEqual(len(rows), len(WEB_SCOPE['questions']), 'missing or duplicate web mapping row')
+        for source, qid, summary, section, status in rows:
+            expected = WEB_SCOPE['questions'][qid]
+            self.assertEqual(source, expected['bank_id'])
+            self.assertTrue(summary, 'web mapping question summary is empty: ' + qid)
+            self.assertEqual(status, expected['status'])
+            expected_section = expected['refs'][0]['section'] if expected['refs'] else ''
+            self.assertEqual(section, expected_section)
+
+    def test_web_refs_are_local_files_with_real_sections(self):
+        from pathlib import Path
+        from urllib.parse import unquote, urlsplit
+        data = parse_question_data(self.html)
+        self.assertIsNotNone(data)
+        items = {item['qid']: item for item in data[1] if item.get('qid')}
+        self.assertEqual(set(items), set(WEB_SCOPE['active']))
+        for qid in WEB_SCOPE['active']:
+            expected_refs = WEB_SCOPE['questions'][qid]['refs']
+            actual_refs = items[qid].get('refs', [])
+            self.assertEqual(len(actual_refs), len(expected_refs))
+            for actual, expected in zip(actual_refs, expected_refs):
+                self.assertEqual({k: actual[k] for k in ('path', 'section')}, expected)
+                parsed = urlsplit(actual.get('href', ''))
+                self.assertFalse(parsed.scheme or parsed.netloc, 'web ref must be local: ' + actual.get('href', ''))
+                target = (Path(HTML_PATH).parent / unquote(parsed.path)).resolve()
+                self.assertTrue(target.is_file(), 'web ref file missing: ' + str(target))
+                headings = {m.group(1).strip() for m in re.finditer(
+                    r'^ {0,3}#{1,6}\s+(.+?)(?:\s+#+)?\s*$', _read(str(target)), re.M)}
+                self.assertIn(expected['section'], headings)
+                anchor = re.sub(r'[^\w\- ]', '', expected['section'].lower()).replace(' ', '-')
+                self.assertEqual(unquote(parsed.fragment), anchor)
+
+
+'''
+    return constants, resource_check, tests, item_filter
+
+
+def render(mmdd, multi, items, scope_terms, prior, supplement, recap=True, web_scope=None):
     required = ["## ⏱ 30초 요약"]
     if recap:
         required.append("## ⏪ 지난 회차 복습")
@@ -261,6 +357,7 @@ def render(mmdd, multi, items, scope_terms, prior, supplement, recap=True):
     if supplement:
         required.append("## 📎 강의 밖 보충")
     required.append("## 부록. 문항 ↔ 개념 매핑")
+    web_constants, resource_check, web_tests, web_item_filter = _web_generated_parts(web_scope)
     return TEMPLATE.substitute(
         PARSER_SOURCE=PARSER_SOURCE,
         MMDD=mmdd,
@@ -269,14 +366,19 @@ def render(mmdd, multi, items, scope_terms, prior, supplement, recap=True):
         SCOPE_TERMS=repr(list(scope_terms)),
         REQUIRED_SECTIONS=repr(required),
         PRIOR=repr(prior),
+        WEB_CONSTANTS=web_constants,
+        RESOURCE_CHECK=resource_check,
+        WEB_TESTS=web_tests,
+        WEB_ITEM_FILTER=web_item_filter,
     )
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description="회차 노트 검증 테스트 생성기")
     ap.add_argument("mmdd", help="회차 날짜 MMDD (예: 0910)")
-    ap.add_argument("--quiz", action="append", required=True,
+    ap.add_argument("--quiz", action="append", default=[],
                     help="이번 회차 문항. '7,8,11' 또는 '1강:32,40' (반복 가능)")
+    ap.add_argument("--web-scope", help="원본 웹 문항 범위 명세 JSON")
     ap.add_argument("--scope-terms", default="",
                     help="본문에 있으면 안 되는 다음 회차 개념, 쉼표 구분")
     ap.add_argument("--prior", default=None, help="직전 회차 MMDD (⏪ 링크·ref 예외)")
@@ -289,19 +391,34 @@ def main(argv=None):
     if not re.fullmatch(r"\d{4}", a.mmdd):
         print("MMDD 는 숫자 4자리여야 합니다: %r" % a.mmdd, file=sys.stderr)
         return 2
+    if not a.quiz and not a.web_scope:
+        print("--quiz or --web-scope is required", file=sys.stderr)
+        return 2
     try:
         multi, items = parse_quiz_specs(a.quiz)
     except ValueError as e:
         print(e, file=sys.stderr)
         return 2
     scope = [t.strip() for t in a.scope_terms.split(",") if t.strip()]
+    web_entries = None
+    if a.web_scope:
+        try:
+            from pathlib import Path
+            if REPO_ROOT not in sys.path:
+                sys.path.insert(0, REPO_ROOT)
+            from scripts.question_bank.scope import load_web_scope
+            web_entries, _ = load_web_scope(Path(a.web_scope).resolve(), Path(REPO_ROOT))
+        except (OSError, UnicodeError, ValueError) as error:
+            print(error, file=sys.stderr)
+            return 2
     out = a.out or os.path.join(REPO_ROOT, "tests", "test_note_%s.py" % a.mmdd)
     if os.path.exists(out) and not a.force:
         print("이미 있습니다: %s  (--force 로 덮어쓰기)" % out, file=sys.stderr)
         return 2
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
     with open(out, "w", encoding="utf-8") as f:
-        f.write(render(a.mmdd, multi, items, scope, a.prior, a.supplement, recap=not a.no_recap))
+        f.write(render(a.mmdd, multi, items, scope, a.prior, a.supplement,
+                       recap=not a.no_recap, web_scope=web_entries))
     print(out)
     return 0
 
