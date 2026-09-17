@@ -36,6 +36,15 @@ class ClaudeStudyNoteEli5Tests(unittest.TestCase):
             r'description:\s*["\']?Use when',
         )
 
+    def test_web_scope_workflow_names_the_question_bank_interpreter(self):
+        canonical = CANONICAL_SKILL.read_text(encoding="utf-8")
+
+        self.assertIn(".venv-question-bank/bin/python", canonical)
+        self.assertIn("build_question_scope.py", canonical)
+        self.assertIn("build_guide.py", canonical)
+        self.assertIn("verify_guide.py", canonical)
+        self.assertIn("plain `python3`", canonical)
+
 
 if __name__ == "__main__":
     unittest.main()

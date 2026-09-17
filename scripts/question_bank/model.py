@@ -73,6 +73,18 @@ def _assets_by_id(bank: dict[str, Any]) -> dict[str, dict[str, Any]]:
     return {asset["id"]: asset for asset in bank["assets"]}
 
 
+def _question_evidence_source_ids(question: dict[str, Any]) -> set[str]:
+    source_ids = set(question["source_ids"])
+    observations = question["observations"]
+    if observations["selected_source_id"] is not None:
+        source_ids.add(observations["selected_source_id"])
+    if observations["official_answer"] is not None:
+        source_ids.update(observations["official_answer"]["source_ids"])
+    for issue in question["analysis"]["issues"]:
+        source_ids.update(issue["source_ids"])
+    return source_ids
+
+
 def asset_payload(
     bank: dict[str, Any], asset: dict[str, Any], base: Path
 ) -> dict[str, Any]:
@@ -103,7 +115,7 @@ def question_payload(
     assets = _assets_by_id(bank)
     source_hashes = {
         source_id: _file_digest(resolve_local(base, sources[source_id]["path"]))
-        for source_id in question["source_ids"]
+        for source_id in sorted(_question_evidence_source_ids(question))
     }
     figure_ids = [
         block["asset_id"]
@@ -322,8 +334,9 @@ def validate_bank(
         if question["id"] != expected_id:
             errors.append(f"{label} id must be {expected_id}")
 
+        question_evidence_source_ids = _question_evidence_source_ids(question)
+        referenced_source_ids.update(question_evidence_source_ids)
         for source_id in question["source_ids"]:
-            referenced_source_ids.add(source_id)
             if source_id not in known_source_ids:
                 errors.append(f"{label} has unknown question source id: {source_id}")
 
@@ -375,7 +388,6 @@ def validate_bank(
                 if option_id not in known_option_ids:
                     errors.append(f"{label} official answer has unknown option: {option_id}")
             for source_id in official_answer["source_ids"]:
-                referenced_source_ids.add(source_id)
                 if source_id not in known_source_ids:
                     errors.append(f"{label} official answer has unknown source: {source_id}")
 
@@ -448,7 +460,6 @@ def validate_bank(
 
         for issue in analysis["issues"]:
             for source_id in issue["source_ids"]:
-                referenced_source_ids.add(source_id)
                 if source_id not in known_source_ids:
                     errors.append(f"{label} issue has unknown source id: {source_id}")
         if question["review"]["status"] == "verified" and any(
@@ -459,7 +470,7 @@ def validate_bank(
 
         payload = None
         if (
-            set(question["source_ids"]) <= valid_source_files
+            question_evidence_source_ids <= valid_source_files
             and set(figure_ids) <= valid_asset_files
             and evidence_files_valid
         ):

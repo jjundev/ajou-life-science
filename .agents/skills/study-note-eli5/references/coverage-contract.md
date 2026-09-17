@@ -42,6 +42,10 @@ manifest, bank paths are relative to the manifest directory, while bank
 requirement evidence and scope refs are repository-root-relative. Validation
 reloads final sources and rejects stale manifest or bank hashes.
 
+Every scope/build/blind-copy/verify command in this web-enabled v2 flow uses
+`.venv-question-bank/bin/python`. Plain `python3` is reserved for the no-bank
+legacy v1 flow because the v2 imports require the question-bank environment.
+
 Raw screenshots without a registered questions.json are raw-only evidence.
 Report and review or register them before claiming web coverage. This differs
 from a chapter with no matching web material.

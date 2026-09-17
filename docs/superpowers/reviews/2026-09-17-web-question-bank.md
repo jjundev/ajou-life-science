@@ -134,3 +134,66 @@ SHA256은 base `5da5fa5`와 같으며 해당 경로 diff도 없다. 보호 artif
 - Ruling: Validated bank-origin figure evidence may be visible inside its own matching question prompt; actual teaching facts remain teaching-only and legacy figure rules unchanged — raw exam figures belong in prompts rather than falsely classified teaching — cost is a narrow ownership/visibility branch in guide_html.
 - Ruling: Validated bank-origin deferred items may have empty fact_ids with explicit reason and later_prerequisite; active and legacy requirements unchanged — bindings intentionally cover active knowledge only, so future facts must not be invented — cost is a narrow deferred-bank branch in coverage_model.
 - Ruling: Current ELI5 adapter explicitly rejects multiple official keys rather than truncating them; bank storage/preview still preserve the full array, and analysis accepted alternatives remain supported — legacy Q printed-key representation is scalar and the real17 records all have null official keys — cost is an adapter extension if a future official multi-key record must be exported.
+
+## Final review finding and fix
+
+The final whole-branch review found one P2 freshness gap: a verified question
+payload hashed `question.source_ids`, but permitted official-answer and issue
+evidence could reference other registered sources. Updating one of those files
+and its stored source hash therefore left the old question review digest valid.
+
+The model now derives one evidence-source union from the question's original
+sources, selected source, official-answer sources, and issue sources. That same
+union drives payload byte hashes, source reference accounting, and payload
+eligibility. Unknown or missing references remain ordinary validation errors;
+they do not reach payload construction or raise a traceback. Regression tests
+cover official-only and issue-only byte changes with refreshed stored source
+hashes, and both invalidate the prior verified review digest.
+
+The real 1장 bank has the same union as its existing `question.source_ids` for
+all 17 questions. Complete validation still reports `Valid: 17 questions
+(complete)`, while `questions.json`, `preview.html`, and the four SVG artifacts
+remain byte-identical with hashes `c8c140…`, `d65322…`, `bcd017…`, `eea53e…`,
+`ad94ed…`, and `2a7ce9…`.
+
+## Forward-test clarifications
+
+The independent preparation-only forward test correctly selected the
+registered-bank path for chapter 1 and the no-web/PDF-only path for chapter 2.
+It produced no note or guide. It also exposed instruction gaps now clarified in
+the canonical files:
+
+- a web-enabled ELI5 scope/build/blind-copy/verify flow uses
+  `.venv-question-bank/bin/python`; plain `python3` is limited to the no-bank
+  legacy v1 path;
+- a chapter bank is shared evidence rather than the property of one dated note;
+  each requested MMDD gets its own full-ID classification, and its date/scope
+  comes from the user request and actual STT rather than bank metadata;
+- legacy unmarked read compatibility does not authorize rewriting old
+  artifacts; an explicit update that combines a bank uses the current template
+  and strict JSON marker contract;
+- the established step-4 range gate keeps its cited number, with step 3 now
+  explicitly marked as having no separate action.
+
+Future note work still needs source resolution for damaged chapter-2 question
+13 before treating its reconstructed wording as complete, and an explicit
+session date plus actual STT or confirmed absence before creating a 0917 note.
+Those are future-note prerequisites; no existing note was edited here. The
+forward test is preparation evidence, not a generated-full-guide or independent
+complete-guide pass.
+
+## Final verification
+
+- TDD RED: the two new source-mutation tests failed because no review mismatch
+  was produced; the unknown-reference guard already returned validation errors.
+- Focused GREEN: model **27 tests OK**, scope **11 tests OK**, ELI5 entrypoint
+  **3 tests OK**, and summary-note entrypoint **4 tests OK**.
+- Both canonical skills passed `quick_validate.py`.
+- Real-bank complete validation: **17 questions complete**.
+- Final full suite, executed once after the fixes: **212 tests, OK, skipped=1**
+  in 7.309s. The existing optional split-textbook test remains the only skip.
+- The full-suite log was written to
+  `/tmp/web-question-bank-final-fix-full-tests.txt`; a surrounding zsh status
+  capture used the reserved variable name `status` after the suite finished and
+  returned shell exit 1. The test log itself ends in `OK (skipped=1)` and was
+  inspected directly without rerunning the suite.

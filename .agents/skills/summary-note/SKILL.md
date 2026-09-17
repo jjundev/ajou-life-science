@@ -13,6 +13,12 @@ description: 회차 강의 STT에서 정리노트/MMDD.md + MMDD.html + tests/te
 
 STT와 직전 노트를 찾고 STT를 전부 읽는다. 강의계획서보다 실제 STT 진도를 우선하며, 강의노트 PDF에서 실제 장·절을 대조한다. STT가 없으면 결석인지 파일 누락인지 확인한 뒤 결석 모드를 적용한다.
 
+장별 bank는 한 날짜 노트가 소유하는 파일이 아니라 여러 회차가 함께 참조하는
+근거다. 각 요청 MMDD의 날짜와 실제 범위는 사용자 요청과 해당 STT로만
+확정하고, bank의 `assessment date`나 파일명에서 새 회차 날짜를 추론하지
+않는다. 같은 bank를 쓰더라도 요청된 각 MMDD마다 전체 bank ID를 그 회차
+기준으로 included/review/deferred 분류한다.
+
 해당 장의 웹 자료를 다음처럼 구분한다.
 
 웹 bank 명령은 `jsonschema`가 설치된 전용 interpreter를 쓴다. 저장소에
@@ -55,6 +61,12 @@ STT 시작의 복습, 마지막 발언, 끊긴 위치, 다음 회차 예고를 �
 
 bank v1은 `official_answer.option_ids` 배열을 보존한다. 현재 ELI5 adapter는 공식 답이 null 또는 정확히 하나일 때만 지원하며, 복수 공식 답은 잘라 쓰지 않고 거부한다. 현재 1장 17문항은 모두 공식 답이 null이다. 분석의 `also_accept`는 공식 답과 별개다.
 
+## 3. 번호 유지
+
+3단계는 별도 실행 단계로 두지 않는다. 2단계 감사 결과를 바로 기존 이름인
+4단계 범위 게이트에 제시한다. 다른 문서가 인용하는 게이트 번호를 바꾸지
+않기 위해 이 생략을 명시한다.
+
 ## 4. ⏸ 범위 게이트
 
 기존 세 표를 제시하고 OK를 기다린다.
@@ -78,7 +90,9 @@ bank v1은 `official_answer.option_ids` 배열을 보존한다. 현재 ELI5 adap
 현재 `_template.html`의 `QUESTION-DATA` marker 안에 새로 쓰는 `META`와
 `QUIZ`는 PDF-only여도 JSON-compatible이어야 한다. 즉 key와 문자열을
 쌍따옴표로 쓰고 JavaScript 전용 literal을 넣지 않는다. marker가 없는 기존
-legacy HTML의 읽기 호환은 유지한다.
+legacy HTML의 read compatibility는 유지한다. 이는 과거 artifact의 일괄
+재작성을 허용하지 않는다. 기존 회차를 명시적으로 업데이트하면서 bank를
+결합할 때는 current template과 strict JSON marker 계약으로 생성한다.
 
 **bank-only 출력**에는 다음 CLI를 쓴다. 이 명령은 scope의 활성 bank
 문항만 export하므로, 같은 회차에서 감사한 PDF 문항이 있다면 이 명령만
@@ -109,8 +123,9 @@ python3 scripts/new_note_test.py MMDD --quiz 7,8,11
 
 `--meta` JSON은 적어도 네 자리 `date`와 비어 있지 않은 `title`을 가진다.
 경로는 저장소 루트 기준이다. JSON과 검증된 SVG는 HTML에 삽입하며 브라우저
-외부 요청을 만들지 않는다. 기존 unmarked HTML-only 회차는 기존 생성법을
-유지한다.
+외부 요청을 만들지 않는다. 기존 unmarked HTML-only 회차는 읽기만 할 때
+현상 유지하며, 명시적 bank 결합 업데이트에는 위 current template 계약을
+적용한다.
 
 MD 본문은 STT 진도만 가르치고, 필요한 추가 지식은 실제 근거에 따라 강의노트·교재·외부 참고로 표시한다. 30초 요약에서도 조건·분류 경계를 보존하고, 기능 경로 참여를 계의 구성원으로 바꾸지 않으며, 쉬운 설명에 시험 판별 용어를 남긴다.
 

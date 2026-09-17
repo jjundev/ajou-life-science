@@ -21,6 +21,26 @@ class SummaryEntrypointTests(unittest.TestCase):
         with self.assertRaises(AssertionError):
             self.assert_thin_entrypoint(restored_duplicate)
 
+    def test_canonical_workflow_keeps_chapter_bank_session_scoped(self):
+        text = Path(".agents/skills/summary-note/SKILL.md").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("각 요청 MMDD", text)
+        self.assertIn("assessment date", text)
+        self.assertIn("## 3.", text)
+
+    def test_explicit_legacy_update_uses_current_template_contract(self):
+        skill = Path(".agents/skills/summary-note/SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        rules = Path("정리노트/CLAUDE.md").read_text(encoding="utf-8")
+
+        for text in (skill, rules):
+            self.assertIn("read compatibility", text)
+            self.assertIn("current template", text)
+            self.assertIn("strict JSON", text)
+
 
 if __name__ == "__main__":
     unittest.main()

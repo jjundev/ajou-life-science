@@ -19,6 +19,22 @@ from scripts.question_bank.model import (
 
 
 class BankModelTests(unittest.TestCase):
+    def add_source(
+        self, base: Path, bank: dict, source_id: str, contents: bytes
+    ) -> Path:
+        path = base / f"raw/{source_id}.txt"
+        path.write_bytes(contents)
+        bank["sources"].append(
+            {
+                "id": source_id,
+                "path": f"raw/{source_id}.txt",
+                "sha256": hashlib.sha256(contents).hexdigest(),
+                "width": 1,
+                "height": 1,
+            }
+        )
+        return path
+
     def test_valid_draft_keeps_selected_answer_separate(self):
         with tempfile.TemporaryDirectory() as tmp:
             base = Path(tmp)
@@ -290,6 +306,99 @@ class BankModelTests(unittest.TestCase):
             (base / "evidence.md").write_text("바뀐 근거", encoding="utf-8")
             errors = validate_bank(bank, base, complete=True, repo_root=base)
             self.assertTrue(any("review hash" in error for error in errors))
+
+    def test_official_only_source_change_invalidates_verified_review(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            _, bank = make_bank(base)
+            official_path = self.add_source(base, bank, "official", b"Official: A")
+            question = bank["questions"][0]
+            question["observations"]["official_answer"] = {
+                "option_ids": ["A"],
+                "source_ids": ["official"],
+            }
+            question["review"] = {
+                "status": "verified",
+                "payload_sha256": canonical_digest(
+                    question_payload(bank, question, base, repo_root=base)
+                ),
+                "notes": "official answer compared with source",
+            }
+            self.assertEqual(
+                validate_bank(bank, base, complete=True, repo_root=base), []
+            )
+
+            official_path.write_bytes(b"Official: B")
+            bank["sources"][1]["sha256"] = hashlib.sha256(
+                official_path.read_bytes()
+            ).hexdigest()
+
+            errors = validate_bank(bank, base, complete=True, repo_root=base)
+            self.assertFalse(
+                any("source official hash mismatch" in error for error in errors)
+            )
+            self.assertTrue(any("review hash mismatch" in error for error in errors))
+
+    def test_issue_only_source_change_invalidates_verified_review(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            _, bank = make_bank(base)
+            issue_path = self.add_source(base, bank, "issue", b"Issue wording: A")
+            question = bank["questions"][0]
+            question["analysis"]["issues"] = [
+                {
+                    "kind": "wording",
+                    "description": "The source wording needs review.",
+                    "source_ids": ["issue"],
+                }
+            ]
+            question["review"] = {
+                "status": "verified",
+                "payload_sha256": canonical_digest(
+                    question_payload(bank, question, base, repo_root=base)
+                ),
+                "notes": "issue compared with source",
+            }
+            self.assertEqual(
+                validate_bank(bank, base, complete=True, repo_root=base), []
+            )
+
+            issue_path.write_bytes(b"Issue wording: B")
+            bank["sources"][1]["sha256"] = hashlib.sha256(
+                issue_path.read_bytes()
+            ).hexdigest()
+
+            errors = validate_bank(bank, base, complete=True, repo_root=base)
+            self.assertFalse(
+                any("source issue hash mismatch" in error for error in errors)
+            )
+            self.assertTrue(any("review hash mismatch" in error for error in errors))
+
+    def test_unknown_observation_and_issue_sources_are_reported_without_raising(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            _, bank = make_bank(base)
+            question = bank["questions"][0]
+            question["observations"]["selected_source_id"] = "missing-selected"
+            question["observations"]["official_answer"] = {
+                "option_ids": ["A"],
+                "source_ids": ["missing-official"],
+            }
+            question["analysis"]["issues"] = [
+                {
+                    "kind": "wording",
+                    "description": "Missing source fixture.",
+                    "source_ids": ["missing-issue"],
+                }
+            ]
+
+            errors = validate_bank(bank, base, repo_root=base)
+
+            self.assertTrue(any("selected_source_id" in error for error in errors))
+            self.assertTrue(
+                any("official answer has unknown source" in error for error in errors)
+            )
+            self.assertTrue(any("issue has unknown source id" in error for error in errors))
 
     def test_complete_rejects_pending_and_draft_allows_it(self):
         with tempfile.TemporaryDirectory() as tmp:

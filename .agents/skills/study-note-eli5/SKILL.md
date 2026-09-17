@@ -24,6 +24,13 @@ ELI5 artifacts are organized under `정리노트/eli5/`, MMDD = the session date
 
 ## Workflow
 
+Interpreter boundary: when `META.web_scope` is present, run
+`build_question_scope.py`, `build_guide.py`, `make_blind_copy.py`, and
+`verify_guide.py` with `.venv-question-bank/bin/python`; these paths import the
+question-bank model and require `jsonschema`. Use plain `python3` only for the
+legacy v1 flow with no registered web bank or web scope. Prepare the dedicated
+venv as described by the canonical summary-note skill before a web-enabled run.
+
 1. Read the note and companion quiz completely. Inspect original PDFs
 visually when wording, choices, diagrams, format, or answer-key color is
 uncertain. Do not trust the companion quiz's options over the originals. If
