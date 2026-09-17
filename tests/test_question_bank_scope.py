@@ -200,6 +200,55 @@ runpy.run_path(sys.argv[0], run_name='__main__')
 
 
 class NoteScopeCliTests(unittest.TestCase):
+    def test_generated_test_output_protects_web_scope_inputs_and_aliases(self):
+        for target_name in ('scope', 'bank', 'raw', 'evidence'):
+            for alias_kind in ('direct', 'symlink', 'hardlink'):
+                with self.subTest(target=target_name, alias=alias_kind), tempfile.TemporaryDirectory(
+                        dir=ROOT / '.superpowers') as tmp:
+                    root = Path(tmp)
+                    bank_path, _, scope, _ = fixture(root)
+                    WebScopeTests.rebase_fixture(root, scope)
+                    targets = {
+                        'scope': scope,
+                        'bank': bank_path,
+                        'raw': bank_path.parent / 'raw/fixture.txt',
+                        'evidence': root / 'evidence.md',
+                    }
+                    target = targets[target_name]
+                    output = target
+                    if alias_kind != 'direct':
+                        output = root / ('output-' + alias_kind)
+                        if alias_kind == 'symlink':
+                            output.symlink_to(target)
+                        else:
+                            os.link(target, output)
+                    before = target.read_bytes()
+                    try:
+                        self.assertEqual(new_note_test.main([
+                            '0999', '--web-scope', str(scope), '--out', str(output), '--force'
+                        ]), 2)
+                        self.assertEqual(target.read_bytes(), before)
+                    finally:
+                        if alias_kind != 'direct' and output.exists():
+                            output.unlink()
+
+        with tempfile.TemporaryDirectory(dir=ROOT / '.superpowers') as tmp:
+            root = Path(tmp)
+            _, _, scope, _ = fixture(root)
+            WebScopeTests.rebase_fixture(root, scope)
+            output = root / 'generated/test_note_0999.py'
+            self.assertEqual(new_note_test.main([
+                '0999', '--web-scope', str(scope), '--out', str(output)
+            ]), 0)
+            first = output.read_bytes()
+            self.assertEqual(new_note_test.main([
+                '0999', '--web-scope', str(scope), '--out', str(output)
+            ]), 2)
+            self.assertEqual(new_note_test.main([
+                '0999', '--web-scope', str(scope), '--out', str(output), '--force'
+            ]), 0)
+            self.assertEqual(output.read_bytes(), first)
+
     def test_note_meta_requires_mmdd_and_nonempty_title(self):
         with tempfile.TemporaryDirectory(dir=ROOT / '.superpowers') as tmp:
             root = Path(tmp)

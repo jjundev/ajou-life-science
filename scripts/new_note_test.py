@@ -420,18 +420,34 @@ def main(argv=None):
         print(e, file=sys.stderr)
         return 2
     scope = [t.strip() for t in a.scope_terms.split(",") if t.strip()]
-    web_entries = None
+    web_entries, web_banks, web_scope_path = None, None, None
     if a.web_scope:
         try:
             from pathlib import Path
             if REPO_ROOT not in sys.path:
                 sys.path.insert(0, REPO_ROOT)
             from scripts.question_bank.scope import load_web_scope
-            web_entries, _ = load_web_scope(Path(a.web_scope).resolve(), Path(REPO_ROOT))
+            web_scope_path = Path(a.web_scope).resolve()
+            web_entries, web_banks = load_web_scope(web_scope_path, Path(REPO_ROOT))
         except (OSError, UnicodeError, ValueError) as error:
             print(error, file=sys.stderr)
             return 2
     out = a.out or os.path.join(REPO_ROOT, "tests", "test_note_%s.py" % a.mmdd)
+    if web_entries is not None:
+        try:
+            from scripts.question_bank.__main__ import _protect_inputs
+            from scripts.question_bank.model import resolve_local
+            from scripts.question_bank.scope import protect_paths
+            output = Path(out)
+            bank_paths = {entry['bank_id']: Path(entry['bank_path']) for entry in web_entries}
+            for bank_id, bank in web_banks.items():
+                _protect_inputs(bank, bank_paths[bank_id], output)
+            refs = [resolve_local(Path(REPO_ROOT), ref['path'])
+                    for entry in web_entries for ref in entry['refs']]
+            protect_paths(output, [web_scope_path, *refs])
+        except (OSError, UnicodeError, ValueError) as error:
+            print(error, file=sys.stderr)
+            return 2
     if os.path.exists(out) and not a.force:
         print("이미 있습니다: %s  (--force 로 덮어쓰기)" % out, file=sys.stderr)
         return 2
