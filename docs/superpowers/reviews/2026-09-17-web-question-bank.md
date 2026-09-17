@@ -197,3 +197,11 @@ complete-guide pass.
   capture used the reserved variable name `status` after the suite finished and
   returned shell exit 1. The test log itself ends in `OK (skipped=1)` and was
   inspected directly without rerunning the suite.
+
+## 최종 재검토 및 전달 상태
+
+`1b2638e`의 최종 수정 범위를 독립 재검토한 결과, 증거 해시 P2는 ADDRESSED, 명세 준수와 품질은 모두 PASS이며 새 결함은 없었다.
+
+최종 담당자 검증: `.venv-question-bank/bin/python -m unittest discover -s tests`는 212 tests, OK (skipped=1), exit 0이었다. 선택적 split-textbook 검사 1개는 기존 입력 부재로 제외됐다. 실제 bank complete 검증 17문항, 기존 노트·가이드 30/30 해시 일치, raw 19/19 main 원본과 바이트 일치, `git diff --check`와 작업 트리는 깨끗했다.
+
+구현은 `codex/web-question-bank`에 완료됐고 main은 원래 `acc50fa`에 유지했다. 병합·푸시는 실행하지 않았다. 자동 검증, 실제 브라우저 검증, 독립 원문 검토, 스킬 준비 점검은 각각의 근거이며, 새 회차 완성 노트나 학습자 이해도 검사를 수행한 것으로 해석하지 않는다.
