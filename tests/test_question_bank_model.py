@@ -150,8 +150,8 @@ class BankModelTests(unittest.TestCase):
             _, bank = make_bank(base)
             exam = base / "exam.svg"
             explained = base / "explained.svg"
-            exam.write_bytes(b"exam")
-            explained.write_bytes(b"explained")
+            exam.write_bytes(b'<svg viewBox="0 0 10 10"><title>exam</title></svg>')
+            explained.write_bytes(b'<svg viewBox="0 0 10 10"><title>explained</title></svg>')
             bank["assets"].append(
                 {
                     "id": "figure-1",
@@ -207,8 +207,8 @@ class BankModelTests(unittest.TestCase):
             (base / "image").mkdir()
             exam = base / "image/q.svg"
             explained = base / "image/q.explained.svg"
-            exam.write_bytes(b"exam")
-            explained.write_bytes(b"explained")
+            exam.write_bytes(b'<svg viewBox="0 0 10 10"><title>exam</title></svg>')
+            explained.write_bytes(b'<svg viewBox="0 0 10 10"><title>explained</title></svg>')
             bank["assets"].append(
                 {
                     "id": "figure-1",
@@ -307,8 +307,8 @@ class BankModelTests(unittest.TestCase):
             (base / "image").mkdir()
             exam = base / "image/q.svg"
             explained = base / "image/q.explained.svg"
-            exam.write_bytes(b"exam-v1")
-            explained.write_bytes(b"explained-v1")
+            exam.write_bytes(b'<svg viewBox="0 0 10 10"><title>exam-v1</title></svg>')
+            explained.write_bytes(b'<svg viewBox="0 0 10 10"><title>explained-v1</title></svg>')
             asset = {
                 "id": "figure-1",
                 "exam": {
@@ -333,7 +333,7 @@ class BankModelTests(unittest.TestCase):
                 {"type": "figure", "asset_id": "figure-1"}
             )
             payload_before = asset_payload(bank, asset, base)
-            exam.write_bytes(b"exam-v2")
+            exam.write_bytes(b'<svg viewBox="0 0 10 10"><title>exam-v2</title></svg>')
             payload_after = asset_payload(bank, asset, base)
 
             self.assertNotEqual(payload_before, payload_after)

@@ -10,6 +10,8 @@ from typing import Any
 
 from jsonschema import Draft202012Validator
 
+from .svg import validate_svg
+
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SCHEMA_PATH = REPO_ROOT / "웹과제/question-bank.schema.json"
@@ -291,7 +293,18 @@ def validate_bank(
             asset["explained"]["sha256"],
             "image",
         )
-        if exam is not None and explained is not None:
+        svg_valid = True
+        for variant, path in (("exam", exam), ("explained", explained)):
+            if path is None:
+                svg_valid = False
+                continue
+            try:
+                svg_errors = validate_svg(path.read_text(encoding="utf-8"))
+            except (OSError, UnicodeError) as error:
+                svg_errors = ["cannot read SVG: " + str(error)]
+            errors.extend(f"{label} {variant}: {error}" for error in svg_errors)
+            svg_valid = svg_valid and not svg_errors
+        if svg_valid:
             valid_asset_files.add(asset["id"])
 
         payload = None
