@@ -38,9 +38,10 @@ def bank_to_guide(bank: dict, bindings: dict, base: Path, entries: list[dict]) -
     for entry in entries:
         ident = entry['id']
         if entry['status'] == 'deferred':
-            if not entry.get('reason') or not entry.get('prerequisite'):
+            reason = entry.get('override_reason') or entry.get('reason')
+            if not reason or not entry.get('prerequisite'):
                 raise ValueError('deferred requires reason and prerequisite: ' + ident)
-            deferred[ident] = (entry['reason'], entry['prerequisite'], [])
+            deferred[ident] = (reason, entry['prerequisite'], [])
             continue
         binding = bindings[ident]
         if binding.get('status') != entry['status']:

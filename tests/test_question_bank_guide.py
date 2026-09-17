@@ -219,6 +219,53 @@ class GuideBankTests(unittest.TestCase):
         _, errors = build(self.base / 'guide.py', self.base)
         self.assertTrue(any('hash' in e or 'sha256' in e for e in errors), errors)
 
+    def test_deferred_adapter_uses_override_reason_over_old_or_null_baseline(self):
+        bank, entries, _ = fixture(self.base)
+        from question_scope import apply_overrides
+        override = dict(id='web-test-ch01:q01', **{'from': 'included', 'to': 'deferred'},
+                        reason='후속 수업에서 DNA 구조를 배운 뒤 풉니다.',
+                        evidence=dict(source_path='note.md', page='15', quote='DNA는 유전 정보를 저장한다.'))
+        for baseline in ('이번 회차 DNA 연결 문항', None):
+            with self.subTest(baseline=baseline):
+                entry = {**entries[0], 'reason': baseline, 'prerequisite': 'DNA 구조 학습'}
+                final, errors = apply_overrides({entry['id']: entry}, [override])
+                self.assertEqual(errors, [])
+                questions, deferred, _ = adapter(bank, {}, self.base, list(final.values()))
+                self.assertEqual(questions, [])
+                self.assertEqual(deferred[entry['id']], (override['reason'], 'DNA 구조 학습', []))
+                self.assertEqual(entry['reason'], baseline)
+                final[entry['id']]['prerequisite'] = None
+                with self.assertRaisesRegex(ValueError, 'prerequisite'):
+                    adapter(bank, {}, self.base, list(final.values()))
+
+    def test_deferred_override_reason_reaches_card_and_inventory_for_old_or_null_baseline(self):
+        for baseline in ('이번 회차 DNA 연결 문항', None):
+            with self.subTest(baseline=baseline):
+                fixture(self.base)
+                scope_path = self.base / 'scope.json'
+                scope = json.loads(scope_path.read_text())
+                scope['banks'][0]['questions'][0].update(reason=baseline, prerequisite='DNA 구조 학습')
+                scope_path.write_text(json.dumps(scope))
+                path = self.base / 'guide.py'
+                path.write_text(path.read_text() + '\nWEB_BINDINGS = {}\nMETA["overrides"] = "overrides.json"\n')
+                override = dict(id='web-test-ch01:q01', **{'from': 'included', 'to': 'deferred'},
+                                reason='후속 수업에서 DNA 구조를 배운 뒤 풉니다.',
+                                evidence=dict(source_path='note.md', page='15', quote='DNA는 유전 정보를 저장한다.'))
+                (self.base / 'overrides.json').write_text(json.dumps([override]))
+                result, errors = build(path, self.base)
+                self.assertEqual(errors, [])
+                parsed = parse_guide(result['html'].read_text())
+                from guide_html import text_of, descendants
+                card = next(n for n in parsed.nodes if n.attrs.get('data-question-id') == override['id'])
+                reason = next(n for n in descendants(card) if n.attrs.get('data-part') == 'deferred-reason')
+                self.assertIn(override['reason'], text_of(reason))
+                if baseline:
+                    self.assertNotIn(baseline, text_of(reason))
+                data = json.loads(result['coverage'].read_text())
+                deferred = next(q for q in data['inventory']['questions'] if q['id'] == override['id'])
+                self.assertEqual(deferred['reason'], override['reason'])
+                self.assertEqual(run_coverage(result['html'], result['coverage'], 'draft', result['scope']), [])
+
     def test_figures_are_visible_in_prompt_and_only_explanations_are_removed(self):
         bank, entries, bindings = fixture(self.base)
         add_figure(self.base, bank)
