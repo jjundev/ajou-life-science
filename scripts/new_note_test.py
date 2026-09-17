@@ -20,6 +20,46 @@ import sys
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 QUIZ_SPEC_RE = re.compile(r"^(?:(\d+강):)?(\d+(?:,\d+)*)$")
 
+# Shared source keeps generated tests standalone and free of bank dependencies.
+PARSER_SOURCE = r'''def parse_question_data(html):
+    """Read a marked JSON data block, or return None for legacy JS literals."""
+    import json
+    start, end = '/* QUESTION-DATA-START */', '/* QUESTION-DATA-END */'
+    if start not in html and end not in html:
+        return None
+    if html.count(start) != 1 or html.count(end) != 1 or html.index(start) >= html.index(end):
+        raise ValueError('expected exactly one ordered question data marker pair')
+    rest = html[html.index(start) + len(start):html.index(end)].strip()
+    values = []
+    for name in ('META', 'QUIZ'):
+        match = re.match(r'const\s+' + name + r'\s*=\s*', rest)
+        if not match:
+            raise ValueError('missing JSON declaration: ' + name)
+        value, offset = json.JSONDecoder().raw_decode(rest[match.end():])
+        rest = rest[match.end() + offset:].lstrip()
+        if not rest.startswith(';'):
+            raise ValueError('missing declaration terminator: ' + name)
+        rest = rest[1:].lstrip()
+        values.append(value)
+    if rest or not isinstance(values[0], dict) or not isinstance(values[1], list):
+        raise ValueError('invalid question data shape or trailing code')
+    if any(not isinstance(item, dict) for item in values[1]):
+        raise ValueError('QUIZ items must be objects')
+    return tuple(values)
+
+
+def html_quiz_qids(html):
+    """Keep full source-qualified IDs and duplicates for exact scope checks."""
+    data = parse_question_data(html)
+    if data is None:
+        return []
+    qids = [item['qid'] for item in data[1] if 'qid' in item]
+    if any(not isinstance(qid, str) or not qid for qid in qids):
+        raise ValueError('qid must be a nonempty string')
+    return qids
+'''
+exec(PARSER_SOURCE)
+
 TEMPLATE = string.Template(r'''import os
 import re
 import unittest
@@ -58,7 +98,14 @@ def _md_quiz_set(md):
     return {int(n) for n in re.findall(r"^\|\s*(\d+)\s*\|", md, re.M)}
 
 
+$PARSER_SOURCE
+
 def _html_quiz_set(html):
+    data = parse_question_data(html)
+    if data is not None:
+        if MULTI:
+            return {(item["src"], item["n"]) for item in data[1] if "src" in item and "n" in item}
+        return {item["n"] for item in data[1] if "n" in item}
     if MULTI:
         pairs = re.findall(r'\bn:\s*(\d+)\s*,\s*src:\s*"([^"]+)"', html)
         return {(s, int(n)) for n, s in pairs}
@@ -66,6 +113,9 @@ def _html_quiz_set(html):
 
 
 def _html_item_count(html):
+    data = parse_question_data(html)
+    if data is not None:
+        return len(data[1])
     return len(re.findall(r"\bn:\s*\d+", html))
 
 
@@ -130,6 +180,12 @@ class TestNoteHtml(unittest.TestCase):
 
     def test_every_question_has_answer_and_reason(self):
         """근거 없는 정답표 금지 — 모든 문항에 answer·why·ref 가 붙어 있는지"""
+        data = parse_question_data(self.html)
+        if data is not None:
+            for item in data[1]:
+                for key in ("n", "answer", "why", "ref"):
+                    self.assertIn(key, item)
+            return
         n_items = _html_item_count(self.html)
         self.assertEqual(len(re.findall(r"\bwhy:", self.html)), n_items)
         self.assertEqual(len(re.findall(r"\bref:", self.html)), n_items)
@@ -149,6 +205,9 @@ class TestCrossReferences(unittest.TestCase):
     def test_html_refs_point_to_real_md_sections(self):
         """html의 ref 문자열이 md에 실제로 존재하는 절인지"""
         refs = set(re.findall(r'ref:\s*"([^"]+)"', self.html))
+        data = parse_question_data(self.html)
+        if data is not None:
+            refs = {item["ref"] for item in data[1] if "ref" in item and not item.get("qid")}
         for ref in refs:
             if ref.startswith("📎") or (PRIOR and ref.startswith(PRIOR + ".md")):
                 continue
@@ -203,6 +262,7 @@ def render(mmdd, multi, items, scope_terms, prior, supplement, recap=True):
         required.append("## 📎 강의 밖 보충")
     required.append("## 부록. 문항 ↔ 개념 매핑")
     return TEMPLATE.substitute(
+        PARSER_SOURCE=PARSER_SOURCE,
         MMDD=mmdd,
         MULTI=repr(bool(multi)),
         QUIZ=_quiz_literal(multi, items),

@@ -171,5 +171,54 @@ class TestGeneratorCli(unittest.TestCase):
                 self.assertIn("QUIZ = {7, 8}", f.read())
 
 
+class TestMarkerData(unittest.TestCase):
+    def test_json_data_full_qids_and_legacy_fallback(self):
+        import json
+        from scripts.new_note_test import parse_question_data, html_quiz_qids
+        meta = {'date': '0999'}
+        items = [{'n': 1, 'src': 'web-a', 'qid': 'web-a:q01', 'q': 'fake n:99', 'answer': 0, 'why': 'ok', 'ref': 'DNA'},
+                 {'n': 1, 'src': 'web-b', 'qid': 'web-b:q01', 'answer': 1, 'why': 'ok', 'ref': 'DNA'}]
+        html = '/* QUESTION-DATA-START */\nconst META = ' + json.dumps(meta) + ';\nconst QUIZ = ' + json.dumps(items) + ';\n/* QUESTION-DATA-END */'
+        self.assertEqual(parse_question_data(html), (meta, items))
+        self.assertEqual(html_quiz_qids(html), ['web-a:q01', 'web-b:q01'])
+        self.assertIsNone(parse_question_data(FIXTURE_HTML_OK))
+        self.assertEqual(html_quiz_qids(FIXTURE_HTML_OK), [])
+        generated = {'__file__': '/tmp/test.py'}
+        from scripts.new_note_test import render
+        exec(compile(render('0999', True, [('web-a', 1), ('web-b', 1)], [], None, False), '<generated>', 'exec'), generated)
+        self.assertEqual(generated['_html_quiz_set'](html), {('web-a', 1), ('web-b', 1)})
+        self.assertEqual(generated['_html_item_count'](html), 2)
+        self.assertEqual(generated['html_quiz_qids'](html), ['web-a:q01', 'web-b:q01'])
+        check = generated['TestNoteHtml']('test_every_question_has_answer_and_reason')
+        check.html = html
+        check.test_every_question_has_answer_and_reason()
+        check.html = html.replace('\"answer\": 0, ', '')
+        with self.assertRaises(AssertionError):
+            check.test_every_question_has_answer_and_reason()
+
+    def test_malformed_marker_block_rejected(self):
+        from scripts.new_note_test import parse_question_data
+        for html in ['/* QUESTION-DATA-START */',
+                     '/* QUESTION-DATA-START */ const META = {}; const QUIZ = []; alert(1); /* QUESTION-DATA-END */',
+                     '/* QUESTION-DATA-START */ const META = []; const QUIZ = {}; /* QUESTION-DATA-END */']:
+            with self.assertRaises(ValueError):
+                parse_question_data(html)
+
+    def test_legacy_entrypoint_without_jsonschema(self):
+        import subprocess
+        code = '''import builtins, runpy, sys
+original = builtins.__import__
+def blocked(name, *args, **kwargs):
+    if name == 'jsonschema' or name.startswith('jsonschema.'):
+        raise ImportError('jsonschema deliberately unavailable')
+    return original(name, *args, **kwargs)
+builtins.__import__ = blocked
+sys.argv = ['new_note_test.py', '--help']
+runpy.run_path('scripts/new_note_test.py', run_name='__main__')
+'''
+        result = subprocess.run([sys.executable, '-c', code], cwd=REPO_ROOT, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()
