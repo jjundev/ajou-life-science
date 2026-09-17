@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import unicodedata
 from pathlib import Path
 from typing import Any
 
@@ -26,9 +27,29 @@ def resolve_local(base: Path, relative: str) -> Path:
     candidate = Path(relative)
     if candidate.is_absolute():
         raise ValueError("absolute path not allowed: " + relative)
-    result = (base / candidate).resolve()
-    if not result.is_relative_to(base):
+    requested = (base / candidate).resolve()
+    if not requested.is_relative_to(base):
         raise ValueError("path outside root: " + relative)
+
+    result = base
+    for component in requested.relative_to(base).parts:
+        matches: list[Path] = []
+        if result.is_dir():
+            normalized = unicodedata.normalize("NFC", component)
+            try:
+                matches = [
+                    entry
+                    for entry in result.iterdir()
+                    if unicodedata.normalize("NFC", entry.name) == normalized
+                ]
+            except OSError:
+                matches = []
+        if len(matches) > 1:
+            raise ValueError("ambiguous normalized path component: " + component)
+        result = matches[0] if matches else result / component
+        result = result.resolve()
+        if not result.is_relative_to(base):
+            raise ValueError("path outside root: " + relative)
     return result
 
 
@@ -147,8 +168,11 @@ def _checked_file(
     except ValueError as error:
         errors.append(f"{label}: {error}")
         return None
-    if required_directory and Path(relative).parts[:1] != (required_directory,):
-        errors.append(f"{label} must be under {required_directory}/: {relative}")
+    if required_directory:
+        required_root = resolve_local(root, required_directory)
+        if not path.is_relative_to(required_root):
+            errors.append(f"{label} must be under {required_directory}/: {relative}")
+            return None
     if not path.is_file():
         errors.append(f"{label} file missing: {relative}")
         return None
@@ -306,6 +330,15 @@ def validate_bank(
         for asset_id in figure_ids:
             if asset_id not in known_asset_ids:
                 errors.append(f"{label} has unknown figure asset id: {asset_id}")
+                continue
+            missing_asset_sources = set(asset_by_id[asset_id]["source_ids"]) - set(
+                question["source_ids"]
+            )
+            if missing_asset_sources:
+                errors.append(
+                    f"{label} asset source_ids must be included in question source_ids: "
+                    f"{sorted(missing_asset_sources)}"
+                )
 
         observations = question["observations"]
         selected_option_id = observations["selected_option_id"]
@@ -334,6 +367,8 @@ def validate_bank(
         if analysis["answer_status"] == "unresolved":
             if answer_option_id is not None or analysis["grading"] != "unresolved":
                 errors.append(f"{label} unresolved answer must have null option and unresolved grading")
+            if analysis["also_accept"]:
+                errors.append(f"{label} unresolved answer requires empty also_accept")
             if complete:
                 errors.append(f"{label} unresolved answer blocks complete validation")
         elif answer_option_id is None or analysis["grading"] == "unresolved":

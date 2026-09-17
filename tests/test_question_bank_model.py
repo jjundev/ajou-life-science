@@ -3,7 +3,9 @@ import hashlib
 import json
 import tempfile
 import unittest
+import unicodedata
 from pathlib import Path
+from unittest.mock import patch
 
 from question_bank_fixture import make_bank
 from scripts.question_bank.model import (
@@ -106,6 +108,121 @@ class BankModelTests(unittest.TestCase):
             self.assertTrue(any("figure asset" in error for error in errors))
             self.assertTrue(any("outside root" in error for error in errors))
 
+    def test_source_path_cannot_escape_raw_after_normalization(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            _, bank = make_bank(base)
+            escaped = base / "outside-raw.txt"
+            escaped.write_bytes(b"outside raw")
+            source = bank["sources"][0]
+            source["path"] = "raw/../outside-raw.txt"
+            source["sha256"] = hashlib.sha256(escaped.read_bytes()).hexdigest()
+
+            errors = validate_bank(bank, base, repo_root=base)
+
+            self.assertTrue(
+                any("source s1" in error and "under raw/" in error for error in errors)
+            )
+
+    def test_asset_paths_cannot_escape_image_after_normalization(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            _, bank = make_bank(base)
+            exam = base / "exam.svg"
+            explained = base / "explained.svg"
+            exam.write_bytes(b"exam")
+            explained.write_bytes(b"explained")
+            bank["assets"].append(
+                {
+                    "id": "figure-1",
+                    "exam": {
+                        "path": "image/../exam.svg",
+                        "sha256": hashlib.sha256(exam.read_bytes()).hexdigest(),
+                        "alt": "문제 그림",
+                    },
+                    "explained": {
+                        "path": "image/../explained.svg",
+                        "sha256": hashlib.sha256(explained.read_bytes()).hexdigest(),
+                        "alt": "해설 그림",
+                    },
+                    "source_ids": ["s1"],
+                    "review": {
+                        "status": "pending",
+                        "payload_sha256": None,
+                        "notes": None,
+                    },
+                }
+            )
+            bank["questions"][0]["original"]["content"].append(
+                {"type": "figure", "asset_id": "figure-1"}
+            )
+
+            errors = validate_bank(bank, base, repo_root=base)
+
+            self.assertTrue(
+                any("exam" in error and "under image/" in error for error in errors)
+            )
+            self.assertTrue(
+                any(
+                    "explained" in error and "under image/" in error
+                    for error in errors
+                )
+            )
+
+    def test_question_sources_cover_every_referenced_asset_source(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            _, bank = make_bank(base)
+            second = base / "raw/second.txt"
+            second.write_bytes(b"figure source")
+            bank["sources"].append(
+                {
+                    "id": "s2",
+                    "path": "raw/second.txt",
+                    "sha256": hashlib.sha256(second.read_bytes()).hexdigest(),
+                    "width": 1,
+                    "height": 1,
+                }
+            )
+            (base / "image").mkdir()
+            exam = base / "image/q.svg"
+            explained = base / "image/q.explained.svg"
+            exam.write_bytes(b"exam")
+            explained.write_bytes(b"explained")
+            bank["assets"].append(
+                {
+                    "id": "figure-1",
+                    "exam": {
+                        "path": "image/q.svg",
+                        "sha256": hashlib.sha256(exam.read_bytes()).hexdigest(),
+                        "alt": "문제 그림",
+                    },
+                    "explained": {
+                        "path": "image/q.explained.svg",
+                        "sha256": hashlib.sha256(explained.read_bytes()).hexdigest(),
+                        "alt": "해설 그림",
+                    },
+                    "source_ids": ["s2"],
+                    "review": {
+                        "status": "pending",
+                        "payload_sha256": None,
+                        "notes": None,
+                    },
+                }
+            )
+            bank["questions"][0]["original"]["content"].append(
+                {"type": "figure", "asset_id": "figure-1"}
+            )
+
+            errors = validate_bank(bank, base, repo_root=base)
+
+            self.assertTrue(
+                any(
+                    "asset source_ids" in error and "question source_ids" in error
+                    for error in errors
+                )
+            )
+
     def test_unresolved_answer_has_no_resolved_option(self):
         with tempfile.TemporaryDirectory() as tmp:
             base = Path(tmp)
@@ -117,6 +234,24 @@ class BankModelTests(unittest.TestCase):
 
             errors = validate_bank(bank, base, repo_root=base)
             self.assertTrue(any("unresolved" in error for error in errors))
+
+    def test_unresolved_answer_has_no_also_accept_options(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            _, bank = make_bank(base)
+            analysis = bank["questions"][0]["analysis"]
+            analysis["answer_status"] = "unresolved"
+            analysis["grading"] = "unresolved"
+            analysis["answer_option_id"] = None
+            analysis["also_accept"] = ["B"]
+            for diagnostic in analysis["option_diagnostics"].values():
+                diagnostic["is_answer"] = None
+
+            errors = validate_bank(bank, base, repo_root=base)
+
+            self.assertTrue(
+                any("unresolved" in error and "also_accept" in error for error in errors)
+            )
 
     def test_verified_review_uses_fresh_file_payloads(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -199,6 +334,35 @@ class BankModelTests(unittest.TestCase):
                 resolve_local(base, "/tmp/a.txt")
             with self.assertRaisesRegex(ValueError, "outside root"):
                 resolve_local(base, "../a.txt")
+
+    def test_resolve_local_matches_nfc_and_preserves_actual_entry_name(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            created = base / "caf\u00e9.txt"
+            created.write_text("accent", encoding="utf-8")
+            actual = next(base.iterdir())
+            alternate_form = (
+                "NFD"
+                if actual.name == unicodedata.normalize("NFC", actual.name)
+                else "NFC"
+            )
+            requested = unicodedata.normalize(alternate_form, actual.name)
+            self.assertNotEqual(requested, actual.name)
+
+            resolved = resolve_local(base, requested)
+
+            self.assertEqual(resolved, actual.resolve())
+
+    def test_resolve_local_rejects_ambiguous_normalized_component(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp).resolve()
+            composed = base / "caf\u00e9.txt"
+            decomposed = base / "cafe\u0301.txt"
+            with patch.object(
+                Path, "iterdir", return_value=iter([composed, decomposed])
+            ):
+                with self.assertRaisesRegex(ValueError, "ambiguous"):
+                    resolve_local(base, composed.name)
 
     def test_canonical_digest_is_sorted_compact_utf8_json(self):
         self.assertEqual(
