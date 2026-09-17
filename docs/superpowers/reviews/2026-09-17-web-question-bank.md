@@ -5,7 +5,7 @@
 ## 전달 범위
 
 - 문제은행 원본·preview·4 SVG는 기존 Task 1–4 산출물을 그대로 사용한다. 1장 bank는 17문항·82보기이고, 모든 `official_answer`는 null이라 공식 답은 확보되지 않았다.
-- `정리노트/CLAUDE.md`는 JSON을 신규 원본의 유일한 원천으로 두고, 모든 보기 감사, 그림 선행 설명, 보충 출처 구분, 분류 경계와 조건 보존, 정확한 다섯 열 매핑표를 규정한다. 기존 HTML-only 회차는 호환 예외다.
+- `정리노트/CLAUDE.md`는 JSON을 신규 원본의 유일한 원천으로 두고, 모든 보기 감사, 그림 선행 설명, 보충 출처 구분, 분류 경계와 조건 보존, 별도의 정확한 다섯 열 WEB 매핑표를 규정한다. PDF-only 단일/다중 출처 숫자 표와 기존 unmarked HTML은 호환 경로를 유지한다.
 - `.agents/skills/summary-note/SKILL.md`가 단일 절차 원천이다. 등록 bank, raw-only, 웹 자료 없음의 세 상태를 구별하고 `validate --complete`, 전체 ID 분류, 생성 변형 분리, 정리 뒤 freshness 재검증, 장 종료 점검을 연결한다.
 - `.claude/skills/summary-note/SKILL.md`는 canonical resource 링크만 가진 얇은 진입점이다. resource 링크는 canonical skill 기준, shell/data 경로는 저장소 루트 기준이다.
 - study-note-eli5는 scope v1 fallback과 v2 혼합 범위, guide-module-relative `META.web_scope`, 최종 활성 ID와 같은 `WEB_BINDINGS`, requirement→authored `FACTS`, 자동 bank import, 공식 키와 분석 대안의 구별을 문서화한다.
@@ -48,6 +48,59 @@ pdfinfo '23, 24 소스/2강 합본.pdf' | rg 'Pages|Title'
 ```
 
 STT에서 전자전달계·시트르산 회로·해당과정이 확인됐고 강의노트는 2장 2.1의 에너지·효소로 시작한다. 이 드라이런은 기존 PDF 감사 경로가 실제 파일로 열리는지만 확인했다. 1장 Q1–Q17을 2장 문항 집합에 넣지 않았고, 분류 경계·조건 변경·그림 판독이라는 출제 형태만 재사용 대상으로 남겼다. 실제 2강 PDF 전체 보기 감사, STT의 정확한 시작/끝 범위, 생성 변형의 풀이 평가는 새 2장 회차 작업 전까지 pending이다.
+
+## Fix round 1 — 생성 절차 실행 검증
+
+첫 리뷰에서 bank-only `question_bank note` 예시가 같은 회차의 PDF 문항을
+잃을 수 있고, web generator를 host `python3`로 실행하면 jsonschema가 없으며,
+다섯 열 표의 범위와 thin-entrypoint guard가 부정확하다는 점이 확인됐다.
+수정 뒤 canonical skill은 bank-only CLI를 명시적으로 제한하고
+`references/mixed-source-note.md`의 실행 가능한 두 절차로 연결한다.
+
+실제 혼합 절차는 다음 명령으로 문서의 첫 bash block을 그대로 실행했다.
+
+```bash
+sed -n '/^```bash$/,/^```$/p' \
+  .agents/skills/summary-note/references/mixed-source-note.md | sed '1d;$d' | zsh
+```
+
+결과: 명시적으로 작성한 임시 `legacy-quiz.json` 1개와 real 1장 bank의
+`export_note_items` 1개를 `render_note`에 함께 전달했다. 출력은
+`legacy=1 web_active=1 web_total=17 ids=2강:6,web-20260917-ch01:q02`였고,
+`--quiz "2강:6" --web-scope …`로 생성한 **13 tests가 모두 통과**했다.
+legacy 문항 수/ID, 활성 web qid 1회, WEB 표의 원본 17 ID가 함께 검증됐다.
+
+진짜 no-bank 2장 fallback은 같은 문서의 두 번째 bash block을 실행했다.
+
+```bash
+awk '/^## PDF-only/{section=1} section && /^```bash$/{block=1; next} \
+  block && /^```$/{exit} block{print}' \
+  .agents/skills/summary-note/references/mixed-source-note.md | zsh
+```
+
+현재 `_template.html`의 strict JSON marker에 PDF-only authored QUIZ 1개를
+넣고, 표준 `python3 scripts/new_note_test.py 0998 --quiz 6`으로 생성한
+**10 tests가 모두 통과**했다. 결과는 `pdf_only=1 ids=6 marker_json=true`였고
+단일 출처 숫자 표를 유지했다. 이는 절차 표본이며 완성된 2장 노트나 전체
+문항 감사가 아니다. web 명령은 모두 `.venv-question-bank/bin/python`을
+사용하고, venv가 없을 때만 만드는 조건부 setup을 canonical skill에 뒀다.
+
+entrypoint test는 실제 옛 heading `## 3. 문항 감사`를 검사한다. canonical
+링크 뒤에 과거 절차를 다시 붙인 합성 회귀가 해당 guard에서 실패하는 것도
+검증한다.
+
+Fix round의 fresh full suite는 다음 명령을 정확히 한 번 실행했다.
+
+```bash
+.venv-question-bank/bin/python -m unittest discover -s tests -v \
+  > /tmp/task8-fix1-full.txt 2>&1
+```
+
+결과는 **206 tests, OK, skipped=1** (7.270s)이다. 같은 시점의 real bank
+`validate --complete`는 17문항 complete였고, bank·preview·SVG 4개의
+SHA256은 base `5da5fa5`와 같으며 해당 경로 diff도 없다. 보호 artifact는
+**30/30 matched**, summary-note `quick_validate.py`와 `git diff --check`도
+통과했다.
 
 ## 검증과 증거의 구분
 

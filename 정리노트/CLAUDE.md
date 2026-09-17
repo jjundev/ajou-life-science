@@ -58,7 +58,7 @@
 | ASCII 다이어그램 | ✅ 보조 | ❌ |
 
 - 문제 JSON은 원문·관찰 기록·분석의 유일 원천이고, 퀴즈 HTML은 생성 결과다. MD에는 정답과 보기별 해설을 넣지 않는다. 새 원본·engine·`src`·source graph부터 이 규칙을 적용하고, 기존 HTML-only 퀴즈는 호환을 위해 현상 유지한다.
-- 신규 매핑표는 `| 출처 | 문항 ID | 질문 요약 | 절 | 상태 |`라는 정확한 다섯 열을 쓴다. 원본 bank ID를 deferred를 포함해 각각 한 번씩 적고, HTML `QUIZ`에는 included/review 활성 문항만 넣는다.
+- 기존 PDF-only 매핑표는 단일 출처일 때 숫자 문항 번호 첫 열을 유지하고, 여러 PDF 출처일 때는 §13의 `출처 | 문항 번호` 형식을 유지한다. web bank가 추가된 회차는 이 legacy 표와 별도로 **WEB 문항 매핑** 표를 만들며, 그 헤더만 `| 출처 | 문항 ID | 질문 요약 | 절 | 상태 |`라는 정확한 다섯 열을 쓴다. WEB 표에는 원본 bank ID를 deferred까지 각각 한 번씩 적고, HTML `QUIZ`에는 legacy 감사 문항과 included/review web 활성 문항을 함께 넣는다.
 - html은 본문을 복사하지 않는다. 해설에서 `→ MMDD.md §N-N 참조`로 넘긴다.
 - 이 규칙이 무너지면 두 파일이 서로 다른 말을 하기 시작하고, 노트는 자산이 아니라 부채가 된다. `tests/test_note_MMDD.py`가 기계로 막는다.
 
@@ -116,7 +116,9 @@ coverage JSON은 제작·검증용이며 브라우저에서 불러오지 않는�
 
 ## 11. 문항 데이터 만들기
 
-등록된 웹 문항은 `웹과제/<장>/questions.json`이 원문·관찰 기록·분석의 유일 원천이다. 모든 보기의 선택 적합성과 근거를 검토하고, 그림 의존 문항은 정답을 열기 전의 그림·설명으로 풀 수 있게 한다. `python -m scripts.question_bank validate BANK --complete`가 성공하기 전에는 미검토 항목을 누락처럼 취급하지 말고 구체적 필드와 source를 보고하여 검토 후 진행한다. 세부 데이터 형식은 `웹과제/question-bank.schema.json`과 생성 도구 계약을 따르며 여기서 다시 복제하지 않는다.
+등록된 웹 문항은 `웹과제/<장>/questions.json`이 원문·관찰 기록·분석의 유일 원천이다. 모든 보기의 선택 적합성과 근거를 검토하고, 그림 의존 문항은 정답을 열기 전의 그림·설명으로 풀 수 있게 한다. `.venv-question-bank/bin/python -m scripts.question_bank validate BANK --complete`가 성공하기 전에는 미검토 항목을 누락처럼 취급하지 말고 구체적 필드와 source를 보고하여 검토 후 진행한다. 세부 데이터 형식은 `웹과제/question-bank.schema.json`과 생성 도구 계약을 따르며 여기서 다시 복제하지 않는다.
+
+현재 `_template.html`의 `QUESTION-DATA` marker 안에 새로 작성하는 `META`와 `QUIZ`는 PDF-only 회차도 JSON-compatible이어야 한다. key와 문자열에 쌍따옴표를 쓰고 JavaScript 전용 literal을 넣지 않는다. marker가 없는 기존 legacy HTML은 계속 읽을 수 있다.
 
 **문제지에는 정답이 빨간 글씨로 이미 표시되어 있습니다.** 텍스트로 뽑으면 색 정보가 날아가 안 보입니다. PyMuPDF로 `dpi=170` 렌더링해서 눈으로 확인하세요.
 

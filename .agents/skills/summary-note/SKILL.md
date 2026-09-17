@@ -15,6 +15,16 @@ STT와 직전 노트를 찾고 STT를 전부 읽는다. 강의계획서보다 �
 
 해당 장의 웹 자료를 다음처럼 구분한다.
 
+웹 bank 명령은 `jsonschema`가 설치된 전용 interpreter를 쓴다. 저장소에
+전용 venv가 없을 때만 먼저 준비한다.
+
+```bash
+if [[ ! -x .venv-question-bank/bin/python ]]; then
+  python3 -m venv --system-site-packages .venv-question-bank
+  .venv-question-bank/bin/python -m pip install 'jsonschema>=4.18,<5'
+fi
+```
+
 1. 같은 장에 등록된 `웹과제/<장>/questions.json`이 있으면 저장소 루트에서 아래를 실행한다.
    ```bash
    .venv-question-bank/bin/python -m scripts.question_bank validate '웹과제/<장>/questions.json' --complete
@@ -65,17 +75,42 @@ bank v1은 `official_answer.option_ids` 배열을 보존한다. 현재 ELI5 adap
 
 승인 뒤 `정리노트/MMDD.md`, `MMDD.html`, 생성 테스트를 만든다. 웹 bank가 있으면 `정리노트/meta/MMDD.web-scope.json`에서 전체 원본 ID를 included/review/deferred로 분류하고 실제 MD heading을 refs로 연결한다. 상세 형식과 경로 기준은 `웹과제/question-bank.schema.json`, `scripts.question_bank.scope`, study-note-eli5의 `references/coverage-contract.md`를 따른다.
 
-신규 HTML은 bank를 수동 복사해 `QUESTIONS`에 중복하지 않는다. 실제 CLI는 다음 형태다.
+현재 `_template.html`의 `QUESTION-DATA` marker 안에 새로 쓰는 `META`와
+`QUIZ`는 PDF-only여도 JSON-compatible이어야 한다. 즉 key와 문자열을
+쌍따옴표로 쓰고 JavaScript 전용 literal을 넣지 않는다. marker가 없는 기존
+legacy HTML의 읽기 호환은 유지한다.
+
+**bank-only 출력**에는 다음 CLI를 쓴다. 이 명령은 scope의 활성 bank
+문항만 export하므로, 같은 회차에서 감사한 PDF 문항이 있다면 이 명령만
+실행하여 legacy 문항을 조용히 잃어서는 안 된다.
 
 ```bash
 .venv-question-bank/bin/python -m scripts.question_bank note \
   --scope 정리노트/meta/MMDD.web-scope.json \
   --meta /tmp/MMDD-meta.json \
   --output 정리노트/MMDD.html
-python3 scripts/new_note_test.py MMDD --web-scope 정리노트/meta/MMDD.web-scope.json
+.venv-question-bank/bin/python scripts/new_note_test.py MMDD \
+  --web-scope 정리노트/meta/MMDD.web-scope.json
 ```
 
-`--meta` JSON은 적어도 네 자리 `date`와 비어 있지 않은 `title`을 가진다. 경로는 저장소 루트 기준이다. JSON과 검증된 SVG는 HTML에 삽입하며 브라우저 외부 요청을 만들지 않는다. 기존 HTML-only 회차는 기존 생성법을 유지한다.
+PDF+bank 혼합 회차는 [mixed-source recipe](references/mixed-source-note.md)를
+따른다. 이 절차는 audited legacy payload를 명시적 임시 JSON으로 준비하고,
+`export_note_items`의 bank 결과와 합쳐 `render_note`에 한 번 전달한다. 생성
+테스트에는 `--quiz`와 `--web-scope`를 함께 주어 legacy 수/ID와 전체 bank
+범위를 각각 검증한다.
+
+웹 자료가 전혀 없는 기존 PDF-only 회차는 표준 Python으로 기존 경로를
+유지한다. 현재 template marker까지 확인하는 임시 예시는
+[PDF-only fallback sample](references/mixed-source-note.md#pdf-only-current-template-fallback-sample)을 따른다.
+
+```bash
+python3 scripts/new_note_test.py MMDD --quiz 7,8,11
+```
+
+`--meta` JSON은 적어도 네 자리 `date`와 비어 있지 않은 `title`을 가진다.
+경로는 저장소 루트 기준이다. JSON과 검증된 SVG는 HTML에 삽입하며 브라우저
+외부 요청을 만들지 않는다. 기존 unmarked HTML-only 회차는 기존 생성법을
+유지한다.
 
 MD 본문은 STT 진도만 가르치고, 필요한 추가 지식은 실제 근거에 따라 강의노트·교재·외부 참고로 표시한다. 30초 요약에서도 조건·분류 경계를 보존하고, 기능 경로 참여를 계의 구성원으로 바꾸지 않으며, 쉬운 설명에 시험 판별 용어를 남긴다.
 
