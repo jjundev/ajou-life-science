@@ -1,0 +1,313 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "question-bank.schema.json",
+  "title": "Web assessment question bank",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "assessment", "sources", "assets", "questions"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "assessment": {"$ref": "#/$defs/assessment"},
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/source"}
+    },
+    "assets": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/asset"}
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/question"}
+    }
+  },
+  "$defs": {
+    "nonempty": {"type": "string", "minLength": 1},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "idList": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/nonempty"},
+      "uniqueItems": true
+    },
+    "assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "chapter", "date", "expected_question_count", "time_limit_seconds", "max_points", "evidence_source_ids"],
+      "properties": {
+        "id": {"$ref": "#/$defs/nonempty"},
+        "title": {"$ref": "#/$defs/nonempty"},
+        "chapter": {"type": "integer", "minimum": 1},
+        "date": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+        "expected_question_count": {"type": "integer", "minimum": 1},
+        "time_limit_seconds": {"type": ["integer", "null"], "minimum": 0},
+        "max_points": {"type": ["number", "null"], "minimum": 0},
+        "evidence_source_ids": {"$ref": "#/$defs/idList"}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "path", "sha256", "width", "height"],
+      "properties": {
+        "id": {"$ref": "#/$defs/nonempty"},
+        "path": {"$ref": "#/$defs/nonempty"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "width": {"type": "integer", "minimum": 1},
+        "height": {"type": "integer", "minimum": 1}
+      }
+    },
+    "assetFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "alt"],
+      "properties": {
+        "path": {"$ref": "#/$defs/nonempty"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "alt": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "payload_sha256", "notes"],
+      "properties": {
+        "status": {"enum": ["pending", "needs_review", "verified"]},
+        "payload_sha256": {
+          "oneOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]
+        },
+        "notes": {
+          "oneOf": [{"$ref": "#/$defs/nonempty"}, {"type": "null"}]
+        }
+      }
+    },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "exam", "explained", "source_ids", "review"],
+      "properties": {
+        "id": {"$ref": "#/$defs/nonempty"},
+        "exam": {"$ref": "#/$defs/assetFile"},
+        "explained": {"$ref": "#/$defs/assetFile"},
+        "source_ids": {"$ref": "#/$defs/idList"},
+        "review": {"$ref": "#/$defs/review"}
+      }
+    },
+    "textBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "text"],
+      "properties": {
+        "type": {"const": "text"},
+        "text": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "statement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "text"],
+      "properties": {
+        "id": {"$ref": "#/$defs/nonempty"},
+        "text": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "statementsBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "items"],
+      "properties": {
+        "type": {"const": "statements"},
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/statement"}
+        }
+      }
+    },
+    "figureBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "asset_id"],
+      "properties": {
+        "type": {"const": "figure"},
+        "asset_id": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "contentBlock": {
+      "oneOf": [
+        {"$ref": "#/$defs/textBlock"},
+        {"$ref": "#/$defs/statementsBlock"},
+        {"$ref": "#/$defs/figureBlock"}
+      ]
+    },
+    "option": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "text"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[A-Z]$"},
+        "text": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "original": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["format", "content", "options"],
+      "properties": {
+        "format": {"const": "single_choice"},
+        "content": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/contentBlock"}
+        },
+        "options": {
+          "type": "array",
+          "minItems": 2,
+          "items": {"$ref": "#/$defs/option"}
+        }
+      }
+    },
+    "officialAnswer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["option_ids", "source_ids"],
+      "properties": {
+        "option_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "pattern": "^[A-Z]$"},
+          "uniqueItems": true
+        },
+        "source_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/nonempty"},
+          "uniqueItems": true
+        }
+      }
+    },
+    "observations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["phase", "selected_option_id", "selected_source_id", "official_answer"],
+      "properties": {
+        "phase": {"enum": ["pre_submission", "post_submission", "unknown"]},
+        "selected_option_id": {
+          "oneOf": [{"type": "string", "pattern": "^[A-Z]$"}, {"type": "null"}]
+        },
+        "selected_source_id": {
+          "oneOf": [{"$ref": "#/$defs/nonempty"}, {"type": "null"}]
+        },
+        "official_answer": {
+          "oneOf": [{"$ref": "#/$defs/officialAnswer"}, {"type": "null"}]
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "locator", "quote"],
+      "properties": {
+        "path": {"$ref": "#/$defs/nonempty"},
+        "locator": {"$ref": "#/$defs/nonempty"},
+        "quote": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "evidence"],
+      "properties": {
+        "id": {"$ref": "#/$defs/nonempty"},
+        "statement": {"$ref": "#/$defs/nonempty"},
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/evidence"}
+        }
+      }
+    },
+    "diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["is_answer", "explanation", "requirement_ids"],
+      "properties": {
+        "is_answer": {"type": ["boolean", "null"]},
+        "explanation": {"$ref": "#/$defs/nonempty"},
+        "requirement_ids": {"$ref": "#/$defs/idList"}
+      }
+    },
+    "issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "description", "source_ids"],
+      "properties": {
+        "kind": {"enum": ["wording", "source-conflict", "unreadable", "figure-incomplete"]},
+        "description": {"$ref": "#/$defs/nonempty"},
+        "source_ids": {"$ref": "#/$defs/idList"}
+      }
+    },
+    "analysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["answer_option_id", "answer_status", "grading", "also_accept", "reason", "concept_ids", "skills", "requirements", "option_diagnostics", "issues"],
+      "properties": {
+        "answer_option_id": {
+          "oneOf": [{"type": "string", "pattern": "^[A-Z]$"}, {"type": "null"}]
+        },
+        "answer_status": {"enum": ["reasoned", "unresolved"]},
+        "grading": {"enum": ["single", "ambiguous", "unresolved"]},
+        "also_accept": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[A-Z]$"},
+          "uniqueItems": true
+        },
+        "reason": {"$ref": "#/$defs/nonempty"},
+        "concept_ids": {"$ref": "#/$defs/idList"},
+        "skills": {
+          "type": "array",
+          "items": {
+            "enum": ["figure-identification", "classification-boundary", "condition-change", "statement-evaluation", "scenario-transfer", "structure-to-function"]
+          },
+          "uniqueItems": true
+        },
+        "requirements": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/requirement"}
+        },
+        "option_diagnostics": {
+          "type": "object",
+          "minProperties": 2,
+          "patternProperties": {"^[A-Z]$": {"$ref": "#/$defs/diagnostic"}},
+          "additionalProperties": false
+        },
+        "issues": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/issue"}
+        }
+      }
+    },
+    "question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "number", "points", "source_ids", "original", "observations", "analysis", "review"],
+      "properties": {
+        "id": {"$ref": "#/$defs/nonempty"},
+        "number": {"type": "integer", "minimum": 1},
+        "points": {"type": "number", "minimum": 0},
+        "source_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/nonempty"},
+          "uniqueItems": true
+        },
+        "original": {"$ref": "#/$defs/original"},
+        "observations": {"$ref": "#/$defs/observations"},
+        "analysis": {"$ref": "#/$defs/analysis"},
+        "review": {"$ref": "#/$defs/review"}
+      }
+    }
+  }
+}
