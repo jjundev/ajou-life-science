@@ -273,14 +273,22 @@ def _web_generated_parts(entries):
                 self.resources = []
             def handle_starttag(self, tag, attrs):
                 values = dict(attrs)
-                attr = {'script':'src', 'link':'href', 'img':'src', 'source':'src',
-                        'video':'src', 'audio':'src', 'iframe':'src', 'embed':'src',
-                        'object':'data', 'image':'href', 'use':'href'}.get(tag)
-                value = values.get(attr) if attr else None
-                if tag in ('image', 'use'):
-                    value = value or values.get('xlink:href')
-                if value:
-                    self.resources.append((tag, value))
+                resource_attrs = {
+                    'script': ('src',), 'link': ('href',), 'base': ('href',),
+                    'img': ('src', 'srcset'), 'source': ('src', 'srcset'),
+                    'video': ('src', 'poster'), 'audio': ('src',), 'track': ('src',),
+                    'iframe': ('src',), 'embed': ('src',), 'object': ('data',),
+                    'input': ('src',), 'image': ('href', 'xlink:href'),
+                    'use': ('href', 'xlink:href'), 'feimage': ('href', 'xlink:href'),
+                }
+                for attr in resource_attrs.get(tag, ()):
+                    if values.get(attr):
+                        self.resources.append((tag, attr, values[attr]))
+                if values.get('background'):
+                    self.resources.append((tag, 'background', values['background']))
+                if (tag == 'meta' and values.get('http-equiv', '').lower() == 'refresh'
+                        and values.get('content')):
+                    self.resources.append((tag, 'content', values['content']))
         parser = ResourceParser()
         parser.feed(self.html)
         self.assertEqual(parser.resources, [], 'external resource elements: ' + repr(parser.resources))
@@ -305,14 +313,23 @@ def _web_generated_parts(entries):
         self.assertEqual(len(qids), len(set(qids)), 'duplicate web qid in HTML')
 
     def test_markdown_web_table_classifies_every_original_qid(self):
-        rows = []
+        rows, in_table = [], False
         for line in self.md.splitlines():
             if not line.lstrip().startswith('|'):
+                if in_table and rows:
+                    break
                 continue
             cells = [cell.strip() for cell in line.strip().strip('|').split('|')]
-            if len(cells) == 5 and cells[1] in WEB_SCOPE['questions']:
-                rows.append(cells)
-        self.assertEqual(len(rows), len(WEB_SCOPE['questions']), 'missing or duplicate web mapping row')
+            if cells == ['출처', '문항 ID', '질문 요약', '절', '상태']:
+                in_table = True
+                continue
+            if not in_table or all(re.fullmatch(r':?-+:?', cell) for cell in cells):
+                continue
+            self.assertEqual(len(cells), 5, 'web mapping row must have five columns')
+            rows.append(cells)
+        qids = [row[1] for row in rows]
+        self.assertEqual(set(qids), set(WEB_SCOPE['questions']), 'web mapping qid set mismatch')
+        self.assertEqual(len(qids), len(set(qids)), 'duplicate web mapping qid')
         for source, qid, summary, section, status in rows:
             expected = WEB_SCOPE['questions'][qid]
             self.assertEqual(source, expected['bank_id'])
@@ -337,6 +354,9 @@ def _web_generated_parts(entries):
                 parsed = urlsplit(actual.get('href', ''))
                 self.assertFalse(parsed.scheme or parsed.netloc, 'web ref must be local: ' + actual.get('href', ''))
                 target = (Path(HTML_PATH).parent / unquote(parsed.path)).resolve()
+                scope_root = Path(os.environ.get('WEB_SCOPE_REPO_ROOT') or REPO_ROOT).resolve()
+                declared = (scope_root / expected['path']).resolve()
+                self.assertEqual(target, declared, 'web ref href points to a different local file')
                 self.assertTrue(target.is_file(), 'web ref file missing: ' + str(target))
                 headings = {m.group(1).strip() for m in re.finditer(
                     r'^ {0,3}#{1,6}\s+(.+?)(?:\s+#+)?\s*$', _read(str(target)), re.M)}

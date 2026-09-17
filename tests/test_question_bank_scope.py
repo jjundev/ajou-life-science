@@ -291,23 +291,59 @@ class NoteScopeCliTests(unittest.TestCase):
             spec = importlib.util.spec_from_file_location('generated_web_note_test', generated)
             module = importlib.util.module_from_spec(spec)
             old_root = os.environ.get('NOTE_REPO_ROOT')
+            old_scope_root = os.environ.get('WEB_SCOPE_REPO_ROOT')
             os.environ['NOTE_REPO_ROOT'] = str(root)
+            os.environ['WEB_SCOPE_REPO_ROOT'] = str(ROOT)
             try:
                 spec.loader.exec_module(module)
                 with open(os.devnull, 'w') as sink:
                     result = unittest.TextTestRunner(stream=sink).run(
                         unittest.defaultTestLoader.loadTestsFromModule(module))
+                self.assertTrue(result.wasSuccessful(), result.failures + result.errors)
+
+                check = module.TestNoteHtml('test_single_file_no_external_deps')
+                for attack in ('<script src="evil.js"></script>', '<script>fetch ("evil")</script>',
+                               '<style>@import "evil.css"</style>',
+                               '<svg><image href="evil.svg"></image></svg>',
+                               '<img srcset="https://example.invalid/a.png 1x">',
+                               '<video poster="https://example.invalid/poster.png"></video>',
+                               '<svg><feImage href="https://example.invalid/filter.svg"></feImage></svg>'):
+                    with self.subTest(attack=attack):
+                        check.html = html_path.read_text().replace('</body>', attack + '</body>')
+                        with self.assertRaises(AssertionError):
+                            check.test_single_file_no_external_deps()
+
+                decoy = root / 'decoy.md'
+                decoy.write_text('# DNA\n관계없는 근거.\n', encoding='utf-8')
+                refs = module.TestWebQuestionScope('test_web_refs_are_local_files_with_real_sections')
+                refs.html = html_path.read_text().replace('../evidence.md#dna', '../decoy.md#dna')
+                with self.assertRaises(AssertionError):
+                    refs.test_web_refs_are_local_files_with_real_sections()
+
+                mapping = module.TestWebQuestionScope(
+                    'test_markdown_web_table_classifies_every_original_qid')
+                original_web_scope = module.WEB_SCOPE
+                q1 = module.WEB_SCOPE['questions']['web-test-ch01:q01']
+                module.WEB_SCOPE = {'active': ['web-test-ch01:q01'], 'questions': {
+                    'web-test-ch01:q01': q1,
+                    'web-test-ch01:q02': {'bank_id': 'web-test-ch01',
+                                          'status': 'deferred', 'refs': []},
+                }}
+                mapping.md = (note_dir / '0999.md').read_text() + (
+                    '| web-test-ch01 | web-test-ch01:q01 | duplicate | DNA | included |\n')
+                with self.assertRaises(AssertionError):
+                    mapping.test_markdown_web_table_classifies_every_original_qid()
+                module.WEB_SCOPE = original_web_scope
+                mapping.md = (note_dir / '0999.md').read_text() + (
+                    '| web-test-ch01 | web-test-ch01:q99 | extra | DNA | included |\n')
+                with self.assertRaises(AssertionError):
+                    mapping.test_markdown_web_table_classifies_every_original_qid()
             finally:
                 if old_root is None:
                     os.environ.pop('NOTE_REPO_ROOT', None)
                 else:
                     os.environ['NOTE_REPO_ROOT'] = old_root
-            self.assertTrue(result.wasSuccessful(), result.failures + result.errors)
-            check = module.TestNoteHtml('test_single_file_no_external_deps')
-            for attack in ('<script src="evil.js"></script>', '<script>fetch ("evil")</script>',
-                           '<style>@import "evil.css"</style>',
-                           '<svg><image href="evil.svg"></image></svg>'):
-                with self.subTest(attack=attack):
-                    check.html = html_path.read_text().replace('</body>', attack + '</body>')
-                    with self.assertRaises(AssertionError):
-                        check.test_single_file_no_external_deps()
+                if old_scope_root is None:
+                    os.environ.pop('WEB_SCOPE_REPO_ROOT', None)
+                else:
+                    os.environ['WEB_SCOPE_REPO_ROOT'] = old_scope_root
