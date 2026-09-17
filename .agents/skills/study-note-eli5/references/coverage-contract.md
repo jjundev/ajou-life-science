@@ -33,6 +33,19 @@ Deferred questions have a concrete reason and later prerequisite. They have no
 answer card. Draft validation may expose missing audit fields; complete
 validation rejects them.
 
+Without `META.web_scope`, this remains the existing scope v1 flow. With
+`META.web_scope`, the builder emits scope v2 and validates the union of the
+legacy note universe and every registered bank ID. `META.web_scope` is
+resolved relative to the guide module directory before `build_lock`; stored
+manifest and source paths are rebased relative to the lock. Inside the
+manifest, bank paths are relative to the manifest directory, while bank
+requirement evidence and scope refs are repository-root-relative. Validation
+reloads final sources and rejects stale manifest or bank hashes.
+
+Raw screenshots without a registered questions.json are raw-only evidence.
+Report and review or register them before claiming web coverage. This differs
+from a chapter with no matching web material.
+
 ## Coverage JSON
 
 Schema version 2 contains inventory, inventory_sha256, mappings, review, and
@@ -80,6 +93,30 @@ imported from it. The module defines:
   FACTS (guide_kit.F), QUESTIONS (guide_kit.Q), DEFERRED ({id: (reason,
   later prerequisite, fact IDs)}), SECTIONS (the overview first), and BOUNDARY.
 
+When `META.web_scope` is present, do not manually copy bank records into
+`QUESTIONS`. The builder imports them with runtime `origin=web-bank`.
+`WEB_BINDINGS` must cover exactly the final active web IDs after evidenced
+overrides and map every source requirement to existing authored `FACTS`.
+Deferred web entries remain in scope without invented facts and require a
+reason plus later prerequisite. These are narrow web-bank exceptions; legacy
+question and teaching rules remain unchanged. If an evidenced override defers
+an item, its final `override_reason` is displayed before any baseline reason.
+
+The adapter's returned `figure_html` is internal render material and must not
+be appended outside the owning question or solution regions. An exam figure
+may appear in its own matching web-bank prompt; explained figures stay in the
+solution region. Existing teaching-only figure rules continue elsewhere.
+
+Bank storage and preview preserve `official_answer.option_ids` arrays. The
+current adapter accepts null or exactly one official key and explicitly
+rejects multiple keys rather than truncating them or calling them absent.
+Analysis `also_accept` alternatives are distinct. The current 17-question
+chapter-1 bank has `official_answer=null` for every record, so this does not
+claim support for future multi-key grading formats.
+
+For web source evidence, `page` is a locator compatibility field such as a
+screenshot filename plus question number. It is not an actual PDF page number.
+
 The builder derives mappings from `id="…" data-facts="…"` attributes. It
 fails on an untaught or unknown fact, a quote missing from its note block, an
 option diagnosis gap, an ambiguous item without also_accept or a conflict, and
@@ -96,6 +133,10 @@ solutions answers from the blind copy made by make_blind_copy.py, never from
 the full artifact. Source/reverse/desktop/mobile/print audits must pass. A
 scientifically unresolved but pedagogically handled item uses grading=ambiguous
 and a visible disclosed conflict.
+
+The scope v2 web path retains all of the same source, reverse,
+blind-solvability, desktop, mobile, print, and individual-SVG gates. A
+successful scope or draft validation does not replace them.
 
 Draft output says that it is not a complete study guide. Partial delivery is
 allowed only when the user explicitly asks for a subset, the artifact filename

@@ -5,142 +5,102 @@ description: 회차 강의 STT에서 정리노트/MMDD.md + MMDD.html + tests/te
 
 # summary-note — 회차 노트 작성 절차
 
-**규칙은 `정리노트/CLAUDE.md`다.** 여기엔 순서와 판단 기준만 있다. 먼저 CLAUDE.md 전체를 읽는다.
+내용 규칙은 저장소 루트의 `정리노트/CLAUDE.md`가 유일한 원천이다. 모든 shell/data 경로는 저장소 루트에서 실행하고, 먼저 그 규칙 전체를 읽는다.
 
-**게이트가 하나 있다 (4단계).** 그 전은 읽기·분류, 그 뒤는 작성·검증·머지. 4단계에서 OK 를 받기 전에 파일을 만들지 않는다.
+4단계의 기존 범위 게이트 전에는 읽기·분류만 하고 파일을 만들지 않는다. 이미 같은 생성 범위에 대해 사용자가 승인한 뒤의 재검토·검증·신선도 갱신은 다시 허가받지 않는다.
 
-## 0. 입력 확인
+## 0. 입력과 장 범위 확인
 
-Bash 호출은 서로 변수를 공유하지 않는다. `$MMDD` 를 쓰는 블록마다 첫 줄에 `MMDD=…` 를 다시 적는다.
+STT와 직전 노트를 찾고 STT를 전부 읽는다. 강의계획서보다 실제 STT 진도를 우선하며, 강의노트 PDF에서 실제 장·절을 대조한다. STT가 없으면 결석인지 파일 누락인지 확인한 뒤 결석 모드를 적용한다.
 
-```bash
-MMDD=0910
-ls STT/${MMDD}*.md                      # STT. 파일명은 불규칙 (0903_생명_full.md / 0908 생명.md)
-ls 정리노트/ | grep -E '^[0-9]{4}\.md$' | sort | awk -v d="$MMDD" '$1 < d".md"' | tail -1   # 직전 노트
-```
+해당 장의 웹 자료를 다음처럼 구분한다.
 
-- 문제지는 강의계획서의 주차↔장 대응으로 고른다: `23, 24 소스/N강 합본.pdf`. 회차가 두 장에 걸치면 둘 다.
-- 강의계획서와 실제 진도가 어긋나면 **STT 의 실제 진도**를 따른다. 계획에 두 장이 잡혀 있어도 STT 가 한 장 안이면 그 합본만 본다.
-- **STT 가 없으면 여기서 멈추고 묻는다** — 결석인지 파일 누락인지. 결석이면 "결석 모드"(맨 아래)로.
-
-## 1. STT 읽기 — 시작과 끝
-
-STT 를 **전부** 읽는다. 발췌하지 않는다. 찾을 것:
-
-- **시작**: 교수님이 도입부에 복습한 내용 → ⏪ 블록 재료. 직전 노트의 ✂️ 예고와 맞는지 대조.
-- **끝**: 마지막 발언을 그대로 인용 → ✂️ 블록. "다음 시간에" 뒤에 나열된 항목이 다음 회차 예고.
-- 절 대응: `pdftotext -layout "강의노트/N장 *.pdf" -` 로 강의노트 절 번호를 붙인다. 강의노트는 뼈대뿐이라 STT 에만 있는 개념(전기음성도·옥텟 등)이 많다 — 그것도 본문이다.
-
-산출: **범위표** — 시작 절 / 끝 절 / 끊긴 지점(개념 중간인가, 장 끝인가) / 다음 회차 예고.
-
-## 2. ⚠️ 함정 수집
-
-```bash
-MMDD=0910
-grep -nE "아닙니다|아니고|아니라|헷갈|틀린 그림|되물|나요\?|커지나|작아지나|쉬워지|어려워지|주의|다른 거냐" "STT/${MMDD}"*.md
-```
-
-후보를 **개념별로** 묶는다. 교수님이 두 번 말했거나, 학생에게 되물었거나, "여기만 어렵다"고 한 곳이 ⚠️ 블록이 된다. 8개 미만이면 STT 를 제대로 안 읽은 것이다.
-
-## 3. 문항 감사
-
-```bash
-python3 -c "
-import pymupdf
-d = pymupdf.open('23, 24 소스/N강 합본.pdf')
-for i, p in enumerate(d):
-    p.get_pixmap(dpi=170).save(f'/tmp/q_{i}.png'); print(f'/tmp/q_{i}.png')
-"
-```
-(`pymupdf` 가 없으면 `python3 -m venv /tmp/v && /tmp/v/bin/pip install -q pymupdf` 후 `/tmp/v/bin/python`.)
-
-이미지를 **Read 로 연다.** 텍스트 추출은 2단 조판이 섞이고 빨간 정답이 사라진다.
-
-각 문항에 대해:
-1. 빨간 글씨 정답을 읽는다.
-2. **자기 지식으로 정답을 판단**하고 빨간 글씨와 대조한다. 어긋나면 `⚠️ 답안지 오류` (CLAUDE.md §11). 1강 합본은 2·30·38 이 오류였다.
-3. 분류: 이번 회차 본문으로 풀림 / ⏪ 직전 회차 / 🔜 다음 회차 / 📎 강의 밖(STT·강의노트에 없고 교재에만). 앞선 회차가 여럿이면 ⏪ 에 날짜를 붙인다(⏪0903 / ⏪0901).
-4. 보기 없는 빈칸 문항은 보기를 구성하고 `keyNote` 로 밝힌다.
-
-## 4. ⏸ 게이트 — 여기서 멈춘다
-
-표 셋을 보여주고 **OK 를 기다린다.** 파일은 아직 만들지 않는다.
-
-**표 1 · 범위와 경계**
-
-| 항목 | 값 |
-|---|---|
-| 시작 | (절, 교수님 복습 내용 요약) |
-| 끝 | (절, 마지막 발언 인용) |
-| 끊긴 방식 | 개념 중간 → ✂️ / 장 끝 → 구분선 |
-| 다음 회차 예고 | (나열) |
-
-**표 2 · 문항 분류와 정답 대조**
-
-| # | 출처 | 무엇을 묻는가 | 분류 | 빨간 답 | 내 판단 | 비고 |
-|---|---|---|---|---|---|---|
-
-어긋나는 행은 굵게. 분류 합계가 그 합본의 전체 문항 수와 맞는지 적는다.
-
-**표 3 · 구조 제안**
-
-§1…§N 제목 목록. 두 장에 걸치면 구분선 위치와 `src` 값. 📎 가 필요하면 무엇을 넣을지.
-
-## 5. 작성 (OK 이후)
-
-순서대로. 각각 CLAUDE.md 의 해당 절을 따른다.
-
-1. **`정리노트/MMDD.md`** — 직전 회차 md 를 예시로 보고 새로 쓴다. 구조: 헤더 → ⏱ 30초 요약 → ⏪ → §1…§N → ✂️ → (📎) → 부록 매핑표. 밀도는 §4, 원문자·ASCII 는 §8, 두 장이면 §13.
-2. **`정리노트/MMDD.html`** — `정리노트/_template.html` 을 **복사**(`cp 정리노트/_template.html 정리노트/$MMDD.html`)하고 상단 데이터 블록(`META`, `QUIZ`)만 바꾼다. 헤더는 `META` 로 그려진다. 엔진은 건드리지 않는다. 스키마는 §11.
-3. **테스트** — 손으로 베끼지 않는다:
+1. 같은 장에 등록된 `웹과제/<장>/questions.json`이 있으면 저장소 루트에서 아래를 실행한다.
    ```bash
-   MMDD=0910
-   python3 scripts/new_note_test.py $MMDD --quiz 7,8,11 --scope-terms 세포골격,확산 --prior 0908
-   # 두 장: --quiz "1강:32,40" --quiz "2강:1,2"   /  📎 있으면 --supplement  /  결석이면 --no-recap
+   .venv-question-bank/bin/python -m scripts.question_bank validate '웹과제/<장>/questions.json' --complete
    ```
-   `--scope-terms` 는 ✂️ 에 적은 다음 회차 개념에서 뽑는다.
-4. **지난 노트 정정** — (a) 40문항 전체 매핑표를 가진 노트(현재 `0903.md`, 반드시 직전 회차가 아니다)에서 이번에 풀린 문항의 `🔜 …` 를 `🔜 (이번 MMDD) (풀림)` 으로 바꾸고, **그 표의 범례도 같이 맞춘다** — 표에 실제로 쓰인 상태값이 하나도 빠짐없이 설명되어야 한다. (b) 직전 md 의 ✂️ 블록이 가리키는 다음 회차 파일명이 이번 MMDD 와 다르면 그것도 맞춘다. 본문은 건드리지 않는다.
+   실패한 review, stale hash, 참조 필드나 source를 구체적으로 보고하고 검토를 마친 뒤 진행한다. 미검토 자료를 누락처럼 무시하지 않는다.
+2. 해당 장 raw 캡처는 있지만 `questions.json`이 없으면 **raw-only 미등록 근거**다. 파일과 범위를 확인하고 등록·검토가 남았다고 보고한다. 이를 자료 부재라고 부르거나 모든 알려진 웹 문항을 다뤘다고 주장하지 않는다.
+3. 같은 장의 등록 bank도 raw-only 자료도 없을 때에만 웹 자료 없음으로 기록하고 기존 `23, 24 소스/N강 합본.pdf` 절차로 진행한다.
 
-## 6. 검증 (전부 통과해야 7 로)
+다른 장 bank는 원문 문항 집합에 합치지 않는다. 분류 경계·조건 변경·그림 판독 같은 출제 형태만 참고하고, 내용 근거는 현재 장 STT·강의노트·교재에서 찾는다.
 
-```bash
-MMDD=0910
-python3 -m unittest discover tests 2>&1 | tail -3        # 전체
-awk '/^```/{f=!f;next} f && /[가-힣]/' 정리노트/$MMDD.md    # ASCII 블록 한글 → 비어야 함
+## 1. 범위와 혼동 묶음
+
+STT 시작의 복습, 마지막 발언, 끊긴 위치, 다음 회차 예고를 확인하여 범위표를 만든다. 교수님이 반복·되물음·주의한 항목과 문항의 오답 진단을 **핵심 혼동 묶음**으로 모은다. 고정 개수를 채우지 않는다.
+
+각 묶음에는 필요하면 1–2개의 회상/생성 변형을 제안한다. 생성 변형은 실제 bank 원문과 분명히 구별하고 별도 영역에 둔다. bank 원문 집합이나 원문 문항 수를 늘리거나 줄이지 않는다.
+
+## 2. 모든 문항과 보기 감사
+
+기존 PDF는 페이지를 이미지로 렌더링하여 인쇄 답을 읽고 독립 판단과 대조한다. bank는 검증된 JSON의 원문·관찰·분석을 사용하며 화면의 선택 기록을 공식 답으로 바꾸지 않는다.
+
+각 원문 문항마다 다음을 확인한다.
+
+- 출처 ID와 원문 문항 ID, 실제 장·절, 상태(included/review/deferred)
+- 판정 답의 종류: 공식 답, 분석 답, 미확정 중 무엇인지
+- 모든 보기의 선택 적합성, 근거 requirement와 source, wording/conflict issue
+- 그림 의존 여부와 exam 그림을 본문/문항 어디에서 먼저 가르칠지
+- 해설에만 있던 필요 지식을 본문 또는 출처가 표시된 보충에서 먼저 가르칠 위치
+
+bank v1은 `official_answer.option_ids` 배열을 보존한다. 현재 ELI5 adapter는 공식 답이 null 또는 정확히 하나일 때만 지원하며, 복수 공식 답은 잘라 쓰지 않고 거부한다. 현재 1장 17문항은 모두 공식 답이 null이다. 분석의 `also_accept`는 공식 답과 별개다.
+
+## 4. ⏸ 범위 게이트
+
+기존 세 표를 제시하고 OK를 기다린다.
+
+1. **범위와 경계**: 시작·끝·끊긴 방식·다음 회차 예고.
+2. **문항 분류와 답 대조**: 문항마다 출처 ID, 판정 답의 종류, 전체 보기 감사 결과, 그림, 필요한 보충을 포함한다. 합계가 PDF 전체 및 각 bank 전체 ID 집합과 일치해야 한다.
+3. **구조 제안**: §1…§N, 장 구분선, 보충의 실제 출처, exam 그림 위치, 회상/생성 변형 영역.
+
+승인 뒤 작성할 MD의 웹 매핑표 헤더는 정확히 다음과 같다.
+
+```markdown
+| 출처 | 문항 ID | 질문 요약 | 절 | 상태 |
 ```
 
-브라우저 (`mcp__Claude_Browser__navigate` → `file:///…/정리노트/MMDD.html`, `javascript_tool`):
-- 정답 1개·오답 1개 클릭 → `fb ok` / `fb no`, 오답엔 `trap` 진단이 먼저 뜨는지
-- 답안지 오류 문항의 `keyNote` 가 뜨는지
-- 해설 하단 `→ MMDD.md §…` 의 파일명이 **이번 회차**인지
-- `read_console_messages` 에러 0
+각 원본 bank ID를 deferred까지 정확히 한 번 적는다. HTML `QUIZ`에는 최종 included/review 문항만 들어간다.
 
-## 7. 완료
+## 5. 작성과 source graph
+
+승인 뒤 `정리노트/MMDD.md`, `MMDD.html`, 생성 테스트를 만든다. 웹 bank가 있으면 `정리노트/meta/MMDD.web-scope.json`에서 전체 원본 ID를 included/review/deferred로 분류하고 실제 MD heading을 refs로 연결한다. 상세 형식과 경로 기준은 `웹과제/question-bank.schema.json`, `scripts.question_bank.scope`, study-note-eli5의 `references/coverage-contract.md`를 따른다.
+
+신규 HTML은 bank를 수동 복사해 `QUESTIONS`에 중복하지 않는다. 실제 CLI는 다음 형태다.
 
 ```bash
-MMDD=0910
-git checkout -b feat/note-$MMDD
-git add "STT/${MMDD}"*.md 정리노트/$MMDD.md 정리노트/$MMDD.html tests/test_note_$MMDD.py
-git commit -m "feat($MMDD): …"
-PREV=0908   # 직전 회차
-git add 정리노트/$PREV.md && git commit -m "docs($PREV): reconcile forecast labels"
-git checkout main && git merge --no-ff feat/note-$MMDD -m "…"
-python3 -m unittest discover tests 2>&1 | tail -3
-git branch -d feat/note-$MMDD
+.venv-question-bank/bin/python -m scripts.question_bank note \
+  --scope 정리노트/meta/MMDD.web-scope.json \
+  --meta /tmp/MMDD-meta.json \
+  --output 정리노트/MMDD.html
+python3 scripts/new_note_test.py MMDD --web-scope 정리노트/meta/MMDD.web-scope.json
 ```
 
-`git status` 에 zip 이 staged 면 멈춘다. 그 뒤 `SendUserFile` 로 html·md 를 보내고 보고한다: 범위 / 문항 수와 답안지 오류 / 계획과 다르게 판단한 것 / 다음 회차 예고 / 32·40 처럼 아직 못 푸는 문항.
+`--meta` JSON은 적어도 네 자리 `date`와 비어 있지 않은 `title`을 가진다. 경로는 저장소 루트 기준이다. JSON과 검증된 SVG는 HTML에 삽입하며 브라우저 외부 요청을 만들지 않는다. 기존 HTML-only 회차는 기존 생성법을 유지한다.
 
-## 결석 모드 (STT 없음)
+MD 본문은 STT 진도만 가르치고, 필요한 추가 지식은 실제 근거에 따라 강의노트·교재·외부 참고로 표시한다. 30초 요약에서도 조건·분류 경계를 보존하고, 기능 경로 참여를 계의 구성원으로 바꾸지 않으며, 쉬운 설명에 시험 판별 용어를 남긴다.
 
-- 강의노트 해당 절 + 교재로 재구성. 헤더에 ⚠️ 결석 경고(STT 없음, 신뢰도 다름).
-- ⏪ 블록 없음 → 생성기에 `--no-recap`.
-- 문항은 강의노트 절 범위로 분류. 게이트는 똑같이 거친다.
-- 예시: `정리노트/0901.md`.
+## 6. 정합성과 신선도 재검토
 
-## 하지 않는 것
+과거 노트의 문항 매핑·예고 상태를 기존 범위 안에서 정리한다. 그 파일이 bank requirement의 evidence이면 full-file hash가 달라질 수 있으므로 **정리 뒤** bank complete 검증을 다시 실행한다. 영향받은 evidence와 diff를 확인한 뒤에만 review 기록을 갱신한다. 검증된 hash만 기계적으로 다시 계산하지 않는다. 최종 source를 기준으로 HTML, web scope와 ELI5 scope binding을 다시 만든다.
 
-- 게이트 전에 파일 만들기 · 빨간 정답을 대조 없이 옮기기 · 테스트를 손으로 베끼기 · 엔진 수정 · `git add .` · 다음 회차 내용을 본문에 당겨오기.
+## 7. ELI5 연결과 검증
 
----
-검증: 2026-09-08 드라이런 — 새 에이전트가 이 스킬만으로 0908 게이트 표를 재현함 (9문항, Q30 오류, 미토콘드리아에서 끊김).
+ELI5 source module의 `META.web_scope`는 `guide.py`가 있는 디렉터리 기준이며 builder가 절대 경로로 해석한다. `WEB_BINDINGS`는 override 뒤 최종 활성 web ID와 정확히 같고, 각 source requirement를 저자가 작성한 `FACTS`에 연결한다. Builder가 bank 문항을 자동으로 가져오므로 `QUESTIONS`에 손으로 중복하지 않는다. 세부 계약은 study-note-eli5 SKILL과 coverage contract를 읽는다.
+
+전체 테스트, 해당 bank `validate --complete`, 생성 테스트와 브라우저 검증을 실행한다. 자동 검증, 실제 브라우저, 원본/의미 검토, 아직 확인하지 않은 항목을 서로 구분하여 보고한다.
+
+## 8. 장 종료 보고
+
+장이 끝나면 다음을 한 번 더 검토하고 보고한다.
+
+1. 회차별 해당 절과 source 연결
+2. 필수 그림과 시험 판별 용어
+3. 남은 deferred 항목과 구체적 사유·선행조건
+4. 시험 범위 확인 또는 불명 상태
+5. 비교 문항과 생성 변형의 풀이 점검 결과
+
+이 절차 자체는 새 장 요약 artifact를 자동 생성하지 않는다. 기존 승인 범위의 작업을 끝까지 검증한 뒤 명시된 파일만 stage한다. zip, `git add .`, 다른 장 bank 원문 혼합, 다음 회차 본문 당겨오기는 금지한다.
+
+## 결석 모드
+
+강의노트 해당 절과 교재로 재구성하고 STT 없음 경고를 헤더에 둔다. ⏪ 블록은 만들지 않으며 테스트 생성기에 `--no-recap`을 쓴다. 문항 범위 게이트와 웹 자료의 등록/raw-only/없음 구분은 그대로 적용한다.

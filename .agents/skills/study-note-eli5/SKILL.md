@@ -26,14 +26,19 @@ ELI5 artifacts are organized under `정리노트/eli5/`, MMDD = the session date
 
 1. Read the note and companion quiz completely. Inspect original PDFs
 visually when wording, choices, diagrams, format, or answer-key color is
-uncertain. Do not trust the companion quiz's options over the originals. Read
+uncertain. Do not trust the companion quiz's options over the originals. If
+the source module has `META.web_scope`, read and validate its registered banks;
+raw screenshots without a registered questions.json are available but
+unregistered evidence, not proof that no web material exists. Read
 references/coverage-contract.md.
 
 2. Lock the question universe, phase 1: run scripts/build_question_scope.py
 on the note with `--overrides` and no audits, writing
-`MMDD-eli5-complete.question-scope.json`. This fixes included, review, and
-deferred IDs only. Inspect every source question. Change a status only
-through an evidenced override; never delete an ID.
+`MMDD-eli5-complete.question-scope.json`. Without web scope this preserves the
+legacy v1 lock. With web scope it creates v2 from the legacy questions plus
+every registered bank ID, including deferred IDs. This fixes included,
+review, and deferred IDs only. Inspect every source question. Change a status
+only through an evidenced override; never delete an ID.
 
 3. Inventory facts in the data module with guide_kit.F. Put every nonblank
 note line in a block, and split teaching content into independently
@@ -44,12 +49,18 @@ previous note, original figure) goes in a supplement or review block. If no
 note line fits it, use an external block with no start/end whose facts cite a
 reference source.
 
-4. For every included or review question, write guide_kit.Q with the
+4. For every legacy included or review question, write guide_kit.Q with the
 original wording, options, and order. Also record the printed key, the
 guide's answer, grading, requirements (fact IDs), a diagnosis for every
 option or a rubric, and any disclosed conflict. Add also_accept for ambiguous
 items and fig for diagram-dependent items. Deferred questions get a concrete
-reason, a later prerequisite, and fact IDs.
+reason, a later prerequisite, and fact IDs. Registered bank questions are
+imported automatically: do not duplicate them in `QUESTIONS`. Define
+`WEB_BINDINGS` for exactly the final active web IDs after overrides, mapping
+every bank requirement to authored `FACTS`. Bank `official_answer.option_ids`
+is preserved by storage/preview; this adapter accepts null or one official
+key and rejects multiple official keys. Analysis `also_accept` remains a
+separate supported field.
 
 5. Write concept sections with guide_kit, in this order: analogy (label who
 made it and state its limits), accurate diagram, mechanism, conditions and
@@ -58,7 +69,9 @@ T(id, "fact ids", html). Run scripts/build_guide.py on guide.py. It writes
 the HTML, the coverage JSON, and the phase-2 audited scope lock. Fix every
 build error without deleting facts or shrinking scope.
 
-6. Run verify_guide.py with artifact, coverage, scope, and phase draft.
+6. Run verify_guide.py with artifact, coverage, scope, and phase draft. A web
+source-evidence `page` value is a locator compatibility field such as a
+screenshot name plus question number; it is not a PDF page number.
 
 7. Review with reviewers who did not write the solutions (e.g. subagents):
 - Solvability: run scripts/make_blind_copy.py and give only the blind copy
@@ -79,7 +92,8 @@ build error without deleting facts or shrinking scope.
 inventory hashes. Then run the same verifier with phase complete. Hand off
 the normal result only when it passes. Report question counts, corrections,
 ambiguous items, and semantic/visual review separately from machine
-validation.
+validation. Web integration does not relax the existing source, reverse,
+blind-solvability, desktop/mobile/print, or figure review gates.
 
 ## Partial requests
 
