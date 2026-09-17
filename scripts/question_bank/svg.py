@@ -10,6 +10,9 @@ ET.register_namespace("", SVG_NS)
 TAGS = {"svg", "g", "path", "line", "polyline", "polygon", "circle", "ellipse", "rect", "text", "tspan", "title", "desc"}
 ATTRS = {"id", "viewBox", "role", "aria-label", "aria-labelledby", "x", "y", "x1", "y1", "x2", "y2", "cx", "cy", "r", "rx", "ry", "width", "height", "d", "points", "dx", "dy", "fill", "fill-opacity", "stroke", "stroke-width", "stroke-linecap", "stroke-linejoin", "stroke-dasharray", "stroke-opacity", "font-size", "font-family", "font-weight", "text-anchor", "dominant-baseline", "baseline-shift", "transform", "opacity"}
 IDENTIFIER = re.compile(r"[A-Za-z_][A-Za-z0-9_.:-]*\Z")
+NUMBER = r"[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?"
+SEPARATOR = r"(?:[ \t\r\n]+,?[ \t\r\n]*|,[ \t\r\n]*)"
+VIEWBOX = re.compile(r"[ \t\r\n]*" + NUMBER + (SEPARATOR + NUMBER) * 3 + r"[ \t\r\n]*\Z")
 
 
 def validate_svg(text: str) -> list[str]:
@@ -26,7 +29,10 @@ def validate_svg(text: str) -> list[str]:
     if root.tag not in {"svg", f"{{{SVG_NS}}}svg"}:
         errors.append("SVG root required")
     try:
-        values = [float(value) for value in re.split(r"[\s,]+", root.attrib.get("viewBox", "").strip())]
+        viewbox = root.attrib.get("viewBox", "")
+        if not VIEWBOX.fullmatch(viewbox):
+            raise ValueError
+        values = [float(value) for value in re.findall(NUMBER, viewbox)]
         if len(values) != 4 or not all(math.isfinite(value) for value in values) or values[2] <= 0 or values[3] <= 0:
             raise ValueError
     except ValueError:

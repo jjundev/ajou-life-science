@@ -4,6 +4,22 @@ from scripts.question_bank.svg import validate_svg, inline_svg
 
 
 class SvgTests(unittest.TestCase):
+    def test_viewbox_rejects_python_underscore_numbers(self):
+        self.assertTrue(validate_svg('<svg viewBox="0 0 1_0 10"/>'))
+
+    def test_viewbox_rejects_non_ascii_digits(self):
+        self.assertTrue(validate_svg('<svg viewBox="0 0 １０ 10"/>'))
+
+    def test_viewbox_requires_legal_separators(self):
+        for value in ('0,,0,10,10', ',0,0,10,10', '0,0,10,10,', '0, ,0,10,10', '0 0 10\u00a010', '0 0 10+10'):
+            with self.subTest(value=value):
+                self.assertTrue(validate_svg('<svg viewBox="' + value + '"/>'))
+
+    def test_viewbox_accepts_svg_decimal_exponent_and_comma_whitespace(self):
+        for value in ('  -0.5, +.5 ,1.e2, 2E+1  ', '0 0 .1 1e-2', '0,0 10,20'):
+            with self.subTest(value=value):
+                self.assertEqual(validate_svg('<svg viewBox="' + value + '"/>'), [])
+
     def test_rejects_active_or_external_content(self):
         for content in ('<script>alert(1)</script>', '<image href="x.png"/>', '<foreignObject/>', '<a href="https://example.com"/>', '<path onclick="x()"/>', '<path fill="url(#x)"/>', '<path style="fill:red"/>', '<text xmlns="http://www.w3.org/1999/xhtml">x</text>'):
             with self.subTest(content=content):
