@@ -43,8 +43,11 @@ class ChapterOneTests(unittest.TestCase):
             self.assertEqual(q['observations']['phase'], 'pre_submission')
 
     def test_manifest_matches_png_bytes_dimensions_and_filename_order(self):
-        paths = sorted((BASE / 'raw').glob('*.png'))
-        self.assertEqual([s['path'] for s in self.bank['sources']], ['raw/' + p.name for p in paths])
+        paths = sorted((BASE / 'raw').glob('*.png'), key=lambda p: unicodedata.normalize('NFC', p.name))
+        self.assertEqual(
+            [unicodedata.normalize('NFC', s['path']) for s in self.bank['sources']],
+            [unicodedata.normalize('NFC', 'raw/' + p.name) for p in paths],
+        )
         self.assertEqual([s['id'] for s in self.bank['sources']], [f's{i:02}' for i in range(1, 20)])
         for source in self.bank['sources']:
             data = (BASE / source['path']).read_bytes()
