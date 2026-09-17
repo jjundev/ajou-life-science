@@ -170,6 +170,24 @@ def question_errors(guide: GuideParser, inventory: dict) -> list[str]:
                 if f"#concept-{concept}" not in hrefs: errors.append(f"missing concept remedy: {ident}/{concept}")
     return errors
 
+def _figure_evidence(node: Node, question: dict) -> bool:
+    if not _visible_teaching(node) or (node.tag != 'svg' and node.attrs.get('data-role') != 'figure-evidence'):
+        return False
+    if question.get('origin') != 'web-bank':
+        return ancestor_has(node, 'data-role', 'teaching')
+    # Bank figures are source prompts, not authored teaching. Bind to the nearest
+    # question owner and require the prompt region, never a solution/template.
+    current, prompt = node, False
+    while current:
+        if current.attrs.get('data-role') == 'solution':
+            return False
+        prompt |= current.attrs.get('data-part') == 'prompt'
+        if 'data-question-id' in current.attrs:
+            return prompt and current.attrs['data-question-id'] == question['id']
+        current = current.parent
+    return False
+
+
 def answerability_errors(guide: GuideParser, data: dict) -> list[str]:
     if data.get("schema_version") != 2:
         return []
@@ -236,28 +254,9 @@ def answerability_errors(guide: GuideParser, data: dict) -> list[str]:
             targets = answerability.get("figure_target_ids")
             if not isinstance(targets, list) or not targets or any(target not in guide.ids for target in targets):
                 errors.append(f"question missing figure evidence: {ident}")
-            elif any(
-                not ancestor_has(guide.ids[target], "data-role", "teaching")
-                or not _visible_teaching(guide.ids[target])
-                or (
-                    guide.ids[target].tag != "svg"
-                    and guide.ids[target].attrs.get("data-role") != "figure-evidence"
-                )
-                for target in targets
-            ):
+            else:
                 for target in targets:
-                    target_node = guide.ids.get(target)
-                    if (
-                        target_node is not None
-                        and (
-                            not ancestor_has(target_node, "data-role", "teaching")
-                            or not _visible_teaching(target_node)
-                            or (
-                                target_node.tag != "svg"
-                                and target_node.attrs.get("data-role") != "figure-evidence"
-                            )
-                        )
-                    ):
+                    if not _figure_evidence(guide.ids[target], question):
                         errors.append(
                             f"figure evidence is not visible teaching: {ident}/{target}"
                         )

@@ -230,7 +230,8 @@ def reference_errors(inventory: dict) -> list[str]:
         fact_ids = question.get("fact_ids")
         if source is None or source.get("role") != "quiz":
             errors.append(f"question source must be quiz: {ident}")
-        if question.get("status") not in QUESTION_STATES or not isinstance(fact_ids, list) or not fact_ids:
+        deferred_bank = question.get('origin') == 'web-bank' and question.get('status') == 'deferred'
+        if question.get("status") not in QUESTION_STATES or not isinstance(fact_ids, list) or (not fact_ids and not deferred_bank):
             errors.append(f"invalid question: {ident}")
             continue
         if any(fact_id not in facts for fact_id in fact_ids):
@@ -238,6 +239,8 @@ def reference_errors(inventory: dict) -> list[str]:
         if question.get("status") == "deferred":
             if not _nonempty(question.get("reason")):
                 errors.append(f"deferred question needs reason: {ident}")
+            if deferred_bank and not _nonempty(question.get('later_prerequisite')):
+                errors.append(f"deferred bank question needs prerequisite: {ident}")
         elif not any(facts.get(fact_id, {}).get("scope") != "deferred" for fact_id in fact_ids):
             errors.append(f"active question needs active fact: {ident}")
         if not _nonempty(question.get("locator")):

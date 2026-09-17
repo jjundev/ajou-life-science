@@ -26,6 +26,12 @@ def Q(id, status, group, page, stem, opts, key, ans, grading, reqs, diag, trap, 
     key is the printed key (None if none is printed); ans is the guide's answer.
     grading='ambiguous' requires also_accept (other defensible option numbers).
     fig lists the SVG ids a diagram-dependent question needs; fig_note names them.
+
+    The validated web-bank adapter returns this dictionary shape plus runtime
+    content, option_labels, locator, source_evidence, bank_origin,
+    requirement_facts, figure_markup and explained_figures. Its fig targets are
+    visible exam figures in the owning prompt; explained_figures belong only to
+    the solution. Legacy constructor keys and HTML authoring remain unchanged.
     """
     return dict(id=id, status=status, group=group, page=page, stem=stem, opts=opts, key=key,
                 ans=ans, grading=grading, reqs=reqs, diag=diag, trap=trap, reason=reason,

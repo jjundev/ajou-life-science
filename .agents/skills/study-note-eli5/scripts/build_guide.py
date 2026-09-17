@@ -17,7 +17,11 @@ import importlib.util
 import json
 import re
 import sys
+import os
+from copy import deepcopy
+from html import escape
 from pathlib import Path
+from types import SimpleNamespace
 
 SCRIPTS = Path(__file__).resolve().parent
 if str(SCRIPTS) not in sys.path:
@@ -96,8 +100,95 @@ def load_data(path: Path):
 
 
 def qanchor(ident: str) -> str:
-    src, n = ident.split(":")
-    return f"q{re.match(r'\d+', src).group(0)}-{n}"
+    match = re.fullmatch(r"(\d+)강:(\d+)", ident)
+    if match:
+        return f"q{match[1]}-{match[2]}"
+    return "qweb-" + ident.encode("utf-8").hex()
+
+
+def merge_web(d, data_dir, note_path, outputs, overrides):
+    """Return a detached authoring view and the resolved, validated scope path."""
+    from repo_bootstrap import enable_repo_imports
+    root = enable_repo_imports()
+    from scripts.question_bank.scope import load_web_scope, protect_paths
+    from scripts.question_bank.model import resolve_local
+    from scripts.question_bank.guide import bank_to_guide
+    from scripts.question_bank.__main__ import _protect_inputs
+    from question_scope import extract_question_scope, apply_overrides
+    manifest = (data_dir / d.META['web_scope']).resolve()
+    entries, banks = load_web_scope(manifest, root)
+    base = extract_question_scope(note_path.read_text(encoding='utf-8'))
+    for entry in entries:
+        if entry['id'] in base:
+            raise ValueError('question id collision: ' + entry['id'])
+        base[entry['id']] = entry
+    final, errors = apply_overrides(base, overrides)
+    if errors:
+        raise ValueError('; '.join(errors))
+    entries = [final[e['id']] for e in entries]
+    for entry in entries:
+        if entry['status'] == 'deferred' and not entry.get('prerequisite'):
+            raise ValueError('deferred requires prerequisite: ' + entry['id'])
+    active = {e['id'] for e in entries if e['status'] != 'deferred'}
+    bindings = getattr(d, 'WEB_BINDINGS', {})
+    if not isinstance(bindings, dict) or set(bindings) != active:
+        raise ValueError('WEB_BINDINGS must exactly cover final active web question IDs')
+    view = SimpleNamespace(**vars(d))
+    view.web_question_ids = {e['id'] for e in entries}
+    view.META, view.QUESTIONS, view.DEFERRED, view.SOURCES = deepcopy((d.META, d.QUESTIONS, d.DEFERRED, d.SOURCES))
+    protected = [manifest, note_path, data_dir / 'guide.py']
+    sources = {s['id']: s for s in view.SOURCES}
+
+    def source(path, role='reference', ident=None):
+        path = path.resolve()
+        relative = os.path.relpath(path, note_path.parent)
+        ident = ident or 'web-source-' + hashlib.sha256(relative.encode()).hexdigest()
+        row = dict(id=ident, path=relative, role=role)
+        if ident in sources and sources[ident] != row:
+            raise ValueError('source id collision: ' + ident)
+        if ident not in sources:
+            sources[ident] = row
+            view.SOURCES.append(row)
+        protected.append(path)
+        return ident, relative
+
+    source(manifest)
+    for bank_id, bank in banks.items():
+        selected = [e for e in entries if e['bank_id'] == bank_id]
+        bank_path = Path(selected[0]['bank_path'])
+        source_id, relative = source(bank_path, 'quiz', 'bank-' + bank_id)
+        if bank_id in view.META['quiz_sources']:
+            raise ValueError('quiz source collision: ' + bank_id)
+        view.META['quiz_sources'][bank_id] = dict(source_id=source_id, path=relative, label=bank['assessment']['title'])
+        for raw in bank['sources']:
+            source(resolve_local(bank_path.parent, raw['path']))
+        for asset in bank['assets']:
+            for variant in ('exam', 'explained'):
+                source(resolve_local(bank_path.parent, asset[variant]['path']))
+        for question in bank['questions']:
+            for requirement in question['analysis']['requirements']:
+                for evidence in requirement['evidence']:
+                    source(resolve_local(root, evidence['path']))
+        for e in selected:
+            for ref in e['refs']:
+                source(resolve_local(root, ref['path']))
+        bank_bindings = {e['id']: bindings[e['id']] for e in selected if e['id'] in active}
+        questions, deferred, _figures = bank_to_guide(bank, bank_bindings, bank_path.parent, selected)
+        for q in questions:
+            q['source_evidence']['source_path'] = relative
+        existing = [q['id'] for q in view.QUESTIONS] + list(view.DEFERRED)
+        if len(existing) != len(set(existing)) or set(existing) & ({q['id'] for q in questions} | set(deferred)):
+            raise ValueError('duplicate guide question IDs')
+        view.QUESTIONS.extend(questions)
+        view.DEFERRED.update(deferred)
+        for output in outputs:
+            _protect_inputs(bank, bank_path, output)
+    for output in outputs:
+        protect_paths(output, protected)
+    actual = {q['id']: q['status'] for q in view.QUESTIONS} | {i: 'deferred' for i in view.DEFERRED}
+    if actual != {i: e['status'] for i, e in final.items()}:
+        raise ValueError('guide questions must exactly match final mixed scope IDs and statuses')
+    return view, manifest
 
 
 def concept_order(reqs, fact_by_id):
@@ -110,31 +201,56 @@ def concept_order(reqs, fact_by_id):
 
 
 def active_card(q, meta, fact_by_id, titles):
+    web = q.get('bank_origin', False)
+    # Bank wording is plain source text; legacy authors already supply safe HTML.
+    if web:
+        q = {**q, **{k: escape(q[k]) if q[k] is not None else None for k in ('stem', 'reason', 'trap', 'conflict')},
+             'opts': [escape(o) for o in q['opts']], 'diag': {i: escape(t) for i, t in q['diag'].items()}}
+    marks = q.get('option_labels', MARK)
     fmt = "multiple_choice" if q["opts"] else "short_answer"
     status_label = {"included": "이번 회차 포함", "review": "지난 회차 복습"}[q["status"]]
-    src, n = q["id"].split(":")
+    src, n = q["id"].rsplit(":", 1)
     label = meta["quiz_sources"][src]["label"]
     head = f'<p class="qid"><b>{src} {n}번</b> · 원문 {label} p{q["page"]} · {status_label}' + \
            (" · 원문 단답형" if fmt == "short_answer" else "") + "</p>"
-    opts = "".join(f"<li>{MARK[i]} {o}</li>" for i, o in enumerate(q["opts"]))
+    if web:
+        head = f'<p class="qid"><b>{escape(src)} {n}번</b> · 원문 {escape(label)} · {escape(q["locator"])} · {status_label}</p>'
+    opts = "".join(f"<li>{marks[i]} {o}</li>" for i, o in enumerate(q["opts"]))
     prompt = f'<div data-part="prompt"><p class="stem">{q["stem"]}</p>' + (f'<ul class="opts">{opts}</ul>' if opts else
              '<p class="note">원문에 보기가 없습니다. 먼저 한두 문장으로 답을 써 보세요.</p>') + "</div>"
-    if q["fig"]:
+    if web:
+        parts = []
+        for index, block in enumerate(q['content']):
+            if block['type'] == 'text':
+                parts.append('<p class="stem">' + escape(block['text']) + '</p>')
+            elif block['type'] == 'statements':
+                parts.append('<ul class="opts">' + ''.join('<li><b>' + escape(s['id']) + '</b> ' + escape(s['text']) + '</li>' for s in block['items']) + '</ul>')
+            elif block['type'] == 'figure':
+                parts.append(q['figure_markup'][index])
+        prompt = '<div data-part="prompt">' + ''.join(parts) + '<ul class="opts">' + opts + '</ul></div>'
+    if q["fig"] and not web:
         prompt += f'<p class="note">원문의 ‘위 그림’ → <a href="#{q["fig"][0]}">{q["fig_note"]}</a>을 보고 푸세요.</p>'
     caution = ('<p class="caution">⚠️ 원문·답지·동반 퀴즈와 관련해 알아 둘 점이 있습니다 — 풀고 나서 해설에서 확인하세요.</p>'
                if q["conflict"] else "")
     if fmt == "multiple_choice":
         a = q["ans"]
-        if q["grading"] == "ambiguous":
-            answer = f"출제 의도 정답: {MARK[a-1]} {q['opts'][a-1]}" + "".join(
-                f" · 함께 인정할 수 있는 답: {MARK[i-1]} {q['opts'][i-1]}" for i in q["also_accept"])
+        if web:
+            answer = ('출제 의도 정답: ' if q['grading'] == 'ambiguous' else '분석 기준 답: ') + f"{marks[a-1]} {q['opts'][a-1]}"
+            answer += ''.join(f" · 함께 인정할 수 있는 답: {marks[i-1]} {q['opts'][i-1]}" for i in q['also_accept'])
+            if q['key'] is None:
+                answer += ' — 분석 기준이며 공식 답은 확인되지 않았습니다.'
+            else:
+                answer += f" · 확인된 공식 답: {marks[q['key']-1]} {q['opts'][q['key']-1]}"
+        elif q["grading"] == "ambiguous":
+            answer = f"출제 의도 정답: {marks[a-1]} {q['opts'][a-1]}" + "".join(
+                f" · 함께 인정할 수 있는 답: {marks[i-1]} {q['opts'][i-1]}" for i in q["also_accept"])
         elif q["key"] is None:
-            answer = f"정답(판단): {MARK[a-1]} {q['opts'][a-1]} — 원문에 인쇄된 정답 표시 없음"
+            answer = f"정답(판단): {marks[a-1]} {q['opts'][a-1]} — 원문에 인쇄된 정답 표시 없음"
         elif q["key"] != a:
-            answer = f"정답(판단): {MARK[a-1]} {q['opts'][a-1]} — 인쇄 정답 {MARK[q['key']-1]}은 오류로 판단"
+            answer = f"정답(판단): {marks[a-1]} {q['opts'][a-1]} — 인쇄 정답 {marks[q['key']-1]}은 오류로 판단"
         else:
-            answer = f"정답: {MARK[a-1]} {q['opts'][a-1]}"
-        diag = "".join(f"<li>{MARK[i-1]} {t}</li>" for i, t in sorted(q["diag"].items()))
+            answer = f"정답: {marks[a-1]} {q['opts'][a-1]}"
+        diag = "".join(f"<li>{marks[i-1]} {t}</li>" for i, t in sorted(q["diag"].items()))
         extra = f'<p><b>보기별 진단</b></p><ul class="diag">{diag}</ul>'
     else:
         answer = f"원문에 인쇄된 답: “{q['printed']}”"
@@ -144,17 +260,19 @@ def active_card(q, meta, fact_by_id, titles):
     remedy = " · ".join(f'<a data-remedy="{q["remedy"]}" href="#concept-{c}">{titles[c]}</a>'
                         for c in concept_order(q["reqs"], fact_by_id))
     solution = (f'<details data-role="solution"><summary>정답과 근거 보기</summary>'
-                f'<p data-part="answer"><b>{answer}</b></p><p data-part="reason"><b>근거</b> {q["reason"]}</p>{extra}'
+                f'<p data-part="answer"><b>{answer}</b></p><p data-part="reason"><b>근거</b> {q["reason"]}</p>{extra}' + ''.join(q.get('explained_figures', [])) +
                 f'<p data-part="trap"><b>고르기 쉬운 함정</b> {q["trap"]}</p>{conflict}'
                 f'<p class="remedy">틀렸거나 이유를 설명하지 못했다면 돌아가기: {remedy}</p></details>')
-    return (f'<article class="card q" id="{qanchor(q["id"])}" data-question-id="{q["id"]}" data-status="{q["status"]}" '
+    return (f'<article class="card q" id="{qanchor(q["id"])}" data-question-id="{escape(q["id"], quote=True)}" data-status="{q["status"]}" '
             f'data-format="{fmt}">{head}{prompt}{caution}{solution}</article>')
 
 
-def deferred_card(ident, reason, later):
-    src, n = ident.split(":")
-    return (f'<article class="card q deferred" id="{qanchor(ident)}" data-question-id="{ident}" data-status="deferred">'
-            f'<p class="qid"><b>{src} {n}번</b> · 보류</p><p data-part="deferred-reason"><b>보류 사유</b> {reason}</p>'
+def deferred_card(ident, reason, later, *, plain_text=False):
+    if plain_text:
+        reason, later = escape(reason), escape(later)
+    src, n = ident.rsplit(":", 1)
+    return (f'<article class="card q deferred" id="{qanchor(ident)}" data-question-id="{escape(ident, quote=True)}" data-status="deferred">'
+            f'<p class="qid"><b>{escape(src)} {n}번</b> · 보류</p><p data-part="deferred-reason"><b>보류 사유</b> {reason}</p>'
             f'<p><b>먼저 배워야 할 후속 내용</b> {later}</p></article>')
 
 
@@ -165,7 +283,7 @@ def question_errors(d, fact_by_id):
         ident = q["id"]
         if q["group"] not in groups:
             errors.append(f"unknown question group: {ident}/{q['group']}")
-        if q["id"].split(":")[0] not in d.META["quiz_sources"]:
+        if q["id"].rsplit(":", 1)[0] not in d.META["quiz_sources"]:
             errors.append(f"question source not in META quiz_sources: {ident}")
         unknown = [r for r in q["reqs"] if r not in fact_by_id]
         if not q["reqs"] or unknown:
@@ -176,7 +294,7 @@ def question_errors(d, fact_by_id):
                 errors.append(f"diag must cover options 1..{n}: {ident}")
             if not (isinstance(q["ans"], int) and 1 <= q["ans"] <= n) or (q["key"] is not None and not 1 <= q["key"] <= n):
                 errors.append(f"answer/key out of range: {ident}")
-            if q["grading"] == "ambiguous" and not q["also_accept"]:
+            if q["grading"] == "ambiguous" and not q["also_accept"] and not q.get('bank_origin'):
                 errors.append(f"ambiguous question needs also_accept: {ident}")
             if q["grading"] == "ambiguous" and not q["conflict"]:
                 errors.append(f"ambiguous question needs a disclosed conflict: {ident}")
@@ -198,6 +316,16 @@ def build(data_path: Path, out_dir: Path | None = None, force: bool = False) -> 
     out_html = out_dir / f"{stem}.html"
     out_cov = meta_dir / f"{stem}.coverage.json"
     out_lock = meta_dir / f"{stem}.question-scope.json"
+    overrides = []
+    if meta.get('overrides'):
+        overrides = json.loads((data_dir / meta['overrides']).read_text(encoding='utf-8'))
+    web_scope = None
+    if meta.get('web_scope'):
+        try:
+            d, web_scope = merge_web(d, data_dir, note_path, [out_html, out_cov, out_lock], overrides)
+            meta = d.META
+        except (OSError, ValueError, KeyError, TypeError) as error:
+            return {}, ['cannot build web guide: ' + str(error)]
     errors: list[str] = []
     if out_html.exists() and not out_cov.exists() and not force:
         return {}, [f"refusing to overwrite {out_html.name}: not a build_guide output (no {out_cov.name}); use --force"]
@@ -245,9 +373,16 @@ def build(data_path: Path, out_dir: Path | None = None, force: bool = False) -> 
 
     sources_json = [{**s, "sha256": hashlib.sha256((note_dir / s["path"]).resolve().read_bytes()).hexdigest(),
                      "read_status": "read"} for s in d.SOURCES]
+    if web_scope:
+        # Coverage travels with its output, including when --out-dir is outside
+        # the note tree. Legacy path serialization remains byte-compatible.
+        for source in sources_json:
+            source['path'] = os.path.relpath((note_dir / source['path']).resolve(), out_cov.parent)
     concepts_json = [{"id": c, "title": t, "prerequisites": p, "prior_note": meta.get("prior_notes", {}).get(c, "")}
                      for c, t, p in d.CONCEPTS]
     errors.extend(question_errors(d, fact_by_id))
+    if errors:
+        return {}, errors
 
     # ── HTML ──
     inc = [q["id"] for q in d.QUESTIONS if q["status"] == "included"]
@@ -259,14 +394,18 @@ def build(data_path: Path, out_dir: Path | None = None, force: bool = False) -> 
         cards = "".join(active_card(q, meta, fact_by_id, titles) for q in d.QUESTIONS if q["group"] == g)
         qparts.append(f'<h3 class="group">{title}</h3>{cards}')
     qparts.append(f'<h3 class="group" id="deferred-questions">보류 문항 {counts["deferred"]}개 — 답 없이 사유만</h3>' +
-                  "".join(deferred_card(i, r, later) for i, (r, later, _) in d.DEFERRED.items()))
-    fmt_ids = lambda ids: ", ".join(i.replace(":", " ") for i in ids)
+                  "".join(deferred_card(i, r, later, plain_text=i in getattr(d, 'web_question_ids', set()))
+                          for i, (r, later, _) in d.DEFERRED.items()))
+    fmt_ids = lambda ids: ", ".join(escape(i.replace(":", " ")) for i in ids)
+    scope_origin = f'{note_path.name}의 매핑표·복습 줄·보류 줄에서 뽑아 고정한 범위'
+    if web_scope:
+        scope_origin = f'{note_path.name}의 문항 범위와 웹 범위 명세를 합쳐 고정한 전체 범위'
     scope = (f'<section class="card" id="question-scope"><p class="kicker">문항 범위</p><h2>원본 문항 {counts["total"]}개를 모두 셉니다</h2>\n'
              f'<div class="tablewrap"><table><tr><th>상태</th><th>개수</th><th>문항</th></tr>\n'
              f'<tr><td>이번 회차 포함</td><td>{counts["inc"]}</td><td>{fmt_ids(inc)}</td></tr>\n'
              f'<tr><td>지난 회차 복습</td><td>{counts["rev"]}</td><td>{fmt_ids(rev)}</td></tr>\n'
              f'<tr><td>보류</td><td>{counts["deferred"]}</td><td>{fmt_ids(deferred_ids)}</td></tr>\n'
-             f'<tr><td><b>합계</b></td><td><b>{counts["total"]}</b></td><td>{note_path.name}의 매핑표·복습 줄·보류 줄에서 뽑아 고정한 범위</td></tr></table></div>\n'
+             f'<tr><td><b>합계</b></td><td><b>{counts["total"]}</b></td><td>{scope_origin}</td></tr></table></div>\n'
              f'{meta["scope_notes_html"]}\n{legend(note_path.name)}</section>')
     header = meta["header_html"].format(**counts)
     body = "".join([header, d.SECTIONS[0], scope] + list(d.SECTIONS[1:]) + [
@@ -274,6 +413,14 @@ def build(data_path: Path, out_dir: Path | None = None, force: bool = False) -> 
         f"<footer>{meta['footer']}</footer>"])
     html = (f'<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n'
             f'<title>{meta["title"]}</title>\n<style>\n{CSS}\n</style>\n</head>\n<body>\n<main class="wrap">\n{body}\n</main>\n{SCRIPT}\n</body></html>\n')
+    if web_scope:
+        from guide_html import parse_guide
+        parsed = parse_guide(html)
+        rendered = [n.attrs['data-question-id'] for n in parsed.nodes if 'data-question-id' in n.attrs]
+        wanted = [q['id'] for q in d.QUESTIONS] + list(d.DEFERRED)
+        if len(rendered) != len(set(rendered)) or set(rendered) != set(wanted):
+            errors.append('rendered question cards do not exactly cover active and deferred IDs')
+        errors.extend(parsed.errors)
 
     mapping: dict[str, list[str]] = {}
     for ident, facts in re.findall(r'id="([^"]+)" data-facts="([^"]+)"', html):
@@ -288,7 +435,7 @@ def build(data_path: Path, out_dir: Path | None = None, force: bool = False) -> 
     questions_json, audits = [], {}
     for q in d.QUESTIONS:
         fmt = "multiple_choice" if q["opts"] else "short_answer"
-        src = q["id"].split(":")[0]
+        src = q["id"].rsplit(":", 1)[0]
         qsrc = meta["quiz_sources"].get(src, {})
         targets = sorted({t for r in q["reqs"] for t in mapping.get(r, [])})
         ans = {"teaching_target_ids": targets}
@@ -299,24 +446,31 @@ def build(data_path: Path, out_dir: Path | None = None, force: bool = False) -> 
         if q["fig"]:
             ans["figure_target_ids"] = q["fig"]
             errors.extend(f"figure id not in html: {q['id']}/{f}" for f in q["fig"] if f not in html_ids)
-        item = {"id": q["id"], "source_id": qsrc.get("source_id"), "locator": f"{qsrc.get('label')} p{q['page']}",
+        item = {"id": q["id"], "source_id": qsrc.get("source_id"), "locator": q.get('locator', f"{qsrc.get('label')} p{q['page']}"),
                 "status": q["status"], "fact_ids": q["reqs"], "reason": "", "format": fmt, "grading": q["grading"],
                 "requirements": q["reqs"], "answerability": ans, "printed_key": q["key"], "answer": q["ans"]}
         if fmt == "multiple_choice":
             item["option_count"] = len(q["opts"])
         if q["fig"]:
             item["diagram_required"] = True
+        if q.get('bank_origin'):
+            item['origin'] = 'web-bank'
         questions_json.append(item)
         audit = {"format": fmt, "grading": q["grading"], "requirements": q["reqs"],
-                 "source_evidence": {"source_path": qsrc.get("path"), "page": q["page"], "quote": q["stem"][:40]},
+                 "source_evidence": q.get('source_evidence', {"source_path": qsrc.get("path"), "page": q["page"], "quote": q["stem"][:40]}),
                  "audit_status": "confirmed"}
+        if q.get('bank_origin'):
+            audit['source_evidence'] = {**audit['source_evidence'],
+                'source_path': os.path.relpath((note_dir / qsrc['path']).resolve(), out_lock.parent)}
         if fmt == "multiple_choice":
             audit["option_count"] = len(q["opts"])
         audits[q["id"]] = audit
     for ident, (reason, later, fids) in d.DEFERRED.items():
-        qsrc = meta["quiz_sources"].get(ident.split(":")[0], {})
+        qsrc = meta["quiz_sources"].get(ident.rsplit(":", 1)[0], {})
         questions_json.append({"id": ident, "source_id": qsrc.get("source_id"), "locator": qsrc.get("label"),
                                "status": "deferred", "fact_ids": fids, "reason": reason, "later_prerequisite": later})
+        if ident in getattr(d, 'web_question_ids', set()):
+            questions_json[-1]['origin'] = 'web-bank'
 
     inventory = {"main_source": "note", "sources": sources_json, "blocks": blocks_json, "facts": facts_json,
                  "concepts": concepts_json, "questions": questions_json}
@@ -327,15 +481,15 @@ def build(data_path: Path, out_dir: Path | None = None, force: bool = False) -> 
     coverage = {"schema_version": 2, "delivery_mode": meta.get("delivery_mode", "complete"), "inventory": inventory,
                 "inventory_sha256": inv_hash,
                 "mappings": [{"fact_id": fid, "target_ids": ids} for fid, ids in mapping.items()], "review": review}
+    if web_scope:
+        from guide_html import mapping_errors
+        errors.extend(mapping_errors(parsed, coverage))
     if errors:
         return {}, errors
 
-    overrides = []
-    if meta.get("overrides"):
-        overrides = json.loads((data_dir / meta["overrides"]).read_text(encoding="utf-8"))
     out_dir.mkdir(parents=True, exist_ok=True)
     meta_dir.mkdir(parents=True, exist_ok=True)
-    lock, lock_errors = build_lock(note_path, out_lock, overrides, audits)
+    lock, lock_errors = build_lock(note_path, out_lock, overrides, audits, web_scope=web_scope)
     if lock_errors:
         return {}, lock_errors
     out_html.write_text(html, encoding="utf-8")
