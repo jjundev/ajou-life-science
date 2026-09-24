@@ -1,0 +1,78 @@
+# 섹션 작성 규칙
+
+## 작성자 브리프 (메인 에이전트가 섹션마다 1명, 병렬, model: opus / lite: sonnet)
+
+---
+생명과학 정리노트의 섹션 `<sid>`(`<섹션 title>`)를 쓴다.
+
+- 읽기: `<SKILL>/references/content-rules.md`(이 파일 전체), 위젯이 있으면 `<SKILL>/references/widget-rules.md`
+- 위젯: <위젯> (메인 에이전트가 정한 것만 만든다. "위젯 없음"이면 이 섹션에는 위젯을 넣지 않는다)
+- 계약: `<RUN>/manifest.json`의 섹션 `<sid>` — 토픽 id·제목·`required_terms`·`layers`·`supp`가 정확히 여기 적힌 대로여야 한다.
+- 링크: manifest `links` 중 `topic`이 이 섹션에 있는 항목 `<이 섹션의 links 목록>`을 모두 그 토픽 안에 `<a href="…">`로 넣는다. `href`는 글자 그대로 복사(`%20` 포함). 복습문제 링크만은 `{{REVIEW_HREF}}`로 써도 된다.
+- 받쳐야 할 문항: <이 섹션 토픽이 받쳐야 할 문항> — `<RUN>/question-audit.md`에서 anchor가 이 섹션 토픽인 포함 문항과 풀이에 필요한 개념이다. 복습문제를 보지 않고 이 섹션만 읽어도 그 문항을 풀 수 있게, 필요한 사실(보기를 가르는 기준 포함)을 본문이나 보충 레이어에 먼저 가르친다. 문항 번호와 정답은 쓰지 않는다.
+- 근거: `<RUN>/summaries/stt-*.md`(해당 날짜), `<RUN>/slides.txt`, 교과서 `<RUN>/repo/교과서/생명과학_기초와_응용_2판/` <쪽> (스캔본이다. PyMuPDF로 필요한 쪽만 dpi 140 PNG를 `<RUN>/work/`에 렌더링해 눈으로 읽는다)
+- 출력: `<RUN>/sections/<sid>.html` **한 파일만**. `<section>`/`<h2>`는 쓰지 않는다(조립기가 감싼다). 임시 파일은 아래 규칙.
+- 임시·보조 파일은 `<RUN>/work/` 아래에만 둔다. 저장소(`STT/`, `강의노트/`, `교과서/`, `23, 24 소스/`, `웹과제/`, `복습노트/`)와 scratchpad 루트, `/tmp`에는 아무것도 쓰지 않는다. 한글(NFD) 파일명은 복사하거나 이름을 바꾸지 말고 Python `os.listdir` + `unicodedata.normalize('NFC', …)`로 찾아 그 경로로 연다.
+- 자기 검사(끝내기 전): 토픽별로 `required_terms`가 모두 글자 그대로 들어갔는지, `$` 짝, `links` 항목이 해당 토픽 안에 있는지, 금지어 `<forbidden 목록>`이 없는지. 금지어는 예고 토픽 `<preview_topic>` 안에서만 허용된다(이 토픽에는 예고 제목을 빠뜨리지 말고 쓴다). eli5 레이어마다 문장 수(figcaption 포함)가 3 이하이고 전문용어가 없는지. warn 레이어가 요약의 `⚠️ 혼동 지점`을 모두 담았는지. supp 레이어마다 `출처:` 줄이 있는지. 조각 어디에도 이모지와 원문자(①~⑳)가 없는지. `layers`가 빈 목록이 아닌 토픽마다 마지막에 `<div class="sum" hidden>`이 있는지. 그림 설명이 SVG 클래스의 실제 모양(채움/윤곽)과 맞는지.
+- 보고: 파일 경로, 토픽별 한 줄, 요약에 있었지만 넣지 않은 것과 이유, 받쳐야 할 문항 중 가르치지 못한 사실.
+---
+
+## 범위
+- 본문(eli5·formal·prof·warn)에는 이번 STT에서 **한 번이라도 언급된** 개념만 쓴다. 강의노트는 목차 뼈대일 뿐이고 STT가 주 자료다. 다음 수업 내용을 당겨오지 않는다.
+- 슬라이드 대조표에서 "예고만/안 다룸"인 내용은 `s<N>-next`에 이름만 쓴다. 끊긴 지점은 여기에 교수님 마지막 발언 인용과 `(MMDD MM:SS)`로 적는다.
+- STT에 없지만 포함 문항을 풀려면 필요한 사실은 supp 레이어에 쓰고 실제 출처를 밝힌다(`출처: 강의노트 3장 p14`, `출처: 교재 3장 p.68`, 외부 자료면 자료명). 수업에서 생략했다는 사실을 "시험에 안 나온다"로 바꾸지 않는다.
+- 수업에서 말한 모든 개념, 교수님 비유와 강조 발언을 빠짐없이 싣는다. 잡담은 "이 비유를 지우면 개념 이해가 나빠지는가"로 판별해 버린다.
+- STT 오인식과 말실수는 올바른 형태로 쓴다.
+- 쉬운 설명에서도 성립 조건과 분류 경계를 지킨다. 어떤 경로·과정에 참여한다는 것을 그 계(系)의 구성원이라고 쓰지 않는다. 시험에서 판별에 쓰는 원래 용어는 쉬운 말과 함께 남긴다.
+
+## 토픽 마크업 (이 순서)
+```html
+<article class="topic" id="…"><h3>…</h3><div class="tags"><span class="tag date">MMDD 수업</span><span class="tag slide">3장 p12</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">한 문장 비유</p> …그림… </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span> …정의·성립 조건·인과·과정(ol.steps)… </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span> …비유·일화, 원문은 blockquote… </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span> …헷갈리는 짝과 바른 구분, 원문 인용 + (MMDD MM:SS)… </div>   ← layers에 warn이 있을 때만
+  <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p>…</p><p>출처: 교재 3장 p.68</p></div>   ← manifest supp=true만
+  <div class="sum" hidden>…페이지 요약(아래)…</div>                                                    ← layers가 빈 목록이 아닌 토픽만, 맨 끝
+</article>
+```
+- 레이어 제목과 배지 글자는 위와 글자 그대로 쓴다. 이모지, 장식 기호(★, ↗, → 같은 화살표 아이콘), "아래를 보세요" 같은 안내 문장은 쓰지 않는다.
+- warn 레이어는 오개념 방어가 목적이다. 요약의 `⚠️ 혼동 지점`마다 "무엇을 무엇으로 착각하기 쉬운지"와 "바른 구분"을 한 쌍으로 쓴다.
+- `s0-recap` 토픽(지난 수업 복습)은 formal 레이어에 요점 3~5줄과 이전 팩 링크만 둔다.
+- 템플릿이 토픽 하나를 한 화면에 보여 준다. 토픽은 그것만 읽어도 이해되게 쓰고, 앞 토픽에 기대는 말 대신 `<a href="#토픽id">토픽 제목</a>`으로 잇는다.
+- 요약·예고 섹션: 치트시트는 표(`<div class="table-wrap"><table>`)로, 행마다 "주제 | 시험 직전 한 줄"이며 성립 조건과 분류 경계를 한 줄 안에 보존한다. 예고는 `<ul>`, 링크는 `<ul><li><a>`.
+
+## 페이지 요약 (`.sum`)
+화면 오른쪽 "페이지 요약" 패널에 그 토픽의 핵심만 보여 준다. 템플릿이 토픽의 **직계 자식** `.sum`을 패널로 옮기므로 토픽 안 맨 끝에, 레이어 밖에 둔다. `hidden`은 꼭 붙인다.
+```html
+<div class="sum" hidden>
+  <p class="sum-lead">토픽 핵심 한 문장("~해요" 체)</p>
+  <p class="panel-label">핵심 식</p>
+  <ul class="eq-list"><li><span class="eq-name">식 이름</span>$$…$$</li></ul>
+  <p class="panel-label">용어</p>
+  <dl class="terms"><dt>용어(영어)</dt><dd>한 줄 뜻</dd></dl>
+</div>
+```
+- 새 내용을 쓰지 않는다. 본문에 이미 나온 식·용어를 같은 표기로 1~3개씩 고른다.
+- 식이 없는 토픽(생명과학은 대부분)은 "핵심 식" 줄과 `eq-list`를 뺀다. 용어가 없으면 "용어" 줄과 `dl`을 뺀다. `sum-lead`는 항상 쓴다.
+- `layers`가 `[]`인 토픽에는 두지 않는다.
+
+## 문체
+- 쉽게 말하면(eli5): 초등학생이 이해할 1~3문장(figcaption 포함) + 그림. 전문용어 없이. 토스처럼 짧고 다정한 "~해요" 체.
+- 정확히 말하면(formal): 정의와 성립 조건, 인과, 과정(위치·입력·출력)을 빠짐없이 정확하게. "~해요" 체.
+- 교수님 말씀(prof)/꼭 기억해요(warn): 원문 인용은 15단어 안팎으로 줄이고 `(0922 26:00)`처럼 출처.
+- UI 글은 한국어, 전문용어는 영어 병기(예: 자매염색분체(sister chromatid)). 한 문장에 한 가지만 말하고 군더더기 수식어는 뺀다.
+
+## 수식과 기호
+- 반응식·화학식을 식으로 보여야 할 때만 `$…$`/`$$…$$`(예: `$$\mathrm{C_6H_{12}O_6 + 6O_2 \rightarrow 6CO_2 + 6H_2O}$$`). 문장 속 화학식은 H₂O처럼 유니코드 아래첨자를 써도 된다. 본문에 리터럴 `$` 금지.
+- TeX 안에 `<`, `>`, `&` 금지 → `\lt`, `\gt`.
+- 원문자(①~⑳)는 어디에도 쓰지 않는다. 목록 번호가 필요하면 `(1) (2) (3)`.
+
+## SVG 그림
+- 개념 토픽마다 eli5 레이어에 그림 1개 이상(구조도, 과정 흐름도, 단계 비교 등).
+- `<figure class="figure"><svg id="fig-<kebab>" viewBox="…" role="img" aria-label="한국어 설명">…</svg><figcaption>…</figcaption></figure>`
+- 색은 클래스로만: `fig-ink`, `fig-accent`, `fig-danger`, `fig-dot`, `fig-text`, `fig-muted`. 하드코딩 색 금지(다크모드).
+- 채움과 윤곽: `fig-ink`, `fig-accent`, `fig-danger`는 선만 그린다(`fill:none`). 속이 칠해진 도형은 `fig-dot`뿐이다. 글·figcaption·`aria-label`에서 "색칠된", "채워진"은 `fig-dot` 도형에만 쓰고, 선만 있는 도형은 "테두리", "선"으로 부른다.
+- 글자 12~14px, SVG `<text>`에 `$` 금지.
+- id는 페이지 전체에서 유일해야 한다(`fig-` + 토픽 고유 단어).
+- 문항이 교재·기출 그림을 판독하게 하면, 그 그림의 구조(표지 이름, 위치 관계)를 같은 이름으로 먼저 그려 가르친다.
