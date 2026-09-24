@@ -1,7 +1,7 @@
 # 문항 감사와 선별 (메인 에이전트)
 
 ## 원칙
-- 문항은 **23·24 기출 합본**(`23, 24 소스/N강 합본.pdf`, 파일명에 `+`가 섞여 있다)과 **웹과제 bank**(`웹과제/N장/questions.json`)에서만 가져온다. 자작·변형 금지.
+- 문항은 **23·24 기출 합본**(`23, 24 소스/N강 합본.pdf`, 파일명에 `+`가 섞여 있다)과 **웹과제 bank**(`웹과제/N장/questions.json`)에서만 가져온다. 원문 문항(partA·partB)은 자작·변형 금지. 원문과 구별된 생성 변형은 partC에만 둔다(6절).
 - 범위 안의 문항은 **전부** 넣는다. 개수 상한은 없다.
 - 이번 수업이 다룬 장의 모든 문항을 하나도 빼지 않고 분류한다. 합계가 합본 전체 문항 수와 bank 전체 ID 수와 같아야 한다.
 
@@ -44,6 +44,7 @@ for q in b["questions"]:
 EOF
 ```
 - 카드에는 `original.content`(문제), `original.options`(보기, id가 `A`~`E`), `analysis.answer_option_id`(분석 정답), `analysis.option_diagnostics`(보기별 설명)를 쓴다. `observations.official_answer`가 있고 분석 정답과 다르면 `key-check.md`에 적고 카드에 공개한다.
+- `observations.selected_option_id`는 응시 화면에서 고른 보기일 뿐 정답이 아니다. 정답이나 풀이 근거로 쓰지 않는다.
 - `RUN/figures/`에는 PNG만 둔다(기출 그림 자르기, `card-rules.md`). `html2md.py`가 변환할 때 `figures_<range>/`의 SVG 파일을 모두 지우고 다시 내보내므로, SVG 파일은 `RUN/figures/`에 복사하지 않는다.
 - 웹과제 그림은 SVG다. 문항 `content`의 `{"type": "figure", "asset_id": "q09"}` 항목은 bank `assets`에서 같은 `id`를 찾는다. `exam.path` SVG(bank 폴더 기준 경로, 예: `image/q09.svg`) 원문을 카드 `div.problem` 안 `<figure class="figure">`에 인라인으로 넣고 루트 `<svg>`의 `aria-label`에 `exam.alt`를 쓴다.
 - `explained.path` SVG는 해설이 들어 있으므로 풀이(`details.solution`) 안에만 넣는다(`aria-label`은 `explained.alt`). 문제·힌트·원문 정보에는 넣지 않는다.
@@ -75,3 +76,11 @@ EOF
 
 ## 5. 난이도 (`level`)
 1 개념 확인(정의·이름) · 2 판별·비교(보기마다 경계 판단) · 3 그림 판독이나 여러 개념 결합.
+
+## 6. 변형 연습(partC) — 원문과 구별된 생성 문제
+이미 풀어 본 원문은 새 문제 대비력을 재는 데 쓸 수 없다. 그래서 아직 보지 않은 변형을 따로 둔다.
+- 대상: 요약의 `⚠️ 혼동 지점`과 포함 문항의 오답 진단에서 나온 **핵심 혼동 묶음**. 묶음마다 필요하면 1~2개, 고정 개수는 채우지 않는다. 합계 3~8개가 보통이다.
+- 형태(필요한 것만): 명칭 바꾸기, 참/거짓 뒤집기(틀린 보기를 고쳐 쓰게 하기), 사례·조건 바꾸기, 그림 표현 바꾸기(회전·표지 교체), 역질문(기능→구조, 조건→분류). 분류 개념이면 포함되는 것과 제외되는 것을 함께 묻는다.
+- 범위: 이번 범위와 이전 수업에서 배운 것만. 금지어를 쓰지 않는다. 원문 기출·웹과제 문장을 그대로 재사용하지 않는다.
+- 정답이 하나로 정해지게 만들고, 메인 에이전트가 manifest `answer`를 정한다. 보기 수는 원문 형식에 맞출 필요가 없다.
+- `question-audit.md`의 원문 합계에 넣지 않는다. 변형 목록은 `RUN/variants.md`에 `| id | 혼동 묶음 | 형태 | 근거 토픽 |`로 적는다.
