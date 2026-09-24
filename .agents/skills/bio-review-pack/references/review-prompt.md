@@ -59,7 +59,7 @@ EOF
 생명과학 복습팩 초안을 검토한다. 파일은 수정하지 않는다.
 
 - 대상: `<RUN>/repo/복습노트/<range>/<정리노트 html>`, `<…/복습문제 html>`
-- 근거: `<RUN>/summaries/stt-*.md`, `<RUN>/slides.txt`, `<RUN>/manifest.json`, `<RUN>/question-audit.md`, `<RUN>/key-check.md`, `<RUN>/work/exam/*.png`, 웹과제 bank
+- 근거: `<RUN>/summaries/stt-*.md`, `<RUN>/slides.txt`, `<RUN>/manifest.json`, `<RUN>/question-audit.md`, `<RUN>/key-check.md`, `<RUN>/variants.md`, `<RUN>/work/exam/*.png`, 웹과제 bank
 - 규칙: `<SKILL>/references/content-rules.md`, `card-rules.md`, `problem-selection.md`
 
 확인할 것:
@@ -68,7 +68,7 @@ EOF
 3. **범위**: "예고만/안 다룸" 내용이 본문에 설명되어 있는가. 보충 레이어에 출처가 있는가.
 4. **분류 경계**: 쉬운 설명이 조건을 지우거나, 과정 참여를 계의 구성원으로 쓰거나, 판별 용어를 없앴는가. 치트시트(30초 요약)는 본문과 따로 읽어도 조건·분류 경계가 살아 있는가.
 5. **ELI5 품질**: 쉽게 말하면 레이어가 전문용어 없이 1~3문장인가, 그림이 개념을 실제로 보여 주는가.
-6. **문항**: 문제·보기가 원문(PNG, bank)과 글자까지 같은가, 모든 보기에 진단이 있는가, 정답이 `key-check.md`와 맞는가(직접 다시 판단), 답안지 오류를 공개했는가, `question-audit.md`의 합계가 합본·bank 전체와 맞는가. 변형 연습(partC)은 원문이 아니라고 표시했는가, 이번 범위 안인가, 정답이 하나인가, 원문 문장을 그대로 재사용하지 않았는가.
+6. **문항**: 문제·보기가 원문(PNG, bank)과 글자까지 같은가, 모든 보기에 진단이 있는가, 원문 문항의 정답이 `key-check.md`와 맞는가(직접 다시 판단), 답안지 오류를 공개했는가, `question-audit.md`의 합계가 합본·bank 전체와 맞는가. 변형 연습(partC)은 원문이 아니라고 표시했는가, 이번 범위 안인가, 정답이 하나이고 `variants.md`의 의도한 정답과 맞는가(직접 다시 판단), 원문 문장을 그대로 재사용하지 않았는가.
 7. **표현**: 표 첫 열이 한 글자씩 줄바꿈되거나 빈 칸이 있는 표, 잘린 문장, 원문자.
 
 출력 형식(이것만):
