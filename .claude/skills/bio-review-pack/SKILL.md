@@ -5,6 +5,6 @@ description: 생명과학 수업의 STT·강의노트·교과서와 23·24 기�
 
 # 생명과학 복습팩
 
-Read and follow [the canonical skill](../../../.agents/skills/bio-review-pack/SKILL.md) completely before acting.
+Read and follow the canonical skill at `.agents/skills/bio-review-pack/SKILL.md` (repo root) completely before acting.
 `SKILL` in that file means the canonical directory `.agents/skills/bio-review-pack`; resolve every script, asset, and reference path from there.
 Do not maintain a second procedure here.

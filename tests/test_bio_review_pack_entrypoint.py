@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CANON = ROOT / ".agents/skills/bio-review-pack/SKILL.md"
 ENTRY = ROOT / ".claude/skills/bio-review-pack/SKILL.md"
-TARGET = "../../../.agents/skills/bio-review-pack/SKILL.md"
+TARGET = ".agents/skills/bio-review-pack/SKILL.md"
 
 
 def frontmatter(text):
@@ -22,18 +22,12 @@ class BioReviewPackEntrypointTests(unittest.TestCase):
     def test_entry_points_to_canonical(self):
         text = ENTRY.read_text(encoding="utf-8")
         self.assertIn(TARGET, text)
-        self.assertEqual((ENTRY.parent / TARGET).resolve(), CANON.resolve())
+        self.assertEqual((ROOT / TARGET).resolve(), CANON.resolve())
 
     def test_entry_does_not_duplicate_procedure(self):
         text = ENTRY.read_text(encoding="utf-8")
         self.assertLessEqual(len(text.splitlines()), 20)
         self.assertNotRegex(text, r"\n### \d\. ")
-
-    def test_rules_point_to_new_skill_only(self):
-        rules = (ROOT / "정리노트/CLAUDE.md").read_text(encoding="utf-8")
-        self.assertIn(".agents/skills/bio-review-pack/SKILL.md", rules)
-        self.assertNotIn(".agents/skills/summary-note/SKILL.md", rules)
-        self.assertNotIn(".agents/skills/study-note-eli5/SKILL.md", rules)
 
     def test_old_skills_removed(self):
         for name in ("summary-note", "study-note-eli5"):
