@@ -1,33 +1,21 @@
-import re
+import os
 import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CANON = ROOT / ".agents/skills/bio-review-pack/SKILL.md"
-ENTRY = ROOT / ".claude/skills/bio-review-pack/SKILL.md"
-TARGET = ".agents/skills/bio-review-pack/SKILL.md"
-
-
-def frontmatter(text):
-    m = re.match(r"---\nname: (.+)\ndescription: (.+)\n---\n", text)
-    return m.groups() if m else None
+ENTRY = ROOT / ".claude/skills/bio-review-pack"
+LINK = "../../.agents/skills/bio-review-pack"
 
 
 class BioReviewPackEntrypointTests(unittest.TestCase):
-    def test_entry_has_same_frontmatter_as_canonical(self):
-        entry = frontmatter(ENTRY.read_text(encoding="utf-8"))
-        self.assertIsNotNone(entry)
-        self.assertEqual(entry, frontmatter(CANON.read_text(encoding="utf-8")))
+    def test_entry_is_symlink_to_canonical(self):
+        self.assertTrue(ENTRY.is_symlink())
+        self.assertEqual(os.readlink(ENTRY), LINK)
+        self.assertEqual(ENTRY.resolve(), CANON.parent.resolve())
 
-    def test_entry_points_to_canonical(self):
-        text = ENTRY.read_text(encoding="utf-8")
-        self.assertIn(TARGET, text)
-        self.assertEqual((ROOT / TARGET).resolve(), CANON.resolve())
-
-    def test_entry_does_not_duplicate_procedure(self):
-        text = ENTRY.read_text(encoding="utf-8")
-        self.assertLessEqual(len(text.splitlines()), 20)
-        self.assertNotRegex(text, r"\n### \d\. ")
+    def test_skill_file_reachable_through_entry(self):
+        self.assertTrue((ENTRY / "SKILL.md").is_file())
 
     def test_old_skills_removed(self):
         for name in ("summary-note", "study-note-eli5"):
