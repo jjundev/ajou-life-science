@@ -6,6 +6,7 @@ manifest + 조각 파일 → 정리노트/복습문제 HTML 두 개 (표준 라�
   RUN/manifest.json
   RUN/sections/<section-id>.html   (섹션 안쪽: <article class="topic"> 들, <script> 가능)
   RUN/cards/<problem-id>.html      (<article class="card"> 하나)
+  RUN/figures/*                    (카드 원문 그림 등, out/figures_<range>/ 로 복사)
 조각 안의 {{NOTE_HREF}} / {{REVIEW_HREF}} 는 실제 파일명으로 바뀐다.
 <script> 블록은 조각에서 빼서 </body> 앞({{SCRIPTS}})으로 모은다.
 CLI: assemble.py --run RUN --out 복습노트/<range>
@@ -17,6 +18,7 @@ import argparse
 import html
 from pathlib import Path
 import re
+import shutil
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -61,7 +63,7 @@ def build_note(m: dict, run_dir: Path) -> str:
         scripts += found
         sections.append(f'    <section id="{sec["id"]}"><h2>{esc(sec["title"])}</h2>\n{body.strip()}\n    </section>')
     return fill((ASSETS / "note-template.html").read_text(encoding="utf-8"), {
-        "PAGE_TITLE": esc(f"머신러닝기초 정리노트 {m['range']}"),
+        "PAGE_TITLE": esc(f"{m['course']} 정리노트 {m['range']}"),
         "DESCRIPTION": esc(m["note_subtitle"]),
         "TOC": "".join(f'<a href="#{s["id"]}">{esc(s["short"])}</a>' for s in m["sections"]),
         "TITLE": esc(m["note_title"]),
@@ -83,7 +85,7 @@ def build_review(m: dict, run_dir: Path) -> str:
             cards.append(body.strip())
         parts.append(f'    <section id="{part["id"]}"><h2>{esc(part["title"])}</h2>\n' + "\n".join(cards) + "\n    </section>")
     return fill((ASSETS / "review-template.html").read_text(encoding="utf-8"), {
-        "PAGE_TITLE": esc(f"머신러닝기초 복습문제 {m['range']}"),
+        "PAGE_TITLE": esc(f"{m['course']} 복습문제 {m['range']}"),
         "DESCRIPTION": esc(m["review_title"]),
         "TOC": "".join(f'<a href="#{p["id"]}">{esc(p["short"])}</a>' for p in m["parts"]),
         "NOTE_HREF": manifest_mod.note_name(m),
@@ -96,6 +98,21 @@ def build_review(m: dict, run_dir: Path) -> str:
     })
 
 
+def copy_figures(run_dir: Path, out_dir: Path, range_: str) -> int:
+    """RUN/figures/ 의 파일을 out/figures_<range>/ 로 복사하고 개수를 돌려준다."""
+    src = run_dir / "figures"
+    if not src.is_dir():
+        return 0
+    dst = out_dir / manifest_mod.fig_dir_name(range_)
+    dst.mkdir(parents=True, exist_ok=True)
+    count = 0
+    for f in sorted(src.iterdir()):
+        if f.is_file():
+            shutil.copy2(f, dst / f.name)
+            count += 1
+    return count
+
+
 def assemble(run_dir: Path | str, out_dir: Path | str) -> tuple[Path, Path]:
     run_dir, out_dir = Path(run_dir), Path(out_dir)
     m = manifest_mod.load(run_dir / "manifest.json")
@@ -106,6 +123,7 @@ def assemble(run_dir: Path | str, out_dir: Path | str) -> tuple[Path, Path]:
     note_html, review_html = build_note(m, run_dir), build_review(m, run_dir)
     note_path.write_text(note_html, encoding="utf-8")
     review_path.write_text(review_html, encoding="utf-8")
+    copy_figures(run_dir, out_dir, m["range"])
     return note_path, review_path
 
 

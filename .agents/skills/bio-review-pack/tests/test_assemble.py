@@ -27,7 +27,8 @@ class TestAssemble(unittest.TestCase):
         self.assertIn('<nav class="toc" aria-label="목차"><a href="#s1">1 기초</a><a href="#s2">2 요약·예고</a></nav>', self.note_html)
         self.assertIn('<section id="s1"><h2>1. 기초 통계</h2>', self.note_html)
         self.assertIn("<h1>Mini — 테스트 정리노트</h1>", self.note_html)
-        self.assertIn("<title>머신러닝기초 정리노트 0101-0102</title>", self.note_html)
+        self.assertIn("<title>생명과학 정리노트 0101-0102</title>", self.note_html)
+        self.assertIn("<title>생명과학 복습문제 0101-0102</title>", self.review_html)
 
     def test_scripts_moved_after_main(self):
         main_end = self.note_html.index("</main>")
@@ -40,6 +41,12 @@ class TestAssemble(unittest.TestCase):
 
     def test_review_parts(self):
         self.assertIn('<section id="partA"><h2>A. 교과서 예제</h2>', self.review_html)
+        self.assertIn('<section id="partB"><h2>B. 기출</h2>', self.review_html)
+
+    def test_card_figures_copied(self):
+        # 카드 원문 그림(RUN/figures/)은 산출물 figures_<range>/ 로 복사된다.
+        self.assertEqual((self.tmp / "figures_0101-0102" / "p2.png").read_bytes(),
+                         (MINI_RUN / "figures" / "p2.png").read_bytes())
 
     def test_progress_keys_are_scoped_by_range(self):
         # 팩마다 p1, s1-… id가 겹치므로 진행 기록 키에 기간이 들어가야 한다.

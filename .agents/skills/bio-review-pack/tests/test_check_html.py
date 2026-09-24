@@ -25,6 +25,17 @@ class TestPrimitives(unittest.TestCase):
         problems = check_html.check_common(check_html.parse_html(src), src, Path("x.html"))
         self.assertEqual([p.code for p in problems], ["widget-static-missing"])
 
+    def test_local_image_must_exist(self):
+        with tempfile.TemporaryDirectory() as d:
+            src = '<html lang="ko"><body><img src="figures_x/a.png" alt=""><img src="data:image/png;base64,AA" alt=""></body></html>'
+            path = Path(d) / "x.html"
+            codes = [p.code for p in check_html.check_common(check_html.parse_html(src), src, path)]
+            self.assertEqual(codes, ["broken-image"])
+            (Path(d) / "figures_x").mkdir()
+            (Path(d) / "figures_x" / "a.png").write_bytes(b"x")
+            codes = [p.code for p in check_html.check_common(check_html.parse_html(src), src, path)]
+            self.assertEqual(codes, [])
+
     def test_leftover_slot_and_external(self):
         src = '<html lang="ko"><head><script src="https://cdn.tailwindcss.com"></script></head><body>{{TOC}}</body></html>'
         codes = sorted(p.code for p in check_html.check_common(check_html.parse_html(src), src, Path("x.html")))
@@ -32,7 +43,7 @@ class TestPrimitives(unittest.TestCase):
 
     def external_codes(self, head: str, body: str = "") -> list[str]:
         src = f'<html lang="ko"><head>{head}</head><body>{body}</body></html>'
-        return [p.code for p in check_html.check_common(check_html.parse_html(src), src, Path("x.html"))]
+        return [p.code for p in check_html.check_common(check_html.parse_html(src), src, Path("x.html")) if p.code == "external"]
 
     def test_remote_resources_on_any_tag_are_external(self):
         cases = [
@@ -88,7 +99,7 @@ class TestPack(unittest.TestCase):
         self.assertEqual(self.codes(), ["missing-layer"])
 
     def test_missing_supp_badge(self):
-        self.edit("sections/s1.html", '<span class="badge supp">보충 · 수업에서 유도하진 않았어요</span>', "")
+        self.edit("sections/s1.html", '<span class="badge supp">보충 · 수업에서 다루지 않았어요</span>', "")
         self.assertEqual(self.codes(), ["missing-supp"])
 
     def test_missing_sum(self):

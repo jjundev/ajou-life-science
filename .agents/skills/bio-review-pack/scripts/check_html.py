@@ -2,7 +2,7 @@
 """
 정리노트/복습문제 HTML 검사기 (표준 라이브러리만 사용).
 
-- 공통 검사: lang, 중복 id, 외부 리소스 허용 목록, 수식 구분자, 링크, 남은 슬롯, 위젯 정적 대체물
+- 공통 검사: lang, 중복 id, 외부 리소스 허용 목록, 수식 구분자, 링크, 남은 슬롯, 위젯 정적 대체물, 로컬 그림 파일
 - manifest 검사: 섹션·토픽 id, 필수 용어, 레이어, 보충 배지, 예고 밖 금지어, 링크, 문제 카드
 CLI:
   check_html.py FILE [FILE ...]
@@ -32,7 +32,7 @@ ALLOWED_EXTERNAL_PREFIXES = (
     "https://cdn.jsdelivr.net/npm/katex@0.16.11/",
     "https://cdn.jsdelivr.net/npm/pretendard@1.3.9/",
 )
-SUPP_LABEL = "보충 · 수업에서 유도하진 않았어요"
+SUPP_LABEL = "보충 · 수업에서 다루지 않았어요"
 # 스킬 템플릿을 바꾸기 전에 만든 팩의 라벨도 받아 준다.
 LEGACY_SUPP_LABELS = ("📎 보충 · 수업 미유도",)
 CARD_PARTS = {"problem", "original", "hint", "solution", "answer"}
@@ -65,6 +65,7 @@ class Doc:
     duplicate_ids: set[str] = field(default_factory=set)
     id_section: dict[str, str | None] = field(default_factory=dict)
     hrefs: list[str] = field(default_factory=list)
+    img_srcs: list[str] = field(default_factory=list)
     external_resources: list[str] = field(default_factory=list)
     section_text: dict[str, str] = field(default_factory=lambda: defaultdict(str))
     containers: dict[str, Container] = field(default_factory=dict)
@@ -117,6 +118,9 @@ class _Parser(HTMLParser):
             self.doc.hrefs.append(a["href"])
             if con is not None:
                 self.doc.containers[con].hrefs.append(a["href"])
+        src = a.get("src", "")
+        if tag == "img" and src and not is_remote(src) and not src.startswith("data:"):
+            self.doc.img_srcs.append(src)
         # 원격 리소스: 모든 태그의 src, 모든 <link>의 href (<a href>는 broken_links 담당)
         if is_remote(a.get("src", "")):
             self.doc.external_resources.append(a["src"])
@@ -236,6 +240,7 @@ def check_common(doc: Doc, source: str, path: Path) -> list[Problem]:
     out += [Problem("external", name, u) for u in doc.external_resources if not u.startswith(ALLOWED_EXTERNAL_PREFIXES)]
     out += [Problem("math", name, e) for e in math_delimiter_errors(doc.body_text)]
     out += [Problem("broken-link", name, h) for h in broken_links(doc, Path(path).parent)]
+    out += [Problem("broken-image", name, s) for s in doc.img_srcs if not (Path(path).parent / unquote(s)).exists()]
     out += [Problem("leftover-slot", name, s) for s in sorted(set(SLOT_RE.findall(source)))]
     out += [Problem("widget-static-missing", wid, "위젯에 .widget-static 정적 대체물이 없음")
             for wid, classes in sorted(doc.widgets.items()) if "widget-static" not in classes]

@@ -59,7 +59,7 @@ class TestHtml2Md(unittest.TestCase):
         (self.tmp / "outside.svg").write_text("<svg/>", encoding="utf-8")
         _, figs = html2md.convert_pack(self.note, self.review)
         self.assertEqual(figs, 1)
-        self.assertEqual(sorted(p.name for p in fig.iterdir()), ["keep.txt", "widget-mean-static.svg"])
+        self.assertEqual(sorted(p.name for p in fig.iterdir()), ["keep.txt", "p2.png", "widget-mean-static.svg"])
         self.assertTrue((self.tmp / "outside.svg").exists())
 
     def test_links_rewritten_to_md(self):
