@@ -37,7 +37,7 @@ manifest는 이번 팩의 계약이다. 작성자, 검사기, 조립기가 모�
 ## parts / problems
 - `parts`: `partA`(`{"id": "partA", "title": "A. 웹과제", "short": "A 웹과제"}`), `partB`(`{"id": "partB", "title": "B. 기출", "short": "B 기출"}`). 포함 문항이 0개인 part는 뺀다. 변형 연습이 있으면 `partC`(`{"id": "partC", "title": "C. 변형 연습", "short": "C 변형"}`)를 마지막에 둔다.
 - 문제 선별은 `references/problem-selection.md`. 범위 안의 문항은 **전부** 넣는다(개수 상한 없음).
-- 문제 `id`: `p1`, `p2`, … 빈 번호 없이 순서대로(partA 먼저, 각 part 안에서는 원문 번호 순). partC id는 모든 원문 문항 뒤에 `RUN/variants.md` 순서로 매긴다. 카드 파일명 `cards/<id>.html`이 된다. `part`: 위 `parts`의 id.
+- 문제 `id`: `p1`, `p2`, … 빈 번호 없이 순서대로(partA 먼저, 각 part 안에서는 원문 번호 순). partC id는 모든 원문 문항 뒤에 `RUN/variants.md` 순서로 매긴다. 카드 파일명 `cards/<id>.html`이 된다. `part`: 위 `parts`의 id. 단, 조립 뒤 추가·삭제는 다시 매기지 않는다(SKILL.md 6단계).
 - 리뷰나 재분류로 조립 뒤에 문항이 늘면 기존 번호를 다시 매기지 않고 다음 번호(예: `p36`)를 끝에 붙인다. 원문 번호 순서의 예외는 `question-audit.md` 사유 칸에 적는다.
 - `source`: 웹과제는 `"웹과제 <장>장 q<두 자리 번호>"`(예: `"웹과제 1장 q01"`), 기출은 `"기출 <장>강 <번호>"`(예: `"기출 3강 12"`). 정확히 이 형식. 변형 연습은 `"생성 변형 <토픽 id>"`(예: `"생성 변형 s2-two-divisions"`).
 - `variant`: partA·partB는 `false`, partC(생성 변형)는 `true`.
