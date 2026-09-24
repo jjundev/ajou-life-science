@@ -1,0 +1,2066 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>생명과학 정리노트 0922</title>
+  <meta name="description" content="이영만 교수님 생명과학 · 0922 수업 (3장 세포분열 · 4장 유전)">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('od-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']})"></script>
+  <style>
+    /* ---------- 토큰 ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #b54708; --prof: #6941c6; --supp: #067647; --danger: #d92d20;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --fs-title: clamp(28px, 6vw, 36px); --fs-h3: clamp(26px, 5.4vw, 32px); --fs-layer: 19px; --fs-lead: 22px; --fs-body: 17px; --fs-sub: 15px; --fs-small: 14px; --fs-label: 13px; --fs-fig: 12px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+      --radius: 8px; --measure: 680px; --tap: 48px; --btn-min: 160px;
+      --dur: 220ms; --dur-exit: 150ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+      /* 예전 조각이 참조할 수 있는 이름 */
+      --surface-2: var(--surface); --accent-soft: var(--surface); --warn-soft: var(--surface);
+      --prof-soft: var(--surface); --supp-soft: var(--surface); --eli5: var(--accent-ink); --eli5-soft: var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+        --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+        --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+    }
+
+    /* ---------- 기본 ---------- */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent-ink); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+
+    /* ---------- 상단 바 ---------- */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s2) var(--s4); display: flex; align-items: center; gap: var(--s3); min-height: 56px; }
+    .brand { flex: 1 1 auto; min-width: 0; font-size: var(--fs-body); font-weight: 700; white-space: nowrap; }
+    .text-btn { flex: none; min-height: 44px; min-width: 44px; padding: 0 var(--s3); border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); font: 600 var(--fs-small)/1 var(--font); cursor: pointer; }
+    .bar { height: 2px; background: var(--line); overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+
+    /* ---------- 본문 ---------- */
+    main { flex: 1 0 auto; width: 100%; max-width: var(--measure); margin: 0 auto; padding: var(--s6) var(--s5) var(--s7); }
+    .hero h1 { font-size: var(--fs-title); line-height: 1.3; margin: 0 0 var(--s3); letter-spacing: -0.02em; }
+    .hero p { color: var(--ink-2); margin: 0; }
+    section { margin-top: var(--s7); }
+    section > h2 { font-size: 22px; line-height: 1.4; margin: 0 0 var(--s4); }
+    .topic { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .topic h3 { margin: 0 0 var(--s2); font-size: var(--fs-h3); font-weight: 800; line-height: 1.3; letter-spacing: -0.02em; }
+    .tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+    .tag { font-size: var(--fs-label); line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+
+    /* 레이어: 배경 없이 라벨과 구분선으로 나눈다 */
+    .layer { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .layer.eli5 { margin-top: 0; padding-top: 0; border-top: 0; }
+    .layer > :first-child { margin-top: 0; }
+    .layer > :last-child { margin-bottom: 0; }
+    .layer-title { display: block; font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; color: var(--ink); margin-bottom: var(--s3); }
+    .layer.eli5 .layer-title { color: var(--accent-ink); }
+    .layer.eli5 .lead { font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; letter-spacing: -0.01em; margin: 0 0 var(--s4); }
+    /* 정확히 말하면: 본문 크기 그대로, 굵은 첫머리만 진하게 */
+    .layer.formal b { font-weight: 700; color: var(--ink); }
+    /* 교수님 말씀 · 주의: 보조 정보는 한 단계 작게 */
+    .layer.prof, .layer.warn { font-size: var(--fs-sub); line-height: 1.7; }
+    .layer.prof blockquote { font-size: var(--fs-sub); }
+    .layer.prof .layer-title { color: var(--prof); }
+    .layer.warn { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn .layer-title { color: var(--warn); font-size: var(--fs-body); }
+    .layer.supp .badge.supp { margin-bottom: var(--s2); }
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
+    .badge.supp { color: var(--supp); }
+    blockquote { margin: var(--s3) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
+    ol.steps { padding-left: 1.4em; }
+    ol.steps li { margin: var(--s2) 0; }
+
+    /* 그림 · 수식 · 표 */
+    .figure { margin: var(--s4) 0; text-align: center; }
+    .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
+    .figure figcaption { font-size: var(--fs-small); color: var(--ink-2); margin-top: var(--s1); }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: var(--s1) 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+    th, td { border-bottom: 1px solid var(--line); padding: var(--s2); text-align: left; vertical-align: top; }
+    th { color: var(--ink-2); font-weight: 600; }
+    td:first-child, th:first-child { min-width: 6em; }
+
+    /* 위젯 */
+    .widget { background: var(--surface); border-radius: var(--radius); padding: var(--s4); margin: var(--s5) 0; }
+    .widget h4 { margin: 0 0 var(--s1); font-size: var(--fs-layer); line-height: 1.4; }
+    .widget-help { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s3); }
+    .controls { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--s2); font-size: var(--fs-small); }
+    .controls label { display: flex; align-items: center; gap: var(--s2); min-height: 44px; }
+    .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .widget svg { width: 100%; height: auto; background: var(--bg); border-radius: var(--radius); }
+    .readout { font-size: var(--fs-small); margin-top: var(--s2); }
+    .legend { font-size: var(--fs-label); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .sw { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: var(--s1); border-radius: 2px; }
+    .sw.truth { background: var(--ink-2); } .sw.fit { background: var(--accent); } .sw.train { background: var(--accent); height: 10px; width: 10px; border-radius: 50%; }
+    .sw.test { background: var(--warn); height: 10px; width: 10px; border-radius: 50%; } .sw.like { background: var(--accent); } .sw.prior { background: var(--prof); } .sw.post { background: var(--supp); }
+    .axis { stroke: var(--line); stroke-width: 1.5; }
+    .tick { fill: var(--ink-2); font-size: 11px; }
+    .plot-truth { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .plot-fit { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+    .pt-train { fill: var(--accent); }
+    .pt-test { fill: var(--warn); }
+    .plot-like { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .plot-prior { fill: none; stroke: var(--prof); stroke-width: 2; stroke-dasharray: 6 4; }
+    .plot-post { fill: none; stroke: var(--supp); stroke-width: 3; }
+    .mark-ml { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .mark-map { stroke: var(--supp); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 2; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 2.5; }
+    .fig-danger { stroke: var(--danger); fill: none; stroke-width: 2.5; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: 13px; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-fig); font-family: inherit; }
+
+    footer { width: 100%; max-width: var(--measure); margin: 0 auto; padding: 0 var(--s5) var(--s6); color: var(--ink-2); font-size: var(--fs-small); }
+
+    /* ---------- 하단 이동 바 ---------- */
+    .pager { position: sticky; bottom: 0; z-index: 10; background: var(--bg); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .pager-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s3) var(--s4); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); }
+    .pager-count { font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; min-width: 4em; }
+    .btn { min-height: var(--tap); min-width: var(--btn-min); padding: 0 var(--s6); border-radius: var(--radius); border: 0; font: 700 var(--fs-body)/1 var(--font); cursor: pointer; white-space: nowrap;
+      transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+    .btn-ghost { justify-self: start; background: var(--surface); color: var(--ink); }
+    .btn-primary { justify-self: end; background: var(--btn-bg); color: var(--on-btn); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    @media (hover: hover) {
+      .text-btn:hover, .btn-ghost:not(:disabled):hover { background: var(--line); }
+      .btn-primary:not(:disabled):hover { box-shadow: inset 0 0 0 100px rgba(0, 0, 0, .14); }
+    }
+
+    /* ---------- 목차 시트 ---------- */
+    .sheet { width: min(100%, var(--measure)); max-width: 100%; max-height: 80dvh; margin: auto auto 0; padding: 0; border: 0;
+      border-radius: 16px 16px 0 0; background: var(--bg); color: var(--ink); }
+    .sheet::backdrop { background: rgba(0, 0, 0, .4); }
+    .sheet-inner { padding: var(--s4) var(--s5) calc(var(--s5) + env(safe-area-inset-bottom)); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s2); }
+    .sheet-head h2 { margin: 0; font-size: var(--fs-lead); }
+    .toc { display: flex; flex-direction: column; }
+    .toc > a, .toc-group > a { display: block; padding: var(--s3) 0 var(--s1); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); text-decoration: none; }
+    .toc-list { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+    .toc-list a { display: flex; align-items: center; gap: var(--s3); min-height: var(--tap); padding: var(--s2) var(--s3); margin: 0 calc(-1 * var(--s3));
+      border-radius: var(--radius); color: var(--ink); text-decoration: none; line-height: 1.4; }
+    .toc-list a[aria-current="true"] { background: var(--surface); font-weight: 700; color: var(--accent-ink); }
+    .toc-list .toc-title { flex: 1 1 0; min-width: 0; }
+    @media (hover: hover) { .toc-list a:hover { background: var(--surface); } }
+
+    /* ---------- 한 화면에 하나씩 (JS가 켤 때만) ---------- */
+    html:not(.js) .pager, html:not(.js) #toc-open { display: none; }
+    html:not(.js) .sheet { display: block; position: static; width: 100%; max-height: none; margin: 0 auto; border-radius: 0; border-bottom: 1px solid var(--line); }
+    html:not(.js) .sheet-close { display: none; }
+    .js main > .hero:not(.is-current), .js main > section:not(.is-on), .js .screen:not(.is-current) { display: none; }
+    .js main > section { margin-top: 0; }
+    .js main > section > h2 { font-size: var(--fs-small); font-weight: 600; color: var(--accent-ink); margin: 0 0 var(--s2); }
+    .js .topic { padding: 0; border-top: 0; }
+    .js .hero { padding-top: 12vh; }
+    .js footer { display: none; }
+    .js body.at-end footer { display: block; }
+    .screen.enter-next { animation: enter-next var(--dur) var(--ease-out); }
+    .screen.enter-prev { animation: enter-prev var(--dur) var(--ease-out); }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .screen.enter-next, .screen.enter-prev { animation: none; }
+      .bar > span, .btn { transition: none; }
+    }
+    @media (max-width: 480px) {
+      main { padding: var(--s5) var(--s4) var(--s6); }
+      footer { padding: 0 var(--s4) var(--s5); }
+      .btn { min-width: 120px; padding: 0 var(--s5); }
+    }
+    @media print {
+      .topbar, .pager, .sheet { display: none !important; }
+      .js main > .hero, .js main > section, .js .screen, .js footer { display: block !important; }
+    }
+
+    /* ---------- 좌우 패널 (drawer) ---------- */
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
+    .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
+    .panel-toggle svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-toggle .strip { fill: transparent; stroke: none; transition: fill 150ms ease-out; }
+    .panel-toggle[aria-expanded="true"] { color: var(--accent-ink); }
+    .panel-toggle[aria-expanded="true"] .strip { fill: currentColor; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .i-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .theme-toggle .i-sun { display: block; }
+      :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
+    }
+
+    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
+    .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
+    .content { grid-column: 2; }
+    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
+    .panel-resize { display: none; }
+    .panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 44px; margin-bottom: var(--s2); }
+    .panel-head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-lead); line-height: 1.4; }
+    .panel-sub { margin: 0 0 var(--s4); font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; }
+    .panel-empty { margin: 0; color: var(--ink-2); }
+    .panel-label { display: block; margin: var(--s5) 0 var(--s2); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+
+    /* 진행 상태 */
+    .panel-meta { margin: 0 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .panel-meta b { color: var(--ink); }
+    .progress { height: 4px; margin-bottom: var(--s3); border-radius: 2px; background: var(--line); overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+    .panel .toc-list a { margin: 0 calc(-1 * var(--s2)); padding: var(--s2); font-size: var(--fs-panel); }
+    .toc-mark { flex: none; display: block; width: 20px; height: 20px; color: var(--ink-2); }
+    .toc-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .toc-mark.is-done { color: var(--accent-ink); }
+
+    /* 복습문제: 원문 · 힌트 · 풀이 */
+    .aid details:last-of-type { border-bottom: 1px solid var(--line); }
+    .aid details.original > summary { font-size: var(--fs-panel); }
+    .solved-btn { display: flex; align-items: center; justify-content: center; gap: var(--s2); width: 100%; min-height: var(--tap); margin-top: var(--s5); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .solved-btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
+
+    /* 정리노트: 페이지 요약 */
+    .sum-lead { margin: 0; font-size: var(--fs-body); font-weight: 700; line-height: 1.6; }
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+    .eq-list li:first-child { padding-top: 0; }
+    .eq-name { display: block; font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+    .eq-list .katex-display { margin: var(--s1) 0 0; text-align: left; }
+    .eq-list .katex-display > .katex { text-align: left; }
+    .terms { margin: 0; }
+    .terms dt { font-size: var(--fs-panel); font-weight: 700; margin-top: var(--s4); }
+    .terms dt:first-child { margin-top: 0; }
+    .terms dd { margin: var(--s1) 0 0; font-size: var(--fs-sub); line-height: 1.6; color: var(--ink-2); }
+    .flow { margin: 0; padding-left: 1.4em; font-size: var(--fs-sub); }
+    .flow li { margin: var(--s2) 0; }
+
+    @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
+
+    /* 넓은 화면: 본문 옆에 붙는 패널 */
+    @media (min-width: 1024px) {
+      .layout { --l: var(--panel-l-user, var(--panel-l)); }
+      .layout[data-left="closed"] { --l: 0px; }
+      .panel-left { width: var(--l); }
+      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
+      .panel-left .panel-resize { right: 0; }
+      .panel-right .panel-resize { left: 0; }
+      .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
+      .panel-left .panel-resize::after { right: 0; }
+      .panel-right .panel-resize::after { left: 0; }
+      .panel-resize:focus-visible { outline: none; }
+      .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
+      @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
+      body.is-resizing { cursor: col-resize; user-select: none; }
+      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
+      .scrim, .panel-close { display: none; }
+    }
+    @keyframes panel-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 좁은 화면: 가장자리에서 밀려 나오는 drawer */
+    @media (max-width: 1023.98px) {
+      .panel { position: fixed; top: 0; bottom: 0; z-index: 40; visibility: hidden;
+        transition: transform var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .panel-left { left: 0; width: min(var(--drawer-l), 88vw); transform: translateX(-100%); }
+      .panel-right { right: 0; width: min(var(--drawer-r), 88vw); transform: translateX(100%); }
+      .panel.is-open { visibility: visible; transform: none; transition: transform var(--dur) var(--ease-out); }
+      .panel-inner { padding-top: calc(var(--s3) + env(safe-area-inset-top)); padding-bottom: calc(var(--s6) + env(safe-area-inset-bottom)); }
+      .scrim { position: fixed; inset: 0; z-index: 35; background: var(--scrim); opacity: 0; visibility: hidden;
+        transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
+      html:not(.js) .panel-left { display: none; }
+    }
+    @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
+      .panel.is-shown { animation: none; }
+      .panel-resize::after { transition: none; }
+    }
+    @media print {
+      body { display: block; height: auto; overflow: visible; }
+      .layout { display: block; }
+      .content { overflow: visible; }
+      .panel, .scrim { display: none !important; }
+    }
+  </style>
+</head>
+<body data-screens="article.topic" data-panels="note" data-range="0922">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <strong class="brand">정리노트</strong>
+      <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>요약</span></button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
+  </header>
+  <div class="layout" data-left="open" data-right="closed">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
+      <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-left-title">목차</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-meta">읽은 토픽 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <nav class="toc" aria-label="목차"><a href="#s0">0 열쇠</a><a href="#s1">1 유사분열</a><a href="#s2">2 감수분열</a><a href="#s3">3 다양성</a><a href="#s4">4 멘델</a><a href="#s5">5 요약·예고</a></nav>
+      </div>
+    </aside>
+    <div class="content">
+  <main>
+    <div class="hero">
+      <h1>세포분열에서 멘델까지 — 5살도 이해하는 정리노트</h1>
+      <p>이영만 교수님 생명과학 · 0922 수업 (3장 세포분열 · 4장 유전)</p>
+    </div>
+    <section id="s0"><h2>0. 지난 수업과 오늘의 열쇠</h2>
+<article class="topic" id="s0-recap"><h3>지난 수업 복습</h3><div class="tags"><span class="tag date">0922 수업</span><span class="tag slide">3장 p2</span><span class="tag slide">3장 p3</span></div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <ul>
+      <li><strong>확인점</strong>(checkpoint): 문제가 생기면 세포주기 진행을 멈추고, 고친 뒤에 다음 단계로 넘어가게 하는 지점이에요.</li>
+      <li><strong>종양 억제 유전자</strong>(tumor suppressor gene): 확인점에서 중요한 일을 하는 유전자예요. 이 유전자가 기능을 못 하면 돌연변이를 고치지 못한 채 세포주기가 진행돼 발암 유전자가 생길 확률이 높아져요.</li>
+      <li><strong>원발암 유전자</strong>(proto-oncogene): 정상일 때 세포 분열을 촉진하거나 세포주기를 조절하는 유전자예요. 돌연변이로 세포 분열을 계속 촉진하게 되면 <strong>발암 유전자</strong>(oncogene)가 돼요.</li>
+      <li>암이 생기는 두 경로: (1) 원발암 유전자가 돌연변이로 발암 유전자가 되거나, (2) 종양 억제 유전자가 기능을 잃어요.</li>
+    </ul>
+    <p>지난 수업 정리노트: <a href="../../정리노트/0917.md">0917.md</a> · <a href="../../정리노트/0917.html">0917.html</a></p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">암은 원발암 유전자가 발암 유전자로 바뀌거나, 확인점에서 일하는 종양 억제 유전자가 기능을 잃을 때 생겨요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>확인점(checkpoint)</dt><dd>문제가 있으면 세포주기를 멈추고 고치게 하는 지점</dd>
+      <dt>종양 억제 유전자(tumor suppressor gene)</dt><dd>확인점에서 중요한 일을 하는 유전자</dd>
+      <dt>발암 유전자(oncogene)</dt><dd>원발암 유전자가 돌연변이로 세포 분열을 계속 촉진하게 된 것</dd>
+    </dl>
+  </div>
+</article>
+
+<article class="topic" id="s0-target"><h3>무엇이 갈라지는가</h3><div class="tags"><span class="tag date">0922 수업</span><span class="tag slide">3장 p3</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">우리 몸의 설명서는 엄마에게 받은 것과 아빠에게 받은 것이 짝을 이루고, 나누기 전에는 저마다 똑같이 한 부씩 복사해 둬요.</p>
+    <figure class="figure">
+      <svg id="fig-split-target" viewBox="0 0 560 240" role="img" aria-label="두 칸 그림. 왼쪽 몸이 자랄 때: 선으로 그린 X 모양 두 개(엄마 것, 아빠 것)의 가운데를 점선이 세로로 지나 X마다 복사본 두 가닥이 갈라짐. 오른쪽 아기 씨앗을 만들 때: 같은 두 X 사이를 점선이 지나 엄마 것과 아빠 것이 갈라짐. X 가운데에는 색칠된 점이 있음.">
+        <text class="fig-text" x="135" y="26" text-anchor="middle">몸이 자랄 때</text>
+        <text class="fig-text" x="425" y="26" text-anchor="middle">아기 씨앗을 만들 때</text>
+        <!-- 왼쪽 칸: 엄마 것 -->
+        <path class="fig-ink" d="M58 60 Q98 110 58 160"/>
+        <path class="fig-ink" d="M102 60 Q62 110 102 160"/>
+        <circle class="fig-dot" cx="80" cy="110" r="6"/>
+        <!-- 왼쪽 칸: 아빠 것 -->
+        <path class="fig-accent" d="M168 60 Q208 110 168 160"/>
+        <path class="fig-accent" d="M212 60 Q172 110 212 160"/>
+        <circle class="fig-dot" cx="190" cy="110" r="6"/>
+        <line class="fig-danger" x1="80" y1="46" x2="80" y2="172" stroke-dasharray="6 5"/>
+        <line class="fig-danger" x1="190" y1="46" x2="190" y2="172" stroke-dasharray="6 5"/>
+        <text class="fig-text" x="80" y="192" text-anchor="middle">엄마 것</text>
+        <text class="fig-text" x="190" y="192" text-anchor="middle">아빠 것</text>
+        <text class="fig-text" x="135" y="224" text-anchor="middle">복사본끼리 떨어져요</text>
+        <!-- 오른쪽 칸: 엄마 것 -->
+        <path class="fig-ink" d="M348 60 Q388 110 348 160"/>
+        <path class="fig-ink" d="M392 60 Q352 110 392 160"/>
+        <circle class="fig-dot" cx="370" cy="110" r="6"/>
+        <!-- 오른쪽 칸: 아빠 것 -->
+        <path class="fig-accent" d="M458 60 Q498 110 458 160"/>
+        <path class="fig-accent" d="M502 60 Q462 110 502 160"/>
+        <circle class="fig-dot" cx="480" cy="110" r="6"/>
+        <line class="fig-danger" x1="425" y1="46" x2="425" y2="172" stroke-dasharray="6 5"/>
+        <text class="fig-text" x="370" y="192" text-anchor="middle">엄마 것</text>
+        <text class="fig-text" x="480" y="192" text-anchor="middle">아빠 것</text>
+        <text class="fig-text" x="425" y="224" text-anchor="middle">엄마 것과 아빠 것이 떨어져요</text>
+      </svg>
+      <figcaption>몸이 자랄 때는 가운데 색칠된 점으로 붙어 있던 복사본끼리 떨어지고, 아기 씨앗을 만들 때는 먼저 엄마 것과 아빠 것이 떨어져요.</figcaption>
+    </figure>
+    <p>그래서 아기 씨앗에는 엄마 것과 아빠 것 가운데 하나만 들어가요.</p>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>유사분열과 감수분열은 둘 다 전기·중기·후기·말기로 나누지만, <strong>무엇이 갈라지는가</strong>가 달라요. 이 차이를 보려면 두 가지 구분이 먼저 필요해요.</p>
+    <ul>
+      <li><strong>자매염색분체</strong>(sister chromatid): 염색체 하나를 복제해 생긴 두 가닥이에요. 동원체로 붙어 있고, 복제본이라 유전 정보가 같아요.</li>
+      <li><strong>상동염색체</strong>(homologous chromosome): 모양과 크기가 같은 염색체 한 쌍이에요. 하나는 어머니에게서, 하나는 아버지에게서 왔어요.</li>
+      <li>상동염색체의 같은 위치에는 같은 유전자가 있어요. 하지만 그 유전자의 <strong>대립유전자</strong>(allele)는 같을 수도 있고 다를 수도 있어요. 그래서 "상동염색체는 늘 같은 대립유전자를 가진다"는 틀린 말이고, "일반적으로 같은 유전자를 가진다(성염색체 X·Y 쌍은 예외)"가 맞는 말이에요.</li>
+      <li>상동염색체를 쌍으로 가진 상태가 <strong>2n</strong>(2배체, diploid)이고, 쌍 가운데 하나씩만 가진 상태가 n, 곧 <strong>반수체</strong>(haploid)예요. 체세포는 2n, 정자·난자 같은 배우자는 n이에요. 사람은 상동염색체가 23쌍이라 체세포에 46개, 배우자에 23개가 있어요. 체세포가 배우자보다 염색체 수가 두 배 많아요.</li>
+    </ul>
+    <div class="table-wrap"><table>
+      <thead><tr><th>구분</th><th>유사분열(체세포 분열)</th><th>감수분열</th></tr></thead>
+      <tbody>
+        <tr><td>염색체 수</td><td>2n → 2n</td><td>2n → n(반수체)</td></tr>
+        <tr><td>갈라지는 것</td><td>자매염색분체</td><td>먼저 상동염색체(1분열), 그다음 자매염색분체(2분열)</td></tr>
+        <tr><td>일어나는 때</td><td>몸의 세포를 늘릴 때</td><td>유성생식에서 정자·난자를 만들 때만</td></tr>
+      </tbody>
+    </table></div>
+    <p>왜 그렇게 갈라지는지는 염색체 수에서 나와요.</p>
+    <ol class="steps">
+      <li>유사분열은 2n이 그대로 2n이 되어야 해요. 그러려면 엄마 것과 아빠 것, 곧 상동염색체가 함께 따라가야 해요. 그래서 유사분열에서 갈라지는 것은 상동염색체가 아니라 자매염색분체예요.</li>
+      <li>감수분열은 2n이 n으로 줄어야 해요. 그래서 처음에 상동염색체가 갈라져요(감수 1분열). 1분열이 끝난 세포는 이미 반수체예요.</li>
+      <li>그다음에 자매염색분체가 갈라져요(감수 2분열). 그래서 감수분열은 두 단계로 진행돼요.</li>
+      <li>결과적으로 배우자는 상동염색체 쌍 가운데 하나만 받아요. 상동염색체 한 쌍이 함께 자식에게 가지 않아요.</li>
+    </ol>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>오늘의 목표를 "유사 분열과 감수 분열 차이를 확실하게" 아는 것으로 잡으셨어요(0922 01:58). 단계별 사건은 외울 것 없이 한번 들으면 이해된다고 하시면서, 그 전제로 두 염색체의 구분을 강조하셨어요.</p>
+    <blockquote>상동 염색체하고 자매 염색 분체의 구분을 확실하게 해야 됩니다. 이걸 못 하면은 그냥 달나라 얘기가 됩니다. (0922 02:37)</blockquote>
+    <p>2n이 2n으로 되려면 상동염색체가 같이 가야 하는지 나뉘어야 하는지 물으시고, 스스로 이렇게 정리하셨어요.</p>
+    <blockquote>엄마가 준 거 아빠가 준 게 같이 가야 되잖아. (0922 04:10)</blockquote>
+    <p>감수분열에서 상동염색체가 갈라지는 장면은 한마디로 표현하셨어요.</p>
+    <blockquote>너는 이쪽, 나는 이쪽. (0922 04:56)</blockquote>
+    <blockquote>처음에 상동 염색체가 나눠지고 그다음에 자매 염색 분체가 나눠집니다. 이게 결정적인 차이입니다. (0922 05:13)</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li><strong>착각:</strong> 동원체로 붙은 두 가닥이 엄마 것과 아빠 것이다. <strong>바른 구분:</strong> 동원체로 붙은 두 가닥은 하나를 복제한 자매염색분체라 유전 정보가 같아요. 엄마 것과 아빠 것은 모양과 크기가 같은 따로 된 한 쌍, 곧 상동염색체이고 대립유전자가 다를 수 있어요. "동원체에 의해서 붙어 있는 거는 자매 염색 분체"(0922 02:54), "한 개는 마더, 한 개는 파더"(0922 03:18).</li>
+      <li><strong>착각:</strong> 상동염색체는 같은 유전자를 가지니 대립유전자도 늘 같다. <strong>바른 구분:</strong> 같은 위치에 같은 유전자가 있을 뿐, 대립유전자는 같을 수도 다를 수도 있어요. "동일한 대립유전자일 수도 있고 다른 대립유전자일 수도"(0922 03:25).</li>
+      <li><strong>착각:</strong> 유사분열에서도 상동염색체가 갈라진다, 또는 감수분열도 처음부터 자매염색분체가 갈라진다. <strong>바른 구분:</strong> 유사분열에서 갈라지는 것은 자매염색분체뿐이에요. 감수분열은 1분열에서 상동염색체, 2분열에서 자매염색분체가 갈라져요. "유사 분열에서 나눠지는 것은 상동 염색체가 아니고 자매 염색 분체"(0922 04:14), "처음에 나눠지는 게 상동 염색체"(0922 04:43).</li>
+      <li><strong>착각:</strong> 배우자가 체세포보다 염색체가 많다, 또는 상동염색체 한 쌍이 함께 자식에게 간다. <strong>바른 구분:</strong> 체세포는 2n, 배우자는 n이라 체세포 쪽이 두 배 많아요. 감수분열에서 상동염색체가 갈라지므로 배우자에는 쌍 가운데 하나만 들어가요. "감수 분열은 2n이 n으로 줄어드는 겁니다"(0922 03:43).</li>
+    </ul>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">유사분열은 자매염색분체가 갈라져 2n을 지키고, 감수분열은 먼저 상동염색체가 갈라져 반수체를 만들어요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>자매염색분체(sister chromatid)</dt><dd>하나를 복제해 동원체로 붙어 있는 두 가닥, 유전 정보가 같음</dd>
+      <dt>상동염색체(homologous chromosome)</dt><dd>엄마·아빠에게서 온 모양과 크기가 같은 한 쌍, 같은 유전자에 대립유전자는 다를 수 있음</dd>
+      <dt>반수체(haploid)</dt><dd>상동염색체 쌍 가운데 하나씩만 가진 n 상태</dd>
+    </dl>
+  </div>
+</article>
+    </section>
+    <section id="s1"><h2>1. 유사분열</h2>
+<article class="topic" id="s1-interphase"><h3>간기와 분열 준비</h3><div class="tags"><span class="tag date">0922 수업</span><span class="tag slide">3장 p1</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">세포는 둘로 나뉘기 전에 한참 동안 자라면서 준비물을 두 배로 챙겨요.</p>
+    <figure class="figure">
+      <svg id="fig-interphase-prep" viewBox="0 0 520 220" role="img" aria-label="왼쪽 세포에는 풀린 실 한 벌과 담배꽁초 모양 원통 한 쌍이 있고, 화살표 오른쪽 세포에는 풀린 실 두 벌과 원통 두 쌍이 있다">
+        <circle class="fig-ink" cx="120" cy="105" r="80"/>
+        <circle class="fig-ink" cx="120" cy="115" r="45"/>
+        <path class="fig-accent" d="M95,110 C105,92 115,132 125,110 S140,92 146,118 C140,136 110,140 100,124"/>
+        <rect class="fig-ink" x="104" y="40" width="16" height="7"/>
+        <rect class="fig-ink" x="124" y="33" width="7" height="16"/>
+        <line class="fig-ink" x1="215" y1="105" x2="295" y2="105"/>
+        <polyline class="fig-ink" points="285,98 295,105 285,112"/>
+        <text class="fig-text" x="255" y="92" text-anchor="middle">두 배로</text>
+        <circle class="fig-ink" cx="400" cy="105" r="80"/>
+        <circle class="fig-ink" cx="400" cy="115" r="45"/>
+        <path class="fig-accent" d="M370,105 C380,88 390,128 400,106 S414,90 420,112"/>
+        <path class="fig-accent" d="M378,130 C388,114 398,150 408,128 S422,114 428,136"/>
+        <rect class="fig-ink" x="345" y="52" width="16" height="7"/>
+        <rect class="fig-ink" x="365" y="45" width="7" height="16"/>
+        <rect class="fig-ink" x="428" y="52" width="16" height="7"/>
+        <rect class="fig-ink" x="448" y="45" width="7" height="16"/>
+        <text class="fig-text" x="120" y="208" text-anchor="middle">풀린 실 한 벌, 원통 한 쌍</text>
+        <text class="fig-text" x="400" y="208" text-anchor="middle">풀린 실 두 벌, 원통 두 쌍</text>
+      </svg>
+      <figcaption>나누기 전에 설계도 실(테두리 선)과 담배꽁초 모양 원통을 미리 두 배로 늘려 둬요.</figcaption>
+    </figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>세포주기는 G1기, S기, G2기, M기 순서로 돌아요. 분열기인 M기를 뺀 G1·S·G2를 합쳐 <b>간기</b>(interphase)라고 해요. '사이 간(間)' 자를 써요.</p>
+    <ol class="steps">
+      <li><b>G1기</b>(G1 phase): 세포가 자라요(성장).</li>
+      <li><b>S기</b>(S phase): DNA가 복제돼요. 이때 <b>중심체</b>도 함께 복제돼요.</li>
+      <li><b>G2기</b>(G2 phase): 분열을 준비해요.</li>
+    </ol>
+    <p>간기에는 DNA가 풀어진 <b>염색질</b>(chromatin) 상태예요. 그래서 막대 모양 염색체가 현미경으로 보이지 않아요. 교과서 그림에 간기 염색체를 막대로 그린 것은 편의상 그런 거예요. M기의 첫 단계인 전기(prophase)가 되어야 염색체가 응축(condense)되어 보이기 시작해요.</p>
+    <p>그림에서 두 가닥이 동원체(centromere)로 붙어 있으면 자매염색분체(sister chromatid)예요. 모양과 크기가 같은 한 쌍이면 상동염색체(homologous chromosome)예요.</p>
+    <p>세포가 분열할 때는 실 같은 <b>방추사</b>(방추체, spindle)가 뻗어 나와 염색체의 <b>동원체</b>에 붙어요. 방추사의 성분은 세포골격 가운데 <b>미세소관</b>(microtubule)이에요.</p>
+    <p>미세소관이 처음 뻗어 나오는 곳이 <b>중심체</b>(centrosome)예요. 서로 직각으로 놓인 작은 원통 하나하나가 <b>중심립</b>(centriole)이고, 중심립 두 개를 합친 것이 중심체예요. 수업 영상도 여러 생물에서 중심체마다 중심립이 한 쌍 있다고 했어요.</p>
+    <ol class="steps">
+      <li>세포는 원래 중심체를 한 개 가지고 있어요.</li>
+      <li>S기에 DNA가 복제될 때 중심체도 같이 복제돼요.</li>
+      <li>그래서 분열을 시작할 때 세포에는 중심체 두 개와 두 배가 된 DNA(자매염색분체)가 있어요.</li>
+    </ol>
+    <figure class="figure">
+      <svg id="fig-centrosome-kinetochore" viewBox="0 0 520 240" role="img" aria-label="양쪽 끝에 직각으로 놓인 중심립 두 개로 된 중심체가 있고, 각 중심체에서 뻗은 미세소관 선이 가운데 염색체의 동원체에 닿는다. 염색체는 자매염색분체 두 가닥이 가운데 색칠된 점인 동원체에서 붙어 있다">
+        <rect class="fig-ink" x="46" y="113" width="18" height="8"/>
+        <rect class="fig-ink" x="68" y="108" width="8" height="18"/>
+        <rect class="fig-ink" x="444" y="113" width="18" height="8"/>
+        <rect class="fig-ink" x="466" y="108" width="8" height="18"/>
+        <line class="fig-ink" x1="82" y1="117" x2="254" y2="120"/>
+        <line class="fig-ink" x1="82" y1="108" x2="118" y2="82"/>
+        <line class="fig-ink" x1="82" y1="128" x2="118" y2="154"/>
+        <line class="fig-ink" x1="440" y1="117" x2="266" y2="120"/>
+        <line class="fig-ink" x1="440" y1="108" x2="404" y2="82"/>
+        <line class="fig-ink" x1="440" y1="128" x2="404" y2="154"/>
+        <path class="fig-accent" d="M235,70 Q280,120 235,170"/>
+        <path class="fig-accent" d="M285,70 Q240,120 285,170"/>
+        <circle class="fig-dot" cx="260" cy="120" r="6"/>
+        <text class="fig-text" x="62" y="96" text-anchor="middle">중심체</text>
+        <text class="fig-muted" x="62" y="146" text-anchor="middle">(중심립 2개)</text>
+        <text class="fig-text" x="460" y="96" text-anchor="middle">중심체</text>
+        <text class="fig-muted" x="460" y="146" text-anchor="middle">(중심립 2개)</text>
+        <text class="fig-text" x="170" y="108" text-anchor="middle">미세소관(방추사)</text>
+        <text class="fig-text" x="260" y="56" text-anchor="middle">자매염색분체 2가닥</text>
+        <line class="fig-ink" x1="260" y1="128" x2="260" y2="196"/>
+        <text class="fig-text" x="260" y="214" text-anchor="middle">동원체(색칠된 점)</text>
+      </svg>
+      <figcaption>S기에 복제된 중심체 두 개가 양쪽에 자리 잡고, 거기서 뻗은 미세소관(방추사)이 염색체 가운데의 동원체에 붙어요.</figcaption>
+    </figure>
+    <p>그래서 미세소관(방추사)이 동원체와 중심체(중심립)를 잇는 일은 <a href="#s1-phases">유사분열(M기)</a> 때 일어나요. 간기의 S기에는 중심체가 복제될 뿐이고, G2기는 분열을 준비하는 때예요. 핵막은 방추사가 잇는 대상이 아니라 전기에 사라지는 구조예요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>간기라는 이름은 한자 뜻으로 기억하게 했어요.</p>
+    <blockquote>M기를 제외한 나머지 시기를 다 간기라고 한 거요, 간기. 사이 간 자. (0922 05:31)</blockquote>
+    <p>교과서 그림 속 중심립 두 개를 담배꽁초에 빗댔어요.</p>
+    <blockquote>웬 담배꽁초 두 개가 이렇게 수직 방향으로 두 개가 널브러져 있어요. (0922 07:51)</blockquote>
+    <p>"방추체의 성분은?" 하고 물은 뒤 스스로 답했어요(0922 07:18–07:29).</p>
+    <blockquote>미세소관, 미세소관. 세포골격 중에서 미세소관 있었죠? (0922 07:29)</blockquote>
+    <p>간기 그림의 막대 모양 염색체는 실제로는 보이지 않는다고 짚었어요.</p>
+    <blockquote>편의상 이렇게 막대기로 표시했지만 이 막대기조차도 안 보입니다, 원래는. (0922 06:19)</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <p><b>중심립과 중심체.</b> 원통 하나를 중심체로 착각하기 쉬워요. 원통 하나가 중심립이고, 중심립 두 개를 합친 것이 중심체예요.</p>
+    <blockquote>각각을 중심립이라고 하고 얘네들을 합쳐서 중심체라고 하는데 (0922 08:11)</blockquote>
+    <p><b>중심체와 동원체.</b> 이름이 비슷해서 서로 바꿔 쓰기 쉬워요. 중심체는 방추사가 뻗어 나오는 곳이고, 동원체는 방추사가 가서 붙는 염색체 부위예요. 방향은 늘 "중심체에서 나와 동원체에 붙는다"예요.</p>
+    <blockquote>방추사가 중심체에서 뻗어나와서 동원체에, 염색체에 결합한다. (0922 14:27)</blockquote>
+    <p><b>간기의 염색체는 "없다"가 아니라 "안 보인다".</b> 간기에 염색체가 아예 없다고 착각하기 쉬워요. 간기에도 DNA는 있고, 풀린 염색질 상태라 막대로 보이지 않을 뿐이에요. 교수님도 06:05에 "염색체가 없고"라고 했다가 나중에 바로잡았어요.</p>
+    <blockquote>간기 때는 염색체가 안 보이지만, 그냥 편의상 이렇게 그림을 그린 거예요. (0922 10:08)</blockquote>
+  </div>
+  <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+    <p>수업에서는 "G1기는 성장"까지만 말했어요. 교재는 G1기를 DNA 복제 전의 세포 성장기라고 설명해요. 이때 세포는 핵 DNA를 제외한 단백질과 그 밖의 분자들을 만들며 커져요. 세포가 커지는 만큼 미토콘드리아 같은 세포소기관(organelle)도 늘어나요.</p>
+    <p>그래서 "핵 DNA를 뺀 대부분의 단백질과 세포소기관이 늘어나는(복제되는) 시기"는 간기의 G1기예요. 가르는 기준은 이래요. S기는 DNA(와 중심체)가 복제되는 시기예요. 유사분열 전기와 말기는 핵막이 사라지거나 다시 생기는 분열 단계라서 세포가 자라는 시기가 아니에요.</p>
+    <p>교재는 G2기에도 단백질 합성과 성장이 이어진다고 써요. 하지만 DNA 복제 전의 성장 단계로 이름 붙은 것은 G1기예요.</p>
+    <p>출처: 교재 3장 p.57(G1기·S기·G2기 설명, 그림 3.2), 강의노트 3장 p1(G1기: 단백질과 그 밖의 다른 분자들을 합성), 세포소기관 증가는 Campbell Biology 12장(세포주기)</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">간기에 세포는 G1기에 자라고, S기에 DNA와 중심체를 복제하고, G2기에 분열을 준비해요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>염색질(chromatin)</dt><dd>간기에 DNA가 풀어진 상태라 막대 모양 염색체가 보이지 않아요.</dd>
+      <dt>중심체(centrosome)</dt><dd>중심립 두 개로 되어 있고 미세소관(방추사)이 뻗어 나오는 곳이에요.</dd>
+      <dt>중심립(centriole)</dt><dd>중심체를 이루는 직각으로 놓인 원통 하나예요.</dd>
+    </dl>
+  </div>
+</article>
+
+<article class="topic" id="s1-phases"><h3>전기·중기·후기·말기</h3><div class="tags"><span class="tag date">0922 수업</span><span class="tag slide">3장 p2</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">세포는 준비물을 딱 반으로 나누려고 네 단계로 움직여요.</p>
+    <figure class="figure">
+      <svg id="fig-mitosis-steps" viewBox="0 0 600 200" role="img" aria-label="세포 네 개가 나란히 있다. 첫째는 점선 테두리 안에 X자 막대 두 개가 흩어져 있고, 둘째는 X자 막대가 가운데 점선 위에 한 줄로 서 있고, 셋째는 반쪽 막대들이 양쪽 끝으로 가고, 넷째는 가운데가 잘록해진 세포 안에 동그라미 두 개가 있다">
+        <circle class="fig-ink" cx="75" cy="85" r="55"/>
+        <circle class="fig-ink" cx="75" cy="85" r="36" stroke-dasharray="5 5"/>
+        <line class="fig-accent" x1="52" y1="64" x2="68" y2="86"/>
+        <line class="fig-accent" x1="68" y1="64" x2="52" y2="86"/>
+        <line class="fig-accent" x1="82" y1="88" x2="98" y2="110"/>
+        <line class="fig-accent" x1="98" y1="88" x2="82" y2="110"/>
+        <circle class="fig-ink" cx="225" cy="85" r="55"/>
+        <line class="fig-ink" x1="225" y1="36" x2="225" y2="134" stroke-dasharray="3 4"/>
+        <line class="fig-accent" x1="217" y1="55" x2="233" y2="77"/>
+        <line class="fig-accent" x1="233" y1="55" x2="217" y2="77"/>
+        <line class="fig-accent" x1="217" y1="93" x2="233" y2="115"/>
+        <line class="fig-accent" x1="233" y1="93" x2="217" y2="115"/>
+        <line class="fig-ink" x1="178" y1="85" x2="219" y2="66"/>
+        <line class="fig-ink" x1="178" y1="85" x2="219" y2="104"/>
+        <line class="fig-ink" x1="272" y1="85" x2="231" y2="66"/>
+        <line class="fig-ink" x1="272" y1="85" x2="231" y2="104"/>
+        <circle class="fig-ink" cx="375" cy="85" r="55"/>
+        <polyline class="fig-accent" points="352,56 338,66 352,76"/>
+        <polyline class="fig-accent" points="352,94 338,104 352,114"/>
+        <polyline class="fig-accent" points="398,56 412,66 398,76"/>
+        <polyline class="fig-accent" points="398,94 412,104 398,114"/>
+        <line class="fig-ink" x1="328" y1="85" x2="338" y2="66"/>
+        <line class="fig-ink" x1="328" y1="85" x2="338" y2="104"/>
+        <line class="fig-ink" x1="422" y1="85" x2="412" y2="66"/>
+        <line class="fig-ink" x1="422" y1="85" x2="412" y2="104"/>
+        <path class="fig-ink" d="M525,62 A36,36 0 1,0 525,108 A36,36 0 1,0 525,62 Z"/>
+        <circle class="fig-ink" cx="497" cy="85" r="15"/>
+        <circle class="fig-ink" cx="553" cy="85" r="15"/>
+        <text class="fig-text" x="75" y="170" text-anchor="middle">(1) 뭉쳐요</text>
+        <text class="fig-text" x="225" y="170" text-anchor="middle">(2) 가운데 줄서기</text>
+        <text class="fig-text" x="375" y="170" text-anchor="middle">(3) 양쪽으로 가요</text>
+        <text class="fig-text" x="525" y="170" text-anchor="middle">(4) 둘로 나뉘어요</text>
+      </svg>
+      <figcaption>실이 뭉쳐 막대가 되고, 가운데 한 줄로 섰다가, 막대가 반씩 갈라져 양쪽 끝으로 끌려가요.</figcaption>
+    </figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>유사분열(mitosis)의 M기는 <b>전기</b>(prophase), <b>중기</b>(metaphase), <b>후기</b>(anaphase), <b>말기</b>(telophase) 네 단계로 나눠요. 전기와 중기 사이에 전중기(prometaphase)가 따로 있지만, 수업에서는 중기 이전을 모두 전기로 봐요.</p>
+    <ol class="steps">
+      <li><b>전기</b>: 세 가지 일이 일어나요. (1) DNA가 응축되어 염색체가 보이기 시작해요. (2) <b>핵막</b>(nuclear envelope)이 사라져요. (3) 중심체에서 <b>방추사</b>(미세소관)가 뻗어 나와 염색체의 <b>동원체</b>에 결합해요. 수업 영상은 방추사가 동원체에 있는 키네토코어(kinetochore)라는 구조에 붙는다고 했어요.</li>
+      <li><b>중기</b>: 염색체가 세포 가운데에 한 줄로 늘어서요("<b>가운데 배열</b>"). 영상은 동원체들이 세포 적도의 한 면에 늘어선다고 했고, 교재는 이 면을 중기판(metaphase plate)이라고 불러요(교재 3장 p.58). 이때 염색체 하나하나는 아직 동원체로 붙은 자매염색분체 2개로 되어 있어요.</li>
+      <li><b>후기</b>: 동원체가 갈라지면서 <b>자매염색분체</b>가 떨어져 서로 반대쪽 극으로 끌려가요. 떨어진 염색분체 하나하나는 이제 독립된 염색체로 봐요. 갈라지는 것은 상동염색체가 아니라 자매염색분체예요.</li>
+      <li><b>말기</b>: 전기의 반대예요. 양극에 도착한 염색체 주위로 핵막이 다시 생기고, 염색체가 풀리고, 방추사가 사라져요. 영상은 이 단계에서 세포질 분열도 시작된다고 했어요.</li>
+    </ol>
+    <div class="table-wrap"><table>
+      <thead><tr><th>단계</th><th>핵막</th><th>염색체</th><th>방추사</th></tr></thead>
+      <tbody>
+        <tr><td>전기</td><td>사라져요</td><td>응축되어 보이기 시작, 자매염색분체 2개가 동원체로 붙은 상태</td><td>중심체에서 뻗어 나와 동원체에 붙어요</td></tr>
+        <tr><td>중기</td><td>없어요</td><td>세포 가운데(중기판)에 한 줄로 배열, 여전히 자매염색분체 2개씩</td><td>양쪽 극에서 동원체에 붙어 있어요</td></tr>
+        <tr><td>후기</td><td>없어요</td><td>자매염색분체가 갈라져 서로 반대 극으로 이동</td><td>염색분체를 극 쪽으로 끌어요</td></tr>
+        <tr><td>말기</td><td>다시 생겨요</td><td>양극에 모여 다시 풀려요</td><td>사라져요</td></tr>
+      </tbody>
+    </table></div>
+    <p>판별 기준을 정리하면 이래요. 염색체가 세포 중앙에 정렬하면 중기, 두 자매염색분체가 반대 극으로 갈라지면 후기, 핵막이 사라지면 전기예요. 염색체가 양극 쪽에서 발견되는 것은 후기·말기의 모습이에요. 세포질 분열은 중기에 시작하지 않아요(<a href="#s1-cytokinesis">세포질 분열</a> 참고).</p>
+    <p>말기가 끝나면 핵막이 다시 생겨 핵이 두 개가 돼요. 이것으로 핵분열이 끝나요. 세포는 아직 하나라서 <a href="#s1-cytokinesis">세포질 분열</a>이 뒤따라야 해요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>전중기는 구분하지 않아도 된다고 했어요.</p>
+    <blockquote>요거 차이까지는 몰라도 되겠습니다. (0922 11:22) 그래서 그냥 다 전기로 생각하면 돼요. (0922 11:30)</blockquote>
+    <p>"뭐가 사라진다?" 하고 묻고, 농담 뒤에 "핵막이 사라지죠, 핵막"으로 답했어요(0922 11:50–11:57).</p>
+    <p>전기는 세 가지 사건만 기억하면 된다고 강조했어요.</p>
+    <blockquote>세 가지 사건밖에 안 돼요, 세 가지. (0922 12:19) 사실 전기만 알면은 나머지는 그냥 더 쉬워요. (0922 12:31)</blockquote>
+    <p>중기는 한자 '가운데 중(中)'으로 외우게 했어요.</p>
+    <blockquote>원래 시간상 중기지만, 그러나 외울 때는 가운데 배열된다 이렇게 외우면 되죠. (0922 12:47)</blockquote>
+    <p>후기에 무엇이 갈라지는지 되물었어요.</p>
+    <blockquote>이렇게 나눠지는 것은 상동 염색체다, 자매 염색분체다? … 자매 염색분체죠. (0922 12:58–13:07)</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <p><b>전기와 전중기.</b> 핵막 소실과 방추사 부착을 전기와 다른 단계로 따로 외우려 하기 쉬워요. 엄밀히는 전중기 일이고 강의노트 3장 p2도 전중기로 적었지만, 수업에서는 전기에 포함해요. 핵막이 사라지는 시기를 물으면 전기예요.</p>
+    <p><b>후기에 갈라지는 것.</b> 상동염색체가 갈라진다고 착각하기 쉬워요. 유사분열 후기에 갈라지는 것은 자매염색분체예요.</p>
+    <blockquote>자매 염색분체죠. 자매 염색분체가 나눠집니다. (0922 13:07)</blockquote>
+    <p><b>중기의 염색체 모양.</b> 중기 염색체가 염색분체 하나로 되어 있다고 착각하기 쉬워요. 중기에는 아직 갈라지기 전이라 염색체마다 자매염색분체가 2개예요. 갈라지는 것은 그다음 후기예요.</p>
+    <p><b>방추사가 사라지는 시기.</b> 교수님은 14:39 요약에서 "방추사가 사라집니다. 요게 후기"라고 말했는데, 이것은 말실수예요. 방추사가 사라지는 것은 말기예요. 후기는 자매염색분체가 갈라져 극으로 가는 단계예요.</p>
+    <blockquote>말기 때는 … 핵막이 나타나고 염색체가 풀리고 방추사가 사라진다. (0922 13:13)</blockquote>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">전기에 염색체가 응축되고 핵막이 사라지며, 중기에 가운데 배열, 후기에 자매염색분체 분리, 말기에 핵막이 다시 생기고 방추사가 사라져요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>방추사(spindle)</dt><dd>중심체에서 뻗어 나와 동원체에 붙는 미세소관 실이에요.</dd>
+      <dt>동원체(centromere)</dt><dd>자매염색분체가 붙어 있고 방추사가 가서 붙는 염색체 부위예요.</dd>
+      <dt>중기판(metaphase plate)</dt><dd>중기에 염색체가 늘어서는 세포 가운데 면이에요.</dd>
+    </dl>
+  </div>
+</article>
+
+<article class="topic" id="s1-cytokinesis"><h3>세포질 분열</h3><div class="tags"><span class="tag date">0922 수업</span><span class="tag slide">3장 p2</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">마지막으로 세포 몸통까지 둘로 갈라야 진짜 세포 두 개가 돼요.</p>
+    <figure class="figure">
+      <svg id="fig-cytokinesis-split" viewBox="0 0 520 210" role="img" aria-label="왼쪽은 가운데가 잘록한 둥근 세포와 그 허리를 두른 고리 테두리이고, 오른쪽은 네모난 세포 가운데에 선으로 된 새 벽이 위아래로 자라는 모습이다">
+        <path class="fig-ink" d="M130,49 A55,55 0 1,0 130,141 A55,55 0 1,0 130,49 Z"/>
+        <ellipse class="fig-accent" cx="130" cy="95" rx="7" ry="46"/>
+        <circle class="fig-ink" cx="95" cy="95" r="18"/>
+        <circle class="fig-ink" cx="165" cy="95" r="18"/>
+        <line class="fig-ink" x1="130" y1="20" x2="130" y2="42"/>
+        <polyline class="fig-ink" points="124,34 130,42 136,34"/>
+        <line class="fig-ink" x1="130" y1="170" x2="130" y2="148"/>
+        <polyline class="fig-ink" points="124,156 130,148 136,156"/>
+        <rect class="fig-ink" x="300" y="45" width="160" height="100"/>
+        <circle class="fig-ink" cx="340" cy="95" r="18"/>
+        <circle class="fig-ink" cx="420" cy="95" r="18"/>
+        <line class="fig-accent" x1="380" y1="72" x2="380" y2="118"/>
+        <line class="fig-ink" x1="380" y1="47" x2="380" y2="70" stroke-dasharray="3 4"/>
+        <line class="fig-ink" x1="380" y1="120" x2="380" y2="143" stroke-dasharray="3 4"/>
+        <text class="fig-text" x="130" y="198" text-anchor="middle">동물: 바깥 끈을 조여요</text>
+        <text class="fig-text" x="380" y="198" text-anchor="middle">식물: 안에서 벽을 쌓아요</text>
+      </svg>
+      <figcaption>동물 세포는 허리를 끈으로 조이듯 나뉘고, 벽이 단단한 식물 세포는 가운데에 새 벽을 세워 나뉘어요.</figcaption>
+    </figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>말기가 끝나면 핵이 두 개가 되어 <b>핵분열</b>이 끝나요. 그래도 세포는 아직 하나예요. 세포가 둘이 되려면 핵분열 다음에 세포질이 나뉘는 <b>세포질 분열</b>(cytokinesis)이 일어나야 해요.</p>
+    <ol class="steps">
+      <li><b>동물세포</b>: 세포막 밑에 있는 <b>미세섬유</b>(microfilament)가 막을 안쪽으로 잡아당겨요. 그러면 세포 허리에 고리가 생기는데, 이것을 <b>수축환</b>(contractile ring)이라고 해요. 수축환이 점점 좁아져 세포가 둘로 나뉘어요. 강의노트는 이렇게 파인 곳을 분열홈(furrow)이라고 불러요.</li>
+      <li><b>식물세포</b>: 세포벽이 단단해서 밖에서 조일 수 없어요. 그래서 세포벽 성분이 세포 안쪽 가운데에서 만들어지는데, 이것이 <b>세포판</b>(cell plate)이에요. 세포판이 양옆으로 늘어나 새 세포벽이 되면서 두 세포로 나뉘어요.</li>
+    </ol>
+    <p>결과는 이래요. 유사분열에서는 상동염색체가 함께 가고 자매염색분체만 갈라지기 때문에, 2n 세포 하나가 2n 세포 두 개가 돼요.</p>
+    <p>시작 시기: 수업 영상은 말기에 세포질 분열도 시작된다고 했어요(0922 14:15). 그래서 세포질이 나뉘기 시작하는 시기는 <a href="#s1-phases">말기</a>로 기억해요. 염색체가 가운데 배열되는 중기나 그보다 앞선 전기·간기에는 세포질이 나뉘기 시작하지 않아요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>핵분열과 세포질 분열을 구분해 짚었어요.</p>
+    <blockquote>핵분열은 끝났지만 아직 세포는 한 개잖아, 한 개. (0922 15:04)</blockquote>
+    <p>동물세포의 수축환을 신발 끈 주머니에 빗댔어요. 끈을 당기면 주머니 입구가 오므라들듯 세포 허리가 좁아진다는 뜻이에요.</p>
+    <blockquote>신발 끈 주머니 쭉 잡아당기면은 입구가 좁아지죠? (0922 15:41)</blockquote>
+    <p>식물이 다른 방식을 쓰는 이유는 세포벽이라고 했어요.</p>
+    <blockquote>식물은 세포벽이 있으니까 밖에서 이렇게 당길 수가 없잖아. (0922 15:58)</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <p><b>핵분열과 세포질 분열.</b> 말기가 끝나면 세포도 이미 둘이 됐다고 착각하기 쉬워요. 말기가 끝나면 핵이 둘이 된 것(핵분열 끝)이고, 세포가 둘이 되려면 세포질 분열이 더 필요해요(0922 14:56–15:04).</p>
+    <p><b>동물과 식물.</b> 둘의 방식을 뒤바꾸기 쉬워요. 동물은 밖에서 조이고(수축환), 식물은 안에서 세포판을 만들어요. 교수님도 15:21에 "식물- 동물은"이라고 말을 바꿔 잡았어요.</p>
+    <blockquote>동물은 밖에서부터 쪼그라들고, 식물은 안에서부터 세포벽이 생깁니다. (0922 15:21)</blockquote>
+    <p><b>미세소관과 미세섬유.</b> 수축환을 당기는 것도 방추사처럼 미세소관이라고 착각하기 쉬워요. 방추사의 성분은 미세소관(0922 07:29)이고, 수축환을 당기는 것은 미세섬유(0922 15:48)예요. 둘 다 세포골격이지만 다른 섬유예요.</p>
+  </div>
+  <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+    <p>교재도 동물세포에서 원형질막 안쪽의 미세섬유로 된 띠가 수축하면서 분열홈이 생긴다고 설명해요. 교재 그림 3.3의 말기 설명도 분열홈을 만들어 세포질이 분열되기 시작한다고 적어요. 그래서 수업 모형과 교재 모두 "세포질 분열은 말기에 시작"으로 맞아요.</p>
+    <p>다만 조건이 있어요. 교재 그림 3.2 설명은 세포질 분열이 대개 유사분열이 진행 중인 가운데 시작해 유사분열이 끝날 때 완결된다고 써요. 그래서 동물세포에서는 후기 끝 무렵부터 분열홈이 보이기 시작한다고 쓰는 자료도 있어요. 보기에 말기가 있으면 수업 모형대로 말기를 고르고, 중기는 어느 자료로 봐도 답이 아니에요.</p>
+    <p>출처: 교재 3장 p.57(그림 3.2 설명), 교재 3장 p.59(말기·세포질분열 본문, 그림 3.3 말기 설명)</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">핵분열이 끝나도 세포는 하나라서, 동물은 수축환으로 조이고 식물은 세포판을 세워 세포질을 나눠요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>수축환(contractile ring)</dt><dd>동물세포에서 미세섬유가 세포막을 당겨 생기는 고리예요.</dd>
+      <dt>세포판(cell plate)</dt><dd>식물세포 안쪽 가운데에서 만들어져 새 세포벽이 되는 판이에요.</dd>
+    </dl>
+  </div>
+</article>
+
+<article class="topic" id="s1-clone"><h3>유사분열의 쓰임과 클론</h3><div class="tags"><span class="tag date">0922 수업</span><span class="tag slide">3장 p2</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">하나에서 계속 나뉘어 생긴 세포들은 모두 쌍둥이처럼 똑같아요.</p>
+    <figure class="figure">
+      <svg id="fig-clone-tree" viewBox="0 0 520 200" role="img" aria-label="세포 하나에서 선이 갈라져 세포 두 개, 다시 네 개가 된다. 모든 세포 안에 똑같은 색칠된 점이 하나씩 있다">
+        <circle class="fig-ink" cx="80" cy="100" r="28"/>
+        <circle class="fig-dot" cx="80" cy="100" r="7"/>
+        <line class="fig-ink" x1="108" y1="92" x2="216" y2="58"/>
+        <line class="fig-ink" x1="108" y1="108" x2="216" y2="142"/>
+        <circle class="fig-ink" cx="240" cy="55" r="24"/>
+        <circle class="fig-dot" cx="240" cy="55" r="6"/>
+        <circle class="fig-ink" cx="240" cy="145" r="24"/>
+        <circle class="fig-dot" cx="240" cy="145" r="6"/>
+        <line class="fig-ink" x1="264" y1="50" x2="380" y2="30"/>
+        <line class="fig-ink" x1="264" y1="60" x2="380" y2="78"/>
+        <line class="fig-ink" x1="264" y1="140" x2="380" y2="122"/>
+        <line class="fig-ink" x1="264" y1="150" x2="380" y2="170"/>
+        <circle class="fig-ink" cx="400" cy="30" r="20"/>
+        <circle class="fig-dot" cx="400" cy="30" r="5"/>
+        <circle class="fig-ink" cx="400" cy="78" r="20"/>
+        <circle class="fig-dot" cx="400" cy="78" r="5"/>
+        <circle class="fig-ink" cx="400" cy="122" r="20"/>
+        <circle class="fig-dot" cx="400" cy="122" r="5"/>
+        <circle class="fig-ink" cx="400" cy="170" r="20"/>
+        <circle class="fig-dot" cx="400" cy="170" r="5"/>
+        <text class="fig-text" x="80" y="150" text-anchor="middle">처음 세포</text>
+        <text class="fig-text" x="470" y="104" text-anchor="middle">모두 같아요</text>
+      </svg>
+      <figcaption>한 세포가 나뉘고 또 나뉘어도 속에 든 설계도(색칠된 점)는 모두 똑같아요.</figcaption>
+    </figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>유사분열은 이럴 때 일어나요.</p>
+    <ol class="steps">
+      <li><b>체세포</b>(somatic cell)가 분열할 때예요. 예를 들어 상처가 나서 새 세포를 만들 때 유사분열이 일어나요.</li>
+      <li><b>무성생식</b>(asexual reproduction)할 때예요. 식물의 <b>꺾꽂이</b>, 잎을 잘라 심으면 뿌리가 나는 것이 그 예예요. 강의노트는 이것을 영양생식(vegetative reproduction)이라고도 불러요.</li>
+    </ol>
+    <p>수업 영상은 체세포 분열이 생장과 재생에 쓰인다고 정리했어요. 동물은 몸 전체에서 체세포 분열이 일어나요. 식물은 생장점, 형성층 같은 특정 부위에서만 일어나요(0922 27:13–27:23).</p>
+    <p>유사분열에서는 세포 하나가 둘이 돼요. 수업 영상 말대로 유사분열은 부모 핵과 유전적으로 같은 핵 두 개를 만들어요. 그래서 딸세포 두 개끼리, 그리고 딸세포와 모세포의 유전정보가 같아요.</p>
+    <p>한 세포의 유사분열로 만들어져 유전정보가 같은 세포 무리를 <b>클론</b>(clone)이라고 해요. 단, 돌연변이(mutation)가 일어난 경우는 예외예요.</p>
+    <p>이렇게 같은 세포가 나오는 까닭은 <a href="#s1-phases">후기</a>에 자매염색분체만 갈라지고 상동염색체는 함께 가기 때문이에요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>무성생식의 예로 꺾꽂이를 들었어요.</p>
+    <blockquote>식물의 뭐 꺾꽂이라든지 잎을 잘라서 이렇게 심으면은 뿌리가 난다든지 (0922 17:25)</blockquote>
+    <p>암세포도 클론이라고 했어요. 암세포 하나가 계속 분열해 덩어리가 되었으니, 그 덩어리의 세포들은 유전적으로 같다는 뜻이에요.</p>
+    <blockquote>사실 암세포도 클론이에요. 암세포 한 개가 계속 분열해서 덩어리가 된 거야. (0922 17:56)</blockquote>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">유사분열은 체세포 분열과 무성생식(꺾꽂이)에서 일어나고, 돌연변이가 없으면 유전정보가 같은 클론을 만들어요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>무성생식(asexual reproduction)</dt><dd>유사분열만으로 자손을 만드는 생식이에요. 꺾꽂이가 예예요.</dd>
+      <dt>클론(clone)</dt><dd>한 세포의 유사분열로 생겨 유전정보가 같은 세포 무리예요.</dd>
+    </dl>
+  </div>
+</article>
+    </section>
+    <section id="s2"><h2>2. 감수분열</h2>
+<article class="topic" id="s2-tetrad"><h3>4분염색체와 중기 배열</h3><div class="tags"><span class="tag date">0922 수업</span><span class="tag slide">3장 p3</span><span class="tag slide">3장 p4</span></div>
+        <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">아기씨(정자·난자)를 만들 때는 엄마 것과 아빠 것이 짝꿍끼리 손잡고 옆으로 나란히 서요.</p>
+          <figure class="figure"><svg id="fig-tetrad-line" viewBox="0 0 560 260" role="img" aria-label="왼쪽 원에서는 빨간 선 막대와 파란 선 막대가 가운데 점선 위에 위아래로 한 줄로 서 있고, 오른쪽 원에서는 빨간 선 두 가닥과 파란 선 두 가닥, 모두 네 가닥이 점선 양옆에 옆으로 나란히 붙어 서 있다">
+            <text class="fig-muted" x="280" y="18" text-anchor="middle">빨간 선 = 엄마 것, 파란 선 = 아빠 것</text>
+            <circle class="fig-ink" cx="140" cy="125" r="92"/>
+            <line class="fig-ink" x1="140" y1="42" x2="140" y2="208" stroke-dasharray="4 5"/>
+            <rect class="fig-danger" x="128" y="58" width="10" height="46" rx="5"/>
+            <rect class="fig-danger" x="142" y="58" width="10" height="46" rx="5"/>
+            <line class="fig-ink" x1="138" y1="81" x2="142" y2="81"/>
+            <rect class="fig-accent" x="128" y="146" width="10" height="46" rx="5"/>
+            <rect class="fig-accent" x="142" y="146" width="10" height="46" rx="5"/>
+            <line class="fig-ink" x1="138" y1="169" x2="142" y2="169"/>
+            <text class="fig-text" x="140" y="238" text-anchor="middle">몸을 키울 때: 위아래로 한 줄</text>
+            <circle class="fig-ink" cx="420" cy="125" r="92"/>
+            <line class="fig-ink" x1="420" y1="42" x2="420" y2="208" stroke-dasharray="4 5"/>
+            <rect class="fig-danger" x="390" y="100" width="10" height="50" rx="5"/>
+            <rect class="fig-danger" x="403" y="100" width="10" height="50" rx="5"/>
+            <line class="fig-ink" x1="400" y1="125" x2="403" y2="125"/>
+            <rect class="fig-accent" x="427" y="100" width="10" height="50" rx="5"/>
+            <rect class="fig-accent" x="440" y="100" width="10" height="50" rx="5"/>
+            <line class="fig-ink" x1="437" y1="125" x2="440" y2="125"/>
+            <text class="fig-text" x="420" y="238" text-anchor="middle">아기씨를 만들 때: 네 가닥이 옆으로</text>
+          </svg><figcaption>몸을 키울 때는 엄마 것과 아빠 것이 따로따로 한 줄로 서고, 아기씨를 만들 때는 짝꿍끼리 붙어 네 가닥이 옆으로 나란히 서요.</figcaption></figure>
+        </div>
+        <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+          <p><b>감수분열(meiosis)</b>은 2배체(2n) 세포를 반수체(n)로 줄이는 분열이에요. <b>유성생식</b>에서만, 즉 정자와 난자 같은 생식세포를 만들 때만 일어나요.</p>
+          <p>감수분열에서 처음 갈라지는 것은 자매염색분체가 아니라 <b>상동염색체(homologous chromosomes)</b>예요. 상동염색체가 갈라지려면 먼저 엄마 것과 아빠 것이 짝을 지어야 해요.</p>
+          <ul>
+            <li><b>4분염색체(tetrad)</b>: 엄마에게서 온 염색체와 아빠에게서 온 상동염색체가 짝을 지어, 자매염색분체 네 가닥이 옆으로 나란히 붙은 것이에요. 같은 것을 <b>2가염색체(bivalent)</b>라고도 불러요. 교수님은 두 이름을 함께 불렀어요(0922 19:49, 33:43).</li>
+            <li>생기는 때: 제1감수분열 전기(전기 I)에 상동염색체가 짝을 지어(접합, synapsis) 생겨요. 짝을 지은 동안 교차가 일어나요(<a href="#s3-crossover">교차와 재조합</a>).</li>
+            <li>늘어서는 때: <b>중기 I</b>에 4분염색체가 이 상태 그대로 세포 가운데에 옆으로 나란히 늘어서요. 그다음 후기 I에 짝이 양쪽 극으로 갈라져요.</li>
+            <li>4분염색체는 감수분열에서만 생겨요. 유사분열에서는 상동염색체가 짝을 짓지 않아요.</li>
+          </ul>
+          <div class="table-wrap"><table>
+            <tr><th>비교</th><th>유사분열 중기</th><th>감수분열 중기 I</th></tr>
+            <tr><td>상동염색체 짝짓기</td><td>하지 않아요</td><td>짝을 지어요</td></tr>
+            <tr><td>가운데 배열</td><td>염색체가 하나씩 위아래로 한 줄</td><td>4분염색체가 네 가닥씩 옆으로 나란히</td></tr>
+            <tr><td>4분염색체</td><td>생기지 않아요</td><td>생겨요</td></tr>
+            <tr><td>다음에 갈라지는 것</td><td>자매염색분체</td><td>상동염색체</td></tr>
+            <tr><td>결과</td><td>2n인 딸세포 2개</td><td>1분열 뒤 n인 세포 2개, 끝나면 n인 딸세포 4개</td></tr>
+          </table></div>
+          <p>유사분열 단계는 <a href="#s1-phases">전기·중기·후기·말기</a>에서, 두 번의 분열은 <a href="#s2-two-divisions">제1감수분열과 제2감수분열</a>에서 이어서 봐요.</p>
+        </div>
+        <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+          <p>교수님은 빨간 것은 엄마가, 파란 것은 아빠가 준 염색체로 정하고 두 배열을 나란히 그렸어요(0922 19:12).</p>
+          <blockquote>"정자, 난자 만들 때만 감수분열이 일어나게 된다." (0922 18:34)</blockquote>
+          <p>유사분열 중기에 상동염색체가 위아래로 선다는 것을 두고 이렇게 말했어요.</p>
+          <blockquote>"이게 결정적인 차이입니다." (0922 20:02)</blockquote>
+          <blockquote>"요것만 알면은 두 개 차이 그냥 껌이에요, 껌." (0922 20:09)</blockquote>
+          <blockquote>"이 그림만 그릴 줄 알면은 끝이죠." (0922 20:27)</blockquote>
+        </div>
+        <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+          <ul>
+            <li><b>중기 배열을 서로 바꿔 기억하기 쉬워요.</b> 유사분열 중기에는 상동염색체가 짝 없이 위아래로 한 줄로 서요. 감수분열 중기 I에는 4분염색체가 네 가닥씩 옆으로 나란히 서요. "유사분열에서는 아래위로, 감수분열에서는 옆으로." (0922 22:59)</li>
+            <li><b>4분염색체와 2가염색체를 다른 구조로 착각하기 쉬워요.</b> 둘은 같은 것을 부르는 두 이름이에요. "4분 염색체, 혹은 2가 염색체 이렇게 부르죠." (0922 19:49) "2가염색체 혹은 4분염색체라고 부르는" (0922 33:43)</li>
+            <li><b>4분염색체가 유사분열에도 생긴다고 착각하기 쉬워요.</b> 4분염색체는 감수분열에서만 생겨요. "감수분열에서만 4분염색체가 형성이 된다." (0922 20:16)</li>
+          </ul>
+        </div>
+        <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+          <p>교재와 강의노트는 같은 구조를 4분체(tetrad)라고 적어요. 교재는 이것을 각 상동염색체 쌍이 4개의 염색분체로 이루어졌다는 뜻이라고 설명해요.</p>
+          <ul>
+            <li>"4분"은 염색분체 네 가닥을, "2가"는 짝을 지은 염색체 두 개(상동염색체 한 쌍)를 센 이름이에요.</li>
+            <li>그래서 4분염색체 하나를 염색체로 세면 4개가 아니라 2개예요. 네 가닥은 염색분체 수예요.</li>
+          </ul>
+          <p>출처: 교재 3장 p.65, 강의노트 3장 p4</p>
+        </div>
+        <div class="sum" hidden>
+          <p class="sum-lead">감수분열 중기 I에는 상동염색체가 짝을 지은 4분염색체가 옆으로 나란히 서요.</p>
+          <p class="panel-label">용어</p>
+          <dl class="terms"><dt>4분염색체(tetrad)</dt><dd>상동염색체 한 쌍이 짝을 지어 염색분체 네 가닥이 붙은 것</dd><dt>2가염색체(bivalent)</dt><dd>4분염색체의 다른 이름</dd><dt>중기 I(metaphase I)</dt><dd>4분염색체가 세포 가운데에 옆으로 나란히 서는 때</dd></dl>
+        </div>
+      </article>
+      <article class="topic" id="s2-two-divisions"><h3>제1감수분열과 제2감수분열</h3><div class="tags"><span class="tag date">0922 수업</span><span class="tag slide">3장 p3</span><span class="tag slide">3장 p4</span></div>
+        <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">아기씨를 만들 때는 두 번 나눠요: 먼저 짝꿍이 헤어지고, 다음엔 붙어 있던 쌍둥이 가닥이 헤어져요.</p>
+          <figure class="figure"><svg id="fig-meiosis-twice" viewBox="0 0 560 320" role="img" aria-label="맨 위 원 하나에는 두 가닥짜리 빨간 선 막대와 파란 선 막대가 있다. 첫 번째 나누기 뒤 가운데 줄 원 두 개에는 각각 두 가닥짜리 빨간 선 막대 하나, 파란 선 막대 하나가 있다. 두 번째 나누기 뒤 맨 아래 원 네 개에는 한 가닥짜리 막대가 하나씩 있다">
+            <circle class="fig-ink" cx="280" cy="52" r="42"/>
+            <rect class="fig-danger" x="255" y="34" width="8" height="36" rx="4"/>
+            <rect class="fig-danger" x="265" y="34" width="8" height="36" rx="4"/>
+            <line class="fig-ink" x1="263" y1="52" x2="265" y2="52"/>
+            <rect class="fig-accent" x="287" y="34" width="8" height="36" rx="4"/>
+            <rect class="fig-accent" x="297" y="34" width="8" height="36" rx="4"/>
+            <line class="fig-ink" x1="295" y1="52" x2="297" y2="52"/>
+            <line class="fig-ink" x1="250" y1="90" x2="185" y2="128"/>
+            <polyline class="fig-ink" points="193,117 185,128 198,129"/>
+            <line class="fig-ink" x1="310" y1="90" x2="375" y2="128"/>
+            <polyline class="fig-ink" points="362,129 375,128 367,117"/>
+            <text class="fig-text" x="280" y="122" text-anchor="middle">첫 번째 나누기</text>
+            <text class="fig-muted" x="280" y="140" text-anchor="middle">짝꿍이 헤어져요</text>
+            <circle class="fig-ink" cx="160" cy="165" r="38"/>
+            <rect class="fig-danger" x="151" y="147" width="8" height="36" rx="4"/>
+            <rect class="fig-danger" x="161" y="147" width="8" height="36" rx="4"/>
+            <line class="fig-ink" x1="159" y1="165" x2="161" y2="165"/>
+            <circle class="fig-ink" cx="400" cy="165" r="38"/>
+            <rect class="fig-accent" x="391" y="147" width="8" height="36" rx="4"/>
+            <rect class="fig-accent" x="401" y="147" width="8" height="36" rx="4"/>
+            <line class="fig-ink" x1="399" y1="165" x2="401" y2="165"/>
+            <line class="fig-ink" x1="140" y1="200" x2="108" y2="238"/>
+            <polyline class="fig-ink" points="112,225 108,238 120,232"/>
+            <line class="fig-ink" x1="180" y1="200" x2="212" y2="238"/>
+            <polyline class="fig-ink" points="200,232 212,238 208,225"/>
+            <line class="fig-ink" x1="380" y1="200" x2="348" y2="238"/>
+            <polyline class="fig-ink" points="352,225 348,238 360,232"/>
+            <line class="fig-ink" x1="420" y1="200" x2="452" y2="238"/>
+            <polyline class="fig-ink" points="440,232 452,238 448,225"/>
+            <text class="fig-text" x="280" y="206" text-anchor="middle">두 번째 나누기</text>
+            <text class="fig-muted" x="280" y="224" text-anchor="middle">쌍둥이 가닥이 헤어져요</text>
+            <circle class="fig-ink" cx="100" cy="276" r="30"/>
+            <rect class="fig-danger" x="96" y="259" width="8" height="34" rx="4"/>
+            <circle class="fig-ink" cx="220" cy="276" r="30"/>
+            <rect class="fig-danger" x="216" y="259" width="8" height="34" rx="4"/>
+            <circle class="fig-ink" cx="340" cy="276" r="30"/>
+            <rect class="fig-accent" x="336" y="259" width="8" height="34" rx="4"/>
+            <circle class="fig-ink" cx="460" cy="276" r="30"/>
+            <rect class="fig-accent" x="456" y="259" width="8" height="34" rx="4"/>
+          </svg><figcaption>짝 하나만 그렸어요: 첫 번째에 엄마 것(빨간 선)과 아빠 것(파란 선)이 갈라지고, 두 번째에 붙은 두 가닥이 갈라져 작은 아기씨 4개가 돼요.</figcaption></figure>
+        </div>
+        <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+          <p>감수분열은 핵분열이 두 번 이어지는 분열이에요. 앞의 분열을 <b>제1감수분열</b>(감수분열 1기, meiosis I), 뒤의 분열을 <b>제2감수분열</b>(감수분열 2기, meiosis II)이라고 해요.</p>
+          <ol class="steps">
+            <li><b>시작 전 간기</b>: S기에 DNA가 복제돼 DNA 양이 두 배가 돼요. 그래서 분열을 시작할 때 각 염색체는 동원체로 붙은 <b>자매염색분체(sister chromatids)</b> 두 가닥이에요.</li>
+            <li><b>제1감수분열</b>: 짝을 지은 상동염색체가 양쪽 극으로 갈라져요. 딸세포 2개가 생기고, 각 세포는 상동염색체 쌍마다 하나씩만 받으므로 이미 <b>반수체(haploid, n)</b>예요. 염색체 수가 절반으로 주는 것은 이때예요.</li>
+            <li><b>1분열과 2분열 사이</b>: 1분열이 끝나면 곧바로 2분열이 시작돼요.</li>
+            <li><b>제2감수분열</b>: 자매염색분체가 갈라져 양쪽 극으로 가요. 염색체 수는 변하지 않아요(n에서 n). 결과는 n인 딸세포 4개예요.</li>
+          </ol>
+          <p><b>말기 I 직후 딸세포</b>는 두 가지를 함께 기억해요.</p>
+          <ul>
+            <li>염색체 세트: 반수체(n)예요. 상동염색체가 이미 갈라졌으니 2배체(2n)가 아니에요.</li>
+            <li>염색체 모양: 각 염색체는 아직 자매염색분체 두 가닥이 붙은 상태예요. 자매염색분체는 제2감수분열에서야 갈라지기 때문이에요.</li>
+          </ul>
+          <p>두 분열은 각각 전기·중기·후기·말기로 진행하고, 전기 I·중기 I·후기 I·말기 I, 전기 II·중기 II·후기 II·말기 II처럼 불러요. 단계마다 일어나는 일은 유사분열과 같아요. 전기에는 핵막이 사라지고 염색체가 응축되고 방추사가 붙어요. 중기에는 가운데에 늘어서고, 후기에는 극으로 끌려가고, 말기에는 전기의 반대 일이 일어나요. 다른 것은 두 가지뿐이에요: 중기 I의 배열 방식(<a href="#s2-tetrad">4분염색체와 중기 배열</a>)과, 각 분열에서 무엇이 갈라지는지예요.</p>
+          <div class="table-wrap"><table>
+            <tr><th>비교</th><th>유사분열(체세포 분열)</th><th>감수분열</th></tr>
+            <tr><td>분열 횟수</td><td>1번</td><td>연속 2번(제1감수분열, 제2감수분열)</td></tr>
+            <tr><td>갈라지는 것</td><td>자매염색분체</td><td>1분열: 상동염색체, 2분열: 자매염색분체</td></tr>
+            <tr><td>결과</td><td>2n인 딸세포 2개</td><td>n인 딸세포 4개</td></tr>
+            <tr><td>쓰임</td><td>생장, 재생</td><td>생식세포(정자, 난자) 형성</td></tr>
+          </table></div>
+        </div>
+        <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+          <p>교수님은 1분열이 끝난 세포가 어떤 상태인지 묻고 바로 답했어요.</p>
+          <blockquote>"1감수분열이 끝나면 이 세포는 반수체예요, 이배체예요?" (0922 21:33)</blockquote>
+          <blockquote>"상동염색체가 나눠졌으니까 얘는 반수체죠." (0922 21:45)</blockquote>
+          <blockquote>"한번 이렇게 하면 이제 1분열이 끝난 거고 곧바로 2분열이 시작이 됩니다." (0922 23:10)</blockquote>
+          <blockquote>"어떤 게 나눠지느냐 그 차이만 이해를 하면 돼요." (0922 23:25)</blockquote>
+          <p>이해를 돕기 위해 중학교 선생님이 만든 영상도 틀었어요. 손가락 하나를 염색체로 보고 붙였다 떼며 두 분열을 표현해요(0922 26:17). 영상은 DNA 양을 두 배로 늘린 뒤 상동염색체가 접합해 2가염색체를 만든다고 정리했어요(0922 26:40).</p>
+          <blockquote>"염색체의 수가 절반으로 감소하는 과정은 1분열" (0922 26:09, 영상)</blockquote>
+        </div>
+        <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+          <ul>
+            <li><b>1분열이 끝난 세포를 아직 2배체로 착각하기 쉬워요.</b> 상동염색체가 갈라졌으니 이미 반수체예요. 다만 각 염색체는 아직 자매염색분체 두 가닥이에요. "이미 제1감수분열에서 반수체 세포가 만들어집니다." (0922 21:45)</li>
+            <li><b>염색체 수가 2분열에서 준다고 착각하기 쉬워요.</b> 염색체 수가 절반으로 주는 것은 1분열이고, 2분열에서는 수가 변하지 않아요. (0922 26:09)</li>
+            <li><b>결과를 섞어 기억하기 쉬워요.</b> 유사분열은 2n인 딸세포 2개, 감수분열은 n인 딸세포 4개예요. "감수분열에서는 n짜리 세포 4개가 만들어지게 됩니다." (0922 22:09)</li>
+            <li><b>1분열과 2분열을 따로 떨어진 두 번의 분열로 착각하기 쉬워요.</b> 두 분열은 이어서 일어나요. "1분열이 끝난 거고 곧바로 2분열이 시작이 됩니다." (0922 23:10)</li>
+            <li><b>감수분열의 단계마다 새로운 사건이 있다고 착각하기 쉬워요.</b> 전기·중기·후기·말기에 일어나는 일은 유사분열과 같고, 갈라지는 대상만 달라요. "이때 일어나는 현상은 다 똑같습니다." (0922 22:42)</li>
+          </ul>
+        </div>
+        <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+          <p>수업에서 DNA 양을 직접 계산하지는 않았어요. 시험은 "G2기 세포의 DNA 양이 X일 때"처럼 물으므로, 염색체 수와 DNA 양을 따로 세는 법을 정리해요.</p>
+          <ul>
+            <li>자매염색분체 한 가닥에는 DNA 이중나선이 하나 들어 있어요. 자매염색분체는 DNA가 2개의 복사본으로 복제된 것이기 때문이에요. 그래서 두 가닥짜리 염색체 하나에는 이중나선이 2개예요.</li>
+            <li>염색체 수는 자매염색분체가 붙어 있는 한 하나로 세요. DNA 양은 가닥 수를 따라가요.</li>
+          </ul>
+          <ol class="steps">
+            <li>S기 복제로 DNA가 두 배가 된 2배체 세포가 G2기예요. 이때 DNA 양을 X라고 해요.</li>
+            <li>제1감수분열에서 상동염색체가 두 세포로 갈라지므로 세포당 DNA 양은 절반인 0.5X가 돼요.</li>
+            <li>그 사이에 복제가 없고, 중기 II에는 자매염색분체가 아직 붙어 있으므로 0.5X 그대로예요.</li>
+            <li>제2감수분열에서 자매염색분체가 갈라지면 세포당 0.25X가 돼요.</li>
+          </ol>
+          <div class="table-wrap"><table>
+            <tr><th>시점</th><th>세포당 염색체 수</th><th>염색체 하나의 가닥</th><th>세포당 DNA 양</th></tr>
+            <tr><td>G1기(복제 전)</td><td>2n</td><td>1가닥</td><td>0.5X</td></tr>
+            <tr><td>G2기(복제 뒤)</td><td>2n</td><td>2가닥</td><td>X</td></tr>
+            <tr><td>말기 I 뒤, 중기 II</td><td>n</td><td>2가닥</td><td>0.5X</td></tr>
+            <tr><td>말기 II 뒤</td><td>n</td><td>1가닥</td><td>0.25X</td></tr>
+          </table></div>
+          <p><b>1분열과 2분열 사이에는 DNA 복제가 일어나지 않아요.</b> 교재는 DNA 복제를 감수분열 전 간기에서만 설명하고, 말기 I 다음의 짧은 분열간기에는 방추체를 해체하고 새로 조립하는 일만 적어요. 그래서 복제는 감수분열 전체에서 한 번뿐이에요.</p>
+          <p>출처: 교재 3장 p.64–65, 강의노트 3장 p1·p4</p>
+        </div>
+        <div class="sum" hidden>
+          <p class="sum-lead">제1감수분열에서 상동염색체가, 제2감수분열에서 자매염색분체가 갈라져 n인 딸세포 4개가 생겨요.</p>
+          <p class="panel-label">용어</p>
+          <dl class="terms"><dt>제1감수분열(meiosis I)</dt><dd>상동염색체가 갈라져 반수체 세포 2개가 되는 분열</dd><dt>제2감수분열(meiosis II)</dt><dd>자매염색분체가 갈라져 n인 딸세포 4개가 되는 분열</dd><dt>반수체(haploid, n)</dt><dd>상동염색체 쌍마다 하나씩만 가진 상태</dd></dl>
+        </div>
+      </article>
+    </section>
+    <section id="s3"><h2>3. 유전적 다양성</h2>
+<article class="topic" id="s3-sexual"><h3>유성생식과 무성생식</h3><div class="tags"><span class="tag date">0922 수업</span><span class="tag slide">3장 p4</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">둘이 만나서 아기를 만들면 형제끼리도 조금씩 달라서, 큰 병이 와도 누군가는 살아남아요.</p>
+    <figure class="figure"><svg id="fig-reproduce" viewBox="0 0 560 200" role="img" aria-label="왼쪽은 혼자 만든 똑같은 감자 네 개가 병이 오자 모두 X 표시로 쓰러진 그림, 오른쪽은 둘이 만나 만든 서로 다른 네 개 중 세 개만 X 표시이고 하나는 살아남은 그림">
+      <text class="fig-text" x="140" y="24" text-anchor="middle">혼자서 만들기</text>
+      <text class="fig-text" x="420" y="24" text-anchor="middle">둘이 만나서 만들기</text>
+      <line class="fig-ink" x1="280" y1="10" x2="280" y2="185" stroke-dasharray="4 4"/>
+      <circle class="fig-ink" cx="50" cy="90" r="24"/><path class="fig-ink" d="M40 100 L50 80 L60 100 Z"/>
+      <circle class="fig-ink" cx="110" cy="90" r="24"/><path class="fig-ink" d="M100 100 L110 80 L120 100 Z"/>
+      <circle class="fig-ink" cx="170" cy="90" r="24"/><path class="fig-ink" d="M160 100 L170 80 L180 100 Z"/>
+      <circle class="fig-ink" cx="230" cy="90" r="24"/><path class="fig-ink" d="M220 100 L230 80 L240 100 Z"/>
+      <path class="fig-danger" d="M30 70 L70 110 M70 70 L30 110 M90 70 L130 110 M130 70 L90 110 M150 70 L190 110 M190 70 L150 110 M210 70 L250 110 M250 70 L210 110"/>
+      <circle class="fig-ink" cx="320" cy="90" r="24"/><path class="fig-ink" d="M310 100 L320 80 L330 100 Z"/>
+      <circle class="fig-ink" cx="380" cy="90" r="24"/><rect class="fig-ink" x="370" y="80" width="20" height="20"/>
+      <circle class="fig-ink" cx="440" cy="90" r="24"/><line class="fig-ink" x1="428" y1="90" x2="452" y2="90"/>
+      <circle class="fig-accent" cx="500" cy="90" r="24"/><circle class="fig-dot" cx="500" cy="90" r="7"/>
+      <path class="fig-danger" d="M300 70 L340 110 M340 70 L300 110 M360 70 L400 110 M400 70 L360 110 M420 70 L460 110 M460 70 L420 110"/>
+      <text class="fig-text" x="140" y="150" text-anchor="middle">모두 똑같아요</text>
+      <text class="fig-muted" x="140" y="172" text-anchor="middle">병이 오면 전부 쓰러져요</text>
+      <text class="fig-text" x="420" y="150" text-anchor="middle">모두 조금씩 달라요</text>
+      <text class="fig-muted" x="500" y="130" text-anchor="middle">살아남음</text>
+      <text class="fig-muted" x="420" y="172" text-anchor="middle">병이 와도 몇몇은 버텨요</text>
+    </svg><figcaption>왼쪽은 모두 같은 무늬라 다 같이 쓰러지고, 오른쪽은 무늬가 달라 파란 테두리 하나가 버텨요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p><strong>무성생식(asexual reproduction)</strong>은 유사분열만으로 자손을 만들어요. 돌연변이가 아니면 DNA 서열이 바뀌지 않아요. 그래서 자손끼리도, 자손과 윗세대도 똑같은 클론(clone)이에요(<a href="#s1-clone">유사분열의 쓰임과 클론</a>).</p>
+    <p><strong>유성생식(sexual reproduction)</strong>은 감수분열로 만든 정자와 난자가 만나 자손을 만들어요. 자손은 형제자매끼리도 다르고 부모와도 달라요. 즉 유성생식은 <strong>유전적 다양성(genetic diversity)</strong>을 만들어요.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>구분</th><th>유성생식</th><th>무성생식</th></tr></thead>
+      <tbody>
+        <tr><td>장점</td><td>유전적 다양성. 환경이 갑자기 바뀌어도 적어도 일부는 살아남아 번식할 수 있어요.</td><td>빠르고 비용이 들지 않아요.</td></tr>
+        <tr><td>단점</td><td>짝을 찾고 생식을 해야 해서 에너지, 시간, 비용이 많이 들어요.</td><td>모두 같아서 환경 변화에 대처하지 못해요.</td></tr>
+      </tbody>
+    </table></div>
+    <p>유성생식의 단점을 뒤집으면 무성생식의 장점이 되고, 유성생식의 장점을 뒤집으면 무성생식의 단점이 돼요.</p>
+    <p>유전적 다양성은 감수분열과 수정 과정의 세 가지 현상에서 생겨요.</p>
+    <ol class="steps">
+      <li>제1감수분열 전기의 교차(재조합): <a href="#s3-crossover">교차와 재조합</a></li>
+      <li>상동염색체 쌍의 무작위 분배: <a href="#s3-assortment">상동염색체의 무작위 분배</a></li>
+      <li>정자와 난자의 무작위 수정: <a href="#s3-fertilization">무작위 수정과 70조</a></li>
+    </ol>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>단점은 짝 찾기 비용으로 설명했어요. 소개팅, 결혼처럼 짝을 찾고 맺는 데 돈과 시간이 든다는 농담이에요.</p>
+    <blockquote>선볼 때 썼던 커피값만 모았어도 집을 샀다. (0922 30:43)</blockquote>
+    <p>장점은 <strong>아일랜드 감자 대기근</strong>으로 설명했어요. 감자는 씨 없이 무성생식으로 재배해서 모두 유전적으로 같았어요. 원생생물이 일으킨 병이 돌자 감자가 모두 병들어 죽었고, 100만 명가량이 굶어 죽거나 이민을 떠났어요. 그 이민자의 후손이 케네디 대통령이에요.</p>
+    <blockquote>만약에 유성생식이었으면은 한두 놈은 저항성이 있었을 수도 있다. (0922 32:27)</blockquote>
+    <p>지금의 바나나도 씨가 없어 무성생식으로 재배하므로 같은 위험을 안고 있어요(0922 32:07).</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <p><strong>유성생식의 장점과 단점을 뒤바꾸기 쉬워요.</strong> 교수님도 "단점, 장점입니다, 장점"이라고 말을 고쳐 잡았어요(0922 32:48).</p>
+    <p>바른 구분: 유전적 다양성은 유성생식의 <strong>장점</strong>이고, 짝 찾기와 생식에 드는 에너지, 시간, 비용이 <strong>단점</strong>이에요. 무성생식의 장점은 빠르고 싸다는 것이에요.</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">유성생식은 비용이 들지만 유전적 다양성을 만들어서, 환경이 바뀌어도 일부가 살아남게 해요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>유성생식(sexual reproduction)</dt><dd>정자와 난자가 만나 자손을 만들어요. 자손이 모두 달라요.</dd><dt>무성생식(asexual reproduction)</dt><dd>유사분열만으로 번식해요. 자손이 클론이에요.</dd><dt>감자 대기근</dt><dd>무성생식으로 똑같던 감자가 병으로 한꺼번에 죽은 사건이에요.</dd></dl>
+  </div>
+</article>
+
+<article class="topic" id="s3-crossover"><h3>교차와 재조합</h3><div class="tags"><span class="tag date">0922 수업</span><span class="tag slide">3장 p4</span><span class="tag slide">3장 p5</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">엄마 줄과 아빠 줄이 나란히 붙어 있다가, 가운데 두 줄이 아래 조각을 맞바꾸는 거예요.</p>
+    <figure class="figure"><svg id="fig-crossover" viewBox="0 0 480 230" role="img" aria-label="바꾸기 전에는 빨간 선 두 줄에 A와 B, 파란 선 두 줄에 a와 b가 있고, 가운데 두 줄이 아래 조각을 바꾼 뒤에는 AB, Ab, aB, ab 네 줄이 된 그림">
+      <text class="fig-muted" x="70" y="24" text-anchor="middle">엄마 쪽</text>
+      <text class="fig-muted" x="150" y="24" text-anchor="middle">아빠 쪽</text>
+      <line class="fig-danger" x1="50" y1="40" x2="50" y2="170"/>
+      <line class="fig-danger" x1="90" y1="40" x2="90" y2="170"/>
+      <line class="fig-accent" x1="130" y1="40" x2="130" y2="170"/>
+      <line class="fig-accent" x1="170" y1="40" x2="170" y2="170"/>
+      <text class="fig-text" x="56" y="75">A</text><text class="fig-text" x="96" y="75">A</text>
+      <text class="fig-text" x="136" y="75">a</text><text class="fig-text" x="176" y="75">a</text>
+      <text class="fig-text" x="56" y="145">B</text><text class="fig-text" x="96" y="145">B</text>
+      <text class="fig-text" x="136" y="145">b</text><text class="fig-text" x="176" y="145">b</text>
+      <line class="fig-ink" x1="80" y1="105" x2="140" y2="105" stroke-dasharray="4 3"/>
+      <text class="fig-muted" x="110" y="195" text-anchor="middle">바꾸기 전</text>
+      <text class="fig-muted" x="110" y="213" text-anchor="middle">점선에서 가운데 두 줄이 잘려요</text>
+      <path class="fig-ink" d="M210 105 L265 105 M257 99 L265 105 L257 111"/>
+      <line class="fig-danger" x1="300" y1="40" x2="300" y2="170"/>
+      <line class="fig-danger" x1="340" y1="40" x2="340" y2="105"/><line class="fig-accent" x1="340" y1="105" x2="340" y2="170"/>
+      <line class="fig-accent" x1="380" y1="40" x2="380" y2="105"/><line class="fig-danger" x1="380" y1="105" x2="380" y2="170"/>
+      <line class="fig-accent" x1="420" y1="40" x2="420" y2="170"/>
+      <text class="fig-text" x="306" y="75">A</text><text class="fig-text" x="346" y="75">A</text>
+      <text class="fig-text" x="386" y="75">a</text><text class="fig-text" x="426" y="75">a</text>
+      <text class="fig-text" x="306" y="145">B</text><text class="fig-text" x="346" y="145">b</text>
+      <text class="fig-text" x="386" y="145">B</text><text class="fig-text" x="426" y="145">b</text>
+      <text class="fig-muted" x="360" y="195" text-anchor="middle">바꾼 뒤: AB, Ab, aB, ab</text>
+      <rect class="fig-accent" x="326" y="30" width="68" height="150" rx="8"/>
+      <text class="fig-muted" x="360" y="213" text-anchor="middle">테두리 안 두 줄이 새 조합</text>
+    </svg><figcaption>원래는 AB와 ab뿐이었는데, 조각을 바꾸자 없던 Ab와 aB가 생겼어요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p><strong>교차(crossing over)</strong>는 상동염색체 사이에서 DNA 조각이 서로 바뀌는 현상이에요. 그 결과 원래 없던 새로운 대립유전자 조합이 생기는 것을 <strong>재조합(recombination)</strong>이라 해요. "새롭게 조합됐다"는 뜻이에요.</p>
+    <ol class="steps">
+      <li><strong>시기</strong>: <strong>제1감수분열 전기</strong>(전기 I, prophase I)예요. 4분염색체(2가염색체)가 이때 만들어지므로 교차도 이때 일어나요(<a href="#s2-tetrad">4분염색체와 중기 배열</a>).</li>
+      <li><strong>배열</strong>: 상동염색체가 짝을 지어 자매염색분체 네 가닥이 옆으로 나란히 붙어요. 엄마 유래 두 가닥, 아빠 유래 두 가닥이에요.</li>
+      <li><strong>교환</strong>: <strong>안쪽 두 가닥</strong>, 즉 엄마 유래 한 가닥과 아빠 유래 한 가닥 사이에서 일어나요. DNA가 절단되고 잘린 조각이 상대 가닥에 가서 붙어요. 강의노트는 이를 "상동염색분체 사이의 물리적 교환"이라 적어요.</li>
+      <li><strong>결과</strong>: 엄마 쪽 염색체가 A·B, 아빠 쪽이 a·b를 가진다고 해요. 교차가 없으면 배우자는 AB 아니면 ab뿐이에요. 교차가 일어나면 원래 없던 <strong>Ab</strong>, <strong>aB</strong> 염색체가 새로 생겨요.</li>
+    </ol>
+    <p>특정 위치에서 교차가 일어날 확률은 낮아요. 하지만 위치가 정해져 있지 않아 염색체 어디서든 일어날 수 있어요(0922 35:51). 그만큼 유전적 다양성이 커져요.</p>
+    <p>유사분열에서는 상동염색체가 짝을 짓지 않아 4분염색체가 없으므로, 이런 방식의 교차가 일어나지 않아요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>교수님은 조각이 바뀌려면 먼저 잘려야 한다는 점을 짚었어요.</p>
+    <blockquote>DNA 조각이 교환되려면은 DNA가 절단이 돼야 돼요. (0922 34:10)</blockquote>
+    <blockquote>우리 DNA는 종종 절단됩니다. (0922 34:13)</blockquote>
+    <p>이름의 뜻도 풀어 주었어요.</p>
+    <blockquote>원래 없었는데 조합이 된 거다. 그래서 재조합. (0922 35:30)</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <p><strong>교차와 재조합을 서로 관계없는 별개 사건으로 착각하기 쉬워요.</strong> 수업에서는 "교차 혹은 재조합"이라고 두 이름을 함께 썼어요(0922 35:20).</p>
+    <p>바른 구분: 교차가 원인(물리적 교환)이고 재조합이 그 결과(새 조합)이며, 둘 다 제1감수분열 전기의 일이에요.</p>
+    <p><strong>교차 시기를 다른 단계로 착각하기 쉬워요.</strong> 제2감수분열 전기나 후기, 또는 후기 I로 고르면 틀려요.</p>
+    <p>바른 구분: 교차(재조합)는 <strong>제1감수분열 전기</strong>에 일어나요. 교수님은 "교차도 제1 감수분열 전기 때 일어나는 현상"이라고 반복했어요(0922 36:23). 후기 I은 상동염색체가 양 극으로 갈라지는 단계이고, 제2감수분열에는 상동염색체 짝이 없어 4분염색체가 생기지 않아요.</p>
+    <p><strong>같은 염색체의 두 가닥끼리 바꾼다고 착각하기 쉬워요.</strong></p>
+    <p>바른 구분: 교환은 "안쪽 두 개", 즉 엄마 유래 가닥과 아빠 유래 가닥 사이에서 일어나요(0922 33:51). 같은 염색체의 자매염색분체끼리는 똑같은 복사본이라 바꿔도 새 조합이 생기지 않아요.</p>
+    <p><strong>A와 a, A와 B를 헷갈리기 쉬워요.</strong> 교수님도 "라지 A 라지 A"라고 했다가 "아 다시 다시"하고 고쳤어요(0922 34:29).</p>
+    <p>바른 구분: A와 a는 같은 유전자의 대립유전자이고, A와 B는 서로 다른 유전자예요. 그래서 예시는 엄마 쪽 염색체 A·B, 아빠 쪽 염색체 a·b예요.</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">제1감수분열 전기에 엄마 유래와 아빠 유래 가닥이 조각을 바꿔서, AB와 ab뿐이던 조합에 Ab와 aB가 생겨요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>교차(crossing over)</dt><dd>상동염색체의 안쪽 두 가닥이 DNA 조각을 바꾸는 현상이에요.</dd><dt>재조합(recombination)</dt><dd>교차로 원래 없던 대립유전자 조합이 생기는 것이에요.</dd><dt>제1감수분열 전기</dt><dd>4분염색체가 생기고 교차가 일어나는 시기예요.</dd></dl>
+  </div>
+</article>
+
+<article class="topic" id="s3-assortment"><h3>상동염색체의 무작위 분배</h3><div class="tags"><span class="tag date">0922 수업</span><span class="tag slide">3장 p5</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">짝마다 엄마 것과 아빠 것 중 하나를 동전 던지듯 골라 담으니, 짝이 두 개면 담는 방법이 네 가지예요.</p>
+    <figure class="figure"><svg id="fig-assortment" viewBox="0 0 560 200" role="img" aria-label="긴 막대 짝과 짧은 막대 짝이 있고, 각 짝에서 빨간 선 엄마 것이나 파란 선 아빠 것 하나씩을 담은 상자 네 가지가 만들어지는 그림">
+      <text class="fig-muted" x="280" y="20" text-anchor="middle">빨간 선은 엄마 것, 파란 선은 아빠 것</text>
+      <line class="fig-danger" x1="50" y1="50" x2="50" y2="140"/>
+      <line class="fig-accent" x1="70" y1="50" x2="70" y2="140"/>
+      <line class="fig-danger" x1="120" y1="85" x2="120" y2="140"/>
+      <line class="fig-accent" x1="140" y1="85" x2="140" y2="140"/>
+      <text class="fig-text" x="60" y="162" text-anchor="middle">짝 1</text>
+      <text class="fig-text" x="130" y="162" text-anchor="middle">짝 2</text>
+      <path class="fig-ink" d="M168 95 L208 95 M200 89 L208 95 L200 101"/>
+      <rect class="fig-ink" x="225" y="40" width="60" height="110" rx="6"/>
+      <line class="fig-danger" x1="245" y1="50" x2="245" y2="140"/><line class="fig-danger" x1="265" y1="85" x2="265" y2="140"/>
+      <rect class="fig-ink" x="305" y="40" width="60" height="110" rx="6"/>
+      <line class="fig-danger" x1="325" y1="50" x2="325" y2="140"/><line class="fig-accent" x1="345" y1="85" x2="345" y2="140"/>
+      <rect class="fig-ink" x="385" y="40" width="60" height="110" rx="6"/>
+      <line class="fig-accent" x1="405" y1="50" x2="405" y2="140"/><line class="fig-danger" x1="425" y1="85" x2="425" y2="140"/>
+      <rect class="fig-ink" x="465" y="40" width="60" height="110" rx="6"/>
+      <line class="fig-accent" x1="485" y1="50" x2="485" y2="140"/><line class="fig-accent" x1="505" y1="85" x2="505" y2="140"/>
+      <text class="fig-text" x="375" y="178" text-anchor="middle">2 × 2 = 4가지</text>
+    </svg><figcaption>짝이 하나 늘 때마다 가짓수가 두 배가 돼요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p><strong>무작위 분배(random assortment)</strong>는 제1감수분열에서 상동염색체 쌍이 갈라질 때, 엄마 유래 염색체가 어느 극으로 갈지가 정해져 있지 않고 쌍마다 따로 무작위로 정해지는 현상이에요. 강의노트는 "중기 I에서 각 상동염색체 쌍이 무작위로 방추체 극에 부착한다"고 적어요. 이렇게 배열된 쌍이 후기 I에 양 극으로 갈라져요.</p>
+    <ol class="steps">
+      <li>상동염색체 1쌍: 엄마 것이 위로 가거나 아래로 가서 2가지예요.</li>
+      <li>2쌍: 2 × 2 = 4가지예요.</li>
+      <li>3쌍: 2 × 2 × 2 = 8가지예요. 한 개체가 여러 번의 감수분열로 만들 수 있는 생식세포의 종류가 8가지예요.</li>
+      <li>n쌍: <strong>2의 n승</strong>(2ⁿ)가지예요.</li>
+    </ol>
+    <p>여기서 n은 <strong>상동염색체 쌍의 수</strong>예요. 염색체 개수가 아니에요. 2n은 염색체 개수이므로, 쌍의 수 n은 그 절반이에요.</p>
+    <ul>
+      <li>2n = 4인 생물: 상동염색체 2쌍(n = 2)이므로 2² = 4가지예요.</li>
+      <li>2n = 6인 생물: 3쌍(n = 3)이므로 2³ = 8가지예요.</li>
+      <li>사람: 염색체 46개, <strong>23쌍</strong>이므로 2²³ = 약 840만(정확히 8,388,608)가지예요. 이 값은 교차와 돌연변이를 뺀 조합만의 수예요.</li>
+    </ul>
+    <p>이것이 유전적 다양성의 두 번째 원인이에요. 첫 번째는 <a href="#s3-crossover">교차와 재조합</a>, 세 번째는 <a href="#s3-fertilization">무작위 수정과 70조</a>예요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>엄마가 빨간색 염색체 세 개, 아빠가 파란색 염색체 세 개를 준 세 쌍의 예로 설명했어요. 누가 나눠 주는지 묻고 스스로 답했어요.</p>
+    <blockquote>누가 나누냐면은 아무도 안 나눠요. 그냥 할 때마다 달라. (0922 37:07)</blockquote>
+    <blockquote>그때그때 달라. 랜덤입니다, 랜덤. 무작위. (0922 37:11)</blockquote>
+    <p>"n쌍이면 어떻게 되냐"고 물은 뒤 "2의 n승 가지수"라고 정리했어요(0922 38:02).</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <p><strong>지수 n을 염색체 개수로 착각하기 쉬워요.</strong> 사람을 2⁴⁶으로 계산하거나, 2n = 4를 보고 2⁴ = 16으로 답하는 실수예요.</p>
+    <p>바른 구분: 지수는 <strong>상동염색체 쌍의 수</strong>예요. 사람은 23쌍이라 2²³이에요. 교수님도 "23쌍"을 거듭 말했어요(0922 40:16). 2n = 4이면 2쌍이라 2² = 4가지예요. 2⁴⁶은 엄마와 아빠의 조합을 곱한 수예요(<a href="#s3-fertilization">무작위 수정과 70조</a>).</p>
+    <p><strong>생식모세포 하나가 감수분열 한 번으로 2ⁿ종류를 만든다고 착각하기 쉬워요.</strong> 수업에서도 "하나의 세포가 감수분열했을 때 여덟 가지"라고 말했어요(0922 37:45).</p>
+    <p>바른 구분: 생식모세포 하나의 감수분열 한 번은 세포 4개를 만들고, 교차가 없으면 그 종류는 많아야 2가지예요. 2ⁿ은 한 개체가 여러 번의 감수분열로 만들 수 있는 생식세포 종류의 수예요.</p>
+  </div>
+  <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+    <p><strong>배우자끼리 유전적으로 달라지는 조건</strong>: 배우자(정자나 난자) 사이의 유전적 차이에는 세 가지가 함께 영향을 줘요.</p>
+    <ol class="steps">
+      <li>감수분열 때 상동염색체의 무작위 분배</li>
+      <li>교차에 의한 재조합</li>
+      <li>서로 다른 대립유전자를 가진 유전자의 수. 즉 이형접합(예: Aa)인 유전자가 몇 개인지예요(<a href="#s4-terms">꼭 알아야 할 유전학 용어</a>).</li>
+    </ol>
+    <p>세 번째가 필요한 이유는 이래요. 무작위 분배와 교차는 엄마 쪽과 아빠 쪽 염색체가 서로 다른 대립유전자를 가질 때만 차이를 만들어요. 수업 예시처럼 엄마 쪽이 A·B, 아빠 쪽이 a·b이면 나뉘는 방식에 따라 배우자가 달라져요. 반대로 모든 유전자가 동형접합(AA, BB처럼 두 대립유전자가 같음)이면 어느 쪽 염색체가 어느 극으로 가든, 조각을 바꾸든 배우자가 모두 같아요. 이형접합인 유전자가 많을수록 배우자가 더 다양해져요.</p>
+    <p>교재도 각 상동염색체 쌍의 모계 및 부계 염색체는 일반적으로 서로 다른 대립유전자를 지닌다고 전제한 뒤 무작위 분배를 설명해요.</p>
+    <p>출처: 교재 3장 p.69 (그림 3.10 A-B / a-b 예시는 p.68)</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">상동염색체 쌍마다 어느 쪽으로 갈지가 무작위라서, n쌍이면 2의 n승 가지 생식세포가 생겨요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>무작위 분배(random assortment)</dt><dd>상동염색체 쌍이 쌍마다 따로 무작위로 갈라지는 현상이에요.</dd><dt>2의 n승</dt><dd>n은 상동염색체 쌍의 수예요. 사람은 23쌍이라 2²³ = 약 840만(정확히 8,388,608)가지예요.</dd></dl>
+  </div>
+</article>
+
+<article class="topic" id="s3-fertilization"><h3>무작위 수정과 70조</h3><div class="tags"><span class="tag date">0922 수업</span><span class="tag slide">3장 p5</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">엄마 카드 한 장과 아빠 카드 한 장이 아무렇게나 만나서 내가 돼요.</p>
+    <figure class="figure"><svg id="fig-fertilization" viewBox="0 0 560 230" role="img" aria-label="엄마 카드 약 840만 가지와 아빠 카드 약 840만 가지가 만나는 칸들 중 색칠된 한 칸이 나이고, 칸 수는 약 70조 개라는 그림">
+      <text class="fig-text" x="186" y="40" text-anchor="middle">아빠 카드 약 840만 가지</text>
+      <text class="fig-text" x="108" y="120" text-anchor="end">엄마 카드</text>
+      <text class="fig-text" x="108" y="140" text-anchor="end">약 840만 가지</text>
+      <path class="fig-ink" d="M120 56 H252 M120 78 H252 M120 100 H252 M120 122 H252 M120 144 H252 M120 166 H252 M120 188 H252 M120 56 V188 M142 56 V188 M164 56 V188 M186 56 V188 M208 56 V188 M230 56 V188 M252 56 V188"/>
+      <rect class="fig-dot" x="187" y="101" width="20" height="20"/>
+      <text class="fig-muted" x="262" y="126">⋯</text>
+      <text class="fig-muted" x="180" y="206">⋮</text>
+      <text class="fig-text" x="300" y="100">칸 수는 약 70조 개</text>
+      <text class="fig-text" x="300" y="125">나는 그중 딱 한 칸</text>
+      <text class="fig-muted" x="300" y="150">지금까지 산 사람을 다 모아도</text>
+      <text class="fig-muted" x="300" y="168">1조 명이 안 돼요</text>
+    </svg><figcaption>색칠된 한 칸이 나예요.</figcaption></figure>
+    <p>그래서 쌍둥이가 아니라면 나와 똑같은 사람은 전에도 없었고 앞으로도 없어요.</p>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p><strong>수정(fertilization)</strong>은 감수분열로 만들어진 생식세포, 즉 정자와 난자가 서로 융합하는 것이에요. 어떤 정자와 어떤 난자가 만날지에는 정해진 규칙이 없어요. 이론적으로 어떤 정자든 어떤 난자와도 수정할 수 있어요. 이것이 <strong>무작위 수정(random fertilization)</strong>이고, 유전적 다양성의 세 번째 원인이에요.</p>
+    <p>정자가 10종류, 난자가 10종류면 가능한 조합은 10 × 10 = 100가지예요. 사람에 적용하면 이래요.</p>
+    <ol class="steps">
+      <li>사람은 상동염색체 23쌍이므로, 한 사람이 만들 수 있는 정자나 난자는 2²³ = 약 840만(정확히 8,388,608)종류예요(<a href="#s3-assortment">상동염색체의 무작위 분배</a>).</li>
+      <li>엄마가 만드는 난자 2²³종류와 아빠가 만드는 정자 2²³종류가 만나므로 경우의 수를 곱해요. 지수법칙으로는 지수를 더해요.</li>
+      <li>한 부모가 만들 수 있는 자녀의 염색체 조합은 2⁴⁶ = 70,368,744,177,664가지, 약 <strong>70조</strong>예요.</li>
+    </ol>
+    $$2^{23} \times 2^{23} = 2^{23+23} = 2^{46} \approx 70\text{조}$$
+    <p>결론: 한 부모가 70조 명을 낳아야 같은 조합의 자녀가 우연히 한 번 나와요. 일란성 쌍둥이만 예외로 유전적으로 같아요. 지금까지 살았던 사람을 모두 합쳐도 1조 명이 안 되므로, 내 염색체 조합은 지금까지 없었고 앞으로도 없을 거예요.</p>
+    <p>이 70조는 교차와 돌연변이를 <strong>뺀</strong> 값이에요. 교차까지 생각하면 한 부모가 낳을 수 있는 자손의 조합은 사실상 무한대예요. 그래서 유성생식으로 유전적으로 동일한 자손을 만드는 것은 사실상 불가능해요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>2²³과 2⁴⁶을 <strong>로또</strong>에 빗댔어요.</p>
+    <blockquote>로또 조합 수하고 인간이 만들 수 있는 생식세포의 조합 수하고 비슷해요. (0922 41:11)</blockquote>
+    <blockquote>2의 46승은 무려 70조입니다, 70조. 로또 두 번 당첨될 확률이죠. (0922 41:45)</blockquote>
+    <p>같은 부모에게서 태어난 유명 연예인 남매나 BTS 이야기로, 형제자매가 서로 다른 이유가 유성생식의 다양성이라고 했어요(0922 38:51–40:00). 이어 한 학생을 예로 "부모님이 몇 명을 낳아야 우연히 또 네가 태어날까"를 계산했어요(0922 40:06).</p>
+    <p>70조가 얼마나 큰지 인구 곡선으로 보여 주었어요. 지금 세계 인구는 약 80억이고, 호모 사피엔스 이후 인구는 바닥을 기다가 산업혁명 뒤 급격히 늘었어요. 이 곡선을 적분해 지금까지 산 모든 사람을 세어도 1조가 안 돼요(0922 42:38–44:16).</p>
+    <blockquote>우주에서 거의 유일한 염색체 조합을 가지고 있다. (0922 44:26)</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <p><strong>2²³과 2⁴⁶을 헷갈리기 쉬워요.</strong></p>
+    <p>바른 구분: 2²³은 <strong>한 사람</strong>이 만드는 정자나 난자의 종류예요(0922 40:52). 2⁴⁶은 <strong>한 부모 쌍</strong>이 만드는 자녀의 조합 수예요(0922 41:29).</p>
+    <p><strong>경우의 수를 곱하는 것과 지수를 더하는 것을 다른 계산으로 착각하기 쉬워요.</strong></p>
+    <p>바른 구분: 같은 계산이에요. 2²³ × 2²³ = 2²³⁺²³ = 2⁴⁶이에요. 교수님도 "곱하면 되는 거죠? 지수법칙에 의해서 이걸 더하면 되죠"라고 짚었어요(0922 41:29).</p>
+    <p><strong>70조를 가능한 조합 전부로 착각하기 쉬워요.</strong></p>
+    <p>바른 구분: 70조는 교차와 돌연변이를 뺀 값이에요(0922 40:27, 44:40). 교차까지 넣으면 사실상 무한대예요.</p>
+    <p><strong>정자와 난자가 합쳐지는 과정의 이름을 다른 과정과 헷갈리기 쉬워요.</strong></p>
+    <p>바른 구분: 생식세포(정자와 난자)가 융합하는 것은 <strong>수정</strong>이에요. 유사분열은 체세포가 같은 세포 둘로 나뉘는 분열이고, 감수분열은 정자와 난자를 만드는 분열이에요. 재조합은 제1감수분열 전기에 상동염색체 사이에서 조각이 바뀌는 일이에요. 수정된 세포가 자라 몸이 되는 과정은 수정 뒤의 일이에요.</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">정자와 난자가 무작위로 만나므로 한 부모가 만드는 자녀 조합은 2⁴⁶, 약 70조 가지예요.</p>
+    <p class="panel-label">핵심 식</p>
+    <ul class="eq-list"><li><span class="eq-name">부모 한 쌍의 자녀 조합</span>$$2^{23} \times 2^{23} = 2^{23+23} = 2^{46} \approx 70\text{조}$$</li></ul>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>수정(fertilization)</dt><dd>생식세포인 정자와 난자가 서로 융합하는 것이에요.</dd><dt>무작위 수정(random fertilization)</dt><dd>어떤 정자와 어떤 난자가 만날지 규칙 없이 정해지는 것이에요.</dd></dl>
+  </div>
+</article>
+    </section>
+    <section id="s4"><h2>4. [4장] 멘델의 유전</h2>
+<article class="topic" id="s4-mendel-design"><h3>멘델의 실험 설계</h3><div class="tags"><span class="tag date">0922 수업</span><span class="tag slide">4장 p1</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">멘델은 부모의 특징이 정말 섞이는지 완두로 직접 실험해 봤어요.</p>
+    <figure class="figure"><svg id="fig-mendel-pollination" viewBox="0 0 560 230" role="img" aria-label="왼쪽 다른 꽃의 꽃가루를 붓으로 옮겨 오른쪽 받는 꽃에 묻히는 그림. 받는 꽃 안의 두 선 중 꽃가루가 나오는 오른쪽 선 위에 잘라 냈다는 X 표시가 있다.">
+      <circle class="fig-ink" cx="120" cy="130" r="45"/>
+      <circle class="fig-dot" cx="110" cy="124" r="5"/><circle class="fig-dot" cx="130" cy="124" r="5"/><circle class="fig-dot" cx="120" cy="140" r="5"/>
+      <text class="fig-text" x="120" y="200" text-anchor="middle">다른 꽃</text>
+      <path class="fig-accent" d="M160 100 Q275 20 390 100"/>
+      <path class="fig-accent" d="M374 90 L390 100 L372 104"/>
+      <circle class="fig-dot" cx="275" cy="60" r="5"/>
+      <text class="fig-text" x="275" y="36" text-anchor="middle">붓으로 꽃가루 옮기기</text>
+      <circle class="fig-ink" cx="430" cy="130" r="45"/>
+      <line class="fig-ink" x1="416" y1="105" x2="416" y2="158"/>
+      <line class="fig-ink" x1="446" y1="158" x2="446" y2="122"/>
+      <line class="fig-danger" x1="438" y1="112" x2="454" y2="128"/><line class="fig-danger" x1="454" y1="112" x2="438" y2="128"/>
+      <text class="fig-muted" x="484" y="124">잘라 냄</text>
+      <text class="fig-text" x="430" y="200" text-anchor="middle">받는 꽃</text>
+    </svg><figcaption>받는 꽃 안에서 꽃가루가 나오는 부분(X 표시한 선)을 잘라 내고, 다른 꽃의 꽃가루(색칠된 점)를 붓으로 옮겨 줬어요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p><strong>혼합설(blending theory)</strong>: 멘델 이전에는 부모의 특징이 섞여서 자식에게 나타난다고 생각했어요. 검은 고양이와 흰 고양이가 만나면 회색 고양이가, 흰 꽃과 붉은 꽃이 만나면 분홍 꽃이 나온다는 식이에요. 멘델의 실험은 이 생각이 틀렸다는 것을 보였어요(<a href="#s4-segregation">분리의 법칙과 우열의 법칙</a>).</p>
+    <p><strong>유전 연구 재료의 조건</strong>은 세 가지예요. (1) 키우기(재배) 쉬워야 해요. (2) 교배가 쉬워야 해요. (3) 형질(trait)이 뚜렷해야 해요.</p>
+    <p><strong>왜 완두(pea)인가</strong>: 처음에는 쥐를 쓰려 했지만 수도원이 쥐 교배를 금지해 식물로 바꿨어요. 완두는 싸고, 잘 자라고, 빨리 크고, 한 번에 많이 얻을 수 있어요. 가장 중요한 이유는 <strong>대립 형질(contrasting traits)</strong>이 분명하다는 점이에요. 대립 형질은 한 가지 특징에서 서로 맞서는 두 모습이에요. 예를 들면 노란 콩과 초록 콩, 둥근 콩과 주름진 콩, 보라(자주) 꽃과 흰 꽃이에요.</p>
+    <p><strong>실험 규모</strong>: 1856년부터 7년 동안 <strong>대립 형질 7가지</strong>를 조사했고, 약 3만 개의 콩을 분석했어요.</p>
+    <p><strong>수분(pollination, 꽃가루받이)</strong>: 수술(stamen)의 꽃가루(pollen)가 암술(pistil)의 암술머리(stigma)에 앉는 것이에요. 한 꽃에 수술과 암술이 함께 있는 꽃도 있고, 수꽃과 암꽃이 따로 있는 식물도 있어요.</p>
+    <div class="table-wrap"><table>
+      <tr><th>구분</th><th>꽃가루는 어디서</th><th>결과·쓰임</th></tr>
+      <tr><td>자가수분(self-pollination)</td><td>자기 꽃가루가 자기 암술에</td><td>자기 유전자만 이어져 유전적 다양성이 사라져요. 그래서 식물은 대개 이를 억제하는 체계가 있어요.</td></tr>
+      <tr><td>타가수분(cross-pollination)</td><td>다른 꽃의 꽃가루가 암술에</td><td>멘델이 교배 실험에 쓴 방법이에요.</td></tr>
+    </table></div>
+    <p><strong>멘델의 방법</strong></p>
+    <ol class="steps">
+      <li>받는 꽃의 수술을 잘라 자가수분을 막아요.</li>
+      <li>다른 꽃의 꽃가루를 붓으로 옮겨 인위적으로 타가수분시켜요.</li>
+      <li>자손의 형질을 세어 비율을 봐요. 둥근 콩 × 주름진 콩은 모두 둥근 콩이었고, 그 둥근 콩끼리 교배하면 둥근 : 주름 = 3:1이었어요. 다른 형질에서도 3:1이 반복됐어요.</li>
+    </ol>
+    <p><strong>영상이 소개한 멘델의 세 법칙</strong>: 영상은 멘델이 알아낸 것을 우열의 법칙, 분리(대립되는 유전자가 따로 있다는 것), 독립의 법칙 세 가지로 이름을 들어 소개했어요(0922 51:13–51:27). 독립의 법칙 내용은 다음 시간에 배워요.</p>
+    <p><strong>멘델 이후의 역사</strong>: 1866년 논문 「식물의 잡종에 대한 실험」은 당시 무시당했어요. 멘델이 죽은 뒤 1900년에 세 과학자가 재발견했어요. 그 뒤 모건의 초파리 연구로 유전자가 염색체의 일정한 위치에 있다는 것이 밝혀졌고(영상은 1915년, 강의노트 4장 p5는 1911년), 1953년 왓슨과 크릭이 DNA 구조를 발표했어요. 그러니 멘델은 염색체의 구조도, 자기가 말한 인자가 염색체 위에 있다는 것도 몰랐어요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>완두를 고른 이유를 농담으로 시작해 재배, 교배, 형질이라는 세 조건으로 넘어갔어요.</p>
+    <blockquote>"배고플 때 삶아 먹으려고 완두를 가지고 한 건 아니고" (0922 53:56)</blockquote>
+    <p>영상도 완두를 고른 가장 큰 이유를 따로 짚었어요.</p>
+    <blockquote>"가장 중요한 이유, 대립되는 형질이 분명하다는 것이죠." (0922 50:22)</blockquote>
+    <p>자가수분을 막은 방법은 아주 단순했어요.</p>
+    <blockquote>"그래서 과감하게 수술을 잘라버립니다." (0922 55:54)</blockquote>
+    <p>식물이 자가수분을 억제하는 체계는 "보통 식물은 그걸 억제하는 시스템이 있는데, 아무튼"(0922 55:42) 하고 넘어갔어요.</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <p><strong>자가수분과 타가수분을 뒤바꾸기 쉬워요.</strong> 자가수분은 자기 꽃가루가 자기 암술에 앉는 것, 타가수분은 다른 꽃의 꽃가루가 앉는 것이에요. "자기 꽃가루가 자기 암술에 앉는 것은 자가 수분"(0922 56:12). 강의노트 4장 p1은 순계(true-breeding)를 얻을 때 자가수분을, 교배 실험에는 타가수분을 쓴다고 구분해요.</p>
+    <p><strong>혼합설의 예상과 멘델의 결과를 섞기 쉬워요.</strong> 흰 꽃 × 붉은 꽃에서 분홍 꽃이 나온다는 것은 혼합설의 예상이에요. 멘델의 보라 × 흰 교배에서 첫째 자식은 모두 보라였고, 흰색은 둘째 자식 세대에서 1/4로 다시 나타났어요. 수업에서 "흰색 그대로 흰색 자식이 나오네"(0922 54:44)라고 한 것은 중간색이 나오지 않았다는 뜻이에요. 뒤 범위에서 자식이 중간색으로 나오는 교배를 보더라도, 사라진 형질이 다음 세대에 그대로 돌아오는지를 보면 혼합설과 구분할 수 있어요(강의노트 4장 p1).</p>
+    <p><strong>멘델이 조사한 형질이 몇 개 안 된다고 착각하기 쉬워요.</strong> 멘델이 조사한 대립 형질은 7가지예요.</p>
+    <p><strong>멘델이 염색체를 알았다고 착각하기 쉬워요.</strong> 멘델은 염색체 구조를 몰랐어요. 유전자가 염색체 위에 있다는 것은 멘델 뒤의 모건 연구에서 밝혀졌어요.</p>
+  </div>
+  <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+    <p><strong>멘델이 완두에서 다룬 7가지 대립 형질은 모두 한쪽이 완전히 우성인 형질이었어요.</strong> 그래서 F1에서는 한쪽 형질만 나타나고 F2에서 3:1이 나왔어요.</p>
+    <p>우성이 열성을 완전히 가리지 못하는 경우(불완전우성)나 두 대립유전자의 효과가 이형접합자에서 함께 드러나는 경우(공동우성)는 1900년 재발견 뒤의 연구에서 알려졌어요. 강의노트와 교재는 이것을 "멘델의 가설에 대한 수정과 추가"로 따로 다뤄요. 그러니 멘델이 이런 경우까지 연구했다고 볼 수 없어요.</p>
+    <p>출처: 강의노트 4장 p3 (4.1.2 멘델의 가설에 대한 수정과 추가), 교재 4장 p.78</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">멘델은 대립 형질이 분명한 완두를 타가수분시켜 혼합설이 틀렸음을 보였어요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>혼합설(blending theory)</dt><dd>부모 특징이 섞여 자식에게 나타난다는 멘델 이전의 생각</dd><dt>대립 형질(contrasting traits)</dt><dd>한 특징에서 서로 맞서는 두 모습(보라/흰 꽃)</dd><dt>타가수분(cross-pollination)</dt><dd>다른 꽃의 꽃가루가 암술에 앉는 것</dd></dl>
+  </div>
+</article>
+
+<article class="topic" id="s4-terms"><h3>꼭 알아야 할 유전학 용어</h3><div class="tags"><span class="tag date">0922 수업</span><span class="tag slide">4장 p1</span><span class="tag slide">4장 p2</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">꽃 속에는 색을 정하는 글자 카드가 두 장씩 들어 있어요.</p>
+    <p>큰 P 카드가 한 장만 있어도 보라 꽃이 피어요.</p>
+    <figure class="figure"><svg id="fig-terms-cards" viewBox="0 0 560 210" role="img" aria-label="카드 PP, Pp, pp 세 쌍. PP와 Pp 아래에는 색칠된 동그라미(보라 꽃), pp 아래에는 테두리만 있는 동그라미(흰 꽃).">
+      <text class="fig-muted" x="100" y="24" text-anchor="middle">같은 카드 두 장</text>
+      <rect class="fig-ink" x="62" y="36" width="34" height="44" rx="4"/><rect class="fig-ink" x="104" y="36" width="34" height="44" rx="4"/>
+      <text class="fig-text" x="79" y="64" text-anchor="middle">P</text><text class="fig-text" x="121" y="64" text-anchor="middle">P</text>
+      <circle class="fig-dot" cx="100" cy="126" r="22"/>
+      <text class="fig-text" x="100" y="180" text-anchor="middle">보라 꽃</text>
+      <text class="fig-muted" x="280" y="24" text-anchor="middle">다른 카드 두 장</text>
+      <rect class="fig-ink" x="242" y="36" width="34" height="44" rx="4"/><rect class="fig-ink" x="284" y="36" width="34" height="44" rx="4"/>
+      <text class="fig-text" x="259" y="64" text-anchor="middle">P</text><text class="fig-text" x="301" y="64" text-anchor="middle">p</text>
+      <circle class="fig-dot" cx="280" cy="126" r="22"/>
+      <text class="fig-text" x="280" y="180" text-anchor="middle">보라 꽃</text>
+      <text class="fig-muted" x="460" y="24" text-anchor="middle">같은 카드 두 장</text>
+      <rect class="fig-ink" x="422" y="36" width="34" height="44" rx="4"/><rect class="fig-ink" x="464" y="36" width="34" height="44" rx="4"/>
+      <text class="fig-text" x="439" y="64" text-anchor="middle">p</text><text class="fig-text" x="481" y="64" text-anchor="middle">p</text>
+      <circle class="fig-ink" cx="460" cy="126" r="22"/>
+      <text class="fig-text" x="460" y="180" text-anchor="middle">흰 꽃</text>
+    </svg><figcaption>PP와 Pp는 색칠된 동그라미(보라 꽃)이고, pp만 테두리뿐인 동그라미(흰 꽃)예요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p><strong>세대 이름</strong>: <strong>P세대</strong>(parental generation)는 부모 세대예요. 자식 세대는 F(filial)로 쓰고, 첫째 자식 세대가 <strong>F1</strong>, 둘째가 F2, 셋째가 F3예요.</p>
+    <p><strong>유전자와 염색체</strong>: 수업의 교차 예시에서 엄마 쪽 염색체 하나에 A와 B 두 유전자가 함께 있었어요(<a href="#s3-crossover">교차와 재조합</a>). 유전자와 염색체는 같은 것이 아니에요.</p>
+    <p><strong>대립유전자(allele)</strong>: 같은 유전자의 서로 다른 버전, 즉 유전자의 변형본이에요. 꽃 색 유전자에는 P와 p라는 대립유전자가 있고, 이 둘이 한 형질의 서로 다른 형식(보라와 흰)을 담당해요. 상동염색체의 같은 위치에는 같은 유전자가 있지만, 그 자리의 대립유전자는 같을 수도 다를 수도 있어요(0922 03:25).</p>
+    <p><strong>표기</strong>: 한 유전자의 대립유전자는 같은 알파벳으로 쓰고, 대문자가 우성, 소문자가 열성이에요. 보라(purple)의 P를 따서 P와 p로 써요.</p>
+    <div class="table-wrap"><table>
+      <tr><th>용어</th><th>뜻</th><th>꽃 색 예</th></tr>
+      <tr><td>유전자형(genotype)</td><td>어떤 대립유전자 두 개를 가졌는가</td><td>PP, Pp, pp</td></tr>
+      <tr><td>표현형(phenotype)</td><td>겉(밖)으로 드러나는 특징</td><td>보라, 흰</td></tr>
+      <tr><td>우성(dominant)</td><td>대립유전자가 <strong>하나만 있어도</strong> 표현형으로 나타나요</td><td>P(우성 대립유전자)</td></tr>
+      <tr><td>열성(recessive)</td><td>대립유전자가 <strong>두 개 다 있어야</strong> 표현형으로 나타나요. 우성과 짝을 이루면 가려져요</td><td>p(열성 대립유전자)</td></tr>
+      <tr><td>동형접합자(homozygote)</td><td>같은 대립유전자 두 개</td><td>PP, pp</td></tr>
+      <tr><td>이형접합자(heterozygote)</td><td>서로 다른 대립유전자 두 개. 잡종(hybrid)이라고도 해요</td><td>Pp</td></tr>
+    </table></div>
+    <div class="table-wrap"><table>
+      <tr><th>유전자형</th><th>접합 상태</th><th>표현형</th></tr>
+      <tr><td>PP</td><td>동형접합자</td><td>보라</td></tr>
+      <tr><td>Pp</td><td>이형접합자(잡종)</td><td>보라</td></tr>
+      <tr><td>pp</td><td>동형접합자</td><td>흰</td></tr>
+    </table></div>
+    <p>이 표에서 두 가지를 읽을 수 있어요.</p>
+    <ol class="steps">
+      <li><strong>같은 표현형이라도 유전자형이 다를 수 있어요.</strong> PP와 Pp는 둘 다 보라예요.</li>
+      <li><strong>이형접합자는 우성 표현형을 보여요.</strong> Pp는 열성 형질(흰)이 아니라 보라예요. 이형접합자도 배우자를 만들 수 있고, 배우자의 절반은 P, 절반은 p를 받아요(<a href="#s4-segregation">분리의 법칙과 우열의 법칙</a>).</li>
+    </ol>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>용어부터 확실히 하자며 시작했어요.</p>
+    <blockquote>"꼭 알아야 될 유전학 용어, 일단 용어만 알아봅시다." (0922 56:33)</blockquote>
+    <p>우성의 기준은 "한 개만 가져도"예요.</p>
+    <blockquote>"라지 P는 한 개만 가져도 보라색이 됩니다." (0922 57:28)</blockquote>
+    <p>동형접합자와 이형접합자는 "꼭"을 다섯 번 붙여 강조했어요.</p>
+    <blockquote>"이 단어는 꼭 알아야 되죠. 꼭 꼭 꼭 꼭 꼭." (0922 59:22)</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <p><strong>유전자형과 표현형을 뒤바꾸기 쉬워요.</strong> PP, Pp, pp처럼 가진 대립유전자를 적은 것이 유전자형이고, 보라나 흰처럼 겉으로 보이는 것이 표현형이에요. "이런 게 유전자형입니다"(0922 57:48), "이 보라색이 표현형이 되는 거죠"(0922 57:58).</p>
+    <p><strong>우성과 열성의 기준을 흐리게 기억하기 쉬워요.</strong> 우성은 하나만 있어도 나타나고, 열성은 두 개 다 있어야 나타나요. "열성 대립유전자는 두 개를 다 가져야만 표현형으로 나타나게 됩니다"(0922 58:35).</p>
+    <p><strong>동형접합자와 이형접합자를 헷갈리기 쉬워요.</strong> 같은 대립유전자 둘(PP, pp)이 동형접합자, 다른 대립유전자 둘(Pp)이 이형접합자예요. 이형접합자는 잡종이라고도 불러요(0922 59:28). 이형접합자가 "항상 열성 형질을 보인다"거나 "배우자를 만들 수 없다"는 말은 틀려요.</p>
+    <p><strong>유전자, 염색체, 대립유전자를 같은 것으로 착각하기 쉬워요.</strong> 수업의 교차 예시처럼 한 염색체에 여러 유전자(A와 B)가 함께 있고, 대립유전자는 한 유전자의 서로 다른 버전(P와 p)이에요.</p>
+  </div>
+  <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+    <p><strong>같은 유전자형이라도 환경에 따라 표현형이 달라질 수 있어요.</strong> 교재는 구름이 많은 고위도 지역에 사는 사람이 햇빛이 많은 지역에 사는 사람보다 같은 유전자형이라도 피부색이 덜 진하다는 예를 들어요.</p>
+    <p>출처: 교재 4장 p.80</p>
+    <p><strong>멘델 완두의 콩 색</strong>: 노란색 대립유전자(Y)가 초록색 대립유전자(y)에 대해 우성이에요. 대문자 Y가 우성, 소문자 y가 열성이라는 표기 규칙 그대로예요. 콩 모양은 둥근(R)이 주름진(r)에 대해 우성이에요(수업 영상에서도 둥근 콩 × 주름진 콩에서 모두 둥근 콩이 나왔어요).</p>
+    <p>출처: 강의노트 4장 p2</p>
+    <p><strong>유전자, 염색체, 대립유전자의 관계</strong>: 유전자는 생물이 어떤 형질을 나타내게 하는 인자이고, 염색체 위 DNA의 한 부분이에요. 그래서 <strong>염색체 하나에는 많은 유전자가 있어요</strong>. 서로 다른 대립유전자는 DNA 서열이 조금씩 달라서, 그 유전자가 만드는 단백질의 기능이 달라져요. 즉 대립유전자는 DNA(유전자의 변형본)이고, 그것이 만든 단백질이나 겉모습(표현형)이 아니에요.</p>
+    <p>출처: 강의노트 4장 p1(유전자는 염색체 상 DNA의 한 부분), 강의노트 4장 p3(대립유전자의 DNA 서열 차이와 단백질 기능 차이)</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">유전자형은 가진 대립유전자 짝(PP·Pp·pp)이고, 표현형은 겉모습(보라·흰)이에요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>대립유전자(allele)</dt><dd>같은 유전자의 서로 다른 버전(P와 p)</dd><dt>우성(dominant)</dt><dd>하나만 있어도 표현형으로 나타나요</dd><dt>이형접합자(heterozygote)</dt><dd>서로 다른 대립유전자 두 개(Pp), 잡종</dd></dl>
+  </div>
+</article>
+
+<article class="topic" id="s4-segregation"><h3>분리의 법칙과 우열의 법칙</h3><div class="tags"><span class="tag date">0922 수업</span><span class="tag slide">4장 p1</span><span class="tag slide">4장 p2</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">부모는 카드 두 장 중 한 장만 아기에게 물려줘요.</p>
+    <p>그래서 PP 부모는 늘 P만 주고, Pp 부모는 P나 p를 반반 줘요.</p>
+    <figure class="figure"><svg id="fig-segregation-split" viewBox="0 0 560 240" role="img" aria-label="왼쪽 Pp 부모의 카드 두 장이 갈라져 P 하나, p 하나로 나뉜다. 오른쪽 PP 부모는 P 하나, P 하나로 나뉜다.">
+      <text class="fig-text" x="150" y="22" text-anchor="middle">Pp 부모</text>
+      <rect class="fig-ink" x="112" y="34" width="34" height="44" rx="4"/><rect class="fig-ink" x="154" y="34" width="34" height="44" rx="4"/>
+      <text class="fig-text" x="129" y="62" text-anchor="middle">P</text><text class="fig-text" x="171" y="62" text-anchor="middle">p</text>
+      <line class="fig-accent" x1="135" y1="86" x2="98" y2="140"/><line class="fig-accent" x1="165" y1="86" x2="202" y2="140"/>
+      <circle class="fig-ink" cx="90" cy="168" r="26"/><circle class="fig-ink" cx="210" cy="168" r="26"/>
+      <text class="fig-text" x="90" y="173" text-anchor="middle">P</text><text class="fig-text" x="210" y="173" text-anchor="middle">p</text>
+      <text class="fig-muted" x="150" y="222" text-anchor="middle">P 반, p 반</text>
+      <text class="fig-text" x="410" y="22" text-anchor="middle">PP 부모</text>
+      <rect class="fig-ink" x="372" y="34" width="34" height="44" rx="4"/><rect class="fig-ink" x="414" y="34" width="34" height="44" rx="4"/>
+      <text class="fig-text" x="389" y="62" text-anchor="middle">P</text><text class="fig-text" x="431" y="62" text-anchor="middle">P</text>
+      <line class="fig-accent" x1="395" y1="86" x2="358" y2="140"/><line class="fig-accent" x1="425" y1="86" x2="462" y2="140"/>
+      <circle class="fig-ink" cx="350" cy="168" r="26"/><circle class="fig-ink" cx="470" cy="168" r="26"/>
+      <text class="fig-text" x="350" y="173" text-anchor="middle">P</text><text class="fig-text" x="470" y="173" text-anchor="middle">P</text>
+      <text class="fig-muted" x="410" y="222" text-anchor="middle">모두 P</text>
+    </svg><figcaption>짝을 이룬 두 장이 갈라져서 아기에게 가는 몫(테두리 동그라미)마다 한 장씩 들어가요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p><strong>멘델의 추론 과정</strong> (0922 59:50–61:13)</p>
+    <ol class="steps">
+      <li>보라 꽃(PP) × 흰 꽃(pp)을 교배하니 F1이 <strong>전부 보라</strong>였어요. 혼합설대로라면 중간색이 나와야 하므로 혼합설은 틀렸어요.</li>
+      <li>그렇다면 이런 특징을 나타나게 하는 어떤 <strong>인자(factor)</strong>가 있을 거예요.</li>
+      <li>한 개체는 그 인자를 <strong>두 개</strong> 가지고 있어요.</li>
+      <li>자식에게는 그중 <strong>하나만</strong> 물려줘요. 두 개가 갈라지는 것이에요.</li>
+    </ol>
+    <p>멘델이 말한 인자가 바로 오늘날의 대립유전자(유전자)예요(0922 60:41).</p>
+    <p><strong>분리의 법칙(law of segregation)</strong>: 한 형질을 정하는 대립유전자 쌍은 <strong>배우자(gamete, 생식세포)</strong>를 만들 때 서로 갈라져 배우자마다 하나씩 들어가요. 강의노트는 이것을 멘델의 세 번째 가설이라고 불러요. 수업에서도 "Pp가 감수분열하면 P를 주든지 p를 주든지 두 가지 경우"라고 설명했어요(0922 62:21).</p>
+    <div class="table-wrap"><table>
+      <tr><th>부모 유전자형</th><th>만드는 배우자</th></tr>
+      <tr><td>PP (동형접합자)</td><td>모두 P</td></tr>
+      <tr><td>pp (동형접합자)</td><td>모두 p</td></tr>
+      <tr><td>Pp (이형접합자)</td><td>P 1/2, p 1/2</td></tr>
+    </table></div>
+    <p>예를 들어 키 큰 대립유전자에 대해 동형접합인 TT 완두는 꽃가루(수컷 배우자)도 난자(암컷 배우자)도 모두 T만 가져요.</p>
+    <p><strong>우열의 법칙(law of dominance)</strong>: 이형접합자(Pp)는 두 대립유전자 중 우성 쪽 표현형을 따라요. P가 우성이라 Pp는 보라예요. 우성과 열성이 정해져 있다는 뜻이에요. 강의노트는 이것을 멘델의 두 번째 가설이라고 불러요.</p>
+    <div class="table-wrap"><table>
+      <tr><th>법칙</th><th>무엇에 대한 규칙인가</th><th>꽃 색 예</th></tr>
+      <tr><td>분리의 법칙</td><td>배우자를 만들 때 대립유전자 쌍이 갈라져 하나씩 들어감</td><td>Pp의 배우자는 P 또는 p</td></tr>
+      <tr><td>우열의 법칙</td><td>이형접합자의 표현형은 우성 쪽을 따름</td><td>Pp는 보라</td></tr>
+    </table></div>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>교수님은 멘델이 되어 추론 과정을 혼잣말처럼 재연했어요.</p>
+    <blockquote>"아니 뭐 이런 게 다 있어. … 그럼 도대체 뭐지?" (0922 60:03–60:14)</blockquote>
+    <blockquote>"두 개를 가지고 있다가 자식에게는 한 개만 물려주는 것 같네. 분리가 되는 것 같네." (0922 60:32)</blockquote>
+    <blockquote>"이형접합자의 경우에 한쪽 표현형을 따르게 된다. 우열이 정해져 있다." (0922 61:13)</blockquote>
+    <p>인자를 쌍으로 갖고 하나만 물려준다는 추론에는 "대단하죠?"(0922 63:00)라고 감탄했어요.</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <p><strong>분리의 법칙과 우열의 법칙을 뒤바꾸기 쉬워요.</strong> 분리는 배우자를 만들 때 쌍이 갈라져 하나씩 들어간다는 규칙이고, 우열은 이형접합자가 우성 쪽 모습을 따른다는 규칙이에요. 수업은 두 법칙을 연달아 정의했어요(0922 60:32–61:13). 강의노트의 번호는 우열이 두 번째 가설, 분리가 세 번째 가설이에요.</p>
+    <p><strong>"인자"를 대립유전자와 다른 것으로 착각하기 쉬워요.</strong> 멘델의 인자가 곧 대립유전자예요. "멘델이 말했던 그 유전 인자가 바로 대립유전자인 것이지요"(0922 60:41). 강의노트 4장 p1은 "멘델의 인자는 유전자(gene)라고 부름"이라고 써요. 인자는 형질을 정하는 단위인 유전자를 가리키고, 한 개체가 가진 두 인자 하나하나(P나 p)가 그 유전자의 대립유전자예요.</p>
+    <p><strong>동형접합자의 배우자를 두 종류로 착각하기 쉬워요.</strong> PP나 TT처럼 같은 대립유전자 둘을 가지면 배우자는 모두 같은 하나(P, T)를 받아요.</p>
+  </div>
+  <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+    <p>수업은 멘델의 "인자"와 3장 감수분열을 따로 가르쳤어요. 둘을 이으면 이렇게 돼요. 대립유전자는 상동염색체의 같은 위치에 있으므로, <strong>대립유전자의 분리는 감수분열에서 상동염색체가 갈라질 때 일어나요.</strong> 상동염색체 쌍은 갈라져 하나만 배우자로 가기 때문이에요(<a href="#s2-two-divisions">제1감수분열과 제2감수분열</a>). 유사분열에서는 상동염색체가 갈라지지 않고 자매염색분체가 갈라지며, 교차가 없다면 자매염색분체는 같은 대립유전자의 복사본이라 대립유전자를 나누지 않아요. 교차가 일어난 뒤에는 한 염색체의 두 자매염색분체가 AB와 Ab처럼 달라질 수 있어요(<a href="#s3-crossover">교차와 재조합</a>).</p>
+    <p>출처: 강의노트 4장 p3 (유전의 염색체설: 대립유전자는 상동염색체의 동일한 위치에 있고, 각 쌍의 염색체는 분리되어 한 개만 배우자에 전달)</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">대립유전자 쌍은 배우자를 만들 때 갈라져 하나씩 들어가고(분리), 이형접합자는 우성 쪽 모습을 따라요(우열).</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>분리의 법칙(law of segregation)</dt><dd>대립유전자 쌍이 배우자에 하나씩 갈라져 들어감</dd><dt>우열의 법칙(law of dominance)</dt><dd>이형접합자는 우성 쪽 표현형을 따름</dd><dt>인자(factor)</dt><dd>멘델이 추론한 형질의 단위, 오늘날의 대립유전자</dd></dl>
+  </div>
+</article>
+
+<article class="topic" id="s4-monohybrid"><h3>단성잡종 교배</h3><div class="tags"><span class="tag date">0922 수업</span><span class="tag slide">4장 p2</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">보라 꽃과 흰 꽃을 짝지으면 자식은 모두 보라 꽃이에요.</p>
+    <p>그 보라 꽃끼리 다시 짝지으면 흰 꽃이 네 송이 중 한 송이꼴로 돌아와요.</p>
+    <figure class="figure"><svg id="fig-monohybrid-f2" viewBox="0 0 560 250" role="img" aria-label="부모: 색칠된 동그라미 곱하기 테두리 동그라미. 자식: 색칠된 동그라미 네 개. 손주: 색칠된 동그라미 세 개와 테두리 동그라미 한 개.">
+      <text class="fig-text" x="30" y="45">부모</text>
+      <circle class="fig-dot" cx="230" cy="40" r="16"/><text class="fig-text" x="280" y="45" text-anchor="middle">×</text><circle class="fig-ink" cx="330" cy="40" r="16"/>
+      <line class="fig-accent" x1="280" y1="62" x2="280" y2="96"/><path class="fig-accent" d="M273 88 L280 98 L287 88"/>
+      <text class="fig-text" x="30" y="125">자식</text>
+      <circle class="fig-dot" cx="190" cy="120" r="16"/><circle class="fig-dot" cx="240" cy="120" r="16"/><circle class="fig-dot" cx="320" cy="120" r="16"/><circle class="fig-dot" cx="370" cy="120" r="16"/>
+      <text class="fig-muted" x="410" y="125">모두 보라</text>
+      <line class="fig-accent" x1="280" y1="142" x2="280" y2="186"/><path class="fig-accent" d="M273 178 L280 188 L287 178"/>
+      <text class="fig-muted" x="292" y="168">자식끼리</text>
+      <text class="fig-text" x="30" y="215">손주</text>
+      <circle class="fig-dot" cx="190" cy="210" r="16"/><circle class="fig-dot" cx="240" cy="210" r="16"/><circle class="fig-dot" cx="320" cy="210" r="16"/><circle class="fig-ink" cx="370" cy="210" r="16"/>
+      <text class="fig-muted" x="410" y="215">넷 중 하나가 흰</text>
+    </svg><figcaption>색칠된 동그라미는 보라 꽃, 테두리만 있는 동그라미는 흰 꽃이에요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p><strong>단성잡종 교배(monohybrid cross)</strong>: 한 가지 형질에 대해 이형접합자(잡종)인 F1끼리 교배하는 것이에요. 꽃 색이라는 한 가지 형질, 즉 <strong>유전자 하나</strong>에 대한 잡종끼리 교배하므로 "단성"이에요. 꽃 색에서는 Pp × Pp예요.</p>
+    <ol class="steps">
+      <li>P세대: 보라(PP) × 흰(pp). 배우자는 각각 P와 p뿐이라 F1은 모두 Pp(보라)예요.</li>
+      <li>F1끼리 교배(Pp × Pp): 엄마도 아빠도 배우자로 P나 p를 1/2씩 줘요.</li>
+      <li>자식이 받는 조합은 2 × 2 = <strong>4가지 경우</strong>이고, 유전자형은 PP, Pp, pp의 <strong>3종류</strong>예요.</li>
+      <li>F2 유전자형 비 PP : Pp : pp = <strong>1:2:1</strong>이에요.</li>
+      <li>PP와 Pp는 보라, pp는 흰이라 F2 표현형 비 보라 : 흰 = <strong>3:1</strong>이에요. 흰 꽃(pp)이 나올 확률은 1/4(25%)예요.</li>
+      <li>F1에서 사라졌던 흰색이 F2에서 다시 나타나요. 인자를 쌍으로 갖고 하나만 물려준다는 추론의 근거예요.</li>
+    </ol>
+    <p><strong>교배 표</strong>: 한 부모의 배우자를 세로에, 다른 부모의 배우자를 가로에 적고, 칸마다 만나는 두 대립유전자를 합쳐 적어요. 네 칸은 각각 확률 1/4예요.</p>
+    <div class="widget" id="widget-punnett"><h4>직접 해 보기: 교배 표</h4>
+      <p class="widget-help">두 부모의 유전자형을 고르면 교배 표 네 칸과 자손의 유전자형 비, 표현형 비가 바뀌어요.</p>
+      <div class="controls">
+        <label>부모 1 <select id="punnett-a"><option value="PP">PP</option><option value="Pp" selected>Pp</option><option value="pp">pp</option></select></label>
+        <label>부모 2 <select id="punnett-b"><option value="PP">PP</option><option value="Pp" selected>Pp</option><option value="pp">pp</option></select></label>
+      </div>
+      <svg id="punnett-plot" viewBox="0 0 560 300" role="img" aria-label="Pp × Pp 교배 표. 자손 유전자형 PP:Pp:pp = 1:2:1, 표현형 보라:흰 = 3:1"><text class="fig-text" x="20" y="24">부모 1 Pp(보라) × 부모 2 Pp(보라)</text><text class="fig-muted" x="190" y="46" text-anchor="middle">부모 2의 배우자</text><text class="fig-muted" x="20" y="154">부모 1의</text><text class="fig-muted" x="20" y="170">배우자</text><text class="fig-text" x="150" y="64" text-anchor="middle">P</text><text class="fig-text" x="230" y="64" text-anchor="middle">p</text><text class="fig-text" x="96" y="115" text-anchor="middle">P</text><text class="fig-text" x="96" y="195" text-anchor="middle">p</text><rect class="fig-ink" x="110" y="70" width="80" height="80"/><circle class="fig-dot" cx="150" cy="100" r="15"/><text class="fig-text" x="150" y="138" text-anchor="middle">PP</text><rect class="fig-ink" x="190" y="70" width="80" height="80"/><circle class="fig-dot" cx="230" cy="100" r="15"/><text class="fig-text" x="230" y="138" text-anchor="middle">Pp</text><rect class="fig-ink" x="110" y="150" width="80" height="80"/><circle class="fig-dot" cx="150" cy="180" r="15"/><text class="fig-text" x="150" y="218" text-anchor="middle">Pp</text><rect class="fig-ink" x="190" y="150" width="80" height="80"/><circle class="fig-ink" cx="230" cy="180" r="15"/><text class="fig-text" x="230" y="218" text-anchor="middle">pp</text><text class="fig-text" x="340" y="80">유전자형</text><text class="fig-text" x="340" y="107">PP</text><rect class="fig-accent" x="400" y="94" width="30" height="16"/><text class="fig-muted" x="438" y="107">1/4</text><text class="fig-text" x="340" y="133">Pp</text><rect class="fig-accent" x="400" y="120" width="60" height="16"/><text class="fig-muted" x="468" y="133">2/4</text><text class="fig-text" x="340" y="159">pp</text><rect class="fig-accent" x="400" y="146" width="30" height="16"/><text class="fig-muted" x="438" y="159">1/4</text><text class="fig-text" x="340" y="200">표현형</text><text class="fig-text" x="340" y="227">보라</text><rect class="fig-dot" x="400" y="214" width="90" height="16"/><text class="fig-muted" x="498" y="227">3/4</text><text class="fig-text" x="340" y="253">흰</text><rect class="fig-ink" x="400" y="240" width="30" height="16"/><text class="fig-muted" x="438" y="253">1/4</text></svg>
+      <p class="readout">결과: <b id="punnett-out">유전자형 PP:Pp:pp = 1:2:1, 표현형 보라:흰 = 3:1, 흰 꽃이 나올 확률 1/4 (25%)</b></p>
+      <p class="legend"><span><span class="sw train"></span>색칠된 동그라미·막대: 보라 꽃</span><span>테두리만 있는 동그라미·막대: 흰 꽃</span><span>유전자형 막대는 테두리 막대</span></p>
+      <div class="widget-static" hidden>
+        <figure class="figure"><svg id="widget-punnett-static-1" viewBox="0 0 560 300" role="img" aria-label="대표 설정 1: Pp × Pp 교배 표. 자손 유전자형 PP:Pp:pp = 1:2:1, 표현형 보라:흰 = 3:1"><text class="fig-text" x="20" y="24">부모 1 Pp(보라) × 부모 2 Pp(보라)</text><text class="fig-muted" x="190" y="46" text-anchor="middle">부모 2의 배우자</text><text class="fig-muted" x="20" y="154">부모 1의</text><text class="fig-muted" x="20" y="170">배우자</text><text class="fig-text" x="150" y="64" text-anchor="middle">P</text><text class="fig-text" x="230" y="64" text-anchor="middle">p</text><text class="fig-text" x="96" y="115" text-anchor="middle">P</text><text class="fig-text" x="96" y="195" text-anchor="middle">p</text><rect class="fig-ink" x="110" y="70" width="80" height="80"/><circle class="fig-dot" cx="150" cy="100" r="15"/><text class="fig-text" x="150" y="138" text-anchor="middle">PP</text><rect class="fig-ink" x="190" y="70" width="80" height="80"/><circle class="fig-dot" cx="230" cy="100" r="15"/><text class="fig-text" x="230" y="138" text-anchor="middle">Pp</text><rect class="fig-ink" x="110" y="150" width="80" height="80"/><circle class="fig-dot" cx="150" cy="180" r="15"/><text class="fig-text" x="150" y="218" text-anchor="middle">Pp</text><rect class="fig-ink" x="190" y="150" width="80" height="80"/><circle class="fig-ink" cx="230" cy="180" r="15"/><text class="fig-text" x="230" y="218" text-anchor="middle">pp</text><text class="fig-text" x="340" y="80">유전자형</text><text class="fig-text" x="340" y="107">PP</text><rect class="fig-accent" x="400" y="94" width="30" height="16"/><text class="fig-muted" x="438" y="107">1/4</text><text class="fig-text" x="340" y="133">Pp</text><rect class="fig-accent" x="400" y="120" width="60" height="16"/><text class="fig-muted" x="468" y="133">2/4</text><text class="fig-text" x="340" y="159">pp</text><rect class="fig-accent" x="400" y="146" width="30" height="16"/><text class="fig-muted" x="438" y="159">1/4</text><text class="fig-text" x="340" y="200">표현형</text><text class="fig-text" x="340" y="227">보라</text><rect class="fig-dot" x="400" y="214" width="90" height="16"/><text class="fig-muted" x="498" y="227">3/4</text><text class="fig-text" x="340" y="253">흰</text><rect class="fig-ink" x="400" y="240" width="30" height="16"/><text class="fig-muted" x="438" y="253">1/4</text></svg><figcaption>Pp × Pp (단성잡종 교배)</figcaption></figure>
+        <figure class="figure"><svg id="widget-punnett-static-2" viewBox="0 0 560 300" role="img" aria-label="대표 설정 2: PP × pp 교배 표. 자손 유전자형 PP:Pp:pp = 0:1:0, 표현형 보라:흰 = 1:0"><text class="fig-text" x="20" y="24">부모 1 PP(보라) × 부모 2 pp(흰)</text><text class="fig-muted" x="190" y="46" text-anchor="middle">부모 2의 배우자</text><text class="fig-muted" x="20" y="154">부모 1의</text><text class="fig-muted" x="20" y="170">배우자</text><text class="fig-text" x="150" y="64" text-anchor="middle">p</text><text class="fig-text" x="230" y="64" text-anchor="middle">p</text><text class="fig-text" x="96" y="115" text-anchor="middle">P</text><text class="fig-text" x="96" y="195" text-anchor="middle">P</text><rect class="fig-ink" x="110" y="70" width="80" height="80"/><circle class="fig-dot" cx="150" cy="100" r="15"/><text class="fig-text" x="150" y="138" text-anchor="middle">Pp</text><rect class="fig-ink" x="190" y="70" width="80" height="80"/><circle class="fig-dot" cx="230" cy="100" r="15"/><text class="fig-text" x="230" y="138" text-anchor="middle">Pp</text><rect class="fig-ink" x="110" y="150" width="80" height="80"/><circle class="fig-dot" cx="150" cy="180" r="15"/><text class="fig-text" x="150" y="218" text-anchor="middle">Pp</text><rect class="fig-ink" x="190" y="150" width="80" height="80"/><circle class="fig-dot" cx="230" cy="180" r="15"/><text class="fig-text" x="230" y="218" text-anchor="middle">Pp</text><text class="fig-text" x="340" y="80">유전자형</text><text class="fig-text" x="340" y="107">PP</text><text class="fig-muted" x="408" y="107">0/4</text><text class="fig-text" x="340" y="133">Pp</text><rect class="fig-accent" x="400" y="120" width="120" height="16"/><text class="fig-muted" x="528" y="133">4/4</text><text class="fig-text" x="340" y="159">pp</text><text class="fig-muted" x="408" y="159">0/4</text><text class="fig-text" x="340" y="200">표현형</text><text class="fig-text" x="340" y="227">보라</text><rect class="fig-dot" x="400" y="214" width="120" height="16"/><text class="fig-muted" x="528" y="227">4/4</text><text class="fig-text" x="340" y="253">흰</text><text class="fig-muted" x="408" y="253">0/4</text></svg><figcaption>PP × pp</figcaption></figure>
+        <figure class="figure"><svg id="widget-punnett-static-3" viewBox="0 0 560 300" role="img" aria-label="대표 설정 3: Pp × pp 교배 표. 자손 유전자형 PP:Pp:pp = 0:1:1, 표현형 보라:흰 = 1:1"><text class="fig-text" x="20" y="24">부모 1 Pp(보라) × 부모 2 pp(흰)</text><text class="fig-muted" x="190" y="46" text-anchor="middle">부모 2의 배우자</text><text class="fig-muted" x="20" y="154">부모 1의</text><text class="fig-muted" x="20" y="170">배우자</text><text class="fig-text" x="150" y="64" text-anchor="middle">p</text><text class="fig-text" x="230" y="64" text-anchor="middle">p</text><text class="fig-text" x="96" y="115" text-anchor="middle">P</text><text class="fig-text" x="96" y="195" text-anchor="middle">p</text><rect class="fig-ink" x="110" y="70" width="80" height="80"/><circle class="fig-dot" cx="150" cy="100" r="15"/><text class="fig-text" x="150" y="138" text-anchor="middle">Pp</text><rect class="fig-ink" x="190" y="70" width="80" height="80"/><circle class="fig-dot" cx="230" cy="100" r="15"/><text class="fig-text" x="230" y="138" text-anchor="middle">Pp</text><rect class="fig-ink" x="110" y="150" width="80" height="80"/><circle class="fig-ink" cx="150" cy="180" r="15"/><text class="fig-text" x="150" y="218" text-anchor="middle">pp</text><rect class="fig-ink" x="190" y="150" width="80" height="80"/><circle class="fig-ink" cx="230" cy="180" r="15"/><text class="fig-text" x="230" y="218" text-anchor="middle">pp</text><text class="fig-text" x="340" y="80">유전자형</text><text class="fig-text" x="340" y="107">PP</text><text class="fig-muted" x="408" y="107">0/4</text><text class="fig-text" x="340" y="133">Pp</text><rect class="fig-accent" x="400" y="120" width="60" height="16"/><text class="fig-muted" x="468" y="133">2/4</text><text class="fig-text" x="340" y="159">pp</text><rect class="fig-accent" x="400" y="146" width="60" height="16"/><text class="fig-muted" x="468" y="159">2/4</text><text class="fig-text" x="340" y="200">표현형</text><text class="fig-text" x="340" y="227">보라</text><rect class="fig-dot" x="400" y="214" width="60" height="16"/><text class="fig-muted" x="468" y="227">2/4</text><text class="fig-text" x="340" y="253">흰</text><rect class="fig-ink" x="400" y="240" width="60" height="16"/><text class="fig-muted" x="468" y="253">2/4</text></svg><figcaption>Pp × pp</figcaption></figure>
+        <div class="table-wrap"><table><tr><th>설정</th><th>결과</th></tr>
+          <tr><td>Pp × Pp</td><td>유전자형 PP:Pp:pp = 1:2:1, 표현형 보라:흰 = 3:1, 흰 꽃이 나올 확률 1/4 (25%)</td></tr>
+          <tr><td>PP × pp</td><td>유전자형 PP:Pp:pp = 0:1:0 (모두 Pp), 표현형 보라:흰 = 1:0 (모두 보라), 흰 꽃이 나올 확률 0/4 (0%)</td></tr>
+          <tr><td>Pp × pp</td><td>유전자형 PP:Pp:pp = 0:1:1, 표현형 보라:흰 = 1:1, 흰 꽃이 나올 확률 2/4 (50%)</td></tr>
+        </table></div>
+      </div>
+    </div>
+    <div class="table-wrap"><table>
+      <tr><th>교배</th><th>자손 유전자형</th><th>자손 표현형</th></tr>
+      <tr><td>PP × pp</td><td>모두 Pp</td><td>모두 보라</td></tr>
+      <tr><td>PP × Pp</td><td>PP : Pp = 1 : 1</td><td>모두 보라</td></tr>
+      <tr><td>Pp × Pp</td><td>PP : Pp : pp = 1:2:1</td><td>보라 : 흰 = 3:1</td></tr>
+      <tr><td>Pp × pp</td><td>Pp : pp = 1 : 1</td><td>보라 : 흰 = 1 : 1</td></tr>
+      <tr><td>pp × pp</td><td>모두 pp</td><td>모두 흰</td></tr>
+    </table></div>
+    <p><strong>자손을 보고 부모 유전자형 거꾸로 찾기</strong></p>
+    <ol class="steps">
+      <li>보라 × 흰 교배에서 자손 수가 충분히 많은데 <strong>모두 보라</strong>면 보라 부모는 PP예요. 보라 부모가 Pp였다면 자손마다 1/2 확률로 흰색(pp)이라, 자손이 많으면 흰 자손이 절반쯤 나와야 해요.</li>
+      <li>열성 자손(pp)이 하나라도 나오면, 두 부모가 각각 p를 하나 이상 가져야 해요.</li>
+      <li>그래서 <strong>우성 표현형 부모 둘이 열성 자손을 낳으려면 두 부모 모두 이형접합자(Pp)</strong>여야 해요. 이때 열성 자손이 나올 확률은 1/4예요.</li>
+      <li>우성 표현형 부모(P_) × 열성 부모(pp) 사이에서 pp 자손이 나왔다면, 우성 부모는 Pp예요. 그러면 다음 자손이 pp일 확률은 1/2(50%)예요. 자손 하나하나는 매번 새로 배우자를 받으므로, 앞 자손의 결과가 다음 자손의 확률을 바꾸지 않아요.</li>
+      <li>열성 표현형끼리(pp × pp)는 p만 주고받으므로 우성 자손이 나올 수 없어요. 반대로 우성 표현형끼리라도 둘 다 Pp면 열성 자손이 나와요.</li>
+    </ol>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>"단성"이 무슨 뜻인지 두 번 되풀이했어요.</p>
+    <blockquote>"꽃 색깔에 관여하는 딱 한 개의 유전자만 관여한 거죠." (0922 61:45)</blockquote>
+    <blockquote>"유전자형은 … 1대 2대 1의 비율로 나오게 되죠? 표현형은 3대 1의 비율" (0922 62:36–62:44)</blockquote>
+    <blockquote>"아 사라졌던 하얀색 형질이 두 번째 세대에서 다시 나타나는구나." (0922 62:53)</blockquote>
+    <p>영상에서도 둥근 콩 × 주름진 콩의 자손끼리 교배하면 3:1이 나오고, 다른 형질에서도 비슷한 3:1이 계속 나왔다고 했어요(0922 50:51–50:57). 수업은 "분리의 법칙, 우열의 법칙. 일단 여기까지 멘델의 법칙이고 독립의 법칙은 다음 시간에 합시다"(0922 63:20)로 끝났어요.</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <p><strong>유전자형 비와 표현형 비를 섞기 쉬워요.</strong> F2 유전자형 비는 PP : Pp : pp = 1:2:1이고, 표현형 비는 보라 : 흰 = 3:1이에요(0922 62:36–62:44).</p>
+    <p><strong>경우의 수 4와 유전자형 종류 3을 헷갈리기 쉬워요.</strong> Pp × Pp(Ff × Ff도 같아요)에서 만나는 경우는 4가지지만, Pp가 두 번 나와서 자손 유전자형은 3종류예요.</p>
+    <p><strong>"단성"의 뜻을 착각하기 쉬워요.</strong> 단성은 형질(유전자)이 <strong>하나</strong>라는 뜻이에요(0922 61:45–62:04). 이형접합자 = 잡종이라는 점도 다시 짚었어요(0922 61:41).</p>
+  </div>
+  <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+    <p>같은 계산을 사람의 유전병에 적용할 수 있어요. 상염색체는 성염색체(X, Y)가 아닌 염색체예요.</p>
+    <div class="table-wrap"><table>
+      <tr><th>유전 방식</th><th>병이 나타나는 유전자형</th><th>이형접합자</th></tr>
+      <tr><td>상염색체 열성 유전 (병 대립유전자 f가 열성)</td><td>열성 동형접합자(ff)에서만</td><td>Ff는 증상이 없어요. 이런 사람을 보인자(carrier)라고 해요</td></tr>
+      <tr><td>상염색체 우성 유전 (병 대립유전자가 우성)</td><td>병 대립유전자가 하나만 있어도(이형접합), 둘 다 있어도(동형접합) 나타나요</td><td>병이 나타나요. 열성 동형접합자만 정상이에요</td></tr>
+    </table></div>
+    <ol class="steps">
+      <li>"상염색체 열성 유전"이라는 말은 병 대립유전자를 두 개(ff) 가져야만 병이 나타난다는 뜻이에요. Ff × Ff 부부의 아이가 ff일 확률은 1/4(25%)예요.</li>
+      <li>우성 형질 부모 둘이 열성 형질 아이를 낳았다면, 두 부모 모두 이형접합 보인자예요.</li>
+      <li>해로운 열성 대립유전자가 있을 때, 이형접합 개체(Ff)는 병이 나타나지 않으므로 열성 동형접합 개체(ff)보다 유리해요. 하지만 동형접합자에는 FF도 있어서, "동형접합자는 항상 이형접합자보다 유리하다(불리하다)" 같은 "항상" 문장은 성립하지 않아요.</li>
+    </ol>
+    <p>출처: 강의노트 4장 p8</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">단성잡종 교배(Pp × Pp)의 F2는 유전자형 1:2:1, 표현형 3:1이에요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>단성잡종 교배(monohybrid cross)</dt><dd>한 형질(유전자 하나)에 대한 이형접합자끼리의 교배</dd><dt>교배 표</dt><dd>두 부모의 배우자를 가로·세로에 놓고 조합을 세는 표</dd></dl>
+  </div>
+</article>
+    </section>
+    <section id="s5"><h2>5. 요약 · 예고</h2>
+<article class="topic" id="s5-cheatsheet"><h3>30초 요약</h3><div class="tags"><span class="tag date">0922 수업</span><span class="tag slide">3장 p2–p5</span><span class="tag slide">4장 p1–p2</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>주제</th><th>시험 직전 한 줄</th></tr></thead>
+          <tbody>
+            <tr><td>무엇이 갈라지나</td><td>유사분열은 자매염색분체만 갈라져 2n에서 2n이 되고, 감수분열은 제1감수분열에서 상동염색체, 제2감수분열에서 자매염색분체가 갈라져 2n에서 n이 돼요.</td></tr>
+            <tr><td>자매염색분체와 상동염색체</td><td>자매염색분체는 복제로 생겨 동원체로 붙은 같은 정보의 두 가닥이고, 상동염색체는 엄마·아빠에게서 하나씩 온 모양·크기가 같은 쌍이라 같은 자리의 대립유전자가 다를 수 있어요.</td></tr>
+            <tr><td>간기</td><td>G1기(성장)·S기(DNA와 중심체 복제)·G2기(분열 준비)이고, 이때 DNA는 풀린 염색질이라 막대 모양 염색체가 없는 게 아니라 안 보일 뿐이에요.</td></tr>
+            <tr><td>중심체와 동원체</td><td>중심체(중심립 두 개)는 방추사가 뻗어 나오는 곳, 동원체는 방추사가 붙는 염색체 부위이고, 방추사의 성분은 미세소관이에요.</td></tr>
+            <tr><td>전기</td><td>세 가지 사건: 염색체 응축(보이기 시작), 핵막 소실, 중심체에서 뻗은 방추사가 동원체에 결합(엄밀히 뒤의 둘은 전중기지만 수업에서는 전기로 묶어요).</td></tr>
+            <tr><td>중기</td><td>염색체가 세포 가운데 배열되며, 유사분열에서는 상동염색체가 짝을 짓지 않고 따로 한 줄로 서요.</td></tr>
+            <tr><td>후기</td><td>유사분열 후기에 갈라지는 것은 상동염색체가 아니라 자매염색분체이고, 각각 양쪽 극으로 끌려가요.</td></tr>
+            <tr><td>말기</td><td>전기의 반대(핵막이 다시 생기고, 염색체가 풀리고, 방추사가 사라짐)로 핵분열이 끝나지만 세포는 아직 하나예요.</td></tr>
+            <tr><td>세포질 분열</td><td>동물은 미세섬유가 수축환을 조여 밖에서 나누고, 식물은 세포벽 때문에 안쪽에서 세포판을 만들어 새 세포벽으로 나눠요(미세소관인 방추사와 다른 섬유예요).</td></tr>
+            <tr><td>유사분열의 쓰임</td><td>체세포 증식(상처 재생)과 무성생식(꺾꽂이)에 쓰이고, 결과 세포는 돌연변이가 없으면 유전정보가 같은 클론이에요.</td></tr>
+            <tr><td>4분염색체</td><td>감수분열 전기 I에 상동염색체가 짝을 지어 네 가닥이 옆으로 나란히 붙은 것(= 2가염색체)으로, 중기 I에 이 상태로 가운데 배열되며 유사분열에는 없어요.</td></tr>
+            <tr><td>두 번의 분열</td><td>제1감수분열이 끝나면 이미 반수체이고 제2감수분열에서는 염색체 수가 변하지 않아 n인 딸세포 4개가 되며(유사분열은 2n 2개), DNA 양은 두 분열 모두에서 반으로 줄어요.</td></tr>
+            <tr><td>유성생식과 무성생식</td><td>유성생식은 짝 찾기에 에너지·시간·비용이 드는 대신(단점) 유전적 다양성으로 환경이 바뀌어도 일부는 살아남고(장점), 무성생식은 빠르고 싸지만 모두 같아 한꺼번에 무너져요(감자 대기근).</td></tr>
+            <tr><td>다양성 원인 (1) 교차</td><td>제1감수분열 전기에 4분염색체의 안쪽 두 가닥(엄마 유래 하나와 아빠 유래 하나) 사이에서 DNA 조각이 바뀌어 AB·ab에 없던 Ab·aB가 생기는 재조합이며, 같은 염색체의 자매염색분체끼리가 아니에요.</td></tr>
+            <tr><td>다양성 원인 (2) 무작위 분배</td><td>중기 I에 상동염색체 쌍마다 어느 극으로 갈지가 무작위라 n쌍이면 2의 n승 가지이고, n은 염색체 개수가 아니라 쌍의 수예요(사람 23쌍이면 2²³, 약 840만).</td></tr>
+            <tr><td>다양성 원인 (3) 무작위 수정</td><td>어떤 정자든 어떤 난자와 수정할 수 있어 2²³ × 2²³ = 2⁴⁶, 약 70조 가지이며, 이 값은 교차와 돌연변이를 뺀 것이고 일란성 쌍둥이만 예외예요.</td></tr>
+            <tr><td>멘델의 실험 설계</td><td>혼합설(중간색이 나온다)을 반박했고, 대립 형질이 분명한 완두를 골라 수술을 잘라 자가수분을 막고 붓으로 다른 꽃의 꽃가루를 옮겨 타가수분시켰어요.</td></tr>
+            <tr><td>유전학 용어</td><td>표현형은 보라·흰처럼 드러난 모습, 유전자형은 PP·Pp·pp이고, 우성은 하나만 있어도 나타나며 열성은 둘 다 있어야 나타나고, PP·pp는 동형접합자, Pp는 이형접합자(= 잡종)예요.</td></tr>
+            <tr><td>분리의 법칙</td><td>개체는 형질을 정하는 인자(대립유전자)를 두 개 가지고, 배우자에는 그중 하나씩만 들어가요.</td></tr>
+            <tr><td>우열의 법칙</td><td>이형접합자(Pp)는 우성 쪽 표현형을 나타내서 보라(PP) × 흰(pp)의 F1은 중간색 없이 전부 보라예요.</td></tr>
+            <tr><td>단성잡종 교배</td><td>한 가지 형질의 이형접합자끼리(Pp × Pp) 교배하면 F2 유전자형은 PP : Pp : pp = 1:2:1, 표현형은 보라 : 흰 = 3:1이고, 흰색이 다시 나타나는 것이 분리의 근거예요.</td></tr>
+          </tbody>
+        </table></div>
+      </article>
+      <article class="topic" id="s5-next"><h3>다음 시간 예고</h3><div class="tags"><span class="tag date">0922 수업</span><span class="tag slide">4장 p2</span></div>
+        <p>끊긴 지점: 분리의 법칙·우열의 법칙과 단성잡종 교배(1:2:1, 3:1)까지 마치고 멈췄어요. "일단 여기까지 멘델의 법칙이고 독립의 법칙은 다음 시간에 합시다." (0922 63:20) 마지막 말씀은 "동영상 꼭 듣고 오시고요. 다음 주 화요일에 봅시다." (0922 63:34)</p>
+        <ul>
+          <li>독립의 법칙</li>
+          <li>양성잡종 교배</li>
+          <li>9:3:3:1</li>
+        </ul>
+        <p>공지: 5장 앞부분은 온라인 동영상 강의로 대체돼요. 28일 23:59까지 듣고 오세요(안 들으면 지각 처리).</p>
+      </article>
+      <article class="topic" id="s5-links"><h3>함께 보면 좋은 자료</h3>
+        <ul><li><a href="복습문제_0922_Cell_Division_and_Heredity.html">복습문제 풀러 가기</a></li></ul>
+      </article>
+    </section>
+  </main>
+  <footer>출처: 이영만 교수님 강의노트(3장·4장) · 수업 녹음 전사(0922) · 『생명과학: 기초와 응용』 2판 3장·4장.</footer>
+    </div>
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="panel-right-title">
+      <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-right-title">페이지 요약</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-sub" id="sum-for">전체 흐름</p>
+        <p class="panel-empty" id="sum-empty">페이지를 넘기면 그 페이지의 핵심 식과 용어가 여기에 나옵니다.</p>
+        <div class="sums"></div>
+      </div>
+    </aside>
+  </div>
+  <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
+  <nav class="pager" aria-label="화면 이동">
+    <div class="pager-inner">
+      <button class="btn btn-ghost" id="pager-prev" type="button">이전</button>
+      <span class="pager-count" id="pager-count"></span>
+      <button class="btn btn-primary" id="pager-next" type="button">시작하기</button>
+    </div>
+  </nav>
+  <p class="sr-only" id="pager-status" aria-live="polite"></p>
+  <script id="widget-punnett-ui">(function () {
+  function punnettGametes(g) { return [g.charAt(0), g.charAt(1)]; }
+  function punnettJoin(a, b) { return (a === 'P' || b !== 'P') ? a + b : b + a; }
+  function punnettGcd(a, b) { return b ? punnettGcd(b, a % b) : a; }
+  function punnettRatio(arr) {
+    var g = 0; arr.forEach(function (v) { g = punnettGcd(g, v); });
+    return arr.map(function (v) { return g ? v / g : 0; }).join(':');
+  }
+  function punnettModel(p1, p2) {
+    var rows = punnettGametes(p1), cols = punnettGametes(p2), cells = [];
+    var count = { PP: 0, Pp: 0, pp: 0 };
+    rows.forEach(function (r) { cols.forEach(function (c) { var k = punnettJoin(r, c); cells.push(k); count[k] += 1; }); });
+    var purple = count.PP + count.Pp, white = count.pp;
+    return { rows: rows, cols: cols, cells: cells, count: count, purple: purple, white: white,
+      geno: punnettRatio([count.PP, count.Pp, count.pp]), pheno: punnettRatio([purple, white]) };
+  }
+  function punnettPhen(g) { return g.indexOf('P') >= 0 ? '보라' : '흰'; }
+  function punnettSVG(p1, p2) {
+    var m = punnettModel(p1, p2), s = [], x0 = 110, y0 = 70, c = 80;
+    s.push('<text class="fig-text" x="20" y="24">부모 1 ' + p1 + '(' + punnettPhen(p1) + ') × 부모 2 ' + p2 + '(' + punnettPhen(p2) + ')</text>');
+    s.push('<text class="fig-muted" x="' + (x0 + c) + '" y="46" text-anchor="middle">부모 2의 배우자</text>');
+    s.push('<text class="fig-muted" x="20" y="' + (y0 + c + 4) + '">부모 1의</text>');
+    s.push('<text class="fig-muted" x="20" y="' + (y0 + c + 20) + '">배우자</text>');
+    m.cols.forEach(function (g, j) { s.push('<text class="fig-text" x="' + (x0 + c * j + c / 2) + '" y="64" text-anchor="middle">' + g + '</text>'); });
+    m.rows.forEach(function (g, i) { s.push('<text class="fig-text" x="' + (x0 - 14) + '" y="' + (y0 + c * i + c / 2 + 5) + '" text-anchor="middle">' + g + '</text>'); });
+    for (var i = 0; i < 2; i++) {
+      for (var j = 0; j < 2; j++) {
+        var k = m.cells[i * 2 + j], cx = x0 + c * j + c / 2, cy = y0 + c * i + c / 2;
+        s.push('<rect class="fig-ink" x="' + (x0 + c * j) + '" y="' + (y0 + c * i) + '" width="' + c + '" height="' + c + '"/>');
+        s.push('<circle class="' + (k.indexOf('P') >= 0 ? 'fig-dot' : 'fig-ink') + '" cx="' + cx + '" cy="' + (cy - 10) + '" r="15"/>');
+        s.push('<text class="fig-text" x="' + cx + '" y="' + (cy + 28) + '" text-anchor="middle">' + k + '</text>');
+      }
+    }
+    var bx = 400, bw = 120;
+    s.push('<text class="fig-text" x="340" y="80">유전자형</text>');
+    ['PP', 'Pp', 'pp'].forEach(function (k, n) {
+      var y = 94 + n * 26, v = m.count[k];
+      s.push('<text class="fig-text" x="340" y="' + (y + 13) + '">' + k + '</text>');
+      if (v) s.push('<rect class="fig-accent" x="' + bx + '" y="' + y + '" width="' + (bw * v / 4) + '" height="16"/>');
+      s.push('<text class="fig-muted" x="' + (bx + bw * v / 4 + 8) + '" y="' + (y + 13) + '">' + v + '/4</text>');
+    });
+    s.push('<text class="fig-text" x="340" y="200">표현형</text>');
+    [['보라', m.purple, 'fig-dot'], ['흰', m.white, 'fig-ink']].forEach(function (p, n) {
+      var y = 214 + n * 26;
+      s.push('<text class="fig-text" x="340" y="' + (y + 13) + '">' + p[0] + '</text>');
+      if (p[1]) s.push('<rect class="' + p[2] + '" x="' + bx + '" y="' + y + '" width="' + (bw * p[1] / 4) + '" height="16"/>');
+      s.push('<text class="fig-muted" x="' + (bx + bw * p[1] / 4 + 8) + '" y="' + (y + 13) + '">' + p[1] + '/4</text>');
+    });
+    return { svg: s.join(''), model: m,
+      label: p1 + ' × ' + p2 + ' 교배 표. 자손 유전자형 PP:Pp:pp = ' + m.geno + ', 표현형 보라:흰 = ' + m.pheno };
+  }
+  function punnettReadout(m) {
+    var geno = 'PP:Pp:pp = ' + m.geno, pheno = '보라:흰 = ' + m.pheno;
+    if (m.count.Pp === 4) geno += ' (모두 Pp)';
+    if (m.count.PP === 4) geno += ' (모두 PP)';
+    if (m.count.pp === 4) geno += ' (모두 pp)';
+    if (m.white === 0) pheno += ' (모두 보라)';
+    if (m.purple === 0) pheno += ' (모두 흰)';
+    return '유전자형 ' + geno + ', 표현형 ' + pheno + ', 흰 꽃이 나올 확률 ' + m.white + '/4 (' + (m.white * 25) + '%)';
+  }
+  
+  var a = document.getElementById('punnett-a'), b = document.getElementById('punnett-b');
+  var svg = document.getElementById('punnett-plot'), out = document.getElementById('punnett-out');
+  if (!a || !b || !svg || !out) return;
+  function draw() {
+    var r = punnettSVG(a.value, b.value);
+    svg.innerHTML = r.svg;
+    svg.setAttribute('aria-label', r.label);
+    out.textContent = punnettReadout(r.model);
+  }
+  a.addEventListener('change', draw);
+  b.addEventListener('change', draw);
+  draw();
+})();</script>
+  <script id="theme-ui">
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const sysDark = matchMedia('(prefers-color-scheme: dark)');
+      const KEY = 'od-theme';
+      const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+      function label() {
+        const next = isDark() ? '라이트 모드로 전환' : '다크 모드로 전환';
+        btn.setAttribute('aria-label', next);
+        btn.title = next;
+      }
+      btn.addEventListener('click', () => {
+        const t = isDark() ? 'light' : 'dark';
+        // 시스템 설정과 같아지면 저장을 지워 다시 시스템을 따른다
+        if ((t === 'dark') === sysDark.matches) { delete root.dataset.theme; try { localStorage.removeItem(KEY); } catch (e) {} }
+        else { root.dataset.theme = t; try { localStorage.setItem(KEY, t); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+        label();
+      });
+      sysDark.addEventListener('change', label);
+      window.addEventListener('storage', (e) => {
+        if (e.key !== KEY) return;
+        if (e.newValue === 'light' || e.newValue === 'dark') root.dataset.theme = e.newValue; else delete root.dataset.theme;
+        label();
+      });
+      label();
+    })();
+  </script>
+  <script id="panels-ui">
+    (function () {
+      const body = document.body;
+      const layout = document.querySelector('.layout');
+      const kind = body.dataset.panels;
+      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const scrim = document.getElementById('panel-scrim');
+      const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
+      const wideMq = matchMedia('(min-width: 1024px)');
+      const roomyMq = matchMedia('(min-width: 1280px)');
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      const PREF = 'od-panels:' + kind;
+      // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
+      const RANGE = body.dataset.range || '';
+      const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+      const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+      let overlay = null;
+
+      // ---------- 열고 닫기 ----------
+      function docked() {
+        const pref = store.get(PREF, {});
+        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+      }
+      function sync() {
+        const wide = wideMq.matches;
+        const d = docked();
+        ['left', 'right'].forEach((side) => {
+          const open = wide ? d[side] : overlay === side;
+          const p = panels[side];
+          layout.dataset[side] = open ? 'open' : 'closed';
+          p.classList.toggle('is-open', !wide && open);
+          p.inert = !open;
+          if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
+          toggles[side].setAttribute('aria-expanded', String(open));
+        });
+        const drawer = !wide && overlay !== null;
+        scrim.classList.toggle('is-on', drawer);
+        body.classList.toggle('drawer-open', drawer);
+        blockers.forEach((el) => { el.inert = drawer; });
+      }
+      function openDrawer(side) {
+        overlay = side;
+        sync();
+        requestAnimationFrame(() => panels[side].querySelector('[data-panel-close]').focus());
+      }
+      function closeDrawer(refocus) {
+        if (overlay === null) return;
+        const side = overlay;
+        overlay = null;
+        sync();
+        if (refocus) toggles[side].focus();
+      }
+      function toggle(side) {
+        if (wideMq.matches) {
+          const d = docked();
+          d[side] = !d[side];
+          store.set(PREF, d);
+          sync();
+          if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+        } else if (overlay === side) closeDrawer(true);
+        else openDrawer(side);
+      }
+
+      toggles.left.addEventListener('click', () => toggle('left'));
+      toggles.right.addEventListener('click', () => toggle('right'));
+      scrim.addEventListener('click', () => closeDrawer(true));
+      document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
+      panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
+
+      // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      function applyWidths() {
+        const w = store.get(PREF + ':w', {});
+        ['left', 'right'].forEach((side) => {
+          if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
+          else layout.style.removeProperty(WIDTH[side].prop);
+        });
+      }
+      function maxFor(side) {
+        const other = side === 'left' ? panels.right : panels.left;
+        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
+      }
+      function setWidth(side, px, save) {
+        const v = Math.round(Math.min(Math.max(px, WIDTH[side].min), maxFor(side)));
+        layout.style.setProperty(WIDTH[side].prop, v + 'px');
+        panels[side].querySelector('.panel-resize').setAttribute('aria-valuenow', String(v));
+        if (save) { const w = store.get(PREF + ':w', {}); w[side] = v; store.set(PREF + ':w', w); }
+      }
+      function resetWidth(side) {
+        const w = store.get(PREF + ':w', {});
+        delete w[side];
+        store.set(PREF + ':w', w);
+        layout.style.removeProperty(WIDTH[side].prop);
+      }
+      document.querySelectorAll('.panel-resize').forEach((handle) => {
+        const side = handle.dataset.side;
+        const dir = side === 'left' ? 1 : -1;
+        handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
+        handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
+        handle.addEventListener('pointerdown', (e) => {
+          if (!wideMq.matches || e.button !== 0) return;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startW = panels[side].getBoundingClientRect().width;
+          handle.setPointerCapture(e.pointerId);
+          body.classList.add('is-resizing');
+          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const up = () => {
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', up);
+            handle.removeEventListener('pointercancel', up);
+            body.classList.remove('is-resizing');
+            setWidth(side, panels[side].getBoundingClientRect().width, true);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', up);
+          handle.addEventListener('pointercancel', up);
+        });
+        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('keydown', (e) => {
+          const step = e.shiftKey ? 64 : 16;
+          const cur = panels[side].getBoundingClientRect().width;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+        });
+      });
+      applyWidths();
+      const onMq = () => { overlay = null; sync(); };
+      wideMq.addEventListener('change', onMq);
+      roomyMq.addEventListener('change', onMq);
+
+      // ---------- 목차의 진행 표시 ----------
+      const progressN = document.getElementById('progress-n');
+      const progressBar = document.getElementById('progress-bar');
+      const progressTotal = document.getElementById('progress-total');
+      function markToc(done, total, doneLabel) {
+        panels.left.querySelectorAll('.toc-list a').forEach((a) => {
+          const id = decodeURIComponent(a.getAttribute('href').slice(1));
+          let mark = a.querySelector('.toc-mark');
+          if (!mark) {
+            mark = document.createElement('span');
+            mark.className = 'toc-mark';
+            mark.setAttribute('aria-hidden', 'true');
+            const state = document.createElement('span');
+            state.className = 'sr-only toc-state';
+            a.append(mark, state);
+          }
+          const isDone = done.has(id);
+          mark.classList.toggle('is-done', isDone);
+          mark.innerHTML = isDone ? ICON_DONE : ICON_TODO;
+          a.querySelector('.toc-state').textContent = isDone ? ' (' + doneLabel + ')' : '';
+        });
+        progressN.textContent = String(done.size);
+        progressTotal.textContent = String(total);
+        progressBar.style.transform = 'scaleX(' + (total ? done.size / total : 0) + ')';
+      }
+      function revealCurrent() {
+        const link = panels.left.querySelector('.toc-list a[aria-current="true"]');
+        if (link && layout.dataset.left === 'open') link.scrollIntoView({ block: 'nearest' });
+      }
+
+      // ---------- 복습문제: 오른쪽 = 원문 · 힌트 · 풀이 ----------
+      function setupReview() {
+        const KEY = 'od-review-solved:' + RANGE;
+        const cards = Array.from(document.querySelectorAll('main article.card'));
+        const aids = panels.right.querySelector('.aids');
+        const sub = document.getElementById('aid-for');
+        const empty = panels.right.querySelector('.panel-empty');
+        const btn = document.getElementById('solved-btn');
+        const groups = {};
+        const solved = new Set(store.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        cards.forEach((card) => {
+          const g = document.createElement('div');
+          g.className = 'aid';
+          g.hidden = true;
+          card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
+          aids.appendChild(g);
+          groups[card.id] = g;
+        });
+        let curId = null;
+        function paintBtn() {
+          const on = solved.has(curId);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.innerHTML = (on ? ICON_DONE : ICON_TODO) + '<span>' + (on ? '푼 문제 · 표시 해제' : '푼 문제로 표시') + '</span>';
+        }
+        btn.addEventListener('click', () => {
+          if (!curId) return;
+          if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
+          store.set(KEY, Array.from(solved));
+          paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          curId = s.matches('article.card') ? s.id : null;
+          Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
+          empty.hidden = Boolean(curId);
+          btn.hidden = !curId;
+          sub.textContent = curId ? ((s.querySelector('h3') || {}).textContent || '').trim() : '';
+          sub.hidden = !curId;
+          if (curId) paintBtn();
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(solved, cards.length, '푼 문제');
+          revealCurrent();
+        });
+      }
+
+      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
+      function setupNote() {
+        const KEY = 'od-note-read:' + RANGE;
+        const topics = Array.from(document.querySelectorAll('main article.topic'));
+        const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
+        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
+        const box = panels.right.querySelector('.sums');
+        const sums = {};
+        topics.forEach((t) => {
+          const el = t.querySelector(':scope > .sum');
+          if (!el) return;
+          el.hidden = true;
+          box.appendChild(el);
+          sums[t.id] = el;
+        });
+        const sub = document.getElementById('sum-for');
+        const empty = document.getElementById('sum-empty');
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          const key = s.matches('article.topic') ? s.id : 'intro';
+          Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
+          empty.hidden = Boolean(sums[key]);
+          sub.textContent = key === 'intro' ? '전체 흐름' : ((s.querySelector('h3') || {}).textContent || '').trim();
+          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(read, topics.length, '읽음');
+          revealCurrent();
+        });
+      }
+
+      if (kind === 'review') setupReview();
+      if (kind === 'note') setupNote();
+      sync();
+    })();
+  </script>
+  <script id="pager-ui">
+    (function () {
+      const root = document.documentElement;
+      const main = document.querySelector('main');
+      const hero = main.querySelector('.hero');
+      const screens = [hero].concat(Array.from(main.querySelectorAll(document.body.dataset.screens)));
+      if (screens.length < 2) { root.classList.remove('js'); return; }
+      screens.forEach((s) => s.classList.add('screen'));
+
+      const last = screens.length - 1;
+      const prevBtn = document.getElementById('pager-prev');
+      const nextBtn = document.getElementById('pager-next');
+      const count = document.getElementById('pager-count');
+      const bar = document.getElementById('pager-bar');
+      const status = document.getElementById('pager-status');
+      const toc = document.querySelector('#panel-left .toc');
+      const scroller = document.querySelector('.content');
+      const titleOf = (s) => ((s.querySelector('h3') || s.querySelector('h1') || {}).textContent || '').trim();
+      let cur = -1;
+
+      // 목차: 섹션 링크 아래에 화면(토픽·카드) 목록을 붙인다
+      const tocLinks = [];
+      Array.from(toc.querySelectorAll(':scope > a')).forEach((a) => {
+        const sec = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+        const group = document.createElement('div');
+        group.className = 'toc-group';
+        a.replaceWith(group);
+        group.appendChild(a);
+        if (!sec) return;
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        screens.forEach((s, i) => {
+          if (!sec.contains(s)) return;
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#' + s.id;
+          link.innerHTML = '<span class="toc-title"></span>';
+          link.firstChild.textContent = titleOf(s);
+          li.appendChild(link);
+          list.appendChild(li);
+          tocLinks[i] = link;
+        });
+        group.appendChild(list);
+      });
+
+      function indexFor(hash) {
+        const id = decodeURIComponent((hash || '').replace(/^#/, ''));
+        const el = id && document.getElementById(id);
+        if (!el || !main.contains(el)) return { i: 0 };
+        const i = screens.findIndex((s) => s.contains(el) || el.contains(s));
+        return { i: Math.max(i, 0), target: i >= 0 && screens[i].contains(el) && screens[i] !== el ? el : null };
+      }
+
+      function render(i, target) {
+        const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
+        if (i !== cur) {
+          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
+          main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
+          const s = screens[i];
+          const sec = s.closest('section');
+          if (sec) sec.classList.add('is-on');
+          s.classList.add('is-current');
+          if (dir) { s.classList.remove('enter-next', 'enter-prev'); void s.offsetWidth; s.classList.add(dir); }
+          cur = i;
+          document.body.classList.toggle('at-end', i === last);
+          prevBtn.disabled = i === 0;
+          nextBtn.textContent = i === 0 ? '시작하기' : i === last ? '처음으로' : '다음';
+          count.textContent = i === 0 ? '' : i + ' / ' + last;
+          bar.style.transform = 'scaleX(' + (i / last) + ')';
+          status.textContent = i === 0 ? titleOf(s) : i + ' / ' + last + ', ' + titleOf(s);
+          tocLinks.forEach((link, k) => link && link.setAttribute('aria-current', String(k === i)));
+          document.dispatchEvent(new CustomEvent('od:screen', { detail: { index: i, screen: s } }));
+        }
+        if (target) target.scrollIntoView({ block: 'start' });
+        else scroller.scrollTo(0, 0);
+      }
+
+      function go(i) {
+        i = Math.min(Math.max(i, 0), last);
+        if (i === cur) return;
+        const url = i === 0 ? location.pathname + location.search : '#' + screens[i].id;
+        history.pushState(null, '', url);
+        render(i);
+      }
+
+      prevBtn.addEventListener('click', () => go(cur - 1));
+      nextBtn.addEventListener('click', () => go(cur === last ? 0 : cur + 1));
+      const fromUrl = () => { const r = indexFor(location.hash); render(r.i, r.target); };
+      window.addEventListener('hashchange', fromUrl);
+      window.addEventListener('popstate', fromUrl);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+
+      // 좌우로 밀어서 넘기기 (가로로 스크롤되는 영역은 제외)
+      let sx = 0, sy = 0, skip = true;
+      main.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (skip) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 64 && Math.abs(dx) > 2 * Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      fromUrl();
+    })();
+  </script>
+</body>
+</html>
