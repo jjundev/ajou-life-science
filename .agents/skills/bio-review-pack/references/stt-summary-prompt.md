@@ -8,7 +8,7 @@
 - 입력(읽기 전용): `<RUN>/repo/STT/<MMDD 생명.md>` — **처음부터 끝까지 전부** 읽는다. 건너뛰지 않는다.
 - 대조 자료: `<RUN>/repo/강의노트/<N장 *.pdf>` 텍스트(메인이 추출해 `<RUN>/slides.txt`에 둠, 쪽마다 `=== N장 pK ===`)
 - 출력: `<RUN>/summaries/stt-<MMDD>.md` 한 파일만 쓴다. 다른 곳에는 쓰지 않는다(임시 파일은 아래 규칙).
-- 임시·보조 파일은 `<RUN>/work/` 아래에만 둔다. 저장소(`STT/`, `강의노트/`, `교과서/`, `23, 24 소스/`, `웹과제/`, `복습노트/`)와 scratchpad 루트, `/tmp`에는 아무것도 쓰지 않는다. 한글(NFD) 파일명은 복사하거나 이름을 바꾸지 말고 Python `os.listdir` + `unicodedata.normalize('NFC', …)`로 찾아 그 경로로 연다.
+- 임시·보조 파일은 `<RUN>/work/` 아래에만 둔다. 저장소(`STT/`, `강의노트/`, `교과서/`, `23, 24 소스/`, `웹과제/`, `복습노트/`)와 `<RUN>` 밖(scratchpad 루트, `/tmp` 등)에는 아무것도 쓰지 않는다. 한글(NFD) 파일명은 복사하거나 이름을 바꾸지 말고 Python `os.listdir` + `unicodedata.normalize('NFC', …)`로 찾아 그 경로로 연다.
 
 출력 형식:
 1. `# <MMDD> 생명과학 강의 개요 (이영만 교수, <YYYY-MM-DD>)`

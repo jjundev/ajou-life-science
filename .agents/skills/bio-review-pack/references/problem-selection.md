@@ -26,22 +26,23 @@ EOF
 `CH`는 공백으로 구분한 장 번호들이다.
 
 ## 2. 웹과제 bank
-- 그 장 `웹과제/N장/questions.json`이 있으면 검증한다(저장소 루트에서):
+- 그 장 `웹과제/N장/questions.json`이 있으면 검증한다(작업 폴더를 `REPO`로 두고 실행한다 — 상대 경로 venv와 `-m scripts.question_bank`가 이를 전제한다. Bash 도구의 작업 폴더가 REPO가 아니면 `cd "$REPO" && …`를 이 명령에서만 허용한다):
   ```bash
   .venv-question-bank/bin/python -m scripts.question_bank validate '웹과제/N장/questions.json' --complete
   ```
   전용 venv가 없으면 `python3 -m venv --system-site-packages .venv-question-bank && .venv-question-bank/bin/python -m pip install 'jsonschema>=4.18,<5'`로 만든다. 검증이 실패해도 멈추지 않는다. 실패한 필드와 source를 보고서 "미해결"에 적고 문항은 그대로 쓴다.
 - `questions.json`은 없고 `웹과제/N장/raw/` 캡처만 있으면 **등록되지 않은 자료**다. 보고서에 그렇게 적는다("웹 자료 없음"이라고 쓰지 않는다). 이 경우 partA는 없다.
-- 목록 보기:
-  ```bash
-  python3 - <<'EOF'
-  import json
-  b = json.load(open("<REPO>/웹과제/N장/questions.json", encoding="utf-8"))
-  for q in b["questions"]:
-      text = " ".join(c.get("text", f"[{c['type']}]") for c in q["original"]["content"])
-      print(q["id"], q["number"], q["analysis"]["answer_option_id"], q["observations"].get("official_answer"), text[:60])
-  EOF
-  ```
+- 목록 보기(`CH`는 장 번호 하나):
+```bash
+REPO=… CH="1" python3 - <<'EOF'
+import json, os
+path = os.path.join(os.environ["REPO"], "웹과제", f'{os.environ["CH"]}장', "questions.json")
+b = json.load(open(path, encoding="utf-8"))
+for q in b["questions"]:
+    text = " ".join(c.get("text", f"[{c['type']}]") for c in q["original"]["content"])
+    print(q["id"], q["number"], q["analysis"]["answer_option_id"], q["observations"].get("official_answer"), text[:60])
+EOF
+```
 - 카드에는 `original.content`(문제), `original.options`(보기, id가 `A`~`E`), `analysis.answer_option_id`(분석 정답), `analysis.option_diagnostics`(보기별 설명)를 쓴다. `observations.official_answer`가 있고 분석 정답과 다르면 `key-check.md`에 적고 카드에 공개한다.
 - `RUN/figures/`에는 PNG만 둔다(기출 그림 자르기, `card-rules.md`). `html2md.py`가 변환할 때 `figures_<range>/`의 SVG 파일을 모두 지우고 다시 내보내므로, SVG 파일은 `RUN/figures/`에 복사하지 않는다.
 - 웹과제 그림은 SVG다. 문항 `content`의 `{"type": "figure", "asset_id": "q09"}` 항목은 bank `assets`에서 같은 `id`를 찾는다. `exam.path` SVG(bank 폴더 기준 경로, 예: `image/q09.svg`) 원문을 카드 `div.problem` 안 `<figure class="figure">`에 인라인으로 넣고 루트 `<svg>`의 `aria-label`에 `exam.alt`를 쓴다.
@@ -68,6 +69,7 @@ EOF
 ## 4. 정답 대조 → `RUN/key-check.md`
 - 기출은 인쇄된 답(빨간 표시)을 PNG에서 읽고, 모든 보기를 독립적으로 판단해 대조한다. **답안지를 그대로 믿지 않는다.** 1강 합본은 40문항 중 3개(2, 30, 38번)가 틀려 있었다.
 - 판단이 어긋나면 manifest `answer`는 **옳다고 판단한 쪽**으로 두고 `key-check.md`에 `기출 3강 12: 인쇄 (2) → 판단 (3), 근거: …`를 적는다. 카드 풀이에서 공개한다. 조용히 고치지 않는다.
+- 보기 둘 이상이 성립하면 `key-check.md`에 `기출 3강 16: 모호 — 인쇄 (4) 유지, 보기 (5)도 성립 가능, 근거: …`처럼 적는다(카드 작성자가 이 줄을 보고 모호성을 공개한다).
 - 보기가 없는 빈칸 문항은 보기를 만들지 않고 빈칸 그대로 카드에 싣는다. 정답은 낱말이다.
 - 모든 포함 문항의 정답이 manifest `answer`와 카드 `정답:` 줄에 같게 들어간다.
 

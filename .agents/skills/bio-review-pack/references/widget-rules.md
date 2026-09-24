@@ -10,7 +10,7 @@
 <div class="widget" id="widget-<name>"><h4>직접 해 보기: …</h4>
   <p class="widget-help">무엇을 움직이면 무엇이 보이는지 한 문장.</p>
   <div class="controls">
-    <label>차수 <input type="range" id="<name>-a" min="1" max="9" step="1" value="3"> <b id="<name>-a-val">3</b></label>
+    <label>자손 수 <input type="range" id="<name>-a" min="1" max="9" step="1" value="3"> <b id="<name>-a-val">3</b></label>
   </div>
   <svg id="<name>-plot" viewBox="0 0 560 300" role="img" aria-label="…"></svg>
   <p class="readout">… <b id="<name>-out">…</b></p>
@@ -23,7 +23,7 @@
 <script id="widget-<name>-ui">(function () { /* 수학 + 그리기, 전역 오염 금지 */ })();</script>
 ```
 - 스크립트는 조각 파일 끝에 둔다. 조립기가 `</body>` 앞으로 옮긴다. 외부 라이브러리 금지.
-- 그래프 선·점은 템플릿 CSS 클래스(`axis`, `tick`, `plot-truth`, `plot-fit`, `pt-train`, `pt-test`, `plot-like`, `plot-prior`, `plot-post`, `mark-ml`, `mark-map`, `fig-*`)를 쓴다.
+- 그래프 선·점은 템플릿 CSS 클래스(`axis`, `tick`, `fig-*`)를 쓴다.
 
 ## `.widget-static` (필수 — 없으면 check_html이 실패)
 - MD 버전에서 위젯 대신 보이는 정적 대체물. `hidden` 속성으로 HTML에서는 숨긴다.

@@ -10,7 +10,7 @@
 - 금지어: `<forbidden 목록>` — 카드 어디에도 쓰지 않는다. "다음 시간에 배울 …" 같은 예고도 쓰지 않는다.
 - 근거: 원문 위치 `<RUN>/problem-pages.txt`(기출 PNG는 `<RUN>/work/exam/`), 웹과제 bank `<RUN>/repo/웹과제/<N>장/questions.json`, 정답 대조 `<RUN>/key-check.md`, 정리노트 토픽 제목은 manifest.
 - 출력: `<RUN>/cards/<pid>.html` 문제마다 한 파일, 기출 그림은 `<RUN>/figures/<pid>.png`(웹과제 SVG 그림은 파일로 만들지 않고 카드에 인라인). 다른 곳에 쓰지 않는다.
-- 임시·보조 파일은 `<RUN>/work/` 아래에만 둔다. 저장소와 scratchpad 루트, `/tmp`에는 아무것도 쓰지 않는다. 한글(NFD) 파일명은 Python `os.listdir` + `unicodedata.normalize('NFC', …)`로 찾아 연다.
+- 임시·보조 파일은 `<RUN>/work/` 아래에만 둔다. 저장소와 `<RUN>` 밖(scratchpad 루트, `/tmp` 등)에는 아무것도 쓰지 않는다. 한글(NFD) 파일명은 Python `os.listdir` + `unicodedata.normalize('NFC', …)`로 찾아 연다.
 - 확인용으로 브라우저 탭을 열었으면 보고 전에 모두 닫는다(메인 에이전트의 브라우저 검사가 탭 수 제한에 걸린다).
 - 자기 검사: 카드별 `terms`가 글자 그대로 있는지, `정답:` 줄이 `answer`와 같은지, 모든 보기에 진단이 있는지, 문제와 보기가 원문과 글자까지 같은지(줄바꿈 흔적만 고친다), 원문자(①~⑳)와 금지어가 하나도 없는지, 기출 그림이면 `<img src>`가 `figures_<range>/<pid>.png`이고 그 파일을 `<RUN>/figures/`에 만들었는지, 웹과제 그림이면 SVG가 인라인이고 모든 `id`에 `<pid>-` 접두어가 붙었으며 `explained` SVG가 풀이 밖에 없는지. 어긋나면 고치지 말고 보고에 적는다.
 - 보고: 카드별 한 줄(출처, 정답, 답안지 오류 여부), 풀이에 정리노트에 없는 사실이 필요했던 곳.

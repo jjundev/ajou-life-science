@@ -106,6 +106,8 @@ coverage JSON은 제작·검증용이며 브라우저에서 불러오지 않는�
 
 ⚠️ **`*.zip`은 절대 add 하지 않는다.** 강의 플랫폼에서 통째로 내려받은 `아카이브.zip`이 강의노트·교과서 폴더에 떨어지는데, 교과서 쪽은 **205MB**다. `.gitignore`가 `*.zip`으로 막고 있으나 `git add -f` 하지 말 것. 커밋 전 `git status` 로 zip이 staged 아닌지 확인한다.
 
+`복습노트/<range>/`는 `/bio-review-pack`이 만든 산출물(html·md·figures)만 담으므로 그 폴더 단위 add는 허용한다. 커밋 전 `git status`로 zip이 섞이지 않았는지 확인한다.
+
 ## 10. 원자료 읽는 법
 
 | 자료 | 방법 |
