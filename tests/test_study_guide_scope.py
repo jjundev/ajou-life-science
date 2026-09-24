@@ -39,6 +39,25 @@ class QuestionScopeTests(unittest.TestCase):
             for item in base.values() if item["status"] == "deferred"
         ))
 
+    def test_single_source_numeric_mapping_keeps_source_qualified_ids(self):
+        markdown = """# 0917
+
+원문: `23, 24 소스/3강 합본.pdf`
+
+> 보류: 3강 4 — 다음 회차 단계별 분열
+
+## 부록. 문항 ↔ 개념 매핑
+
+| 문항 번호 | 질문 요약 | 노트 위치 | 상태 |
+|---:|---|---|---|
+| 1 | 간기 | §1 | 포함 |
+| 2 | 확인점 | §1 | 포함 |
+"""
+        scope = extract_question_scope(markdown)
+        self.assertEqual(set(scope), {"3강:1", "3강:2", "3강:4"})
+        self.assertEqual(scope["3강:1"]["source_locator"], "문항 매핑표")
+        self.assertEqual(scope["3강:4"]["status"], "deferred")
+
     def test_evidenced_override_reclassifies_without_deleting_id(self):
         base = extract_question_scope(self.markdown)
         overrides = [{

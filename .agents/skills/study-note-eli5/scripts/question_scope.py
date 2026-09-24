@@ -30,9 +30,17 @@ def extract_question_scope(markdown: str) -> dict[str, dict]:
     questions = {}
     appendix = markdown.split("## 부록. 문항 ↔ 개념 매핑", 1)
     if len(appendix) == 2:
-        for source, number in re.findall(r"^\|\s*(\d+강)\s*\|\s*(\d+)\s*\|", appendix[1], re.M):
+        qualified_rows = re.findall(r"^\|\s*(\d+강)\s*\|\s*(\d+)\s*\|", appendix[1], re.M)
+        for source, number in qualified_rows:
             ident = f"{source}:{int(number)}"
             questions[ident] = {"id": ident, "status": "included", "source_locator": "문항 매핑표"}
+        if not qualified_rows:
+            sources = set(re.findall(r"(\d+강)\s*합본\.pdf", markdown))
+            if len(sources) == 1:
+                source = next(iter(sources))
+                for number in re.findall(r"^\|\s*(\d+)\s*\|", appendix[1], re.M):
+                    ident = f"{source}:{int(number)}"
+                    questions[ident] = {"id": ident, "status": "included", "source_locator": "문항 매핑표"}
     review = re.search(r"## ⏪ 지난 회차 복습.*?(?=\n## )", markdown, re.S)
     if review:
         for line in review.group(0).splitlines():
