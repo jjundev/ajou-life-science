@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>생명과학 복습문제 0915</title>
+  <meta name="description" content="복습문제 25선 — 0915 수업 범위">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('od-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']})"></script>
+  <style>
+    /* ---------- 토큰 ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #b54708; --prof: #6941c6; --supp: #067647; --danger: #d92d20;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --fs-body: 17px; --fs-lead: 20px; --fs-small: 14px; --fs-label: 13px; --fs-fig: 12px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+      --radius: 8px; --measure: 680px; --tap: 48px; --btn-min: 160px;
+      --dur: 220ms; --dur-exit: 150ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+      /* 예전 조각이 참조할 수 있는 이름 */
+      --surface-2: var(--surface); --accent-soft: var(--surface); --warn-soft: var(--surface);
+      --prof-soft: var(--surface); --supp-soft: var(--surface); --eli5: var(--accent-ink); --eli5-soft: var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+        --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+        --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+    }
+
+    /* ---------- 기본 ---------- */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent-ink); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+
+    /* ---------- 상단 바 ---------- */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s2) var(--s4); display: flex; align-items: center; gap: var(--s3); min-height: 56px; }
+    .brand { flex: 1 1 auto; min-width: 0; font-size: var(--fs-body); font-weight: 700; white-space: nowrap; }
+    .text-btn { flex: none; min-height: 44px; min-width: 44px; padding: 0 var(--s3); border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); font: 600 var(--fs-small)/1 var(--font); cursor: pointer; }
+    .bar { height: 2px; background: var(--line); overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+
+    /* ---------- 본문 ---------- */
+    main { flex: 1 0 auto; width: 100%; max-width: var(--measure); margin: 0 auto; padding: var(--s6) var(--s5) var(--s7); }
+    .hero h1 { font-size: clamp(28px, 6vw, 36px); line-height: 1.3; margin: 0 0 var(--s3); letter-spacing: -0.02em; }
+    .hero p { color: var(--ink-2); margin: 0; }
+    section { margin-top: var(--s7); }
+    section > h2 { font-size: 22px; line-height: 1.4; margin: 0 0 var(--s4); }
+    .topic { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .topic h3 { margin: 0 0 var(--s2); font-size: clamp(24px, 5vw, 28px); line-height: 1.35; letter-spacing: -0.01em; }
+    .tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+    .tag { font-size: var(--fs-label); line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+
+    /* 레이어: 배경 없이 라벨과 구분선으로 나눈다 */
+    .layer { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .layer.eli5 { margin-top: 0; padding-top: 0; border-top: 0; }
+    .layer > :first-child { margin-top: 0; }
+    .layer > :last-child { margin-bottom: 0; }
+    .layer-title { display: block; font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); margin-bottom: var(--s2); }
+    .layer.eli5 .layer-title { color: var(--accent-ink); }
+    .layer.eli5 .lead { font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; margin: 0 0 var(--s3); }
+    .layer.prof .layer-title { color: var(--prof); }
+    .layer.warn { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn .layer-title { color: var(--warn); }
+    .layer.supp .badge.supp { margin-bottom: var(--s2); }
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
+    .badge.supp { color: var(--supp); }
+    blockquote { margin: var(--s2) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
+    ol.steps { padding-left: 1.4em; }
+    ol.steps li { margin: var(--s2) 0; }
+
+    /* 그림 · 수식 · 표 */
+    .figure { margin: var(--s4) 0; text-align: center; }
+    .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
+    .figure figcaption { font-size: var(--fs-small); color: var(--ink-2); margin-top: var(--s1); }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: var(--s1) 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+    th, td { border-bottom: 1px solid var(--line); padding: var(--s2); text-align: left; vertical-align: top; }
+    th { color: var(--ink-2); font-weight: 600; }
+    td:first-child, th:first-child { min-width: 6em; }
+
+    /* 위젯 */
+    .widget { background: var(--surface); border-radius: var(--radius); padding: var(--s4); margin: var(--s5) 0; }
+    .widget h4 { margin: 0 0 var(--s1); font-size: var(--fs-body); }
+    .widget-help { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s3); }
+    .controls { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--s2); font-size: var(--fs-small); }
+    .controls label { display: flex; align-items: center; gap: var(--s2); min-height: 44px; }
+    .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .widget svg { width: 100%; height: auto; background: var(--bg); border-radius: var(--radius); }
+    .readout { font-size: var(--fs-small); margin-top: var(--s2); }
+    .legend { font-size: var(--fs-label); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .sw { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: var(--s1); border-radius: 2px; }
+    .sw.truth { background: var(--ink-2); } .sw.fit { background: var(--accent); } .sw.train { background: var(--accent); height: 10px; width: 10px; border-radius: 50%; }
+    .sw.test { background: var(--warn); height: 10px; width: 10px; border-radius: 50%; } .sw.like { background: var(--accent); } .sw.prior { background: var(--prof); } .sw.post { background: var(--supp); }
+    .axis { stroke: var(--line); stroke-width: 1.5; }
+    .tick { fill: var(--ink-2); font-size: 11px; }
+    .plot-truth { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .plot-fit { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+    .pt-train { fill: var(--accent); }
+    .pt-test { fill: var(--warn); }
+    .plot-like { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .plot-prior { fill: none; stroke: var(--prof); stroke-width: 2; stroke-dasharray: 6 4; }
+    .plot-post { fill: none; stroke: var(--supp); stroke-width: 3; }
+    .mark-ml { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .mark-map { stroke: var(--supp); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 2; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 2.5; }
+    .fig-danger { stroke: var(--danger); fill: none; stroke-width: 2.5; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: 13px; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-fig); font-family: inherit; }
+
+    footer { width: 100%; max-width: var(--measure); margin: 0 auto; padding: 0 var(--s5) var(--s6); color: var(--ink-2); font-size: var(--fs-small); }
+
+    /* ---------- 문제 카드 ---------- */
+    .card { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .card h3 { margin: 0 0 var(--s4); font-size: clamp(22px, 5vw, 26px); line-height: 1.4; letter-spacing: -0.01em; }
+    .problem { margin: 0 0 var(--s5); }
+    .problem ol { padding-left: 1.4em; }
+    details { border-top: 1px solid var(--line); }
+    .card details:last-of-type { border-bottom: 1px solid var(--line); }
+    details[open] { padding-bottom: var(--s4); }
+    details > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: var(--s3);
+      min-height: var(--tap); cursor: pointer; font-weight: 600; }
+    details > summary::-webkit-details-marker { display: none; }
+    details > summary::after { content: ""; flex: none; width: 8px; height: 8px; margin-right: var(--s1);
+      border-right: 2px solid var(--ink-2); border-bottom: 2px solid var(--ink-2); transform: rotate(45deg); transition: transform 150ms ease-out; }
+    details[open] > summary::after { transform: rotate(-135deg); }
+    details.original { color: var(--ink-2); font-size: var(--fs-small); }
+    details.original > summary { color: var(--ink); font-size: var(--fs-body); }
+    .answer { font-weight: 700; background: var(--surface); border-radius: var(--radius); padding: var(--s3) var(--s4); }
+    .link-back { font-size: var(--fs-small); color: var(--ink-2); margin: var(--s5) 0 var(--s4); }
+    .top-link { flex: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--s2);
+      font-size: var(--fs-small); font-weight: 600; text-decoration: none; }
+    .js .card { padding: 0; border-top: 0; }
+    @media (prefers-reduced-motion: reduce) { details > summary::after { transition: none; } }
+
+    /* ---------- 하단 이동 바 ---------- */
+    .pager { position: sticky; bottom: 0; z-index: 10; background: var(--bg); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .pager-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s3) var(--s4); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); }
+    .pager-count { font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; min-width: 4em; }
+    .btn { min-height: var(--tap); min-width: var(--btn-min); padding: 0 var(--s6); border-radius: var(--radius); border: 0; font: 700 var(--fs-body)/1 var(--font); cursor: pointer; white-space: nowrap;
+      transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+    .btn-ghost { justify-self: start; background: var(--surface); color: var(--ink); }
+    .btn-primary { justify-self: end; background: var(--btn-bg); color: var(--on-btn); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    @media (hover: hover) {
+      .text-btn:hover, .btn-ghost:not(:disabled):hover { background: var(--line); }
+      .btn-primary:not(:disabled):hover { box-shadow: inset 0 0 0 100px rgba(0, 0, 0, .14); }
+    }
+
+    /* ---------- 목차 시트 ---------- */
+    .sheet { width: min(100%, var(--measure)); max-width: 100%; max-height: 80dvh; margin: auto auto 0; padding: 0; border: 0;
+      border-radius: 16px 16px 0 0; background: var(--bg); color: var(--ink); }
+    .sheet::backdrop { background: rgba(0, 0, 0, .4); }
+    .sheet-inner { padding: var(--s4) var(--s5) calc(var(--s5) + env(safe-area-inset-bottom)); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s2); }
+    .sheet-head h2 { margin: 0; font-size: var(--fs-lead); }
+    .toc { display: flex; flex-direction: column; }
+    .toc > a, .toc-group > a { display: block; padding: var(--s3) 0 var(--s1); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); text-decoration: none; }
+    .toc-list { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+    .toc-list a { display: flex; align-items: center; gap: var(--s3); min-height: var(--tap); padding: var(--s2) var(--s3); margin: 0 calc(-1 * var(--s3));
+      border-radius: var(--radius); color: var(--ink); text-decoration: none; line-height: 1.4; }
+    .toc-list a[aria-current="true"] { background: var(--surface); font-weight: 700; color: var(--accent-ink); }
+    .toc-list .toc-title { flex: 1 1 0; min-width: 0; }
+    @media (hover: hover) { .toc-list a:hover { background: var(--surface); } }
+
+    /* ---------- 한 화면에 하나씩 (JS가 켤 때만) ---------- */
+    html:not(.js) .pager, html:not(.js) #toc-open { display: none; }
+    html:not(.js) .sheet { display: block; position: static; width: 100%; max-height: none; margin: 0 auto; border-radius: 0; border-bottom: 1px solid var(--line); }
+    html:not(.js) .sheet-close { display: none; }
+    .js main > .hero:not(.is-current), .js main > section:not(.is-on), .js .screen:not(.is-current) { display: none; }
+    .js main > section { margin-top: 0; }
+    .js main > section > h2 { font-size: var(--fs-label); font-weight: 600; color: var(--accent-ink); margin: 0 0 var(--s2); }
+    .js .topic { padding: 0; border-top: 0; }
+    .js .hero { padding-top: 12vh; }
+    .js footer { display: none; }
+    .js body.at-end footer { display: block; }
+    .screen.enter-next { animation: enter-next var(--dur) var(--ease-out); }
+    .screen.enter-prev { animation: enter-prev var(--dur) var(--ease-out); }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .screen.enter-next, .screen.enter-prev { animation: none; }
+      .bar > span, .btn { transition: none; }
+    }
+    @media (max-width: 480px) {
+      main { padding: var(--s5) var(--s4) var(--s6); }
+      footer { padding: 0 var(--s4) var(--s5); }
+      .btn { min-width: 120px; padding: 0 var(--s5); }
+    }
+    @media print {
+      .topbar, .pager, .sheet { display: none !important; }
+      .js main > .hero, .js main > section, .js .screen, .js footer { display: block !important; }
+    }
+
+    /* ---------- 좌우 패널 (drawer) ---------- */
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
+    .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
+    .panel-toggle svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-toggle .strip { fill: transparent; stroke: none; transition: fill 150ms ease-out; }
+    .panel-toggle[aria-expanded="true"] { color: var(--accent-ink); }
+    .panel-toggle[aria-expanded="true"] .strip { fill: currentColor; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .i-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .theme-toggle .i-sun { display: block; }
+      :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
+    }
+
+    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
+    .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
+    .content { grid-column: 2; }
+    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
+    .panel-resize { display: none; }
+    .panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 44px; margin-bottom: var(--s2); }
+    .panel-head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-lead); line-height: 1.4; }
+    .panel-sub { margin: 0 0 var(--s4); font-weight: 700; line-height: 1.45; }
+    .panel-empty { margin: 0; color: var(--ink-2); }
+    .panel-label { display: block; margin: var(--s5) 0 var(--s2); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+
+    /* 진행 상태 */
+    .panel-meta { margin: 0 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .panel-meta b { color: var(--ink); }
+    .progress { height: 4px; margin-bottom: var(--s3); border-radius: 2px; background: var(--line); overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+    .panel .toc-list a { margin: 0 calc(-1 * var(--s2)); padding: var(--s2); font-size: var(--fs-panel); }
+    .toc-mark { flex: none; display: block; width: 20px; height: 20px; color: var(--ink-2); }
+    .toc-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .toc-mark.is-done { color: var(--accent-ink); }
+
+    /* 복습문제: 원문 · 힌트 · 풀이 */
+    .aid details:last-of-type { border-bottom: 1px solid var(--line); }
+    .aid details.original > summary { font-size: var(--fs-panel); }
+    .solved-btn { display: flex; align-items: center; justify-content: center; gap: var(--s2); width: 100%; min-height: var(--tap); margin-top: var(--s5); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .solved-btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
+
+    /* 정리노트: 섹션 요약 */
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+    .eq-list li:first-child { padding-top: 0; }
+    .eq-name { display: block; font-size: var(--fs-small); font-weight: 600; color: var(--ink-2); }
+    .eq-list .katex-display { margin: var(--s1) 0 0; text-align: left; }
+    .eq-list .katex-display > .katex { text-align: left; }
+    .terms { margin: 0; }
+    .terms dt { font-weight: 700; margin-top: var(--s3); }
+    .terms dt:first-child { margin-top: 0; }
+    .terms dd { margin: var(--s1) 0 0; }
+    .flow { margin: 0; padding-left: 1.4em; }
+    .flow li { margin: var(--s2) 0; }
+
+    @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
+
+    /* 넓은 화면: 본문 옆에 붙는 패널 */
+    @media (min-width: 1024px) {
+      .layout { --l: var(--panel-l-user, var(--panel-l)); }
+      .layout[data-left="closed"] { --l: 0px; }
+      .panel-left { width: var(--l); }
+      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
+      .panel-left .panel-resize { right: 0; }
+      .panel-right .panel-resize { left: 0; }
+      .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
+      .panel-left .panel-resize::after { right: 0; }
+      .panel-right .panel-resize::after { left: 0; }
+      .panel-resize:focus-visible { outline: none; }
+      .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
+      @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
+      body.is-resizing { cursor: col-resize; user-select: none; }
+      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
+      .scrim, .panel-close { display: none; }
+    }
+    @keyframes panel-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 좁은 화면: 가장자리에서 밀려 나오는 drawer */
+    @media (max-width: 1023.98px) {
+      .panel { position: fixed; top: 0; bottom: 0; z-index: 40; visibility: hidden;
+        transition: transform var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .panel-left { left: 0; width: min(var(--drawer-l), 88vw); transform: translateX(-100%); }
+      .panel-right { right: 0; width: min(var(--drawer-r), 88vw); transform: translateX(100%); }
+      .panel.is-open { visibility: visible; transform: none; transition: transform var(--dur) var(--ease-out); }
+      .panel-inner { padding-top: calc(var(--s3) + env(safe-area-inset-top)); padding-bottom: calc(var(--s6) + env(safe-area-inset-bottom)); }
+      .scrim { position: fixed; inset: 0; z-index: 35; background: var(--scrim); opacity: 0; visibility: hidden;
+        transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
+      html:not(.js) .panel-left { display: none; }
+    }
+    @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
+      .panel.is-shown { animation: none; }
+      .panel-resize::after { transition: none; }
+    }
+    @media print {
+      body { display: block; height: auto; overflow: visible; }
+      .layout { display: block; }
+      .content { overflow: visible; }
+      .panel, .scrim { display: none !important; }
+    }
+  </style>
+</head>
+<body data-screens="article.card" data-panels="review" data-range="0915">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <strong class="brand">복습문제</strong>
+      <a class="top-link" href="정리노트_0915_Cellular_Respiration_and_Photosynthesis.html">정리노트</a>
+      <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>풀이</span></button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
+  </header>
+  <div class="layout" data-left="open" data-right="closed">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
+      <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-left-title">문제 목록</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-meta">푼 문제 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <nav class="toc" aria-label="목차"><a href="#partB">B 기출</a><a href="#partC">C 변형</a></nav>
+      </div>
+    </aside>
+    <div class="content">
+  <main>
+    <div class="hero">
+      <h1>복습문제 25선 — 0915 수업 범위</h1>
+      <p>0915 수업 범위의 <b>기출 17문항</b>(2023·2024 2강 합본)과 수업 내용으로 만든 <b>변형 연습 8문항</b>이에요. 먼저 풀어 보고, 막히면 힌트를 열어 보세요.</p>
+    </div>
+    <section id="partB"><h2>B. 기출</h2>
+<article class="card" id="p1" data-source="기출 2강 3">
+  <h3>P1. C3·C4 식물 이름의 기준</h3>
+  <div class="problem"><p>C3와 C4식물은 어떻게 이름 붙여졌는가?</p>
+    <ul class="choices"><li>(1) 대사과정에서 이산화탄소가 고정될 때, 생성된 첫 번째로 안정한 분자의 탄소 수</li><li>(2) 탄소를 포함하는 분자가 발견된 순서</li><li>(3) 식물이나 동물의 물질대사에 가장 먼저 참여하는 탄소 수</li><li>(4) 식물이 위치하는 지리적 좌표와 연관</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 2강 합본 3번 (PDF 1쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>캘빈 회로에서 CO₂가 RuBP에 붙으면 곧바로 몇 탄소짜리 분자가 두 개 생기는지 떠올려 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 맞아요. 보통 식물은 CO₂가 RuBP에 붙자마자 쪼개져 3탄소 PGA가 첫 안정한 분자가 되므로 C3예요. C4 식물은 CO₂를 먼저 4탄소 화합물로 고정하므로 C4예요.</li><li>(2) 틀려요. 이름은 발견 순서가 아니라 CO₂ 고정의 첫 산물의 탄소 수에서 왔어요.</li><li>(3) 틀려요. 동물은 CO₂를 고정하지 않고, 기준은 '먼저 참여하는 탄소 수'가 아니라 고정 후 생긴 첫 안정한 분자의 탄소 수예요.</li><li>(4) 틀려요. 지리적 좌표와는 관계없어요. C4 식물이 더운 곳에 많을 뿐, 이름은 화학적 기준이에요.</li><li>수업과의 연결: 0915 캘빈 회로 설명에서 "6탄당이 없어. 3탄당 두 개가 있어"(52:20)라고 하신 첫 산물 PGA가 C3라는 이름의 근거예요. C4의 4탄소 산물은 교수님이 "몰라도 된다"고 하신 부분이라 정리노트 보충에서 다뤘어요.</li></ol>
+    <p class="answer">정답: (1)</p>
+    
+  </details>
+</article>
+<article class="card" id="p2" data-source="기출 2강 4">
+  <h3>P2. 광의존반응의 핵심 화학 과정</h3>
+  <div class="problem"><p>광합성의 광의존반응에서 주요한 화학적 과정에는 (　 )의 분해와 (　 )의 방출이 포함된다.</p>
+    <ul class="choices"><li>(1) 물 - 전자</li><li>(2) ATP - 산소</li><li>(3) ATP - 전자</li><li>(4) 물 - 질소</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 2강 합본 4번 (PDF 1쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>광계 2의 반응 중심이 잃은 전자를 어디에서 채우는지 생각해 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 맞아요. 광계 2가 잃은 전자를 물에서 빼 오면서 물이 분해되고(물의 광분해), 전자가 방출되어 전자전달계로 흘러가요.</li><li>(2) 틀려요. 광의존반응에서 ATP는 분해되는 것이 아니라 만들어져요. 산소가 방출되는 것은 맞지만 분해되는 것은 물이에요.</li><li>(3) 틀려요. ATP는 이 단계의 산물이지 분해 대상이 아니에요.</li><li>(4) 틀려요. 물의 분해에서 나오는 것은 전자, H⁺, 산소이고 질소는 관계없어요.</li><li>수업과의 연결: 0915 38:38–39:05에서 "전자를 잃은 P680은 물에서 전자를 채우고, 전자를 뺏긴 물은 산소가 된다"고 설명하신 물의 광분해 그대로예요.</li></ol>
+    <p class="answer">정답: (1)</p>
+    
+  </details>
+</article>
+<article class="card" id="p3" data-source="기출 2강 5">
+  <h3>P3. 발효의 결과로 생기는 분자</h3>
+  <div class="problem"><p>다음 중 발효과정의 결과로 생산되는 분자는 어떤 것인가?</p>
+    <ul class="choices"><li>(1) ATP</li><li>(2) NAD⁺</li><li>(3) NADPH</li><li>(4) NADH</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 2강 합본 5번 (PDF 1쪽). 원문의 NAD 위첨자 표기 깨짐을 NAD⁺로 바로잡았어요.</details>
+  <details class="hint"><summary>힌트 보기</summary>산소가 없을 때 세포가 왜 발효를 하는지, 무엇을 되살리려는지 떠올려 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 출제 의도로는 답이 아니지만, 발효하는 세포도 ATP 2개를 얻기는 해요. 다만 그 ATP는 앞선 해당과정에서 만들어지고, 발효 단계(피루브산 → 젖산 등) 자체가 만드는 것은 아니에요.</li><li>(2) 맞아요. 발효 단계에서 NADH가 전자를 피루브산(또는 아세트알데하이드)에 넘기며 NAD⁺로 되돌아가요. 이 NAD⁺ 재생 덕분에 해당과정이 계속 돌아요.</li><li>(3) 틀려요. NADPH는 광합성에서 쓰는 전자 운반체라 발효와 관계없어요.</li><li>(4) 틀려요. NADH는 발효에서 전자를 내주고 소모되는 쪽이에요.</li><li>수업과의 연결: 0915 13:37–14:42에서 "NAD⁺만 되살리면 해당과정은 돌릴 수 있다"며 NADH가 피루브산에 전자를 억지로 주는 것이 발효라고 설명하셨어요.</li></ol>
+    <p class="answer">정답: (2)</p>
+    <p>이 문항은 해석에 따라 보기 (1)도 성립할 수 있어요. '발효 전체'를 해당과정까지 포함해 넓게 보면 ATP 2개가 생기기 때문이에요. 인쇄된 답 (2)는 '발효 단계가 하는 일 = NAD⁺ 재생'을 묻는 출제 의도로 보고 그대로 두었어요.</p>
+  </details>
+</article>
+<article class="card" id="p4" data-source="기출 2강 9">
+  <h3>P4. 광의존반응 중에 일어나지 않는 일</h3>
+  <div class="problem"><p>다음 중 광합성의 광의존반응 동안에 일어나지 않는 것은?</p>
+    <ul class="choices"><li>(1) 전자전달계가 캘빈회로에 사용될 ATP합성을 가동시킨다.</li><li>(2) 엽록소로부터 나온 전자가 전자전달계에 첨가된다.</li><li>(3) 물이 분해되면서 산소가 생산된다.</li><li>(4) 산소가 분해되어서 물을 방출한다.</li><li>(5) NADPH가 생산되며, 캘빈회로에 전자를 운반한다.</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 2강 합본 9번 (PDF 1쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>광합성에서 물과 산소 중 어느 쪽이 어느 쪽으로 바뀌는지 방향을 확인해 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 일어나요. 전자전달계가 H⁺를 틸라코이드 안쪽에 쌓고, 이 기울기로 ATP 합성효소가 캘빈 회로에서 쓸 ATP를 만들어요.</li><li>(2) 일어나요. 반응 중심 엽록소가 내보낸 전자가 최초 수용체를 거쳐 전자전달계로 들어가요.</li><li>(3) 일어나요. 광계 2에서 물이 분해되며 산소가 나와요.</li><li>(4) 일어나지 않아요. 산소가 전자를 받아 물이 되는 것은 세포호흡의 전자전달계예요. 광합성은 반대로 물이 분해되어 산소가 나와요.</li><li>(5) 일어나요. NADP⁺가 광계 1에서 온 전자를 받아 NADPH가 되고, 이 전자를 캘빈 회로로 날라요.</li><li>수업과의 연결: 0915 39:14에서 "호흡은 산소 → 물, 광합성은 물 → 산소"라고 방향을 대비하셨어요.</li></ol>
+    <p class="answer">정답: (4)</p>
+    
+  </details>
+</article>
+<article class="card" id="p5" data-source="기출 2강 12">
+  <h3>P5. 광호흡에서 일어나는 일</h3>
+  <div class="problem"><p>광호흡 과정에서 일어나는 일은?</p>
+    <ul class="choices"><li>(1) 이산화탄소가 루비스코와 결합하여 RuBP를 생성한다.</li><li>(2) 루비스코가 기질로 산소를 이용한다.</li><li>(3) 산소가 루비스코와 결합하여 RuBP를 생성한다.</li><li>(4) 효소인 루비스코가 기질로 이산화탄소를 사용한다.</li><li>(5) 이산화탄소가 3-탄소 분자와 결합하여 4-탄소 분자를 생산한다.</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 2강 합본 12번 (PDF 1쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>기공이 닫혀 CO₂가 줄고 O₂가 쌓이면 루비스코가 무엇을 '착각'해서 붙이는지 떠올려 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 틀려요. RuBP는 CO₂가 붙는 5탄소 받개이고, CO₂와 루비스코가 결합해 RuBP가 생기는 것이 아니에요.</li><li>(2) 맞아요. 광호흡은 루비스코가 CO₂ 대신 O₂를 기질로 붙이는 과정이에요. 그 결과 독성 물질이 생기고 이를 없애는 데 에너지를 써요.</li><li>(3) 틀려요. O₂가 붙는 대상도 RuBP이고, RuBP가 생성되는 것이 아니에요.</li><li>(4) 틀려요. 루비스코가 CO₂를 붙이는 것은 캘빈 회로의 정상적인 탄소 고정이지 광호흡이 아니에요.</li><li>(5) 틀려요. CO₂를 먼저 4탄소 화합물로 고정하는 것은 광호흡을 피하는 C4 식물의 방식이에요.</li><li>수업과의 연결: 0915 57:44–58:13에서 루비스코가 "착각"해 CO₂ 대신 O₂를 붙인다고 설명하셨어요.</li></ol>
+    <p class="answer">정답: (2)</p>
+    
+  </details>
+</article>
+<article class="card" id="p6" data-source="기출 2강 13">
+  <h3>P6. 광합성 전체 반응식</h3>
+  <div class="problem"><p>다음의 화학 반응 중 광합성을 가장 적절히 나타낸 것은?</p>
+    <ul class="choices"><li>(1) 6H₂O + 6CO₂ + 태양에너지 → C₆H₁₂O₆ + 6O₂</li><li>(2) C₆H₁₂O₆ + 6H₂O + 태양에너지 → 6CO₂ + 6O₂</li><li>(3) 6CO₂ + 6O₂ + 태양에너지 → C₆H₁₂O₆ + 6H₂O</li><li>(4) O₂ + H₂O + 태양에너지 → C₆H₁₂O₆ + CO₂</li><li>(5) C₆H₁₂O₆ + 6O₂ + 태양에너지 → 6CO₂ + 6H₂O</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 2강 합본 13번 (PDF 1쪽). 합본에서 이 문항의 질문과 보기는 11번 옆에 이미지로 밀려 인쇄되어 있고, 13번 자리에는 답만 남아 있어요(PDF 2쪽 위).</details>
+  <details class="hint"><summary>힌트 보기</summary>광합성은 세포호흡을 거꾸로 돌린 것이에요. 반응물과 산물을 한 번 뒤집어 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 맞아요. 물과 CO₂가 빛에너지로 포도당과 산소가 돼요. 산소는 물에서, 포도당의 탄소는 CO₂에서 와요.</li><li>(2) 틀려요. 포도당이 반응물 쪽에 있어 광합성이 아니고, 산소와 CO₂가 함께 나오는 반응도 성립하지 않아요.</li><li>(3) 틀려요. 산소가 반응물이고 물이 산물이라 방향이 뒤집혔어요. 광합성에서는 물이 들어가 산소가 나와요.</li><li>(4) 틀려요. 산소가 반응물 쪽에 있고, CO₂가 산물로 나와 탄소의 방향도 반대예요. 계수도 맞지 않아요.</li><li>(5) 틀려요. 포도당과 산소가 CO₂와 물이 되는 것은 세포호흡이에요.</li><li>수업과의 연결: 0915 27:37–28:00에서 호흡은 "포도당 → NADH → 산소", 광합성은 "물 → NADPH → 포도당"이라고 정리하셨어요.</li></ol>
+    <p class="answer">정답: (1)</p>
+    
+  </details>
+</article>
+<article class="card" id="p7" data-source="기출 2강 17">
+  <h3>P7. 광합성 산소의 기원</h3>
+  <div class="problem"><p>광합성 광의존반응에서 발생하는 산소의 기원은?</p>
+    <ul class="choices"><li>(1) 물</li><li>(2) 포도당</li><li>(3) NADPH</li><li>(4) NADH</li><li>(5) 이산화탄소</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 2강 합본 17번 (PDF 2쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>광계 2가 잃은 전자를 채우려고 무엇을 쪼개는지 생각해 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 맞아요. 광계 2가 물에서 전자를 빼 오며 물이 분해되고, 그 결과 산소가 나와요.</li><li>(2) 틀려요. 포도당은 광합성의 산물이지 산소의 출처가 아니에요.</li><li>(3) 틀려요. NADPH는 전자를 캘빈 회로로 나르는 운반체예요.</li><li>(4) 틀려요. NADH는 세포호흡의 전자 운반체예요.</li><li>(5) 틀려요. CO₂의 탄소는 캘빈 회로에서 포도당으로 들어가고, 방출되는 산소는 물에서 와요.</li><li>수업과의 연결: 0915 39:50에서 "산소는 명반응에서 생긴다"고, 38:38–39:05에서 물이 전자를 뺏기고 산소가 된다고 하셨어요.</li></ol>
+    <p class="answer">정답: (1)</p>
+    
+  </details>
+</article>
+<article class="card" id="p8" data-source="기출 2강 21">
+  <h3>P8. 캘빈 회로 환원 단계의 산물</h3>
+  <div class="problem"><p>캘빈회로의 2단계 반응 중 NADPH에 의한 환원반응의 결과 생산되는 것은?</p>
+    <p>답: (　　　　)</p></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 2강 합본 21번 (PDF 2쪽). 합본에 보기 번호만 있고 보기 글이 인쇄되지 않아, 보기 없이 답을 쓰는 문항으로 실었어요.</details>
+  <details class="hint"><summary>힌트 보기</summary>PGA(3-인산글리세르산)가 ATP의 인산기와 NADPH의 전자를 받으면 산이 무엇으로 바뀌는지 떠올려 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>캘빈 회로 1단계(탄소 고정)에서 CO₂가 RuBP에 붙어 3-인산글리세르산(PGA) 2분자가 생겨요.</li><li>2단계(환원)에서 PGA가 ATP에서 인산기, NADPH에서 전자를 받아 산(글리세르산)이 알데하이드가 돼요. 이 산물이 G3P(글리세르알데하이드 3-인산)예요.</li><li>G3P 일부는 포도당 합성에, 나머지는 3단계 RuBP 재생에 쓰여요.</li><li>수업과의 연결: 0915 52:52–53:07에서 PGA가 NADPH에서 전자를 받아 알데하이드인 G3P가 된다고 설명하셨어요.</li></ol>
+    <p class="answer">정답: G3P</p>
+    
+  </details>
+</article>
+<article class="card" id="p9" data-source="기출 2강 24">
+  <h3>P9. 캘빈 회로 한 바퀴의 산물</h3>
+  <div class="problem"><p>캘빈회로의 한 회전에서 CO₂ 분자는 무엇을 생산하는가?</p>
+    <ul class="choices"><li>(1) 포도당 한 분자</li><li>(2) ATP</li><li>(3) ATP 6개 NADPH 6개</li><li>(4) 탄수화물 한 단위</li><li>(5) 6 NADPH</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 2강 합본 24번 (PDF 2쪽). 원문 CO₂ 표기 깨짐을 바로잡았어요. 문항 옆에 인쇄된 효소 그림은 14번 그림이라 싣지 않았어요.</details>
+  <details class="hint"><summary>힌트 보기</summary>한 바퀴에 들어오는 CO₂는 몇 개이고, 포도당 한 분자에는 몇 바퀴가 필요했는지 떠올려 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 틀려요. 포도당(탄소 6개) 한 분자에는 CO₂가 6번, 곧 6바퀴가 필요해요.</li><li>(2) 틀려요. 캘빈 회로는 ATP를 쓰는 쪽이지 만드는 쪽이 아니에요.</li><li>(3) 틀려요. ATP와 NADPH는 캘빈 회로에서 소모돼요. 만드는 곳은 명반응이에요.</li><li>(4) 맞아요. 한 바퀴에 CO₂ 1개가 고정되어 탄소 하나만큼, 곧 탄수화물 한 단위(CH₂O)가 생겨요.</li><li>(5) 틀려요. NADPH는 캘빈 회로에서 전자를 내주고 NADP⁺로 돌아가요.</li><li>수업과의 연결: 0915 53:43–53:54에서 "6바퀴 돌아야 포도당 1분자"라고 하셨어요. 한 바퀴 = 탄소 하나라는 뜻이에요.</li></ol>
+    <p class="answer">정답: (4)</p>
+    
+  </details>
+</article>
+<article class="card" id="p10" data-source="기출 2강 26">
+  <h3>P10. NADP⁺의 역할</h3>
+  <div class="problem"><p>광합성 과정에서 NADP⁺ 의 역할은 무엇인가?</p>
+    <ul class="choices"><li>(1) ADP를 ATP로 인산화</li><li>(2) 빛에너지 흡수</li><li>(3) 물을 산소와 수소로 분해</li><li>(4) 전자수용체</li><li>(5) 이산화탄소를 루비스코로 전환</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 2강 합본 26번 (PDF 3쪽). 원문 NADP 위첨자 표기 깨짐을 바로잡았어요.</details>
+  <details class="hint"><summary>힌트 보기</summary>광계 1에서 나간 전자가 마지막으로 어디에 도착하는지 생각해 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 틀려요. ADP를 ATP로 인산화하는 것은 H⁺ 기울기로 돌아가는 ATP 합성효소예요.</li><li>(2) 틀려요. 빛에너지는 안테나 복합체의 색소(엽록소, 카로티노이드)가 흡수해요.</li><li>(3) 틀려요. 물을 분해하는 것은 광계 2예요.</li><li>(4) 맞아요. NADP⁺는 광계 1에서 온 전자와 H⁺를 받아 NADPH가 되는 마지막 전자수용체예요.</li><li>(5) 틀려요. 루비스코는 효소이고, CO₂가 루비스코로 바뀌는 일은 없어요.</li><li>수업과의 연결: 0915 48:17–48:37에서 광계 1의 전자가 NADP⁺까지 가서 전자와 H⁺를 받아 NADPH가 된다고 하셨어요.</li></ol>
+    <p class="answer">정답: (4)</p>
+    
+  </details>
+</article>
+<article class="card" id="p11" data-source="기출 2강 31">
+  <h3>P11. 두 반응을 잇는 분자</h3>
+  <div class="problem"><p>광의존반응과 광독립반응을 연결시키는 분자는?</p>
+    <ul class="choices"><li>(1) G3P와 RuBP</li><li>(2) ADP와 H₂O</li><li>(3) RuBP와 CO₂</li><li>(4) ATP와 NADPH</li><li>(5) 사이토크롬과 물</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 2강 합본 31번 (PDF 3쪽). 원문 H₂O, CO₂ 표기 깨짐을 바로잡았어요.</details>
+  <details class="hint"><summary>힌트 보기</summary>명반응이 만들어 암반응에 넘겨 주는 두 가지가 무엇이었는지 떠올려 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 틀려요. G3P와 RuBP는 캘빈 회로(광독립반응) 안에서만 도는 물질이에요.</li><li>(2) 틀려요. 물은 광의존반응의 재료일 뿐 두 반응을 잇지 않아요. ADP는 캘빈 회로에서 명반응으로 돌아가는 쪽이지만 짝이 틀렸어요.</li><li>(3) 틀려요. RuBP와 CO₂는 캘빈 회로의 탄소 고정 단계에서 만나는 물질이에요.</li><li>(4) 맞아요. 명반응이 만든 ATP와 NADPH를 캘빈 회로가 받아 CO₂를 포도당으로 바꿔요.</li><li>(5) 틀려요. 사이토크롬은 전자전달계 안의 운반체이고, 물은 명반응의 재료예요.</li><li>수업과의 연결: 0915 수업 끝 문제 풀이(61:53–62:04)에서 똑같이 "광의존반응과 광독립반응을 연결하는 분자는 ATP와 NADPH"라고 푸셨어요.</li></ol>
+    <p class="answer">정답: (4)</p>
+    
+  </details>
+</article>
+<article class="card" id="p12" data-source="기출 2강 32">
+  <h3>P12. 광합성에 대한 틀린 설명</h3>
+  <div class="problem"><p>다음 중 광합성에 대하여 잘못 설명하고 있는 것은?</p>
+    <ul class="choices"><li>(1) 햇빛이 엽록소에 부딪쳤을 때 방출된 전자들은 물에서부터 온 전자들에 의해서 대체된다.</li><li>(2) 캘빈회로의 효소들은 엽록체의 스트로마에 존재한다.</li><li>(3) 캘빈회로에서 생산된 산소는 대기로 방출한다.</li><li>(4) 캘빈회로에서는 광의존반응으로부터 온 전자들과 ATP가 대기의 이산회탄소와 결합하여 당을 생성한다.</li><li>(5) 햇빛은 엽록소에 있는 전자들을 더 높은 에너지 수준으로 올림으로써 광합성을 가동시킨다.</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 2강 합본 32번 (PDF 3쪽). 보기 (4)의 '이산회탄소'는 원문 표기 그대로예요(이산화탄소의 오타).</details>
+  <details class="hint"><summary>힌트 보기</summary>광합성에서 산소가 어느 반응, 어느 물질에서 나오는지 확인해 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 맞는 설명이에요. 반응 중심 엽록소가 내보낸 전자는 물에서 빼 온 전자로 채워져요.</li><li>(2) 맞는 설명이에요. 캘빈 회로의 세 단계는 모두 스트로마에서 일어나요.</li><li>(3) 잘못된 설명이에요. 산소는 캘빈 회로가 아니라 광의존반응에서 물이 분해될 때 나와요. 캘빈 회로는 산소를 만들지 않아요.</li><li>(4) 맞는 설명이에요. 광의존반응에서 온 전자(NADPH가 실어 옴)와 ATP를 써서 CO₂로 당을 만들어요.</li><li>(5) 맞는 설명이에요. 빛에너지를 받은 엽록소의 전자가 들뜬 상태(더 높은 에너지 수준)가 되며 광합성이 시작돼요.</li><li>수업과의 연결: 0915 39:50에서 "산소는 명반응에서 생긴다"고, 55:38에서 캘빈 회로의 모든 단계가 스트로마에서 일어난다고 하셨어요.</li></ol>
+    <p class="answer">정답: (3)</p>
+    
+  </details>
+</article>
+<article class="card" id="p13" data-source="기출 2강 36">
+  <h3>P13. 요구르트의 신맛</h3>
+  <div class="problem"><p>요구르트의 신맛의 원인은 무엇인가?</p>
+    <ul class="choices"><li>(1) 시트르산 회로에서 미생물에 의해 방출된 시트르산</li><li>(2) 해당과정 동안에 미생물에 의해 생성된 ADP</li><li>(3) 미생물에 의해 무기호흡과정 동안 생성된 젖산</li><li>(4) 미생물에 의해 지방이 분해되어 나온 지방산</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 2강 합본 36번 (PDF 3쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>김치가 시어지는 까닭을 교수님이 무엇 때문이라고 하셨는지 떠올려 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 틀려요. 시트르산 회로는 산소가 있을 때 미토콘드리아에서 도는 과정이고, 신맛의 원인이 아니에요.</li><li>(2) 틀려요. ADP는 신맛을 내지 않고, 해당과정에서는 ADP가 ATP로 바뀌는 쪽이에요.</li><li>(3) 맞아요. 유산균(젖산균)이 산소가 적은 곳에서 젖산 발효를 해 젖산을 만들고, 이 젖산이 신맛을 내요.</li><li>(4) 틀려요. 요구르트의 신맛은 지방 분해가 아니라 젖산 때문이에요.</li><li>수업과의 연결: 0915 15:38–16:09에서 젖산 발효를 설명하며 김치의 신맛이 젖산 때문이라고 하셨어요.</li></ol>
+    <p class="answer">정답: (3)</p>
+    <p>보기 (3)의 '무기호흡과정'은 엄밀히는 '발효(젖산 발효)'라고 불러야 해요. 무산소 호흡은 산소 대신 질산염·황산염 같은 다른 물질을 최종 전자수용체로 쓰는 전자전달계 과정이라 발효와 달라요. 그래도 네 보기 가운데 신맛의 원인(젖산)을 바르게 짚은 것은 (3)뿐이라 정답은 (3)이에요.</p>
+  </details>
+</article>
+<article class="card" id="p14" data-source="기출 2강 40">
+  <h3>P14. 사막에 적응한 식물</h3>
+  <div class="problem"><p>다음 중 사막과 같이 낮에 고온 건조한 환경에서 가장 잘 적응하는 식물은?</p>
+    <p>답: (　　　　)</p></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 2강 합본 40번 (PDF 3쪽). 합본에 보기가 인쇄되지 않고 답만 있어, 보기 없이 답을 쓰는 문항으로 실었어요.</details>
+  <details class="hint"><summary>힌트 보기</summary>낮에 기공을 닫아도 광합성을 할 수 있게 CO₂를 저장해 두는 식물을 떠올려 보세요. 낮에는 기공을 닫고 밤에 여는 식물이에요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>낮에 뜨겁고 건조하면 식물은 물을 아끼려고 기공을 닫아요. 그러면 잎 안의 CO₂가 줄고 O₂가 쌓여 광호흡이 늘어요.</li><li>CAM 식물(선인장 등)은 서늘한 밤에만 기공을 열어 CO₂를 받아 저장하고, 낮에는 기공을 닫은 채 저장한 CO₂로 캘빈 회로를 돌려요. 그래서 낮에 고온 건조한 사막에 가장 잘 적응해요.</li><li>C4 식물(옥수수, 사탕수수)도 CO₂를 저장해 더운 곳에 강하지만, 낮에 고온 건조한 사막의 대표는 CAM 식물이에요. 수업에서 선인장을 C4와 한데 말씀하신 부분은 부정확해요. 선인장은 CAM 식물이에요.</li><li>수업과의 연결: 0915 59:32–60:00에서 건조 지역 식물은 "이산화탄소를 저장했다가 빼는 시스템"이 있어 기공을 닫아도 걱정이 없다고 하셨어요.</li></ol>
+    <p class="answer">정답: CAM 식물</p>
+    
+  </details>
+</article>
+<article class="card" id="p15" data-source="기출 2강 41">
+  <h3>P15. 캘빈 회로의 투입물이 아닌 것</h3>
+  <div class="problem"><p>광독립반응의 진행을 위해 캘빈회로에서 반드시 요구되는 투입물질이 아닌 것은?</p>
+    <ul class="choices"><li>(1) ATP</li><li>(2) FAD</li><li>(3) CO₂</li><li>(4) NADPH</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 2강 합본 41번 (PDF 4쪽). 원문 CO₂ 표기 깨짐을 바로잡았어요.</details>
+  <details class="hint"><summary>힌트 보기</summary>캘빈 회로에 전자와 에너지와 탄소를 대는 것이 각각 무엇이었는지 떠올려 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 필요해요. ATP는 PGA에 인산기를 주고 RuBP 재생에도 쓰이는 에너지예요.</li><li>(2) 필요하지 않아요. FAD(FADH₂)는 세포호흡의 시트르산 회로에서 전자를 나르는 운반체이고 캘빈 회로에는 들어가지 않아요.</li><li>(3) 필요해요. CO₂는 RuBP에 고정되는 탄소 재료예요.</li><li>(4) 필요해요. NADPH는 PGA를 G3P로 환원하는 전자를 줘요.</li><li>수업과의 연결: 0915 51:01에서 캘빈 회로의 전자는 NADPH가, 에너지는 ATP가 댄다고 하셨고, FADH₂는 같은 날 세포호흡 ATP 수지(02:47)에서만 나왔어요.</li></ol>
+    <p class="answer">정답: (2)</p>
+    
+  </details>
+</article>
+<article class="card" id="p24" data-source="기출 2강 20">
+  <h3>P24. 포도당 한 분자의 ATP 수</h3>
+  <div class="problem"><p>포도당 한 분자가 이산화탄소와 물로 완전히 산화될 때 생산되는 ATP 분자는 몇 개인가?</p>
+    <ul class="choices"><li>(1) 94</li><li>(2) 5</li><li>(3) 20</li><li>(4) 2</li><li>(5) 32</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 2강 합본 20번 (PDF 2쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>기질 수준 인산화로 바로 얻는 몫과, NADH·FADH2의 전자가 전자전달계에서 떨어지며 만드는 몫을 더해 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 틀려요. 94는 어떤 셈에서도 나오지 않는 값이에요.</li><li>(2) 틀려요. 5는 NADH 2개(약 2.5 ATP씩)가 만드는 정도의 양밖에 안 돼요.</li><li>(3) 틀려요. 20은 산화적 인산화 몫(28)에도 못 미쳐요.</li><li>(4) 틀려요. 2는 해당과정만 돌 때(산소가 없어 발효할 때) 얻는 양이에요.</li><li>(5) 맞아요. 기질 수준 인산화 4개(해당과정 2 + 시트르산 회로 2)와 산화적 인산화 28개(NADH 10 × 2.5 + FADH2 2 × 1.5)를 더하면 32개예요.</li><li>수업과의 연결: 0915 02:11–06:05에서 단계별로 세어 "32 ATP, 1몰 기준 32몰"이라고 정리하셨어요.</li></ol>
+    <p class="answer">정답: (5)</p>
+  </details>
+</article>
+<article class="card" id="p25" data-source="기출 2강 34">
+  <h3>P25. 산소가 없을 때 근육세포의 ATP</h3>
+  <div class="problem"><p>근육세포에 산소가 사용될 수 없다면 한 분자의 포도당에서 ATP는 얼마나 생성되는가?</p>
+    <ul class="choices"><li>(1) 없음</li><li>(2) 8분자</li><li>(3) 26분자</li><li>(4) 2분자</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 2강 합본 34번 (PDF 3쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>산소가 없을 때 근육세포는 NAD+를 어떻게 되살려 해당과정을 계속 돌리는지 떠올려 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 틀려요. 발효를 못 한다면 NAD+가 고갈되어 ATP가 0이 되지만, 근육세포는 젖산 발효로 NAD+를 되살려 해당과정을 계속 돌려요.</li><li>(2) 틀려요. 8분자는 해당과정의 순생산량(2개)보다 많아요. 산소가 없으면 그 뒤 단계가 돌지 않아요.</li><li>(3) 틀려요. 26분자는 산소가 있어야 돌아가는 전자전달계의 몫에 가까운 값이에요.</li><li>(4) 맞아요. 산소가 없으면 전자전달계가 멈추고, 근육세포는 젖산 발효로 NAD+를 재생해 해당과정의 순 ATP 2분자만 얻어요.</li><li>수업과의 연결: 0915 13:37–15:38에서 "NAD+만 되살리면 해당과정은 돌릴 수 있고 ATP 2개를 얻는다", 32개 대신 2개라 효율은 1/16이지만 0보다 낫다고 하셨어요(근육의 젖산 발효는 15:38).</li></ol>
+    <p class="answer">정답: (4)</p>
+  </details>
+</article>
+    </section>
+    <section id="partC"><h2>C. 변형 연습</h2>
+<article class="card" id="p16" data-source="생성 변형 s0-atp-yield">
+  <h3>P16. [변형] 32개 중 산화적 인산화의 몫</h3>
+  <div class="problem"><p>포도당 1분자가 완전히 산화될 때 생기는 ATP 32개 가운데, H⁺ 농도 기울기와 ATP 합성효소로 만들어지는 것은 몇 개인가요?</p>
+    <ul class="choices"><li>(1) 2개</li><li>(2) 4개</li><li>(3) 28개</li><li>(4) 30개</li><li>(5) 32개</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 기질 수준 인산화와 산화적 인산화의 개수. 근거 토픽: 포도당 한 분자에서 ATP 32개(s0-atp-yield)</details>
+  <details class="hint"><summary>힌트 보기</summary>H⁺ 기울기와 ATP 합성효소로 ATP를 만드는 방식의 이름부터 떠올리고, NADH와 FADH2의 개수를 세어 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 틀려요. 2개는 해당과정에서 기질 수준 인산화로 얻는 몫(또는 발효 때 얻는 전부)이에요.</li><li>(2) 틀려요. 4개는 인산기를 직접 건네는 기질 수준 인산화의 전체 몫이에요. 두 방식의 개수를 뒤바꾼 거예요.</li><li>(3) 맞아요. 산화적 인산화로 NADH 10개 × 2.5 + FADH2 2개 × 1.5 = 28개가 만들어져요.</li><li>(4) 틀려요. 30개는 32개에서 해당과정의 2개를 뺀 값으로, 발효할 때 모자라는 양이에요.</li><li>(5) 틀려요. 32개는 두 방식을 합친 전체예요.</li><li>수업과의 연결: 0915 05:34–05:50에서 교수님도 28개와 4개를 한 번 뒤바꿔 말했다가 "아 다시 다시"라며 28개가 산화적 인산화라고 바로잡으셨어요.</li></ol>
+    <p class="answer">정답: (3)</p>
+    
+  </details>
+</article>
+<article class="card" id="p17" data-source="생성 변형 s0-chemiosmosis">
+  <h3>P17. [변형] 전자는 흐르는데 H⁺가 샌다면</h3>
+  <div class="problem"><p>어떤 약물 때문에 미토콘드리아 전자전달계의 전자 흐름은 정상인데, H⁺가 ATP 합성효소를 거치지 않고 내막을 그냥 새어 기질로 돌아간다고 해요. 옳은 설명은 무엇인가요?</p>
+    <ul class="choices"><li>(1) 전자가 정상으로 흐르므로 ATP 합성량은 변하지 않는다.</li><li>(2) H⁺ 농도 기울기가 유지되지 않아 ATP 합성효소가 ATP를 거의 만들지 못한다.</li><li>(3) 산소 대신 H⁺가 최종 전자수용체가 된다.</li><li>(4) ATP 합성효소를 직접 돌리는 에너지는 포도당이므로 영향이 없다.</li><li>(5) 이 현상을 설명하는 이론의 이름이 산화적 인산화이고, ATP가 생기는 과정의 이름이 화학삼투설이다.</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 전자 흐름과 H⁺ 농도 기울기의 짝, 직접 에너지원과 궁극 에너지원, 이론과 과정의 이름. 근거 토픽: 화학삼투설과 최종 전자수용체(s0-chemiosmosis)</details>
+  <details class="hint"><summary>힌트 보기</summary>ATP 합성효소를 '직접' 돌리는 것이 무엇인지, 그리고 그것이 사라지면 어떻게 되는지 생각해 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 틀려요. 전자 흐름은 H⁺ 기울기를 만드는 데까지만 해요. 기울기가 새어 없어지면 ATP는 거의 안 생겨요.</li><li>(2) 맞아요. 전자 흐름, H⁺ 농도 기울기, ATP 합성은 짝을 이뤄요. H⁺가 새면 기울기가 깨져 ATP 합성효소가 돌지 못해요.</li><li>(3) 틀려요. 전자는 여전히 산소까지 가요. 최종 전자수용체는 산소 그대로예요.</li><li>(4) 틀려요. 포도당은 궁극적인 에너지원이고, ATP 합성효소를 직접 돌리는 것은 H⁺ 농도 기울기예요.</li><li>(5) 틀려요. 이름이 뒤바뀌었어요. 이론이 화학삼투설, 과정이 산화적 인산화예요.</li><li>수업과의 연결: 0915 07:04–07:29에서 H⁺가 막을 그냥 통과해 기울기가 깨지면 "ATP 생성이 된다, 안 된다?"라고 되물으셨고, 60:31에는 직접 에너지원이 H⁺ 농도 기울기라고 푸셨어요.</li></ol>
+    <p class="answer">정답: (2)</p>
+    
+  </details>
+</article>
+<article class="card" id="p18" data-source="생성 변형 s1-no-oxygen">
+  <h3>P18. [변형] 해당과정까지 멈추는 이유</h3>
+  <div class="problem"><p>산소가 없고 발효도 할 수 없는 세포가 있다고 가정해요. 포도당이 충분한데도 해당과정까지 멈추는 직접적인 이유는 무엇인가요?</p>
+    <ul class="choices"><li>(1) 포도당이 미토콘드리아로 들어가지 못해서</li><li>(2) 모든 NAD⁺가 전자를 받은 NADH 상태로 남아, 해당과정에서 전자를 받을 NAD⁺가 없어서</li><li>(3) 해당과정은 산소를 직접 사용하는 반응이라서</li><li>(4) ATP 합성효소가 해당과정의 효소라서</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 산소가 없으면 전자전달계만 멈춘다는 착각(NAD⁺ 고갈). 근거 토픽: 산소가 없으면 해당과정도 멈춘다(s1-no-oxygen)</details>
+  <details class="hint"><summary>힌트 보기</summary>해당과정에서 포도당의 전자를 누가 받아 가야 하는지, 그 운반체가 모두 꽉 차면 어떻게 되는지 생각해 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 틀려요. 해당과정은 원래 미토콘드리아 밖, 세포질에서 일어나요.</li><li>(2) 맞아요. 산소가 없으면 전자전달계가 막혀 NADH가 NAD⁺로 돌아가지 못해요. NAD⁺가 고갈되면 해당과정이 전자를 넘길 곳이 없어 멈춰요.</li><li>(3) 틀려요. 해당과정은 산소를 쓰지 않아요. 멈추는 까닭은 NAD⁺가 없어서예요.</li><li>(4) 틀려요. ATP 합성효소는 미토콘드리아 내막의 효소이고, 해당과정의 ATP는 기질 수준 인산화로 만들어요.</li><li>수업과의 연결: 0915 11:18–13:30에서 복합체 4부터 차례로 막혀 NAD⁺가 고갈되고 해당과정이 멈춘다고 여러 번 반복하셨어요(택시와 손님 비유).</li></ol>
+    <p class="answer">정답: (2)</p>
+    
+  </details>
+</article>
+<article class="card" id="p19" data-source="생성 변형 s1-fermentation">
+  <h3>P19. [변형] 알코올 발효에서 전자를 받는 분자</h3>
+  <div class="problem"><p>효모의 알코올 발효에서 NADH의 전자를 받아 NAD⁺를 되살리는 분자는 무엇인가요?</p>
+    <ul class="choices"><li>(1) 산소</li><li>(2) 피루브산</li><li>(3) 아세트알데하이드</li><li>(4) 젖산</li><li>(5) 이산화탄소</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 젖산 발효와 알코올 발효의 전자수용체, 발효와 세포호흡의 최종 전자수용체. 근거 토픽: 젖산 발효와 알코올 발효(s1-fermentation)</details>
+  <details class="hint"><summary>힌트 보기</summary>알코올 발효에서는 피루브산에서 무엇이 먼저 빠진 뒤 전자를 받는지 떠올려 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 틀려요. 산소는 세포호흡의 최종 전자수용체예요. 발효는 산소가 없을 때 일어나요.</li><li>(2) 틀려요. 피루브산이 직접 전자를 받는 것은 젖산 발효예요.</li><li>(3) 맞아요. 피루브산에서 CO₂가 하나 빠져 아세트알데하이드가 되고, 아세트알데하이드가 NADH의 전자를 받아 에탄올이 돼요.</li><li>(4) 틀려요. 젖산은 젖산 발효의 산물이에요.</li><li>(5) 틀려요. 이산화탄소는 알코올 발효에서 떨어져 나가는 분자이고, 빵을 부풀려요.</li><li>수업과의 연결: 0915 16:18–16:43에서 효모가 피루브산에서 CO₂를 떼어 아세트알데하이드를 만들고, 그것이 전자를 받아 에탄올이 된다고 하셨어요.</li></ol>
+    <p class="answer">정답: (3)</p>
+    
+  </details>
+</article>
+<article class="card" id="p20" data-source="생성 변형 s3-pigments">
+  <h3>P20. [변형] 산소 양으로 그린 그래프</h3>
+  <div class="problem"><p>여러 파장의 빛을 차례로 비추며 파장마다 실제로 발생한 산소의 양을 재어 그래프를 그렸어요. 이 그래프의 이름과, 이 그래프가 흡수 스펙트럼과 비슷한 까닭을 바르게 짝지은 것은 무엇인가요?</p>
+    <ul class="choices"><li>(1) 흡수 스펙트럼 — 색소가 녹색 빛을 가장 많이 흡수하기 때문</li><li>(2) 작용 스펙트럼 — 색소가 빛을 흡수해야 광합성이 일어나기 때문</li><li>(3) 작용 스펙트럼 — 광합성이 빛과 상관없이 일어나기 때문</li><li>(4) 흡수 스펙트럼 — 분광광도계로 산소를 재기 때문</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 흡수 스펙트럼과 작용 스펙트럼. 근거 토픽: 엽록체와 광합성 색소(s3-pigments)</details>
+  <details class="hint"><summary>힌트 보기</summary>무엇을 재는지(흡광도냐, 실제 광합성량이냐)로 두 그래프를 가르세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 틀려요. 산소 양을 잰 그래프는 흡수 스펙트럼이 아니에요. 게다가 녹색 빛은 흡수하지 않고 반사해요.</li><li>(2) 맞아요. 파장별 실제 광합성량(산소나 포도당의 양)을 잰 것이 작용 스펙트럼이고, 흡수해야 광합성이 되므로 흡수 스펙트럼과 거의 일치해요.</li><li>(3) 틀려요. 이름은 맞지만 이유가 틀렸어요. 광합성은 색소가 빛을 흡수해야 일어나요.</li><li>(4) 틀려요. 흡수 스펙트럼은 분광광도계로 파장별 흡광도를 재는 것이지 산소를 재는 것이 아니에요.</li><li>수업과의 연결: 0915 32:45–33:30에서 흡수 스펙트럼과 작용 스펙트럼을 두 번 반복해 대비하셨어요.</li></ol>
+    <p class="answer">정답: (2)</p>
+    
+  </details>
+</article>
+<article class="card" id="p21" data-source="생성 변형 s3-electron-flow">
+  <h3>P21. [변형] 명반응 전자의 순서</h3>
+  <div class="problem"><p>명반응에서 물의 전자가 흐르는 순서로 옳은 것은 무엇인가요?</p>
+    <ul class="choices"><li>(1) 물 → 광계 1 → 전자전달계 → 광계 2 → NADP⁺</li><li>(2) 물 → 광계 2 → 전자전달계 → 광계 1 → NADP⁺</li><li>(3) NADP⁺ → 광계 1 → 전자전달계 → 광계 2 → 물</li><li>(4) 물 → 광계 2 → 전자전달계 → 광계 1 → 산소</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 광계 1·2의 번호와 전자 흐름 순서, 물의 광분해 위치. 근거 토픽: 명반응의 전자 흐름과 ATP 합성(s3-electron-flow)</details>
+  <details class="hint"><summary>힌트 보기</summary>물의 광분해가 어느 광계에서 일어나는지부터 떠올려 보세요. 번호 순서와 흐름 순서는 달라요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 틀려요. 번호 순서대로 흐른다고 착각한 순서예요. 물의 전자는 광계 2로 먼저 가요.</li><li>(2) 맞아요. 물의 광분해는 광계 2에서 일어나고, 전자는 광계 2 → 전자전달계 → 광계 1을 지나 NADP⁺에 도착해 NADPH가 돼요.</li><li>(3) 틀려요. 방향이 완전히 거꾸로예요. 전자는 물에서 출발해 NADP⁺에서 끝나요.</li><li>(4) 틀려요. 명반응의 마지막 전자수용체는 NADP⁺예요. 산소가 전자를 받는 것은 세포호흡이에요.</li><li>수업과의 연결: 0915 44:25–45:03에서 "물의 광분해가 일어나는 곳은 광계 2"라고 네 번 반복하셨고, 광계 1이 먼저 발견되어 번호가 거꾸로라고 하셨어요.</li></ol>
+    <p class="answer">정답: (2)</p>
+    
+  </details>
+</article>
+<article class="card" id="p22" data-source="생성 변형 s3-electron-flow">
+  <h3>P22. [변형] H⁺가 쌓이는 곳과 ATP가 생기는 곳</h3>
+  <div class="problem"><p>엽록체의 명반응에서 H⁺가 쌓이는 곳과 ATP가 만들어지는 곳을 바르게 짝지은 것은 무엇인가요?</p>
+    <ul class="choices"><li>(1) 스트로마 — 틸라코이드 안쪽</li><li>(2) 틸라코이드 안쪽 — 스트로마</li><li>(3) 틸라코이드 안쪽 — 틸라코이드 안쪽</li><li>(4) 막간 공간(내막과 외막 사이) — 기질</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 미토콘드리아와 엽록체의 H⁺ 이동 방향, ATP 생성 장소. 근거 토픽: 명반응의 전자 흐름과 ATP 합성(s3-electron-flow)</details>
+  <details class="hint"><summary>힌트 보기</summary>엽록체는 미토콘드리아와 '방향만 반대'라고 하셨어요. H⁺를 어디로 퍼내고, 어디로 빠져나올 때 ATP가 생기는지 생각해 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 틀려요. 방향이 거꾸로예요. H⁺는 틸라코이드 안쪽에 쌓이고, ATP는 스트로마에서 생겨요.</li><li>(2) 맞아요. 전자전달계가 H⁺를 틸라코이드 안쪽으로 퍼내고, H⁺가 ATP 합성효소를 지나 스트로마로 나올 때 ATP가 만들어져요.</li><li>(3) 틀려요. H⁺가 쌓이는 곳과 ATP가 생기는 곳은 막을 사이에 둔 반대쪽이에요.</li><li>(4) 틀려요. 이것은 미토콘드리아의 경우예요(바깥에 쌓였다가 기질로 들어올 때 ATP).</li><li>수업과의 연결: 0915 41:23에서 "방향만 반대입니다, 방향만", 49:53에서 ATP는 틸라코이드 막의 바깥쪽에서 생긴다고 두 번 반복하셨어요.</li></ol>
+    <p class="answer">정답: (2)</p>
+    
+  </details>
+</article>
+<article class="card" id="p23" data-source="생성 변형 s4-photorespiration">
+  <h3>P23. [변형] 기공이 닫힌 더운 날</h3>
+  <div class="problem"><p>덥고 건조한 날 잎의 기공이 닫힌 온대 식물에 대한 설명으로 옳은 것은 무엇인가요?</p>
+    <ul class="choices"><li>(1) 잎 안의 CO₂가 늘어 캘빈 회로가 빨라진다.</li><li>(2) 루비스코가 CO₂ 대신 O₂를 붙이는 일이 늘어, 에너지를 소모하는 광호흡이 늘어난다.</li><li>(3) 광호흡은 세포호흡처럼 ATP를 만들어 성장을 돕는다.</li><li>(4) 루비스코는 원래 O₂를 붙이도록 진화한 효소다.</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 광호흡과 세포호흡, 루비스코의 두 기능. 근거 토픽: 광호흡과 C4·CAM 식물(s4-photorespiration)</details>
+  <details class="hint"><summary>힌트 보기</summary>기공이 닫히면 잎 안의 CO₂와 O₂가 각각 어떻게 변하는지부터 따져 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 틀려요. 기공이 닫히면 CO₂가 들어오지 못해 잎 안의 CO₂는 줄어요.</li><li>(2) 맞아요. CO₂는 줄고 O₂는 쌓이니 루비스코가 O₂를 붙이는 광호흡이 늘고, 독성 물질을 없애느라 에너지를 써요.</li><li>(3) 틀려요. 광호흡은 이름만 호흡이고 ATP를 만들지 않아요. 오히려 에너지를 소모해 성장을 떨어뜨려요.</li><li>(4) 틀려요. 루비스코는 산소가 없던 시절에 CO₂를 붙이는 효소로 생겼고, 산소가 많아지며 O₂를 '착각'해 붙이게 되었어요.</li><li>수업과의 연결: 0915 57:22–59:19에서 기공이 닫히면 CO₂가 줄고 O₂가 쌓여 루비스코가 착각한다고, 59:09에서 광호흡은 에너지를 소모하는 호흡이라고 하셨어요.</li></ol>
+    <p class="answer">정답: (2)</p>
+    
+  </details>
+</article>
+    </section>
+  </main>
+  <footer>출처: 2023·2024 생명과학 기출(2강 합본). 정답은 인쇄된 답안지와 독립 판단을 대조했고, 어긋난 곳은 풀이에 밝혔습니다. 변형 연습은 수업 내용으로 만든 생성 문제입니다.</footer>
+    </div>
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="panel-right-title">
+      <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-right-title">풀이 도움</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-sub" id="aid-for" hidden></p>
+        <p class="panel-empty">문제로 넘어가면 그 문제의 교과서 원문, 힌트, 풀이가 여기에 나옵니다. 먼저 스스로 풀어 본 뒤 여세요.</p>
+        <div class="aids"></div>
+        <button class="solved-btn" id="solved-btn" type="button" aria-pressed="false" hidden><span>푼 문제로 표시</span></button>
+      </div>
+    </aside>
+  </div>
+  <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
+  <nav class="pager" aria-label="화면 이동">
+    <div class="pager-inner">
+      <button class="btn btn-ghost" id="pager-prev" type="button">이전</button>
+      <span class="pager-count" id="pager-count"></span>
+      <button class="btn btn-primary" id="pager-next" type="button">시작하기</button>
+    </div>
+  </nav>
+  <p class="sr-only" id="pager-status" aria-live="polite"></p>
+
+  <script id="theme-ui">
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const sysDark = matchMedia('(prefers-color-scheme: dark)');
+      const KEY = 'od-theme';
+      const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+      function label() {
+        const next = isDark() ? '라이트 모드로 전환' : '다크 모드로 전환';
+        btn.setAttribute('aria-label', next);
+        btn.title = next;
+      }
+      btn.addEventListener('click', () => {
+        const t = isDark() ? 'light' : 'dark';
+        // 시스템 설정과 같아지면 저장을 지워 다시 시스템을 따른다
+        if ((t === 'dark') === sysDark.matches) { delete root.dataset.theme; try { localStorage.removeItem(KEY); } catch (e) {} }
+        else { root.dataset.theme = t; try { localStorage.setItem(KEY, t); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+        label();
+      });
+      sysDark.addEventListener('change', label);
+      window.addEventListener('storage', (e) => {
+        if (e.key !== KEY) return;
+        if (e.newValue === 'light' || e.newValue === 'dark') root.dataset.theme = e.newValue; else delete root.dataset.theme;
+        label();
+      });
+      label();
+    })();
+  </script>
+  <script id="panels-ui">
+    (function () {
+      const body = document.body;
+      const layout = document.querySelector('.layout');
+      const kind = body.dataset.panels;
+      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const scrim = document.getElementById('panel-scrim');
+      const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
+      const wideMq = matchMedia('(min-width: 1024px)');
+      const roomyMq = matchMedia('(min-width: 1280px)');
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      const PREF = 'od-panels:' + kind;
+      // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
+      const RANGE = body.dataset.range || '';
+      const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+      const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+      let overlay = null;
+
+      // ---------- 열고 닫기 ----------
+      function docked() {
+        const pref = store.get(PREF, {});
+        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+      }
+      function sync() {
+        const wide = wideMq.matches;
+        const d = docked();
+        ['left', 'right'].forEach((side) => {
+          const open = wide ? d[side] : overlay === side;
+          const p = panels[side];
+          layout.dataset[side] = open ? 'open' : 'closed';
+          p.classList.toggle('is-open', !wide && open);
+          p.inert = !open;
+          if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
+          toggles[side].setAttribute('aria-expanded', String(open));
+        });
+        const drawer = !wide && overlay !== null;
+        scrim.classList.toggle('is-on', drawer);
+        body.classList.toggle('drawer-open', drawer);
+        blockers.forEach((el) => { el.inert = drawer; });
+      }
+      function openDrawer(side) {
+        overlay = side;
+        sync();
+        requestAnimationFrame(() => panels[side].querySelector('[data-panel-close]').focus());
+      }
+      function closeDrawer(refocus) {
+        if (overlay === null) return;
+        const side = overlay;
+        overlay = null;
+        sync();
+        if (refocus) toggles[side].focus();
+      }
+      function toggle(side) {
+        if (wideMq.matches) {
+          const d = docked();
+          d[side] = !d[side];
+          store.set(PREF, d);
+          sync();
+          if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+        } else if (overlay === side) closeDrawer(true);
+        else openDrawer(side);
+      }
+
+      toggles.left.addEventListener('click', () => toggle('left'));
+      toggles.right.addEventListener('click', () => toggle('right'));
+      scrim.addEventListener('click', () => closeDrawer(true));
+      document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
+      panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
+
+      // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      function applyWidths() {
+        const w = store.get(PREF + ':w', {});
+        ['left', 'right'].forEach((side) => {
+          if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
+          else layout.style.removeProperty(WIDTH[side].prop);
+        });
+      }
+      function maxFor(side) {
+        const other = side === 'left' ? panels.right : panels.left;
+        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
+      }
+      function setWidth(side, px, save) {
+        const v = Math.round(Math.min(Math.max(px, WIDTH[side].min), maxFor(side)));
+        layout.style.setProperty(WIDTH[side].prop, v + 'px');
+        panels[side].querySelector('.panel-resize').setAttribute('aria-valuenow', String(v));
+        if (save) { const w = store.get(PREF + ':w', {}); w[side] = v; store.set(PREF + ':w', w); }
+      }
+      function resetWidth(side) {
+        const w = store.get(PREF + ':w', {});
+        delete w[side];
+        store.set(PREF + ':w', w);
+        layout.style.removeProperty(WIDTH[side].prop);
+      }
+      document.querySelectorAll('.panel-resize').forEach((handle) => {
+        const side = handle.dataset.side;
+        const dir = side === 'left' ? 1 : -1;
+        handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
+        handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
+        handle.addEventListener('pointerdown', (e) => {
+          if (!wideMq.matches || e.button !== 0) return;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startW = panels[side].getBoundingClientRect().width;
+          handle.setPointerCapture(e.pointerId);
+          body.classList.add('is-resizing');
+          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const up = () => {
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', up);
+            handle.removeEventListener('pointercancel', up);
+            body.classList.remove('is-resizing');
+            setWidth(side, panels[side].getBoundingClientRect().width, true);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', up);
+          handle.addEventListener('pointercancel', up);
+        });
+        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('keydown', (e) => {
+          const step = e.shiftKey ? 64 : 16;
+          const cur = panels[side].getBoundingClientRect().width;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+        });
+      });
+      applyWidths();
+      const onMq = () => { overlay = null; sync(); };
+      wideMq.addEventListener('change', onMq);
+      roomyMq.addEventListener('change', onMq);
+
+      // ---------- 목차의 진행 표시 ----------
+      const progressN = document.getElementById('progress-n');
+      const progressBar = document.getElementById('progress-bar');
+      const progressTotal = document.getElementById('progress-total');
+      function markToc(done, total, doneLabel) {
+        panels.left.querySelectorAll('.toc-list a').forEach((a) => {
+          const id = decodeURIComponent(a.getAttribute('href').slice(1));
+          let mark = a.querySelector('.toc-mark');
+          if (!mark) {
+            mark = document.createElement('span');
+            mark.className = 'toc-mark';
+            mark.setAttribute('aria-hidden', 'true');
+            const state = document.createElement('span');
+            state.className = 'sr-only toc-state';
+            a.append(mark, state);
+          }
+          const isDone = done.has(id);
+          mark.classList.toggle('is-done', isDone);
+          mark.innerHTML = isDone ? ICON_DONE : ICON_TODO;
+          a.querySelector('.toc-state').textContent = isDone ? ' (' + doneLabel + ')' : '';
+        });
+        progressN.textContent = String(done.size);
+        progressTotal.textContent = String(total);
+        progressBar.style.transform = 'scaleX(' + (total ? done.size / total : 0) + ')';
+      }
+      function revealCurrent() {
+        const link = panels.left.querySelector('.toc-list a[aria-current="true"]');
+        if (link && layout.dataset.left === 'open') link.scrollIntoView({ block: 'nearest' });
+      }
+
+      // ---------- 복습문제: 오른쪽 = 원문 · 힌트 · 풀이 ----------
+      function setupReview() {
+        const KEY = 'od-review-solved:' + RANGE;
+        const cards = Array.from(document.querySelectorAll('main article.card'));
+        const aids = panels.right.querySelector('.aids');
+        const sub = document.getElementById('aid-for');
+        const empty = panels.right.querySelector('.panel-empty');
+        const btn = document.getElementById('solved-btn');
+        const groups = {};
+        const solved = new Set(store.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        cards.forEach((card) => {
+          const g = document.createElement('div');
+          g.className = 'aid';
+          g.hidden = true;
+          card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
+          aids.appendChild(g);
+          groups[card.id] = g;
+        });
+        let curId = null;
+        function paintBtn() {
+          const on = solved.has(curId);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.innerHTML = (on ? ICON_DONE : ICON_TODO) + '<span>' + (on ? '푼 문제 · 표시 해제' : '푼 문제로 표시') + '</span>';
+        }
+        btn.addEventListener('click', () => {
+          if (!curId) return;
+          if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
+          store.set(KEY, Array.from(solved));
+          paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          curId = s.matches('article.card') ? s.id : null;
+          Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
+          empty.hidden = Boolean(curId);
+          btn.hidden = !curId;
+          sub.textContent = curId ? ((s.querySelector('h3') || {}).textContent || '').trim() : '';
+          sub.hidden = !curId;
+          if (curId) paintBtn();
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(solved, cards.length, '푼 문제');
+          revealCurrent();
+        });
+      }
+
+      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
+      function setupNote() {
+        const KEY = 'od-note-read:' + RANGE;
+        const topics = Array.from(document.querySelectorAll('main article.topic'));
+        const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
+        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
+        const box = panels.right.querySelector('.sums');
+        const sums = {};
+        topics.forEach((t) => {
+          const el = t.querySelector(':scope > .sum');
+          if (!el) return;
+          el.hidden = true;
+          box.appendChild(el);
+          sums[t.id] = el;
+        });
+        const sub = document.getElementById('sum-for');
+        const empty = document.getElementById('sum-empty');
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          const key = s.matches('article.topic') ? s.id : 'intro';
+          Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
+          empty.hidden = Boolean(sums[key]);
+          sub.textContent = key === 'intro' ? '전체 흐름' : ((s.querySelector('h3') || {}).textContent || '').trim();
+          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(read, topics.length, '읽음');
+          revealCurrent();
+        });
+      }
+
+      if (kind === 'review') setupReview();
+      if (kind === 'note') setupNote();
+      sync();
+    })();
+  </script>
+  <script id="pager-ui">
+    (function () {
+      const root = document.documentElement;
+      const main = document.querySelector('main');
+      const hero = main.querySelector('.hero');
+      const screens = [hero].concat(Array.from(main.querySelectorAll(document.body.dataset.screens)));
+      if (screens.length < 2) { root.classList.remove('js'); return; }
+      screens.forEach((s) => s.classList.add('screen'));
+
+      const last = screens.length - 1;
+      const prevBtn = document.getElementById('pager-prev');
+      const nextBtn = document.getElementById('pager-next');
+      const count = document.getElementById('pager-count');
+      const bar = document.getElementById('pager-bar');
+      const status = document.getElementById('pager-status');
+      const toc = document.querySelector('#panel-left .toc');
+      const scroller = document.querySelector('.content');
+      const titleOf = (s) => ((s.querySelector('h3') || s.querySelector('h1') || {}).textContent || '').trim();
+      let cur = -1;
+
+      // 목차: 섹션 링크 아래에 화면(토픽·카드) 목록을 붙인다
+      const tocLinks = [];
+      Array.from(toc.querySelectorAll(':scope > a')).forEach((a) => {
+        const sec = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+        const group = document.createElement('div');
+        group.className = 'toc-group';
+        a.replaceWith(group);
+        group.appendChild(a);
+        if (!sec) return;
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        screens.forEach((s, i) => {
+          if (!sec.contains(s)) return;
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#' + s.id;
+          link.innerHTML = '<span class="toc-title"></span>';
+          link.firstChild.textContent = titleOf(s);
+          li.appendChild(link);
+          list.appendChild(li);
+          tocLinks[i] = link;
+        });
+        group.appendChild(list);
+      });
+
+      function indexFor(hash) {
+        const id = decodeURIComponent((hash || '').replace(/^#/, ''));
+        const el = id && document.getElementById(id);
+        if (!el || !main.contains(el)) return { i: 0 };
+        const i = screens.findIndex((s) => s.contains(el) || el.contains(s));
+        return { i: Math.max(i, 0), target: i >= 0 && screens[i].contains(el) && screens[i] !== el ? el : null };
+      }
+
+      function render(i, target) {
+        const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
+        if (i !== cur) {
+          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
+          main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
+          const s = screens[i];
+          const sec = s.closest('section');
+          if (sec) sec.classList.add('is-on');
+          s.classList.add('is-current');
+          if (dir) { s.classList.remove('enter-next', 'enter-prev'); void s.offsetWidth; s.classList.add(dir); }
+          cur = i;
+          document.body.classList.toggle('at-end', i === last);
+          prevBtn.disabled = i === 0;
+          nextBtn.textContent = i === 0 ? '시작하기' : i === last ? '처음으로' : '다음';
+          count.textContent = i === 0 ? '' : i + ' / ' + last;
+          bar.style.transform = 'scaleX(' + (i / last) + ')';
+          status.textContent = i === 0 ? titleOf(s) : i + ' / ' + last + ', ' + titleOf(s);
+          tocLinks.forEach((link, k) => link && link.setAttribute('aria-current', String(k === i)));
+          document.dispatchEvent(new CustomEvent('od:screen', { detail: { index: i, screen: s } }));
+        }
+        if (target) target.scrollIntoView({ block: 'start' });
+        else scroller.scrollTo(0, 0);
+      }
+
+      function go(i) {
+        i = Math.min(Math.max(i, 0), last);
+        if (i === cur) return;
+        const url = i === 0 ? location.pathname + location.search : '#' + screens[i].id;
+        history.pushState(null, '', url);
+        render(i);
+      }
+
+      prevBtn.addEventListener('click', () => go(cur - 1));
+      nextBtn.addEventListener('click', () => go(cur === last ? 0 : cur + 1));
+      const fromUrl = () => { const r = indexFor(location.hash); render(r.i, r.target); };
+      window.addEventListener('hashchange', fromUrl);
+      window.addEventListener('popstate', fromUrl);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+
+      // 좌우로 밀어서 넘기기 (가로로 스크롤되는 영역은 제외)
+      let sx = 0, sy = 0, skip = true;
+      main.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (skip) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 64 && Math.abs(dx) > 2 * Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      fromUrl();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>생명과학 정리노트 0903</title>
+  <meta name="description" content="이영만 교수님 생명과학 · 0903 수업 (1장 생물분자와 세포)">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('od-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']})"></script>
+  <style>
+    /* ---------- 토큰 ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #b54708; --prof: #6941c6; --supp: #067647; --danger: #d92d20;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --fs-title: clamp(28px, 6vw, 36px); --fs-h3: clamp(26px, 5.4vw, 32px); --fs-layer: 19px; --fs-lead: 22px; --fs-body: 17px; --fs-sub: 15px; --fs-small: 14px; --fs-label: 13px; --fs-fig: 12px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+      --radius: 8px; --measure: 680px; --tap: 48px; --btn-min: 160px;
+      --dur: 220ms; --dur-exit: 150ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+      /* 예전 조각이 참조할 수 있는 이름 */
+      --surface-2: var(--surface); --accent-soft: var(--surface); --warn-soft: var(--surface);
+      --prof-soft: var(--surface); --supp-soft: var(--surface); --eli5: var(--accent-ink); --eli5-soft: var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+        --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+        --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+    }
+
+    /* ---------- 기본 ---------- */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent-ink); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+
+    /* ---------- 상단 바 ---------- */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s2) var(--s4); display: flex; align-items: center; gap: var(--s3); min-height: 56px; }
+    .brand { flex: 1 1 auto; min-width: 0; font-size: var(--fs-body); font-weight: 700; white-space: nowrap; }
+    .text-btn { flex: none; min-height: 44px; min-width: 44px; padding: 0 var(--s3); border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); font: 600 var(--fs-small)/1 var(--font); cursor: pointer; }
+    .bar { height: 2px; background: var(--line); overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+
+    /* ---------- 본문 ---------- */
+    main { flex: 1 0 auto; width: 100%; max-width: var(--measure); margin: 0 auto; padding: var(--s6) var(--s5) var(--s7); }
+    .hero h1 { font-size: var(--fs-title); line-height: 1.3; margin: 0 0 var(--s3); letter-spacing: -0.02em; }
+    .hero p { color: var(--ink-2); margin: 0; }
+    section { margin-top: var(--s7); }
+    section > h2 { font-size: 22px; line-height: 1.4; margin: 0 0 var(--s4); }
+    .topic { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .topic h3 { margin: 0 0 var(--s2); font-size: var(--fs-h3); font-weight: 800; line-height: 1.3; letter-spacing: -0.02em; }
+    .tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+    .tag { font-size: var(--fs-label); line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+
+    /* 레이어: 배경 없이 라벨과 구분선으로 나눈다 */
+    .layer { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .layer.eli5 { margin-top: 0; padding-top: 0; border-top: 0; }
+    .layer > :first-child { margin-top: 0; }
+    .layer > :last-child { margin-bottom: 0; }
+    .layer-title { display: block; font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; color: var(--ink); margin-bottom: var(--s3); }
+    .layer.eli5 .layer-title { color: var(--accent-ink); }
+    .layer.eli5 .lead { font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; letter-spacing: -0.01em; margin: 0 0 var(--s4); }
+    /* 정확히 말하면: 본문 크기 그대로, 굵은 첫머리만 진하게 */
+    .layer.formal b { font-weight: 700; color: var(--ink); }
+    /* 교수님 말씀 · 주의: 보조 정보는 한 단계 작게 */
+    .layer.prof, .layer.warn { font-size: var(--fs-sub); line-height: 1.7; }
+    .layer.prof blockquote { font-size: var(--fs-sub); }
+    .layer.prof .layer-title { color: var(--prof); }
+    .layer.warn { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn .layer-title { color: var(--warn); font-size: var(--fs-body); }
+    .layer.supp .badge.supp { margin-bottom: var(--s2); }
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
+    .badge.supp { color: var(--supp); }
+    blockquote { margin: var(--s3) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
+    ol.steps { padding-left: 1.4em; }
+    ol.steps li { margin: var(--s2) 0; }
+
+    /* 그림 · 수식 · 표 */
+    .figure { margin: var(--s4) 0; text-align: center; }
+    .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
+    .figure figcaption { font-size: var(--fs-small); color: var(--ink-2); margin-top: var(--s1); }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: var(--s1) 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+    th, td { border-bottom: 1px solid var(--line); padding: var(--s2); text-align: left; vertical-align: top; }
+    th { color: var(--ink-2); font-weight: 600; }
+    td:first-child, th:first-child { min-width: 6em; }
+
+    /* 위젯 */
+    .widget { background: var(--surface); border-radius: var(--radius); padding: var(--s4); margin: var(--s5) 0; }
+    .widget h4 { margin: 0 0 var(--s1); font-size: var(--fs-layer); line-height: 1.4; }
+    .widget-help { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s3); }
+    .controls { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--s2); font-size: var(--fs-small); }
+    .controls label { display: flex; align-items: center; gap: var(--s2); min-height: 44px; }
+    .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .widget svg { width: 100%; height: auto; background: var(--bg); border-radius: var(--radius); }
+    .readout { font-size: var(--fs-small); margin-top: var(--s2); }
+    .legend { font-size: var(--fs-label); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .sw { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: var(--s1); border-radius: 2px; }
+    .sw.truth { background: var(--ink-2); } .sw.fit { background: var(--accent); } .sw.train { background: var(--accent); height: 10px; width: 10px; border-radius: 50%; }
+    .sw.test { background: var(--warn); height: 10px; width: 10px; border-radius: 50%; } .sw.like { background: var(--accent); } .sw.prior { background: var(--prof); } .sw.post { background: var(--supp); }
+    .axis { stroke: var(--line); stroke-width: 1.5; }
+    .tick { fill: var(--ink-2); font-size: 11px; }
+    .plot-truth { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .plot-fit { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+    .pt-train { fill: var(--accent); }
+    .pt-test { fill: var(--warn); }
+    .plot-like { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .plot-prior { fill: none; stroke: var(--prof); stroke-width: 2; stroke-dasharray: 6 4; }
+    .plot-post { fill: none; stroke: var(--supp); stroke-width: 3; }
+    .mark-ml { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .mark-map { stroke: var(--supp); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 2; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 2.5; }
+    .fig-danger { stroke: var(--danger); fill: none; stroke-width: 2.5; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: 13px; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-fig); font-family: inherit; }
+
+    footer { width: 100%; max-width: var(--measure); margin: 0 auto; padding: 0 var(--s5) var(--s6); color: var(--ink-2); font-size: var(--fs-small); }
+
+    /* ---------- 하단 이동 바 ---------- */
+    .pager { position: sticky; bottom: 0; z-index: 10; background: var(--bg); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .pager-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s3) var(--s4); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); }
+    .pager-count { font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; min-width: 4em; }
+    .btn { min-height: var(--tap); min-width: var(--btn-min); padding: 0 var(--s6); border-radius: var(--radius); border: 0; font: 700 var(--fs-body)/1 var(--font); cursor: pointer; white-space: nowrap;
+      transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+    .btn-ghost { justify-self: start; background: var(--surface); color: var(--ink); }
+    .btn-primary { justify-self: end; background: var(--btn-bg); color: var(--on-btn); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    @media (hover: hover) {
+      .text-btn:hover, .btn-ghost:not(:disabled):hover { background: var(--line); }
+      .btn-primary:not(:disabled):hover { box-shadow: inset 0 0 0 100px rgba(0, 0, 0, .14); }
+    }
+
+    /* ---------- 목차 시트 ---------- */
+    .sheet { width: min(100%, var(--measure)); max-width: 100%; max-height: 80dvh; margin: auto auto 0; padding: 0; border: 0;
+      border-radius: 16px 16px 0 0; background: var(--bg); color: var(--ink); }
+    .sheet::backdrop { background: rgba(0, 0, 0, .4); }
+    .sheet-inner { padding: var(--s4) var(--s5) calc(var(--s5) + env(safe-area-inset-bottom)); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s2); }
+    .sheet-head h2 { margin: 0; font-size: var(--fs-lead); }
+    .toc { display: flex; flex-direction: column; }
+    .toc > a, .toc-group > a { display: block; padding: var(--s3) 0 var(--s1); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); text-decoration: none; }
+    .toc-list { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+    .toc-list a { display: flex; align-items: center; gap: var(--s3); min-height: var(--tap); padding: var(--s2) var(--s3); margin: 0 calc(-1 * var(--s3));
+      border-radius: var(--radius); color: var(--ink); text-decoration: none; line-height: 1.4; }
+    .toc-list a[aria-current="true"] { background: var(--surface); font-weight: 700; color: var(--accent-ink); }
+    .toc-list .toc-title { flex: 1 1 0; min-width: 0; }
+    @media (hover: hover) { .toc-list a:hover { background: var(--surface); } }
+
+    /* ---------- 한 화면에 하나씩 (JS가 켤 때만) ---------- */
+    html:not(.js) .pager, html:not(.js) #toc-open { display: none; }
+    html:not(.js) .sheet { display: block; position: static; width: 100%; max-height: none; margin: 0 auto; border-radius: 0; border-bottom: 1px solid var(--line); }
+    html:not(.js) .sheet-close { display: none; }
+    .js main > .hero:not(.is-current), .js main > section:not(.is-on), .js .screen:not(.is-current) { display: none; }
+    .js main > section { margin-top: 0; }
+    .js main > section > h2 { font-size: var(--fs-small); font-weight: 600; color: var(--accent-ink); margin: 0 0 var(--s2); }
+    .js .topic { padding: 0; border-top: 0; }
+    .js .hero { padding-top: 12vh; }
+    .js footer { display: none; }
+    .js body.at-end footer { display: block; }
+    .screen.enter-next { animation: enter-next var(--dur) var(--ease-out); }
+    .screen.enter-prev { animation: enter-prev var(--dur) var(--ease-out); }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .screen.enter-next, .screen.enter-prev { animation: none; }
+      .bar > span, .btn { transition: none; }
+    }
+    @media (max-width: 480px) {
+      main { padding: var(--s5) var(--s4) var(--s6); }
+      footer { padding: 0 var(--s4) var(--s5); }
+      .btn { min-width: 120px; padding: 0 var(--s5); }
+    }
+    @media print {
+      .topbar, .pager, .sheet { display: none !important; }
+      .js main > .hero, .js main > section, .js .screen, .js footer { display: block !important; }
+    }
+
+    /* ---------- 좌우 패널 (drawer) ---------- */
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
+    .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
+    .panel-toggle svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-toggle .strip { fill: transparent; stroke: none; transition: fill 150ms ease-out; }
+    .panel-toggle[aria-expanded="true"] { color: var(--accent-ink); }
+    .panel-toggle[aria-expanded="true"] .strip { fill: currentColor; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .i-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .theme-toggle .i-sun { display: block; }
+      :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
+    }
+
+    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
+    .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
+    .content { grid-column: 2; }
+    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
+    .panel-resize { display: none; }
+    .panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 44px; margin-bottom: var(--s2); }
+    .panel-head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-lead); line-height: 1.4; }
+    .panel-sub { margin: 0 0 var(--s4); font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; }
+    .panel-empty { margin: 0; color: var(--ink-2); }
+    .panel-label { display: block; margin: var(--s5) 0 var(--s2); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+
+    /* 진행 상태 */
+    .panel-meta { margin: 0 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .panel-meta b { color: var(--ink); }
+    .progress { height: 4px; margin-bottom: var(--s3); border-radius: 2px; background: var(--line); overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+    .panel .toc-list a { margin: 0 calc(-1 * var(--s2)); padding: var(--s2); font-size: var(--fs-panel); }
+    .toc-mark { flex: none; display: block; width: 20px; height: 20px; color: var(--ink-2); }
+    .toc-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .toc-mark.is-done { color: var(--accent-ink); }
+
+    /* 복습문제: 원문 · 힌트 · 풀이 */
+    .aid details:last-of-type { border-bottom: 1px solid var(--line); }
+    .aid details.original > summary { font-size: var(--fs-panel); }
+    .solved-btn { display: flex; align-items: center; justify-content: center; gap: var(--s2); width: 100%; min-height: var(--tap); margin-top: var(--s5); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .solved-btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
+
+    /* 정리노트: 페이지 요약 */
+    .sum-lead { margin: 0; font-size: var(--fs-body); font-weight: 700; line-height: 1.6; }
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+    .eq-list li:first-child { padding-top: 0; }
+    .eq-name { display: block; font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+    .eq-list .katex-display { margin: var(--s1) 0 0; text-align: left; }
+    .eq-list .katex-display > .katex { text-align: left; }
+    .terms { margin: 0; }
+    .terms dt { font-size: var(--fs-panel); font-weight: 700; margin-top: var(--s4); }
+    .terms dt:first-child { margin-top: 0; }
+    .terms dd { margin: var(--s1) 0 0; font-size: var(--fs-sub); line-height: 1.6; color: var(--ink-2); }
+    .flow { margin: 0; padding-left: 1.4em; font-size: var(--fs-sub); }
+    .flow li { margin: var(--s2) 0; }
+
+    @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
+
+    /* 넓은 화면: 본문 옆에 붙는 패널 */
+    @media (min-width: 1024px) {
+      .layout { --l: var(--panel-l-user, var(--panel-l)); }
+      .layout[data-left="closed"] { --l: 0px; }
+      .panel-left { width: var(--l); }
+      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
+      .panel-left .panel-resize { right: 0; }
+      .panel-right .panel-resize { left: 0; }
+      .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
+      .panel-left .panel-resize::after { right: 0; }
+      .panel-right .panel-resize::after { left: 0; }
+      .panel-resize:focus-visible { outline: none; }
+      .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
+      @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
+      body.is-resizing { cursor: col-resize; user-select: none; }
+      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
+      .scrim, .panel-close { display: none; }
+    }
+    @keyframes panel-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 좁은 화면: 가장자리에서 밀려 나오는 drawer */
+    @media (max-width: 1023.98px) {
+      .panel { position: fixed; top: 0; bottom: 0; z-index: 40; visibility: hidden;
+        transition: transform var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .panel-left { left: 0; width: min(var(--drawer-l), 88vw); transform: translateX(-100%); }
+      .panel-right { right: 0; width: min(var(--drawer-r), 88vw); transform: translateX(100%); }
+      .panel.is-open { visibility: visible; transform: none; transition: transform var(--dur) var(--ease-out); }
+      .panel-inner { padding-top: calc(var(--s3) + env(safe-area-inset-top)); padding-bottom: calc(var(--s6) + env(safe-area-inset-bottom)); }
+      .scrim { position: fixed; inset: 0; z-index: 35; background: var(--scrim); opacity: 0; visibility: hidden;
+        transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
+      html:not(.js) .panel-left { display: none; }
+    }
+    @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
+      .panel.is-shown { animation: none; }
+      .panel-resize::after { transition: none; }
+    }
+    @media print {
+      body { display: block; height: auto; overflow: visible; }
+      .layout { display: block; }
+      .content { overflow: visible; }
+      .panel, .scrim { display: none !important; }
+    }
+  </style>
+</head>
+<body data-screens="article.topic" data-panels="note" data-range="0903">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <strong class="brand">정리노트</strong>
+      <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>요약</span></button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
+  </header>
+  <div class="layout" data-left="open" data-right="closed">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
+      <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-left-title">목차</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-meta">읽은 토픽 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <nav class="toc" aria-label="목차"><a href="#s0">0 복습</a><a href="#s1">1 원자·결합</a><a href="#s2">2 물</a><a href="#s3">3 탄수화물</a><a href="#s4">4 지질</a><a href="#s5">5 단백질</a><a href="#s6">6 요약·예고</a></nav>
+      </div>
+    </aside>
+    <div class="content">
+  <main>
+    <div class="hero">
+      <h1>원자에서 단백질까지 — 5살도 이해하는 정리노트</h1>
+      <p>이영만 교수님 생명과학 · 0903 수업 (1장 생물분자와 세포)</p>
+    </div>
+    <section id="s0"><h2>0. 지난 수업 복습</h2>
+<article class="topic" id="s0-recap"><h3>지난 수업(0901) 복습 — 생명의 계층과 3영역</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p1</span></div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <ul>
+      <li>모든 생물은 세포로 이루어져 있고, 세포에서 지구 전체까지 수직적 계층 구조를 가져요. (0903 01:16)</li>
+      <li>같은 지역에 사는 같은 종의 개체 모임은 개체군(population)이에요. 그 지역의 여러 개체군(여러 종)이 모이면 군집(community)이에요. 개체군과 군집은 종이 하나냐 여럿이냐로 갈려요. (0903 01:24)</li>
+      <li>군집에 빛·물·토양 같은 무생물 환경까지 합치면 생태계(ecosystem)예요. 한 지역의 모든 종과 무생물 구성요소를 합친 것은 군집이 아니라 생태계예요. 지구의 생태계 전체는 생물권이에요. (0903 01:33, 강의노트 1장 p1)</li>
+      <li>지구의 생물은 3영역, 4계로 나눠요. 3영역은 진정세균, 고세균, 진핵생물이에요. 원생생물계·식물계·균계·동물계의 4계는 모두 진핵생물 영역 안의 계라서 영역이 아니에요. "원핵생물"은 진정세균 영역과 고세균 영역을 함께 부르는 말일 뿐 하나의 영역이 아니에요. (0903 01:41, 강의노트 1장 p1 "3 영역과 계로 분류")</li>
+    </ul>
+    <p>이전 팩: <a href="../../정리노트/0901.html">0901 문제 풀이</a> · <a href="../../정리노트/0901.md">0901 본문 노트</a></p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">개체군, 군집, 생태계, 생물권 순으로 커지고, 생물은 진정세균·고세균·진핵생물의 3영역으로 나눠요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>생태계(ecosystem)</dt><dd>군집 + 무생물 환경</dd><dt>3영역</dt><dd>진정세균, 고세균, 진핵생물</dd></dl>
+  </div>
+</article>
+    </section>
+    <section id="s1"><h2>1. 원자와 화학결합</h2>
+<article class="topic" id="s1-elements"><h3>생물을 이루는 원소</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p1–2</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">우리 몸은 거의 네 가지 재료로 만든 레고예요.</p>
+    <figure class="figure"><svg id="fig-elements-share" viewBox="0 0 520 170" role="img" aria-label="큰 테두리 상자 안에 C, H, O, N 네 칸이 96퍼센트를 차지하고, 옆의 작은 칸이 나머지 4퍼센트, 아주 작은 점이 미량원소를 나타내는 그림">
+      <rect x="20" y="30" width="380" height="90" rx="10" class="fig-accent"/>
+      <line x1="115" y1="30" x2="115" y2="120" class="fig-ink"/>
+      <line x1="210" y1="30" x2="210" y2="120" class="fig-ink"/>
+      <line x1="305" y1="30" x2="305" y2="120" class="fig-ink"/>
+      <text x="60" y="82" class="fig-text">C</text><text x="155" y="82" class="fig-text">H</text><text x="250" y="82" class="fig-text">O</text><text x="345" y="82" class="fig-text">N</text>
+      <text x="150" y="150" class="fig-muted">C · H · O · N = 약 96%</text>
+      <rect x="410" y="30" width="60" height="90" rx="8" class="fig-ink"/>
+      <text x="422" y="80" class="fig-text">4%</text>
+      <circle cx="495" cy="75" r="6" class="fig-dot"/>
+      <text x="455" y="150" class="fig-muted">아주 조금</text>
+    </svg><figcaption>큰 네 칸이 거의 다이고, 옆의 작은 칸과 점도 없으면 안 돼요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>생물은 세포 → 분자 → 원자 순서로 쪼개 볼 수 있어요. 생물을 이루는 원소 가운데 탄소(C)·수소(H)·산소(O)·질소(N) 네 가지가 약 96%를 차지해요. 이 넷이 다량원소의 중심이에요.</p>
+    <ul>
+      <li>탄소(C): 탄소가 들어 있는 물질을 유기물이라고 해요. 단, 일산화탄소(CO)와 이산화탄소(CO₂)처럼 탄소가 있어도 유기물로 치지 않는 것이 있어요. 지구 생명체의 큰 분자(고분자)는 모두 탄소를 뼈대로 삼기 때문에 "탄소 기반 생명체"라고 불러요.</li>
+      <li>수소(H)·산소(O): 몸의 약 70%가 물(H₂O)이라서 많아요. 수소와 산소는 고분자에도 들어 있지만, 사슬과 고리의 뼈대를 만드는 원소는 탄소예요.</li>
+      <li>질소(N): 단백질과 DNA를 만들 때 필요해요.</li>
+      <li>나머지 약 4%는 칼슘(Ca), 인(P), 칼륨(K), 황(S), 나트륨(Na), 염소(Cl), 마그네슘(Mg)이에요.</li>
+    </ul>
+    <p>미량원소는 셀레늄, 철, 아이오딘처럼 아주 적게(강의노트 기준 0.01% 미만) 필요하지만 없으면 안 되는 원소예요. 예를 들어 철이 부족하면 빈혈이 생겨요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <blockquote>"미량 원소라고 해서 필요 없는 것이 아닙니다. 적은 양이지만 꼭 필요합니다." (0903 03:31)</blockquote>
+    <p>교수님은 탄소가 들어간 물질이 유기물이고, 그래서 우리가 "탄소 기반 생명체"라고 설명했어요. (0903 02:23–02:37)</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li>"양이 적다"를 "필요 없다"로 착각하기 쉬워요. 미량원소는 적게 필요할 뿐 반드시 필요해요. (0903 03:31)</li>
+      <li>"탄소가 있으면 모두 유기물"로 외우기 쉬워요. 일산화탄소·이산화탄소는 탄소가 있어도 유기물에서 빼요. (0903 02:23)</li>
+      <li>"몸에 가장 많은 원소"와 "고분자의 뼈대 원소"를 같은 것으로 착각하기 쉬워요. 물 때문에 수소·산소가 많지만, 고분자의 기초(뼈대) 원소는 탄소예요.</li>
+    </ul>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">C·H·O·N이 약 96%이고, 생명체의 뼈대는 탄소예요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>다량원소</dt><dd>C·H·O·N(96%)과 Ca·P·K·S·Na·Cl·Mg(4%)</dd><dt>미량원소</dt><dd>셀레늄·철·아이오딘처럼 아주 적지만 필수인 원소</dd><dt>유기물</dt><dd>탄소가 들어 있는 물질(CO, CO₂ 제외)</dd></dl>
+  </div>
+</article>
+
+<article class="topic" id="s1-atom"><h3>원자의 구조와 옥텟 규칙</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p1</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">원자는 가운데 무거운 씨앗과 그 둘레를 도는 가벼운 알갱이로 되어 있어요.</p>
+    <figure class="figure"><svg id="fig-atom-shells" viewBox="0 0 520 220" role="img" aria-label="가운데 색칠된 원 안에 양성자와 중성자가 있고, 바깥 세 개의 테두리 원 위에 전자가 안쪽부터 2개, 8개, 1개 놓인 나트륨 원자 그림">
+      <circle cx="160" cy="110" r="22" class="fig-dot"/>
+      <text x="140" y="160" class="fig-muted">원자핵</text>
+      <circle cx="160" cy="110" r="45" class="fig-ink"/>
+      <circle cx="160" cy="110" r="70" class="fig-ink"/>
+      <circle cx="160" cy="110" r="95" class="fig-accent"/>
+      <circle cx="160" cy="65" r="5" class="fig-dot"/><circle cx="160" cy="155" r="5" class="fig-dot"/>
+      <circle cx="90" cy="110" r="5" class="fig-dot"/><circle cx="230" cy="110" r="5" class="fig-dot"/><circle cx="160" cy="40" r="5" class="fig-dot"/><circle cx="160" cy="180" r="5" class="fig-dot"/>
+      <circle cx="110" cy="60" r="5" class="fig-dot"/><circle cx="210" cy="60" r="5" class="fig-dot"/><circle cx="110" cy="160" r="5" class="fig-dot"/><circle cx="210" cy="160" r="5" class="fig-dot"/>
+      <circle cx="255" cy="110" r="5" class="fig-dot"/>
+      <text x="290" y="60" class="fig-text">Na (원자번호 11)</text>
+      <text x="290" y="90" class="fig-text">안쪽부터 전자 2 - 8 - 1</text>
+      <text x="290" y="120" class="fig-text">가장 바깥 칸: 1개뿐</text>
+      <text x="290" y="150" class="fig-muted">→ 하나를 잃기 쉬워요</text>
+    </svg><figcaption>바깥 칸이 꽉 차면 조용하고, 덜 차면 짝을 찾아 붙어요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>원자는 원자핵과 전자(electron)로 이루어져요. 원자핵에는 양(+)전하를 띤 양성자(proton)와 전하가 없는 중성자(neutron)가 들어 있어요. 음(−)전하를 띤 전자는 핵 안에 있지 않고 핵 바깥 궤도를 돌아요. 전자는 매우 가벼워서 원자의 질량은 거의 핵의 질량이에요. (0903 03:40–04:01, 강의노트 1장 p1 "원자 = 핵(양성자, 중성자) + 전자")</p>
+    <p>전자는 정해진 궤도만 돌고, 안쪽부터 2개, 8개, 8개씩 채워져요. 가장 바깥 궤도를 8개(첫 궤도만 있으면 2개)로 채우려는 경향이 옥텟 규칙(octet rule)이에요. 가장 바깥 궤도를 최외각 궤도(원자가 궤도)라고 하고, 거기에 있는 전자를 최외각 전자(원자가 전자)라고 해요. 최외각 전자의 수가 원자의 화학적 성질을 정해요. (0903 04:06–04:38)</p>
+    <ul>
+      <li>최외각 전자가 1개뿐이면(예: Na, 2-8-1) 그 하나를 잃기 쉬워요.</li>
+      <li>최외각 전자가 7개면(예: Cl, 2-8-7) 1개를 얻기 쉬워요.</li>
+      <li>최외각 궤도가 덜 차 있는 원자는 전자를 잃거나, 얻거나, 공유하면서 다른 원자와 화학결합을 해요.</li>
+      <li>최외각 궤도에 전자 수가 이미 최대치(꽉 참)인 원자는 안정해서 다른 원자와 결합하지 않아요.</li>
+    </ul>
+    <p>결합할지 말지를 가르는 기준은 최외각 궤도가 얼마나 찼느냐예요. 양성자 수와 중성자 수가 같은지, 양성자 수와 전자 수가 같은지는 결합 여부의 기준이 아니에요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>교수님은 나트륨과 염소를 예로 들어, 7개를 더 채우는 것보다 1개를 잃는 쪽이 쉽고, 1개를 얻는 쪽이 쉽다고 설명했어요. (0903 04:20–05:40)</p>
+    <p>전자는 매우 가벼워서 원자의 질량은 핵의 질량과 같다고 보면 된다고 했어요. (0903 03:40–04:01)</p>
+  </div>
+  <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+    <p>원자번호는 그 원소의 원자핵 속 양성자 수예요. 원자번호는 "양성자 수 + 전자 수"도, "중성자 수"도, "전자 수"만을 뜻하지도 않아요. 전하를 띠지 않은 원자에서는 전자 수가 양성자 수와 같아서, 원자번호 11인 나트륨은 전자도 11개(2-8-1)예요. 즉 양성자는 양(+)전하를 띠고, 양성자의 수가 곧 원소의 원자번호예요.</p>
+    <p>출처: 일반화학 표준 정의(강의노트 1장에는 원자번호 정의가 없고, 교재 1장의 1.1.2 쪽(인쇄 p.4–5)은 스캔본에 빠져 있어 확인하지 못했어요).</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">핵에는 양성자와 중성자, 바깥에는 전자가 돌고, 최외각이 꽉 차면 결합하지 않아요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>원자핵</dt><dd>양성자 + 중성자</dd><dt>원자번호</dt><dd>양성자 수</dd><dt>옥텟 규칙(octet rule)</dt><dd>최외각 궤도를 8개로 채우려는 경향</dd></dl>
+  </div>
+</article>
+
+<article class="topic" id="s1-bonds"><h3>이온결합과 공유결합</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p1–2</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">원자끼리 작은 알갱이를 하나 건네주고 붙기도 하고, 둘이 나눠 쓰며 붙기도 해요.</p>
+    <figure class="figure"><svg id="fig-bonds-two" viewBox="0 0 520 170" role="img" aria-label="왼쪽은 Na 테두리 원에서 Cl 테두리 원으로 전자 하나가 화살표로 옮겨 가는 그림, 오른쪽은 두 H 테두리 원이 겹친 자리에 전자 두 개가 함께 있는 그림">
+      <circle cx="60" cy="80" r="30" class="fig-ink"/><text x="47" y="85" class="fig-text">Na</text>
+      <circle cx="180" cy="80" r="30" class="fig-ink"/><text x="170" y="85" class="fig-text">Cl</text>
+      <line x1="92" y1="70" x2="146" y2="70" class="fig-accent"/><polyline points="138,64 148,70 138,76" class="fig-accent"/>
+      <circle cx="118" cy="58" r="5" class="fig-dot"/>
+      <text x="40" y="140" class="fig-muted">Na⁺ 와 Cl⁻ 이 끌어당김</text>
+      <circle cx="350" cy="80" r="35" class="fig-ink"/><circle cx="410" cy="80" r="35" class="fig-ink"/>
+      <text x="330" y="85" class="fig-text">H</text><text x="420" y="85" class="fig-text">H</text>
+      <circle cx="380" cy="70" r="5" class="fig-dot"/><circle cx="380" cy="90" r="5" class="fig-dot"/>
+      <text x="320" y="150" class="fig-muted">전자쌍 하나를 함께 씀</text>
+    </svg><figcaption>왼쪽은 하나를 건네주고 서로 끌리고, 오른쪽은 둘이 같이 써요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>생물 분자에서 중요한 결합은 이온결합, 공유결합, 수소결합이에요(반데르발스 힘은 수업에서 생략했어요). (0903 04:59–05:04)</p>
+    <ol class="steps">
+      <li>이온결합(ionic bond): 나트륨(Na, 원자번호 11, 2-8-1)은 전자 1개를 잃어 양이온 Na⁺가 되고, 염소(Cl, 원자번호 17, 2-8-7)는 전자 1개를 얻어 음이온 Cl⁻가 돼요. 양이온과 음이온 사이의 정전기적 인력이 이온결합이에요. (0903 05:23–06:45)</li>
+      <li>공유결합(covalent bond): 두 원자가 전자를 내놓아 함께 쓰는 결합이에요. H–H는 각자 전자를 1개씩 내놓아 2개를 채우고, 이 공유된 전자쌍 하나를 막대 하나(단일결합)로 그려요. 전자쌍 두 개를 공유하면 막대 두 개(이중결합)예요. (0903 06:58–07:20, 58:56)</li>
+    </ol>
+    <p>물(H₂O) 분자: 산소(8번)는 최외각 전자가 6개예요. 산소는 수소 2개와 각각 전자쌍을 공유하고, 공유하지 않는 전자쌍 두 개를 가져요. 공유하지 않는 전자쌍끼리(둘 다 음전하) 밀어내서 물 분자는 180°로 펴지지 않고 굽은 모양이에요. (0903 07:30–08:22)</p>
+    <p>세기는 이온결합과 공유결합이 수소결합보다 강해요. 수소결합은 <a href="#s1-hbond">수소결합</a> 토픽에서 다뤄요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>교수님은 나트륨은 7개를 채우는 것보다 1개를 잃는 게 쉽고, 염소는 1개를 얻는 게 쉽다는 말로 이온이 생기는 까닭을 설명했어요. (0903 05:23–06:45)</p>
+    <p>물 분자가 굽은 이유를 공유하지 않는 전자쌍끼리 밀어내기 때문이라고 짚었어요. (0903 07:30–08:22)</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">이온결합은 양이온과 음이온의 끌어당김, 공유결합은 전자쌍을 함께 쓰는 결합이에요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>이온결합(ionic bond)</dt><dd>Na⁺와 Cl⁻ 같은 양이온·음이온 사이 인력</dd><dt>공유결합(covalent bond)</dt><dd>전자쌍을 공유하는 결합</dd></dl>
+  </div>
+</article>
+
+<article class="topic" id="s1-polarity"><h3>전기음성도와 극성, 친수성과 소수성</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p2</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">산소는 함께 쓰는 알갱이를 자기 쪽으로 세게 끌어당기는 욕심쟁이예요.</p>
+    <figure class="figure"><svg id="fig-polar-pull" viewBox="0 0 520 190" role="img" aria-label="위쪽은 C와 H 사이 가운데에 전자 점 두 개가 있고, 아래쪽은 O와 H 사이 전자 점 두 개가 O 쪽으로 치우쳐 O 옆에 δ−, H 옆에 δ+가 적힌 그림">
+      <circle cx="80" cy="50" r="24" class="fig-ink"/><text x="72" y="55" class="fig-text">C</text>
+      <circle cx="240" cy="50" r="24" class="fig-ink"/><text x="233" y="55" class="fig-text">H</text>
+      <circle cx="160" cy="44" r="5" class="fig-dot"/><circle cx="160" cy="58" r="5" class="fig-dot"/>
+      <text x="300" y="55" class="fig-text">가운데 → 비극성</text>
+      <circle cx="80" cy="140" r="24" class="fig-accent"/><text x="72" y="145" class="fig-text">O</text>
+      <circle cx="240" cy="140" r="24" class="fig-ink"/><text x="233" y="145" class="fig-text">H</text>
+      <circle cx="118" cy="134" r="5" class="fig-dot"/><circle cx="118" cy="148" r="5" class="fig-dot"/>
+      <text x="60" y="185" class="fig-text">δ−</text><text x="228" y="185" class="fig-text">δ+</text>
+      <text x="300" y="145" class="fig-text">O 쪽으로 쏠림 → 극성</text>
+    </svg><figcaption>알갱이가 가운데 있으면 공평하고, 한쪽으로 쏠리면 그쪽이 살짝 더 무거운 편이 돼요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>전기음성도(electronegativity)는 결합한 원자가 공유 전자를 끌어당기는 힘이에요. 두 원자의 전기음성도 차이가 결합의 극성을 정해요. (0903 09:25)</p>
+    <ul>
+      <li>H–H, C–H: 전기음성도 차이가 거의 없어 전자가 가운데 있어요. 전자를 고르게 공유하는 비극성 공유결합이에요. (0903 09:34–10:03)</li>
+      <li>O–H: 산소가 전자를 매우 강하게 끌어당겨 전자가 불균등하게 배분돼요. 그래서 O는 부분 음전하(δ−), H는 부분 양전하(δ+)를 띠어요. 이것이 극성 공유결합이에요. (0903 10:09–11:37)</li>
+    </ul>
+    <p>"산소가 전기적으로 강한 음성을 띤다"는 말은 산소가 전자를 더 강하게 끌어당긴다는 뜻이에요. 전자를 밀어내거나 날려 보낸다는 뜻이 아니에요.</p>
+    <p>물 분자는 O–H 극성 공유결합 두 개가 굽은 모양으로 붙어 있어서, 분자 전체로 한쪽은 +, 한쪽은 −를 띠는 극성 분자예요. 물은 비극성·이온성·소수성 분자가 아니에요. (0903 10:48–11:07)</p>
+    <p>극성을 띠는 분자는 극성 분자, 부분 전하가 없는 분자는 비극성(무극성) 분자예요. 극성끼리, 비극성끼리 친해요. (0903 14:31–14:46)</p>
+    <ul>
+      <li>친수성(hydrophilic): hydro는 물, philic은 좋아한다는 뜻이에요. 극성 분자와 전하를 띤 이온. 예: 소금이 녹아 생긴 Na⁺·Cl⁻, 음전하를 띤 인산기, OH가 있는 곁사슬(세린의 CH₂OH). (0903 15:35–15:46)</li>
+      <li>소수성(hydrophobic): phobic은 싫어한다는 뜻이에요. 비극성 분자. 예: 기름. (0903 15:59)</li>
+    </ul>
+    <p>기름은 CH₂가 십몇 개 이어진 사슬이에요. 이렇게 탄소와 수소로만 이루어진 분자(사슬)를 탄화수소라고 불러요. C–H가 비극성이라 탄화수소는 전체가 비극성이고 물과 섞이지 않아요. 폴리펩타이드(아미노산 사슬), 탄수화물, 다당류는 산소 같은 다른 원소도 들어 있어서 탄화수소가 아니에요. (0903 14:57–15:25; 탄화수소라는 이름은 교재 1장 p.10 "지방산은 한 가닥으로 된 탄화수소 사슬")</p>
+    <p>비극성 분자는 부분적 전하가 없는 분자예요. 음이온과 양이온은 전하를 띠므로 비극성이 아니에요. 이온은 전하를 띤 입자라는 뜻이라서, "중성 이온"이라는 말로 비극성을 판단하지 않아요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>교수님은 이준기가 나온 "미녀는 석류를 좋아해" 광고를 틀어 준 뒤 빈칸을 "산소는 전자를 좋아한다"로 채웠어요. 산소의 전기음성도가 크다는 것을 외우게 하려는 장치예요. (0903 12:13–13:43)</p>
+    <blockquote>"산소는 전자를 좋아한다. 죽을 때까지 안 잊어먹겠죠." (0903 13:43)</blockquote>
+    <blockquote>"그냥 좋아하는 게 아니고 엄청 좋아합니다." (0903 10:14)</blockquote>
+    <p>산소 분자도 전자를 좋아하며, 전자를 빼앗기는 것을 산화라고 한다는 이야기는 물질대사에서 다시 나온다고 했어요. (0903 13:50)</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li>결합의 극성과 분자의 극성을 같은 말로 착각하기 쉬워요. O–H 결합이 극성인 것에 굽은 모양이 더해져 물 분자 전체가 극성이 돼요. 교수님도 "극성 공유결합. 아니…"라며 다시 설명했어요. (0903 11:13)</li>
+      <li>C–H와 O–H는 둘 다 공유결합이라 같은 성질로 보기 쉬워요. 전기음성도 차이 때문에 C–H는 비극성, O–H는 극성이에요. (0903 08:39–10:09)</li>
+      <li>전기음성도와 전자 친화도를 같은 말로 착각하기 쉬워요. 결합한 원자가 공유 전자를 끄는 힘은 전기음성도예요. (0903 09:25)</li>
+      <li>친수성은 극성 분자만이라고 착각하기 쉬워요. 전하를 띤 이온도 친수성이고, 비극성 분자가 소수성이에요. (0903 15:39–15:46)</li>
+      <li>산화를 "산소가 붙는 것"이나 "전자를 얻는 것"으로 헷갈리기 쉬워요. 산화는 전자를 잃는 것이고, 산소는 전자를 빼앗아 가는 쪽이에요. (0903 13:50)</li>
+    </ul>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">산소는 전자를 세게 끌어서 O–H는 극성, C–H는 비극성이에요. 극성·이온은 친수성, 비극성은 소수성이에요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>전기음성도(electronegativity)</dt><dd>공유 전자를 끌어당기는 힘</dd><dt>극성 공유결합</dt><dd>전자를 불균등하게 공유(O–H)</dd><dt>탄화수소</dt><dd>탄소와 수소로만 된 분자, 비극성</dd></dl>
+  </div>
+</article>
+
+<article class="topic" id="s1-hbond"><h3>수소결합</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p2</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">물 분자들은 옆 친구의 손을 살짝 잡고 있어요.</p>
+    <figure class="figure"><svg id="fig-hbond-water" viewBox="0 0 540 230" role="img" aria-label="왼쪽 물 분자는 O에 δ−, 두 H에 δ+가 적혀 있고 O–H 사이에 공유 전자 e가 O 쪽으로 끌리는 화살표가 있다. 오른쪽 물 분자의 O와 왼쪽 분자의 H 사이가 점선으로 이어져 수소결합이라고 적힌 그림">
+      <circle cx="120" cy="70" r="30" class="fig-accent"/><text x="112" y="76" class="fig-text">O</text><text x="108" y="30" class="fig-text">δ−</text>
+      <circle cx="60" cy="150" r="20" class="fig-ink"/><text x="54" y="155" class="fig-text">H</text><text x="40" y="195" class="fig-text">δ+</text>
+      <circle cx="180" cy="150" r="20" class="fig-ink"/><text x="174" y="155" class="fig-text">H</text><text x="176" y="195" class="fig-text">δ+</text>
+      <line x1="98" y1="92" x2="72" y2="134" class="fig-ink"/>
+      <line x1="142" y1="92" x2="168" y2="134" class="fig-ink"/>
+      <text x="62" y="112" class="fig-muted">e</text><text x="160" y="112" class="fig-muted">e</text>
+      <line x1="80" y1="128" x2="96" y2="104" class="fig-ink"/><polyline points="88,106 96,104 97,112" class="fig-ink"/>
+      <line x1="160" y1="128" x2="144" y2="104" class="fig-ink"/><polyline points="143,112 144,104 152,106" class="fig-ink"/>
+      <line x1="200" y1="150" x2="330" y2="150" class="fig-danger" stroke-dasharray="6 5"/>
+      <text x="215" y="140" class="fig-text">수소결합</text>
+      <circle cx="360" cy="150" r="30" class="fig-accent"/><text x="352" y="156" class="fig-text">O</text><text x="348" y="200" class="fig-text">δ−</text>
+      <circle cx="420" cy="80" r="20" class="fig-ink"/><text x="414" y="85" class="fig-text">H</text>
+      <circle cx="450" cy="190" r="20" class="fig-ink"/><text x="444" y="195" class="fig-text">H</text>
+      <line x1="380" y1="128" x2="406" y2="96" class="fig-ink"/>
+      <line x1="386" y1="164" x2="432" y2="182" class="fig-ink"/>
+      <text x="300" y="30" class="fig-muted">실선: 분자 안 O–H 극성 공유결합</text>
+      <text x="300" y="50" class="fig-muted">점선: 분자 사이 수소결합</text>
+    </svg><figcaption>한 물 분자의 H와 옆 물 분자의 O가 점선처럼 약하게 끌어당겨요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>수소결합(hydrogen bond)은 전기음성도가 큰 원자(O 또는 N)에 공유결합한 수소 원자와, 근처의 전기음성도가 큰 원자 사이에 생기는 약한 전기적 인력이에요. (0903 17:43)</p>
+    <ol class="steps">
+      <li>성립 조건: 수소가 O나 N에 공유결합해 있어야 해요. C에 붙은 수소(예: 메테인 CH₄, 기름의 C–H)는 전자를 거의 빼앗기지 않아 수소결합을 하지 않아요. (0903 16:41–16:54)</li>
+      <li>원리: O나 N에 붙은 H는 전자를 빼앗겨 δ+를 띠고, 옆에 있는 O나 N은 δ−를 띠어요. 이 δ+와 δ−가 서로 당기는 힘이 수소결합이에요. (0903 17:15–17:43)</li>
+      <li>그래서 수소결합은 O·N에 공유결합한 H를 가진 극성 분자와, O·N을 가진 극성 분자 사이(또는 큰 분자 안의 그런 두 부분 사이)에서 생겨요. 극성 분자라도 O·N에 붙은 H와 상대 O·N이 없으면 수소결합을 하지 않아요. 두 이온 사이의 인력은 이온결합이고, 두 비극성 분자 사이나 극성 분자와 비극성 분자 사이에는 수소결합이 생기지 않아요.</li>
+    </ol>
+    <p>물 분자 2개 이상이 가까이 있으면, 한 분자의 수소원자(δ+)와 다른 분자의 산소원자(δ−) 사이에 수소결합이 생겨요. 두 산소 원자 사이의 공유결합도, 두 수소 원자 사이의 결합도, 수소이온과 산소이온의 이온결합도 아니에요. 한 분자 안에서 O와 H를 잇는 결합은 극성 공유결합 그 자체이고 수소결합이 아니에요. (0903 18:47–19:07)</p>
+    <p>수소결합이 생기는 자리 (0903 18:09–19:22)</p>
+    <ul>
+      <li>분자 사이: 물처럼 작은 분자는 분자와 분자 사이에서 수소결합을 해요.</li>
+      <li>단백질: 한 사슬 안의 먼 부분끼리 수소결합을 해요. 펴져 있던 사슬이 수소결합으로 접히면서 3차 구조가 만들어지고 유지돼요. (0903 20:01–20:17)</li>
+      <li>DNA: 두 가닥(사슬) 사이에서 수소결합을 해서 이중나선을 이뤄요. 두 가닥을 잇는 것은 극성 공유결합·이온결합·비극성 공유결합이 아니라 수소결합이에요. (0903 20:22)</li>
+    </ul>
+    <p>수소결합은 열에 약하다: 온도가 오르면 전자가 에너지를 받아 돌아다녀 쏠림이 풀리고 수소결합이 깨져요. 물은 분자 사이가 멀어져 상태가 바뀌고(액체 → 기체), 단백질은 접힌 구조가 풀려요. (0903 20:34–21:42)</p>
+    <p>세기는 이온결합·공유결합이 수소결합보다 강해요. 수소결합은 약하지만 생물 분자의 구조를 유지하는 매우 중요한 힘이에요. (0903 21:49–22:01)</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>팔 비유: 팔을 펴고 있다가 어깨와 손가락 사이에 당기는 힘이 생기면 팔이 탁 접혀요. 단백질 사슬이 수소결합으로 접히는 모습이에요. (0903 19:40–20:01)</p>
+    <p>달걀 프라이: 투명하던 흰자가 열을 받으면 하얗게 변해요. 열에 수소결합이 깨져 단백질 구조가 바뀐 거예요. (0903 21:32–21:42)</p>
+    <blockquote>"요놈이 생물 분자들의 구조에서 상당히 중요한 역할을 하기 때문입니다." (0903 17:58)</blockquote>
+    <blockquote>"그것보다는 약하지만 생물 분자의 구조를 유지시켜 주는 매우 중요한 힘입니다." (0903 22:01)</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li>물 분자 안의 O–H 결합을 수소결합으로 착각하기 쉬워요. "이거 자체가 수소결합이 아닙니다." 분자 안 O–H는 극성 공유결합이고, 수소결합은 다른 분자(또는 먼 부분)의 O와의 인력이에요. (0903 18:47)</li>
+      <li>분자 사이와 분자 안을 헷갈리기 쉬워요. 교수님은 "물은 분자 사이, DNA·단백질 같은 큰 분자는 분자 안"으로 묶어 설명했어요(0903 19:16–19:22). 정확히는 단백질은 한 사슬 안, DNA는 두 가닥 사이의 수소결합이에요.</li>
+      <li>수소만 있으면 수소결합을 한다고 착각하기 쉬워요. C에 붙은 H는 하지 않고, O나 N에 붙은 H만 해요. (0903 16:54)</li>
+      <li>"중요하다"와 "약하다"가 모순처럼 보여요. 둘 다 맞아요. 세기는 약하지만 구조 유지에 중요해요. (0903 21:49–22:01)</li>
+    </ul>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">O·N에 붙은 H(δ+)와 이웃 O·N(δ−) 사이의 약한 인력이 수소결합이에요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>수소결합(hydrogen bond)</dt><dd>δ+ 수소와 δ− 산소·질소 사이 인력</dd><dt>이중나선</dt><dd>DNA 두 가닥이 수소결합으로 이어진 모양</dd></dl>
+  </div>
+</article>
+    </section>
+    <section id="s2"><h2>2. 물의 특성</h2>
+<article class="topic" id="s2-ice"><h3>얼음이 물에 뜬다</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p2</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">물은 얼면 양은 그대로인데 몸집만 커져서, 같은 크기로 보면 더 가벼워 물 위에 떠요.</p>
+    <figure class="figure"><svg id="fig-ice-lake" viewBox="0 0 520 190" role="img" aria-label="호수 단면 그림. 맨 위에 얼음 층 테두리, 그 아래 물 층, 물속에 물고기 모양 선이 있다">
+      <rect x="40" y="30" width="440" height="30" class="fig-accent"/>
+      <text x="220" y="52" class="fig-text">얼음 (위에 뜸)</text>
+      <path d="M40 60 L40 170 L480 170 L480 60" class="fig-ink"/>
+      <text x="200" y="110" class="fig-text">물 (아래는 얼지 않음)</text>
+      <path d="M200 140 q20 -15 40 0 q-20 15 -40 0 z M240 140 l12 -8 l0 16 z" class="fig-ink"/>
+    </svg><figcaption>얼음이 뚜껑처럼 위를 덮어 줘서 아래 물고기가 살 수 있어요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>물은 생화학 반응이 일어나는 곳이고, 형태를 유지해 주며, 세포와 조직의 구성 성분이에요. 물의 특별한 성질은 물이 극성이고 물 분자끼리 수소결합을 하기 때문에 생겨요. (0903 22:28–23:02, 교재 1장 p.7)</p>
+    <ol class="steps">
+      <li>대부분의 물질은 고체가 되면 부피가 줄지만, 물은 얼면 부피가 늘어나요. (0903 23:12–23:32) 그 까닭은 얼음에서 물 분자들이 수소결합으로 서로 멀리 떨어진 격자(얼음 격자)를 만들기 때문이에요. 이 까닭은 교수님이 말로 연결하지 않았고 강의노트에 있는 내용이에요. (강의노트 1장 p2, 교재 1장 p.7)</li>
+      <li>밀도 = 질량 / 부피예요. 질량은 같은데 부피가 커지니 얼음의 밀도가 물보다 낮아져요. 그래서 얼음이 물에 떠요. (0903 23:12–24:13)</li>
+      <li>그 결과 호수는 위에서부터 얼고, 얼음 아래의 물에서 생물이 살 수 있어요. 얼음이 가라앉는다면 호수 전체가 얼어 생물이 모두 죽을 거예요. (0903 24:20–24:44)</li>
+    </ol>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>아이스 아메리카노의 얼음이 뜨는 것, 얼음낚시를 예로 들었고, 페트병을 얼리면 깨질 수 있다고 했어요. (0903 23:48–24:30)</p>
+    <blockquote>"그게 중요한 게 아니고, 호수 생태계가 살 수가 있다는 거죠." (0903 24:40)</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li>"고체는 보통 부피가 작아진다"는 일반 원칙을 물에도 적용하기 쉬워요(0903 23:19). 물은 반대로 얼면 부피가 커져 밀도가 낮아져요. "같은 질량인데 부피가 커지니까 밀도가 낮아지죠." (0903 24:13)</li>
+      <li>얼음이 뜨는 까닭(밀도가 낮음)과 그 결과(호수가 위에서부터 얼어 생물이 삶)를 구분해요. (0903 23:19–24:44)</li>
+    </ul>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">얼음은 부피가 커져 밀도가 낮아지고, 그래서 호수가 위에서부터 얼어요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>밀도</dt><dd>질량 / 부피</dd><dt>얼음 격자</dt><dd>수소결합으로 분자 사이가 벌어진 얼음 구조</dd></dl>
+  </div>
+</article>
+
+<article class="topic" id="s2-solvent"><h3>극성 용매로서의 물</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p2</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">물은 한쪽은 살짝 플러스, 한쪽은 살짝 마이너스라서 자기와 닮은 가루를 잘 녹여요.</p>
+    <figure class="figure"><svg id="fig-solvent-coffee" viewBox="0 0 520 170" role="img" aria-label="왼쪽 색칠된 작은 점들(용질)과 가운데 테두리 컵(용매인 물)이 더해져 오른쪽 점이 퍼진 컵(용액)이 되는 그림">
+      <circle cx="50" cy="80" r="6" class="fig-dot"/><circle cx="70" cy="95" r="6" class="fig-dot"/><circle cx="60" cy="65" r="6" class="fig-dot"/>
+      <text x="30" y="140" class="fig-text">용질</text>
+      <text x="105" y="90" class="fig-text">+</text>
+      <path d="M140 40 L150 120 L230 120 L240 40" class="fig-ink"/>
+      <text x="165" y="140" class="fig-text">용매(물)</text>
+      <text x="265" y="90" class="fig-text">=</text>
+      <path d="M300 40 L310 120 L390 120 L400 40" class="fig-accent"/>
+      <circle cx="330" cy="80" r="5" class="fig-dot"/><circle cx="360" cy="100" r="5" class="fig-dot"/><circle cx="375" cy="65" r="5" class="fig-dot"/><circle cx="345" cy="108" r="5" class="fig-dot"/>
+      <text x="330" y="140" class="fig-text">용액</text>
+    </svg><figcaption>커피 가루가 물에 녹으면 커피가 되는 것과 같아요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>녹이는 것을 용매(solvent), 녹는 것을 용질(solute), 둘을 합친 것을 용액(solution)이라고 해요. 원두커피 가루는 용질, 물은 용매, 커피는 용액이에요. (0903 24:57–25:07)</p>
+    <p>물은 극성 용매예요. 물은 작고 극성이라서 극성(친수성) 물질과 이온을 잘 녹여요. 단백질, DNA, 이온, 작은 분자처럼 생명 현상을 일으키는 분자는 대부분 극성이라, 이들을 녹일 용매인 물이 있어야 생명 현상이 일어나요. 물은 우리 몸에서 극성 물질을 녹이는 일반적인 용매이지, 녹는 쪽(용질)이 아니에요. (0903 25:07–25:46, 교재 1장 p.7)</p>
+    <p>물 분자끼리는 강한 공유결합이 아니라 약한 수소결합으로 이어져 있어요(<a href="#s1-hbond">수소결합</a>). 또 효소로 작용하는 것은 단백질이지 물이 아니에요(<a href="#s5-structure">구조와 기능 — 1·2·3차 구조</a>).</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>원두커피로 용매·용질·용액을 설명했어요. 가루는 용질, 물은 용매, 커피는 용액이에요. (0903 24:57–25:07)</p>
+    <p>생명 현상을 일으키는 분자가 대부분 극성이라 이들을 녹이는 물이 있어야 생명 현상이 일어난다고 강조했어요. (0903 25:20–25:46)</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li>용매와 용질을 뒤바꾸기 쉬워요. 녹이는 쪽이 용매(물), 녹는 쪽이 용질(커피 가루)이에요. (0903 24:57–25:07)</li>
+      <li>물이 무엇이든 다 녹인다고 착각하기 쉬워요. 물은 극성·이온 물질을 녹이고, 기름 같은 비극성 물질은 녹이지 못해요. (0903 25:20)</li>
+    </ul>
+  </div>
+  <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+    <p>물 분자는 아주 일부가 수소 이온(H⁺)과 수산화 이온(OH⁻)으로 해리돼요(나뉘어요). 순수한 물처럼 H⁺와 OH⁻의 농도가 같은 중성 수용액의 pH는 pH 7(25 °C 기준)이에요. 그래서 순수한 물은 산성이 아니라 중성이에요. pH가 7보다 작으면 산성(H⁺가 더 많음), 7보다 크면 염기성(OH⁻가 더 많음)이에요.</p>
+    <p>출처: 일반화학 표준 내용(강의노트 1장에는 pH가 없고, 교재 1장 1.1.4(p.7–8)에도 pH 설명이 없어요. 교재 1장 p.14에는 "pH의 급격한 변화"가 단백질을 변성시킨다는 언급만 있어요).</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">물은 극성 용매라 극성 물질과 이온을 녹여요. 순수한 물은 조금 해리되고 pH 7(중성)이에요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>용매(solvent)</dt><dd>녹이는 물질(물)</dd><dt>용질(solute)</dt><dd>녹는 물질</dd><dt>pH 7</dt><dd>중성, H⁺ 농도 = OH⁻ 농도</dd></dl>
+  </div>
+</article>
+
+<article class="topic" id="s2-heat"><h3>높은 비열과 기화열</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p2</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">물은 데우기도 식히기도 오래 걸리고, 날아갈 때 열을 많이 가져가요.</p>
+    <figure class="figure"><svg id="fig-heat-sweat" viewBox="0 0 520 180" role="img" aria-label="피부 선 위에 테두리 물방울이 있고, 위로 향하는 화살표 두 개가 열을 가지고 날아가는 모습을 나타낸 그림">
+      <line x1="40" y1="140" x2="480" y2="140" class="fig-ink"/>
+      <text x="40" y="165" class="fig-muted">피부</text>
+      <path d="M200 138 q-18 -22 0 -46 q18 24 0 46 z" class="fig-accent"/>
+      <path d="M300 138 q-18 -22 0 -46 q18 24 0 46 z" class="fig-accent"/>
+      <line x1="200" y1="80" x2="200" y2="30" class="fig-danger"/><polyline points="192,40 200,28 208,40" class="fig-danger"/>
+      <line x1="300" y1="80" x2="300" y2="30" class="fig-danger"/><polyline points="292,40 300,28 308,40" class="fig-danger"/>
+      <text x="330" y="45" class="fig-text">증발하며 열을 가져감</text>
+    </svg><figcaption>땀방울이 날아가면서 몸의 열을 들고 가서 시원해져요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>물은 비열과 기화열이 모두 커요. 둘 다 물 분자 사이의 수소결합 때문이에요. (0903 25:56–27:46, 교재 1장 p.7–8)</p>
+    <ul>
+      <li>비열(specific heat): 물질 1 g의 온도를 1 °C 올리는 데 필요한 열량이에요. 물은 비열이 커서 천천히 데워지고 천천히 식어요. 열이 들어오면 먼저 수소결합을 끊는 데 쓰이기 때문이에요.</li>
+      <li>기화열(heat of vaporization): 액체가 기체가 되는 데 필요한 열량이에요. 기체가 되려면 분자 사이가 멀어져야 하고, 그러려면 수소결합을 끊어야 해서 에너지가 많이 들어요. 물은 기화열이 커요. "기화열이 작다"는 물의 특성과 반대예요.</li>
+    </ul>
+    <p>효과: 땀이 증발하면서 큰 기화열을 몸에서 가져가 몸을 식혀요. 그래서 땀을 흘려도 체온이 크게 오르지 않아요. 시원해지는 까닭은 땀을 흘리는 것 자체가 아니라 땀이 증발하는 것이에요. 습한 날에는 땀이 잘 증발하지 않아 열을 덜 가져가서 더 덥고 불쾌해요. (0903 27:00–27:46)</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>부산이 대구보다 남쪽인데도 여름에 더 시원한 것은 바다(물)의 큰 비열 때문이라고 했어요. (0903 26:05–26:30)</p>
+    <p>땀을 흘리는 것만으로는 시원하지 않고, 땀이 식어야(증발해야) 시원하다고 했어요. (0903 27:24)</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li>땀을 흘리는 것과 땀이 증발하는 것을 헷갈리기 쉬워요. 몸을 식히는 것은 증발할 때 가져가는 기화열이에요. (0903 27:24)</li>
+      <li>비열과 기화열을 같은 말로 착각하기 쉬워요. 둘 다 크고 수소결합 때문인 점은 같지만, 비열은 온도를 올리는 열량, 기화열은 기체로 바꾸는 열량이에요. (0903 26:41, 26:49)</li>
+      <li>교수님은 비열을 "물 온도를 1도 올리는 데 필요한 열량"이라고 말했지만, 정확히는 1 g 기준이에요. (0903 26:41)</li>
+    </ul>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">물은 비열과 기화열이 커서 온도가 잘 안 변하고, 땀이 증발할 때 열을 많이 가져가요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>비열(specific heat)</dt><dd>1 g을 1 °C 올리는 열량</dd><dt>기화열(heat of vaporization)</dt><dd>액체를 기체로 바꾸는 열량</dd></dl>
+  </div>
+</article>
+
+<article class="topic" id="s2-cohesion"><h3>응집력과 식물의 물 운반</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p2</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">물 분자들은 손을 꼭 잡고 줄지어 나무 꼭대기까지 올라가요.</p>
+    <figure class="figure"><svg id="fig-cohesion-tree" viewBox="0 0 520 220" role="img" aria-label="뿌리에서 잎까지 이어진 긴 관 안에 색칠된 점(물 분자)들이 선으로 이어져 있고, 잎의 구멍에서 위로 화살표가 나가는 그림">
+      <rect x="230" y="30" width="40" height="170" class="fig-ink"/>
+      <circle cx="250" cy="60" r="6" class="fig-dot"/><circle cx="250" cy="90" r="6" class="fig-dot"/><circle cx="250" cy="120" r="6" class="fig-dot"/><circle cx="250" cy="150" r="6" class="fig-dot"/><circle cx="250" cy="180" r="6" class="fig-dot"/>
+      <line x1="250" y1="66" x2="250" y2="84" class="fig-accent"/><line x1="250" y1="96" x2="250" y2="114" class="fig-accent"/><line x1="250" y1="126" x2="250" y2="144" class="fig-accent"/><line x1="250" y1="156" x2="250" y2="174" class="fig-accent"/>
+      <line x1="270" y1="40" x2="330" y2="20" class="fig-danger"/><polyline points="320,18 331,20 324,29" class="fig-danger"/>
+      <text x="340" y="30" class="fig-text">잎의 기공에서 증발</text>
+      <text x="290" y="120" class="fig-text">물관: 물 분자가 이어짐</text>
+      <text x="290" y="200" class="fig-text">뿌리에서 흡수</text>
+    </svg><figcaption>꼭대기에서 하나가 날아가면 아래 친구들이 줄줄이 끌려 올라가요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>응집력(cohesion)은 같은 것끼리 당기는 힘이에요. 물 분자는 극성이고 서로 수소결합을 해서 응집력이 커요. 물은 표면장력도 커요(교수님은 이름만 말하고 넘어갔어요). (0903 28:02–28:12, 30:35)</p>
+    <ol class="steps">
+      <li>뿌리에서 흡수한 물이 물관을 따라 잎까지 올라가요. 이때 식물은 에너지를 쓰지 않아요.</li>
+      <li>잎의 기공에서 물이 증발해요(증산작용(transpiration)). 그 자리의 압력이 낮아져 아래 물을 끌어올리는 장력이 생겨요.</li>
+      <li>물 분자끼리 응집력으로 이어져 있어서 물줄기가 끊기지 않고 끌려 올라가요. (0903 28:37–30:09, 교재 1장 p.8)</li>
+    </ol>
+    <p>CO₂는 잎의 기공으로, 물은 뿌리로 들어와요. (0903 29:06)</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>학과 체육대회 비유: 같은 과 학생끼리 응집력이 좋은 것처럼, 같은 것끼리 당기는 힘이 응집력이에요. (0903 28:12–28:37)</p>
+    <p>물 분자끼리 "손을 잡고" 쭉 올라간다고 설명했어요. (0903 30:00)</p>
+    <blockquote>"그래서 물은 꼭 필요하다." (0903 30:35)</blockquote>
+    <p>교수님은 "물은 생명체의 생존에 매우 중요합니다"(22:28)라며, 다른 행성에서 물을 찾는 것도 물이 생명이 존재할 기본 조건이기 때문이라고 했어요("화성 삼다수" 농담, 22:37–22:55).</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li>물을 끌어올리는 힘과 물줄기를 잇는 힘을 헷갈리기 쉬워요. 증산작용이 만든 장력이 끌어올리고, 응집력은 물줄기가 끊기지 않게 해요. (0903 29:34–30:09)</li>
+      <li>식물이 에너지를 써서 물을 퍼 올린다고 착각하기 쉬워요. 이 과정에 식물의 에너지는 들지 않아요. (0903 28:50)</li>
+    </ul>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">물은 응집력과 표면장력이 크고, 증산작용의 장력과 응집력으로 물관을 타고 올라가요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>응집력(cohesion)</dt><dd>같은 분자끼리 당기는 힘</dd><dt>증산작용(transpiration)</dt><dd>잎의 기공에서 물이 증발하는 것</dd></dl>
+  </div>
+</article>
+    </section>
+    <section id="s3"><h2>3. 탄수화물</h2>
+<article class="topic" id="s3-sugars"><h3>단당류와 이당류</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p2</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">단맛 구슬 하나, 구슬 두 개를 이은 것, 아주 많이 이은 것이 있어요.</p>
+    <figure class="figure"><svg id="fig-sugars-beads" viewBox="0 0 520 170" role="img" aria-label="육각형 테두리 하나(단당류), 육각형 두 개가 선으로 이어진 것(이당류), 육각형 여러 개가 길게 이어진 것(다당류)을 나란히 그린 그림">
+      <polygon points="40,70 55,55 75,55 90,70 75,85 55,85" class="fig-ink"/>
+      <text x="35" y="120" class="fig-text">단당류</text>
+      <polygon points="140,70 155,55 175,55 190,70 175,85 155,85" class="fig-ink"/>
+      <line x1="190" y1="70" x2="205" y2="70" class="fig-accent"/>
+      <polygon points="205,70 220,55 240,55 255,70 240,85 220,85" class="fig-ink"/>
+      <text x="170" y="120" class="fig-text">이당류</text>
+      <polygon points="300,70 312,58 328,58 340,70 328,82 312,82" class="fig-ink"/>
+      <line x1="340" y1="70" x2="350" y2="70" class="fig-accent"/>
+      <polygon points="350,70 362,58 378,58 390,70 378,82 362,82" class="fig-ink"/>
+      <line x1="390" y1="70" x2="400" y2="70" class="fig-accent"/>
+      <polygon points="400,70 412,58 428,58 440,70 428,82 412,82" class="fig-ink"/>
+      <line x1="440" y1="70" x2="450" y2="70" class="fig-accent"/>
+      <polygon points="450,70 462,58 478,58 490,70 478,82 462,82" class="fig-ink"/>
+      <text x="370" y="120" class="fig-text">다당류</text>
+    </svg><figcaption>하나, 둘, 아주 많이 이어진 사탕 목걸이라고 생각해요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>동물·식물·세균 등 모든 생물의 세포에는 비슷한 큰 분자가 있고, 이를 네 그룹으로 나눠요: 탄수화물, 단백질, 지질, 핵산. (0903 31:20–31:51; 핵산은 이번 수업에서 이름만 나왔어요)</p>
+    <p>탄수화물(carbohydrate)은 탄소·수소·산소가 대략 C : H : O = 1 : 2 : 1인 분자예요. 예: 포도당 C₆H₁₂O₆. 탄수화물에는 단당류·이당류·다당류가 있어요. (0903 32:29–32:36, 교재 1장 p.8)</p>
+    <ul>
+      <li>단당류(monosaccharide): 한 분자로 된 당. 포도당·과당·갈락토스. 탄소 수가 3~7개이고, 6개면 6탄당, 5개면 5탄당이에요. (0903 32:45–33:26)</li>
+      <li>과당도 C₆H₁₂O₆이지만 구조가 달라요. 분자식은 같고 구조가 다른 것을 구조 이성질체라고 해요. 포도당은 알데하이드기, 과당은 케톤기를 가져요. (0903 32:58–33:08)</li>
+      <li>이당류(disaccharide): 단당류 두 개가 붙은 것. 엿당 = 포도당 + 포도당, 설탕 = 포도당 + 과당, 젖당 = 포도당 + 갈락토스. (0903 33:34–34:11)</li>
+    </ul>
+    <p>설탕은 식물이 광합성으로 만든 포도당을 체관으로 운반하는 형태이고, 젖당은 모유에 들어 있어요. 포도당은 물속에서 저절로 고리 모양이 되며, 사슬형과 고리형을 오가요. (0903 34:33–36:16)</p>
+    <p>단당류는 탄수화물이에요. 중성지방(트라이글리세라이드)·지방·스테로이드·인지질처럼 지질에 속하는 것과 나란히 놓이면 혼자 다른 그룹이에요(<a href="#s4-neutral">지질의 세 종류와 중성지질</a>).</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>이당류 암기법: "엿 포 포", "설 포 과"(설탕은 과자에 많으니까), "젖 포 갈". (0903 33:50–34:11)</p>
+    <blockquote>"상식적으로라도 알아야 되는 게 설탕, 엿당, 젖당이 이당류다." (0903 33:44)</blockquote>
+    <p>태어나서 밥부터 먹은 사람은 없고, 누구나 젖당(모유)을 먹고 자랐다고 했어요. (0903 35:00–35:20)</p>
+    <blockquote>"밤에 시험공부할 때는 고기 먹는 것보다는 빵을 먹는 게 낫습니다. 뇌는 탄수화물만 소비하기 때문에." (0903 32:17)</blockquote>
+    <p>바로잡기: 뇌는 주로 포도당(탄수화물)을 쓰지만, 오래 굶으면 케톤체도 에너지로 써요. "탄수화물만"은 단순화한 말이에요.</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li>포도당과 과당을 같은 분자로 착각하기 쉬워요. 분자식은 같지만 구조가 다른 구조 이성질체예요(알데하이드기 대 케톤기). (0903 33:08)</li>
+      <li>이당류의 짝을 뒤섞기 쉬워요. 엿당은 포도당+포도당, 설탕은 포도당+과당, 젖당은 포도당+갈락토스예요. (0903 33:50–34:11)</li>
+      <li>포도당을 사슬형과 고리형 중 하나로만 그려야 한다고 생각하기 쉬워요. 포도당은 둘 사이를 오가서 둘 다 맞아요. (0903 35:59)</li>
+      <li>교수님이 "단당류… 아 이당류나 다당류"로 고쳐 말했어요. 포도당이 두 개 이어지면 이당류, 여러 개면 다당류예요. (0903 36:16)</li>
+    </ul>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">탄수화물은 C : H : O = 1 : 2 : 1이고, 단당류 하나, 둘(이당류), 여럿(다당류)으로 나눠요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>단당류(monosaccharide)</dt><dd>포도당·과당·갈락토스</dd><dt>이당류(disaccharide)</dt><dd>엿당·설탕·젖당</dd><dt>구조 이성질체</dt><dd>분자식은 같고 구조가 다른 분자</dd></dl>
+  </div>
+</article>
+
+<article class="topic" id="s3-storage"><h3>다당류 — 녹말과 글리코겐</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p3</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">포도당 동전을 실에 줄줄이 꿰어 모아 두면 녹말이에요.</p>
+    <figure class="figure"><svg id="fig-storage-branch" viewBox="0 0 520 190" role="img" aria-label="위에는 색칠된 원들이 한 줄로 이어진 녹말, 아래에는 색칠된 원들이 여러 갈래로 가지를 친 글리코겐 그림">
+      <line x1="40" y1="50" x2="400" y2="50" class="fig-ink"/>
+      <circle cx="60" cy="50" r="8" class="fig-dot"/><circle cx="110" cy="50" r="8" class="fig-dot"/><circle cx="160" cy="50" r="8" class="fig-dot"/><circle cx="210" cy="50" r="8" class="fig-dot"/><circle cx="260" cy="50" r="8" class="fig-dot"/><circle cx="310" cy="50" r="8" class="fig-dot"/><circle cx="360" cy="50" r="8" class="fig-dot"/>
+      <text x="420" y="55" class="fig-text">녹말(식물)</text>
+      <line x1="40" y1="140" x2="400" y2="140" class="fig-ink"/>
+      <line x1="160" y1="140" x2="220" y2="100" class="fig-ink"/><line x1="280" y1="140" x2="340" y2="175" class="fig-ink"/>
+      <circle cx="60" cy="140" r="8" class="fig-dot"/><circle cx="110" cy="140" r="8" class="fig-dot"/><circle cx="160" cy="140" r="8" class="fig-dot"/><circle cx="220" cy="100" r="8" class="fig-dot"/><circle cx="210" cy="140" r="8" class="fig-dot"/><circle cx="260" cy="140" r="8" class="fig-dot"/><circle cx="280" cy="140" r="8" class="fig-dot"/><circle cx="340" cy="175" r="8" class="fig-dot"/><circle cx="360" cy="140" r="8" class="fig-dot"/>
+      <text x="420" y="145" class="fig-text">글리코겐(동물)</text>
+    </svg><figcaption>식물은 한 줄로, 동물은 가지를 많이 쳐서 모아 둬요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>다당류(polysaccharide)는 단당류(당)가 길게 이어진 것이에요. 녹말·글리코겐·셀룰로오스는 모두 당(포도당)으로 이루어져요. 아미노산·뉴클레오티드·지방산이 이어진 것이 아니에요. (0903 36:16–36:51, 교재 1장 p.9)</p>
+    <ul>
+      <li>녹말(starch): 포도당이 한 줄로 이어진 것. 식물이 포도당을 저장하는 형태예요. 아밀로오스가 녹말의 한 종류이고, 감자·쌀·바나나에 있어요. 아이오딘으로 염색하면 보라색 알갱이로 보여요. (0903 36:51–38:24)</li>
+      <li>글리코겐(glycogen): 포도당이 이어진 것이지만 가지가 더 많아요. 동물이 포도당을 저장하는 형태예요. (0903 36:51, 38:24)</li>
+    </ul>
+    <ol class="steps">
+      <li>소화: 녹말은 너무 커서 세포막을 통과하지 못하므로 잘라야 해요. 아밀라아제(아밀레이스)가 녹말을 포도당 2개 단위, 즉 엿당으로 잘라요.</li>
+      <li>엿당 분해 효소가 엿당을 포도당으로 잘라요.</li>
+      <li>포도당은 소장에서 흡수되어 온몸의 세포로 가요. (0903 38:30–39:30)</li>
+      <li>저장: 쓰고 남은 포도당은 가지가 있는 글리코겐으로 만들어 간과 근육에 저장해요. 저장을 지시하는 호르몬은 인슐린이에요. (0903 39:30–40:18)</li>
+    </ol>
+    <p>녹말과 글리코겐의 기능은 연료(포도당 저장)예요. (0903 41:01–41:12)</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>500원 동전 비유: 아빠가 매일 주는 500원을 실로 줄줄이 엮어 두는 것이 녹말이에요. 포도당을 하나씩 이어 저장한다는 뜻이에요. (0903 37:21–37:39)</p>
+    <p>"클라우드에 저장할 거냐 SSD에 저장할 거냐"라고 물으며 글리코겐의 저장 장소를 간과 근육으로 답했고, 닭다리(근육)를 먹으면 글리코겐도 먹는 셈이라고 했어요. (0903 40:03–40:45)</p>
+    <blockquote>"다당류는 또 조금 알아야 되는데, 녹말, 글리코겐 우리 생활하고 다 밀접하게 관련이 있기 때문에." (0903 36:41)</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li>녹말과 글리코겐을 뒤바꾸기 쉬워요. 둘 다 포도당 저장 형태지만 녹말은 식물, 글리코겐은 동물이고 글리코겐은 가지가 더 많아요. (0903 36:51, 38:24)</li>
+      <li>아밀라아제가 포도당 하나씩 자른다고 착각하기 쉬워요. 아밀라아제는 포도당 2개(엿당) 단위로 자르고, 엿당은 다른 효소가 잘라요. (0903 38:59–39:15)</li>
+    </ul>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">다당류는 당이 길게 이어진 것이고, 녹말은 식물, 글리코겐은 동물의 포도당 저장 형태예요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>녹말(starch)</dt><dd>식물의 포도당 저장 형태</dd><dt>글리코겐(glycogen)</dt><dd>동물의 포도당 저장 형태, 가지가 많음, 간과 근육</dd><dt>아밀라아제</dt><dd>녹말을 엿당 단위로 자르는 효소</dd></dl>
+  </div>
+</article>
+
+<article class="topic" id="s3-alpha-beta"><h3>셀룰로오스와 α·β 결합</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p2–3</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">녹말과 셀룰로오스는 같은 구슬로 만들었는데, 셀룰로오스는 구슬을 하나씩 뒤집어 꿰었어요.</p>
+    <figure class="figure"><svg id="fig-alpha-beta-chain" viewBox="0 0 520 200" role="img" aria-label="위 줄은 OH 표시가 모두 아래를 향한 육각형 사슬(녹말, α 결합), 아래 줄은 OH 표시가 아래 위로 번갈아 뒤집힌 육각형 사슬(셀룰로오스, β 결합)">
+      <polygon points="40,60 55,45 75,45 90,60 75,75 55,75" class="fig-ink"/><line x1="65" y1="75" x2="65" y2="95" class="fig-accent"/>
+      <line x1="90" y1="60" x2="110" y2="60" class="fig-ink"/>
+      <polygon points="110,60 125,45 145,45 160,60 145,75 125,75" class="fig-ink"/><line x1="135" y1="75" x2="135" y2="95" class="fig-accent"/>
+      <line x1="160" y1="60" x2="180" y2="60" class="fig-ink"/>
+      <polygon points="180,60 195,45 215,45 230,60 215,75 195,75" class="fig-ink"/><line x1="205" y1="75" x2="205" y2="95" class="fig-accent"/>
+      <text x="260" y="65" class="fig-text">녹말: 모두 같은 방향(α)</text>
+      <polygon points="40,150 55,135 75,135 90,150 75,165 55,165" class="fig-ink"/><line x1="65" y1="165" x2="65" y2="185" class="fig-accent"/>
+      <line x1="90" y1="150" x2="110" y2="150" class="fig-ink"/>
+      <polygon points="110,150 125,135 145,135 160,150 145,165 125,165" class="fig-ink"/><line x1="135" y1="135" x2="135" y2="115" class="fig-accent"/>
+      <line x1="160" y1="150" x2="180" y2="150" class="fig-ink"/>
+      <polygon points="180,150 195,135 215,135 230,150 215,165 195,165" class="fig-ink"/><line x1="205" y1="165" x2="205" y2="185" class="fig-accent"/>
+      <text x="260" y="155" class="fig-text">셀룰로오스: 하나씩 뒤집힘(β)</text>
+    </svg><figcaption>이어 붙이는 방향이 달라서, 사람 몸은 아래 줄을 자르지 못해요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>셀룰로오스(섬유소)는 포도당이 이어진 다당류, 즉 탄수화물이에요. 사람은 연료로 쓰지 못하고, 식물 세포벽의 구조 성분이에요. 섬유소는 지질이 아니에요. (0903 41:23–41:37, 교재 1장 p.8)</p>
+    <p>녹말과 셀룰로오스는 둘 다 포도당이 한 줄로 이어진 중합체지만, 연결 방식이 달라요. (0903 41:50–43:46)</p>
+    <ol class="steps">
+      <li>포도당이 고리를 만들 때 OH가 아래로 가면 α 포도당, 위로 가면 β 포도당이에요.</li>
+      <li>α 포도당끼리 결합하면 α 결합(녹말·글리코겐), β 포도당끼리 결합하면 β 결합(셀룰로오스)이에요. 셀룰로오스는 한 단위씩 뒤집혀 있어요.</li>
+      <li>"1, 4"는 결합한 탄소 번호(1번과 4번)예요.</li>
+      <li>아밀라아제는 α 결합만 끊어요. 사람에게는 β 결합을 끊는 효소가 없어서 셀룰로오스를 소화하지 못해요.</li>
+    </ol>
+    <p>소화되지 않는 다당류가 식이섬유예요. 대장 벽을 긁어 노폐물을 없애 장 건강과 배변에 도움이 돼요(고구마, 옥수수). (0903 44:05–44:26)</p>
+    <p>반추동물(소, 염소)은 셀룰로오스를 소화해요. 소 자신이 효소를 가진 것이 아니라, 장 안에 사는 공생 미생물이 β 결합을 끊어 줘요. 소는 미생물이 분해한 산물을 흡수하거나 미생물 자체를 먹어요. 반추는 되새김질이에요. (0903 44:30–45:07, 교재 1장 p.10)</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>틀린 그림 찾기: 아밀로오스와 셀룰로오스 그림을 비교하게 한 뒤 "연결 방식이죠"라고 답했어요. (0903 42:11–42:55)</p>
+    <blockquote>"얘는 밑으로 간 게 아닙니다. 이게 뒤집힌 거예요." (0903 43:04)</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li>녹말과 셀룰로오스는 재료가 달라서 다르다고 착각하기 쉬워요. 재료는 똑같이 포도당이고, α 결합과 β 결합이라는 연결 방식이 달라요. (0903 42:11–42:55)</li>
+      <li>β 결합 그림에서 OH가 "아래로 간" 것이 아니라 포도당이 "뒤집힌" 거예요. (0903 43:04)</li>
+      <li>α와 β의 기준: 고리를 만들 때 OH가 아래면 α, 위면 β예요. (0903 43:13)</li>
+      <li>소가 셀룰로오스를 스스로 소화한다고 착각하기 쉬워요. 공생 미생물 덕분이에요. (0903 44:39–44:48)</li>
+      <li>탄수화물의 기능을 모두 연료로 착각하기 쉬워요. 녹말·글리코겐은 연료, 셀룰로오스는 구조예요. (0903 41:12–41:37)</li>
+    </ul>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">셀룰로오스는 포도당이 β 결합으로 이어진 세포벽 성분이고, 사람의 아밀라아제는 α 결합만 끊어요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>셀룰로오스(섬유소)</dt><dd>β 결합 포도당 중합체, 식물 세포벽</dd><dt>α 결합</dt><dd>녹말·글리코겐의 연결</dd><dt>반추동물</dt><dd>공생 미생물로 셀룰로오스를 소화하는 동물</dd></dl>
+  </div>
+</article>
+    </section>
+    <section id="s4"><h2>4. 지질</h2>
+<article class="topic" id="s4-neutral"><h3>지질의 세 종류와 중성지질</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p3</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">뱃살 기름은 빗 하나에 빗살 세 개가 달린 모양이에요.</p>
+    <figure class="figure"><svg id="fig-neutral-comb" viewBox="0 0 520 200" role="img" aria-label="위쪽 가로 테두리 막대(글리세롤)에 아래로 긴 지그재그 선 세 개(지방산)가 매달린 중성지방 그림">
+      <rect x="120" y="30" width="200" height="30" rx="6" class="fig-accent"/>
+      <text x="175" y="50" class="fig-text">글리세롤</text>
+      <polyline points="150,60 140,80 160,100 140,120 160,140 140,160 160,180" class="fig-ink"/>
+      <polyline points="220,60 210,80 230,100 210,120 230,140 210,160 230,180" class="fig-ink"/>
+      <polyline points="290,60 280,80 300,100 280,120 300,140 280,160 300,180" class="fig-ink"/>
+      <text x="340" y="125" class="fig-text">지방산 3개</text>
+    </svg><figcaption>윗부분 하나에 긴 꼬리 세 개, 이게 몸에 쌓이는 기름이에요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>지질은 지방질이고, 세 종류가 있어요: 중성지질, 인지질, 스테로이드(콜레스테롤은 스테로이드의 한 종류). 지질의 기능은 연료 저장, 세포막 구성, 호르몬이에요. (0903 46:26–47:03)</p>
+    <p>지질에 속하는 것과 속하지 않는 것을 나란히 봐요.</p>
+    <ul>
+      <li>지질: 중성지방(트라이글리세라이드), 지방, 기름, 인지질, 스테로이드, 콜레스테롤.</li>
+      <li>지질이 아님: 섬유소(셀룰로오스)와 단당류는 탄수화물이에요(<a href="#s3-alpha-beta">셀룰로오스와 α·β 결합</a>, <a href="#s3-sugars">단당류와 이당류</a>).</li>
+    </ul>
+    <p>중성지질의 구조 (0903 47:12–48:30, 교재 1장 p.10–11)</p>
+    <ol class="steps">
+      <li>위쪽의 탄소 3개짜리 뼈대가 글리세롤(glycerol)이에요.</li>
+      <li>아래 꼬리처럼 달린 탄소 사슬은 끝에 COOH(카복실기, 산)가 붙어 있어서 지방산(fatty acid)이라고 불러요. R은 이 탄소 사슬 전체를 가리켜요.</li>
+      <li>글리세롤 1분자 + 지방산 3분자 = 중성지방이에요. 지방산이 3개(tri)라서 트라이글리세라이드(트리글리세라이드)라고도 해요. 거의 모든 중성지방은 이렇게 글리세롤과 지방산으로 구성돼요(탄수화물과 단백질로 구성되지 않아요).</li>
+    </ol>
+    <p>중성지방은 주된 에너지 저장 물질이고(뱃살), C–H가 많은 비극성이라 소수성이에요. 상온에서 고체면 지방(fat), 액체면 기름(oil)이라고 불러요. 같은 종류의 물질이고 상태만 달라요(이유는 <a href="#s4-saturation">포화지방산과 불포화지방산</a>). (0903 48:44–49:28)</p>
+    <p>글리코겐과 중성지방은 둘 다 에너지 저장 물질이지만, 글리코겐은 금방 쓰는 단기 저장이고 중성지방은 장기 저장이에요. 그 이유는 2장 물질대사에서 다룬다고 했어요. (0903 56:49–58:00)</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>"지질"과 "찌질"을 엮은 말장난으로 시작했고, 뱃살이 바로 중성지방이라고 했어요. (0903 46:26, 48:54)</p>
+    <p>지갑과 주식·금 비유: 지갑의 돈은 글리코겐(금방 쓰는 돈), 주식이나 금은 중성지방(오래 두는 재산)이에요. 둘 다 재산이에요. (0903 57:17–57:49)</p>
+    <blockquote>"중성지질의 기본 구조를 알아야 인지질을 또 이해할 수가 있습니다." (0903 47:12)</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li>글리세롤과 지방산 가운데 어느 쪽이 "산"인지 헷갈리기 쉬워요. COOH가 붙은 긴 사슬이 지방산이고, 글리세롤은 탄소 3개 뼈대예요. (0903 47:22–47:47)</li>
+      <li>R이 무엇을 가리키는지 헷갈려요. 지방산에서 R은 탄소 사슬 전체예요. 아미노산의 R(곁사슬)과 기호만 같아요. (0903 47:47)</li>
+      <li>지방과 기름을 다른 물질로 착각하기 쉬워요. 상온에서의 상태만 달라요. (0903 49:16–49:28)</li>
+      <li>"동물은 글리코겐이 연료 물질이라면서?" 둘 다 저장 물질이고, 글리코겐은 단기(지갑), 중성지방은 장기(주식·금)예요. (0903 56:58)</li>
+    </ul>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">지질은 중성지질·인지질·스테로이드이고, 중성지방은 글리세롤 1 + 지방산 3이에요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>트라이글리세라이드</dt><dd>글리세롤 + 지방산 3개, 중성지방</dd><dt>지방산(fatty acid)</dt><dd>끝에 COOH가 붙은 탄소 사슬</dd></dl>
+  </div>
+</article>
+
+<article class="topic" id="s4-saturation"><h3>포화지방산과 불포화지방산</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p3</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">곧은 막대는 촘촘히 쌓이고, 꺾인 막대는 사이가 벌어져 흘러내려요.</p>
+    <figure class="figure"><svg id="fig-saturation-kink" viewBox="0 0 520 200" role="img" aria-label="왼쪽은 곧은 선 네 개가 촘촘히 붙은 모습(버터, 고체), 오른쪽은 가운데가 꺾인 선 세 개 사이에 틈이 생긴 모습(올리브유, 액체)">
+      <line x1="60" y1="30" x2="60" y2="160" class="fig-ink"/><line x1="80" y1="30" x2="80" y2="160" class="fig-ink"/><line x1="100" y1="30" x2="100" y2="160" class="fig-ink"/><line x1="120" y1="30" x2="120" y2="160" class="fig-ink"/>
+      <text x="40" y="190" class="fig-text">포화: 촘촘 → 고체</text>
+      <polyline points="300,30 300,95 330,160" class="fig-accent"/>
+      <polyline points="350,30 350,95 380,160" class="fig-accent"/>
+      <polyline points="400,30 400,95 430,160" class="fig-accent"/>
+      <text x="290" y="190" class="fig-text">불포화: 꺾여서 틈 → 액체</text>
+    </svg><figcaption>꺾인 꼬리들은 서로 딱 붙지 못해서 잘 굳지 않아요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>공유 전자쌍 하나는 막대 하나(단일결합), 두 쌍이면 막대 두 개(이중결합)로 표시해요. 이중결합이 있으면 수소를 더 넣을 여지가 있어요. (0903 58:56–59:40)</p>
+    <ul>
+      <li>포화지방산: 탄소 사이가 모두 단일결합이라 수소로 꽉 찬(포화된) 지방산.</li>
+      <li>불포화지방산: 이중결합이 하나 이상 있는 지방산. (0903 59:43–59:52, 교재 1장 p.10)</li>
+    </ul>
+    <ol class="steps">
+      <li>불포화지방산은 이중결합 자리에서 꺾여요.</li>
+      <li>꺾이면 분자 사이에 틈이 생겨요.</li>
+      <li>틈이 생기면 유동성이 커져요.</li>
+      <li>유동성이 크면 고체가 되기 어려워 상온에서 액체예요. (0903 59:58–61:15)</li>
+    </ol>
+    <p>식물성 기름(올리브유)은 대개 불포화지방이라 액체이고, 동물성 지방(버터)은 대개 포화지방이라 고체예요. (0903 61:26–61:47)</p>
+    <p>인지질에도 똑같이 적용돼요. 인지질 꼬리에는 포화지방산도, 이중결합으로 꺾인 불포화지방산도 올 수 있어요(늘 포화지방산인 것이 아니에요). 꼬리에 이중결합이 있으면 꺾여 막이 굳지 않아요. 그래서 추운 곳에 사는 생물일수록 불포화지방산 비율이 높아 막이 얼지 않아요. (0903 61:59–62:38, 교재 1장 p.12 그림 1.12)</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>지하철 쩍벌남 비유: 모두 다리를 모으고 앉으면 촘촘히 앉을 수 있지만, 누군가 다리를 벌리면 틈이 생겨요. 불포화지방산이 꺾여서 분자 사이에 틈이 생기는 모습이에요. (0903 60:15–60:31)</p>
+    <p>교수님은 "틈이 생기면 유동성이 커지나요, 작아지나요?", "고체가 되기 쉬워지겠냐, 어려워지겠냐?"를 차례로 되물었어요. (0903 60:36, 60:53)</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li>"포화"의 뜻을 헷갈리기 쉬워요. 수소로 꽉 찼다는 뜻이고, 이중결합이 없으면 포화, 있으면 불포화예요. (0903 59:40–59:52)</li>
+      <li>인과 사슬의 방향을 뒤집기 쉬워요. 이중결합 → 꺾임 → 틈 → 유동성 증가 → 액체예요. (0903 60:36, 60:53)</li>
+      <li>식물성과 동물성을 뒤바꾸기 쉬워요. 식물성은 불포화라 액체, 동물성은 포화라 고체예요. 교수님도 "동물성 지방은 아 동물성 지질은"이라고 고쳐 말했어요. (0903 61:34)</li>
+      <li>추운 곳 생물은 막을 단단하게 하려고 포화지방산이 많다고 거꾸로 외우기 쉬워요. 추운 곳 생물은 불포화지방산 비율이 높아요. (0903 62:25)</li>
+    </ul>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">이중결합이 있으면 불포화지방산이고, 꺾여서 틈이 생겨 유동성이 커지고 액체가 돼요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>포화지방산</dt><dd>이중결합 없음, 곧음, 상온 고체(버터)</dd><dt>불포화지방산</dt><dd>이중결합 있음, 꺾임, 상온 액체(올리브유)</dd></dl>
+  </div>
+</article>
+
+<article class="topic" id="s4-phospholipid"><h3>인지질과 인지질 이중층</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p3</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">인지질은 물을 좋아하는 머리와 물을 싫어하는 꼬리 두 개를 가진 성냥개비예요.</p>
+    <figure class="figure"><svg id="fig-phospho-bilayer" viewBox="0 0 540 250" role="img" aria-label="왼쪽: 위에서부터 콜린, 인산염, 글리세롤이라고 적힌 테두리 칸(친수성 머리) 아래에 지방산 꼬리 두 줄이 달리고 오른쪽 꼬리는 이중결합 부근에서 꺾인 인지질. 오른쪽: 색칠된 원 머리들이 위아래 바깥을 향하고 꼬리끼리 안쪽에서 마주 보는 이중층">
+      <rect x="40" y="20" width="110" height="24" rx="4" class="fig-accent"/><text x="75" y="37" class="fig-text">콜린</text>
+      <rect x="40" y="44" width="110" height="24" rx="4" class="fig-accent"/><text x="72" y="61" class="fig-text">인산염</text>
+      <rect x="40" y="68" width="110" height="24" rx="4" class="fig-accent"/><text x="68" y="85" class="fig-text">글리세롤</text>
+      <text x="160" y="60" class="fig-muted">친수성 머리</text>
+      <line x1="70" y1="92" x2="70" y2="210" class="fig-ink"/>
+      <polyline points="120,92 120,150 140,210" class="fig-ink"/>
+      <text x="126" y="155" class="fig-muted">이중결합</text>
+      <text x="40" y="235" class="fig-muted">지방산 꼬리 2개(소수성)</text>
+      <text x="380" y="18" class="fig-muted">물</text>
+      <circle cx="320" cy="50" r="10" class="fig-dot"/><circle cx="360" cy="50" r="10" class="fig-dot"/><circle cx="400" cy="50" r="10" class="fig-dot"/><circle cx="440" cy="50" r="10" class="fig-dot"/><circle cx="480" cy="50" r="10" class="fig-dot"/>
+      <line x1="316" y1="60" x2="316" y2="110" class="fig-ink"/><line x1="324" y1="60" x2="324" y2="110" class="fig-ink"/>
+      <line x1="356" y1="60" x2="356" y2="110" class="fig-ink"/><line x1="364" y1="60" x2="364" y2="110" class="fig-ink"/>
+      <line x1="396" y1="60" x2="396" y2="110" class="fig-ink"/><line x1="404" y1="60" x2="404" y2="110" class="fig-ink"/>
+      <line x1="436" y1="60" x2="436" y2="110" class="fig-ink"/><line x1="444" y1="60" x2="444" y2="110" class="fig-ink"/>
+      <line x1="476" y1="60" x2="476" y2="110" class="fig-ink"/><line x1="484" y1="60" x2="484" y2="110" class="fig-ink"/>
+      <line x1="316" y1="120" x2="316" y2="170" class="fig-ink"/><line x1="324" y1="120" x2="324" y2="170" class="fig-ink"/>
+      <line x1="356" y1="120" x2="356" y2="170" class="fig-ink"/><line x1="364" y1="120" x2="364" y2="170" class="fig-ink"/>
+      <line x1="396" y1="120" x2="396" y2="170" class="fig-ink"/><line x1="404" y1="120" x2="404" y2="170" class="fig-ink"/>
+      <line x1="436" y1="120" x2="436" y2="170" class="fig-ink"/><line x1="444" y1="120" x2="444" y2="170" class="fig-ink"/>
+      <line x1="476" y1="120" x2="476" y2="170" class="fig-ink"/><line x1="484" y1="120" x2="484" y2="170" class="fig-ink"/>
+      <circle cx="320" cy="180" r="10" class="fig-dot"/><circle cx="360" cy="180" r="10" class="fig-dot"/><circle cx="400" cy="180" r="10" class="fig-dot"/><circle cx="440" cy="180" r="10" class="fig-dot"/><circle cx="480" cy="180" r="10" class="fig-dot"/>
+      <text x="380" y="215" class="fig-muted">물</text>
+      <text x="300" y="240" class="fig-muted">머리는 바깥(물 쪽), 꼬리는 안쪽</text>
+    </svg><figcaption>머리는 물 쪽으로, 꼬리는 물을 피해 안쪽에서 서로 마주 봐요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>인지질(phospholipid)은 중성지질에서 지방산 하나를 빼고, 그 자리에 인산기(PO₄)를 포함한 기를 붙인 분자예요. 글리세롤의 탄소 3개 가운데 2개에는 지방산, 1개에는 인산기가 붙어요. 즉 인지질 = 글리세롤 1개 + 지방산 2개 + 인산기 1개예요("인산기 3개 + 글리세롤 1개"가 아니에요). (0903 49:46–50:22, 교재 1장 p.10)</p>
+    <p>지방산 두 개(꼬리)는 비극성·소수성이고, 인산기(머리)는 음전하를 띠어 극성·친수성이에요. 한 분자 안에 둘 다 있어요. 인산기 쪽을 극성 머리, 지방산 쪽을 비극성 꼬리라고 해요. 그래서 인지질은 트라이글리세라이드(중성지질)보다 인산기와 극성 단위를 더 가지고 있어요. (0903 50:28–51:06)</p>
+    <ol class="steps">
+      <li>인지질을 물에 넣으면 머리는 물을 향하고, 꼬리는 물을 피해 서로 마주 봐요.</li>
+      <li>그래서 저절로 두 겹의 층, 인지질 이중층이 생겨요. 세포막에서 소수성 꼬리는 안쪽, 친수성 머리는 물(세포 안팎) 쪽에 놓여요. (0903 51:06–51:39)</li>
+      <li>이 인지질 이중층이 세균·식물·동물·버섯·곰팡이 등 모든 생물의 세포막(생체막)의 기본 구조예요. (0903 51:45–52:01, 교재 1장 p.11)</li>
+    </ol>
+    <p>살아 있는 모든 세포의 경계를 이루는 생체막에서 2중층을 만드는 분자는 인지질이에요. 단백질·탄수화물·지방(중성지방)은 2중층을 만들지 않고, 콜레스테롤은 동물 세포막의 인지질 사이사이에 끼어 막을 안정화할 뿐 2중층의 기본 분자가 아니에요(<a href="#s4-steroid">스테로이드와 콜레스테롤</a>).</p>
+    <p>인지질 꼬리는 늘 포화지방산인 것이 아니에요. 한쪽 꼬리가 이중결합에서 꺾인 불포화지방산인 경우가 흔해요(<a href="#s4-saturation">포화지방산과 불포화지방산</a>).</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>"나는 지방산이 싫어. 서울 산이 좋아." 지방산 하나를 없애고 인산기로 바꾸는 장면을 기억하게 하는 말장난이에요. (0903 49:42)</p>
+    <blockquote>"모든 생물의 세포막은 인지질 이중층으로 구성이 됩니다." (0903 52:01)</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li>중성지질과 인지질을 헷갈리기 쉬워요. 지방산은 3개 대 2개, 인산기는 없음 대 있음(1개)이에요. (0903 50:03–50:11)</li>
+      <li>머리와 꼬리의 극성을 뒤바꾸기 쉬워요. 머리(인산기)는 극성·친수성, 꼬리(지방산)는 비극성·소수성이라 꼬리끼리 안쪽에서 마주 봐요. (0903 51:11–51:35)</li>
+    </ul>
+  </div>
+  <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+    <p>인지질의 인산기에는 다시 다른 종류의 극성 단위(예: 콜린, 에탄올아민)가 붙어 머리를 이뤄요. 그래서 머리 부분은 "콜린·인산염·글리세롤"처럼 그려지기도 해요.</p>
+    <p>세포막에는 막을 관통하는 단백질도 박혀 있어요. 막 단백질도 친수성 부분과 소수성 부분을 함께 가져서, 막을 관통하는 부분은 인지질의 소수성 꼬리와 닿는 소수성 부분이고, 물에 드러난 부분은 친수성이에요.</p>
+    <p>출처: 교재 1장 p.10–12(인지질 구조, 그림 1.12), p.22(1.4.1 세포막의 구조 "막 단백질 또한 친수성과 소수성을 동시에 갖고 있어").</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">인지질은 글리세롤 + 지방산 2개 + 인산기 1개이고, 머리는 물 쪽, 꼬리는 안쪽으로 모여 이중층을 만들어요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>인지질(phospholipid)</dt><dd>극성 머리(인산기) + 비극성 꼬리(지방산 2개)</dd><dt>인지질 이중층</dt><dd>모든 생물의 세포막 기본 구조</dd></dl>
+  </div>
+</article>
+
+<article class="topic" id="s4-steroid"><h3>스테로이드와 콜레스테롤</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p3</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">콜레스테롤은 고리 네 개를 붙여 만든 기름 친구예요.</p>
+    <figure class="figure"><svg id="fig-steroid-rings" viewBox="0 0 520 170" role="img" aria-label="육각형 테두리 세 개와 오각형 테두리 하나가 이어 붙은 탄소 고리 4개 그림, 오른쪽 끝에 짧은 곁가지 선">
+      <polygon points="60,90 80,70 110,70 130,90 110,110 80,110" class="fig-ink"/>
+      <polygon points="130,90 150,70 180,70 200,90 180,110 150,110" class="fig-ink"/>
+      <polygon points="180,70 200,50 230,50 250,70 230,90 200,90" class="fig-ink"/>
+      <polygon points="250,70 275,55 295,75 285,100 255,95" class="fig-ink"/>
+      <polyline points="295,75 330,60 360,75 390,60" class="fig-accent"/>
+      <text x="120" y="145" class="fig-text">탄소 고리 4개 + 곁가지</text>
+    </svg><figcaption>긴 꼬리가 없고, 고리 네 개가 뼈대예요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>스테로이드(steroid)는 중성지질·인지질과 완전히 다른 구조로, 탄소 고리 4개로 이루어져요. 스테로이드에 특정 곁가지가 붙은 것이 콜레스테롤(cholesterol)이에요. 즉 콜레스테롤은 스테로이드의 한 종류예요. (0903 52:16–52:43, 56:19)</p>
+    <p>콜레스테롤(스테로이드)은 지방산을 갖지 않아요. 지방산을 가진 지질은 중성지질(지방산 3개)과 인지질(지방산 2개)이에요.</p>
+    <p>콜레스테롤의 두 얼굴 (0903 53:00–53:56)</p>
+    <ul>
+      <li>혈중 농도가 높으면 혈관이 막혀요.</li>
+      <li>없어서는 안 돼요. 호르몬은 단백질 호르몬과 지질 호르몬으로 나뉘는데, 지질 호르몬(성호르몬 등)은 콜레스테롤로 만들어요.</li>
+      <li>동물 세포막은 인지질 이중층만으로 되어 있지 않고, 사이사이에 콜레스테롤이 끼어 막을 안정화해요(강의노트 "스테로이드는 생체막 구조를 튼튼히").</li>
+    </ul>
+    <p>콜레스테롤은 간에서 만들어져 혈액을 타고 온몸으로 가요. 소수성이라 혈액에 녹지 않아서, 물에 잘 녹는 단백질이 둘러싸 덩어리를 만드는데 이것이 LDL(저밀도 지질단백질)이에요. LDL이 너무 많으면 혈중 콜레스테롤 농도가 높아져요. (0903 53:56–54:44)</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <blockquote>"콜레스테롤은 상식적으로도 반드시 알아야 됩니다, 건강을 위해서." (0903 52:49)</blockquote>
+    <blockquote>"콜레스테롤은 우리 몸에 꼭 필요하고 그러다 보니까 간에서 만들어 줍니다." (0903 53:56)</blockquote>
+    <p>종합검진 때 LDL, HDL, 총 콜레스테롤 검사를 꼭 받고 가족에게도 권하라고 했어요. 유전적으로 수치가 높은 사람이 있다고 했어요. (0903 54:59–56:11)</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li>스테로이드와 콜레스테롤을 다른 무리로 착각하기 쉬워요. "이게 스테로이드의 한 종류입니다." (0903 56:19)</li>
+      <li>콜레스테롤이 해롭기만 하다고 착각하기 쉬워요. 농도가 높으면 해롭지만, 호르몬 원료와 막 안정화에 꼭 필요해요. (0903 53:00–53:47)</li>
+      <li>세포막이 인지질 이중층만으로 되어 있다고 생각하기 쉬워요. 동물 세포막에는 콜레스테롤도 끼어 있어요. 그래도 2중층을 만드는 기본 분자는 인지질이에요. (0903 53:38)</li>
+      <li>모든 호르몬을 콜레스테롤로 만든다고 착각하기 쉬워요. 지질 호르몬만 콜레스테롤로 만들어요. (0903 53:15)</li>
+    </ul>
+  </div>
+  <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+    <p>콜레스테롤이 지방산이 없는데도 지질로 분류되는 까닭은, 지질이 "대부분 극성을 띠지 않는 탄화수소로 이루어진 생물분자"이기 때문이에요. 콜레스테롤은 탄소 고리에 탄소와 수소로 된 곁사슬(탄화수소)이 붙은 구조라 비극성·소수성이에요. 탄수화물, 지방산, 글리세롤을 가져서 지질인 것이 아니에요(탄화수소는 <a href="#s1-polarity">전기음성도와 극성, 친수성과 소수성</a>).</p>
+    <p>출처: 교재 1장 p.10(1.2.3 지질 첫 문단), p.12 그림 1.13(콜레스테롤: 탄소 고리 구조에 연결된 탄화수소 곁사슬 하나와 수산기 하나).</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">콜레스테롤은 탄소 고리 4개의 스테로이드이고, 지방산은 없지만 탄화수소라 소수성이어서 지질이에요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>스테로이드(steroid)</dt><dd>탄소 고리 4개로 된 지질</dd><dt>콜레스테롤(cholesterol)</dt><dd>스테로이드의 한 종류, 지질 호르몬 원료, 막 안정화</dd></dl>
+  </div>
+</article>
+    </section>
+    <section id="s5"><h2>5. 단백질</h2>
+<article class="topic" id="s5-amino-acid"><h3>아미노산과 펩타이드 결합</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p3</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">아미노산은 몸통은 모두 같고 모자만 다른 인형이에요.</p>
+    <figure class="figure"><svg id="fig-amino-hat" viewBox="0 0 520 200" role="img" aria-label="몸통 테두리 네모 두 개가 똑같고, 위에 올린 모자 모양만 하나는 작은 세모, 하나는 긴 막대로 다른 그림">
+      <rect x="80" y="90" width="110" height="70" rx="8" class="fig-ink"/><text x="112" y="130" class="fig-text">몸통</text>
+      <polygon points="105,90 135,55 165,90" class="fig-accent"/><text x="125" y="80" class="fig-muted">모자</text>
+      <rect x="320" y="90" width="110" height="70" rx="8" class="fig-ink"/><text x="352" y="130" class="fig-text">몸통</text>
+      <rect x="360" y="30" width="30" height="60" class="fig-accent"/><text x="400" y="60" class="fig-muted">모자</text>
+      <text x="170" y="190" class="fig-muted">몸통은 같고 모자만 달라요</text>
+    </svg><figcaption>몸통은 모두 같고, 위의 모자만 달라서 20가지 종류가 생겨요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>단백질(protein)은 아미노산의 중합체예요. 녹말이 포도당이 이어진 것이듯, 단백질은 아미노산이 이어진 것이에요. 지방산·당·뉴클레오티드가 이어진 것이 아니에요. (0903 63:29–63:42)</p>
+    <p>아미노산(amino acid)의 구조: 가운데 탄소(C)에 네 가지가 붙어 있어요. (0903 64:41, 교재 1장 p.13)</p>
+    <ul>
+      <li>아미노기(−NH₂)</li>
+      <li>카복실기(−COOH)</li>
+      <li>수소(H)</li>
+      <li>R기(곁사슬): 아미노산마다 다른 부분. R 자리에 올 수 있는 곁사슬은 20가지라서 생물의 단백질은 20가지 아미노산으로 이루어져요. 예: R = CH₂OH이면 세린, R = CH₃이면 알라닌. (0903 64:41–65:21)</li>
+    </ul>
+    <p>아미노산끼리의 결합이 펩타이드 결합(peptide bond)이고, 펩타이드 결합으로 길게 이어진 것이 단백질이에요. (0903 65:30)</p>
+    <p>R기에 따라 화학적 성질이 달라요. 세린·트레오닌·타이로신은 곁사슬에 OH(산소)가 있어 극성·친수성이고, 알라닌·류신은 극성이 없는 소수성 아미노산이에요. (0903 65:47–66:10)</p>
+    <p>아미노산과 다른 단위체를 구분해요. 단당류가 이어지면 다당류(<a href="#s3-storage">다당류 — 녹말과 글리코겐</a>), 뉴클레오타이드가 이어지면 핵산이에요(핵산은 이번 수업에서 이름만 나왔어요). 글리신은 아미노산의 한 종류이고, 효소는 단백질이 하는 일의 하나예요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>교수님은 세린(R = CH₂OH)과 알라닌(R = CH₃)을 나란히 보여 주며 R기가 무엇이냐에 따라 아미노산의 성질이 달라진다고 했어요. (0903 65:01–66:10)</p>
+    <p>수업에서 튼 영상은 아미노산 서열이 구조와 기능을 정하고, 그 서열은 유전자의 DNA에 적혀 있다고 설명했어요. 영상은 포유류에 가장 많은 단백질인 콜라겐이 세 가닥 나선 구조라는 예도 들었어요. (0903 64:09–66:45)</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li>아미노산마다 뼈대가 다르다고 착각하기 쉬워요. 가운데 C·아미노기·카복실기·H는 같고, R기만 달라서 종류와 성질이 갈려요. (0903 65:01, 65:55–66:10)</li>
+      <li>극성 아미노산과 소수성 아미노산의 판별: 곁사슬에 OH가 있으면 극성(세린), 탄소와 수소뿐이면 소수성(알라닌)이에요. (0903 66:00)</li>
+      <li>아미노산의 R(곁사슬)과 지방산의 R(탄소 사슬 전체)은 기호만 같고 가리키는 것이 달라요. (0903 47:47, 65:01)</li>
+    </ul>
+  </div>
+  <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+    <p>세포 안처럼 물이 있는 환경에서는 아미노기가 H⁺를 받아 H₃N⁺로, 카복실기가 H⁺를 내놓아 COO⁻로 그려지기도 해요. 그래서 가운데 C에 H₃N⁺, COO⁻, H, R이 붙은 그림도 아미노산이에요. R이 CH₃이면 알라닌, CH₂–CH₂–S–CH₃이면 메싸이오닌(메티오닌)이에요.</p>
+    <figure class="figure"><svg id="fig-amino-two" viewBox="0 0 560 230" role="img" aria-label="두 분자 구조. 각각 가운데 C에 왼쪽 H₃N⁺, 오른쪽 COO⁻, 아래 H가 붙어 있고 위쪽 R 자리는 왼쪽 분자가 CH₃, 오른쪽 분자가 CH₂–CH₂–S–CH₃이다. 두 분자 사이에 펩타이드 결합으로 이어진다는 점선 화살표">
+      <text x="120" y="30" class="fig-text">CH₃</text>
+      <line x1="130" y1="38" x2="130" y2="95" class="fig-accent"/>
+      <text x="124" y="115" class="fig-text">C</text>
+      <line x1="118" y1="110" x2="80" y2="110" class="fig-ink"/><text x="30" y="115" class="fig-text">H₃N⁺</text>
+      <line x1="142" y1="110" x2="180" y2="110" class="fig-ink"/><text x="185" y="115" class="fig-text">COO⁻</text>
+      <line x1="130" y1="120" x2="130" y2="150" class="fig-ink"/><text x="124" y="170" class="fig-text">H</text>
+      <text x="90" y="205" class="fig-muted">R = CH₃ (알라닌)</text>
+      <line x1="240" y1="110" x2="300" y2="110" class="fig-danger" stroke-dasharray="6 5"/><polyline points="292,104 302,110 292,116" class="fig-danger"/>
+      <text x="232" y="95" class="fig-muted">이어지면</text>
+      <text x="370" y="20" class="fig-text">CH₃</text><text x="384" y="38" class="fig-text">S</text><text x="370" y="56" class="fig-text">CH₂</text><text x="370" y="74" class="fig-text">CH₂</text>
+      <line x1="390" y1="80" x2="390" y2="97" class="fig-accent"/>
+      <text x="384" y="115" class="fig-text">C</text>
+      <line x1="378" y1="110" x2="345" y2="110" class="fig-ink"/><text x="305" y="130" class="fig-text">H₃N⁺</text>
+      <line x1="402" y1="110" x2="440" y2="110" class="fig-ink"/><text x="445" y="115" class="fig-text">COO⁻</text>
+      <line x1="390" y1="120" x2="390" y2="150" class="fig-ink"/><text x="384" y="170" class="fig-text">H</text>
+      <text x="330" y="205" class="fig-muted">R = CH₂–CH₂–S–CH₃ (메싸이오닌)</text>
+    </svg><figcaption>물속에서 흔히 그리는 모양: 가운데 C에 H₃N⁺, COO⁻, H, R이 붙어 있어요.</figcaption></figure>
+    <p>아미노산이 펩타이드 결합으로 길게 이어진 사슬을 폴리펩타이드(polypeptide)라고 하고, 이것이 접혀 단백질이 돼요.</p>
+    <p>출처: 강의노트 1장 p3(1.2.4 "폴리펩타이드"), 교재 1장 p.13(아미노산 기본 구조, 폴리펩타이드). 이온화된 표기(H₃N⁺, COO⁻)는 일반화학·생화학 표준 표기예요(교재 1장 본문에는 NH₂·COOH 형태만 있어요).</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">단백질은 20가지 아미노산이 펩타이드 결합으로 이어진 중합체이고, R기가 아미노산의 성질을 정해요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>아미노산(amino acid)</dt><dd>가운데 C + 아미노기 + 카복실기 + H + R기</dd><dt>펩타이드 결합(peptide bond)</dt><dd>아미노산끼리의 결합</dd></dl>
+  </div>
+</article>
+
+<article class="topic" id="s5-structure"><h3>구조와 기능 — 1·2·3차 구조</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p4</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">구슬을 꿴 순서가 정해지면, 목걸이는 저절로 제 모양으로 접혀요.</p>
+    <figure class="figure"><svg id="fig-structure-levels" viewBox="0 0 560 190" role="img" aria-label="왼쪽: 색칠된 구슬이 한 줄로 이어진 1차 구조. 가운데: 용수철처럼 꼬인 선(알파 나선)과 지그재그 선(베타 병풍)인 2차 구조. 오른쪽: 선이 뭉쳐 접힌 덩어리인 3차 구조">
+      <line x1="20" y1="90" x2="160" y2="90" class="fig-ink"/>
+      <circle cx="30" cy="90" r="7" class="fig-dot"/><circle cx="55" cy="90" r="7" class="fig-dot"/><circle cx="80" cy="90" r="7" class="fig-dot"/><circle cx="105" cy="90" r="7" class="fig-dot"/><circle cx="130" cy="90" r="7" class="fig-dot"/><circle cx="155" cy="90" r="7" class="fig-dot"/>
+      <text x="40" y="150" class="fig-text">1차: 순서</text>
+      <path d="M200 60 q10 -20 20 0 q10 20 20 0 q10 -20 20 0 q10 20 20 0" class="fig-accent"/>
+      <polyline points="200,120 215,105 230,120 245,105 260,120 275,105" class="fig-accent"/>
+      <text x="200" y="150" class="fig-text">2차: 부분 모양</text>
+      <path d="M420 60 q60 0 40 40 q-20 40 -60 20 q-40 -20 -10 -50 q30 -30 50 10 q15 30 -20 30" class="fig-ink"/>
+      <text x="390" y="150" class="fig-text">3차: 전체 입체</text>
+    </svg><figcaption>줄 세우기, 부분 꼬기, 전체 접기 순서로 모양이 생겨요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>구조와 기능은 밀접하게 관련되어 있어요. 분자 수준에서도 같아요. 예를 들어 설탕 분해 효소는 먼저 설탕과 결합해야 하므로 설탕을 알아보는 구조를 가져야 해요. 이처럼 단백질은 효소로 작용해요(효소는 단백질이 하는 가장 중요한 일 가운데 하나예요). (0903 66:55–67:54, 교재 1장 p.11 "효소(enzyme)로 작용하여 세포의 반응속도를 촉진")</p>
+    <ul>
+      <li>1차 구조: 아미노산의 순서(서열)예요. 서로 다른 단백질은 아미노산의 서로 다른 서열로 구성돼요. 지방·당·글리세롤의 서열이 아니에요. 1차 구조는 DNA(유전 정보)가 정해요. (0903 68:05, 68:43)</li>
+      <li>2차 구조: 3차 구조 안에서 부분적으로 되풀이되는 패턴이에요. 꼬인 알파 나선(α-helix)과 병풍처럼 접힌 베타 병풍(β-pleated sheet)이 있어요. 위아래 아미노산 사이의 수소결합이 2차 구조를 안정시켜요. (0903 68:58–69:40)</li>
+      <li>3차 구조: 단백질 전체의 입체(3차원) 구조예요. 순서가 정해지면 수소결합·이온결합 등이 저절로 생겨 저절로 접혀요. (0903 67:56–68:24)</li>
+    </ul>
+    <p>인과 사슬: DNA → 1차 구조 → 3차 구조 → 기능. (0903 68:34–68:48)</p>
+    <p>2차와 3차 구조를 모두 안정시키는 결합은 수소결합이에요. 이온결합은 3차 구조를 유지하는 데는 함께 기여하지만, 2차 구조(알파 나선·베타 병풍)를 붙잡는 결합은 아니에요. 그래서 "2차 및 3차 구조"를 함께 안정시키는 결합을 하나 고르면 수소결합이에요. 공유결합(펩타이드 결합)은 아미노산을 한 줄로 잇는 결합이지 접힌 모양을 붙잡는 결합으로 배우지 않았고, 비극성 공유결합은 전자를 고르게 나누는 공유결합일 뿐이에요. 반데르발스 힘은 수업에서 생략했어요(<a href="#s1-hbond">수소결합</a>).</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>휴대폰, 의자, 시계, 마이크의 모양은 기능 때문에 정해졌다는 비유로 구조와 기능의 관계를 설명했어요. (0903 67:07–67:16)</p>
+    <blockquote>"기능하고 구조는 밀접한 관련이 있습니다. 이게 분자 수준에서도 마찬가지라는 얘기다." (0903 67:19–67:22)</blockquote>
+    <p>"그러면 이 1차 구조는 누가 정하니?"라고 되묻고 DNA라고 답했어요. (0903 68:43)</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li>설명 순서가 3차 → 1차 → 2차여서 번호를 뒤섞기 쉬워요. 1차는 서열, 2차는 부분 패턴(알파 나선, 베타 병풍), 3차는 전체 입체 구조예요. (0903 67:56–69:14)</li>
+      <li>1차 구조를 누가 정하는지 헷갈려요. DNA예요. (0903 68:43)</li>
+      <li>2차 구조와 3차 구조를 안정시키는 힘을 헷갈리기 쉬워요. 2차 구조는 아미노산 사이의 수소결합, 3차 구조는 수소결합·이온결합 등이에요. (0903 68:18, 69:20, 69:50)</li>
+    </ul>
+  </div>
+  <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+    <p>물속에서 단백질이 접힐 때, 소수성(비극성) 곁사슬을 가진 아미노산은 물과 멀어지는 쪽, 즉 접힌 단백질의 안쪽에 모이고, 친수성 곁사슬은 물에 닿는 바깥쪽에 놓이는 경우가 많아요. 극성 분자(물)가 끼리끼리 모이면서 비극성 부분을 몰아내기 때문이에요. 사슬의 한쪽 끝이냐, 펩타이드 결합 자리냐가 위치를 정하는 기준이 아니에요.</p>
+    <p>출처: 강의노트 1장 p2("극성 분자는 끼리끼리 모이는 경향이 있으며, 비극성 분자를 몰아낸다"), 교재 1장 p.14(곁사슬의 극성 또는 비극성 결합들도 3차 구조를 결정).</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">1차는 아미노산의 순서, 2차는 수소결합으로 생긴 부분 모양, 3차는 전체 입체 구조이고, 구조가 기능을 정해요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>1차 구조</dt><dd>아미노산 서열(DNA가 정함)</dd><dt>2차 구조</dt><dd>알파 나선·베타 병풍, 수소결합이 안정화</dd><dt>3차 구조</dt><dd>전체 입체 구조</dd></dl>
+  </div>
+</article>
+
+<article class="topic" id="s5-denature"><h3>변성</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p4</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">접힌 모양이 풀리면 단백질은 제 할 일을 못 해요.</p>
+    <figure class="figure"><svg id="fig-denature-unfold" viewBox="0 0 520 170" role="img" aria-label="왼쪽 뭉쳐 접힌 선 덩어리가 열 표시 화살표를 지나 오른쪽에서 길게 풀린 물결선이 되는 그림">
+      <path d="M60 60 q60 0 40 40 q-20 40 -60 20 q-40 -20 -10 -50 q30 -30 50 10" class="fig-ink"/>
+      <text x="40" y="150" class="fig-text">접힘: 일함</text>
+      <line x1="170" y1="85" x2="260" y2="85" class="fig-danger"/><polyline points="250,78 262,85 250,92" class="fig-danger"/>
+      <text x="190" y="70" class="fig-text">열</text>
+      <path d="M290 85 q20 -15 40 0 q20 15 40 0 q20 -15 40 0 q20 15 40 0" class="fig-ink"/>
+      <text x="320" y="150" class="fig-text">풀림: 일 못 함</text>
+    </svg><figcaption>달걀을 부치면 투명한 흰자가 하얗게 바뀌는 것과 같아요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>변성(denaturation): 3차 구조를 유지하던 이온결합·수소결합이 열 등으로 깨지면 접혀 있던 사슬이 펼쳐지며 구조가 무너지는 것이에요. 구조가 무너지면 단백질은 대개 기능을 잃어요. 아미노산의 순서(1차 구조)가 그대로여도 접힌 모양이 풀리면 기능을 잃어요. (0903 69:50–70:32, 교재 1장 p.14)</p>
+    <p>수소결합은 열에 약하다는 사실(<a href="#s1-hbond">수소결합</a>)과 이어져요. 달걀 프라이의 흰자가 투명했다가 하얗게 변하는 것이 변성의 예예요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>의자 비유: ㄱ자 모양 의자가 부러져 뒤로 넘어가면 앉을 수 없어요. 구조가 무너지면 기능을 잃는다는 뜻이에요. (0903 70:23–70:32)</p>
+    <blockquote>"구조가 깨지면은 기능이 사라지죠." (0903 70:32)</blockquote>
+    <p>달걀 프라이 비유를 수소결합 설명 때에 이어 다시 썼어요. (0903 21:32, 69:57)</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li>아미노산 순서만 그대로면 기능도 그대로라고 착각하기 쉬워요. 접힌 구조가 무너지면(변성) 기능을 잃어요. (0903 70:16–70:32)</li>
+      <li>변성은 수소결합이 열에 약하다는 사실과 이어져요. 펩타이드 결합이 끊기는 것이 아니라 접힘을 붙잡던 약한 결합이 깨지는 거예요. (0903 20:34, 69:50)</li>
+    </ul>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">열 등으로 수소결합·이온결합이 깨져 접힌 구조가 풀리면 단백질은 기능을 잃어요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms"><dt>변성(denaturation)</dt><dd>입체 구조가 무너져 기능을 잃는 것</dd></dl>
+  </div>
+</article>
+    </section>
+    <section id="s6"><h2>6. 요약 · 예고</h2>
+<article class="topic" id="s6-cheatsheet"><h3>30초 요약</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p1–4</span></div>
+  <div class="table-wrap"><table>
+    <tr><th>주제</th><th>시험 직전 한 줄</th></tr>
+    <tr><td>원소</td><td>C·H·O·N이 약 96%. 고분자의 뼈대 원소는 탄소. 미량원소는 적지만 필수.</td></tr>
+    <tr><td>원자</td><td>핵 = 양성자(+) + 중성자, 전자는 핵 밖. 원자번호 = 양성자 수. 최외각이 꽉 차면 결합하지 않음.</td></tr>
+    <tr><td>이온·공유결합</td><td>이온결합은 양이온·음이온의 인력(Na⁺, Cl⁻), 공유결합은 전자쌍을 함께 씀.</td></tr>
+    <tr><td>극성</td><td>산소가 전자를 세게 끌어 O–H는 극성 공유결합, C–H는 비극성. 물 분자는 굽어서 극성 분자.</td></tr>
+    <tr><td>친수·소수</td><td>극성 분자와 이온은 친수성, 탄화수소(C와 H만) 같은 비극성은 소수성.</td></tr>
+    <tr><td>수소결합</td><td>O·N에 붙은 H(δ+)와 이웃 O·N(δ−) 사이 약한 인력. 분자 안 O–H 자체는 극성 공유결합. C에 붙은 H는 하지 않음.</td></tr>
+    <tr><td>수소결합의 자리</td><td>물은 분자 사이, 단백질 3차 구조는 한 사슬 안, DNA는 두 가닥 사이(이중나선). 열에 약함.</td></tr>
+    <tr><td>얼음</td><td>얼면 부피가 커져 밀도가 낮아 뜸 → 호수가 위에서부터 얼음.</td></tr>
+    <tr><td>용매</td><td>물은 극성 용매(녹이는 쪽). 극성·이온 물질을 녹이고 비극성은 못 녹임.</td></tr>
+    <tr><td>pH(보충)</td><td>물은 일부가 H⁺와 OH⁻로 해리. 중성 = pH 7(25 °C 기준), 7 미만 산성, 7 초과 염기성.</td></tr>
+    <tr><td>비열·기화열</td><td>둘 다 크다(수소결합 때문). 땀은 흘릴 때가 아니라 증발할 때 열을 가져감.</td></tr>
+    <tr><td>응집력</td><td>증산작용의 장력이 끌어올리고, 응집력이 물줄기를 잇는다. 표면장력도 큼.</td></tr>
+    <tr><td>단당·이당</td><td>탄수화물 C : H : O = 1 : 2 : 1. 엿당 = 포+포, 설탕 = 포+과, 젖당 = 포+갈.</td></tr>
+    <tr><td>녹말·글리코겐</td><td>둘 다 포도당 저장. 녹말은 식물, 글리코겐은 동물(가지 많음, 간과 근육). 아밀라아제는 엿당 단위로 자름.</td></tr>
+    <tr><td>셀룰로오스</td><td>포도당이 β 결합(하나씩 뒤집힘)으로 이어진 세포벽 성분. 아밀라아제는 α 결합만 끊음. 소는 공생 미생물 덕에 소화.</td></tr>
+    <tr><td>지질 분류</td><td>중성지질·인지질·스테로이드. 섬유소·단당류는 탄수화물이라 지질이 아님.</td></tr>
+    <tr><td>중성지방</td><td>글리세롤 1 + 지방산 3(트라이글리세라이드). 장기 에너지 저장, 소수성.</td></tr>
+    <tr><td>포화·불포화</td><td>이중결합이 있으면 불포화 → 꺾임 → 틈 → 유동성 증가 → 액체. 추운 곳 생물은 불포화 비율이 높음.</td></tr>
+    <tr><td>인지질</td><td>글리세롤 + 지방산 2 + 인산기 1. 극성 머리는 물 쪽, 비극성 꼬리는 안쪽 → 인지질 이중층이 모든 생물의 세포막.</td></tr>
+    <tr><td>콜레스테롤</td><td>탄소 고리 4개의 스테로이드, 지방산 없음. 탄화수소라 소수성이어서 지질. 지질 호르몬 원료, 동물 세포막 안정화.</td></tr>
+    <tr><td>아미노산</td><td>가운데 C + 아미노기 + 카복실기 + H + R기(20가지). 펩타이드 결합으로 이어진 중합체가 단백질.</td></tr>
+    <tr><td>단백질 구조</td><td>1차 구조 = 아미노산의 순서(DNA가 정함), 2차 = 알파 나선·베타 병풍(수소결합), 3차 = 전체 입체. 효소로 작용하는 단백질이 많음.</td></tr>
+    <tr><td>변성</td><td>열 등으로 수소결합·이온결합이 깨져 입체 구조가 풀리면 기능을 잃음. 1차 구조가 그대로여도 마찬가지.</td></tr>
+  </table></div>
+</article>
+
+<article class="topic" id="s6-next"><h3>다음 시간 예고</h3><div class="tags"><span class="tag date">0903 수업</span><span class="tag slide">1장 p4–6</span></div>
+  <p>끊긴 지점: 단백질의 1·2·3차 구조와 변성까지 설명하고 수업이 끝났어요.</p>
+  <blockquote>"자, 요 정도 하고 나머지는 다음 시간에 해야 되겠습니다." (0903 70:36)</blockquote>
+  <p>다음에 나올 항목(이름만):</p>
+  <ul>
+    <li>1.2.4 단백질의 4차 구조(헤모글로빈 예)</li>
+    <li>1.2.5 뉴클레오타이드와 핵산</li>
+    <li>1.3 세포: 원핵세포와 진핵세포, 세포 속 구조들</li>
+    <li>1.4 세포막과 수송</li>
+    <li>수업 중 미룬 것: 2장 물질대사(글리코겐은 단기, 지방은 장기 저장인 이유; 산소 분자가 전자를 좋아한다는 것)</li>
+  </ul>
+</article>
+
+<article class="topic" id="s6-links"><h3>함께 보면 좋은 자료</h3><div class="tags"><span class="tag date">0903 수업</span></div>
+  <ul>
+    <li><a href="복습문제_0903_Biomolecules_and_Cells.html">복습문제 40선 — 0903 수업 범위</a></li>
+    <li><a href="#s1-hbond">수소결합</a></li>
+    <li><a href="#s4-phospholipid">인지질과 인지질 이중층</a></li>
+    <li><a href="#s5-structure">구조와 기능 — 1·2·3차 구조</a></li>
+  </ul>
+</article>
+    </section>
+  </main>
+  <footer>출처: 이영만 교수님 강의노트(1장) · 수업 녹음 전사(0903) · 『생명과학: 기초와 응용』 2판 1장.</footer>
+    </div>
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="panel-right-title">
+      <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-right-title">페이지 요약</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-sub" id="sum-for">전체 흐름</p>
+        <p class="panel-empty" id="sum-empty">페이지를 넘기면 그 페이지의 핵심 식과 용어가 여기에 나옵니다.</p>
+        <div class="sums"></div>
+      </div>
+    </aside>
+  </div>
+  <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
+  <nav class="pager" aria-label="화면 이동">
+    <div class="pager-inner">
+      <button class="btn btn-ghost" id="pager-prev" type="button">이전</button>
+      <span class="pager-count" id="pager-count"></span>
+      <button class="btn btn-primary" id="pager-next" type="button">시작하기</button>
+    </div>
+  </nav>
+  <p class="sr-only" id="pager-status" aria-live="polite"></p>
+
+  <script id="theme-ui">
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const sysDark = matchMedia('(prefers-color-scheme: dark)');
+      const KEY = 'od-theme';
+      const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+      function label() {
+        const next = isDark() ? '라이트 모드로 전환' : '다크 모드로 전환';
+        btn.setAttribute('aria-label', next);
+        btn.title = next;
+      }
+      btn.addEventListener('click', () => {
+        const t = isDark() ? 'light' : 'dark';
+        // 시스템 설정과 같아지면 저장을 지워 다시 시스템을 따른다
+        if ((t === 'dark') === sysDark.matches) { delete root.dataset.theme; try { localStorage.removeItem(KEY); } catch (e) {} }
+        else { root.dataset.theme = t; try { localStorage.setItem(KEY, t); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+        label();
+      });
+      sysDark.addEventListener('change', label);
+      window.addEventListener('storage', (e) => {
+        if (e.key !== KEY) return;
+        if (e.newValue === 'light' || e.newValue === 'dark') root.dataset.theme = e.newValue; else delete root.dataset.theme;
+        label();
+      });
+      label();
+    })();
+  </script>
+  <script id="panels-ui">
+    (function () {
+      const body = document.body;
+      const layout = document.querySelector('.layout');
+      const kind = body.dataset.panels;
+      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const scrim = document.getElementById('panel-scrim');
+      const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
+      const wideMq = matchMedia('(min-width: 1024px)');
+      const roomyMq = matchMedia('(min-width: 1280px)');
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      const PREF = 'od-panels:' + kind;
+      // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
+      const RANGE = body.dataset.range || '';
+      const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+      const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+      let overlay = null;
+
+      // ---------- 열고 닫기 ----------
+      function docked() {
+        const pref = store.get(PREF, {});
+        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+      }
+      function sync() {
+        const wide = wideMq.matches;
+        const d = docked();
+        ['left', 'right'].forEach((side) => {
+          const open = wide ? d[side] : overlay === side;
+          const p = panels[side];
+          layout.dataset[side] = open ? 'open' : 'closed';
+          p.classList.toggle('is-open', !wide && open);
+          p.inert = !open;
+          if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
+          toggles[side].setAttribute('aria-expanded', String(open));
+        });
+        const drawer = !wide && overlay !== null;
+        scrim.classList.toggle('is-on', drawer);
+        body.classList.toggle('drawer-open', drawer);
+        blockers.forEach((el) => { el.inert = drawer; });
+      }
+      function openDrawer(side) {
+        overlay = side;
+        sync();
+        requestAnimationFrame(() => panels[side].querySelector('[data-panel-close]').focus());
+      }
+      function closeDrawer(refocus) {
+        if (overlay === null) return;
+        const side = overlay;
+        overlay = null;
+        sync();
+        if (refocus) toggles[side].focus();
+      }
+      function toggle(side) {
+        if (wideMq.matches) {
+          const d = docked();
+          d[side] = !d[side];
+          store.set(PREF, d);
+          sync();
+          if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+        } else if (overlay === side) closeDrawer(true);
+        else openDrawer(side);
+      }
+
+      toggles.left.addEventListener('click', () => toggle('left'));
+      toggles.right.addEventListener('click', () => toggle('right'));
+      scrim.addEventListener('click', () => closeDrawer(true));
+      document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
+      panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
+
+      // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      function applyWidths() {
+        const w = store.get(PREF + ':w', {});
+        ['left', 'right'].forEach((side) => {
+          if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
+          else layout.style.removeProperty(WIDTH[side].prop);
+        });
+      }
+      function maxFor(side) {
+        const other = side === 'left' ? panels.right : panels.left;
+        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
+      }
+      function setWidth(side, px, save) {
+        const v = Math.round(Math.min(Math.max(px, WIDTH[side].min), maxFor(side)));
+        layout.style.setProperty(WIDTH[side].prop, v + 'px');
+        panels[side].querySelector('.panel-resize').setAttribute('aria-valuenow', String(v));
+        if (save) { const w = store.get(PREF + ':w', {}); w[side] = v; store.set(PREF + ':w', w); }
+      }
+      function resetWidth(side) {
+        const w = store.get(PREF + ':w', {});
+        delete w[side];
+        store.set(PREF + ':w', w);
+        layout.style.removeProperty(WIDTH[side].prop);
+      }
+      document.querySelectorAll('.panel-resize').forEach((handle) => {
+        const side = handle.dataset.side;
+        const dir = side === 'left' ? 1 : -1;
+        handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
+        handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
+        handle.addEventListener('pointerdown', (e) => {
+          if (!wideMq.matches || e.button !== 0) return;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startW = panels[side].getBoundingClientRect().width;
+          handle.setPointerCapture(e.pointerId);
+          body.classList.add('is-resizing');
+          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const up = () => {
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', up);
+            handle.removeEventListener('pointercancel', up);
+            body.classList.remove('is-resizing');
+            setWidth(side, panels[side].getBoundingClientRect().width, true);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', up);
+          handle.addEventListener('pointercancel', up);
+        });
+        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('keydown', (e) => {
+          const step = e.shiftKey ? 64 : 16;
+          const cur = panels[side].getBoundingClientRect().width;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+        });
+      });
+      applyWidths();
+      const onMq = () => { overlay = null; sync(); };
+      wideMq.addEventListener('change', onMq);
+      roomyMq.addEventListener('change', onMq);
+
+      // ---------- 목차의 진행 표시 ----------
+      const progressN = document.getElementById('progress-n');
+      const progressBar = document.getElementById('progress-bar');
+      const progressTotal = document.getElementById('progress-total');
+      function markToc(done, total, doneLabel) {
+        panels.left.querySelectorAll('.toc-list a').forEach((a) => {
+          const id = decodeURIComponent(a.getAttribute('href').slice(1));
+          let mark = a.querySelector('.toc-mark');
+          if (!mark) {
+            mark = document.createElement('span');
+            mark.className = 'toc-mark';
+            mark.setAttribute('aria-hidden', 'true');
+            const state = document.createElement('span');
+            state.className = 'sr-only toc-state';
+            a.append(mark, state);
+          }
+          const isDone = done.has(id);
+          mark.classList.toggle('is-done', isDone);
+          mark.innerHTML = isDone ? ICON_DONE : ICON_TODO;
+          a.querySelector('.toc-state').textContent = isDone ? ' (' + doneLabel + ')' : '';
+        });
+        progressN.textContent = String(done.size);
+        progressTotal.textContent = String(total);
+        progressBar.style.transform = 'scaleX(' + (total ? done.size / total : 0) + ')';
+      }
+      function revealCurrent() {
+        const link = panels.left.querySelector('.toc-list a[aria-current="true"]');
+        if (link && layout.dataset.left === 'open') link.scrollIntoView({ block: 'nearest' });
+      }
+
+      // ---------- 복습문제: 오른쪽 = 원문 · 힌트 · 풀이 ----------
+      function setupReview() {
+        const KEY = 'od-review-solved:' + RANGE;
+        const cards = Array.from(document.querySelectorAll('main article.card'));
+        const aids = panels.right.querySelector('.aids');
+        const sub = document.getElementById('aid-for');
+        const empty = panels.right.querySelector('.panel-empty');
+        const btn = document.getElementById('solved-btn');
+        const groups = {};
+        const solved = new Set(store.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        cards.forEach((card) => {
+          const g = document.createElement('div');
+          g.className = 'aid';
+          g.hidden = true;
+          card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
+          aids.appendChild(g);
+          groups[card.id] = g;
+        });
+        let curId = null;
+        function paintBtn() {
+          const on = solved.has(curId);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.innerHTML = (on ? ICON_DONE : ICON_TODO) + '<span>' + (on ? '푼 문제 · 표시 해제' : '푼 문제로 표시') + '</span>';
+        }
+        btn.addEventListener('click', () => {
+          if (!curId) return;
+          if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
+          store.set(KEY, Array.from(solved));
+          paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          curId = s.matches('article.card') ? s.id : null;
+          Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
+          empty.hidden = Boolean(curId);
+          btn.hidden = !curId;
+          sub.textContent = curId ? ((s.querySelector('h3') || {}).textContent || '').trim() : '';
+          sub.hidden = !curId;
+          if (curId) paintBtn();
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(solved, cards.length, '푼 문제');
+          revealCurrent();
+        });
+      }
+
+      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
+      function setupNote() {
+        const KEY = 'od-note-read:' + RANGE;
+        const topics = Array.from(document.querySelectorAll('main article.topic'));
+        const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
+        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
+        const box = panels.right.querySelector('.sums');
+        const sums = {};
+        topics.forEach((t) => {
+          const el = t.querySelector(':scope > .sum');
+          if (!el) return;
+          el.hidden = true;
+          box.appendChild(el);
+          sums[t.id] = el;
+        });
+        const sub = document.getElementById('sum-for');
+        const empty = document.getElementById('sum-empty');
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          const key = s.matches('article.topic') ? s.id : 'intro';
+          Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
+          empty.hidden = Boolean(sums[key]);
+          sub.textContent = key === 'intro' ? '전체 흐름' : ((s.querySelector('h3') || {}).textContent || '').trim();
+          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(read, topics.length, '읽음');
+          revealCurrent();
+        });
+      }
+
+      if (kind === 'review') setupReview();
+      if (kind === 'note') setupNote();
+      sync();
+    })();
+  </script>
+  <script id="pager-ui">
+    (function () {
+      const root = document.documentElement;
+      const main = document.querySelector('main');
+      const hero = main.querySelector('.hero');
+      const screens = [hero].concat(Array.from(main.querySelectorAll(document.body.dataset.screens)));
+      if (screens.length < 2) { root.classList.remove('js'); return; }
+      screens.forEach((s) => s.classList.add('screen'));
+
+      const last = screens.length - 1;
+      const prevBtn = document.getElementById('pager-prev');
+      const nextBtn = document.getElementById('pager-next');
+      const count = document.getElementById('pager-count');
+      const bar = document.getElementById('pager-bar');
+      const status = document.getElementById('pager-status');
+      const toc = document.querySelector('#panel-left .toc');
+      const scroller = document.querySelector('.content');
+      const titleOf = (s) => ((s.querySelector('h3') || s.querySelector('h1') || {}).textContent || '').trim();
+      let cur = -1;
+
+      // 목차: 섹션 링크 아래에 화면(토픽·카드) 목록을 붙인다
+      const tocLinks = [];
+      Array.from(toc.querySelectorAll(':scope > a')).forEach((a) => {
+        const sec = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+        const group = document.createElement('div');
+        group.className = 'toc-group';
+        a.replaceWith(group);
+        group.appendChild(a);
+        if (!sec) return;
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        screens.forEach((s, i) => {
+          if (!sec.contains(s)) return;
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#' + s.id;
+          link.innerHTML = '<span class="toc-title"></span>';
+          link.firstChild.textContent = titleOf(s);
+          li.appendChild(link);
+          list.appendChild(li);
+          tocLinks[i] = link;
+        });
+        group.appendChild(list);
+      });
+
+      function indexFor(hash) {
+        const id = decodeURIComponent((hash || '').replace(/^#/, ''));
+        const el = id && document.getElementById(id);
+        if (!el || !main.contains(el)) return { i: 0 };
+        const i = screens.findIndex((s) => s.contains(el) || el.contains(s));
+        return { i: Math.max(i, 0), target: i >= 0 && screens[i].contains(el) && screens[i] !== el ? el : null };
+      }
+
+      function render(i, target) {
+        const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
+        if (i !== cur) {
+          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
+          main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
+          const s = screens[i];
+          const sec = s.closest('section');
+          if (sec) sec.classList.add('is-on');
+          s.classList.add('is-current');
+          if (dir) { s.classList.remove('enter-next', 'enter-prev'); void s.offsetWidth; s.classList.add(dir); }
+          cur = i;
+          document.body.classList.toggle('at-end', i === last);
+          prevBtn.disabled = i === 0;
+          nextBtn.textContent = i === 0 ? '시작하기' : i === last ? '처음으로' : '다음';
+          count.textContent = i === 0 ? '' : i + ' / ' + last;
+          bar.style.transform = 'scaleX(' + (i / last) + ')';
+          status.textContent = i === 0 ? titleOf(s) : i + ' / ' + last + ', ' + titleOf(s);
+          tocLinks.forEach((link, k) => link && link.setAttribute('aria-current', String(k === i)));
+          document.dispatchEvent(new CustomEvent('od:screen', { detail: { index: i, screen: s } }));
+        }
+        if (target) target.scrollIntoView({ block: 'start' });
+        else scroller.scrollTo(0, 0);
+      }
+
+      function go(i) {
+        i = Math.min(Math.max(i, 0), last);
+        if (i === cur) return;
+        const url = i === 0 ? location.pathname + location.search : '#' + screens[i].id;
+        history.pushState(null, '', url);
+        render(i);
+      }
+
+      prevBtn.addEventListener('click', () => go(cur - 1));
+      nextBtn.addEventListener('click', () => go(cur === last ? 0 : cur + 1));
+      const fromUrl = () => { const r = indexFor(location.hash); render(r.i, r.target); };
+      window.addEventListener('hashchange', fromUrl);
+      window.addEventListener('popstate', fromUrl);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+
+      // 좌우로 밀어서 넘기기 (가로로 스크롤되는 영역은 제외)
+      let sx = 0, sy = 0, skip = true;
+      main.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (skip) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 64 && Math.abs(dx) > 2 * Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      fromUrl();
+    })();
+  </script>
+</body>
+</html>

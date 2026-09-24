@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>생명과학 복습문제 0908</title>
+  <meta name="description" content="복습문제 24선 — 0908 수업 범위">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('od-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']})"></script>
+  <style>
+    /* ---------- 토큰 ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #b54708; --prof: #6941c6; --supp: #067647; --danger: #d92d20;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --fs-body: 17px; --fs-lead: 20px; --fs-small: 14px; --fs-label: 13px; --fs-fig: 12px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+      --radius: 8px; --measure: 680px; --tap: 48px; --btn-min: 160px;
+      --dur: 220ms; --dur-exit: 150ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+      /* 예전 조각이 참조할 수 있는 이름 */
+      --surface-2: var(--surface); --accent-soft: var(--surface); --warn-soft: var(--surface);
+      --prof-soft: var(--surface); --supp-soft: var(--surface); --eli5: var(--accent-ink); --eli5-soft: var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+        --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+        --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+    }
+
+    /* ---------- 기본 ---------- */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent-ink); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+
+    /* ---------- 상단 바 ---------- */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s2) var(--s4); display: flex; align-items: center; gap: var(--s3); min-height: 56px; }
+    .brand { flex: 1 1 auto; min-width: 0; font-size: var(--fs-body); font-weight: 700; white-space: nowrap; }
+    .text-btn { flex: none; min-height: 44px; min-width: 44px; padding: 0 var(--s3); border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); font: 600 var(--fs-small)/1 var(--font); cursor: pointer; }
+    .bar { height: 2px; background: var(--line); overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+
+    /* ---------- 본문 ---------- */
+    main { flex: 1 0 auto; width: 100%; max-width: var(--measure); margin: 0 auto; padding: var(--s6) var(--s5) var(--s7); }
+    .hero h1 { font-size: clamp(28px, 6vw, 36px); line-height: 1.3; margin: 0 0 var(--s3); letter-spacing: -0.02em; }
+    .hero p { color: var(--ink-2); margin: 0; }
+    section { margin-top: var(--s7); }
+    section > h2 { font-size: 22px; line-height: 1.4; margin: 0 0 var(--s4); }
+    .topic { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .topic h3 { margin: 0 0 var(--s2); font-size: clamp(24px, 5vw, 28px); line-height: 1.35; letter-spacing: -0.01em; }
+    .tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+    .tag { font-size: var(--fs-label); line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+
+    /* 레이어: 배경 없이 라벨과 구분선으로 나눈다 */
+    .layer { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .layer.eli5 { margin-top: 0; padding-top: 0; border-top: 0; }
+    .layer > :first-child { margin-top: 0; }
+    .layer > :last-child { margin-bottom: 0; }
+    .layer-title { display: block; font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); margin-bottom: var(--s2); }
+    .layer.eli5 .layer-title { color: var(--accent-ink); }
+    .layer.eli5 .lead { font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; margin: 0 0 var(--s3); }
+    .layer.prof .layer-title { color: var(--prof); }
+    .layer.warn { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn .layer-title { color: var(--warn); }
+    .layer.supp .badge.supp { margin-bottom: var(--s2); }
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
+    .badge.supp { color: var(--supp); }
+    blockquote { margin: var(--s2) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
+    ol.steps { padding-left: 1.4em; }
+    ol.steps li { margin: var(--s2) 0; }
+
+    /* 그림 · 수식 · 표 */
+    .figure { margin: var(--s4) 0; text-align: center; }
+    .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
+    .figure figcaption { font-size: var(--fs-small); color: var(--ink-2); margin-top: var(--s1); }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: var(--s1) 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+    th, td { border-bottom: 1px solid var(--line); padding: var(--s2); text-align: left; vertical-align: top; }
+    th { color: var(--ink-2); font-weight: 600; }
+    td:first-child, th:first-child { min-width: 6em; }
+
+    /* 위젯 */
+    .widget { background: var(--surface); border-radius: var(--radius); padding: var(--s4); margin: var(--s5) 0; }
+    .widget h4 { margin: 0 0 var(--s1); font-size: var(--fs-body); }
+    .widget-help { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s3); }
+    .controls { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--s2); font-size: var(--fs-small); }
+    .controls label { display: flex; align-items: center; gap: var(--s2); min-height: 44px; }
+    .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .widget svg { width: 100%; height: auto; background: var(--bg); border-radius: var(--radius); }
+    .readout { font-size: var(--fs-small); margin-top: var(--s2); }
+    .legend { font-size: var(--fs-label); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .sw { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: var(--s1); border-radius: 2px; }
+    .sw.truth { background: var(--ink-2); } .sw.fit { background: var(--accent); } .sw.train { background: var(--accent); height: 10px; width: 10px; border-radius: 50%; }
+    .sw.test { background: var(--warn); height: 10px; width: 10px; border-radius: 50%; } .sw.like { background: var(--accent); } .sw.prior { background: var(--prof); } .sw.post { background: var(--supp); }
+    .axis { stroke: var(--line); stroke-width: 1.5; }
+    .tick { fill: var(--ink-2); font-size: 11px; }
+    .plot-truth { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .plot-fit { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+    .pt-train { fill: var(--accent); }
+    .pt-test { fill: var(--warn); }
+    .plot-like { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .plot-prior { fill: none; stroke: var(--prof); stroke-width: 2; stroke-dasharray: 6 4; }
+    .plot-post { fill: none; stroke: var(--supp); stroke-width: 3; }
+    .mark-ml { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .mark-map { stroke: var(--supp); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 2; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 2.5; }
+    .fig-danger { stroke: var(--danger); fill: none; stroke-width: 2.5; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: 13px; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-fig); font-family: inherit; }
+
+    footer { width: 100%; max-width: var(--measure); margin: 0 auto; padding: 0 var(--s5) var(--s6); color: var(--ink-2); font-size: var(--fs-small); }
+
+    /* ---------- 문제 카드 ---------- */
+    .card { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .card h3 { margin: 0 0 var(--s4); font-size: clamp(22px, 5vw, 26px); line-height: 1.4; letter-spacing: -0.01em; }
+    .problem { margin: 0 0 var(--s5); }
+    .problem ol { padding-left: 1.4em; }
+    details { border-top: 1px solid var(--line); }
+    .card details:last-of-type { border-bottom: 1px solid var(--line); }
+    details[open] { padding-bottom: var(--s4); }
+    details > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: var(--s3);
+      min-height: var(--tap); cursor: pointer; font-weight: 600; }
+    details > summary::-webkit-details-marker { display: none; }
+    details > summary::after { content: ""; flex: none; width: 8px; height: 8px; margin-right: var(--s1);
+      border-right: 2px solid var(--ink-2); border-bottom: 2px solid var(--ink-2); transform: rotate(45deg); transition: transform 150ms ease-out; }
+    details[open] > summary::after { transform: rotate(-135deg); }
+    details.original { color: var(--ink-2); font-size: var(--fs-small); }
+    details.original > summary { color: var(--ink); font-size: var(--fs-body); }
+    .answer { font-weight: 700; background: var(--surface); border-radius: var(--radius); padding: var(--s3) var(--s4); }
+    .link-back { font-size: var(--fs-small); color: var(--ink-2); margin: var(--s5) 0 var(--s4); }
+    .top-link { flex: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--s2);
+      font-size: var(--fs-small); font-weight: 600; text-decoration: none; }
+    .js .card { padding: 0; border-top: 0; }
+    @media (prefers-reduced-motion: reduce) { details > summary::after { transition: none; } }
+
+    /* ---------- 하단 이동 바 ---------- */
+    .pager { position: sticky; bottom: 0; z-index: 10; background: var(--bg); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .pager-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s3) var(--s4); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); }
+    .pager-count { font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; min-width: 4em; }
+    .btn { min-height: var(--tap); min-width: var(--btn-min); padding: 0 var(--s6); border-radius: var(--radius); border: 0; font: 700 var(--fs-body)/1 var(--font); cursor: pointer; white-space: nowrap;
+      transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+    .btn-ghost { justify-self: start; background: var(--surface); color: var(--ink); }
+    .btn-primary { justify-self: end; background: var(--btn-bg); color: var(--on-btn); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    @media (hover: hover) {
+      .text-btn:hover, .btn-ghost:not(:disabled):hover { background: var(--line); }
+      .btn-primary:not(:disabled):hover { box-shadow: inset 0 0 0 100px rgba(0, 0, 0, .14); }
+    }
+
+    /* ---------- 목차 시트 ---------- */
+    .sheet { width: min(100%, var(--measure)); max-width: 100%; max-height: 80dvh; margin: auto auto 0; padding: 0; border: 0;
+      border-radius: 16px 16px 0 0; background: var(--bg); color: var(--ink); }
+    .sheet::backdrop { background: rgba(0, 0, 0, .4); }
+    .sheet-inner { padding: var(--s4) var(--s5) calc(var(--s5) + env(safe-area-inset-bottom)); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s2); }
+    .sheet-head h2 { margin: 0; font-size: var(--fs-lead); }
+    .toc { display: flex; flex-direction: column; }
+    .toc > a, .toc-group > a { display: block; padding: var(--s3) 0 var(--s1); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); text-decoration: none; }
+    .toc-list { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+    .toc-list a { display: flex; align-items: center; gap: var(--s3); min-height: var(--tap); padding: var(--s2) var(--s3); margin: 0 calc(-1 * var(--s3));
+      border-radius: var(--radius); color: var(--ink); text-decoration: none; line-height: 1.4; }
+    .toc-list a[aria-current="true"] { background: var(--surface); font-weight: 700; color: var(--accent-ink); }
+    .toc-list .toc-title { flex: 1 1 0; min-width: 0; }
+    @media (hover: hover) { .toc-list a:hover { background: var(--surface); } }
+
+    /* ---------- 한 화면에 하나씩 (JS가 켤 때만) ---------- */
+    html:not(.js) .pager, html:not(.js) #toc-open { display: none; }
+    html:not(.js) .sheet { display: block; position: static; width: 100%; max-height: none; margin: 0 auto; border-radius: 0; border-bottom: 1px solid var(--line); }
+    html:not(.js) .sheet-close { display: none; }
+    .js main > .hero:not(.is-current), .js main > section:not(.is-on), .js .screen:not(.is-current) { display: none; }
+    .js main > section { margin-top: 0; }
+    .js main > section > h2 { font-size: var(--fs-label); font-weight: 600; color: var(--accent-ink); margin: 0 0 var(--s2); }
+    .js .topic { padding: 0; border-top: 0; }
+    .js .hero { padding-top: 12vh; }
+    .js footer { display: none; }
+    .js body.at-end footer { display: block; }
+    .screen.enter-next { animation: enter-next var(--dur) var(--ease-out); }
+    .screen.enter-prev { animation: enter-prev var(--dur) var(--ease-out); }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .screen.enter-next, .screen.enter-prev { animation: none; }
+      .bar > span, .btn { transition: none; }
+    }
+    @media (max-width: 480px) {
+      main { padding: var(--s5) var(--s4) var(--s6); }
+      footer { padding: 0 var(--s4) var(--s5); }
+      .btn { min-width: 120px; padding: 0 var(--s5); }
+    }
+    @media print {
+      .topbar, .pager, .sheet { display: none !important; }
+      .js main > .hero, .js main > section, .js .screen, .js footer { display: block !important; }
+    }
+
+    /* ---------- 좌우 패널 (drawer) ---------- */
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
+    .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
+    .panel-toggle svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-toggle .strip { fill: transparent; stroke: none; transition: fill 150ms ease-out; }
+    .panel-toggle[aria-expanded="true"] { color: var(--accent-ink); }
+    .panel-toggle[aria-expanded="true"] .strip { fill: currentColor; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .i-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .theme-toggle .i-sun { display: block; }
+      :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
+    }
+
+    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
+    .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
+    .content { grid-column: 2; }
+    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
+    .panel-resize { display: none; }
+    .panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 44px; margin-bottom: var(--s2); }
+    .panel-head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-lead); line-height: 1.4; }
+    .panel-sub { margin: 0 0 var(--s4); font-weight: 700; line-height: 1.45; }
+    .panel-empty { margin: 0; color: var(--ink-2); }
+    .panel-label { display: block; margin: var(--s5) 0 var(--s2); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+
+    /* 진행 상태 */
+    .panel-meta { margin: 0 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .panel-meta b { color: var(--ink); }
+    .progress { height: 4px; margin-bottom: var(--s3); border-radius: 2px; background: var(--line); overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+    .panel .toc-list a { margin: 0 calc(-1 * var(--s2)); padding: var(--s2); font-size: var(--fs-panel); }
+    .toc-mark { flex: none; display: block; width: 20px; height: 20px; color: var(--ink-2); }
+    .toc-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .toc-mark.is-done { color: var(--accent-ink); }
+
+    /* 복습문제: 원문 · 힌트 · 풀이 */
+    .aid details:last-of-type { border-bottom: 1px solid var(--line); }
+    .aid details.original > summary { font-size: var(--fs-panel); }
+    .solved-btn { display: flex; align-items: center; justify-content: center; gap: var(--s2); width: 100%; min-height: var(--tap); margin-top: var(--s5); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .solved-btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
+
+    /* 정리노트: 섹션 요약 */
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+    .eq-list li:first-child { padding-top: 0; }
+    .eq-name { display: block; font-size: var(--fs-small); font-weight: 600; color: var(--ink-2); }
+    .eq-list .katex-display { margin: var(--s1) 0 0; text-align: left; }
+    .eq-list .katex-display > .katex { text-align: left; }
+    .terms { margin: 0; }
+    .terms dt { font-weight: 700; margin-top: var(--s3); }
+    .terms dt:first-child { margin-top: 0; }
+    .terms dd { margin: var(--s1) 0 0; }
+    .flow { margin: 0; padding-left: 1.4em; }
+    .flow li { margin: var(--s2) 0; }
+
+    @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
+
+    /* 넓은 화면: 본문 옆에 붙는 패널 */
+    @media (min-width: 1024px) {
+      .layout { --l: var(--panel-l-user, var(--panel-l)); }
+      .layout[data-left="closed"] { --l: 0px; }
+      .panel-left { width: var(--l); }
+      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
+      .panel-left .panel-resize { right: 0; }
+      .panel-right .panel-resize { left: 0; }
+      .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
+      .panel-left .panel-resize::after { right: 0; }
+      .panel-right .panel-resize::after { left: 0; }
+      .panel-resize:focus-visible { outline: none; }
+      .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
+      @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
+      body.is-resizing { cursor: col-resize; user-select: none; }
+      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
+      .scrim, .panel-close { display: none; }
+    }
+    @keyframes panel-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 좁은 화면: 가장자리에서 밀려 나오는 drawer */
+    @media (max-width: 1023.98px) {
+      .panel { position: fixed; top: 0; bottom: 0; z-index: 40; visibility: hidden;
+        transition: transform var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .panel-left { left: 0; width: min(var(--drawer-l), 88vw); transform: translateX(-100%); }
+      .panel-right { right: 0; width: min(var(--drawer-r), 88vw); transform: translateX(100%); }
+      .panel.is-open { visibility: visible; transform: none; transition: transform var(--dur) var(--ease-out); }
+      .panel-inner { padding-top: calc(var(--s3) + env(safe-area-inset-top)); padding-bottom: calc(var(--s6) + env(safe-area-inset-bottom)); }
+      .scrim { position: fixed; inset: 0; z-index: 35; background: var(--scrim); opacity: 0; visibility: hidden;
+        transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
+      html:not(.js) .panel-left { display: none; }
+    }
+    @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
+      .panel.is-shown { animation: none; }
+      .panel-resize::after { transition: none; }
+    }
+    @media print {
+      body { display: block; height: auto; overflow: visible; }
+      .layout { display: block; }
+      .content { overflow: visible; }
+      .panel, .scrim { display: none !important; }
+    }
+  </style>
+</head>
+<body data-screens="article.card" data-panels="review" data-range="0908">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <strong class="brand">복습문제</strong>
+      <a class="top-link" href="정리노트_0908_Biomolecules_and_Cells.html">정리노트</a>
+      <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>풀이</span></button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
+  </header>
+  <div class="layout" data-left="open" data-right="closed">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
+      <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-left-title">문제 목록</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-meta">푼 문제 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <nav class="toc" aria-label="목차"><a href="#partA">A 웹과제</a><a href="#partB">B 기출</a><a href="#partC">C 변형</a></nav>
+      </div>
+    </aside>
+    <div class="content">
+  <main>
+    <div class="hero">
+      <h1>복습문제 24선 — 0908 수업 범위</h1>
+      <p>웹과제 <b>7문항</b>, 기출 <b>8문항</b>, 변형 연습 <b>9문항</b>으로 되어 있어요. 먼저 풀어 보고, 막히면 힌트를 열어 보세요.</p>
+    </div>
+    <section id="partA"><h2>A. 웹과제</h2>
+<article class="card" id="p1" data-source="웹과제 1장 q02">
+  <h3>P1. 내막계에 속하지 않는 구조</h3>
+  <div class="problem"><p>다음 중 진핵생물의 내막계를 구성하지 않는 것은?</p>
+    <ul class="choices"><li>A. 원형질막</li><li>B. 골지복합체</li><li>C. 소낭</li><li>D. 소포체</li><li>E. 리보솜</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>웹과제 1장 q02 (스크린샷 s02)</details>
+  <details class="hint"><summary>힌트 보기</summary>내막계는 소낭으로 떨어져 나가고 다시 합쳐지며 서로 이어지는 "막"들의 모임이에요. 보기 가운데 막으로 둘러싸여 있지 않은 것이 무엇인지 찾아보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. 원형질막(세포막)도 소낭이 합쳐지고 떨어져 나오며 다른 막과 섞이므로 내막계에 들어가요. 세포 겉면에 있다고 빼면 안 돼요.</li>
+      <li>B. 틀려요. 골지복합체는 소포체에서 소낭으로 온 단백질을 가공하고 분류하는 내막계 구성원이에요.</li>
+      <li>C. 틀려요. 소낭은 소포체·골지체·세포막 사이를 오가며 물질을 나르고 막과 융합하는 막 주머니라서 내막계에 들어가요.</li>
+      <li>D. 틀려요. 소포체는 핵막과 이어져 있고 소낭 수송으로 골지체와 연결되는 내막계 구성원이에요.</li>
+      <li>E. 맞아요. 리보솜은 막으로 둘러싸인 구조가 아니므로 내막계 구성원이 아니에요. 조면 소포체에 붙어 분비 단백질을 만든다는 사실과 내막계 구성원인지는 별개예요.</li>
+      <li>수업과의 연결: 교수님이 핵막·소포체·골지체·세포막·소낭을 묶어 내막계라 부르며 "그 막이 그 막이야."라고 정리한 대목(0908 46:40–47:31)과 이어져요.</li>
+    </ol>
+    <p class="answer">정답: E</p>
+  </details>
+</article>
+<article class="card" id="p2" data-source="웹과제 1장 q04">
+  <h3>P2. 미토콘드리아와 엽록체에 대한 틀린 설명</h3>
+  <div class="problem"><p>미토콘드리아와 엽록체에 대한 설명으로 잘못된 것은?</p>
+    <ul class="choices"><li>A. 고대 원핵생물로부터 유래되어 공생하는 것으로 여겨진다</li><li>B. 세포에서 독립적으로 성장하고 수를 늘려간다</li><li>C. 세포내막계의 일부분이다</li><li>D. 자체 리보솜과 원형 DNA를 가지고 있다</li><li>E. 이중막으로 둘러싸여 있다</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>웹과제 1장 q04 (스크린샷 s04)</details>
+  <details class="hint"><summary>힌트 보기</summary>세포 내 공생설에서 이 두 소기관이 어디서 왔다고 했는지 떠올려 보세요. 원래 바깥에서 들어온 세균이라면, 소낭으로 서로 이어지는 막 무리에 끼어 있을까요?</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 맞아요. 두 소기관이 고대 원핵생물(세균)이 큰 세포에 잡아먹혀 공생하게 된 데서 왔다는 설명은 세포 내 공생설 그대로예요. 옳은 설명이라 답이 아니에요.</li>
+      <li>B. 맞아요. 자체 DNA와 리보솜으로 스스로 단백질을 만들고, 세포 안에서 기존 소기관이 자라고 나뉘어 수를 늘린다는 뜻으로 읽으면 옳아요. 다만 숙주 세포 밖에서 완전히 따로 살 수 있다는 뜻이라면 지나친 표현이에요.</li>
+      <li>C. 틀려요. 두 소기관은 막을 가지지만, 소포체·골지체·소낭·세포막처럼 소낭으로 떨어지고 합쳐지며 이어지는 내막계의 구성원은 아니에요. 그래서 이것이 잘못된 설명이에요.</li>
+      <li>D. 맞아요. 자체 리보솜과 원형 DNA는 세균과 닮은 점으로, 세포 내 공생설의 근거예요.</li>
+      <li>E. 맞아요. 두 소기관 모두 외막과 내막, 두 겹의 막으로 둘러싸여 있어요.</li>
+      <li>수업과의 연결: 미토콘드리아의 원형 DNA와 세균 크기의 리보솜을 근거로 든 세포 내 공생설(0908 53:16–55:33)과, 내막계를 "그 막이 그 막"으로 묶은 설명(0908 46:40–47:31)과 이어져요.</li>
+    </ol>
+    <p class="answer">정답: C</p>
+    <p>보기 B의 "독립적으로 성장하고 수를 늘려간다"는 세포 밖에서 따로 살아간다는 뜻이 아니라, 세포 안에서 스스로 자라고 분열해 수를 늘린다는 뜻으로 읽어야 해요. 세포 밖에서 완전히 독립해 산다는 뜻으로 읽으면 지나친 표현이라, 문제 표현에 약간의 모호함이 있어요.</p>
+  </details>
+</article>
+<article class="card" id="p3" data-source="웹과제 1장 q05">
+  <h3>P3. 리소좀을 연구하기 좋은 세포</h3>
+  <div class="problem"><p>리소좀을 연구하기에 가장 좋은 세포 종류는?</p>
+    <ul class="choices"><li>A. 근육세포</li><li>B. 세균</li><li>C. 산소가 부족한 근육세포</li><li>D. 식물의 잎세포</li><li>E. 식균작용을 하는 백혈구</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>웹과제 1장 q05 (스크린샷 s05)</details>
+  <details class="hint"><summary>힌트 보기</summary>리소좀이 하는 두 가지 일 가운데 "밖에 있는 것을 먹는" 일을 떠올려 보세요. 그 일을 가장 활발히 하는 세포가 어느 것일까요?</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. 근육세포에도 리소좀이 있어 분해·재활용을 하지만, 보기 가운데 리소좀의 기능을 가장 직접 보여 주는 세포는 아니에요.</li>
+      <li>B. 틀려요. 세균은 원핵세포라 막으로 둘러싸인 세포소기관이 없으므로 리소좀도 없어요.</li>
+      <li>C. 틀려요. 산소가 부족하다는 조건은 에너지(ATP) 생산과 관련된 조건이에요. 리소좀의 소화 기능을 보기에 알맞은 조건이 아니에요.</li>
+      <li>D. 틀려요. 식물의 잎세포는 광합성이 주된 일이라, 보기 가운데 리소좀을 연구할 가장 직접적인 대상은 아니에요.</li>
+      <li>E. 맞아요. 백혈구는 세균을 감싸 들여온 뒤 리소좀과 합쳐 리소좀 효소로 녹여요. 기능과 세포가 가장 직접 이어지는 사례예요.</li>
+      <li>수업과의 연결: "자기 걸 먹으면 자가소화작용, 밖에 있는 걸 먹으면 식균 작용"이라며 백혈구가 세균을 감싸 리소좀과 합친다고 설명한 대목(0908 48:53–49:14)과 이어져요.</li>
+    </ol>
+    <p class="answer">정답: E</p>
+  </details>
+</article>
+<article class="card" id="p4" data-source="웹과제 1장 q06">
+  <h3>P4. 살아 있는 세포의 필수 조건</h3>
+  <div class="problem"><p>과학자들이 "가생이"이라는 미지의 물질을 발견했다. 이 물질을 살아있는 세포로 판단하려면, 아래의 조건들 중 "가생이"가 반드시 가져야 할 필수 조건이 무엇인지 있는대로 모두 고른 것은?</p>
+    <ul><li>a. 외부와는 다른 자신만의 환경조성을 가지도록 막으로 둘러싸인다.</li><li>b. 유전물질이 있어서 증식을 할 수 있다.</li><li>c. 물질대사를 한다.</li><li>d. 핵 내부 물질이 섞이는 것을 방지하도록 핵막이 있다.</li></ul>
+    <ul class="choices"><li>A. b, c, d</li><li>B. a, b, c</li><li>C. a, b</li><li>D. c, d</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>웹과제 1장 q06 (스크린샷 s06)</details>
+  <details class="hint"><summary>힌트 보기</summary>"모든 세포"에 있어야 하는 조건을 고르는 문제예요. 핵이 없는 원핵세포도 살아 있는 세포라는 점을 기준으로 삼아 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>먼저 조건을 하나씩 따져요. a(경계막)는 원핵세포에도 세포막이 있으니 필수예요. b(유전물질과 증식)도 원핵세포에 DNA가 없을 수는 없으니 필수예요. c(물질대사)는 생명의 특성이라 필수예요. d(핵막)는 원핵세포에 없으므로 필수가 아니에요.</li>
+      <li>A. 틀려요. b와 c는 필요하지만 a가 빠졌고, 모든 세포에 필요하지는 않은 핵막 d를 넣었어요.</li>
+      <li>B. 맞아요. 경계막 a, 유전물질과 증식 b, 물질대사 c를 모두 넣고, 원핵세포에는 없는 핵막 d를 뺐어요.</li>
+      <li>C. 틀려요. a와 b만 골라서 물질대사 c가 빠졌어요.</li>
+      <li>D. 틀려요. 물질대사 c만으로는 부족하고 경계막 a와 유전물질·증식 b가 빠졌어요. 핵막 d는 모든 세포의 필수 조건이 아니에요.</li>
+      <li>수업과의 연결: 원핵세포라도 "DNA가 없을 수는 없어요"라고 하고, 텐트든 컨테이너든 경계인 세포막은 있어야 한다고 한 대목(0908 26:05–27:20)과 이어져요.</li>
+    </ol>
+    <p class="answer">정답: B</p>
+  </details>
+</article>
+<article class="card" id="p5" data-source="웹과제 1장 q07">
+  <h3>P5. 세포 소기관에 대한 틀린 설명</h3>
+  <div class="problem"><p>세포 소기관의 설명으로 옳지 않은 것은?</p>
+    <ul class="choices"><li>A. 활면소포체는 지질을 합성하는 장소이다</li><li>B. 핵에는 핵공이 있어 이를 통해 염색체가 자유로이 드나든다</li><li>C. 핵막은 이중막이다</li><li>D. 세포막은 인지질의 이중층으로 되어 있다</li><li>E. 미토콘드리아는 ATP를 만드는 전자전달사슬이 있다</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>웹과제 1장 q07 (스크린샷 s07)</details>
+  <details class="hint"><summary>힌트 보기</summary>핵공은 무엇이 핵 밖으로 나가려고 뚫린 구멍이었는지 떠올려 보세요. DNA는 소중해서 핵 밖으로 내보내지 않는다고 했어요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 맞아요. 활면소포체는 리보솜이 없는 매끈한 소포체로, 지질 합성과 해독을 맡아요. 옳은 설명이라 답이 아니에요.</li>
+      <li>B. 틀려요. 핵공은 RNA처럼 크고 전하를 띤 분자가 드나드는 통로예요. 핵공이 있다고 염색체가 자유롭게 드나드는 것은 아니에요. 그래서 이것이 옳지 않은 설명이에요.</li>
+      <li>C. 맞아요. 핵막은 인지질 이중층이 두 개 겹친 이중막이에요.</li>
+      <li>D. 맞아요. 세포막의 기본 구조는 인지질 이중층 하나예요. 이중층 하나(세포막)와 이중막(핵막)을 구별해야 해요.</li>
+      <li>E. 맞아요. 미토콘드리아 내막에는 ATP를 만드는 데 쓰이는 단백질들이 박혀 있고, 전자전달사슬이 그 일부예요.</li>
+      <li>수업과의 연결: RNA가 막을 못 뚫으니 "드릴로 구멍을 뚫어놨는데, 그 구멍을 구멍 공 자, 핵공"이라고 한 대목(0908 30:05–31:47)과 이중층·이중막 구분(0908 29:16–29:56)과 이어져요.</li>
+    </ol>
+    <p class="answer">정답: B</p>
+  </details>
+</article>
+<article class="card" id="p6" data-source="웹과제 1장 q16">
+  <h3>P6. 당과 핵산의 잘못된 연결</h3>
+  <div class="problem"><p>탄수화물에 대한 다음 설명으로 바르지 않은 것은?</p>
+    <ul class="choices"><li>A. 뉴클레오티드 - 핵산의 구성 성분</li><li>B. 디옥시리보오스 - RNA의 구성 성분</li><li>C. 녹말 - 식물의 에너지 저장물질</li><li>D. 셀룰로오스 - 식물의 세포벽 성분</li><li>E. 설탕 - 포도당과 과당이 결합한 이당류</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>웹과제 1장 q16 (스크린샷 s18)</details>
+  <details class="hint"><summary>힌트 보기</summary>"디옥시"가 무슨 뜻이었는지 떠올려 보세요. 2′ 탄소에서 산소가 빠진 당은 DNA와 RNA 가운데 어느 쪽 당일까요?</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 맞아요. 뉴클레오티드는 핵산을 이루는 단위체예요. 뉴클레오티드 전체가 탄수화물은 아니지만, 그 안의 5탄당이 탄수화물이라 이 문항에 들어간 것으로 보여요. 연결 자체는 옳아요.</li>
+      <li>B. 틀려요. RNA의 당은 리보오스이고, 디옥시리보오스는 DNA의 당이에요. 그래서 이것이 바르지 않은 연결이에요.</li>
+      <li>C. 맞아요. 녹말은 식물이 에너지를 저장하는 다당류예요.</li>
+      <li>D. 맞아요. 셀룰로오스는 식물 세포벽의 성분이에요.</li>
+      <li>E. 맞아요. 설탕은 포도당과 과당이 결합한 이당류예요.</li>
+      <li>수업과의 연결: 2′ 탄소에 OH가 있으면 리보스, 산소가 빠져 H만 있으면 디옥시리보스라서 DNA가 "디옥시리보뉴클레익 애시드"라고 한 대목(0908 08:18–08:58)과 이어져요.</li>
+    </ol>
+    <p class="answer">정답: B</p>
+    <p>문제는 "탄수화물에 대한 설명"이라고 묻지만, 보기 A의 뉴클레오티드처럼 탄수화물이 아닌 항목도 섞여 있어요. A는 뉴클레오티드가 핵산의 구성 성분이라는 연결이 옳다는 뜻일 뿐, 뉴클레오티드 전체가 탄수화물이라는 뜻으로 넓혀 읽으면 안 돼요.</p>
+  </details>
+</article>
+<article class="card" id="p7" data-source="웹과제 1장 q17">
+  <h3>P7. 핵양체를 가진 세포</h3>
+  <div class="problem"><p>어떤 세포는 리보좀, 원형질막, 핵양체, 그리고 세포벽을 가지고 있다. 아래 예 중, 이 세포와 가장 가까운 것은?</p>
+    <ul class="choices"><li>A. 사람의 폐세포</li><li>B. 사람의 정자</li><li>C. 원생생물</li><li>D. 세균</li><li>E. 식물세포</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>웹과제 1장 q17 (스크린샷 s19)</details>
+  <details class="hint"><summary>힌트 보기</summary>네 구조 가운데 한 종류의 세포에만 있는 결정적인 단서가 하나 있어요. 핵막으로 둘러싸인 핵 대신 DNA가 뭉쳐 있는 곳의 이름을 찾아보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. 사람의 폐세포는 동물의 진핵세포라 핵양체 대신 핵막으로 둘러싸인 핵을 가지고, 세포벽도 없어요.</li>
+      <li>B. 틀려요. 사람의 정자도 동물의 진핵세포라 핵막이 있는 핵을 가지므로 핵양체라는 단서와 맞지 않아요.</li>
+      <li>C. 틀려요. 원생생물은 진핵생물이라 핵막이 있는 핵을 가지므로 핵양체라는 단서와 맞지 않아요.</li>
+      <li>D. 맞아요. 핵양체는 막으로 둘러싸이지 않은 원핵세포의 DNA 부분이에요. 리보좀·원형질막·세포벽과 함께 있으니 원핵세포인 세균이 가장 가까워요.</li>
+      <li>E. 틀려요. 식물세포도 세포벽은 있지만 핵막이 있는 핵을 가져요. 세포벽만 보고 고르면 핵양체라는 결정적 단서를 놓쳐요.</li>
+      <li>수업과의 연결: 원핵세포의 구조를 핵양체("마치 핵인 것 같은"), 리보솜, 세포막, 세포벽, 협막 순서로 짚은 대목(0908 26:19–28:26)과 이어져요.</li>
+    </ol>
+    <p class="answer">정답: D</p>
+  </details>
+</article>
+    </section>
+    <section id="partB"><h2>B. 기출</h2>
+<article class="card" id="p8" data-source="기출 1강 7">
+  <h3>P8. 진핵세포 소기관에 대한 잘못된 설명</h3>
+  <div class="problem"><p>다음은 진핵세포의 세포소기관의 설명들이다. 잘못 설명한 것은?</p>
+    <ul class="choices"><li>(1) 리보솜은 식균작용의 기능을 수행한다.</li><li>(2) 미토콘드리아는 2개의 막으로 둘러싸여 있다.</li><li>(3) 리소좀은 많은 종류의 가수분해효소를 가지고 있다.</li><li>(4) 골지복합체에서는 단백질의 화학적 변형이 동반된다.</li><li>(5) 활면소포체는 원형질막의 구성성분인 지질을 합성한다.</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 1강 합본 7번 (PDF 1쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>각 소기관의 대표 기능을 한 단어로 떠올려 보세요. 리보솜은 무엇을 만드는 공장이었고, 밖에서 들어온 것을 녹이는 곳은 어디였나요?</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>(1) 틀려요. 리보솜은 단백질을 만드는 곳이에요. 식균작용으로 삼킨 것을 녹이는 일은 리소좀이 해요. 그래서 이것이 잘못된 설명이에요.</li>
+      <li>(2) 맞아요. 미토콘드리아는 매끈한 외막과 접힌 내막, 두 겹의 막으로 둘러싸인 이중막 소기관이에요. 옳은 설명이라 답이 아니에요.</li>
+      <li>(3) 맞아요. 리소좀은 가수분해효소로 단백질·지질 등 모든 것을 잘라 분해하는 곳이에요.</li>
+      <li>(4) 맞아요. 골지체는 소포체에서 온 단백질을 화학적으로 한 번 더 변형하고 목적지별로 분류해요.</li>
+      <li>(5) 맞아요. 활면소포체는 지질 합성을 맡고, 원형질막의 주성분인 인지질도 지질이에요.</li>
+      <li>수업과의 연결: "자기 걸 먹으면 자가소화작용, 밖에 있는 걸 먹으면 식균 작용. 요 두 개를 하는 게 리소좀이다."라고 한 대목(0908 49:14)과 리보솜을 단백질 공장으로 설명한 대목(0908 26:50)과 이어져요.</li>
+    </ol>
+    <p class="answer">정답: (1)</p>
+  </details>
+</article>
+<article class="card" id="p9" data-source="기출 1강 8">
+  <h3>P9. 원핵세포와 진핵세포에 모두 있지는 않은 것</h3>
+  <div class="problem"><p>다음의 세포 구성 요소 중 원핵세포와 진핵세포 모두에서 발견되는 것이 아닌 것은?</p>
+    <ul class="choices"><li>(1) DNA</li><li>(2) 원형질막</li><li>(3) 리보솜</li><li>(4) 세포벽</li><li>(5) 소포체</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 1강 합본 8번 (PDF 1쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>원핵세포에 없는 것은 핵과 "막으로 둘러싸인 세포소기관"이었어요. 보기 가운데 막으로 둘러싸인 소기관을 찾아보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>(1) 틀려요. DNA는 원핵세포(핵양체)와 진핵세포(핵) 모두에 있어요. 원핵세포라도 유전물질이 없을 수는 없어요.</li>
+      <li>(2) 틀려요. 원형질막(세포막)은 모든 세포의 경계라서 두 세포 모두에 있어요.</li>
+      <li>(3) 틀려요. 리보솜은 단백질을 만드는 곳이라 원핵세포에도 진핵세포에도 있어요.</li>
+      <li>(4) 틀려요. 세포벽은 원핵세포(세균)에도 있고, 진핵세포 가운데 식물세포에도 있어요. 동물세포에는 없지만 "원핵세포와 진핵세포 모두에서 발견되는 것이 아닌 것"에는 해당하지 않아요.</li>
+      <li>(5) 맞아요. 소포체는 막으로 둘러싸인 세포소기관이라 원핵세포에는 없고 진핵세포에만 있어요.</li>
+      <li>수업과의 연결: 원핵세포에는 핵도 막성 세포소기관도 없지만 DNA·리보솜·세포막은 "없을 수는 없다"고 반복하고 바깥에 세포벽이 있다고 설명한 대목(0908 25:52–28:26)과 이어져요.</li>
+    </ol>
+    <p class="answer">정답: (5)</p>
+  </details>
+</article>
+<article class="card" id="p10" data-source="기출 1강 11">
+  <h3>P10. 핵공과 염색체</h3>
+  <div class="problem"><p>세포 소기관의 설명으로 옳지 않은 것은?</p>
+    <ul class="choices"><li>(1) 활면소포체는 지질을 합성하는 장소이다.</li><li>(2) 세포막은 인지질의 이중층으로 되어 있다.</li><li>(3) 핵막은 이중막이다.</li><li>(4) 핵에는 핵공이 있어 이를 통해 염색체가 자유로이 드나든다.</li><li>(5) 미토콘드리아는 ATP를 만드는 전자전달사슬이 있다.</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 1강 합본 11번 (PDF 1쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>핵공이 왜 필요했는지 떠올려 보세요. DNA는 핵 안에 두고, 무엇이 대신 핵 밖으로 나갔나요?</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>(1) 맞아요. 활면소포체는 리보솜이 없는 매끈한 소포체로, 지질 합성과 해독을 맡아요. 옳은 설명이라 답이 아니에요.</li>
+      <li>(2) 맞아요. 세포막은 인지질이 두 겹으로 층을 이룬 이중층 하나로 되어 있어요.</li>
+      <li>(3) 맞아요. 핵막은 이중층이 하나 더 있는 이중막이에요. 인지질 층으로 세면 4겹이에요.</li>
+      <li>(4) 틀려요. 핵공은 DNA를 복사한 RNA처럼 크고 전하를 띤 분자가 지나는 통로예요. 염색체는 DNA가 응축된 것으로, 핵 밖으로 드나들지 않아요. 그래서 이것이 옳지 않은 설명이에요.</li>
+      <li>(5) 맞아요. 미토콘드리아 내막에는 ATP를 만드는 데 쓰이는 단백질들이 박혀 있고, 전자전달사슬이 그 일부예요.</li>
+      <li>수업과의 연결: "DNA는 소중하니까요"라며 DNA 대신 RNA가 핵공으로 나간다고 한 대목(0908 30:05–31:47)과 염색체는 분열 때 응축된 DNA라는 설명(0908 35:16)과 이어져요.</li>
+    </ol>
+    <p class="answer">정답: (4)</p>
+  </details>
+</article>
+<article class="card" id="p11" data-source="기출 1강 14">
+  <h3>P11. 당-인산 사슬을 가진 고분자</h3>
+  <div class="problem"><p>다음 중 연속된 당-인산 사슬을 포함하는 고분자는?</p>
+    <ul class="choices"><li>(1) 단백질</li><li>(2) 지질</li><li>(3) 핵산</li><li>(4) 다당류</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 1강 합본 14번 (PDF 1쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>단위체 안에 당과 인산이 둘 다 들어 있는 고분자를 떠올려 보세요. 단위체끼리 이어질 때 한쪽의 당과 다른 쪽의 인산이 붙어요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 틀려요. 단백질은 아미노산이 펩타이드 결합으로 이어진 사슬이라 당도 인산도 뼈대에 없어요.</li><li>(2) 틀려요. 지질은 같은 단위체가 줄줄이 이어진 중합체가 아니고, 당-인산 뼈대도 없어요.</li><li>(3) 맞아요. 핵산(DNA, RNA)은 뉴클레오타이드가 이어진 중합체이고, 한 뉴클레오타이드의 당과 다음 뉴클레오타이드의 인산기가 공유 결합해 "인산-당-인산-당" 뼈대를 만들어요. 염기는 이 뼈대 옆으로 삐져나와요.</li><li>(4) 틀려요. 다당류는 당(단당류)끼리만 이어진 사슬이라 인산기가 들어 있지 않아요.</li><li>수업과의 연결: 0908 09:20–09:53에서 교수님이 당과 다음 인산기가 이어져 뼈대가 "인산-당-인산-당"이 되고 RNA도 같다고 설명했어요.</li></ol>
+    <p class="answer">정답: (3)</p>
+  </details>
+</article>
+<article class="card" id="p12" data-source="기출 1강 17">
+  <h3>P12. 원핵세포와 진핵세포에 모두 있는 것</h3>
+  <div class="problem"><p>원핵세포와 진핵세포 모두에서 발견되는 특징은?</p>
+    <ul class="choices"><li>(1) 미토콘드리아</li><li>(2) 중심체</li><li>(3) DNA</li><li>(4) 조면소포체</li><li>(5) 골지복합체</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 1강 합본 17번 (PDF 2쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>원핵세포에는 막으로 둘러싸인 방이 하나도 없어요. 그래도 세포라면 절대 빠질 수 없는 것이 무엇일지 생각해 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 틀려요. 미토콘드리아는 이중막으로 둘러싸인 막성 세포소기관이라 진핵세포에만 있어요.</li><li>(2) 틀려요. 중심체는 진핵세포(주로 동물세포)에 있는 구조라 원핵세포에는 없어요. 수업에서는 다루지 않았고 정리노트 원핵·진핵 토픽의 보충 설명에 있어요.</li><li>(3) 맞아요. 모든 세포는 유전 물질인 DNA를 가져요. 진핵세포는 DNA를 핵 안에, 원핵세포는 핵막 없이 핵양체에 모아 두는 차이만 있어요.</li><li>(4) 틀려요. 조면소포체는 리보솜이 붙은 막성 구조라 원핵세포에는 없어요. 원핵세포에 있는 것은 막에 붙지 않은 리보솜이에요.</li><li>(5) 틀려요. 골지복합체(골지체)는 납작한 막 주머니들로 된 막성 세포소기관이라 진핵세포에만 있어요.</li><li>수업과의 연결: 0908 26:23에서 교수님이 "원핵세포라 할지라도 유전 물질이 없을 수는 없죠. DNA가 없을 수는 없어요"라고 강조했어요.</li></ol>
+    <p class="answer">정답: (3)</p>
+  </details>
+</article>
+<article class="card" id="p13" data-source="기출 1강 30">
+  <h3>P13. 원핵세포가 가진 구조</h3>
+  <div class="problem"><p>원핵세포는 다음 중 어느 것을 가지고 있는가?</p>
+    <ul class="choices"><li>(1) 핵</li><li>(2) 골지체</li><li>(3) 소포체</li><li>(4) 세포벽</li><li>(5) 미토콘드리아</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 1강 합본 30번 (PDF 2쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>원핵세포에는 막으로 둘러싸인 세포소기관이 없어요. 보기 중에서 막성 세포소기관이 아닌 것을 찾아보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 틀려요. 원핵세포에는 핵막으로 둘러싸인 핵이 없고, DNA는 핵양체에 뭉쳐 있을 뿐이에요.</li><li>(2) 틀려요. 골지체는 막으로 된 주머니들이 모인 막성 세포소기관이라 원핵세포에는 없어요.</li><li>(3) 틀려요. 소포체도 핵막이 이어져 나온 막성 구조라 원핵세포에는 없어요. 원핵세포의 리보솜은 소포체에 붙지 않고 세포 안에 흩어져 있어요.</li><li>(4) 맞아요. 원핵세포는 세포막만으로는 약해서 그 바깥에 더 단단한 세포벽을 가지고 있어요. 세포벽은 막성 세포소기관이 아니라 세포막 바깥의 벽이에요.</li><li>(5) 틀려요. 미토콘드리아는 이중막으로 둘러싸인 막성 세포소기관이라 진핵세포에만 있어요.</li><li>수업과의 연결: 0908 26:19–28:26에서 교수님이 원핵세포의 구조를 핵양체, 리보솜, 세포막, 세포벽, 협막 순서로 짚었고, 25:52–26:10에서 원핵세포에는 핵도 막성 세포소기관도 없다고 했어요.</li></ol>
+    <p class="answer">정답: (4)</p>
+    <p>인쇄된 답안지에는 (3) 소포체로 표시되어 있지만 오류로 판단해요. 소포체는 막으로 둘러싸인 세포소기관이라 원핵세포에 없고, 강의노트 1장 p5의 원핵세포 목록과 수업 설명(0908 26:19–28:26) 모두 원핵세포가 세포막 바깥에 세포벽을 가진다고 해요. 핵, 골지체, 미토콘드리아도 막성 구조라 원핵세포에 없으므로 답은 (4) 세포벽 하나예요.</p>
+  </details>
+</article>
+<article class="card" id="p14" data-source="기출 1강 33">
+  <h3>P14. 핵산을 이루는 단위체</h3>
+  <div class="problem"><p>다음 중 핵산을 구성하는 것은?</p>
+    <p>________</p></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 1강 합본 33번 (PDF 2쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>단백질의 단위체가 아미노산이듯, DNA와 RNA에도 단위체가 있어요. 염기, 5탄당, 인산기 세 부분으로 된 그 단위체의 이름을 떠올려 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>핵산은 DNA와 RNA를 묶어 부르는 말이고, 같은 단위체가 줄줄이 이어진 중합체예요.</li><li>그 단위체는 염기, 5탄당, 인산기 세 부분으로 이루어진 뉴클레오타이드예요. 한 뉴클레오타이드의 당과 다음 뉴클레오타이드의 인산기가 이어져 사슬이 돼요.</li><li>수업과의 연결: 0908 04:54–05:18에서 교수님이 핵산은 DNA와 RNA이고 단위체인 뉴클레오타이드의 중합체이며, 뉴클레오타이드는 염기·당·인산 세 부분으로 되어 있다고 했어요.</li></ol>
+    <p class="answer">정답: 뉴클레오타이드</p>
+    <p>인쇄된 답안지에는 "뉴클레오티드"로 적혀 있는데, 강의노트 표기 "뉴클레오타이드"와 같은 말(nucleotide)이에요. 어느 표기로 써도 같은 답이에요.</p>
+  </details>
+</article>
+<article class="card" id="p15" data-source="기출 1강 35">
+  <h3>P15. 진핵세포를 원핵세포와 가르는 기준</h3>
+  <div class="problem"><p>진핵세포는 __________점에서 원핵세포와 구별 된다.</p>
+    <ul class="choices"><li>(1) 진핵세포만이 원형질막을 가지고 있다는</li><li>(2) 진핵세포만이 DNA를 가지고 있다는</li><li>(3) 진핵세포만이 지구상에서 발견된다는</li><li>(4) 진핵세포만이 살아 있다고 생각된다는</li><li>(5) 진핵세포만이 핵을 가지고 있다는</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 1강 합본 35번 (PDF 3쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>이름에 답이 들어 있어요. "진핵"은 진짜 핵, "원핵"은 핵 이전이라는 뜻이에요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 틀려요. 원형질막(세포막)은 모든 세포의 경계라서 원핵세포에도 있어요.</li><li>(2) 틀려요. 원핵세포도 DNA를 가지고 있어요. 핵막 없이 핵양체에 뭉쳐 있을 뿐이에요.</li><li>(3) 틀려요. 세균 같은 원핵생물도 지구상에 살고 있고, 초기 지구의 생명은 오히려 원핵생물이었을 것으로 봐요.</li><li>(4) 틀려요. 원핵세포도 스스로 복제할 수 있는 살아 있는 세포예요.</li><li>(5) 맞아요. 진핵세포는 핵막으로 둘러싸인 진짜 핵 안에 DNA를 두고, 원핵세포에는 핵이 없어요.</li><li>수업과의 연결: 0908 24:19에서 교수님이 원핵생물은 핵이 없고 진핵생물은 진짜 핵이 있어 그 안에 DNA가 들어 있다고 했고, 원핵세포를 방이 없는 텐트에, 진핵세포를 방이 나뉜 아파트에 빗댔어요.</li></ol>
+    <p class="answer">정답: (5)</p>
+  </details>
+</article>
+    </section>
+    <section id="partC"><h2>C. 변형 연습</h2>
+<article class="card" id="p16" data-source="생성 변형 s0-quaternary">
+  <h3>P16. [변형] 폴리펩티드 한 가닥 단백질과 헤모글로빈</h3>
+  <div class="problem"><p>폴리펩티드 한 가닥으로만 이루어진 단백질 A와, 폴리펩티드 4개(α 2개, β 2개)로 이루어진 헤모글로빈을 비교했다. 이에 대한 설명으로 옳은 것은?</p>
+    <ul class="choices"><li>(1) 모든 단백질은 4차 구조를 가진다.</li><li>(2) 헤모글로빈은 폴리펩티드 한 가닥이 네 번 접혀서 만들어진 단백질이다.</li><li>(3) 단백질 A는 3차 구조가 가장 높은 수준의 구조이다.</li><li>(4) 헤모글로빈의 각 폴리펩티드는 3차 구조를 이루지 않은 채 바로 모여 4차 구조를 만든다.</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 폴리펩티드와 단백질, 3차 구조와 4차 구조(모든 단백질이 4차 구조를 가진다는 착각). 근거 토픽: 단백질의 4차 구조(s0-quaternary)</details>
+  <details class="hint"><summary>힌트 보기</summary>4차 구조는 "여러 줄이 모인" 구조예요. 줄이 하나뿐인 단백질에서도 모일 것이 있는지 생각해 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 틀려요. 단백질 A가 바로 반례예요. 폴리펩티드가 한 가닥인 단백질은 모일 다른 가닥이 없어서 4차 구조가 없어요. 4차 구조는 폴리펩티드가 2개 이상일 때만 생겨요.</li><li>(2) 틀려요. 헤모글로빈은 서로 다른 폴리펩티드 4개(α 2개, β 2개)가 모인 것이에요. 한 가닥이 여러 번 접히는 것은 3차 구조이고, 가닥의 개수와 접힘은 다른 이야기예요.</li><li>(3) 맞아요. 폴리펩티드 한 가닥은 1차 구조(아미노산 순서) → 2차 구조 → 3차 구조(입체 구조)까지 접히고 거기서 끝나요. 모일 가닥이 없으니 단백질 A의 가장 높은 수준은 3차 구조예요.</li><li>(4) 틀려요. 헤모글로빈의 폴리펩티드는 각자 먼저 3차 구조를 이룬 뒤 넷이 모여 4차 구조를 만들어요.</li><li>수업과의 연결: 0908 03:47–04:44에서 교수님이 폴리펩티드 각각이 3차 구조를 이룬 뒤 모인 것이 4차 구조이고, 폴리펩티드가 한 줄인 단백질은 3차 구조에서 끝난다고 했어요. 헤모글로빈은 김밥 네 줄을 모은 "모둠김밥 단백질"이었어요(03:30–03:59).</li></ol>
+    <p class="answer">정답: (3)</p>
+  </details>
+</article>
+<article class="card" id="p17" data-source="생성 변형 s1-double-helix">
+  <h3>P17. [변형] 아데닌 비율로 구아닌 비율 구하기</h3>
+  <div class="problem"><p>이중 가닥 DNA를 분석했더니 아데닌(A)이 전체 염기의 20%였다. 이 DNA에서 구아닌(G)이 차지하는 비율은?</p>
+    <ul class="choices"><li>(1) 20%</li><li>(2) 30%</li><li>(3) 40%</li><li>(4) 60%</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 상보적 염기쌍과 샤가프의 법칙(어떤 염기끼리 수가 같은지). 근거 토픽: 사슬의 뼈대와 이중 나선(s1-double-helix)</details>
+  <details class="hint"><summary>힌트 보기</summary>A는 누구와 짝을 짓나요? 짝끼리는 수가 같아요. A와 그 짝을 빼고 남은 비율을 나머지 한 쌍이 나눠 가져요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>A는 T하고만, G는 C하고만 짝을 지어요(상보적 수소결합). 그래서 이중 가닥 DNA에서는 A 수 = T 수, G 수 = C 수예요. 이것이 샤가프의 법칙이에요.</li><li>A = 20%이면 T도 20%라서 A + T = 40%예요. 남은 60%가 G + C이고, G = C이므로 G = 30%예요.</li><li>(1) 틀려요. 20%는 A와 G가 같다고 본 값인데, A의 짝은 G가 아니라 T예요.</li><li>(2) 맞아요. G + C = 100% − 40% = 60%를 G와 C가 똑같이 나눠 30%예요.</li><li>(3) 틀려요. 40%는 A + T의 합이에요. G의 비율이 아니에요.</li><li>(4) 틀려요. 60%는 G + C의 합이에요. 이것을 G와 C가 반씩 나눠 가져야 해요.</li><li>수업과의 연결: 0908 11:01–11:37에서 교수님이 G는 C하고 수소결합 3개, A는 T하고 수소결합 2개를 이룬다고 했고, 12:53–13:12에서 "G 개수랑 C 개수는 무조건 같겠죠?"라며 샤가프의 법칙을 설명했어요.</li></ol>
+    <p class="answer">정답: (2)</p>
+  </details>
+</article>
+<article class="card" id="p18" data-source="생성 변형 s1-dna-rna">
+  <h3>P18. [변형] 2′ 탄소에 OH가 있고 염기가 유라실인 뉴클레오타이드</h3>
+  <div class="problem"><p>어떤 뉴클레오타이드를 조사했더니 5탄당의 2′ 탄소에 OH가 붙어 있고, 염기는 유라실(U)이었다. 이 뉴클레오타이드에 대한 설명으로 옳은 것은?</p>
+    <ul class="choices"><li>(1) DNA를 이루는 단위체이다.</li><li>(2) RNA를 이루는 뉴클레오타이드이다.</li><li>(3) 이 당은 2′ 탄소에서 산소가 빠진 디옥시리보스이다.</li><li>(4) 유라실은 아데닌·구아닌과 같은 퓨린 계열 염기이다.</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 리보스(2′-OH)와 디옥시리보스(2′-H), DNA 염기와 RNA 염기, 퓨린과 피리미딘. 근거 토픽: DNA와 RNA는 무엇이 다를까(s1-dna-rna)</details>
+  <details class="hint"><summary>힌트 보기</summary>"디옥시"는 산소가 떨어졌다는 뜻이에요. 2′ 탄소에 산소(OH)가 그대로 있다면 어느 당일까요? 그리고 유라실은 DNA와 RNA 중 어디에만 있나요?</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>(1) 틀려요. DNA의 당은 2′ 탄소에 H만 붙은 디옥시리보스이고, DNA 염기는 A·G·T·C라 유라실이 없어요. 두 단서 모두 DNA와 맞지 않아요.</li><li>(2) 맞아요. 2′ 탄소에 OH가 붙은 당은 리보스이고, 유라실은 티민 대신 RNA에만 쓰이는 염기예요. 그래서 이 뉴클레오타이드는 RNA(리보뉴클레익 애시드)의 단위체예요.</li><li>(3) 틀려요. 2′ 탄소에 OH가 그대로 있으니 산소가 빠지지 않은 리보스예요. 산소가 빠져 H만 남은 것이 디옥시리보스예요.</li><li>(4) 틀려요. 퓨린은 고리가 2개인 아데닌(A)과 구아닌(G)뿐이고, 유라실(U)은 시토신·티민과 함께 고리가 1개인 피리미딘이에요.</li><li>수업과의 연결: 0908 08:18–08:58에서 교수님이 2′ 탄소에 OH가 있으면 리보스, 산소가 빠지면 디옥시리보스라고 풀었고, 06:29–07:11에서 "아기들은 순수" 암기법으로 A·G만 퓨린이라고 했어요.</li></ol>
+    <p class="answer">정답: (2)</p>
+  </details>
+</article>
+<article class="card" id="p19" data-source="생성 변형 s2-cell-size">
+  <h3>P19. [변형] 세포가 세 배 커질 때 표면적/부피 비</h3>
+  <div class="problem"><p>한 변이 2 μm인 정육면체 모양의 세포가 모양은 그대로인 채 한 변이 6 μm가 되도록 커졌다. 이때 세포의 표면적/부피 비는 어떻게 변하는가?</p>
+    <ul class="choices"><li>(1) 3배로 커진다.</li><li>(2) 변하지 않는다.</li><li>(3) 1/3로 줄어든다.</li><li>(4) 1/9로 줄어든다.</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 세포가 커질 때 표면적 자체와 표면적/부피 비. 근거 토픽: 세포는 왜 작을까(s2-cell-size)</details>
+  <details class="hint"><summary>힌트 보기</summary>한 변이 3배가 되면 면적은 몇 배, 부피는 몇 배가 될까요? 두 값을 직접 계산해서 나눠 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>처음: 표면적 = 6 × 2² = 24 μm², 부피 = 2³ = 8 μm³이라 비는 24 / 8 = 3이에요.</li><li>나중: 표면적 = 6 × 6² = 216 μm², 부피 = 6³ = 216 μm³이라 비는 216 / 216 = 1이에요. 3에서 1이 되었으니 1/3로 줄었어요.</li><li>(1) 틀려요. 표면적 자체는 24 μm²에서 216 μm²로 9배 커지지만, 부피가 8 μm³에서 216 μm³로 27배나 늘어서 비는 오히려 줄어요.</li><li>(2) 틀려요. 모양이 같아도 크기가 달라지면 면적(길이의 제곱)과 부피(길이의 세제곱)가 늘어나는 속도가 달라서 비가 변해요.</li><li>(3) 맞아요. 한 변이 k배가 되면 표면적은 k²배, 부피는 k³배라서 비는 1/k배가 돼요. k = 3이니 1/3이에요.</li><li>(4) 틀려요. 1/9는 표면적이 9배가 된다는 값을 비에 잘못 옮긴 것이에요. 비는 9 / 27 = 1/3배로 변해요.</li><li>수업과의 연결: 0908 22:34와 23:37–23:43에서 교수님이 세포가 커지면 표면적은 커져도 표면적/부피 비는 작아지며, 한 변이 2배면 면적 4배·부피 8배라고 설명했어요. 조각나서 표면적이 넓어진 터미네이터가 금방 녹은 장면(21:39–22:23)도 같은 이야기예요.</li></ol>
+    <p class="answer">정답: (3)</p>
+  </details>
+</article>
+<article class="card" id="p20" data-source="생성 변형 s2-prokaryote">
+  <h3>P20. [변형] 세균에 있는 것만 고르기</h3>
+  <div class="problem"><p>다음 ㄱ~ㅁ 중 원핵세포(세균)에 있는 것만을 있는 대로 고른 것은?</p>
+    <ul><li>ㄱ. 리보솜</li><li>ㄴ. 핵막</li><li>ㄷ. 세포벽</li><li>ㄹ. 미토콘드리아</li><li>ㅁ. 핵양체</li></ul>
+    <ul class="choices"><li>(1) ㄱ, ㄷ, ㅁ</li><li>(2) ㄱ, ㄴ, ㄷ</li><li>(3) ㄴ, ㄹ, ㅁ</li><li>(4) ㄱ, ㄷ, ㄹ, ㅁ</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 원핵세포에 있는 것과 없는 것(포함·제외를 함께 판단). 근거 토픽: 원핵세포와 진핵세포(s2-prokaryote)</details>
+  <details class="hint"><summary>힌트 보기</summary>원핵세포는 방이 없는 텐트예요. 막으로 둘러싸인 구조는 빼고, 세포라면 꼭 있어야 하는 것과 텐트 바깥 벽을 남겨 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>ㄱ 리보솜: 있어요. 원핵세포도 단백질을 만들어야 살 수 있어요. ㄴ 핵막: 없어요. ㄷ 세포벽: 있어요. 세포막 바깥의 단단한 벽이에요. ㄹ 미토콘드리아: 없어요. 막성 세포소기관이에요. ㅁ 핵양체: 있어요. 핵막 없이 DNA가 뭉친 부분이에요.</li><li>(1) 맞아요. 있는 것은 ㄱ 리보솜, ㄷ 세포벽, ㅁ 핵양체예요.</li><li>(2) 틀려요. ㄴ 핵막이 들어 있어요. 핵양체는 핵처럼 보이는 DNA 덩어리일 뿐 핵막으로 싸여 있지 않아요.</li><li>(3) 틀려요. 없는 것(ㄴ 핵막, ㄹ 미토콘드리아)을 주로 모았어요. 막으로 둘러싸인 구조는 오히려 원핵세포에 없는 쪽이에요.</li><li>(4) 틀려요. ㄹ 미토콘드리아가 들어 있어요. 세포 내 공생설은 옛날 세균이 큰 세포에 잡아먹혀 미토콘드리아가 되었다는 이야기이지, 세균이 미토콘드리아를 가지고 있다는 뜻이 아니에요.</li><li>수업과의 연결: 0908 26:19–28:26에서 교수님이 원핵세포의 구조로 핵양체, 리보솜, 세포막, 세포벽, 협막을 짚었고, 25:52–26:10에서 원핵세포에는 핵도 막성 세포소기관도 없다고 했어요.</li></ol>
+    <p class="answer">정답: (1)</p>
+  </details>
+</article>
+<article class="card" id="p21" data-source="생성 변형 s3-er-golgi">
+  <h3>P21. [변형] 자유 리보솜에서 만들어지는 단백질</h3>
+  <div class="problem"><p>진핵세포의 리보솜은 조면 소포체 막에 붙어 있는 것과 시토졸에 떠 있는 것 두 종류가 있다. 다음 단백질 중 조면 소포체에 붙은 리보솜이 아니라 자유 리보솜에서 만들어지는 것은?</p>
+    <ul class="choices"><li>(1) 이자 세포가 만들어 혈액으로 내보내는 인슐린</li><li>(2) 세포막에 박혀 포도당을 들여보내는 수송 단백질</li><li>(3) 핵 속에서 DNA가 감기는 실패 역할을 하는 히스톤</li><li>(4) 골지체 안에 남아 단백질을 변형하는 골지체 단백질</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 부착 리보솜과 자유 리보솜이 각각 어느 목적지의 단백질을 만드는지. 근거 토픽: 소포체·골지체와 단백질이 가는 길 (s3-er-golgi).</details>
+  <details class="hint"><summary>힌트 보기</summary>먼저 각 단백질이 최종적으로 어디로 가는지 정해 보세요. 소포체 → 골지체 → 소낭 길을 타고 가는 단백질인지, 그 길 밖으로 가는 단백질인지가 갈림길이에요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>기준: 조면 소포체에 붙은 리보솜(부착 리보솜)은 리보솜 → 조면 소포체 → 소낭 → 골지체 → 소낭 길을 타는 단백질, 곧 세포 밖으로 분비되거나 세포막에 박히거나 소포체·골지체에 머무는 단백질을 만들어요. 그 밖의 단백질(핵, 시토졸, 미토콘드리아로 가는 것)은 자유 리보솜이 만들어요.</li><li>(1) 틀려요. 인슐린은 세포 밖(혈액)으로 나가는 분비 단백질이라 소포체와 골지체를 거쳐야 하므로 부착 리보솜에서 만들어져요.</li><li>(2) 틀려요. 포도당 수송 단백질은 세포막에 박히는 막 단백질이라 소낭에 실려 세포막까지 가야 하므로 부착 리보솜에서 만들어져요.</li><li>(3) 맞아요. 히스톤의 목적지는 핵이고, 핵으로 가는 단백질은 소포체·골지체 길을 타지 않고 핵공으로 들어가므로 자유 리보솜에서 만들어져요.</li><li>(4) 틀려요. 골지체에 머무는 단백질도 소포체 → 소낭 → 골지체 길을 거쳐 자리를 잡으므로 부착 리보솜에서 만들어져요.</li><li>수업과의 연결: 0908 수업 39:19–39:57에서 히스톤은 핵으로, 포도당 수송 단백질은 세포막으로, 인슐린은 혈액으로 간다고 목적지를 나눴고, 44:40–46:21에서 핵·세포질·미토콘드리아로 가는 단백질은 자유 리보솜이 만든다며 "요기만 조금 어려워요"라고 강조했어요.</li></ol>
+    <p class="answer">정답: (3)</p>
+  </details>
+</article>
+<article class="card" id="p22" data-source="생성 변형 s3-nucleus">
+  <h3>P22. [변형] 이중층과 이중막 구별하기</h3>
+  <div class="problem"><p>인지질로 된 막의 "이중층"과 "이중막"에 대한 설명으로 옳은 것은?</p>
+    <ul class="choices"><li>(1) 세포막은 인지질 이중층 두 개가 겹쳐진 이중막 구조이다.</li><li>(2) 이중층과 이중막은 같은 구조를 가리키는 두 가지 이름이다.</li><li>(3) 핵막은 인지질 분자가 한 겹으로만 늘어선 막이다.</li><li>(4) 핵막은 인지질 이중층 두 개로 되어 있어, 인지질 층으로 세면 4겹이다.</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 이중층(인지질 두 겹, 일반 세포막)과 이중막(이중층이 두 개, 핵막). 근거 토픽: 핵: 이중막·핵공·염색질·인 (s3-nucleus).</details>
+  <details class="hint"><summary>힌트 보기</summary>"층"은 인지질이 늘어선 한 겹, "막"은 이중층 하나 전체를 세는 단위라고 생각해 보세요. 세포막과 핵막은 각각 막이 몇 개일까요?</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>기준: 이중층은 인지질이 두 겹으로 늘어선 막 하나이고, 일반적인 세포막이 이것이에요. 이중막은 그런 이중층 자체가 두 개 있는 것, 곧 막이 두 겹인 구조이고, 핵막이 여기에 해당해요.</li><li>(1) 틀려요. 세포막은 인지질 이중층 하나로 된 막이라 이중막이 아니에요.</li><li>(2) 틀려요. 이중층은 막 하나 안의 인지질 두 겹이고, 이중막은 막(이중층)이 두 개라서 서로 다른 구조예요.</li><li>(3) 틀려요. 핵막은 인지질 한 겹이 아니라 이중층이 두 개 있는 이중막이에요.</li><li>(4) 맞아요. 핵막은 이중층 두 개로 된 이중막이므로 인지질 층 수로 세면 2 × 2 = 4겹이에요.</li><li>수업과의 연결: 0908 수업 29:16–29:56에서 교수님이 "이중층하고 이중막하고 다른 거냐? … 다릅니다"라고 묻고, 세포막은 이중층, 핵막은 이중층이 하나 더 있는 이중막이라고 네 번 되풀이했어요.</li></ol>
+    <p class="answer">정답: (4)</p>
+  </details>
+</article>
+<article class="card" id="p23" data-source="생성 변형 s3-endomembrane">
+  <h3>P23. [변형] 망가진 미토콘드리아를 분해하는 작용</h3>
+  <div class="problem"><p>어떤 세포가 기능을 잃은 자기 미토콘드리아를 리소좀으로 보내 분해하고, 나온 재료를 다시 쓴다. 이 작용의 이름과 설명을 옳게 짝지은 것은?</p>
+    <ul class="choices"><li>(1) 식균작용 — 세포가 자기 몸속의 낡은 구조를 골라 분해한다.</li><li>(2) 자가소화작용 — 리소좀이 자기 세포의 낡은 구조를 분해해 재활용한다.</li><li>(3) 자가소화작용 — 리보솜이 자기 세포의 낡은 구조를 잘게 분해한다.</li><li>(4) 식균작용 — 골지체가 바깥에서 들어온 세균을 직접 녹인다.</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 자가소화작용(자기 것 분해)과 식균작용(바깥 것 분해), 그리고 분해를 맡는 소기관. 근거 토픽: 내막계와 리소좀 (s3-endomembrane).</details>
+  <details class="hint"><summary>힌트 보기</summary>분해 대상이 세포 "자기 것"인지 "바깥에서 들어온 것"인지부터 보세요. 그다음, 가수분해효소를 담고 분해를 맡는 소기관이 무엇인지 확인하세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>기준: 리소좀은 가수분해효소로 단백질, 지질 등을 잘라 내는 분해·재활용 장소예요. 자기 것(망가진 미토콘드리아 등)을 분해하면 자가소화작용, 백혈구가 세균을 감싸 들여온 것처럼 바깥 것을 분해하면 식균작용이에요.</li><li>(1) 틀려요. 자기 몸속 구조를 분해하는 것은 자가소화작용이고, 식균작용은 바깥에서 감싸 들여온 것을 분해하는 작용이라 대상이 뒤바뀌었어요.</li><li>(2) 맞아요. 자기 미토콘드리아를 리소좀이 분해해 재료를 다시 쓰는 것이 자가소화작용이에요.</li><li>(3) 틀려요. 이름은 맞지만 분해를 맡는 것은 리소좀이에요. 리보솜은 단백질을 만드는 곳이라 분해와 반대 일을 해요.</li><li>(4) 틀려요. 식균작용에서 세균을 녹이는 것은 골지체가 아니라, 감싸 들여온 주머니와 합쳐지는 리소좀의 효소예요. 또 이 문제의 상황은 바깥 세균이 아니라 자기 미토콘드리아를 분해하는 경우예요.</li><li>수업과의 연결: 0908 수업 48:40–49:14에서 망가진 미토콘드리아를 분해하는 자가소화작용과 백혈구가 세균을 먹는 식균작용을 예로 들고, "자기 걸 먹으면 자가소화작용, 밖에 있는 걸 먹으면 식균 작용"이라고 대비했어요.</li></ol>
+    <p class="answer">정답: (2)</p>
+  </details>
+</article>
+<article class="card" id="p24" data-source="생성 변형 s4-mito">
+  <h3>P24. [변형] 세포 내 공생설의 근거가 아닌 것</h3>
+  <div class="problem"><p>미토콘드리아가 원래는 독립해 살던 세균이었는데, 큰 세포 안에 들어와 함께 살게 되었다는 세포 내 공생설이 있다. 이 설을 뒷받침하는 근거로 옳지 않은 것은?</p>
+    <ul class="choices"><li>(1) 미토콘드리아 DNA는 사람 핵 속 DNA처럼 선형이 아니라, 세균 DNA처럼 끝이 이어진 원형이다.</li><li>(2) 미토콘드리아 안의 리보솜은 진핵세포 세포질의 리보솜보다 작고, 세균의 리보솜과 크기가 같다.</li><li>(3) 미토콘드리아는 자기만의 DNA와 리보솜을 가지고 있어, 자기 단백질 중 일부를 스스로 만든다.</li><li>(4) 미토콘드리아 막은 소낭을 통해 골지체 막과 끊임없이 섞이며, 골지체 막과 같은 막으로 이어진다.</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 세포 내 공생설의 근거가 되는 관찰과 근거가 아닌 진술(미토콘드리아를 내막계로 착각). 근거 토픽: 미토콘드리아와 세포 내 공생설 (s4-mito).</details>
+  <details class="hint"><summary>힌트 보기</summary>근거가 되려면 미토콘드리아가 세균과 닮았다는 점을 보여 줘야 해요. 반대로 미토콘드리아가 세포 자신의 막 체계에 속한다는 진술은 어느 쪽 이야기일까요?</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>기준: 세포 내 공생설의 근거는 미토콘드리아가 세균과 닮은 점이에요. 수업이 든 근거는 두 가지예요. 미토콘드리아 DNA가 세균처럼 원형이라는 것과, 미토콘드리아 리보솜이 세균 리보솜과 크기가 같다는 것이에요. 미토콘드리아가 자체 DNA와 리보솜으로 단백질을 만든다는 것은 이 설이 나오게 된 출발점이 된 관찰이에요.</li><li>(1) 맞아요. 진핵세포 핵 DNA는 선형이고 세균 DNA는 원형인데, 미토콘드리아 DNA가 원형이라는 것은 세균과 닮았다는 근거라서 답이 아니에요.</li><li>(2) 맞아요. 세균 리보솜은 진핵세포 리보솜보다 작고, 미토콘드리아 리보솜이 세균 것과 크기가 같다는 것은 근거라서 답이 아니에요.</li><li>(3) 맞아요. 한때 독립 생물이었다면 자기 유전 정보와 단백질 공장을 가졌을 것이므로, 자체 DNA와 리보솜이 있다는 것은 공생설의 출발이 된 관찰로서 이 설과 맞아떨어지므로 답이 아니에요.</li><li>(4) 틀려요. 미토콘드리아는 내막계가 아니에요(정리노트 보충). 소낭으로 막이 이어지고 섞이는 것은 핵막·소포체·골지체·소낭·리소좀·세포막으로 이루어진 내막계의 특징이라, 이 진술은 사실이 아니고 공생설의 근거도 아니에요.</li><li>수업과의 연결: 0908 수업 53:34–55:33에서 교수님이 세포 내 공생설의 근거로 "사람은 직선인데 세균은 … 동그란 형태"인 DNA와 세균과 같은 크기의 리보솜을 들었고, 47:12–47:31에서 소낭으로 섞이는 막들을 "그 막이 그 막"이라며 내막계로 묶었어요.</li></ol>
+    <p class="answer">정답: (4)</p>
+  </details>
+</article>
+    </section>
+  </main>
+  <footer>출처: 2023·2024 생명과학 기출(1강 합본) · 웹과제(1장). 정답은 인쇄된 답안지와 독립 판단을 대조했고, 어긋난 곳은 풀이에 밝혔습니다. 변형 연습은 수업 내용으로 만든 생성 문제입니다.</footer>
+    </div>
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="panel-right-title">
+      <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-right-title">풀이 도움</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-sub" id="aid-for" hidden></p>
+        <p class="panel-empty">문제로 넘어가면 그 문제의 교과서 원문, 힌트, 풀이가 여기에 나옵니다. 먼저 스스로 풀어 본 뒤 여세요.</p>
+        <div class="aids"></div>
+        <button class="solved-btn" id="solved-btn" type="button" aria-pressed="false" hidden><span>푼 문제로 표시</span></button>
+      </div>
+    </aside>
+  </div>
+  <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
+  <nav class="pager" aria-label="화면 이동">
+    <div class="pager-inner">
+      <button class="btn btn-ghost" id="pager-prev" type="button">이전</button>
+      <span class="pager-count" id="pager-count"></span>
+      <button class="btn btn-primary" id="pager-next" type="button">시작하기</button>
+    </div>
+  </nav>
+  <p class="sr-only" id="pager-status" aria-live="polite"></p>
+
+  <script id="theme-ui">
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const sysDark = matchMedia('(prefers-color-scheme: dark)');
+      const KEY = 'od-theme';
+      const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+      function label() {
+        const next = isDark() ? '라이트 모드로 전환' : '다크 모드로 전환';
+        btn.setAttribute('aria-label', next);
+        btn.title = next;
+      }
+      btn.addEventListener('click', () => {
+        const t = isDark() ? 'light' : 'dark';
+        // 시스템 설정과 같아지면 저장을 지워 다시 시스템을 따른다
+        if ((t === 'dark') === sysDark.matches) { delete root.dataset.theme; try { localStorage.removeItem(KEY); } catch (e) {} }
+        else { root.dataset.theme = t; try { localStorage.setItem(KEY, t); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+        label();
+      });
+      sysDark.addEventListener('change', label);
+      window.addEventListener('storage', (e) => {
+        if (e.key !== KEY) return;
+        if (e.newValue === 'light' || e.newValue === 'dark') root.dataset.theme = e.newValue; else delete root.dataset.theme;
+        label();
+      });
+      label();
+    })();
+  </script>
+  <script id="panels-ui">
+    (function () {
+      const body = document.body;
+      const layout = document.querySelector('.layout');
+      const kind = body.dataset.panels;
+      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const scrim = document.getElementById('panel-scrim');
+      const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
+      const wideMq = matchMedia('(min-width: 1024px)');
+      const roomyMq = matchMedia('(min-width: 1280px)');
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      const PREF = 'od-panels:' + kind;
+      // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
+      const RANGE = body.dataset.range || '';
+      const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+      const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+      let overlay = null;
+
+      // ---------- 열고 닫기 ----------
+      function docked() {
+        const pref = store.get(PREF, {});
+        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+      }
+      function sync() {
+        const wide = wideMq.matches;
+        const d = docked();
+        ['left', 'right'].forEach((side) => {
+          const open = wide ? d[side] : overlay === side;
+          const p = panels[side];
+          layout.dataset[side] = open ? 'open' : 'closed';
+          p.classList.toggle('is-open', !wide && open);
+          p.inert = !open;
+          if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
+          toggles[side].setAttribute('aria-expanded', String(open));
+        });
+        const drawer = !wide && overlay !== null;
+        scrim.classList.toggle('is-on', drawer);
+        body.classList.toggle('drawer-open', drawer);
+        blockers.forEach((el) => { el.inert = drawer; });
+      }
+      function openDrawer(side) {
+        overlay = side;
+        sync();
+        requestAnimationFrame(() => panels[side].querySelector('[data-panel-close]').focus());
+      }
+      function closeDrawer(refocus) {
+        if (overlay === null) return;
+        const side = overlay;
+        overlay = null;
+        sync();
+        if (refocus) toggles[side].focus();
+      }
+      function toggle(side) {
+        if (wideMq.matches) {
+          const d = docked();
+          d[side] = !d[side];
+          store.set(PREF, d);
+          sync();
+          if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+        } else if (overlay === side) closeDrawer(true);
+        else openDrawer(side);
+      }
+
+      toggles.left.addEventListener('click', () => toggle('left'));
+      toggles.right.addEventListener('click', () => toggle('right'));
+      scrim.addEventListener('click', () => closeDrawer(true));
+      document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
+      panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
+
+      // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      function applyWidths() {
+        const w = store.get(PREF + ':w', {});
+        ['left', 'right'].forEach((side) => {
+          if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
+          else layout.style.removeProperty(WIDTH[side].prop);
+        });
+      }
+      function maxFor(side) {
+        const other = side === 'left' ? panels.right : panels.left;
+        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
+      }
+      function setWidth(side, px, save) {
+        const v = Math.round(Math.min(Math.max(px, WIDTH[side].min), maxFor(side)));
+        layout.style.setProperty(WIDTH[side].prop, v + 'px');
+        panels[side].querySelector('.panel-resize').setAttribute('aria-valuenow', String(v));
+        if (save) { const w = store.get(PREF + ':w', {}); w[side] = v; store.set(PREF + ':w', w); }
+      }
+      function resetWidth(side) {
+        const w = store.get(PREF + ':w', {});
+        delete w[side];
+        store.set(PREF + ':w', w);
+        layout.style.removeProperty(WIDTH[side].prop);
+      }
+      document.querySelectorAll('.panel-resize').forEach((handle) => {
+        const side = handle.dataset.side;
+        const dir = side === 'left' ? 1 : -1;
+        handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
+        handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
+        handle.addEventListener('pointerdown', (e) => {
+          if (!wideMq.matches || e.button !== 0) return;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startW = panels[side].getBoundingClientRect().width;
+          handle.setPointerCapture(e.pointerId);
+          body.classList.add('is-resizing');
+          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const up = () => {
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', up);
+            handle.removeEventListener('pointercancel', up);
+            body.classList.remove('is-resizing');
+            setWidth(side, panels[side].getBoundingClientRect().width, true);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', up);
+          handle.addEventListener('pointercancel', up);
+        });
+        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('keydown', (e) => {
+          const step = e.shiftKey ? 64 : 16;
+          const cur = panels[side].getBoundingClientRect().width;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+        });
+      });
+      applyWidths();
+      const onMq = () => { overlay = null; sync(); };
+      wideMq.addEventListener('change', onMq);
+      roomyMq.addEventListener('change', onMq);
+
+      // ---------- 목차의 진행 표시 ----------
+      const progressN = document.getElementById('progress-n');
+      const progressBar = document.getElementById('progress-bar');
+      const progressTotal = document.getElementById('progress-total');
+      function markToc(done, total, doneLabel) {
+        panels.left.querySelectorAll('.toc-list a').forEach((a) => {
+          const id = decodeURIComponent(a.getAttribute('href').slice(1));
+          let mark = a.querySelector('.toc-mark');
+          if (!mark) {
+            mark = document.createElement('span');
+            mark.className = 'toc-mark';
+            mark.setAttribute('aria-hidden', 'true');
+            const state = document.createElement('span');
+            state.className = 'sr-only toc-state';
+            a.append(mark, state);
+          }
+          const isDone = done.has(id);
+          mark.classList.toggle('is-done', isDone);
+          mark.innerHTML = isDone ? ICON_DONE : ICON_TODO;
+          a.querySelector('.toc-state').textContent = isDone ? ' (' + doneLabel + ')' : '';
+        });
+        progressN.textContent = String(done.size);
+        progressTotal.textContent = String(total);
+        progressBar.style.transform = 'scaleX(' + (total ? done.size / total : 0) + ')';
+      }
+      function revealCurrent() {
+        const link = panels.left.querySelector('.toc-list a[aria-current="true"]');
+        if (link && layout.dataset.left === 'open') link.scrollIntoView({ block: 'nearest' });
+      }
+
+      // ---------- 복습문제: 오른쪽 = 원문 · 힌트 · 풀이 ----------
+      function setupReview() {
+        const KEY = 'od-review-solved:' + RANGE;
+        const cards = Array.from(document.querySelectorAll('main article.card'));
+        const aids = panels.right.querySelector('.aids');
+        const sub = document.getElementById('aid-for');
+        const empty = panels.right.querySelector('.panel-empty');
+        const btn = document.getElementById('solved-btn');
+        const groups = {};
+        const solved = new Set(store.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        cards.forEach((card) => {
+          const g = document.createElement('div');
+          g.className = 'aid';
+          g.hidden = true;
+          card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
+          aids.appendChild(g);
+          groups[card.id] = g;
+        });
+        let curId = null;
+        function paintBtn() {
+          const on = solved.has(curId);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.innerHTML = (on ? ICON_DONE : ICON_TODO) + '<span>' + (on ? '푼 문제 · 표시 해제' : '푼 문제로 표시') + '</span>';
+        }
+        btn.addEventListener('click', () => {
+          if (!curId) return;
+          if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
+          store.set(KEY, Array.from(solved));
+          paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          curId = s.matches('article.card') ? s.id : null;
+          Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
+          empty.hidden = Boolean(curId);
+          btn.hidden = !curId;
+          sub.textContent = curId ? ((s.querySelector('h3') || {}).textContent || '').trim() : '';
+          sub.hidden = !curId;
+          if (curId) paintBtn();
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(solved, cards.length, '푼 문제');
+          revealCurrent();
+        });
+      }
+
+      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
+      function setupNote() {
+        const KEY = 'od-note-read:' + RANGE;
+        const topics = Array.from(document.querySelectorAll('main article.topic'));
+        const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
+        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
+        const box = panels.right.querySelector('.sums');
+        const sums = {};
+        topics.forEach((t) => {
+          const el = t.querySelector(':scope > .sum');
+          if (!el) return;
+          el.hidden = true;
+          box.appendChild(el);
+          sums[t.id] = el;
+        });
+        const sub = document.getElementById('sum-for');
+        const empty = document.getElementById('sum-empty');
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          const key = s.matches('article.topic') ? s.id : 'intro';
+          Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
+          empty.hidden = Boolean(sums[key]);
+          sub.textContent = key === 'intro' ? '전체 흐름' : ((s.querySelector('h3') || {}).textContent || '').trim();
+          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(read, topics.length, '읽음');
+          revealCurrent();
+        });
+      }
+
+      if (kind === 'review') setupReview();
+      if (kind === 'note') setupNote();
+      sync();
+    })();
+  </script>
+  <script id="pager-ui">
+    (function () {
+      const root = document.documentElement;
+      const main = document.querySelector('main');
+      const hero = main.querySelector('.hero');
+      const screens = [hero].concat(Array.from(main.querySelectorAll(document.body.dataset.screens)));
+      if (screens.length < 2) { root.classList.remove('js'); return; }
+      screens.forEach((s) => s.classList.add('screen'));
+
+      const last = screens.length - 1;
+      const prevBtn = document.getElementById('pager-prev');
+      const nextBtn = document.getElementById('pager-next');
+      const count = document.getElementById('pager-count');
+      const bar = document.getElementById('pager-bar');
+      const status = document.getElementById('pager-status');
+      const toc = document.querySelector('#panel-left .toc');
+      const scroller = document.querySelector('.content');
+      const titleOf = (s) => ((s.querySelector('h3') || s.querySelector('h1') || {}).textContent || '').trim();
+      let cur = -1;
+
+      // 목차: 섹션 링크 아래에 화면(토픽·카드) 목록을 붙인다
+      const tocLinks = [];
+      Array.from(toc.querySelectorAll(':scope > a')).forEach((a) => {
+        const sec = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+        const group = document.createElement('div');
+        group.className = 'toc-group';
+        a.replaceWith(group);
+        group.appendChild(a);
+        if (!sec) return;
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        screens.forEach((s, i) => {
+          if (!sec.contains(s)) return;
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#' + s.id;
+          link.innerHTML = '<span class="toc-title"></span>';
+          link.firstChild.textContent = titleOf(s);
+          li.appendChild(link);
+          list.appendChild(li);
+          tocLinks[i] = link;
+        });
+        group.appendChild(list);
+      });
+
+      function indexFor(hash) {
+        const id = decodeURIComponent((hash || '').replace(/^#/, ''));
+        const el = id && document.getElementById(id);
+        if (!el || !main.contains(el)) return { i: 0 };
+        const i = screens.findIndex((s) => s.contains(el) || el.contains(s));
+        return { i: Math.max(i, 0), target: i >= 0 && screens[i].contains(el) && screens[i] !== el ? el : null };
+      }
+
+      function render(i, target) {
+        const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
+        if (i !== cur) {
+          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
+          main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
+          const s = screens[i];
+          const sec = s.closest('section');
+          if (sec) sec.classList.add('is-on');
+          s.classList.add('is-current');
+          if (dir) { s.classList.remove('enter-next', 'enter-prev'); void s.offsetWidth; s.classList.add(dir); }
+          cur = i;
+          document.body.classList.toggle('at-end', i === last);
+          prevBtn.disabled = i === 0;
+          nextBtn.textContent = i === 0 ? '시작하기' : i === last ? '처음으로' : '다음';
+          count.textContent = i === 0 ? '' : i + ' / ' + last;
+          bar.style.transform = 'scaleX(' + (i / last) + ')';
+          status.textContent = i === 0 ? titleOf(s) : i + ' / ' + last + ', ' + titleOf(s);
+          tocLinks.forEach((link, k) => link && link.setAttribute('aria-current', String(k === i)));
+          document.dispatchEvent(new CustomEvent('od:screen', { detail: { index: i, screen: s } }));
+        }
+        if (target) target.scrollIntoView({ block: 'start' });
+        else scroller.scrollTo(0, 0);
+      }
+
+      function go(i) {
+        i = Math.min(Math.max(i, 0), last);
+        if (i === cur) return;
+        const url = i === 0 ? location.pathname + location.search : '#' + screens[i].id;
+        history.pushState(null, '', url);
+        render(i);
+      }
+
+      prevBtn.addEventListener('click', () => go(cur - 1));
+      nextBtn.addEventListener('click', () => go(cur === last ? 0 : cur + 1));
+      const fromUrl = () => { const r = indexFor(location.hash); render(r.i, r.target); };
+      window.addEventListener('hashchange', fromUrl);
+      window.addEventListener('popstate', fromUrl);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+
+      // 좌우로 밀어서 넘기기 (가로로 스크롤되는 영역은 제외)
+      let sx = 0, sy = 0, skip = true;
+      main.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (skip) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 64 && Math.abs(dx) > 2 * Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      fromUrl();
+    })();
+  </script>
+</body>
+</html>

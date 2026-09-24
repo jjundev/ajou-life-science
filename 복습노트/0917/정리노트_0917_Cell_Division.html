@@ -1,0 +1,2076 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>생명과학 정리노트 0917</title>
+  <meta name="description" content="이영만 교수님 생명과학 · 0917 수업 (3장 세포분열)">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('od-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']})"></script>
+  <style>
+    /* ---------- 토큰 ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #b54708; --prof: #6941c6; --supp: #067647; --danger: #d92d20;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --fs-title: clamp(28px, 6vw, 36px); --fs-h3: clamp(26px, 5.4vw, 32px); --fs-layer: 19px; --fs-lead: 22px; --fs-body: 17px; --fs-sub: 15px; --fs-small: 14px; --fs-label: 13px; --fs-fig: 12px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+      --radius: 8px; --measure: 680px; --tap: 48px; --btn-min: 160px;
+      --dur: 220ms; --dur-exit: 150ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+      /* 예전 조각이 참조할 수 있는 이름 */
+      --surface-2: var(--surface); --accent-soft: var(--surface); --warn-soft: var(--surface);
+      --prof-soft: var(--surface); --supp-soft: var(--surface); --eli5: var(--accent-ink); --eli5-soft: var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+        --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+        --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+    }
+
+    /* ---------- 기본 ---------- */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent-ink); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+
+    /* ---------- 상단 바 ---------- */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s2) var(--s4); display: flex; align-items: center; gap: var(--s3); min-height: 56px; }
+    .brand { flex: 1 1 auto; min-width: 0; font-size: var(--fs-body); font-weight: 700; white-space: nowrap; }
+    .text-btn { flex: none; min-height: 44px; min-width: 44px; padding: 0 var(--s3); border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); font: 600 var(--fs-small)/1 var(--font); cursor: pointer; }
+    .bar { height: 2px; background: var(--line); overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+
+    /* ---------- 본문 ---------- */
+    main { flex: 1 0 auto; width: 100%; max-width: var(--measure); margin: 0 auto; padding: var(--s6) var(--s5) var(--s7); }
+    .hero h1 { font-size: var(--fs-title); line-height: 1.3; margin: 0 0 var(--s3); letter-spacing: -0.02em; }
+    .hero p { color: var(--ink-2); margin: 0; }
+    section { margin-top: var(--s7); }
+    section > h2 { font-size: 22px; line-height: 1.4; margin: 0 0 var(--s4); }
+    .topic { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .topic h3 { margin: 0 0 var(--s2); font-size: var(--fs-h3); font-weight: 800; line-height: 1.3; letter-spacing: -0.02em; }
+    .tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+    .tag { font-size: var(--fs-label); line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+
+    /* 레이어: 배경 없이 라벨과 구분선으로 나눈다 */
+    .layer { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .layer.eli5 { margin-top: 0; padding-top: 0; border-top: 0; }
+    .layer > :first-child { margin-top: 0; }
+    .layer > :last-child { margin-bottom: 0; }
+    .layer-title { display: block; font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; color: var(--ink); margin-bottom: var(--s3); }
+    .layer.eli5 .layer-title { color: var(--accent-ink); }
+    .layer.eli5 .lead { font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; letter-spacing: -0.01em; margin: 0 0 var(--s4); }
+    /* 정확히 말하면: 본문 크기 그대로, 굵은 첫머리만 진하게 */
+    .layer.formal b { font-weight: 700; color: var(--ink); }
+    /* 교수님 말씀 · 주의: 보조 정보는 한 단계 작게 */
+    .layer.prof, .layer.warn { font-size: var(--fs-sub); line-height: 1.7; }
+    .layer.prof blockquote { font-size: var(--fs-sub); }
+    .layer.prof .layer-title { color: var(--prof); }
+    .layer.warn { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn .layer-title { color: var(--warn); font-size: var(--fs-body); }
+    .layer.supp .badge.supp { margin-bottom: var(--s2); }
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
+    .badge.supp { color: var(--supp); }
+    blockquote { margin: var(--s3) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
+    ol.steps { padding-left: 1.4em; }
+    ol.steps li { margin: var(--s2) 0; }
+
+    /* 그림 · 수식 · 표 */
+    .figure { margin: var(--s4) 0; text-align: center; }
+    .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
+    .figure figcaption { font-size: var(--fs-small); color: var(--ink-2); margin-top: var(--s1); }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: var(--s1) 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+    th, td { border-bottom: 1px solid var(--line); padding: var(--s2); text-align: left; vertical-align: top; }
+    th { color: var(--ink-2); font-weight: 600; }
+    td:first-child, th:first-child { min-width: 6em; }
+
+    /* 위젯 */
+    .widget { background: var(--surface); border-radius: var(--radius); padding: var(--s4); margin: var(--s5) 0; }
+    .widget h4 { margin: 0 0 var(--s1); font-size: var(--fs-layer); line-height: 1.4; }
+    .widget-help { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s3); }
+    .controls { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--s2); font-size: var(--fs-small); }
+    .controls label { display: flex; align-items: center; gap: var(--s2); min-height: 44px; }
+    .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .widget svg { width: 100%; height: auto; background: var(--bg); border-radius: var(--radius); }
+    .readout { font-size: var(--fs-small); margin-top: var(--s2); }
+    .legend { font-size: var(--fs-label); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .sw { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: var(--s1); border-radius: 2px; }
+    .sw.truth { background: var(--ink-2); } .sw.fit { background: var(--accent); } .sw.train { background: var(--accent); height: 10px; width: 10px; border-radius: 50%; }
+    .sw.test { background: var(--warn); height: 10px; width: 10px; border-radius: 50%; } .sw.like { background: var(--accent); } .sw.prior { background: var(--prof); } .sw.post { background: var(--supp); }
+    .axis { stroke: var(--line); stroke-width: 1.5; }
+    .tick { fill: var(--ink-2); font-size: 11px; }
+    .plot-truth { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .plot-fit { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+    .pt-train { fill: var(--accent); }
+    .pt-test { fill: var(--warn); }
+    .plot-like { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .plot-prior { fill: none; stroke: var(--prof); stroke-width: 2; stroke-dasharray: 6 4; }
+    .plot-post { fill: none; stroke: var(--supp); stroke-width: 3; }
+    .mark-ml { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .mark-map { stroke: var(--supp); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 2; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 2.5; }
+    .fig-danger { stroke: var(--danger); fill: none; stroke-width: 2.5; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: 13px; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-fig); font-family: inherit; }
+
+    footer { width: 100%; max-width: var(--measure); margin: 0 auto; padding: 0 var(--s5) var(--s6); color: var(--ink-2); font-size: var(--fs-small); }
+
+    /* ---------- 하단 이동 바 ---------- */
+    .pager { position: sticky; bottom: 0; z-index: 10; background: var(--bg); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .pager-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s3) var(--s4); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); }
+    .pager-count { font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; min-width: 4em; }
+    .btn { min-height: var(--tap); min-width: var(--btn-min); padding: 0 var(--s6); border-radius: var(--radius); border: 0; font: 700 var(--fs-body)/1 var(--font); cursor: pointer; white-space: nowrap;
+      transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+    .btn-ghost { justify-self: start; background: var(--surface); color: var(--ink); }
+    .btn-primary { justify-self: end; background: var(--btn-bg); color: var(--on-btn); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    @media (hover: hover) {
+      .text-btn:hover, .btn-ghost:not(:disabled):hover { background: var(--line); }
+      .btn-primary:not(:disabled):hover { box-shadow: inset 0 0 0 100px rgba(0, 0, 0, .14); }
+    }
+
+    /* ---------- 목차 시트 ---------- */
+    .sheet { width: min(100%, var(--measure)); max-width: 100%; max-height: 80dvh; margin: auto auto 0; padding: 0; border: 0;
+      border-radius: 16px 16px 0 0; background: var(--bg); color: var(--ink); }
+    .sheet::backdrop { background: rgba(0, 0, 0, .4); }
+    .sheet-inner { padding: var(--s4) var(--s5) calc(var(--s5) + env(safe-area-inset-bottom)); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s2); }
+    .sheet-head h2 { margin: 0; font-size: var(--fs-lead); }
+    .toc { display: flex; flex-direction: column; }
+    .toc > a, .toc-group > a { display: block; padding: var(--s3) 0 var(--s1); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); text-decoration: none; }
+    .toc-list { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+    .toc-list a { display: flex; align-items: center; gap: var(--s3); min-height: var(--tap); padding: var(--s2) var(--s3); margin: 0 calc(-1 * var(--s3));
+      border-radius: var(--radius); color: var(--ink); text-decoration: none; line-height: 1.4; }
+    .toc-list a[aria-current="true"] { background: var(--surface); font-weight: 700; color: var(--accent-ink); }
+    .toc-list .toc-title { flex: 1 1 0; min-width: 0; }
+    @media (hover: hover) { .toc-list a:hover { background: var(--surface); } }
+
+    /* ---------- 한 화면에 하나씩 (JS가 켤 때만) ---------- */
+    html:not(.js) .pager, html:not(.js) #toc-open { display: none; }
+    html:not(.js) .sheet { display: block; position: static; width: 100%; max-height: none; margin: 0 auto; border-radius: 0; border-bottom: 1px solid var(--line); }
+    html:not(.js) .sheet-close { display: none; }
+    .js main > .hero:not(.is-current), .js main > section:not(.is-on), .js .screen:not(.is-current) { display: none; }
+    .js main > section { margin-top: 0; }
+    .js main > section > h2 { font-size: var(--fs-small); font-weight: 600; color: var(--accent-ink); margin: 0 0 var(--s2); }
+    .js .topic { padding: 0; border-top: 0; }
+    .js .hero { padding-top: 12vh; }
+    .js footer { display: none; }
+    .js body.at-end footer { display: block; }
+    .screen.enter-next { animation: enter-next var(--dur) var(--ease-out); }
+    .screen.enter-prev { animation: enter-prev var(--dur) var(--ease-out); }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .screen.enter-next, .screen.enter-prev { animation: none; }
+      .bar > span, .btn { transition: none; }
+    }
+    @media (max-width: 480px) {
+      main { padding: var(--s5) var(--s4) var(--s6); }
+      footer { padding: 0 var(--s4) var(--s5); }
+      .btn { min-width: 120px; padding: 0 var(--s5); }
+    }
+    @media print {
+      .topbar, .pager, .sheet { display: none !important; }
+      .js main > .hero, .js main > section, .js .screen, .js footer { display: block !important; }
+    }
+
+    /* ---------- 좌우 패널 (drawer) ---------- */
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
+    .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
+    .panel-toggle svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-toggle .strip { fill: transparent; stroke: none; transition: fill 150ms ease-out; }
+    .panel-toggle[aria-expanded="true"] { color: var(--accent-ink); }
+    .panel-toggle[aria-expanded="true"] .strip { fill: currentColor; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .i-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .theme-toggle .i-sun { display: block; }
+      :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
+    }
+
+    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
+    .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
+    .content { grid-column: 2; }
+    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
+    .panel-resize { display: none; }
+    .panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 44px; margin-bottom: var(--s2); }
+    .panel-head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-lead); line-height: 1.4; }
+    .panel-sub { margin: 0 0 var(--s4); font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; }
+    .panel-empty { margin: 0; color: var(--ink-2); }
+    .panel-label { display: block; margin: var(--s5) 0 var(--s2); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+
+    /* 진행 상태 */
+    .panel-meta { margin: 0 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .panel-meta b { color: var(--ink); }
+    .progress { height: 4px; margin-bottom: var(--s3); border-radius: 2px; background: var(--line); overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+    .panel .toc-list a { margin: 0 calc(-1 * var(--s2)); padding: var(--s2); font-size: var(--fs-panel); }
+    .toc-mark { flex: none; display: block; width: 20px; height: 20px; color: var(--ink-2); }
+    .toc-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .toc-mark.is-done { color: var(--accent-ink); }
+
+    /* 복습문제: 원문 · 힌트 · 풀이 */
+    .aid details:last-of-type { border-bottom: 1px solid var(--line); }
+    .aid details.original > summary { font-size: var(--fs-panel); }
+    .solved-btn { display: flex; align-items: center; justify-content: center; gap: var(--s2); width: 100%; min-height: var(--tap); margin-top: var(--s5); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .solved-btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
+
+    /* 정리노트: 페이지 요약 */
+    .sum-lead { margin: 0; font-size: var(--fs-body); font-weight: 700; line-height: 1.6; }
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+    .eq-list li:first-child { padding-top: 0; }
+    .eq-name { display: block; font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+    .eq-list .katex-display { margin: var(--s1) 0 0; text-align: left; }
+    .eq-list .katex-display > .katex { text-align: left; }
+    .terms { margin: 0; }
+    .terms dt { font-size: var(--fs-panel); font-weight: 700; margin-top: var(--s4); }
+    .terms dt:first-child { margin-top: 0; }
+    .terms dd { margin: var(--s1) 0 0; font-size: var(--fs-sub); line-height: 1.6; color: var(--ink-2); }
+    .flow { margin: 0; padding-left: 1.4em; font-size: var(--fs-sub); }
+    .flow li { margin: var(--s2) 0; }
+
+    @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
+
+    /* 넓은 화면: 본문 옆에 붙는 패널 */
+    @media (min-width: 1024px) {
+      .layout { --l: var(--panel-l-user, var(--panel-l)); }
+      .layout[data-left="closed"] { --l: 0px; }
+      .panel-left { width: var(--l); }
+      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
+      .panel-left .panel-resize { right: 0; }
+      .panel-right .panel-resize { left: 0; }
+      .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
+      .panel-left .panel-resize::after { right: 0; }
+      .panel-right .panel-resize::after { left: 0; }
+      .panel-resize:focus-visible { outline: none; }
+      .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
+      @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
+      body.is-resizing { cursor: col-resize; user-select: none; }
+      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
+      .scrim, .panel-close { display: none; }
+    }
+    @keyframes panel-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 좁은 화면: 가장자리에서 밀려 나오는 drawer */
+    @media (max-width: 1023.98px) {
+      .panel { position: fixed; top: 0; bottom: 0; z-index: 40; visibility: hidden;
+        transition: transform var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .panel-left { left: 0; width: min(var(--drawer-l), 88vw); transform: translateX(-100%); }
+      .panel-right { right: 0; width: min(var(--drawer-r), 88vw); transform: translateX(100%); }
+      .panel.is-open { visibility: visible; transform: none; transition: transform var(--dur) var(--ease-out); }
+      .panel-inner { padding-top: calc(var(--s3) + env(safe-area-inset-top)); padding-bottom: calc(var(--s6) + env(safe-area-inset-bottom)); }
+      .scrim { position: fixed; inset: 0; z-index: 35; background: var(--scrim); opacity: 0; visibility: hidden;
+        transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
+      html:not(.js) .panel-left { display: none; }
+    }
+    @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
+      .panel.is-shown { animation: none; }
+      .panel-resize::after { transition: none; }
+    }
+    @media print {
+      body { display: block; height: auto; overflow: visible; }
+      .layout { display: block; }
+      .content { overflow: visible; }
+      .panel, .scrim { display: none !important; }
+    }
+  </style>
+</head>
+<body data-screens="article.topic" data-panels="note" data-range="0917">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <strong class="brand">정리노트</strong>
+      <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>요약</span></button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
+  </header>
+  <div class="layout" data-left="open" data-right="closed">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
+      <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-left-title">목차</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-meta">읽은 토픽 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <nav class="toc" aria-label="목차"><a href="#s0">0 헬라 세포</a><a href="#s1">1 두 분열</a><a href="#s2">2 염색체</a><a href="#s3">3 주기·확인점</a><a href="#s4">4 주기 조절</a><a href="#s5">5 암</a><a href="#s6">6 요약·예고</a></nav>
+      </div>
+    </aside>
+    <div class="content">
+  <main>
+    <div class="hero">
+      <h1>세포주기 조절과 암 — 5살도 이해하는 정리노트</h1>
+      <p>이영만 교수님 생명과학 · 0917 수업 (3장 세포분열)</p>
+    </div>
+    <section id="s0"><h2>0. 헬라 세포 — 멈추지 않는 세포</h2>
+<article class="topic" id="s0-hela"><h3>0. 헬라 세포와 이번 장의 질문</h3><div class="tags"><span class="tag date">0917 수업</span><span class="tag slide">3장 도입</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">보통 세포는 몇십 번 나뉘고 나면 멈추는데, 어떤 아픈 세포는 먹이만 주면 멈추지 않고 계속 나뉘어요.</p>
+    <figure class="figure"><svg id="fig-hela-endless" viewBox="0 0 600 240" role="img" aria-label="두 줄 비교 그림. 위 줄은 선으로 그린 보통 세포가 1개, 2개, 4개로 늘다가 세로 막대 앞에서 멈추고, 아래 줄은 테두리로 그린 멈추지 않는 세포가 1개, 2개, 4개, 8개로 계속 늘어나며 화살표가 오른쪽 끝까지 이어진다.">
+      <text class="fig-text" x="10" y="30">보통 세포</text>
+      <circle class="fig-ink" cx="110" cy="75" r="14"/>
+      <line class="fig-ink" x1="130" y1="75" x2="160" y2="75"/>
+      <circle class="fig-ink" cx="180" cy="60" r="11"/>
+      <circle class="fig-ink" cx="180" cy="90" r="11"/>
+      <line class="fig-ink" x1="198" y1="75" x2="228" y2="75"/>
+      <circle class="fig-ink" cx="245" cy="51" r="8"/>
+      <circle class="fig-ink" cx="245" cy="67" r="8"/>
+      <circle class="fig-ink" cx="245" cy="83" r="8"/>
+      <circle class="fig-ink" cx="245" cy="99" r="8"/>
+      <text class="fig-text" x="272" y="80">…</text>
+      <line class="fig-ink" x1="310" y1="45" x2="310" y2="105" stroke-width="5"/>
+      <text class="fig-text" x="325" y="72">몇십 번 나뉘면</text>
+      <text class="fig-text" x="325" y="90">더 안 나뉘어요</text>
+
+      <text class="fig-text" x="10" y="145">멈추지 않는 세포</text>
+      <circle class="fig-danger" cx="110" cy="190" r="14"/>
+      <line class="fig-ink" x1="130" y1="190" x2="160" y2="190"/>
+      <circle class="fig-danger" cx="180" cy="175" r="11"/>
+      <circle class="fig-danger" cx="180" cy="205" r="11"/>
+      <line class="fig-ink" x1="198" y1="190" x2="228" y2="190"/>
+      <circle class="fig-danger" cx="245" cy="166" r="8"/>
+      <circle class="fig-danger" cx="245" cy="182" r="8"/>
+      <circle class="fig-danger" cx="245" cy="198" r="8"/>
+      <circle class="fig-danger" cx="245" cy="214" r="8"/>
+      <line class="fig-ink" x1="262" y1="190" x2="292" y2="190"/>
+      <circle class="fig-danger" cx="305" cy="162" r="6"/>
+      <circle class="fig-danger" cx="305" cy="176" r="6"/>
+      <circle class="fig-danger" cx="305" cy="190" r="6"/>
+      <circle class="fig-danger" cx="305" cy="204" r="6"/>
+      <circle class="fig-danger" cx="305" cy="218" r="6"/>
+      <circle class="fig-danger" cx="319" cy="169" r="6"/>
+      <circle class="fig-danger" cx="319" cy="197" r="6"/>
+      <circle class="fig-danger" cx="319" cy="211" r="6"/>
+      <line class="fig-ink" x1="335" y1="190" x2="580" y2="190"/>
+      <polyline class="fig-ink" points="570,182 580,190 570,198"/>
+      <text class="fig-text" x="345" y="178">먹이만 있으면 계속 늘어나요</text>
+    </svg><figcaption>위 줄 세포는 몇십 번 나뉜 뒤 막대 앞에서 멈추고, 아래 줄 테두리 세포는 화살표처럼 끝없이 늘어나요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p><strong>헬라 세포(HeLa cell)</strong>는 헨리에타 랙스(Henrietta Lacks)라는 여성의 자궁경부암 세포에서 온 세포예요. 사람 몸을 떠나 몸 밖에서 배양에 성공한 첫 세포이고, 이름의 앞 두 글자씩(He + La)을 따서 붙였어요.</p>
+    <ul>
+      <li>핵을 파랗게 염색해 보면 둥근 핵이 보이고, 자궁경부암 세포라서 배양 접시 바닥에 붙어서 자라요.</li>
+      <li>지금은 동물세포를 배양하는 실험실 거의 모두가 이 세포를 갖고 있어요.</li>
+      <li>유족의 허락은 세포가 이미 전 세계로 퍼진 뒤에야 받았어요.</li>
+    </ul>
+    <p><strong>세포주(cell line)</strong>는 몸 밖에서 대를 이어 계속 키우며 실험에 쓰는 세포 무리예요. 헬라 세포는 자궁경부암에서 온 세포주 하나일 뿐이고, 간세포·신경세포·근육세포 세포주, 사람·원숭이·쥐 세포주처럼 여러 가지가 있어요.</p>
+    <p>정상 세포와 암세포는 <strong>분열 횟수</strong>에서 갈려요.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>구분</th><th>정상 세포</th><th>암세포(예: 헬라 세포)</th></tr></thead>
+      <tbody>
+        <tr><td>분열 횟수</td><td>정해져 있어요. 피에서 면역세포를 키우면 30~50번쯤 분열한 뒤 더 안 나뉘어요.</td><td>정해져 있지 않아요. 배양액(영양)만 갈아 주면 계속 분열해요.</td></tr>
+        <tr><td>실험에서</td><td>멈추면 피를 새로 뽑아 다시 키워야 해요.</td><td>계속 키울 수 있어서 항암제 등을 처리해 보는 실험에 쓰기 좋아요. 이런 실험으로 생물학이 크게 발전했어요.</td></tr>
+      </tbody>
+    </table></div>
+    <p>한 번 분열해서 다음 분열까지 걸리는 시간도 생물마다 달라요. 헬라 세포는 오늘 배양액을 갈아 주면 다음 날 아침에 2배가 되어 있을 만큼, 한 바퀴에 <strong>하루 정도</strong> 걸려요. 대장균은 작고 단순해서 빠르면 <strong>20분</strong>마다 분열해요. 이 차이가 어디서 오는지는 <a href="#s3-phases">3-1. G1–S–G2–M과 G0</a>에서 이어져요.</p>
+    <p>이 이야기에서 이번 장의 질문 세 가지가 나와요.</p>
+    <ul>
+      <li>세포는 어떻게 분열하는가: <a href="#s1-cycle-division">1. 세포주기, 유사분열과 감수분열</a></li>
+      <li>암세포는 왜 분열을 멈추지 않는가: <a href="#s5-oncogene">5-1. 원발암 유전자와 발암 유전자</a>, <a href="#s5-suppressor">5-2. 종양 억제 유전자: p53과 BRCA1</a></li>
+      <li>암세포는 도대체 무엇인가: <a href="#s5-tumor">5-3. 양성·악성 종양, 전이, 접촉 저해</a></li>
+    </ul>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>교수님은 수업을 퀴즈로 열었어요. 헨리에타 랙스는 암으로 세상을 떠났지만 무언가는 아직 살아 있다는 거예요.</p>
+    <blockquote>그녀의 땡땡땡은 아직도 살아있다. (0917 00:19)</blockquote>
+    <p>"손자, 손녀가 살아 있다"는 너무 평범한 답이라며 웃으셨고, 정답은 교수님이 직접 말했어요. 몸의 주인은 죽었어도 세포는 계속 분열한다는 뜻이에요.</p>
+    <blockquote>암세포겠죠, 암세포. (0917 00:44)</blockquote>
+    <p>정상 세포와 비교할 때는 이렇게 짚었어요.</p>
+    <blockquote>분열 횟수가 정해져 있어요. (0917 01:59) / 암세포는 영원히 자랄 수 있는 능력이 있죠. (0917 02:27)</blockquote>
+    <p>세포 주기 길이를 물을 때도 헬라 세포를 예로 들었어요. 오늘 배지를 갈아 넣으면 내일 아침에 딱 2배가 되어 있다는 거예요 (0917 18:01).</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li><strong>착각:</strong> 세포는 원래 끝없이 분열할 수 있다. <strong>바른 구분:</strong> 정상 세포는 분열 횟수가 정해져 있어 30~50번쯤 분열하면 멈춰요. 영양만 있으면 계속 분열하는 것은 암세포예요. "50번 분열하면은 그냥 더 이상 안 자라요" (0917 01:59)</li>
+      <li><strong>착각:</strong> "땡땡땡이 살아 있다"는 자손이 살아 있다는 뜻이다. <strong>바른 구분:</strong> 살아 있는 것은 그녀의 암세포예요. 사람이 죽은 것과 그 사람에게서 나온 세포가 살아 있는 것은 별개예요 (0917 00:29–00:44).</li>
+      <li><strong>착각:</strong> 헬라 세포는 암세포 전체를 부르는 이름이다. <strong>바른 구분:</strong> 헬라 세포는 헨리에타 랙스의 자궁경부암에서 온 세포주 하나예요. 세포주는 이 밖에도 간세포·신경세포·근육세포 등 여러 가지가 있어요 (0917 02:43).</li>
+      <li><strong>착각:</strong> 사람 세포가 세균보다 빨리 분열한다. <strong>바른 구분:</strong> 헬라 세포는 한 바퀴에 하루 정도, 대장균은 빠르면 20분이에요. 세균은 작고 단순해서 훨씬 빨라요 (0917 18:16).</li>
+    </ul>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">정상 세포는 분열 횟수가 정해져 있지만, 헬라 세포 같은 암세포는 영양만 있으면 계속 분열해요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>헬라 세포(HeLa cell)</dt><dd>헨리에타 랙스의 자궁경부암 세포에서 온, 몸 밖에서 처음 배양된 세포</dd>
+      <dt>세포주(cell line)</dt><dd>몸 밖에서 대를 이어 계속 키우며 실험에 쓰는 세포 무리</dd>
+      <dt>분열 횟수</dt><dd>정상 세포는 30~50번쯤으로 정해져 있고, 암세포는 정해져 있지 않음</dd>
+    </dl>
+  </div>
+</article>
+    </section>
+    <section id="s1"><h2>1. 세포주기와 두 가지 분열</h2>
+<article class="topic" id="s1-cycle-division"><h3>1. 세포주기, 유사분열과 감수분열</h3><div class="tags"><span class="tag date">0917 수업</span><span class="tag slide">3장 p1</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">세포는 자라고 나뉘는 일을 계절처럼 되풀이해요.</p>
+    <figure class="figure">
+      <svg id="fig-cycle-two-ways" viewBox="0 0 600 260" role="img" aria-label="왼쪽에는 자라고 나누고를 되풀이하는 화살표 고리가 있다. 오른쪽 위에는 막대 선 네 개가 든 테두리 원 세포가 화살표를 지나 막대 선 네 개씩 든 똑같은 세포 두 개가 된다. 오른쪽 아래에는 막대 선 네 개가 든 세포가 화살표를 지나 막대 선이 두 개뿐인 세포가 된다">
+        <circle class="fig-ink" cx="100" cy="130" r="68"/>
+        <polyline class="fig-ink" points="160,120 168,134 176,120"/>
+        <text class="fig-text" x="100" y="124" text-anchor="middle">자라고</text>
+        <text class="fig-text" x="100" y="146" text-anchor="middle">나누고</text>
+        <text class="fig-muted" x="100" y="226" text-anchor="middle">계속 되풀이</text>
+
+        <circle class="fig-ink" cx="270" cy="70" r="34"/>
+        <line class="fig-accent" x1="256" y1="58" x2="256" y2="82"/>
+        <line class="fig-accent" x1="265" y1="58" x2="265" y2="82"/>
+        <line class="fig-accent" x1="275" y1="58" x2="275" y2="82"/>
+        <line class="fig-accent" x1="284" y1="58" x2="284" y2="82"/>
+        <line class="fig-ink" x1="312" y1="70" x2="366" y2="70"/>
+        <polyline class="fig-ink" points="358,63 366,70 358,77"/>
+        <circle class="fig-ink" cx="410" cy="70" r="32"/>
+        <line class="fig-accent" x1="396" y1="58" x2="396" y2="82"/>
+        <line class="fig-accent" x1="405" y1="58" x2="405" y2="82"/>
+        <line class="fig-accent" x1="415" y1="58" x2="415" y2="82"/>
+        <line class="fig-accent" x1="424" y1="58" x2="424" y2="82"/>
+        <circle class="fig-ink" cx="510" cy="70" r="32"/>
+        <line class="fig-accent" x1="496" y1="58" x2="496" y2="82"/>
+        <line class="fig-accent" x1="505" y1="58" x2="505" y2="82"/>
+        <line class="fig-accent" x1="515" y1="58" x2="515" y2="82"/>
+        <line class="fig-accent" x1="524" y1="58" x2="524" y2="82"/>
+        <text class="fig-text" x="400" y="126" text-anchor="middle">보통 나눌 때: 똑같은 세포 둘</text>
+
+        <circle class="fig-ink" cx="270" cy="185" r="34"/>
+        <line class="fig-accent" x1="256" y1="173" x2="256" y2="197"/>
+        <line class="fig-accent" x1="265" y1="173" x2="265" y2="197"/>
+        <line class="fig-accent" x1="275" y1="173" x2="275" y2="197"/>
+        <line class="fig-accent" x1="284" y1="173" x2="284" y2="197"/>
+        <line class="fig-ink" x1="312" y1="185" x2="366" y2="185"/>
+        <polyline class="fig-ink" points="358,178 366,185 358,192"/>
+        <circle class="fig-ink" cx="410" cy="185" r="32"/>
+        <line class="fig-accent" x1="404" y1="173" x2="404" y2="197"/>
+        <line class="fig-accent" x1="416" y1="173" x2="416" y2="197"/>
+        <text class="fig-text" x="400" y="242" text-anchor="middle">아기를 만들 때만: 막대가 절반</text>
+      </svg>
+      <figcaption>보통은 막대 선 네 개를 그대로 가진 똑같은 세포 둘이 되지만, 아기를 만드는 세포를 만들 때만 막대 선이 절반인 세포가 돼요.</figcaption>
+    </figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p><b>세포주기(cell cycle)</b>는 세포가 한 번 분열한 뒤 다음 분열을 할 때까지 도는 한 바퀴예요. 한 바퀴가 끝나면 다시 처음부터 반복돼요.</p>
+    <p>강의노트 3장 p1은 세포주기를 세 요소로 적어요. 수업에서 셋을 나열하지는 않았어요.</p>
+    <ol class="steps">
+      <li><b>세포의 성장</b>: 단백질, 지질, 탄수화물을 합성하고 DNA를 복제해요.</li>
+      <li><b>핵분열</b>: 복제된 DNA가 든 핵이 둘로 나뉘어요.</li>
+      <li><b>세포질 분열</b>: 세포질이 나뉘어 딸세포 두 개가 완성돼요.</li>
+    </ol>
+    <p>수업에서는 이 한 바퀴를 G1기, S기, G2기, M기의 네 단계로 나눠 설명했어요. 각 단계가 하는 일은 <a href="#s3-phases">3-1. G1–S–G2–M과 G0</a>에서 다뤄요.</p>
+    <p>세포분열은 두 종류예요.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>구분</th><th>유사분열(mitosis)</th><th>감수분열(meiosis)</th></tr></thead>
+      <tbody>
+        <tr><th>다른 이름</th><td>체세포 분열(중학교 때 배운 이름)</td><td>"감수(減數)" = 수가 줄어든다는 뜻</td></tr>
+        <tr><th>염색체 수</th><td>그대로 유지돼요(2n이 분열해도 2n)</td><td>반으로 줄어요</td></tr>
+        <tr><th>딸세포 핵</th><td>부모 핵과 유전적으로 같은 복제품</td><td>부모 핵과 유전적으로 달라요(강의노트 p1)</td></tr>
+        <tr><th>언제 일어나나</th><td>몸을 이루는 세포(체세포)가 분열할 때</td><td>유성생식에서 정자·난자를 만들 때만</td></tr>
+      </tbody>
+    </table></div>
+    <p>유사분열의 딸세포 핵이 부모 핵과 같은 까닭은, 분열 전에 DNA를 먼저 복제해 똑같은 사본을 하나씩 나눠 주기 때문이에요. 복제된 두 사본(자매염색분체)의 뜻은 <a href="#s2-sister-homolog">2-2. 자매염색분체·상동염색체·대립유전자</a>에서, 2n의 뜻은 <a href="#s2-ploidy">2-3. 2배체·반수체와 무엇이 나뉘는가</a>에서 이어서 봐요.</p>
+    <p>정자와 난자처럼 감수분열로 만들어지는 세포를 뺀 나머지 몸의 세포는 체세포이고, 체세포는 유사분열로 늘어나요. 거꾸로 확인하면 이래요. 정자·난자를 만드는 분열은 감수분열이고, 피부나 간처럼 몸을 이루는 세포를 늘리는 분열은 유사분열이에요.</p>
+    <p>두 분열이 실제로 어떤 단계를 거치는지는 다음 수업에서 둘을 비교하며 배워요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>세포주기를 말장난으로 시작했어요.</p>
+    <blockquote>선물 주기가 아니고, 세포 주기. (0917 03:16)</blockquote>
+    <p>세포주기를 계절이 도는 것에 빗댔어요.</p>
+    <blockquote>계절의 주기는 봄, 여름, 가을, 겨울 계속 반복이 되죠. (0917 03:31)</blockquote>
+    <p>유사분열이 곧 중학교 때 배운 체세포 분열이라고 짚었어요.</p>
+    <blockquote>중학교 때 체세포 분열이라고 부르는 게 유사분열입니다. (0917 03:49)</blockquote>
+    <p>"감수"라는 이름을 감수성에 빗대 농담한 뒤 바로 뜻을 정리했어요.</p>
+    <blockquote>감수성이 뛰어난 분열인가? 그게 아니고 숫자가 줄어드는 분열이죠. (0917 03:59)</blockquote>
+    <blockquote>유성생식 과정에서 정자, 난자 만들 때만 감수분열이 일어나게 됩니다. (0917 03:59)</blockquote>
+    <p>분열 전 복제를 함께 자취하던 친구들의 이사에 빗댔어요. 짐을 복제해 둘로 만든 뒤 하나씩 나눠 가진다는 거예요.</p>
+    <blockquote>각자 짐을 복제를 해서 두 개를 만들어요. 그래 하나씩 나눠 갖는 거. (0917 06:35)</blockquote>
+    <p>두 분열의 과정은 비교하며 보는 편이 빠르다며 다음 시간으로 미뤘어요.</p>
+    <blockquote>요거는 이제 두 개 비교하면서 하는 게 더 빠르기 때문에 (0917 41:17)</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <p><b>"감수"는 감수성이 아니에요.</b> 감정을 잘 느끼는 감수성(感受性)으로 착각하기 쉬워요. 감수분열의 감수는 "수가 줄어든다(減數)"는 뜻이고, 염색체 수가 반으로 줄어드는 분열이에요.</p>
+    <blockquote>염색체 숫자가 반으로 줄어드는 분열이 감수분열이고 (0917 03:59)</blockquote>
+    <p><b>유사분열과 체세포 분열은 같은 것이에요.</b> 이름이 둘이라 서로 다른 분열로 착각하기 쉬워요. 유사분열(mitosis)을 중학교에서는 체세포 분열이라고 불렀을 뿐이에요. 두 종류로 나뉘는 짝은 "유사분열(=체세포 분열)과 감수분열"이에요.</p>
+    <blockquote>우리가 중학교 때 체세포 분열이라고 부르는 게 유사분열입니다. (0917 03:49)</blockquote>
+    <p><b>"만"은 경계를 확인하라는 신호예요.</b> 감수분열이 몸의 어느 세포에서나 일어난다고 착각하기 쉬워요. 사람 몸에서 감수분열은 정자·난자를 만들 때만 일어나고, 나머지 체세포는 유사분열로 늘어나요. 그래서 체세포를 늘리는 분열은 딸세포 핵이 부모 핵과 유전적으로 같고 염색체 수도 그대로예요.</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">세포주기는 분열에서 다음 분열까지의 한 바퀴이고, 분열은 유사분열(=체세포 분열)과 감수분열 두 종류예요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>세포주기(cell cycle)</dt><dd>세포가 분열한 뒤 다음 분열할 때까지의 한 바퀴예요.</dd>
+      <dt>유사분열(mitosis)</dt><dd>체세포 분열이에요. 부모 핵과 유전적으로 같은 딸세포 핵을 만들어요.</dd>
+      <dt>감수분열(meiosis)</dt><dd>염색체 수가 반으로 줄어드는 분열로, 정자·난자를 만들 때만 일어나요.</dd>
+    </dl>
+  </div>
+</article>
+    </section>
+    <section id="s2"><h2>2. 염색체 — 자매염색분체와 상동염색체</h2>
+<article class="topic" id="s2-chromatin"><h3>2-1. 염색질과 염색체</h3><div class="tags"><span class="tag date">0917 수업</span><span class="tag slide">3장 p1</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">날마다 쓰는 옷은 옷장에 걸어 두지만, 이사하는 날에는 짐을 꽁꽁 묶어 싸요.</p>
+    <figure class="figure">
+      <svg id="fig-chromatin-eli5" viewBox="0 0 520 230" role="img" aria-label="두 칸 그림. 왼쪽 평소: 선 하나가 구불구불 느슨하게 풀려 있음. 가운데 화살표. 오른쪽 이사하는 날: 선이 짧게 묶인 X 모양 두 가닥으로 바뀌어 있고 가운데에 색칠된 점이 있음.">
+        <text class="fig-text" x="120" y="26" text-anchor="middle">평소</text>
+        <text class="fig-text" x="400" y="26" text-anchor="middle">이사하는 날</text>
+        <path class="fig-ink" d="M40 110 C60 50 90 170 110 100 S150 40 165 110 S120 180 90 150 S50 190 70 120 S130 70 190 130 S200 190 170 170"/>
+        <text class="fig-muted" x="120" y="210" text-anchor="middle">풀어 두고 꺼내 써요</text>
+        <line class="fig-ink" x1="230" y1="115" x2="290" y2="115"/>
+        <path class="fig-ink" d="M280 107 L292 115 L280 123"/>
+        <path class="fig-accent" d="M375 60 Q415 115 375 170"/>
+        <path class="fig-accent" d="M425 60 Q385 115 425 170"/>
+        <circle class="fig-dot" cx="400" cy="115" r="6"/>
+        <text class="fig-muted" x="400" y="210" text-anchor="middle">꽁꽁 묶어 싸 둬요</text>
+      </svg>
+      <figcaption>평소에는 선이 느슨하게 풀려 있어 잘 안 보이고, 이사하는 날에만 짧게 꽁꽁 묶여서 현미경으로 보여요.</figcaption>
+    </figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>세포 안의 DNA는 같은 것이지만, 세포가 무엇을 하느냐에 따라 두 가지 모습으로 있어요.</p>
+    <ul>
+      <li><strong>염색질(chromatin)</strong>: 세포가 분열하지 않는 평소의 모습이에요. 평소에는 DNA의 정보(유전자)를 꺼내 써야 하므로 DNA가 풀어진 상태로 있어요. 그래서 아무리 좋은 현미경을 써도 막대 모양의 염색체가 보이지 않아요.</li>
+      <li><strong>염색체(chromosome)</strong>: 세포가 분열하는 동안의 모습이에요. 분열하는 동안에는 정보를 쓸 일이 없으므로, <strong>히스톤</strong> 단백질과 결합한 DNA가 꽁꽁 <strong>응축</strong>돼 막대 모양이 돼요. 염색질도 DNA와 히스톤으로 되어 있으니, 둘의 차이는 풀렸는지 응축됐는지예요.</li>
+    </ul>
+    <div class="table-wrap"><table>
+      <thead><tr><th>구분</th><th>염색질(chromatin)</th><th>염색체(chromosome)</th></tr></thead>
+      <tbody>
+        <tr><td>언제</td><td>평소(분열하지 않을 때)</td><td>세포 분열 중</td></tr>
+        <tr><td>DNA 상태</td><td>DNA+히스톤 단백질, 풀어져 있음</td><td>DNA+히스톤 단백질, 꽁꽁 응축됨</td></tr>
+        <tr><td>정보 사용</td><td>꺼내 씀</td><td>쓰지 않음(싸 둔 짐)</td></tr>
+        <tr><td>현미경 관찰</td><td>막대 모양으로 보이지 않음</td><td>막대 모양으로 보임</td></tr>
+      </tbody>
+    </table></div>
+    <p>그래서 염색체를 보려면 <strong>분열 중인 세포</strong>를 관찰해야 해요. 생물 실험에서 <strong>양파 뿌리 끝</strong>을 잘라 관찰하는 것도 분열 중인 세포에서 염색체를 보기 위해서예요.</p>
+    <p>유사분열과 감수분열을 이해하려면 염색체를 먼저 알아야 해요. 분열 중에 보이는 염색체의 구조는 <a href="#s2-sister-homolog">2-2. 자매염색분체·상동염색체·대립유전자</a>에서 이어져요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>분열을 배우기 전에 염색체부터 짚고 가셨어요.</p>
+    <blockquote>감수분열, 유사분열을 이해를 하려면 염색체에 대한 이해가 먼저입니다. (0917 04:21)</blockquote>
+    <p>쓰는 DNA와 싸 둔 DNA를 옷에 비유하셨어요. 여름에는 반팔 티를 옷장에 걸어 두고 쓰고, 겨울옷은 꽁꽁 묶어 상자에 보관한다고 하셨어요(0917 04:51–04:58).</p>
+    <blockquote>세포 분열은 이사하는 날입니다… 꽁꽁 묶어서 응축시킨 형태가 염색체입니다. (0917 05:07)</blockquote>
+    <blockquote>생물 실험할 때 양파 뿌리 끝… 잘라서 관찰을 하지요. (0917 05:27)</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li><strong>착각:</strong> 염색체는 아무 때나 현미경으로 보인다. <strong>바른 구분:</strong> 평소에는 DNA가 풀린 염색질이라 보이지 않고, 분열 중에 응축된 염색체일 때만 막대 모양으로 보여요. "평상시에는 DNA가 염색질 형태로 풀어져 있기 때문"(0917 04:34).</li>
+      <li><strong>착각:</strong> 염색질과 염색체는 서로 다른 물질이다. <strong>바른 구분:</strong> 같은 DNA(히스톤과 결합한 상태)가 평소에는 풀려 있고(염색질), 분열할 때는 응축돼 있어요(염색체). 히스톤이 있느냐 없느냐가 아니라 풀림과 응축의 차이예요.</li>
+    </ul>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">평소에는 DNA가 풀린 염색질로 있다가, 분열할 때 (히스톤과 함께) 응축돼 막대 모양 염색체로 보여요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>염색질(chromatin)</dt><dd>평소 정보를 쓰려고 DNA가 풀어진 상태</dd>
+      <dt>염색체(chromosome)</dt><dd>분열 중 DNA와 히스톤이 응축된 막대</dd>
+    </dl>
+  </div>
+</article>
+
+<article class="topic" id="s2-sister-homolog"><h3>2-2. 자매염색분체·상동염색체·대립유전자</h3><div class="tags"><span class="tag date">0917 수업</span><span class="tag slide">3장 p1</span><span class="tag slide">3장 p3</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">이사 가기 전에 짐을 똑같이 한 벌 더 만들면, 그 두 벌은 완전히 같아요.</p>
+    <p>엄마가 준 짝과 아빠가 준 짝은 모양이 같아도, 같은 자리에 초코 맛과 딸기 맛처럼 다른 게 들어 있을 수 있어요.</p>
+    <figure class="figure">
+      <svg id="fig-sister-eli5" viewBox="0 0 400 250" role="img" aria-label="선으로 그린 X 모양 두 개. 왼쪽 엄마 것 X는 두 가닥이 가운데 색칠된 점으로 붙어 있고 두 가닥 위쪽에 모두 초코라고 적혀 있음. 오른쪽 아빠 것 X도 두 가닥이 가운데 색칠된 점으로 붙어 있고 같은 높이에 모두 딸기라고 적혀 있음.">
+        <path class="fig-ink" d="M50 40 Q110 115 50 190"/>
+        <path class="fig-ink" d="M130 40 Q70 115 130 190"/>
+        <circle class="fig-dot" cx="90" cy="115" r="6"/>
+        <text class="fig-text" x="58" y="78" text-anchor="end">초코</text>
+        <text class="fig-text" x="122" y="78" text-anchor="start">초코</text>
+        <path class="fig-accent" d="M250 40 Q310 115 250 190"/>
+        <path class="fig-accent" d="M330 40 Q270 115 330 190"/>
+        <circle class="fig-dot" cx="290" cy="115" r="6"/>
+        <text class="fig-text" x="258" y="78" text-anchor="end">딸기</text>
+        <text class="fig-text" x="322" y="78" text-anchor="start">딸기</text>
+        <text class="fig-text" x="90" y="222" text-anchor="middle">엄마 것</text>
+        <text class="fig-text" x="290" y="222" text-anchor="middle">아빠 것</text>
+        <text class="fig-muted" x="190" y="119" text-anchor="middle">모양은 같은 짝</text>
+      </svg>
+      <figcaption>가운데 색칠된 점으로 붙은 두 가닥은 똑같이 만든 한 벌이라 둘 다 초코이고, 옆의 아빠 것은 같은 자리에 딸기가 있어요.</figcaption>
+    </figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>현미경으로 분열 중인 세포의 염색체를 보면 막대가 하나가 아니라 <strong>두 개가 붙어 있고</strong>, 그와 크기·모양이 같은 것이 옆에 또 있어요. 이 모습은 아래 네 가지로 풀어요.</p>
+    <ol class="steps">
+      <li><strong>왜 두 개가 붙어 있나</strong>: 세포주기에서는 분열(M기)에 들어가기 전에 S기에 <strong>DNA 복제</strong>가 끝나 있어요. 그래서 분열 중에 보이는 염색체는 이미 복제된 상태예요. 붙어 있는 두 막대는 복제 전의 서로 다른 두 염색체가 아니라, 한 염색체와 그 복사본이에요.</li>
+      <li><strong>자매염색분체(sister chromatid)</strong>: 한 염색체가 DNA 복제로 만든 <strong>똑같은 두 사본</strong>이에요. 서로 붙어 있고, 정보가 완전히 같아요. 한쪽 어느 자리에 A가 있으면 다른 쪽 같은 자리에도 A가 있어요. 그래서 자매염색분체는 상동염색체의 다른 이름이 아니고, 서로 다른 두 염색체도 아니며, 서로 다른 유전자를 가진 염색체도 아니에요.</li>
+      <li><strong>동원체(centromere)</strong>: 자매염색분체가 서로 붙어 있는 잘록한 부위예요. 핵이 있는 곳, 염색체의 끝, 염색체들이 세포 가운데에 늘어서는 자리를 가리키는 말이 아니에요. 대립유전자·염색분체·중심립·핵형과도 다른 말이에요.</li>
+      <li><strong>상동염색체(homologous chromosome)</strong>: 옆에 있는 크기·모양이 같은 염색체와의 관계예요. 하나는 엄마가, 하나는 아빠가 준 것이에요. "염색체 쌍"의 두 구성원이 바로 상동염색체예요.</li>
+    </ol>
+    <p><strong>유전자(gene)와 대립유전자(allele)</strong>는 다른 개념이에요.</p>
+    <ul>
+      <li>상동염색체는 <strong>같은 자리에 같은 유전자</strong>를 가져요. 예를 들어 모든 사람의 같은 자리에 혈액형 유전자가 있어요.</li>
+      <li>하지만 그 유전자의 버전은 다를 수 있어요. A 버전인지 B 버전인지, 이 A와 B가 <strong>대립유전자</strong>, 곧 "같은 유전자의 다른 버전"이에요.</li>
+      <li>꽃 색깔 유전자라면 C는 빨간색, c는 하얀색일 수 있어요. 버전은 달라도 둘 다 꽃 색깔에 관여하는 같은 유전자예요.</li>
+      <li>상동염색체의 같은 자리 대립유전자는 같을 수도(C와 C), 다를 수도(C와 c) 있어요. 자매염색분체는 복제로 생긴 복사본이라 (드문 복제 오류를 빼면) 같아요.</li>
+    </ul>
+    <div class="table-wrap"><table>
+      <thead><tr><th>구분</th><th>자매염색분체</th><th>상동염색체</th></tr></thead>
+      <tbody>
+        <tr><td>어떻게 생기나</td><td>한 염색체의 DNA 복제</td><td>엄마에게서 하나, 아빠에게서 하나</td></tr>
+        <tr><td>붙어 있나</td><td>동원체로 서로 붙어 있음</td><td>동원체로 서로 붙어 있지 않은 따로 된 두 염색체</td></tr>
+        <tr><td>같은 자리의 정보</td><td>완전히 같음(C와 C)</td><td>같은 유전자, 대립유전자는 같을 수도 다를 수도(C와 c)</td></tr>
+      </tbody>
+    </table></div>
+    <p><strong>염색체 그림 읽기</strong>: 시험에는 아래처럼 길이·모양이 같은 두 막대에 표지가 붙은 그림이 나와요.</p>
+    <figure class="figure">
+      <svg id="fig-sister-exam" viewBox="0 0 360 300" role="img" aria-label="테두리만 그린 길이와 모양이 같은 막대 두 개가 떨어져 서 있음. 두 막대 모두 위쪽 3분의 1쯤에 잘록한 부위가 있음. 왼쪽 막대에는 위에서부터 A, B, 잘록한 부위를 가리키는 X, 아래쪽 C 표지가 있고, 오른쪽 막대의 같은 높이에는 a, b, c 표지가 있음.">
+        <path class="fig-ink" d="M122 50 A18 18 0 0 1 158 50 L158 94 Q142 104 158 114 L158 252 A18 18 0 0 1 122 252 L122 114 Q138 104 122 94 Z"/>
+        <path class="fig-accent" d="M202 50 A18 18 0 0 1 238 50 L238 94 Q222 104 238 114 L238 252 A18 18 0 0 1 202 252 L202 114 Q218 104 202 94 Z"/>
+        <line class="fig-ink" x1="122" y1="58" x2="158" y2="58"/>
+        <line class="fig-ink" x1="122" y1="84" x2="158" y2="84"/>
+        <line class="fig-ink" x1="122" y1="236" x2="158" y2="236"/>
+        <line class="fig-accent" x1="202" y1="58" x2="238" y2="58"/>
+        <line class="fig-accent" x1="202" y1="84" x2="238" y2="84"/>
+        <line class="fig-accent" x1="202" y1="236" x2="238" y2="236"/>
+        <line class="fig-ink" x1="96" y1="58" x2="118" y2="58"/>
+        <line class="fig-ink" x1="96" y1="84" x2="118" y2="84"/>
+        <line class="fig-ink" x1="70" y1="104" x2="124" y2="104"/>
+        <line class="fig-ink" x1="96" y1="236" x2="118" y2="236"/>
+        <text class="fig-text" x="90" y="62" text-anchor="end">A</text>
+        <text class="fig-text" x="90" y="88" text-anchor="end">B</text>
+        <text class="fig-text" x="64" y="109" text-anchor="end">X</text>
+        <text class="fig-text" x="90" y="240" text-anchor="end">C</text>
+        <line class="fig-ink" x1="242" y1="58" x2="264" y2="58"/>
+        <line class="fig-ink" x1="242" y1="84" x2="264" y2="84"/>
+        <line class="fig-ink" x1="242" y1="236" x2="264" y2="236"/>
+        <text class="fig-text" x="270" y="62" text-anchor="start">a</text>
+        <text class="fig-text" x="270" y="88" text-anchor="start">b</text>
+        <text class="fig-text" x="270" y="240" text-anchor="start">c</text>
+        <text class="fig-muted" x="180" y="290" text-anchor="middle">같은 높이 = 같은 자리</text>
+      </svg>
+      <figcaption>테두리만 그린 두 막대가 서로 떨어져 있고, 왼쪽의 A·B·C와 같은 높이에 오른쪽의 a·b·c가 있으며, X는 잘록한 부위를 가리켜요.</figcaption>
+    </figure>
+    <ul>
+      <li><strong>두 막대의 관계</strong>: 길이·모양이 같고, 같은 자리에 A와 a처럼 다른 버전이 있어요. 복사본이라면 같은 자리에 같은 글자가 있어야 하므로, 이 두 막대는 <strong>상동염색체</strong>이고 자매염색분체가 아니에요.</li>
+      <li><strong>X</strong>: 잘록한 부위, 곧 <strong>동원체</strong>예요. 이 부위에 무엇이 붙는지는 아래 보충에서 다뤄요.</li>
+      <li><strong>A, B, C</strong>: 한 막대의 서로 다른 자리에 있으므로 서로 다른 유전자예요.</li>
+      <li><strong>A와 a</strong>: 같은 자리에 있는 같은 유전자의 다른 버전, 곧 <strong>대립유전자</strong>예요. B와 b, C와 c도 마찬가지예요.</li>
+    </ul>
+    <p><strong>변형 그림 가르기</strong>: 복제된 상동염색체 한 쌍을 그리면 아래와 같아요.</p>
+    <figure class="figure">
+      <svg id="fig-sister-compare" viewBox="0 0 400 300" role="img" aria-label="선으로 그린 X 모양 두 개. 왼쪽 엄마 쪽 X는 두 가닥이 가운데 색칠된 점(동원체)으로 붙어 있고 두 가닥 같은 자리에 모두 C가 있음. 오른쪽 아빠 쪽 X도 두 가닥이 가운데 색칠된 점으로 붙어 있고 같은 자리에 모두 c가 있음. 아래 괄호가 왼쪽 X만 묶어 C와 C는 자매염색분체, 두 X를 함께 묶어 C와 c는 상동염색체라고 적혀 있음.">
+        <path class="fig-ink" d="M40 40 Q100 110 40 180"/>
+        <path class="fig-ink" d="M120 40 Q60 110 120 180"/>
+        <circle class="fig-dot" cx="80" cy="110" r="6"/>
+        <line class="fig-ink" x1="54" y1="75" x2="68" y2="75"/>
+        <line class="fig-ink" x1="92" y1="75" x2="106" y2="75"/>
+        <text class="fig-text" x="48" y="79" text-anchor="end">C</text>
+        <text class="fig-text" x="112" y="79" text-anchor="start">C</text>
+        <path class="fig-accent" d="M240 40 Q300 110 240 180"/>
+        <path class="fig-accent" d="M320 40 Q260 110 320 180"/>
+        <circle class="fig-dot" cx="280" cy="110" r="6"/>
+        <line class="fig-accent" x1="254" y1="75" x2="268" y2="75"/>
+        <line class="fig-accent" x1="292" y1="75" x2="306" y2="75"/>
+        <text class="fig-text" x="248" y="79" text-anchor="end">c</text>
+        <text class="fig-text" x="312" y="79" text-anchor="start">c</text>
+        <line class="fig-ink" x1="90" y1="110" x2="154" y2="110"/>
+        <line class="fig-ink" x1="206" y1="110" x2="270" y2="110"/>
+        <text class="fig-text" x="180" y="114" text-anchor="middle">동원체</text>
+        <text class="fig-text" x="80" y="202" text-anchor="middle">엄마 쪽 염색체</text>
+        <text class="fig-text" x="280" y="202" text-anchor="middle">아빠 쪽 염색체</text>
+        <path class="fig-ink" d="M40 216 L40 224 L120 224 L120 216"/>
+        <text class="fig-text" x="80" y="242" text-anchor="middle">C와 C: 자매염색분체</text>
+        <path class="fig-danger" d="M40 256 L40 264 L320 264 L320 256"/>
+        <text class="fig-text" x="180" y="286" text-anchor="middle">C와 c: 상동염색체(대립유전자가 다름)</text>
+      </svg>
+      <figcaption>선으로 그린 X마다 두 가닥이 가운데 색칠된 점(동원체)으로 붙어 있고, 한 X 안의 C와 C는 자매염색분체, 두 X 사이의 C와 c는 상동염색체의 대립유전자예요.</figcaption>
+    </figure>
+    <ul>
+      <li>동원체로 붙어 있고 같은 자리에 C와 C가 있는 두 가닥은 <strong>자매염색분체</strong>예요.</li>
+      <li>같은 자리에 C와 c가 있는 두 염색체는 복사본일 수 없으므로 <strong>상동염색체</strong>예요.</li>
+      <li>거꾸로, 같은 글자라고 해서 늘 자매염색분체인 것은 아니에요. 상동염색체도 대립유전자가 같을 수(C와 C) 있으므로, 한 염색체 안에서 동원체로 붙어 있는지를 함께 봐요.</li>
+    </ul>
+    <p><strong>방추사</strong>(spindle fiber)는 세포 분열 때 염색체에 붙는 실 같은 구조예요. 세포주기의 확인점에서는 방추사가 염색체에 제대로 붙었는지도 확인해요. 분열할 때 무엇이 나뉘는지는 <a href="#s2-ploidy">2-3. 2배체·반수체와 무엇이 나뉘는가</a>에서 이어져요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>복제한 뒤에 나눈다는 것을 자취하던 친구들의 이사로 설명하셨어요. 짐을 싸서 가져가는 게 아니라 각자 짐을 복제해 두 개를 만든 뒤 하나씩 나눠 갖는다고 하셨어요(0917 06:35).</p>
+    <blockquote>DNA 복제가 끝나야 세포 분열이 일어납니다. (0917 06:49)</blockquote>
+    <blockquote>여기 만약에 A 유전자가 있으면 요기도 그대로 A 유전자가 있습니다. (0917 07:05)</blockquote>
+    <blockquote>자매 염색분체는 모든 정보가 똑같습니다. 그런데 상동 염색체는 다를 수가 있죠. (0917 08:16–08:21)</blockquote>
+    <blockquote>유전자하고 대립유전자는 좀 다른 개념입니다. (0917 08:46)</blockquote>
+    <p>엄마는 A형(AA), 아빠는 B형(BB)인 예로, 같은 자리의 혈액형 유전자가 A 버전인지 B 버전인지가 대립유전자라고 하셨어요(0917 08:50–09:30). 이어서 먹는 것에 비유하셨어요.</p>
+    <blockquote>아이스크림 유전자에 초코 아이스크림 대립유전자가 있고, 딸기 아이스크림 대립유전자가 있는 거야. (0917 09:35)</blockquote>
+    <p>콜라에 코카콜라와 제로콜라가 있는 것도 같은 예라고 하셨어요(0917 09:54). 대립유전자는 교재 3장에는 없고 4장 75쪽 오른쪽에 나온다고 알려 주셨어요(0917 10:23–10:29). allele는 "얼릴"로 읽으면 되고, 예전에는 "알렐레"라고들 읽었다고 하셨어요(0917 11:08–11:17).</p>
+    <p>꽃 색깔 유전자에서 C는 빨간색, c는 하얀색일 수 있지만 둘 다 꽃 색깔에 관여한다고 정리하셨어요(0917 12:04–12:11). 그리고 이 구분이 모든 것의 바탕이라고 강조하셨어요.</p>
+    <blockquote>자매 염색분체가 뭐다, 상동 염색체가 뭐다… 이걸 모르면은 아무것도 안 됩니다. (0917 15:00–15:08)</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li><strong>착각:</strong> 자매염색분체와 상동염색체는 같은 것이다. <strong>바른 구분:</strong> 자매염색분체는 복제로 생긴 복사본이라 정보가 완전히 같아요. 상동염색체는 엄마·아빠에게서 하나씩 온 쌍이라 같은 자리에 같은 유전자가 있어도 대립유전자는 다를 수 있어요. 수업에서도 두 번 반복하셨고(0917 07:05–08:31, 11:29–11:50), 11:29에서는 "대립… 아, 상동 염색체"로 고쳐 말씀하셨어요.</li>
+      <li><strong>착각:</strong> 유전자와 대립유전자는 같은 말이다. <strong>바른 구분:</strong> 유전자는 자리와 기능(예: 혈액형 유전자), 대립유전자는 그 유전자의 버전(예: A, B)이에요. "같은 유전자의 다른 버전"(0917 09:30).</li>
+      <li><strong>착각:</strong> 분열 중에 붙어 보이는 막대 두 개는 복제 전의 서로 다른 염색체 두 개다. <strong>바른 구분:</strong> 분열 전에 DNA 복제가 끝나 있으므로, 붙은 두 막대는 한 염색체와 그 복사본(자매염색분체)이에요. "복제된 걸 본 거야"(0917 06:49).</li>
+      <li><strong>착각:</strong> 동원체는 상동염색체끼리 붙어 있는 부분이다. <strong>바른 구분:</strong> 동원체는 <strong>자매염색분체</strong>가 서로 붙어 있는 부분이에요. 상동염색체끼리는 동원체로 붙어 있지 않아요. 수업(0917 13:03)에서 가운데 붙은 부분을 동원체라고 소개하셨는데, 그 두 가닥은 자매염색분체예요.</li>
+      <li><strong>착각:</strong> 그림에서 나란히 선 두 막대는 모두 자매염색분체다. <strong>바른 구분:</strong> 같은 자리에 A와 a처럼 다른 버전이 있으면 복사본이 아니므로 상동염색체예요.</li>
+    </ul>
+  </div>
+  <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+    <p>수업에서는 확인점에서 "방추사가 염색체에 제대로 붙었는지" 확인한다고만 하셨어요(0917 30:18). 방추사가 염색체의 어디에 붙는지는 강의노트에 있어요. 분열할 때 방추사가 염색체의 <strong>동원체</strong>에 붙어요. 방추사는 미세소관(microtubule)으로 된 실이라, 시험에서는 "미세소관(방추사)이 붙는 부위 = 동원체"처럼 나와요.</p>
+    <p>출처: 강의노트 3장 p2("방추제가 염색체 동원체에 부착"), 교재 3장 p.58(방추체 미세소관)</p>
+    <p>교재 3장 p.58은 자매염색분체가 붙은 부위를 "중심절(centromere)"이라고도 적어요. 수업과 시험에서는 이 부위를 동원체라고 불러요.</p>
+    <p>출처: 교재 3장 p.58</p>
+    <p><strong>중심립</strong>(centriole)은 동원체와 전혀 다른 구조예요. 염색체의 한 부분이 아니라, 세포질의 중심체(centrosome) 안에 있는 한 쌍의 작은 구조예요.</p>
+    <p>출처: 강의노트 3장 p2(중심체), 교재 3장 p.58 그림 3.3(중심체 안의 중심립 쌍)</p>
+    <p><strong>핵형</strong>(karyotype)은 한 생물의 염색체 전체를 쌍으로 배열해 보여 준 모습이에요. 염색체의 한 부위를 가리키는 말이 아니에요.</p>
+    <p>출처: 강의노트 3장 p2(핵형분석)</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">자매염색분체는 DNA 복제로 생긴 똑같은 복사본이고, 상동염색체는 엄마·아빠에게서 하나씩 온 쌍이라 대립유전자가 다를 수 있어요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>자매염색분체(sister chromatid)</dt><dd>한 염색체를 복제한 똑같은 두 사본, 동원체로 붙어 있음</dd>
+      <dt>상동염색체(homologous chromosome)</dt><dd>엄마·아빠에게서 하나씩 온, 크기·모양이 같은 염색체 쌍</dd>
+      <dt>대립유전자(allele)</dt><dd>같은 자리에 있는 같은 유전자의 다른 버전</dd>
+    </dl>
+  </div>
+</article>
+
+<article class="topic" id="s2-ploidy"><h3>2-3. 2배체·반수체와 무엇이 나뉘는가</h3><div class="tags"><span class="tag date">0917 수업</span><span class="tag slide">3장 p1</span><span class="tag slide">3장 p3</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">몸의 세포는 엄마 것과 아빠 것을 짝으로 모두 갖고, 아기 씨앗 세포는 짝마다 하나씩만 가져요.</p>
+    <figure class="figure">
+      <svg id="fig-ploidy-eli5" viewBox="0 0 520 240" role="img" aria-label="두 칸 그림. 왼쪽 큰 원(몸 세포) 안에 긴 막대 두 개와 짧은 막대 두 개가 짝지어 테두리로 그려져 있음. 가운데 화살표. 오른쪽 작은 원(아기 씨앗) 안에는 긴 막대 하나와 짧은 막대 하나만 있음.">
+        <circle class="fig-ink" cx="130" cy="115" r="90"/>
+        <rect class="fig-ink" x="72" y="60" width="16" height="100" rx="8"/>
+        <rect class="fig-accent" x="96" y="60" width="16" height="100" rx="8"/>
+        <rect class="fig-ink" x="148" y="85" width="16" height="55" rx="8"/>
+        <rect class="fig-accent" x="172" y="85" width="16" height="55" rx="8"/>
+        <text class="fig-text" x="130" y="230" text-anchor="middle">몸 세포: 짝이 모두 있어요</text>
+        <line class="fig-ink" x1="240" y1="115" x2="300" y2="115"/>
+        <path class="fig-ink" d="M290 107 L302 115 L290 123"/>
+        <circle class="fig-ink" cx="400" cy="115" r="62"/>
+        <rect class="fig-ink" x="366" y="65" width="16" height="100" rx="8"/>
+        <rect class="fig-accent" x="416" y="88" width="16" height="55" rx="8"/>
+        <text class="fig-text" x="400" y="230" text-anchor="middle">아기 씨앗: 짝마다 하나</text>
+      </svg>
+      <figcaption>왼쪽 몸 세포에는 긴 막대와 짧은 막대가 두 개씩 짝지어 있고, 오른쪽 아기 씨앗에는 짝마다 하나씩만 들어 있어요.</figcaption>
+    </figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <ul>
+      <li><strong>2배체(diploid)</strong>: 상동염색체를 쌍으로 가진 상태예요. <strong>2n</strong>으로 적어요. 정자·난자를 뺀 나머지 체세포는 2배체예요.</li>
+      <li><strong>반수체(haploid)</strong>: 상동염색체 쌍마다 하나만 가진 상태예요. <strong>n</strong>으로 적어요. 감수분열로 염색체 수가 절반이 되면 반수체가 돼요. 정자·난자는 반수체예요.</li>
+      <li>n을 "1배체"라고 부르지 않고 반수체라고 불러요.</li>
+      <li>사람은 염색체 46개를 가져요. 엄마에게서 23개, 아빠에게서 23개를 받았어요. 이것을 <strong>2n = 46</strong>으로 적고, 2배체이므로 <strong>23쌍</strong>이라는 뜻이에요(46쌍이 아니에요).</li>
+      <li>그래서 사람의 정자·난자는 23쌍 각각에서 하나씩, 모두 23개의 염색체를 가져요. 각 염색체를 엄마 쪽과 아빠 쪽 두 종류씩 갖지 않고, 쌍마다 한 개(한 종류)만 가져요. 정자·난자는 유사분열이 아니라 <strong>감수분열</strong>로 만들어져요.</li>
+    </ul>
+    <p>두 분열은 <strong>무엇이 나뉘는가</strong>가 달라요.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>구분</th><th>체세포 분열(유사분열)</th><th>감수분열 1단계(제1감수분열)</th><th>감수분열 2단계(제2감수분열)</th></tr></thead>
+      <tbody>
+        <tr><td>나뉘는 것</td><td>자매염색분체</td><td>상동염색체</td><td>자매염색분체</td></tr>
+        <tr><td>상동염색체는</td><td>나뉘지 않고 함께 따라감</td><td>쌍이 갈라져 하나씩 감</td><td>(이미 쌍마다 하나뿐)</td></tr>
+      </tbody>
+    </table></div>
+    <ol class="steps">
+      <li><strong>유사분열(체세포 분열)</strong>: 자매염색분체가 나뉘고 상동염색체는 따라가요. 그래서 2n이 분열해도 그대로 2n이에요. 염색체 46개인 세포가 유사분열하면 딸세포도 46개예요. 딸세포는 부모세포와 정확히 같은 유전 정보를 가진 복제품이에요.</li>
+      <li><strong>감수분열</strong>: 유성생식에서 정자·난자를 만들 때만 일어나고, 염색체 수가 절반으로 줄어요(2n에서 n). <strong>2단계</strong>로 진행돼요. 처음에 <strong>상동염색체</strong>가 나뉘고, 그다음에 <strong>자매염색분체</strong>가 나뉘어요.</li>
+      <li>교재는 이 첫 단계를 <strong>제1감수분열</strong>, 두 번째 단계를 <strong>제2감수분열</strong>이라고 불러요. 그러니 상동염색체는 제1감수분열에서 나뉘고, 제2감수분열이나 유사분열에서는 나뉘지 않아요. 자매염색분체는 유사분열과 제2감수분열에서 나뉘어요.</li>
+    </ol>
+    <p>보기를 가를 때는 특징이 어느 분열의 것인지 따져요. "2배체에서 반수체를 만든다", "배우자를 만든다", "두 번 연속 분열한다"는 모두 감수분열의 특징이에요. 유사분열은 한 번의 분열로 부모세포와 똑같은 딸세포를 만들 뿐, "제1·제2 유사분열" 같은 단계 이름은 없어요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <blockquote>1배체가 아니고 반수체라고 합니다, 반수체. (0917 12:46)</blockquote>
+    <blockquote>정자 난자는 반수체고 나머지 체세포는 2배체입니다. (0917 12:53)</blockquote>
+    <p>사람이 가진 염색체 수를 물으시고, 엄마가 23개, 아빠가 23개를 준다고 하셨어요. "엄마가 23억을 물려줬으면 좋겠다"는 농담으로 23이라는 수를 기억하게 하셨어요(0917 13:26–13:35).</p>
+    <blockquote>총 46개인데 2배체이기 때문에 23쌍을 가지고 있다는 뜻이죠. (0917 13:43)</blockquote>
+    <p>체세포 분열에서 상동염색체가 함께 간다는 것을 짝지어 움직이는 모습으로 말씀하셨어요.</p>
+    <blockquote>얘가 가면은 얘도 가는 거예요… 그래야 2n이 2n이 되죠? (0917 14:25)</blockquote>
+    <blockquote>감수 분열에서는 처음에 상동 염색체가 나눠지고, 그다음에 자매 염색분체가 나뉘죠. (0917 14:43)</blockquote>
+    <p>자세한 과정은 뒤에서 다룰 테니 지금은 이해가 안 돼도 넘어가라고 하셨어요(0917 14:55).</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li><strong>착각:</strong> n은 1배체라고 부른다. <strong>바른 구분:</strong> n은 반수체(haploid)라고 불러요. "1배체가 아닙니다"(0917 12:46).</li>
+      <li><strong>착각:</strong> 2n = 46은 46쌍이라는 뜻이다. <strong>바른 구분:</strong> 모두 46개이고, 2배체라 23쌍이에요(0917 13:43).</li>
+      <li><strong>착각:</strong> 체세포 분열에서도 상동염색체가 나뉜다. <strong>바른 구분:</strong> 체세포 분열에서 나뉘는 것은 자매염색분체이고 상동염색체는 따라가요. 상동염색체가 나뉘는 것은 감수분열 1단계(제1감수분열)예요. "체세포 분열할 때 나눠지는 거는 자매 염색분체예요"(0917 14:06), "처음에 상동 염색체가 나눠지고"(0917 14:43).</li>
+      <li><strong>착각:</strong> 정자·난자는 각 염색체를 엄마 쪽과 아빠 쪽 두 종류씩 갖는다. <strong>바른 구분:</strong> 반수체라 쌍마다 하나만 가져요(0917 12:37).</li>
+    </ul>
+  </div>
+  <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+    <p>수업에서는 감수분열이 "처음에 상동염색체, 그다음에 자매염색분체"를 나누는 2단계라고만 하셨어요(0917 14:43–14:51). 강의노트와 교재는 감수분열을 두 번의 세포분열로 설명하고, 첫 번째를 <strong>제1감수분열</strong>(감수분열 I), 두 번째를 <strong>제2감수분열</strong>(감수분열 II)이라고 불러요. 제1감수분열은 상동염색체를, 제2감수분열은 자매염색분체를 나눠요.</p>
+    <p>출처: 강의노트 3장 p4("감수분열은 두 번 세포분열이 일어난다"), 교재 3장 p.64 그림 3.8</p>
+    <p>한 사람이 만든 정자(또는 난자)가 모두 유전적으로 같지는 않아요. 배우자는 상동염색체 쌍마다 엄마 쪽과 아빠 쪽 가운데 하나만 받는데, 어느 쪽을 받는지가 배우자마다 다를 수 있어요. 그래서 감수분열로 생긴 세포들은 유전적으로 서로 달라요.</p>
+    <p>같은 이유로, 배우자가 가진 대립유전자는 "우성만" 또는 "열성만"처럼 한쪽으로 정해지지 않아요. 쌍마다 따로 정해지므로 섞일 수 있어요. 예를 들어 한 쌍에서는 C를, 다른 쌍에서는 d를 받을 수 있어요.</p>
+    <p>출처: 강의노트 3장 p3–p4(생식세포는 각 상동염색체 쌍 중 하나의 염색체만 받음, 유전적으로 서로 다른 4개의 세포), 교재 3장 p.64</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">체세포는 상동염색체를 쌍으로 가진 2배체(사람 2n = 46, 23쌍)이고, 정자·난자는 쌍마다 하나만 가진 반수체예요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>2배체(diploid)</dt><dd>상동염색체를 쌍으로 가진 상태, 2n</dd>
+      <dt>반수체(haploid)</dt><dd>쌍마다 하나만 가진 상태, n(1배체라 부르지 않음)</dd>
+      <dt>제1감수분열</dt><dd>감수분열 1단계, 상동염색체가 나뉨(제2감수분열에서는 자매염색분체)</dd>
+    </dl>
+  </div>
+</article>
+    </section>
+    <section id="s3"><h2>3. 세포주기의 단계와 확인점</h2>
+<article class="topic" id="s3-phases"><h3>3-1. G1–S–G2–M과 G0</h3><div class="tags"><span class="tag date">0917 수업</span><span class="tag slide">3장 p1</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">세포는 자라고, 복사하고, 준비하고, 나누는 순서로 한 바퀴를 돌아요.</p>
+    <figure class="figure">
+      <svg id="fig-phases-kid" viewBox="0 0 560 270" role="img" aria-label="테두리 원 위를 시계 방향 화살표가 돈다. 오른쪽은 자라요, 아래는 복사해요, 왼쪽은 준비해요, 위는 나눠요. 자라요 자리에서 오른쪽으로 곁가지 화살표가 나가 색칠된 원 쉬어요에 닿고, 다시 돌아오는 화살표가 있다">
+        <path class="fig-ink" d="M172.8 84.1 A95 95 0 0 1 287.2 84.1"/>
+        <polyline class="fig-ink" points="278.2,84.4 287.2,84.1 285.0,75.4"/>
+        <path class="fig-ink" d="M294.8 90.5 A95 95 0 0 1 305.9 217.2"/>
+        <polyline class="fig-ink" points="305.6,208.2 305.9,217.2 314.6,215.0"/>
+        <path class="fig-ink" d="M299.5 224.8 A95 95 0 0 1 160.5 224.8"/>
+        <polyline class="fig-ink" points="169.4,226.1 160.5,224.8 161.2,233.7"/>
+        <path class="fig-ink" d="M154.1 217.2 A95 95 0 0 1 165.2 90.5"/>
+        <polyline class="fig-ink" points="163.9,99.4 165.2,90.5 156.3,91.2"/>
+        <text class="fig-text" x="230.0" y="102.0" text-anchor="middle">나눠요</text>
+        <text class="fig-text" x="292.8" y="159.5" text-anchor="middle">자라요</text>
+        <text class="fig-text" x="230.0" y="228.0" text-anchor="middle">복사해요</text>
+        <text class="fig-text" x="167.2" y="159.5" text-anchor="middle">준비해요</text>
+        <line class="fig-accent" x1="328.6" y1="145.7" x2="440" y2="120"/>
+        <polyline class="fig-accent" points="430,114 440,120 431,128"/>
+        <line class="fig-accent" x1="440" y1="200" x2="328.6" y2="161.7"/>
+        <polyline class="fig-accent" points="336.6,153.7 328.6,161.7 338.6,165.7"/>
+        <circle class="fig-dot" cx="485" cy="160" r="34"/>
+        <text class="fig-text" x="485" y="212" text-anchor="middle">쉬어요</text>
+        <text class="fig-muted" x="485" y="232" text-anchor="middle">(나눌 수는 있어요)</text>
+      </svg>
+      <figcaption>자라는 자리에서 옆으로 빠져 쉬는 세포는 나눌 힘이 없는 게 아니라 그냥 안 나누고 있는 거예요.</figcaption>
+    </figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>세포는 아무 때나 분열하지 않아요. 분열해야 할 때만 분열하고, 멈출 때는 멈추도록 정교하게 조절돼요.</p>
+    <p>세포주기는 <b>G1기 → S기 → G2기 → M기</b> 순서로 돌고, M기가 끝나면 다시 G1기로 돌아와요.</p>
+    <ol class="steps">
+      <li><b>G1기</b>(G = Gap, 틈): 분열이 막 끝난 세포는 크기가 절반이라 가장 작아요. 그래서 이때 세포가 성장해요.</li>
+      <li><b>S기</b>(S = Synthesis, 합성): 적당히 커진 세포에 분열하라는 신호가 오면 DNA를 복제해요. DNA 합성기라고도 해요.</li>
+      <li><b>G2기</b>(두 번째 Gap): 분열하기 전에 잠깐 쉬면서 분열을 준비해요.</li>
+      <li><b>M기</b>(M = Mitosis): 유사분열(체세포 분열) 과정 자체예요. 복제된 자매염색분체가 나뉘어 두 딸세포로 가요(<a href="#s2-sister-homolog">2-2. 자매염색분체·상동염색체·대립유전자</a>).</li>
+    </ol>
+    <p>G1기와 G2기는 분열(M)과 복제(S) 사이에 끼인 틈이에요. G1기는 M기와 S기 사이, G2기는 S기와 M기 사이예요.</p>
+    <p>G1기의 길이는 종마다 달라서 한 바퀴 전체의 길이를 좌우해요. 사람 세포(헬라 세포)는 한 바퀴에 하루쯤 걸리고, 작고 단순한 대장균은 빠르면 20분마다 분열해요.</p>
+    <p><b>G0기</b>: 사람 신경세포는 태어나서 죽을 때까지 거의 분열하지 않아요. 분열 능력이 없는 게 아니라, G1기에서 멈춰 그대로 머무는 상태예요. 이 상태를 G0기라고 불러요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>학교는 수업 있는 날만 가고, 약속은 약속 있는 날만 가요. 세포도 분열해야 할 때만 분열해요.</p>
+    <blockquote>"멈출 때는 멈춰야 됩니다. 이 조절이 깨지면은 암이에요." (0917 15:56)</blockquote>
+    <blockquote>"G는 갭(Gap)이라고 생각하면 돼요, 갭. 틈." (0917 16:28)</blockquote>
+    <p>헬라 세포는 오늘 배지를 갈아 주면 내일 아침에 딱 2배가 돼 있어요. 세균은 훨씬 빨라서 대장균은 빠르면 20분에 한 번 분열해요. (0917 18:01–18:16)</p>
+    <blockquote>"능력이 없는 게 아니고 그냥 안 하는 겁니다." (0917 18:28) — 신경세포와 G0기</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li><b>글자의 뜻</b>: G는 Gap(틈)이지 성장(Growth)이 아니에요. S는 Synthesis(DNA 합성), M은 Mitosis(유사분열)예요. G1기는 M기와 S기 사이의 틈, G2기는 S기와 M기 사이의 틈이에요.</li>
+      <li><b>G0기 ≠ 분열 능력 없음</b>: G0기는 G1기에서 멈춰 분열을 안 하고 있는 상태예요. 신경세포는 "능력이 없는 게 아니고 그냥 안 하는" 세포예요. (0917 18:28)</li>
+      <li><b>순서와 할 일을 짝지어요</b>: 세포 성장은 G1기, DNA 복제는 S기, 분열 준비는 G2기, 분열은 M기예요. "S기에 성장", "G2기에 복제"처럼 짝을 바꾼 설명에 속지 마세요.</li>
+    </ul>
+  </div>
+  <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+    <p><b>간기(interphase)</b>는 G1기, S기, G2기를 합친 이름이에요. 한 유사분열이 끝난 뒤부터 다음 유사분열이 시작될 때까지예요. 세포는 한 바퀴의 대부분을 간기로 보내며, 이때 성장하고 DNA를 복제해요.</p>
+    <p>그래서 세포주기는 크게 간기와 M기(유사분열기, 분열기) 둘로 나뉘어요. 간기는 분열기가 아니에요. 전기, 중기, 후기, 말기는 M기 안의 소단계 이름이에요. 각 소단계에서 일어나는 일은 다음 시간에 배워요.</p>
+    <p>M기는 핵분열로 시작해 세포질 분열로 끝나요. 따라서 한 바퀴를 순서대로 쓰면 G1기 → S기 → G2기 → 핵분열 → 세포질 분열이에요.</p>
+    <figure class="figure">
+      <svg id="fig-phases-cycle" viewBox="0 0 580 345" role="img" aria-label="테두리 원이 네 칸으로 나뉘어 시계 방향 화살표로 돈다. 위는 M기, 오른쪽은 G1기, 아래는 S기, 왼쪽은 G2기. 원 바깥에 G1기부터 G2기까지를 감싸는 선이 있고 간기라고 적혀 있다. G1기에서 오른쪽 테두리 원 G0기로 나갔다 돌아오는 화살표가 있다">
+        <path class="fig-ink" d="M189.8 95.1 A100 100 0 0 1 310.2 95.1"/>
+        <polyline class="fig-ink" points="301.2,95.4 310.2,95.1 308.0,86.4"/>
+        <path class="fig-ink" d="M318.2 101.9 A100 100 0 0 1 329.9 235.2"/>
+        <polyline class="fig-ink" points="329.6,226.2 329.9,235.2 338.6,233.0"/>
+        <path class="fig-ink" d="M323.1 243.2 A100 100 0 0 1 176.9 243.2"/>
+        <polyline class="fig-ink" points="185.8,244.5 176.9,243.2 177.6,252.1"/>
+        <path class="fig-ink" d="M170.1 235.2 A100 100 0 0 1 181.8 101.9"/>
+        <polyline class="fig-ink" points="180.5,110.8 181.8,101.9 172.9,102.6"/>
+        <text class="fig-text" x="250.0" y="112.0" text-anchor="middle">M기</text>
+        <text class="fig-text" x="317.7" y="174.1" text-anchor="middle">G1기</text>
+        <text class="fig-text" x="250.0" y="248.0" text-anchor="middle">S기</text>
+        <text class="fig-text" x="182.3" y="174.1" text-anchor="middle">G2기</text>
+        <text class="fig-muted" x="250" y="169" text-anchor="middle">세포주기</text>
+        <path class="fig-accent" d="M337.3 81.4 A128 128 0 1 1 162.7 81.4"/>
+        <line class="fig-accent" x1="333.2" y1="85.8" x2="341.4" y2="77.0"/>
+        <line class="fig-accent" x1="166.8" y1="85.8" x2="158.6" y2="77.0"/>
+        <text class="fig-text" x="250.0" y="329.0" text-anchor="middle">간기(interphase) = G1기 + S기 + G2기</text>
+        <text class="fig-text" x="250.0" y="53.0" text-anchor="middle">M기 = 핵분열 → 세포질 분열</text>
+        <line class="fig-ink" x1="355.6" y1="158.3" x2="470" y2="140"/>
+        <polyline class="fig-ink" points="461,133 470,140 460,146"/>
+        <line class="fig-ink" x1="470" y1="208" x2="355.6" y2="178.3"/>
+        <polyline class="fig-ink" points="363.6,169.3 355.6,178.3 366.6,182.3"/>
+        <circle class="fig-ink" cx="505" cy="175" r="30"/>
+        <text class="fig-text" x="505" y="180" text-anchor="middle">G0기</text>
+        <text class="fig-muted" x="505" y="228" text-anchor="middle">G1에서 멈춰 머묾</text>
+      </svg>
+      <figcaption>시험지 그림과 같은 배치예요. 바깥 선으로 묶인 G1기·S기·G2기가 간기이고, 위쪽 M기만 분열기예요.</figcaption>
+    </figure>
+    <p><b>DNA 중합효소</b>(DNA polymerase)는 DNA를 복제(합성)하는 효소예요. DNA 복제는 S기에 일어나므로 DNA 중합효소는 S기에 가장 활발해요.</p>
+    <p>출처: 강의노트 3장 p1(간기, M기의 소단계 이름, 세포 성장·핵분열·세포질 분열), 교재 3장 p.56–57 그림 3.2(세포주기), 교재 5장 p.97(DNA 중합효소)</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">세포주기는 G1기(성장) → S기(DNA 복제) → G2기(준비) → M기(분열) 순서로 돌고, G0기는 G1기에서 멈춰 쉬는 상태예요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>간기(interphase)</dt><dd>G1기 + S기 + G2기, 분열기가 아닌 시기</dd>
+      <dt>G0기</dt><dd>능력은 있지만 G1기에서 멈춰 분열을 안 하는 상태</dd>
+      <dt>DNA 중합효소</dt><dd>DNA를 복제하는 효소, S기에 가장 활발</dd>
+    </dl>
+  </div>
+</article>
+<article class="topic" id="s3-checkpoint"><h3>3-2. 확인점</h3><div class="tags"><span class="tag date">0917 수업</span><span class="tag slide">3장 p2</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">세포는 다음 단계로 가기 전에 잘됐는지 살펴보고, 잘못된 게 있으면 멈춰요.</p>
+    <figure class="figure">
+      <svg id="fig-checkpoint-report" viewBox="0 0 600 200" role="img" aria-label="테두리 네모 다 썼어요에서 화살표를 따라 팔각형 테두리 멈춰로 간다. 멈춰에서 테두리 네모 고쳐요로 갔다가 테두리 네모 내요로 간다">
+        <rect class="fig-ink" x="20" y="70" width="110" height="60" rx="8"/>
+        <text class="fig-text" x="75" y="105" text-anchor="middle">다 썼어요</text>
+        <line class="fig-ink" x1="130" y1="100" x2="168" y2="100"/>
+        <polyline class="fig-ink" points="160,93 168,100 160,107"/>
+        <polygon class="fig-danger" points="197,55 243,55 275,87 275,113 243,145 197,145 165,113 165,87"/>
+        <text class="fig-text" x="220" y="96" text-anchor="middle">멈춰!</text>
+        <text class="fig-muted" x="220" y="116" text-anchor="middle">살펴봐요</text>
+        <line class="fig-ink" x1="275" y1="100" x2="313" y2="100"/>
+        <polyline class="fig-ink" points="305,93 313,100 305,107"/>
+        <rect class="fig-accent" x="315" y="70" width="110" height="60" rx="8"/>
+        <text class="fig-text" x="370" y="105" text-anchor="middle">고쳐요</text>
+        <line class="fig-ink" x1="425" y1="100" x2="463" y2="100"/>
+        <polyline class="fig-ink" points="455,93 463,100 455,107"/>
+        <rect class="fig-ink" x="465" y="70" width="110" height="60" rx="8"/>
+        <text class="fig-text" x="520" y="105" text-anchor="middle">내요</text>
+        <text class="fig-muted" x="300" y="180" text-anchor="middle">이름, 과목, 오타를 보고 틀리면 고친 뒤 내요</text>
+      </svg>
+      <figcaption>보고서를 내기 전에 이름과 오타를 보고, 틀린 게 있으면 멈춰서 고친 뒤 내는 것과 같아요.</figcaption>
+    </figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p><b>확인점(checkpoint)</b>은 세포주기 중간중간에서 앞 단계가 제대로 끝났는지 확인하는 지점이에요. 한 단계가 완성되기 전에는 다음 단계로 넘어가지 못하게 멈춰요.</p>
+    <p>수업에서 든 확인점이 확인하는 것은 세 가지예요.</p>
+    <ol class="steps">
+      <li><b>DNA 복제</b>가 정상적으로 일어났는지: S기가 끝나면 확인해요.</li>
+      <li><b>방추사</b>가 염색체에 제대로 붙었는지.</li>
+      <li>지금이 세포가 분열할 시기가 맞는지.</li>
+    </ol>
+    <figure class="figure">
+      <svg id="fig-checkpoint-cycle" viewBox="0 0 520 300" role="img" aria-label="테두리 원이 네 칸으로 나뉘어 시계 방향으로 돈다. 위는 M기, 오른쪽은 G1기, 아래는 S기, 왼쪽은 G2기. 원을 가로지르는 짧은 선 세 개가 확인점이다. G1기와 S기 경계에는 지금 분열할 때인가, S기와 G2기 경계에는 DNA 복제 잘 끝났나, M기 가운데에는 방추사가 염색체에 붙었나라고 적혀 있다">
+        <path class="fig-ink" d="M189.8 95.1 A100 100 0 0 1 310.2 95.1"/>
+        <polyline class="fig-ink" points="301.2,95.4 310.2,95.1 308.0,86.4"/>
+        <path class="fig-ink" d="M318.2 101.9 A100 100 0 0 1 329.9 235.2"/>
+        <polyline class="fig-ink" points="329.6,226.2 329.9,235.2 338.6,233.0"/>
+        <path class="fig-ink" d="M323.1 243.2 A100 100 0 0 1 176.9 243.2"/>
+        <polyline class="fig-ink" points="185.8,244.5 176.9,243.2 177.6,252.1"/>
+        <path class="fig-ink" d="M170.1 235.2 A100 100 0 0 1 181.8 101.9"/>
+        <polyline class="fig-ink" points="180.5,110.8 181.8,101.9 172.9,102.6"/>
+        <text class="fig-text" x="250.0" y="112.0" text-anchor="middle">M기</text>
+        <text class="fig-text" x="317.7" y="174.1" text-anchor="middle">G1기</text>
+        <text class="fig-text" x="250.0" y="248.0" text-anchor="middle">S기</text>
+        <text class="fig-text" x="182.3" y="174.1" text-anchor="middle">G2기</text>
+        <line class="fig-danger" x1="314.3" y1="229.0" x2="338.9" y2="249.6"/>
+        <line class="fig-danger" x1="183.8" y1="226.7" x2="158.6" y2="246.4"/>
+        <line class="fig-danger" x1="250.0" y1="91.0" x2="250.0" y2="59.0"/>
+        <text class="fig-text" x="347.5" y="267.4" text-anchor="start">지금 분열할 때인가?</text>
+        <text class="fig-text" x="149.9" y="260.1" text-anchor="end">DNA 복제 잘 끝났나?</text>
+        <text class="fig-text" x="250.0" y="45.0" text-anchor="middle">방추사가 염색체에 붙었나?</text>
+      </svg>
+      <figcaption>원을 가로지르는 짧은 선이 확인점이에요. 교수님 설명에서 DNA 복제 확인은 S기가 끝난 뒤에 해요. 교재 그림 3.6은 이 확인을 G2기에서 M기로 넘어가는 확인점에 표시해요.</figcaption>
+    </figure>
+    <p>DNA 복제에 문제가 있으면 확인점에서 멈춘 뒤 그 자리에서 고쳐요. 확인점 자체는 진행을 멈추는 일이고, 고치는 데 중요한 유전자가 <b>종양 억제 유전자</b>예요. 자세한 내용은 <a href="#s5-suppressor">5-2. 종양 억제 유전자: p53과 BRCA1</a>에서 이어져요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>세포 분열을 보고서 제출에 빗댔어요. 보고서는 제출하라고 할 때만 내요. 내기 전에 학번과 이름, 생물 과목이 맞는지, 베낀 티가 나는지, AI에 한 질문까지 붙여 넣지 않았는지 확인해요. (0917 19:11–19:45)</p>
+    <blockquote>"잠깐 멈추잖아요… '멈춰! 내지 마!'" (0917 19:50) — 고친 다음에 내요.</blockquote>
+    <blockquote>"한 단계가 완성될 때까지 그다음 단계를 진행시키지 않는 거야, 멈추는 거야." (0917 20:08)</blockquote>
+    <p>보고서를 다 쓴 뒤 오타를 확인하고 고치듯, S기가 끝나면 DNA 복제가 제대로 됐는지 확인하고 잘못됐으면 그 자리에서 고쳐요. (0917 30:29–30:39)</p>
+    <blockquote>"고치는 데 중요한 유전자들을 종양 억제 유전자라고 합니다." (0917 30:43)</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li><b>멈추는 것과 고치는 것</b>: 확인점을 "고치는 장치"로 착각하기 쉬워요. 확인점은 다음 단계로 못 가게 멈추는 지점이고, 그 자리에서 고치는 일은 종양 억제 유전자가 해요.</li>
+      <li><b>S기 "동안"과 S기 "끝난 뒤"</b>: 이 수업 모형에서 DNA 복제 확인은 S기가 끝난 뒤, G2기로 넘어가기 전에 해요. "S기가 끝나면 DNA 복제가 정상적으로 일어났는지를 확인합니다." (0917 30:29) 확인점은 한 단계를 마친 뒤 다음 단계 앞에 있다고 기억해요.</li>
+      <li><b>확인점이 보는 것은 세 가지</b>: DNA 복제가 제대로 됐는지, 방추사가 염색체에 붙었는지, 지금 분열할 때인지예요. 이 셋에 없는 일(예: 딸세포를 세 개로 나눌 수 있는지)을 확인점의 일로 고른 설명은 의심하세요. 한 번 분열하면 딸세포는 두 개예요. DNA 손상 점검은 아래 보충을 참고하세요.</li>
+    </ul>
+  </div>
+  <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+    <p>강의노트는 확인점을 "이전 단계의 작용이 완결되지 않으면 다음 단계로 못 가게 하는 지점"으로 적어요. 또 이온 방사선이나 화학물질이 DNA를 손상시키면 확인점이 주기를 늦춰 DNA를 수선할 시간을 준다고 적어요.</p>
+    <p>교재도 S기에 모든 DNA가 복제되지 않으면 G2기 동안 진행을 늦춰 복제를 끝낼 시간을 준다고 설명해요. 교재 그림 3.6은 G1기에서 S기로 넘어가는 확인점과 G2기에서 M기로 넘어가는 확인점을 표시해요. 방추사가 염색체에 붙는 일은 M기 안에서 일어나요.</p>
+    <p>현대 세포생물학에는 S기가 진행되는 중에 복제 이상을 점검하는 S기 내 확인점(intra-S checkpoint)도 소개돼요. 하지만 이 수업 모형에서 확인점은 한 단계가 끝난 뒤 다음 단계로 넘어가기 전에 둬요.</p>
+    <p>출처: 강의노트 3장 p2, 교재 3장 p.62(그림 3.6과 본문), Alberts 외 『Molecular Biology of the Cell』 17장(DNA 복제 점검)</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">확인점은 앞 단계가 제대로 끝났는지 보고 아니면 멈추는 지점이고, 고치는 일은 종양 억제 유전자가 해요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>확인점(checkpoint)</dt><dd>한 단계가 완성되기 전에는 다음 단계로 못 가게 멈추는 지점</dd>
+      <dt>확인하는 것</dt><dd>DNA 복제(S기 뒤), 방추사 부착, 분열할 시기</dd>
+      <dt>종양 억제 유전자</dt><dd>확인점에서 잘못된 것을 고치는 데 중요한 유전자</dd>
+    </dl>
+  </div>
+</article>
+    </section>
+    <section id="s4"><h2>4. 세포주기 조절 — 안의 엔진과 밖의 신호</h2>
+<article class="topic" id="s4-cyclin-cdk"><h3>4-1. 내적 조절: 사이클린과 CDK</h3><div class="tags"><span class="tag date">0917 수업</span><span class="tag slide">3장 p2</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">세포 안에는 한 단계씩 다음으로 넘겨 주는 작은 엔진이 있어요.</p>
+    <p>늘 제자리에 있는 부품에 잠깐 왔다 가는 부품이 끼워져야 엔진이 돌아요.</p>
+    <figure class="figure">
+      <svg id="fig-cyclin-engine" viewBox="0 0 360 170" role="img" aria-label="선만 그린 네모 부품의 홈에 색칠된 동그라미 부품이 끼워지고, 오른쪽에서 선만 그린 작은 동그라미 칸을 따라 굽은 화살표가 한 칸 넘어가는 모습">
+        <circle class="fig-dot" cx="90" cy="60" r="18"/>
+        <text class="fig-text" x="116" y="40">왔다 가는 부품</text>
+        <path class="fig-ink" d="M50,72 L70,72 L70,84 L110,84 L110,72 L130,72 L130,128 L50,128 Z"/>
+        <text class="fig-text" x="46" y="152">늘 있는 부품</text>
+        <line class="fig-ink" x1="150" y1="104" x2="200" y2="104"/>
+        <polyline class="fig-ink" points="190,96 200,104 190,112"/>
+        <circle class="fig-ink" cx="232" cy="110" r="10"/>
+        <circle class="fig-ink" cx="268" cy="110" r="10"/>
+        <circle class="fig-ink" cx="304" cy="110" r="10"/>
+        <circle class="fig-ink" cx="340" cy="110" r="10"/>
+        <path class="fig-accent" d="M232,94 Q250,66 268,94"/>
+        <polyline class="fig-accent" points="259,88 268,95 270,84"/>
+        <text class="fig-text" x="236" y="150">한 칸 넘어가요</text>
+      </svg>
+      <figcaption>선만 그린 네모는 늘 있는 부품이고, 색칠된 동그라미는 왔다 가는 부품이에요.</figcaption>
+    </figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>세포 안에서 세포 분열을 일으키는 인자를 찾다가 발견한 단백질이 <strong>사이클린(cyclin)</strong>이에요. 사이클린이 G1기, S기, G2기, M기를 돌려요.</p>
+    <p>G1, S, G2, M기는 단계마다 하는 일이 달라요. 그래서 사이클린도 한 종류가 아니라 여러 종류가 있어요.</p>
+    <p>사이클린은 혼자 일하지 않아요. <strong>사이클린 의존성 인산화 효소(CDK)</strong>(cyclin-dependent kinase)와 둘이 합쳐져야 세포주기를 다음 단계로 넘겨요.</p>
+    <p>사이클린과 CDK는 세포 안에 있으면서 세포 분열을 직접 조절하는 <strong>내적 조절자</strong>예요. 세포 안의 이런 단백질이 주기를 돌리는 것을 <strong>내적 조절</strong>이라고 해요.</p>
+    <ol class="steps">
+      <li>세포 안에 사이클린과 CDK가 있어요.</li>
+      <li>그 단계에 맞는 사이클린이 CDK와 합쳐져요.</li>
+      <li>합쳐진 사이클린·CDK가 세포주기를 다음 단계로 넘겨요.</li>
+    </ol>
+    <p>그러면 사이클린·CDK가 일하게 만드는 애초의 원인은 무엇일까요? 그 원인은 세포 밖에서 와요. 이어지는 내용은 <a href="#s4-signal">4-2. 외적 조절: 신호 분자와 수용체</a>에 있어요.</p>
+    <p>한 단계가 끝나기 전에 다음 단계로 못 가게 멈추는 장치는 <a href="#s3-checkpoint">3-2. 확인점</a>에서 다뤄요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>교수님은 교재 순서와 달리 세포 분열 과정보다 주기 조절을 먼저 가르쳤어요.</p>
+    <blockquote>"교재는 세포 분열 얘기가 먼저 나오지만 나는 뒤쪽을 먼저 이야기한다." (0917 20:21)</blockquote>
+    <blockquote>"찾다가 찾다가 찾았어. 바로 사이클린이라고 하는 단백질이 G1, S, G2, M기를 돌리더라." (0917 20:45)</blockquote>
+    <p>자세한 작동 방식은 수업에서 생략했어요. 세포 안의 단백질이 주기를 돌린다는 것까지 알면 된다고 했어요.</p>
+    <blockquote>"내부에 이런 단백질들이 세포 주기를 열심히 돌리고 있다, 그것만 알면 되고." (0917 21:26)</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <p><strong>사이클린 혼자 주기를 돌린다고 착각하기 쉬워요.</strong> 바른 구분: 사이클린은 CDK와 둘이 합쳐져야 주기를 넘겨요. "얘 혼자서 하는 것이 아니고" CDK가 있다고 했어요. (0917 21:03)</p>
+    <p><strong>사이클린이 한 종류라고 착각하기 쉬워요.</strong> 바른 구분: 단계마다 하는 일이 달라서 사이클린도 여러 종류예요. (0917 20:56)</p>
+    <p><strong>세포 안의 조절자와 밖에서 오는 조절자를 섞기 쉬워요.</strong> 바른 구분: 사이클린·CDK는 세포 안에서 주기를 직접 돌리는 내적 조절자예요. 성장 호르몬·성장 인자는 밖에서 와서 주기를 시작시키는 외적 조절자예요. 밖의 신호는 <a href="#s4-signal">4-2. 외적 조절: 신호 분자와 수용체</a>에서 다뤄요. (0917 21:31–22:11)</p>
+    <p><strong>동원체도 주기를 조절하는 단백질이라고 헷갈리기 쉬워요.</strong> 바른 구분: 동원체(centromere)는 자매염색분체가 붙어 있는 염색체의 부위예요. 주기를 넘기는 조절 단백질이 아니에요. 자세한 내용은 <a href="#s2-sister-homolog">2-2. 자매염색분체·상동염색체·대립유전자</a>에 있어요.</p>
+  </div>
+  <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+    <p>수업에서는 "사이클린과 CDK가 합쳐서 주기를 돌린다"까지만 말했어요. 시험에서 사이클린과 CDK를 가르는 기준은 교재에 있어요.</p>
+    <p><strong>CDK는 인산화 효소예요.</strong> CDK는 표적 단백질에 인산기를 붙이는 단백질 인산화 효소(protein kinase)예요. CDK는 사이클린과 결합했을 때만 활성을 가져요. 그래서 "사이클린 의존성"이라는 이름이 붙었어요.</p>
+    <p><strong>양이 변하는 쪽은 사이클린이에요.</strong> CDK의 농도는 세포주기 내내 거의 일정해요. 사이클린의 농도는 세포주기에 따라 오르내려요. 특정 시기에만 CDK를 켤 만큼 많아졌다가, 그 단계를 넘기면 분해되어 줄어들어요. 사이클린(cyclin)이라는 이름도 농도가 주기적으로(cycle) 바뀐다는 데서 왔어요.</p>
+    <figure class="figure">
+      <svg id="fig-cyclin-level" viewBox="0 0 360 200" role="img" aria-label="세포주기 동안의 양 변화 그래프. 가로로 평평한 선은 CDK로 양이 거의 일정하고, 오르내리는 선은 사이클린으로 G2기까지 올라갔다가 M기에 뚝 떨어진다">
+        <text class="fig-muted" x="6" y="18">양(농도)</text>
+        <line class="fig-ink" x1="40" y1="24" x2="40" y2="150"/>
+        <line class="fig-ink" x1="40" y1="150" x2="344" y2="150"/>
+        <line class="fig-ink" x1="40" y1="78" x2="344" y2="78"/>
+        <text class="fig-text" x="48" y="70">CDK: 거의 일정</text>
+        <path class="fig-accent" d="M40,142 C130,140 210,96 262,34 L298,142 L344,142"/>
+        <text class="fig-text" x="100" y="44">사이클린: 오르내림</text>
+        <text class="fig-muted" x="70" y="170">G1</text>
+        <text class="fig-muted" x="150" y="170">S</text>
+        <text class="fig-muted" x="218" y="170">G2</text>
+        <text class="fig-muted" x="272" y="170">M</text>
+        <text class="fig-muted" x="314" y="170">G1</text>
+        <line class="fig-ink" x1="120" y1="146" x2="120" y2="154"/>
+        <line class="fig-ink" x1="190" y1="146" x2="190" y2="154"/>
+        <line class="fig-ink" x1="258" y1="146" x2="258" y2="154"/>
+        <line class="fig-ink" x1="300" y1="146" x2="300" y2="154"/>
+        <text class="fig-muted" x="40" y="194">모양만 나타낸 그림이에요</text>
+      </svg>
+      <figcaption>평평한 선은 CDK, 오르내리는 선은 사이클린이에요. CDK는 늘 비슷한 양으로 있고, 사이클린은 쌓였다가 단계를 넘기면 분해돼요.</figcaption>
+    </figure>
+    <p><strong>단계마다 짝이 달라요.</strong> 교재 그림에서는 G1기에서 S기로 넘어갈 때 사이클린 E가 CDK2와 결합하고, S기로 넘어가면 사이클린 E는 분해돼요. G2기에서 M기로 넘어갈 때는 사이클린 B가 CDK1과 결합하고, 그 뒤 사이클린 B가 분해돼요.</p>
+    <p><strong>보기를 가르는 기준.</strong> "세포주기 조절에 관련된다"와 "농도가 계속 변동한다"는 두 조건을 함께 봐요.</p>
+    <ul>
+      <li>사이클린: 세포주기 조절에 관련되고, 농도가 오르내려요. 두 조건을 모두 채워요.</li>
+      <li>CDK 같은 인산화 효소: 세포주기 조절에 관련되지만, 농도는 거의 일정해요.</li>
+      <li>양자펌프(proton pump): H⁺(양성자)를 막 너머로 퍼 나르는 막 수송 단백질이에요. 세포주기 조절 단백질이 아니에요.</li>
+      <li>동원체(centromere): 자매염색분체가 붙어 있는 염색체의 부위예요. 단백질 조절자가 아니에요.</li>
+    </ul>
+    <p>출처: 교재 3장 p.60–62(3.1.3 세포주기 조절, 그림 3.6), 양자펌프는 교재 1장 p.23(능동수송 펌프)</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">세포 안에서는 사이클린과 CDK가 둘이 합쳐져 세포주기를 한 단계씩 넘겨요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>사이클린(cyclin)</dt><dd>단계마다 종류가 다르고 농도가 오르내리는 주기 조절 단백질</dd>
+      <dt>사이클린 의존성 인산화 효소(CDK)</dt><dd>사이클린과 결합해야 작동하며, 양은 거의 일정</dd>
+      <dt>내적 조절</dt><dd>세포 안의 사이클린·CDK가 주기를 직접 돌리는 조절</dd>
+    </dl>
+  </div>
+</article>
+
+<article class="topic" id="s4-signal"><h3>4-2. 외적 조절: 신호 분자와 수용체</h3><div class="tags"><span class="tag date">0917 수업</span><span class="tag slide">3장 p2</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">밖에서 온 "나눠!" 쪽지는 세포의 문에 딱 맞게 꽂혀야 안으로 전해져요.</p>
+    <p>그다음 안에서 차례차례 말을 전해서, 마지막에 세포가 둘로 나뉘어요.</p>
+    <figure class="figure">
+      <svg id="fig-signal-door" viewBox="0 0 380 190" role="img" aria-label="색칠된 점인 쪽지가 선만 그린 큰 동그라미 세포의 문에 꽂히고, 안에서 작은 동그라미 셋을 차례로 거쳐 둘로 나뉨에 이르는 그림">
+        <circle class="fig-dot" cx="36" cy="95" r="12"/>
+        <text class="fig-text" x="16" y="130">쪽지</text>
+        <line class="fig-ink" x1="54" y1="95" x2="92" y2="95"/>
+        <polyline class="fig-ink" points="84,88 92,95 84,102"/>
+        <circle class="fig-ink" cx="230" cy="95" r="80"/>
+        <path class="fig-accent" d="M150,80 L166,80 L166,110 L150,110"/>
+        <text class="fig-text" x="138" y="72">문</text>
+        <circle class="fig-ink" cx="196" cy="95" r="10"/>
+        <circle class="fig-ink" cx="232" cy="95" r="10"/>
+        <circle class="fig-ink" cx="268" cy="95" r="10"/>
+        <line class="fig-ink" x1="170" y1="95" x2="184" y2="95"/>
+        <line class="fig-ink" x1="206" y1="95" x2="220" y2="95"/>
+        <line class="fig-ink" x1="242" y1="95" x2="256" y2="95"/>
+        <text class="fig-text" x="190" y="130">안에서 차례로</text>
+        <text class="fig-text" x="190" y="148">전달해요</text>
+        <text class="fig-text" x="244" y="60">둘로 나뉨</text>
+        <line class="fig-ink" x1="276" y1="88" x2="282" y2="66"/>
+      </svg>
+      <figcaption>색칠된 점이 밖에서 온 쪽지이고, 선만 그린 큰 동그라미가 세포예요.</figcaption>
+    </figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>사이클린·CDK가 주기를 돌리게 만드는 애초의 원인은 세포 밖에서 와요. 이것을 <strong>외적 조절</strong>이라고 해요.</p>
+    <p>밖에서 오는 조절자의 예는 성장 호르몬(growth hormone)과 <strong>성장 인자(growth factor)</strong>예요. 예를 들어 상처가 나면 어떤 인자들이 분비되어 "빨리 상처를 메워라, 분열해라"라는 신호를 줘요.</p>
+    <p>이렇게 세포 밖에서 오는 신호를 전하는 물질이 <strong>신호 분자</strong>(signal molecule)예요.</p>
+    <p><strong>성립 조건:</strong> 신호 분자는 반드시 <strong>수용체(receptor)</strong>에 결합해야만 작동해요. 신호 분자 혼자서는 아무 효과가 없어요. 수용체는 세포 표면에 있는 단백질이에요.</p>
+    <p>신호가 전달되는 경로는 다음과 같아요.</p>
+    <ol class="steps">
+      <li>성장하거나 상처가 나면 세포 밖에서 신호 분자가 와요.</li>
+      <li>신호 분자가 수용체에 결합하면 쉬고 있던 수용체가 활성화돼요.</li>
+      <li>활성화된 수용체가 세포 안의 A 단백질을 활성화하고, A가 B를 활성화해요. 중간에 C 같은 단계가 더 있을 수도 있어요.</li>
+      <li>이런 여러 단계를 거쳐 마지막에 사이클린·CDK가 일해요.</li>
+      <li>사이클린·CDK가 DNA 복제를 일으키고, 결국 세포 분열이 일어나요.</li>
+    </ol>
+    <figure class="figure">
+      <svg id="fig-signal-path" viewBox="0 0 340 400" role="img" aria-label="위에서 아래로 신호 분자, 수용체, A, B, 사이클린·CDK, DNA 복제와 세포 분열 순서로 이어지는 흐름도. 수용체는 세포막에 걸쳐 있고 위는 세포 밖, 아래는 세포 안이다">
+        <text class="fig-muted" x="8" y="60">세포 밖</text>
+        <text class="fig-muted" x="8" y="132">세포 안</text>
+        <line class="fig-ink" x1="4" y1="94" x2="70" y2="94" stroke-dasharray="6 4"/>
+        <line class="fig-ink" x1="270" y1="94" x2="336" y2="94" stroke-dasharray="6 4"/>
+        <text class="fig-muted" x="280" y="86">세포막</text>
+        <rect class="fig-ink" x="70" y="12" width="200" height="36" rx="8"/>
+        <text class="fig-text" x="170" y="35" text-anchor="middle">신호 분자(성장 인자 등)</text>
+        <line class="fig-ink" x1="170" y1="48" x2="170" y2="74"/>
+        <polyline class="fig-ink" points="163,67 170,75 177,67"/>
+        <text class="fig-muted" x="180" y="66">결합</text>
+        <rect class="fig-accent" x="70" y="76" width="200" height="36" rx="8"/>
+        <text class="fig-text" x="170" y="99" text-anchor="middle">수용체(R 유전자의 산물)</text>
+        <line class="fig-ink" x1="170" y1="112" x2="170" y2="138"/>
+        <polyline class="fig-ink" points="163,131 170,139 177,131"/>
+        <text class="fig-muted" x="180" y="130">활성화</text>
+        <rect class="fig-ink" x="70" y="140" width="200" height="36" rx="8"/>
+        <text class="fig-text" x="170" y="163" text-anchor="middle">A 단백질</text>
+        <line class="fig-ink" x1="170" y1="176" x2="170" y2="202"/>
+        <polyline class="fig-ink" points="163,195 170,203 177,195"/>
+        <rect class="fig-ink" x="70" y="204" width="200" height="36" rx="8"/>
+        <text class="fig-text" x="170" y="227" text-anchor="middle">B 단백질 (C… 더 있을 수도)</text>
+        <line class="fig-ink" x1="170" y1="240" x2="170" y2="266"/>
+        <polyline class="fig-ink" points="163,259 170,267 177,259"/>
+        <rect class="fig-accent" x="70" y="268" width="200" height="36" rx="8"/>
+        <text class="fig-text" x="170" y="291" text-anchor="middle">사이클린·CDK</text>
+        <line class="fig-ink" x1="170" y1="304" x2="170" y2="330"/>
+        <polyline class="fig-ink" points="163,323 170,331 177,323"/>
+        <rect class="fig-ink" x="70" y="332" width="200" height="36" rx="8"/>
+        <text class="fig-text" x="170" y="355" text-anchor="middle">DNA 복제, 세포 분열</text>
+        <text class="fig-muted" x="170" y="392" text-anchor="middle">테두리가 강조색인 칸: 수용체, 사이클린·CDK</text>
+      </svg>
+      <figcaption>신호 분자가 수용체에 결합해야 세포 안의 A, B를 거쳐 사이클린·CDK까지 신호가 전해지고, 그 끝에 DNA 복제와 세포 분열이 일어나요.</figcaption>
+    </figure>
+    <p><strong>분류 경계:</strong> 외적 조절자는 밖에서 오는 신호 분자(성장 호르몬, 성장 인자)예요. 수용체와 A, B는 세포 쪽 단백질로, 신호를 안으로 전달하는 단계에 참여할 뿐 외적 조절자가 아니에요. 사이클린·CDK는 내적 조절자예요(<a href="#s4-cyclin-cdk">4-1. 내적 조절: 사이클린과 CDK</a>).</p>
+    <p>수용체 단백질을 암호화하는 유전자를 receptor의 첫 글자를 따서 <strong>R 유전자</strong>라고 불렀어요. 수용체, A, B, 사이클린은 모두 세포 주기를 조절(촉진)하는 유전자에서 만들어져요. 이것들이 있어야 분열이 일어나요.</p>
+    <p>R 유전자에 돌연변이가 생기면 어떻게 되는지는 <a href="#s5-oncogene">5-1. 원발암 유전자와 발암 유전자</a>로 이어져요.</p>
+    <p>강의노트 p2에서 외부 조절 아래에 함께 적힌 접촉 저해는 <a href="#s5-tumor">5-3. 양성·악성 종양, 전이, 접촉 저해</a>에서 다뤄요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p><strong>보고서를 쓰는 애초의 원인.</strong> 보고서는 쓰라고 하니까 쓰는 것이고, 그 지시는 밖에서 와요. 세포 분열의 시작도 마찬가지로 외부에서 온다고 했어요. (0917 21:39–21:46)</p>
+    <p><strong>벤츠 차 키 비유.</strong> 선물로 벤츠 차 키만 받고 차는 오지 않았다면 아무 쓸모가 없어요. 신호 분자(차 키)도 혼자서는 쓸모없고, 수용체(차)에 결합해야 신호가 안으로 전달돼요.</p>
+    <blockquote>"이 신호 분자는 반드시 수용체에 결합을 해야만 작동을 합니다." (0917 23:29)</blockquote>
+    <blockquote>"키만 받았어, 키만. 차 키만. 차는 안 오고." (0917 23:42)</blockquote>
+    <p><strong>잠에서 깨는 수용체.</strong> 신호 분자가 붙으면 수용체가 "어, 놀고 있었는데 날 깨우네?" 하고 깨어나 A를 활성화해요. (0917 24:17)</p>
+    <p><strong>교수, 과대표, 총무, 학생, 보고서 비유.</strong> 교수가 학생 모두에게 말하기 힘드니 과대표에게 시키고, 과대표가 총무에게, 총무가 학생들에게 알려서 마지막에 보고서가 나와요. (0917 25:17–25:50)</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>비유</th><th>세포에서</th></tr></thead>
+      <tbody>
+        <tr><td>교수의 지시</td><td>신호 분자</td></tr>
+        <tr><td>과대표</td><td>수용체</td></tr>
+        <tr><td>총무, 학생</td><td>A, B 등 신호 전달 단계</td></tr>
+        <tr><td>보고서 제출</td><td>세포 분열</td></tr>
+      </tbody>
+    </table></div>
+    <blockquote>"교수의 지시가 있을 때 보고서가 나오게 되죠? 신호 물질이 있을 때 세포 분열을 일으키게 되는 겁니다." (0917 25:57)</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <p><strong>내적 조절자와 외적 조절자를 섞기 쉬워요.</strong> 바른 구분: 내적 조절자는 사이클린·CDK로, 세포 안에서 주기를 직접 돌려요. 외적 조절자는 성장 호르몬·성장 인자로, 밖에서 와서 주기를 시작시켜요. (0917 21:31–22:11)</p>
+    <p><strong>신호 분자만 있으면 분열이 일어난다고 착각하기 쉬워요.</strong> 바른 구분: 신호 분자 혼자서는 효과가 없고, 수용체에 결합해야만 신호가 안으로 전달돼요. 차 키만 있고 차가 없는 것과 같아요. (0917 23:29–23:54)</p>
+    <p><strong>신호 전달에 참여하는 수용체, A, B를 외적 조절자로 착각하기 쉬워요.</strong> 바른 구분: 이들은 세포 쪽 단백질로 신호를 전달하는 단계예요. 밖에서 오는 조절자는 신호 분자예요.</p>
+    <p><strong>"반드시"라는 말이 나오면 반례를 확인해요.</strong> 정상 세포에서는 신호 분자가 수용체에 붙어야만 신호가 전달돼요. 그런데 R 유전자에 돌연변이가 생겨 수용체가 늘 켜진 모양이 되면 신호 분자 없이도 신호가 계속 전달돼요. 이 경우는 <a href="#s5-oncogene">5-1. 원발암 유전자와 발암 유전자</a>에서 다뤄요.</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">밖에서 온 신호 분자가 수용체에 결합해야만 세포 안으로 신호가 전달되어 사이클린·CDK와 세포 분열까지 이어져요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>외적 조절</dt><dd>성장 호르몬·성장 인자처럼 세포 밖에서 와서 주기를 시작시키는 조절</dd>
+      <dt>신호 분자</dt><dd>밖에서 오는 신호 물질로, 수용체에 결합해야만 작동</dd>
+      <dt>수용체(receptor)</dt><dd>신호 분자가 결합하는 세포 표면 단백질, R 유전자의 산물</dd>
+    </dl>
+  </div>
+</article>
+    </section>
+    <section id="s5"><h2>5. 암 — 조절이 깨질 때</h2>
+<article class="topic" id="s5-oncogene"><h3>5-1. 원발암 유전자와 발암 유전자</h3><div class="tags"><span class="tag date">0917 수업</span><span class="tag slide">3장 p2–p3</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">세포에게 "나뉘어라"라는 말을 전하는 전달자가 고장 나면, 아무도 시키지 않았는데도 계속 "나뉘어라"라고 외쳐요.</p>
+    <figure class="figure">
+      <svg id="fig-onco-messenger" viewBox="0 0 600 270" role="img" aria-label="두 줄 비교 그림. 위 줄은 테두리 원으로 그린 시키는 사람이 화살표로 테두리 네모 전달자에게 말을 전하고, 전달자가 친구 셋에게 전해 종이 한 장이 나온다. 아래 줄은 시키는 사람 자리가 점선 원으로 비어 있는데도 빨간 테두리 네모 전달자가 친구 셋에게 계속 말을 전해 종이가 여러 장 겹쳐 쌓인다.">
+        <text class="fig-text" x="10" y="28">보통 때</text>
+        <circle class="fig-ink" cx="60" cy="80" r="22"/>
+        <text class="fig-text" x="22" y="125">시키는 사람</text>
+        <line class="fig-ink" x1="88" y1="80" x2="140" y2="80"/>
+        <polyline class="fig-ink" points="130,72 140,80 130,88"/>
+        <rect class="fig-ink" x="148" y="58" width="90" height="44" rx="6"/>
+        <text class="fig-text" x="168" y="85">전달자</text>
+        <line class="fig-ink" x1="244" y1="80" x2="296" y2="80"/>
+        <polyline class="fig-ink" points="286,72 296,80 286,88"/>
+        <circle class="fig-ink" cx="318" cy="66" r="11"/>
+        <circle class="fig-ink" cx="346" cy="66" r="11"/>
+        <circle class="fig-ink" cx="332" cy="94" r="11"/>
+        <text class="fig-text" x="306" y="125">친구들</text>
+        <line class="fig-ink" x1="366" y1="80" x2="418" y2="80"/>
+        <polyline class="fig-ink" points="408,72 418,80 408,88"/>
+        <rect class="fig-accent" x="428" y="56" width="36" height="48"/>
+        <text class="fig-text" x="476" y="86">종이 한 장</text>
+
+        <text class="fig-text" x="10" y="165">고장 났을 때</text>
+        <circle class="fig-ink" cx="60" cy="215" r="22" stroke-dasharray="5 5"/>
+        <text class="fig-text" x="10" y="260">아무도 안 시켰어요</text>
+        <rect class="fig-danger" x="148" y="193" width="90" height="44" rx="6"/>
+        <text class="fig-text" x="168" y="220">전달자</text>
+        <line class="fig-danger" x1="244" y1="215" x2="296" y2="215"/>
+        <polyline class="fig-danger" points="286,207 296,215 286,223"/>
+        <circle class="fig-ink" cx="318" cy="201" r="11"/>
+        <circle class="fig-ink" cx="346" cy="201" r="11"/>
+        <circle class="fig-ink" cx="332" cy="229" r="11"/>
+        <line class="fig-danger" x1="366" y1="215" x2="418" y2="215"/>
+        <polyline class="fig-danger" points="408,207 418,215 408,223"/>
+        <rect class="fig-danger" x="428" y="199" width="36" height="48"/>
+        <rect class="fig-danger" x="438" y="191" width="36" height="48"/>
+        <rect class="fig-danger" x="448" y="183" width="36" height="48"/>
+        <rect class="fig-danger" x="458" y="175" width="36" height="48"/>
+        <text class="fig-text" x="504" y="205">종이가</text>
+        <text class="fig-text" x="504" y="223">끝없이 쌓여요</text>
+      </svg>
+      <figcaption>위 줄은 시킬 때만 종이 한 장이 나오지만, 아래 줄은 빨간 테두리 전달자가 혼자 계속 말을 전해 종이가 끝없이 쌓여요.</figcaption>
+    </figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p><b>암은 세포주기 조절이 깨질 때 생겨요.</b> 세포는 분열해야 할 때만 분열하고, 멈출 때는 멈추도록 정교하게 조절돼요. 세포가 "언제, 얼마나 자주 분열할지"를 정하는 이 조절에 더 이상 반응하지 않게 되면 암이 돼요(교재 3장 p.62: 이 정상적인 조절을 잃어버릴 때 생긴다). 강의노트도 "세포주기 조절은 암의 경우 소실된다"고 적어요.</p>
+    <p>조절은 안팎에서 와요. 세포 안에서는 사이클린과 CDK가 주기를 돌리고(<a href="#s4-cyclin-cdk">4-1. 내적 조절: 사이클린과 CDK</a>), 밖에서 온 신호 분자가 수용체에 붙어야 그 일이 시작돼요(<a href="#s4-signal">4-2. 외적 조절: 신호 분자와 수용체</a>). 수업에서는 이 외적 조절 경로가 고장 나는 예로 암을 설명했어요.</p>
+    <p><b>정상 경로</b>: 신호 분자는 반드시 수용체에 결합해야만 작동해요.</p>
+    <ol class="steps">
+      <li>성장 인자 같은 신호 분자가 세포 표면의 수용체에 결합해요.</li>
+      <li>놀고 있던 수용체가 활성화돼요.</li>
+      <li>세포 안의 A가 활성화되고, 이어서 B가 활성화돼요.</li>
+      <li>사이클린·CDK가 움직여 DNA 복제와 세포 분열이 일어나요.</li>
+    </ol>
+    <p>수용체를 암호화하는 유전자를 R(receptor)이라고 해요. 수용체, A, B, 사이클린은 모두 세포 주기를 조절(촉진)하는 유전자의 산물이에요.</p>
+    <p><b>돌연변이 경로</b>:</p>
+    <ol class="steps">
+      <li>R 유전자 서열에 <b>돌연변이</b>가 생겨 R′ 유전자가 돼요.</li>
+      <li>R′가 만든 수용체는 단백질 구조가 바뀌어요.</li>
+      <li>여러 돌연변이 가운데 하필 활성화된 상태의 모양과 똑같이 바뀌면, 이 수용체는 <b>신호 분자 없이</b>도 항상 활성화된 형태로 있어요.</li>
+      <li>A, B가 계속 활성화되고, 세포 분열이 멈추지 않고 계속 일어나요.</li>
+    </ol>
+    <p>그래서 암은 유전자 돌연변이 때문에 생겨요. 두 유전자의 이름은 이렇게 갈려요.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>구분</th><th>원발암 유전자(proto-oncogene)</th><th>발암 유전자(oncogene)</th></tr></thead>
+      <tbody>
+        <tr><th>다른 이름</th><td>프로토온코진</td><td>종양 유전자, 온코진</td></tr>
+        <tr><th>상태</th><td>돌연변이 전의 정상 유전자(예: R)</td><td>돌연변이로 바뀐 유전자(예: R′)</td></tr>
+        <tr><th>하는 일</th><td>평소엔 놀다가 신호 분자가 붙을 때만 세포 분열을 촉진해요</td><td>신호가 없어도 세포 분열을 계속 촉진해 암을 일으켜요</td></tr>
+        <tr><th>관계</th><td colspan="2">세포 주기를 조절하는 정상 유전자(원발암 유전자)가 돌연변이로 분열을 계속 촉진하게 되면 발암 유전자가 돼요.</td></tr>
+      </tbody>
+    </table></div>
+    <p>암을 막으려면 돌연변이가 일어나지 않게 하거나, 일어나도 고치면 돼요. 고치는 일을 맡은 유전자는 <a href="#s5-suppressor">5-2. 종양 억제 유전자: p53과 BRCA1</a>에서 다뤄요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>세포가 필요할 때만 분열한다는 점을 수업 있는 날만 학교에 가는 것에 빗댄 뒤 이렇게 못 박았어요.</p>
+    <blockquote>멈출 때는 멈춰야 됩니다. 이 조절이 깨지면은 암이에요. (0917 15:56)</blockquote>
+    <p>정상 경로는 교수 → <b>과대표</b> → 총무 → 학생 → 보고서로 비유했어요. 교수의 지시(신호 분자)가 있을 때만 보고서(세포 분열)가 나와요. 수용체 유전자의 돌연변이는 "과대표가 미침"이에요.</p>
+    <blockquote>보고서 한 장만 내라고 했는데 과대표가 미쳐 가지고 (0917 26:55)</blockquote>
+    <blockquote>얘들아, 보고서 또 쓰래. 그다음 날 또 쓰래 (0917 26:59)</blockquote>
+    <blockquote>신호 분자가 오지도 않았는데 얘가 계속 신호를 전달하는 거야. (0917 27:20)</blockquote>
+    <p>과대표 한 명 때문에 학생 모두가 필요 없는 보고서를 쓰듯, 수용체 유전자 하나의 돌연변이로 세포 분열이 계속 일어나요.</p>
+    <blockquote>결론적으로 암은 유전자 돌연변이 때문에 발생하게 된다. (0917 27:44)</blockquote>
+    <p>"태어날 때부터 발암 유전자를 가진 사람이 있을까?"라고 물은 뒤 비유로 답했어요. 발암 유전자도 원래는 정상 유전자(원발암 유전자)였다는 뜻이에요.</p>
+    <blockquote>태어날 때부터 과대표가 미친 건 아니지. 원래 착실한 아이였는데. (0917 28:37)</blockquote>
+    <blockquote>우리는 발암 유전자 때문에 암에 걸리는 거다. (0917 29:32)</blockquote>
+    <blockquote>돌연변이가 일어나도 고치면 돼요. 우리는 고치는 시스템을 다 가지고 있습니다. (0917 29:45)</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <p><b>원발암 유전자는 정상 유전자예요.</b> 이름에 "발암"이 들어 있어 암을 일으키는 유전자로 착각하기 쉬워요. 원발암 유전자는 신호가 있을 때만 분열을 촉진하는 정상 유전자이고, 돌연변이로 신호 없이도 계속 촉진하게 된 것이 발암 유전자예요.</p>
+    <blockquote>세포 주기를 조절하는 유전자들을 원발암 유전자라고 하고 (0917 29:20)</blockquote>
+    <p><b>발암 유전자, 종양 유전자, 온코진은 같은 것이에요.</b> 이름이 셋이라 서로 다른 유전자로 착각하기 쉬워요. 셋 다 oncogene을 부르는 이름이고, 돌연변이 전의 정상형인 원발암 유전자(proto-oncogene, 프로토온코진)와만 구분하면 돼요.</p>
+    <blockquote>종양 유전자, 발암 유전자. 영어로는 온코진 (0917 28:03–28:11)</blockquote>
+    <p><b>"항상"은 누구에게 붙었는지 확인해요.</b> 발암 유전자가 만든 수용체는 신호 분자 없이도 항상 켜져 있는 게 맞아요. 원발암 유전자가 만든 정상 수용체가 항상 켜져 있다고 하면 틀려요. 정상 수용체는 신호 분자가 붙을 때만 켜져요.</p>
+    <p>암이 언제 생기는지 묻는 설명은 이렇게 갈라요.</p>
+    <ul>
+      <li><b>조절에 반응하지 않게 된다</b>와 <b>조절에 더 민감해진다</b>를 헷갈리기 쉬워요. 암은 언제, 얼마나 자주 분열할지 정하는 조절에 세포가 더 이상 반응하지 않을 때 생겨요. 조절에 더 민감해지면 오히려 조절을 더 잘 따르게 돼요.</li>
+      <li><b>세포가 늙는 것 자체</b>를 원인으로 착각하기 쉬워요. 나이 든 사람에게 암이 많은 까닭은 돌연변이가 쌓일 시간이 길어지기 때문이에요(<a href="#s5-tumor">5-3. 양성·악성 종양, 전이, 접촉 저해</a>).</li>
+      <li><b>p53이 많아지는 것</b>을 암의 원인으로 착각하기 쉬워요. p53은 종양 억제 유전자라서, 이쪽 힘이 세지면 분열을 더 억제하는 방향이에요(<a href="#s5-suppressor">5-2. 종양 억제 유전자: p53과 BRCA1</a>).</li>
+      <li><b>다른 세포에 붙지 못하고 돌아다니는 것</b>을 발생 원인으로 착각하기 쉬워요. 이것은 이미 생긴 암세포가 떨어져 나가 퍼질 때(전이) 보이는 성질이고, 암이 왜 생기는지에 대한 설명이 아니에요.</li>
+    </ul>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">세포 주기를 조절하는 정상 유전자(원발암 유전자)가 돌연변이로 신호 없이도 분열을 계속 촉진하게 되면 발암 유전자가 되고, 조절이 깨진 세포는 암이 돼요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>원발암 유전자(proto-oncogene)</dt><dd>신호가 있을 때만 분열을 촉진하는 정상 유전자</dd>
+      <dt>발암 유전자(oncogene)</dt><dd>돌연변이로 신호 분자 없이도 분열을 계속 촉진하는 유전자(= 종양 유전자, 온코진)</dd>
+    </dl>
+  </div>
+</article>
+
+<article class="topic" id="s5-suppressor"><h3>5-2. 종양 억제 유전자: p53과 BRCA1</h3><div class="tags"><span class="tag date">0917 수업</span><span class="tag slide">3장 p3</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">세포 안에는 실수를 찾으면 "잠깐 멈춰, 고치자" 하는 지우개 같은 일꾼이 있어요.</p>
+    <p>이 일꾼이 없어도 바로 병이 되지는 않지만, 고치지 못한 실수가 쌓일 기회가 커져요.</p>
+    <figure class="figure">
+      <svg id="fig-suppressor-backspace" viewBox="0 0 600 250" role="img" aria-label="두 줄 비교 그림. 위 줄은 테두리 네모 키보드에 지우기 키가 있어서, 화살표 뒤 글자 칸에 틀린 곳이 없다. 아래 줄은 키보드의 지우기 키 자리가 빨간 점선 테두리로 비어 있고, 화살표 뒤 글자 칸에 색칠된 점으로 표시한 실수가 네 개 쌓여 있다.">
+        <text class="fig-text" x="10" y="26">지우기 키가 있을 때</text>
+        <rect class="fig-ink" x="20" y="40" width="200" height="70" rx="6"/>
+        <rect class="fig-ink" x="32" y="52" width="26" height="20" rx="3"/>
+        <rect class="fig-ink" x="64" y="52" width="26" height="20" rx="3"/>
+        <rect class="fig-ink" x="96" y="52" width="26" height="20" rx="3"/>
+        <rect class="fig-accent" x="128" y="52" width="80" height="20" rx="3"/>
+        <text class="fig-text" x="146" y="67">지우기</text>
+        <rect class="fig-ink" x="32" y="80" width="176" height="20" rx="3"/>
+        <line class="fig-ink" x1="232" y1="75" x2="292" y2="75"/>
+        <polyline class="fig-ink" points="282,67 292,75 282,83"/>
+        <rect class="fig-ink" x="304" y="50" width="200" height="50" rx="4"/>
+        <text class="fig-text" x="320" y="80">틀린 글자를 바로 지워요</text>
+
+        <text class="fig-text" x="10" y="150">지우기 키가 없을 때</text>
+        <rect class="fig-ink" x="20" y="164" width="200" height="70" rx="6"/>
+        <rect class="fig-ink" x="32" y="176" width="26" height="20" rx="3"/>
+        <rect class="fig-ink" x="64" y="176" width="26" height="20" rx="3"/>
+        <rect class="fig-ink" x="96" y="176" width="26" height="20" rx="3"/>
+        <rect class="fig-danger" x="128" y="176" width="80" height="20" rx="3" stroke-dasharray="4 4"/>
+        <text class="fig-muted" x="156" y="191">없음</text>
+        <rect class="fig-ink" x="32" y="204" width="176" height="20" rx="3"/>
+        <line class="fig-ink" x1="232" y1="199" x2="292" y2="199"/>
+        <polyline class="fig-ink" points="282,191 292,199 282,207"/>
+        <rect class="fig-ink" x="304" y="174" width="200" height="50" rx="4"/>
+        <circle class="fig-dot" cx="326" cy="199" r="6"/>
+        <circle class="fig-dot" cx="356" cy="199" r="6"/>
+        <circle class="fig-dot" cx="386" cy="199" r="6"/>
+        <circle class="fig-dot" cx="416" cy="199" r="6"/>
+        <text class="fig-text" x="516" y="195">실수가</text>
+        <text class="fig-text" x="516" y="213">쌓여요</text>
+      </svg>
+      <figcaption>위 키보드는 틀린 글자를 지우지만, 아래 키보드는 지우기 키 자리가 비어 있어 색칠된 점처럼 실수가 쌓여요.</figcaption>
+    </figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p><b>종양 억제 유전자(tumor suppressor gene)</b>는 세포 분열을 억제하는 단백질을 암호화하는 유전자예요. 확인점에서 잘못된 것을 찾으면 "잠깐 멈춰, 고치자" 하고 분열을 세운 뒤 고치게 해요. 예를 들어 S기가 끝나면 DNA 복제가 정상인지 확인하고, 잘못됐으면 그 자리에서 고쳐요(<a href="#s3-checkpoint">3-2. 확인점</a>).</p>
+    <p>이 유전자들이 제대로 일하기 때문에 우리는 웬만해서는 암에 잘 걸리지 않아요.</p>
+    <p><b>종양 억제 유전자가 망가지면</b>:</p>
+    <ol class="steps">
+      <li>종양 억제 유전자에 돌연변이가 생겨 기능을 잃어요.</li>
+      <li>다른 곳에 돌연변이가 생겨도 고칠 수 없어요.</li>
+      <li>돌연변이를 가진 채로 세포 분열이 일어나요.</li>
+      <li>여기저기 돌연변이가 쌓이면서 원발암 유전자가 발암 유전자로 바뀔 확률이 올라가요.</li>
+      <li>발암 유전자 같은 돌연변이가 여럿 쌓이면 암이 돼요(<a href="#s5-tumor">5-3. 양성·악성 종양, 전이, 접촉 저해</a>).</li>
+    </ol>
+    <p>그래서 종양 억제 유전자에 돌연변이가 생겼다고 <b>곧바로 암이 되지는 않아요.</b> 고칠 수 없게 될 뿐이고, 시간이 지나며 암이 될 <b>확률이 높아져요.</b> 교재도 종양 억제 유전자 하나가 비활성화되어서는 암이 거의 생기지 않는다고 적어요(교재 3장 p.63).</p>
+    <p>대표적인 종양 억제 유전자는 둘이에요. 암 환자의 절반 정도가 종양 억제 유전자 돌연변이를 갖고 있어요.</p>
+    <ul>
+      <li><b>p53</b>: 가장 대표적인 종양 억제 유전자예요.</li>
+      <li><b>BRCA1</b>(브라카): breast cancer의 줄임말이에요. 이름은 유방암이지만 유방암을 <b>억제하는</b> 유전자예요.</li>
+    </ul>
+    <p>세포 분열에 관여하는 세 유전자를 나란히 보면 이래요.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>유전자</th><th>정상일 때 하는 일</th><th>고장 났을 때</th></tr></thead>
+      <tbody>
+        <tr><th>원발암 유전자(proto-oncogene)</th><td>신호 분자가 있을 때만 세포 분열을 촉진해요(분열을 미는 쪽 정상 유전자)</td><td>돌연변이로 발암 유전자가 돼요</td></tr>
+        <tr><th>발암 유전자(oncogene)</th><td>정상형이 따로 없어요. 원발암 유전자가 돌연변이로 바뀐 것이에요</td><td>신호가 없어도 분열을 계속 촉진해요(가속 페달이 켜진 채)</td></tr>
+        <tr><th>종양 억제 유전자(tumor suppressor gene)</th><td>확인점에서 분열을 멈추고 고치게 해요(분열을 막는 쪽 정상 유전자)</td><td>돌연변이를 고치지 못해 암이 될 확률이 높아져요(브레이크와 수선이 없음)</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <blockquote>고치는 데 중요한 유전자들을 종양 억제 유전자라고 합니다. (0917 30:43)</blockquote>
+    <blockquote>확인 지점에서 "잠깐 멈춰, 멈춰, 고치자." (0917 31:26)</blockquote>
+    <blockquote>p53은 대표적인 종양 억제 유전자고 (0917 31:44)</blockquote>
+    <p>BRCA1이 망가진 것을 <b>백스페이스</b>가 없는 키보드에 빗댔어요. 오타는 반드시 생기는데 고칠 수가 없어서, 돌연변이가 있는 채로 분열이 일어나 발암 유전자가 생길 확률이 높아져요.</p>
+    <blockquote>키보드에 백스페이스가 없는 거예요. (0917 32:41)</blockquote>
+    <blockquote>오타가 생겨도 고칠 수가 없는 거예요. (0917 32:45)</blockquote>
+    <p>[강의노트 외] <b>안젤리나 졸리</b> 이야기로 BRCA1을 설명했어요. 어머니가 난소암으로, 외할머니도 암으로 세상을 떠나자 BRCA1 검사를 받았고 돌연변이가 발견됐어요. 곧바로 암이 된 것은 아니지만 위험이 크다고 보고 유방과 난소를 예방적으로 절제했어요. 이후 다른 여성들도 검사를 받게 된 것을 "안젤리나 이펙트"라고 해요.</p>
+    <blockquote>종양 억제 유전자에 돌연변이가 생기면 바로 암에 걸리는 건 아니죠. (0917 32:22)</blockquote>
+    <p>[강의노트 외] 졸리의 BRCA1 검사비는 400만 원 가까이였어요. 실험 자체는 10만 원, 인건비까지 쳐도 40만 원쯤이면 될 일인데, 검사를 고안한 회사 미리아드(Myriad)가 유전자에 <b>특허</b>를 걸어 두었기 때문이에요. 연구자에게까지 돈을 받으려 하자 시민단체가 소송을 냈어요.</p>
+    <ul>
+      <li>1심은 시민단체, 항소심은 미리아드, 대법원은 시민단체가 이겼어요.</li>
+      <li>유전자 서열 자체는 모든 사람이 가진 자연 상태라서 특허 대상이 될 수 없어요.</li>
+      <li>다만 유전자 중간중간 끼워진 "쓸데없는 부위"(나중에 배운다고 하셨어요, 0917 35:10)를 실험으로 제거한 서열은 사람이 개입한 것이라 특허 대상이 될 수 있어요. 그래서 "절반은 지고 절반은 이긴" 셈이에요.</li>
+      <li>특허는 사람이 만든 것만 받을 수 있어요. 자연 상태의 것이나 AI로 만든 것은 안 돼요.</li>
+    </ul>
+    <blockquote>유전자 서열 자체는 특허 대상이 될 수가 없죠. (0917 34:52)</blockquote>
+    <p>[강의노트 외] 염기 서열을 읽는 방법을 시퀀싱(sequencing)이라고 해요. 1990년대 게놈 프로젝트 때는 한 사람을 읽는 데 15년, 30억 달러가 들었어요. 지금은 하루, 1,000달러면 되고 100달러까지 떨어질 전망이에요. 비용이 싸지는 속도가 반도체의 무어의 법칙보다 빠르대요.</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <p><b>발암 유전자와 종양 억제 유전자는 방향이 반대예요.</b> 둘 다 "암 유전자"로 뭉뚱그리기 쉬워요. 발암 유전자는 분열을 너무 촉진해서 암을 일으키고(가속 페달이 켜진 채), 종양 억제 유전자는 분열을 멈추고 돌연변이를 고쳐 암을 억제해요. 종양 억제 유전자는 망가질 때(브레이크와 수선이 없어질 때) 암 위험이 커져요.</p>
+    <blockquote>발암 유전자가 암을 일으킨다. 세포 분열을 너무 촉진시키기 때문에 (0917 37:15)</blockquote>
+    <p><b>종양 억제 유전자 돌연변이는 곧바로 암이 아니에요.</b> 돌연변이가 곧 암이라고 착각하기 쉬워요. 고칠 수 없게 될 뿐이고, 시간이 지나며 발암 유전자가 생길 확률이 높아지는 거예요.</p>
+    <blockquote>시간이 지나면 발암 유전자가 생길 확률이 증가하는 거죠. (0917 32:35)</blockquote>
+    <p><b>원발암 유전자와 종양 억제 유전자는 둘 다 정상 유전자예요.</b> 원발암 유전자를 "나쁜 유전자", 종양 억제 유전자를 "좋은 유전자"로 나누기 쉬워요. 둘 다 정상 세포가 갖고 있고, 원발암 유전자는 분열을 미는 쪽, 종양 억제 유전자는 분열을 막는 쪽이에요.</p>
+    <p><b>종양 억제 쪽이 세지면 분열은 더 억제돼요.</b> p53 같은 종양 억제 유전자가 많이 일하면 암이 생긴다고 착각하기 쉬워요. 종양 억제 유전자는 분열을 억제하므로, 이쪽이 강해지면 분열을 더 막는 방향이에요. 암 위험은 이 유전자가 <b>기능을 잃을 때</b> 커져요.</p>
+    <p><b>BRCA1의 이름에 속지 마세요.</b> breast cancer라는 이름 때문에 유방암을 일으키는 유전자로 착각하기 쉬워요. BRCA1은 유방암을 억제하는 종양 억제 유전자이고, 이것이 망가졌을 때 위험이 커져요.</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">종양 억제 유전자는 확인점에서 분열을 멈추고 돌연변이를 고치게 하는 유전자이고, 망가지면 곧바로 암이 되는 게 아니라 암이 될 확률이 높아져요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>종양 억제 유전자(tumor suppressor gene)</dt><dd>세포 분열을 억제하고 돌연변이를 고치게 하는 유전자</dd>
+      <dt>p53</dt><dd>가장 대표적인 종양 억제 유전자</dd>
+      <dt>BRCA1</dt><dd>breast cancer의 줄임말, 유방암 억제 유전자</dd>
+    </dl>
+  </div>
+</article>
+
+<article class="topic" id="s5-tumor"><h3>5-3. 양성·악성 종양, 전이, 접촉 저해</h3><div class="tags"><span class="tag date">0917 수업</span><span class="tag slide">3장 p2–p3</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
+    <p class="lead">보통 세포는 옆 친구와 닿으면 자라기를 멈추는데, 고장 난 세포는 멈추지 않고 쌓여요.</p>
+    <p>한곳에 머무는 혹은 떼어 내면 되지만, 피를 타고 다른 곳으로 퍼지는 혹이 무서운 병이에요.</p>
+    <figure class="figure">
+      <svg id="fig-tumor-spread" viewBox="0 0 600 260" role="img" aria-label="세 칸 비교 그림. 왼쪽 칸은 바닥선 위에 테두리 원 세포들이 한 줄로 빈틈없이 늘어서 있다. 가운데 칸은 빨간 테두리 원 세포들이 한곳에 여러 층으로 쌓여 있고 점선 테두리가 그 둘레를 감싼다. 오른쪽 칸은 빨간 테두리 세포 무더기에서 세포 몇 개가 두 줄 선으로 그린 길을 따라 떨어져 나가 멀리 작은 무더기를 새로 만든다.">
+        <text class="fig-text" x="20" y="26">보통 세포</text>
+        <line class="fig-ink" x1="15" y1="190" x2="185" y2="190"/>
+        <circle class="fig-ink" cx="30" cy="176" r="13"/>
+        <circle class="fig-ink" cx="57" cy="176" r="13"/>
+        <circle class="fig-ink" cx="84" cy="176" r="13"/>
+        <circle class="fig-ink" cx="111" cy="176" r="13"/>
+        <circle class="fig-ink" cx="138" cy="176" r="13"/>
+        <circle class="fig-ink" cx="165" cy="176" r="13"/>
+        <text class="fig-text" x="20" y="222">한 줄로 메우면</text>
+        <text class="fig-text" x="20" y="240">멈춰요</text>
+
+        <text class="fig-text" x="215" y="26">한곳에 쌓임</text>
+        <line class="fig-ink" x1="210" y1="190" x2="380" y2="190"/>
+        <ellipse class="fig-ink" cx="295" cy="150" rx="78" ry="58" stroke-dasharray="5 5"/>
+        <circle class="fig-danger" cx="255" cy="176" r="13"/>
+        <circle class="fig-danger" cx="282" cy="176" r="13"/>
+        <circle class="fig-danger" cx="309" cy="176" r="13"/>
+        <circle class="fig-danger" cx="336" cy="176" r="13"/>
+        <circle class="fig-danger" cx="268" cy="150" r="13"/>
+        <circle class="fig-danger" cx="295" cy="150" r="13"/>
+        <circle class="fig-danger" cx="322" cy="150" r="13"/>
+        <circle class="fig-danger" cx="282" cy="124" r="13"/>
+        <circle class="fig-danger" cx="309" cy="124" r="13"/>
+        <text class="fig-text" x="215" y="222">제자리에 머물러요</text>
+
+        <text class="fig-text" x="405" y="26">멀리 퍼짐</text>
+        <line class="fig-ink" x1="400" y1="190" x2="480" y2="190"/>
+        <circle class="fig-danger" cx="415" cy="176" r="11"/>
+        <circle class="fig-danger" cx="438" cy="176" r="11"/>
+        <circle class="fig-danger" cx="461" cy="176" r="11"/>
+        <circle class="fig-danger" cx="427" cy="154" r="11"/>
+        <circle class="fig-danger" cx="450" cy="154" r="11"/>
+        <line class="fig-accent" x1="470" y1="130" x2="590" y2="50"/>
+        <line class="fig-accent" x1="484" y1="146" x2="598" y2="70"/>
+        <circle class="fig-danger" cx="500" cy="122" r="7"/>
+        <circle class="fig-danger" cx="540" cy="96" r="7"/>
+        <circle class="fig-danger" cx="545" cy="160" r="9"/>
+        <circle class="fig-danger" cx="565" cy="160" r="9"/>
+        <circle class="fig-danger" cx="555" cy="143" r="9"/>
+        <text class="fig-text" x="405" y="222">피가 흐르는 길을</text>
+        <text class="fig-text" x="405" y="240">타고 멀리 가요</text>
+      </svg>
+      <figcaption>왼쪽 세포는 한 줄로 자리를 메우면 멈추고, 가운데 빨간 테두리 세포는 한곳에 쌓이며, 오른쪽 세포는 두 줄 선으로 그린 길을 타고 멀리 가서 새 무더기를 만들어요.</figcaption>
+    </figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>분열 조절이 깨진 세포는 계속 빠르게 분열해 <b>종양(tumor)</b>이라는 세포 덩어리를 만들어요. 종양은 둘로 나뉘어요.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>구분</th><th>양성 종양(benign tumor)</th><th>악성 종양(malignant tumor)</th></tr></thead>
+      <tbody>
+        <tr><th>어디에</th><td>제자리에서 분열만 해서 덩어리로 머물러요</td><td>주변 조직에 침투해 파괴하고, 떨어져 나와 몸의 다른 곳으로 퍼져요</td></tr>
+        <tr><th>처치</th><td>제거하면 문제없어요</td><td>퍼진 곳에서 새 종양으로 자라서 문제가 돼요</td></tr>
+        <tr><th>일상의 "암"</th><td>아니에요</td><td>맞아요. 일상에서 "암"이라고 하는 것은 악성 종양이에요</td></tr>
+      </tbody>
+    </table></div>
+    <p><b>전이(metastasis)</b>는 암세포가 원래 자리의 종양에서 떨어져 나와 혈액을 타고(교재: 혈류나 림프) 몸의 다른 곳으로 퍼져 새로운 종양으로 자라는 과정이에요. 비슷한 말과 이렇게 달라요.</p>
+    <ul>
+      <li>발암: 정상 세포가 암세포가 되는 것(암이 생기는 것)이에요. 퍼지는 과정이 아니에요.</li>
+      <li>돌연변이 유발: 유전자 서열을 바꾸는 것이에요. 암의 원인 쪽이지 퍼지는 과정이 아니에요.</li>
+      <li>유사분열: 체세포가 둘로 나뉘는 정상 분열이에요(<a href="#s1-cycle-division">1. 세포주기, 유사분열과 감수분열</a>).</li>
+      <li>혈관신생: 새 혈관이 생기는 것을 뜻하는 말이에요. 수업과 교재 3장 암 부분에서는 다루지 않았어요.</li>
+    </ul>
+    <p><b>암세포의 특징</b>:</p>
+    <ul>
+      <li>눈으로 봐도 정상 조직과 밀도가 달라요. 교재 그림 3.7처럼 종양 세포는 더 치밀하게 모여 있어요.</li>
+      <li><b>접촉 저해가 없어요.</b> 옆에 세포가 있어도 계속 자라 층으로 쌓여요.</li>
+      <li>영양분만 충분하면 무한히 증식해요(<a href="#s0-hela">0. 헬라 세포와 이번 장의 질문</a>).</li>
+      <li>원래 자리에서 떨어져 나와 활발하게 이동하고, 다른 곳으로 전이돼요.</li>
+    </ul>
+    <p><b>접촉 저해(contact inhibition)</b>는 정상 세포가 이웃 세포와 닿으면 성장과 분열을 멈추는 성질이에요. 접촉하는 순간 성장이 저해된다는 뜻이에요. 교재는 서로 접촉한 세포들이 G0기로 옮겨가 더 이상 분열하지 않는다고 적어요(교재 3장 p.62, <a href="#s3-phases">3-1. G1–S–G2–M과 G0</a>). 살이 파인 <b>상처</b>에서 새살이 자라다가 빈 곳을 다 메우면 멈추는 것이 접촉 저해예요.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>성질</th><th>정상 세포</th><th>암세포</th></tr></thead>
+      <tbody>
+        <tr><th>접촉 저해</th><td>있어요. 이웃과 닿으면 분열을 멈춰요</td><td>없어요. 닿아도 계속 자라 층을 이뤄요</td></tr>
+        <tr><th>분열</th><td>조절받고, 횟수에 한계가 있어요</td><td>조절이 안 되고, 영양분만 있으면 무한히 증식해요</td></tr>
+        <tr><th>이동</th><td>제자리에 있어요</td><td>떨어져 나와 이동하고 전이돼요</td></tr>
+      </tbody>
+    </table></div>
+    <p><b>암은 여러 돌연변이가 순차적으로 축적되어 생겨요.</b> 유전자 하나가 망가져서 바로 암이 되는 게 아니에요.</p>
+    <ol class="steps">
+      <li>유전자 A가 망가져요. 아직 암이 아니에요.</li>
+      <li>시간이 지나며 B, C…가 차례로 망가져요. 이 단계에서는 양성 종양일 수 있어요(교수님 예: 네다섯 개까지).</li>
+      <li>하나가 더 망가지면 악성 종양으로 바뀌어요(교수님 예: 대여섯 개쯤).</li>
+    </ol>
+    <p>개수는 이해를 돕는 예시예요. 강의노트는 "몇 개로부터 다수에 이르는 많은 유전자들의 순차적인 변화가 누적"된다고 적어요. 나이가 들수록 돌연변이가 쌓일 시간이 길어지므로 나이 든 사람에게 암이 더 많아요. 같은 까닭으로 종양 억제 유전자 하나에 돌연변이가 생겼다고 곧바로 악성 종양이 되지는 않아요(<a href="#s5-suppressor">5-2. 종양 억제 유전자: p53과 BRCA1</a>).</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <blockquote>암은 사실은 유전자 한두 개 가지고서는 암이 안 걸린답니다. (0917 37:45)</blockquote>
+    <p>앞에서는 분열이 계속 촉진되는 것을 암이라고 불렀지만, 일상에서 말하는 암은 다르다고 짚었어요.</p>
+    <blockquote>일상생활에서 이제 우리가 암이라고 하는 거는 이 악성 종양을 의미하는 겁니다. (0917 37:54)</blockquote>
+    <blockquote>근데 이게 이제 혈액을 통해서 퍼져 나가는 게 문제예요. (0917 37:54)</blockquote>
+    <p>접촉 저해는 <b>상처</b>가 아무는 모습으로 설명했어요. 새살이 파인 곳을 메우면 멈추지만, 암세포는 메운 뒤에도 옆에 누가 있든 계속 자라 층을 이뤄요.</p>
+    <blockquote>메꾸면은 끝. 메꾼 상태에서는 더 이상 안 자라죠 (0917 39:00)</blockquote>
+    <blockquote>정상 세포는 접촉 저해를 받아요. 근데 암세포는 이거를 안 받는다는 얘기입니다. (0917 39:00)</blockquote>
+    <p>나이 든 사람에게 암이 많은 까닭을 돌연변이 축적으로 설명했어요. A도 망가지고, B도 망가지고, C도 망가지며 단계별로 진행된다는 거예요.</p>
+    <blockquote>한 네 개 다섯 개까지는 그냥 뭐 양성 종양이다가 (0917 40:18)</blockquote>
+    <blockquote>하나가 더 망가지면 이제 악성 종양으로 바뀐다 (0917 40:22)</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <p><b>수업 앞부분의 "암"과 일상의 "암"은 범위가 달라요.</b> 분열이 멈추지 않는 세포 덩어리면 모두 일상의 암이라고 착각하기 쉬워요. 앞부분에서는 분열이 계속 촉진되는 것을 암이라고 불렀지만, 일상에서 암이라고 하는 것은 전이되는 악성 종양만이에요.</p>
+    <blockquote>지금은 그냥 세포 분열이 계속 촉진되는 걸 암이라고 했지만 (0917 37:54)</blockquote>
+    <p><b>양성 종양과 악성 종양은 퍼지느냐로 갈려요.</b> 덩어리가 생기면 다 악성이라고 착각하기 쉬워요. 제자리에 머무는 덩어리는 양성 종양이고 제거하면 되며, 주변에 침투하고 전이되는 것이 악성 종양이에요.</p>
+    <p><b>접촉 저해는 정상 세포의 성질이에요.</b> "저해"라는 말 때문에 암세포의 특징으로 착각하기 쉬워요. 접촉하면 성장이 저해되는 성질이 정상 세포에 있고, 암세포에서는 이것이 없어져요. 그래서 암세포의 특성을 고를 때 접촉 저해는 빠지고, 활발한 이동성·전이·조절되지 않는 분열이 들어가요.</p>
+    <p><b>암은 돌연변이 하나로 생기지 않아요.</b> 유전자 하나만 망가지면 바로 암이 된다고 착각하기 쉬워요. 여러 돌연변이가 순차적으로 축적되어야 암이 되고, 그래서 나이와 관계가 있어요. 종양 억제 유전자 돌연변이 하나도 곧바로 악성 종양을 만들지 않아요.</p>
+    <blockquote>유전자 한 개 망가져서 암이 바로 걸리는 게 아니기 때문에 (0917 40:03)</blockquote>
+    <p><b>늙는 것 자체가 원인은 아니에요.</b> 나이가 들면 세포가 늙어서 암이 된다고 착각하기 쉬워요. 나이가 들수록 돌연변이가 쌓일 시간이 길어지는 것이 까닭이에요.</p>
+    <p><b>전이는 "퍼지는 과정"의 이름이에요.</b> 암이 생기는 것(발암), 유전자를 바꾸는 것(돌연변이 유발), 세포가 둘로 나뉘는 것(유사분열)과 헷갈리기 쉬워요. 암세포가 원래 자리를 벗어나 몸의 다른 곳으로 퍼지는 과정만 전이예요.</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">제자리 덩어리는 양성 종양, 주변에 침투하고 전이되는 것이 악성 종양(일상의 "암")이며, 암세포는 접촉 저해를 잃고 여러 돌연변이가 축적되어 생겨요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>전이(metastasis)</dt><dd>암세포가 떨어져 나와 혈액을 타고 다른 곳으로 퍼지는 과정</dd>
+      <dt>접촉 저해(contact inhibition)</dt><dd>정상 세포가 이웃과 닿으면 분열을 멈추는 성질, 암세포에는 없음</dd>
+      <dt>악성 종양(malignant tumor)</dt><dd>주변에 침투하고 전이되는 종양, 일상의 "암"</dd>
+    </dl>
+  </div>
+</article>
+    </section>
+    <section id="s6"><h2>6. 요약 · 예고</h2>
+<article class="topic" id="s6-cheatsheet"><h3>30초 요약</h3><div class="tags"><span class="tag date">0917 수업</span><span class="tag slide">3장 p1–3</span></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>주제</th><th>시험 직전 한 줄</th></tr></thead>
+    <tbody>
+      <tr><td><a href="#s0-hela">정상 세포 vs 암세포</a></td><td>정상 세포는 분열 횟수가 정해져 있어요(배양한 면역세포는 30~50번쯤 뒤 멈춤). 암세포는 영양분만 있으면 멈추지 않고 분열해요. 헬라 세포(HeLa cell)는 헨리에타 랙스의 자궁경부암 세포로, 몸 밖에서 처음 배양된 세포주예요.</td></tr>
+      <tr><td><a href="#s1-cycle-division">유사분열 vs 감수분열</a></td><td>유사분열(mitosis)은 체세포 분열과 같은 것이에요. 감수분열(meiosis)의 "감수"는 감수성이 아니라 수가 줄어든다는 뜻이고, 염색체 수가 반으로 줄며 유성생식에서 정자·난자를 만들 때만 일어나요.</td></tr>
+      <tr><td><a href="#s2-chromatin">염색질 vs 염색체</a></td><td>평소(유전자를 써야 할 때)에는 DNA가 풀린 염색질이라 현미경으로 염색체가 안 보여요. 분열 중에만 (둘 다 DNA+히스톤이지만) 꽁꽁 응축한 막대 모양 염색체로 보이므로, 분열 중인 세포(양파 뿌리 끝)를 관찰해요.</td></tr>
+      <tr><td><a href="#s2-sister-homolog">자매염색분체 vs 상동염색체</a></td><td>자매염색분체는 DNA 복제로 생긴 쌍이라 정보가 완전히 같고, 동원체에서 붙어 있어요. 상동염색체는 엄마·아빠에게서 하나씩 받은 쌍으로, 크기·모양과 같은 자리의 유전자는 같지만 대립유전자는 다를 수 있어요.</td></tr>
+      <tr><td><a href="#s2-sister-homolog">유전자 vs 대립유전자</a></td><td>유전자는 자리와 기능(예: 혈액형 유전자)이고, 대립유전자(allele)는 그 유전자의 다른 버전(예: A와 B, C와 c)이에요.</td></tr>
+      <tr><td><a href="#s2-sister-homolog">분열 중 붙은 막대 두 개</a></td><td>세포주기에서 M기(분열)에 들어가기 전에는 S기에 DNA 복제가 끝나 있어요. 그래서 분열 중에 붙어 보이는 막대 두 개는 복제된 염색체 하나(자매염색분체 두 개)이지, 복제 전 염색체 두 개가 아니에요.</td></tr>
+      <tr><td><a href="#s2-ploidy">2n과 n</a></td><td>상동염색체를 쌍으로 가지면 2배체(2n), 쌍 중 하나씩만 가지면 반수체(n)예요. n은 "1배체"라고 부르지 않아요. 사람 체세포는 2n = 46, 즉 46개 = 23쌍(46쌍 아님)이고, 정자·난자는 반수체예요.</td></tr>
+      <tr><td><a href="#s2-ploidy">무엇이 나뉘나</a></td><td>체세포 분열에서는 자매염색분체가 나뉘고 상동염색체는 나뉘지 않고 따라가서 2n에서 2n이 돼요. 감수분열은 2단계로, 1단계에서 상동염색체가, 2단계에서 자매염색분체가 나뉘어요.</td></tr>
+      <tr><td><a href="#s3-phases">세포주기 순서</a></td><td>G1(세포 성장, 분열 직후라 가장 작음) → S(DNA 합성·복제) → G2(분열 준비) → M(유사분열)이에요. G1·S·G2가 간기이고 G는 Gap(틈)이에요. 분열하라는 신호가 와야 G1에서 S로 넘어가요.</td></tr>
+      <tr><td><a href="#s3-phases">G0기</a></td><td>G1에서 멈춰 분열하지 않고 머무는 상태예요(예: 신경세포). 분열 능력이 없는 게 아니라 안 하는 거예요. 주기 길이는 G1 길이가 좌우해요(사람 세포 약 하루, 대장균 빠르면 20분).</td></tr>
+      <tr><td><a href="#s3-checkpoint">확인점 vs 종양 억제 유전자</a></td><td>확인점은 한 단계가 완성되기 전에는 다음 단계로 못 넘어가게 멈추는 지점이에요(DNA 복제가 정상인지, 방추사가 염색체에 제대로 붙었는지, 분열할 시기인지 확인). 멈춘 자리에서 고치는 일은 종양 억제 유전자가 해요.</td></tr>
+      <tr><td><a href="#s4-cyclin-cdk">내적 조절</a></td><td>세포 안의 사이클린과 CDK(사이클린 의존성 인산화 효소)가 둘이 합쳐서 G1·S·G2·M을 넘겨요. 사이클린은 단계마다 하는 일이 달라 여러 종류예요.</td></tr>
+      <tr><td><a href="#s4-signal">외적 조절</a></td><td>성장 인자·성장 호르몬 같은 신호 분자가 세포 밖에서 와서 분열을 시작시켜요(예: 상처가 나면 분비). 신호 분자는 반드시 수용체에 결합해야만 작동해요(차 키만 있고 차가 없으면 못 씀).</td></tr>
+      <tr><td><a href="#s4-signal">외적 신호가 전달되는 길</a></td><td>신호 분자가 수용체에 결합 → 수용체 활성화 → 세포 안 A → B → … → 사이클린·CDK → DNA 복제 → 분열 순서예요. 신호 분자는 이 길을 켜는 바깥 신호이고, 길 안의 수용체·A·B·사이클린은 세포주기를 촉진하는 유전자가 만든 단백질이에요.</td></tr>
+      <tr><td><a href="#s5-oncogene">원발암 유전자 vs 발암 유전자</a></td><td>원발암 유전자(proto-oncogene)는 신호 분자가 있을 때만 분열을 촉진하는 정상 유전자예요. 돌연변이로 수용체가 활성 모양으로 바뀌어 신호 분자 없이도 계속 촉진하게 되면 발암 유전자(oncogene, 종양 유전자)예요. 태어날 때부터가 아니라 돌연변이로 바뀐 거예요.</td></tr>
+      <tr><td><a href="#s5-suppressor">종양 억제 유전자</a></td><td>분열을 억제하고 확인점에서 멈춰 돌연변이를 고치는 정상 유전자예요(p53, BRCA1). 망가지면 곧바로 암이 되는 게 아니라, 고치지 못한 돌연변이가 쌓여 원발암 유전자가 발암 유전자로 바뀔 확률이 올라가요.</td></tr>
+      <tr><td><a href="#s5-suppressor">촉진 쪽 vs 억제 쪽</a></td><td>원발암 유전자는 촉진 쪽 정상 유전자로, 돌연변이로 발암 유전자가 되면 분열을 너무 촉진해 암을 일으켜요. 종양 억제 유전자는 억제·수선 쪽 정상 유전자로, 제 기능을 못 하면 암 확률이 높아져요.</td></tr>
+      <tr><td><a href="#s5-tumor">양성 vs 악성, 전이</a></td><td>양성 종양은 제자리에서 분열만 해서 생긴 덩어리라 제거하면 돼요. 악성 종양은 혈액을 타고 퍼지는 전이(metastasis)가 일어나는 것이고, 일상에서 말하는 "암"은 악성 종양만 가리켜요.</td></tr>
+      <tr><td><a href="#s5-tumor">접촉 저해</a></td><td>접촉 저해는 정상 세포의 성질이에요: 옆 세포와 닿으면 성장을 멈춰요(상처를 메꾸면 멈춤). 암세포는 이것을 잃어서 층을 이루며 계속 자라요.</td></tr>
+      <tr><td><a href="#s5-tumor">암은 누적으로 생김</a></td><td>유전자 하나가 망가져서 바로 암이 되지 않아요. 돌연변이가 순차적으로 축적되어 여러 개(교수님 예시로 대여섯 개쯤)가 망가져야 악성이 되므로, 나이가 들수록 암이 많아요.</td></tr>
+    </tbody>
+  </table></div>
+</article>
+<article class="topic" id="s6-next"><h3>다음 시간 예고</h3><div class="tags"><span class="tag date">0917 수업</span><span class="tag slide">3장 p1–5</span></div>
+  <p>수업은 세포주기 조절과 암을 정리한 뒤 교수님이 스스로 마쳤어요.</p>
+  <ul>
+    <li>끊긴 지점: "나머지는 이제 체세포 분열 과정, 감수분열 과정인데 … 두 개 비교하면서 하는 게 더 빠르기 때문에 일단 오늘은 여기까지만" (0917 41:17)</li>
+    <li>과제: "동영상 다음 주까지 복습하세요" (0917 41:27)</li>
+  </ul>
+  <p>다음 시간에 둘을 비교하며 배울 내용이에요.</p>
+  <ul>
+    <li>체세포 분열 과정: 유사분열 단계(전기·전중기·중기·후기·말기)</li>
+    <li>감수분열 과정: 감수분열 1·2의 단계</li>
+  </ul>
+  <p>교수님이 따로 예고하지는 않았지만 아직 다루지 않은 강의노트 3장 p2–p5 내용이에요.</p>
+  <ul>
+    <li>핵형분석과 콜히친</li>
+    <li>세포질 분열(분열홈·세포판)</li>
+    <li>영양생식·클론</li>
+    <li>4분체와 교차</li>
+    <li>비분리와 다운증후군</li>
+    <li>성염색체</li>
+    <li>유전적 다양성</li>
+  </ul>
+</article>
+<article class="topic" id="s6-links"><h3>함께 보면 좋은 자료</h3><div class="tags"><span class="tag date">0917 수업</span></div>
+  <ul>
+    <li><a href="복습문제_0917_Cell_Division.html">복습문제 29선 — 9/17 수업 범위</a></li>
+    <li><a href="../../정리노트/0915.md">직전 수업 0915 정리노트: 2장 세포호흡과 광합성</a></li>
+    <li><a href="../0922/정리노트_0922_Cell_Division_and_Heredity.html">다음 수업 0922 복습팩: 유사분열·감수분열 과정과 멘델 유전</a></li>
+  </ul>
+</article>
+    </section>
+  </main>
+  <footer>출처: 이영만 교수님 강의노트(3장) · 수업 녹음 전사(0917) · 『생명과학: 기초와 응용』 2판 3장.</footer>
+    </div>
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="panel-right-title">
+      <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-right-title">페이지 요약</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-sub" id="sum-for">전체 흐름</p>
+        <p class="panel-empty" id="sum-empty">페이지를 넘기면 그 페이지의 핵심 식과 용어가 여기에 나옵니다.</p>
+        <div class="sums"></div>
+      </div>
+    </aside>
+  </div>
+  <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
+  <nav class="pager" aria-label="화면 이동">
+    <div class="pager-inner">
+      <button class="btn btn-ghost" id="pager-prev" type="button">이전</button>
+      <span class="pager-count" id="pager-count"></span>
+      <button class="btn btn-primary" id="pager-next" type="button">시작하기</button>
+    </div>
+  </nav>
+  <p class="sr-only" id="pager-status" aria-live="polite"></p>
+
+  <script id="theme-ui">
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const sysDark = matchMedia('(prefers-color-scheme: dark)');
+      const KEY = 'od-theme';
+      const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+      function label() {
+        const next = isDark() ? '라이트 모드로 전환' : '다크 모드로 전환';
+        btn.setAttribute('aria-label', next);
+        btn.title = next;
+      }
+      btn.addEventListener('click', () => {
+        const t = isDark() ? 'light' : 'dark';
+        // 시스템 설정과 같아지면 저장을 지워 다시 시스템을 따른다
+        if ((t === 'dark') === sysDark.matches) { delete root.dataset.theme; try { localStorage.removeItem(KEY); } catch (e) {} }
+        else { root.dataset.theme = t; try { localStorage.setItem(KEY, t); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+        label();
+      });
+      sysDark.addEventListener('change', label);
+      window.addEventListener('storage', (e) => {
+        if (e.key !== KEY) return;
+        if (e.newValue === 'light' || e.newValue === 'dark') root.dataset.theme = e.newValue; else delete root.dataset.theme;
+        label();
+      });
+      label();
+    })();
+  </script>
+  <script id="panels-ui">
+    (function () {
+      const body = document.body;
+      const layout = document.querySelector('.layout');
+      const kind = body.dataset.panels;
+      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const scrim = document.getElementById('panel-scrim');
+      const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
+      const wideMq = matchMedia('(min-width: 1024px)');
+      const roomyMq = matchMedia('(min-width: 1280px)');
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      const PREF = 'od-panels:' + kind;
+      // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
+      const RANGE = body.dataset.range || '';
+      const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+      const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+      let overlay = null;
+
+      // ---------- 열고 닫기 ----------
+      function docked() {
+        const pref = store.get(PREF, {});
+        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+      }
+      function sync() {
+        const wide = wideMq.matches;
+        const d = docked();
+        ['left', 'right'].forEach((side) => {
+          const open = wide ? d[side] : overlay === side;
+          const p = panels[side];
+          layout.dataset[side] = open ? 'open' : 'closed';
+          p.classList.toggle('is-open', !wide && open);
+          p.inert = !open;
+          if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
+          toggles[side].setAttribute('aria-expanded', String(open));
+        });
+        const drawer = !wide && overlay !== null;
+        scrim.classList.toggle('is-on', drawer);
+        body.classList.toggle('drawer-open', drawer);
+        blockers.forEach((el) => { el.inert = drawer; });
+      }
+      function openDrawer(side) {
+        overlay = side;
+        sync();
+        requestAnimationFrame(() => panels[side].querySelector('[data-panel-close]').focus());
+      }
+      function closeDrawer(refocus) {
+        if (overlay === null) return;
+        const side = overlay;
+        overlay = null;
+        sync();
+        if (refocus) toggles[side].focus();
+      }
+      function toggle(side) {
+        if (wideMq.matches) {
+          const d = docked();
+          d[side] = !d[side];
+          store.set(PREF, d);
+          sync();
+          if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+        } else if (overlay === side) closeDrawer(true);
+        else openDrawer(side);
+      }
+
+      toggles.left.addEventListener('click', () => toggle('left'));
+      toggles.right.addEventListener('click', () => toggle('right'));
+      scrim.addEventListener('click', () => closeDrawer(true));
+      document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
+      panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
+
+      // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      function applyWidths() {
+        const w = store.get(PREF + ':w', {});
+        ['left', 'right'].forEach((side) => {
+          if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
+          else layout.style.removeProperty(WIDTH[side].prop);
+        });
+      }
+      function maxFor(side) {
+        const other = side === 'left' ? panels.right : panels.left;
+        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
+      }
+      function setWidth(side, px, save) {
+        const v = Math.round(Math.min(Math.max(px, WIDTH[side].min), maxFor(side)));
+        layout.style.setProperty(WIDTH[side].prop, v + 'px');
+        panels[side].querySelector('.panel-resize').setAttribute('aria-valuenow', String(v));
+        if (save) { const w = store.get(PREF + ':w', {}); w[side] = v; store.set(PREF + ':w', w); }
+      }
+      function resetWidth(side) {
+        const w = store.get(PREF + ':w', {});
+        delete w[side];
+        store.set(PREF + ':w', w);
+        layout.style.removeProperty(WIDTH[side].prop);
+      }
+      document.querySelectorAll('.panel-resize').forEach((handle) => {
+        const side = handle.dataset.side;
+        const dir = side === 'left' ? 1 : -1;
+        handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
+        handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
+        handle.addEventListener('pointerdown', (e) => {
+          if (!wideMq.matches || e.button !== 0) return;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startW = panels[side].getBoundingClientRect().width;
+          handle.setPointerCapture(e.pointerId);
+          body.classList.add('is-resizing');
+          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const up = () => {
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', up);
+            handle.removeEventListener('pointercancel', up);
+            body.classList.remove('is-resizing');
+            setWidth(side, panels[side].getBoundingClientRect().width, true);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', up);
+          handle.addEventListener('pointercancel', up);
+        });
+        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('keydown', (e) => {
+          const step = e.shiftKey ? 64 : 16;
+          const cur = panels[side].getBoundingClientRect().width;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+        });
+      });
+      applyWidths();
+      const onMq = () => { overlay = null; sync(); };
+      wideMq.addEventListener('change', onMq);
+      roomyMq.addEventListener('change', onMq);
+
+      // ---------- 목차의 진행 표시 ----------
+      const progressN = document.getElementById('progress-n');
+      const progressBar = document.getElementById('progress-bar');
+      const progressTotal = document.getElementById('progress-total');
+      function markToc(done, total, doneLabel) {
+        panels.left.querySelectorAll('.toc-list a').forEach((a) => {
+          const id = decodeURIComponent(a.getAttribute('href').slice(1));
+          let mark = a.querySelector('.toc-mark');
+          if (!mark) {
+            mark = document.createElement('span');
+            mark.className = 'toc-mark';
+            mark.setAttribute('aria-hidden', 'true');
+            const state = document.createElement('span');
+            state.className = 'sr-only toc-state';
+            a.append(mark, state);
+          }
+          const isDone = done.has(id);
+          mark.classList.toggle('is-done', isDone);
+          mark.innerHTML = isDone ? ICON_DONE : ICON_TODO;
+          a.querySelector('.toc-state').textContent = isDone ? ' (' + doneLabel + ')' : '';
+        });
+        progressN.textContent = String(done.size);
+        progressTotal.textContent = String(total);
+        progressBar.style.transform = 'scaleX(' + (total ? done.size / total : 0) + ')';
+      }
+      function revealCurrent() {
+        const link = panels.left.querySelector('.toc-list a[aria-current="true"]');
+        if (link && layout.dataset.left === 'open') link.scrollIntoView({ block: 'nearest' });
+      }
+
+      // ---------- 복습문제: 오른쪽 = 원문 · 힌트 · 풀이 ----------
+      function setupReview() {
+        const KEY = 'od-review-solved:' + RANGE;
+        const cards = Array.from(document.querySelectorAll('main article.card'));
+        const aids = panels.right.querySelector('.aids');
+        const sub = document.getElementById('aid-for');
+        const empty = panels.right.querySelector('.panel-empty');
+        const btn = document.getElementById('solved-btn');
+        const groups = {};
+        const solved = new Set(store.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        cards.forEach((card) => {
+          const g = document.createElement('div');
+          g.className = 'aid';
+          g.hidden = true;
+          card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
+          aids.appendChild(g);
+          groups[card.id] = g;
+        });
+        let curId = null;
+        function paintBtn() {
+          const on = solved.has(curId);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.innerHTML = (on ? ICON_DONE : ICON_TODO) + '<span>' + (on ? '푼 문제 · 표시 해제' : '푼 문제로 표시') + '</span>';
+        }
+        btn.addEventListener('click', () => {
+          if (!curId) return;
+          if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
+          store.set(KEY, Array.from(solved));
+          paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          curId = s.matches('article.card') ? s.id : null;
+          Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
+          empty.hidden = Boolean(curId);
+          btn.hidden = !curId;
+          sub.textContent = curId ? ((s.querySelector('h3') || {}).textContent || '').trim() : '';
+          sub.hidden = !curId;
+          if (curId) paintBtn();
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(solved, cards.length, '푼 문제');
+          revealCurrent();
+        });
+      }
+
+      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
+      function setupNote() {
+        const KEY = 'od-note-read:' + RANGE;
+        const topics = Array.from(document.querySelectorAll('main article.topic'));
+        const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
+        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
+        const box = panels.right.querySelector('.sums');
+        const sums = {};
+        topics.forEach((t) => {
+          const el = t.querySelector(':scope > .sum');
+          if (!el) return;
+          el.hidden = true;
+          box.appendChild(el);
+          sums[t.id] = el;
+        });
+        const sub = document.getElementById('sum-for');
+        const empty = document.getElementById('sum-empty');
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          const key = s.matches('article.topic') ? s.id : 'intro';
+          Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
+          empty.hidden = Boolean(sums[key]);
+          sub.textContent = key === 'intro' ? '전체 흐름' : ((s.querySelector('h3') || {}).textContent || '').trim();
+          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(read, topics.length, '읽음');
+          revealCurrent();
+        });
+      }
+
+      if (kind === 'review') setupReview();
+      if (kind === 'note') setupNote();
+      sync();
+    })();
+  </script>
+  <script id="pager-ui">
+    (function () {
+      const root = document.documentElement;
+      const main = document.querySelector('main');
+      const hero = main.querySelector('.hero');
+      const screens = [hero].concat(Array.from(main.querySelectorAll(document.body.dataset.screens)));
+      if (screens.length < 2) { root.classList.remove('js'); return; }
+      screens.forEach((s) => s.classList.add('screen'));
+
+      const last = screens.length - 1;
+      const prevBtn = document.getElementById('pager-prev');
+      const nextBtn = document.getElementById('pager-next');
+      const count = document.getElementById('pager-count');
+      const bar = document.getElementById('pager-bar');
+      const status = document.getElementById('pager-status');
+      const toc = document.querySelector('#panel-left .toc');
+      const scroller = document.querySelector('.content');
+      const titleOf = (s) => ((s.querySelector('h3') || s.querySelector('h1') || {}).textContent || '').trim();
+      let cur = -1;
+
+      // 목차: 섹션 링크 아래에 화면(토픽·카드) 목록을 붙인다
+      const tocLinks = [];
+      Array.from(toc.querySelectorAll(':scope > a')).forEach((a) => {
+        const sec = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+        const group = document.createElement('div');
+        group.className = 'toc-group';
+        a.replaceWith(group);
+        group.appendChild(a);
+        if (!sec) return;
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        screens.forEach((s, i) => {
+          if (!sec.contains(s)) return;
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#' + s.id;
+          link.innerHTML = '<span class="toc-title"></span>';
+          link.firstChild.textContent = titleOf(s);
+          li.appendChild(link);
+          list.appendChild(li);
+          tocLinks[i] = link;
+        });
+        group.appendChild(list);
+      });
+
+      function indexFor(hash) {
+        const id = decodeURIComponent((hash || '').replace(/^#/, ''));
+        const el = id && document.getElementById(id);
+        if (!el || !main.contains(el)) return { i: 0 };
+        const i = screens.findIndex((s) => s.contains(el) || el.contains(s));
+        return { i: Math.max(i, 0), target: i >= 0 && screens[i].contains(el) && screens[i] !== el ? el : null };
+      }
+
+      function render(i, target) {
+        const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
+        if (i !== cur) {
+          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
+          main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
+          const s = screens[i];
+          const sec = s.closest('section');
+          if (sec) sec.classList.add('is-on');
+          s.classList.add('is-current');
+          if (dir) { s.classList.remove('enter-next', 'enter-prev'); void s.offsetWidth; s.classList.add(dir); }
+          cur = i;
+          document.body.classList.toggle('at-end', i === last);
+          prevBtn.disabled = i === 0;
+          nextBtn.textContent = i === 0 ? '시작하기' : i === last ? '처음으로' : '다음';
+          count.textContent = i === 0 ? '' : i + ' / ' + last;
+          bar.style.transform = 'scaleX(' + (i / last) + ')';
+          status.textContent = i === 0 ? titleOf(s) : i + ' / ' + last + ', ' + titleOf(s);
+          tocLinks.forEach((link, k) => link && link.setAttribute('aria-current', String(k === i)));
+          document.dispatchEvent(new CustomEvent('od:screen', { detail: { index: i, screen: s } }));
+        }
+        if (target) target.scrollIntoView({ block: 'start' });
+        else scroller.scrollTo(0, 0);
+      }
+
+      function go(i) {
+        i = Math.min(Math.max(i, 0), last);
+        if (i === cur) return;
+        const url = i === 0 ? location.pathname + location.search : '#' + screens[i].id;
+        history.pushState(null, '', url);
+        render(i);
+      }
+
+      prevBtn.addEventListener('click', () => go(cur - 1));
+      nextBtn.addEventListener('click', () => go(cur === last ? 0 : cur + 1));
+      const fromUrl = () => { const r = indexFor(location.hash); render(r.i, r.target); };
+      window.addEventListener('hashchange', fromUrl);
+      window.addEventListener('popstate', fromUrl);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+
+      // 좌우로 밀어서 넘기기 (가로로 스크롤되는 영역은 제외)
+      let sx = 0, sy = 0, skip = true;
+      main.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (skip) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 64 && Math.abs(dx) > 2 * Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      fromUrl();
+    })();
+  </script>
+</body>
+</html>
