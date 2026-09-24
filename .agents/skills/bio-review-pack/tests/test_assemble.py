@@ -84,6 +84,24 @@ class TestAssemble(unittest.TestCase):
             assemble.assemble(run, self.tmp)
         self.assertEqual({p.name: p.read_bytes() for p in (self.note, self.review)}, before)
 
+    def _svg_run_rejected(self, name):
+        run = self.tmp / "run-svg"
+        shutil.copytree(MINI_RUN, run)
+        (run / "figures" / name).write_text("<svg xmlns='http://www.w3.org/2000/svg'/>", encoding="utf-8")
+        out = self.tmp / "out-svg"
+        with self.assertRaises(assemble.AssembleError) as cm:
+            assemble.assemble(run, out)
+        self.assertIn(name, str(cm.exception))
+        # 실패한 조립은 정리노트·복습문제 HTML을 어느 쪽도 쓰지 않는다.
+        self.assertEqual(sorted(out.glob("*.html")) if out.exists() else [], [])
+
+    def test_svg_figure_rejected_before_writing(self):
+        # SVG는 카드에 인라인한다. RUN/figures/에 두면 html2md가 나중에 지운다.
+        self._svg_run_rejected("x.svg")
+
+    def test_uppercase_svg_figure_rejected(self):
+        self._svg_run_rejected("X.SVG")
+
     def test_fill_rejects_missing_slot(self):
         with self.assertRaises(assemble.AssembleError):
             assemble.fill("<p>{{NOPE}}</p>", {})

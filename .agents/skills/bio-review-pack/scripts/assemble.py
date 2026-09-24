@@ -6,7 +6,7 @@ manifest + 조각 파일 → 정리노트/복습문제 HTML 두 개 (표준 라�
   RUN/manifest.json
   RUN/sections/<section-id>.html   (섹션 안쪽: <article class="topic"> 들, <script> 가능)
   RUN/cards/<problem-id>.html      (<article class="card"> 하나)
-  RUN/figures/*                    (카드 원문 그림 등, out/figures_<range>/ 로 복사)
+  RUN/figures/*                    (카드 원문 그림 등, out/figures_<range>/ 로 복사) (SVG 금지)
 조각 안의 {{NOTE_HREF}} / {{REVIEW_HREF}} 는 실제 파일명으로 바뀐다.
 <script> 블록은 조각에서 빼서 </body> 앞({{SCRIPTS}})으로 모은다.
 CLI: assemble.py --run RUN --out 복습노트/<range>
@@ -98,6 +98,16 @@ def build_review(m: dict, run_dir: Path) -> str:
     })
 
 
+def check_figures(run_dir: Path) -> None:
+    """RUN/figures/ 에 SVG가 있으면 막는다(html2md.convert_pack이 나중에 지운다)."""
+    src = run_dir / "figures"
+    if not src.is_dir():
+        return
+    svgs = sorted(f.name for f in src.iterdir() if f.is_file() and f.suffix.lower() == ".svg")
+    if svgs:
+        raise AssembleError(f"RUN/figures/에는 PNG 등 래스터 그림만 둔다(SVG는 카드에 인라인): {', '.join(svgs)}")
+
+
 def copy_figures(run_dir: Path, out_dir: Path, range_: str) -> int:
     """RUN/figures/ 의 파일을 out/figures_<range>/ 로 복사하고 개수를 돌려준다."""
     src = run_dir / "figures"
@@ -121,6 +131,7 @@ def assemble(run_dir: Path | str, out_dir: Path | str) -> tuple[Path, Path]:
     review_path = out_dir / manifest_mod.review_name(m)
     # 둘 다 만든 뒤에 쓴다: 조각이 하나라도 없으면 어느 파일도 바뀌지 않는다.
     note_html, review_html = build_note(m, run_dir), build_review(m, run_dir)
+    check_figures(run_dir)
     note_path.write_text(note_html, encoding="utf-8")
     review_path.write_text(review_html, encoding="utf-8")
     copy_figures(run_dir, out_dir, m["range"])

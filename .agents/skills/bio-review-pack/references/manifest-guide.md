@@ -9,7 +9,7 @@ manifest는 이번 팩의 계약이다. 작성자, 검사기, 조립기가 모�
 |---|---|
 | `course` | `"생명과학"` (페이지 `<title>`에 쓰인다) |
 | `range` | `"0922"` 또는 `"0922-0924"` (첫 STT–마지막 STT 날짜) |
-| `slug` | 이번 범위 대표 장 제목의 영문 밑줄 형태, 예: `"Cell_Division"`, `"Mendelian_Genetics"`. 두 장에 걸치면 뒤쪽 장 |
+| `slug` | 이번 범위 대표 장 제목의 영문 밑줄 형태, 예: `"Cell_Division"`, `"Mendelian_Genetics"`. 두 장에 걸치면 두 장의 영문 제목을 `_and_`로 잇는다(예: `"Cell_Division_and_Heredity"`). 세 장 이상이면 첫 장과 끝 장만 잇는다. |
 | `note_title` | `"<주제> — 5살도 이해하는 정리노트"` |
 | `note_subtitle` | `"이영만 교수님 생명과학 · 0922 수업 (3장 세포분열)"` 형식 |
 | `review_title` | `"복습문제 N선 — <range 물결표기> 수업 범위"` |
