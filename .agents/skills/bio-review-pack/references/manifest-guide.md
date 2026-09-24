@@ -48,4 +48,4 @@ manifest는 이번 팩의 계약이다. 작성자, 검사기, 조립기가 모�
 ## links
 - `href`는 작성자가 `<a href="…">`에 **글자 그대로** 넣을 값이다(검사기가 해당 `topic` 안의 링크와 정확히 비교한다).
 - `{"topic": "s<N>-links", "href": "복습문제_<range>_<slug>.html"}`는 항상. 파일명은 `manifest.py`의 `review_name`이 만드는 것과 정확히 같아야 한다.
-- 이전 복습팩과 이어지면 `../<이전 range>/정리노트_<이전 range>_<slug>.html#<토픽>`. 예전 형식 노트와 이어지면 `../../정리노트/MMDD.html`(퀴즈)·`../../정리노트/MMDD.md`(본문). 토픽은 기본 `s<N>-links`, `s0-recap`이 있으면 그 링크는 `s0-recap`에 건다.
+- 이전 복습팩과 이어지면 `../<이전 range>/정리노트_<이전 range>_<slug>.html#<토픽>`. 토픽은 기본 `s<N>-links`, `s0-recap`이 있으면 그 링크는 `s0-recap`에 건다.

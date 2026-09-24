@@ -91,15 +91,7 @@ class TestRangeSnippet(unittest.TestCase):
     def test_nothing_done_yet(self):
         self.assertIn("다음: 0903 0917 0922 0924", self.run_snippet())
 
-    def test_legacy_note_counts_as_done(self):
-        (self.repo / "정리노트").mkdir()
-        (self.repo / "정리노트" / "0917.md").write_text("x", encoding="utf-8")
-        (self.repo / "정리노트" / "0903.md").write_text("x", encoding="utf-8")
-        self.assertIn("다음: 0922 0924", self.run_snippet())
-
     def test_new_pack_range_end_counts_as_done(self):
-        (self.repo / "정리노트").mkdir()
-        (self.repo / "정리노트" / "0917.md").write_text("x", encoding="utf-8")
         pack = self.repo / "복습노트" / unicodedata.normalize("NFD", "0922-0924")
         pack.mkdir(parents=True)
         (pack / unicodedata.normalize("NFD", "정리노트_0922-0924_Cell_Division.html")).write_text("x", encoding="utf-8")
