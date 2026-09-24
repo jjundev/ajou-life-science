@@ -16,10 +16,6 @@ from scripts import new_note_test
 from scripts.question_bank.__main__ import main as bank_cli
 
 ROOT = Path(__file__).resolve().parents[1]
-SCRIPTS = ROOT / '.agents/skills/study-note-eli5/scripts'
-sys.path.insert(0, str(SCRIPTS))
-from build_question_scope import build_lock
-from question_scope import validate_scope_lock, scope_digest
 
 
 def write_json(path, value):
@@ -124,33 +120,6 @@ class WebScopeTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 self.load(scope, root)
 
-    def test_v2_rebases_sources_and_detects_forged_universe_and_source_changes(self):
-        with tempfile.TemporaryDirectory(dir=ROOT / '.superpowers') as tmp:
-            root = Path(tmp)
-            _, _, scope, _ = fixture(root)
-            # Fixture evidence paths are repo-relative when integrated in the real repo.
-            self.rebase_fixture(root, scope)
-            note = root / 'note.md'
-            note.write_text('## 부록. 문항 ↔ 개념 매핑\n| 1강 | 18 | example |\n')
-            for out in (root / 'lock.json', root / 'far/away/lock.json'):
-                lock, errors = build_lock(note, out, [], {}, web_scope=Path('meta/scope.json'))
-                self.assertEqual(errors, [])
-                self.assertEqual(lock['schema_version'], 2)
-                self.assertEqual({e['id'] for e in lock['base_questions']}, {'1강:18', 'web-test-ch01:q01'})
-                self.assertNotIn('bank_path', json.dumps(lock))
-                self.assertEqual((out.parent / lock['web_scope']['path']).resolve(), scope)
-                self.assertEqual(validate_scope_lock(lock, note, lock_path=out), [])
-                absolute = copy.deepcopy(lock)
-                absolute['web_scope']['path'] = str(scope)
-                absolute['scope_sha256'] = scope_digest(absolute)
-                self.assertTrue(validate_scope_lock(absolute, note, lock_path=out))
-                lock['base_questions'].pop()
-                lock['questions'].pop()
-                lock['scope_sha256'] = scope_digest(lock)
-                self.assertTrue(validate_scope_lock(lock, note, lock_path=out))
-            scope.write_bytes(scope.read_bytes() + b' ')
-            self.assertTrue(validate_scope_lock(json.loads(out.read_text()), note, lock_path=out))
-
     @staticmethod
     def rebase_fixture(root, scope):
         manifest = json.loads(scope.read_text())
@@ -165,38 +134,17 @@ class WebScopeTests(unittest.TestCase):
         manifest['banks'][0]['questions'][0]['refs'][0]['path'] = ref
         write_json(scope, manifest)
 
-    def test_absolute_script_from_temp_cwd_and_legacy_without_jsonschema(self):
+    def test_new_note_test_from_temp_cwd_accepts_absolute_web_scope(self):
         with tempfile.TemporaryDirectory(dir=ROOT / '.superpowers') as tmp, tempfile.TemporaryDirectory() as cwd:
             root = Path(tmp)
             _, _, scope, _ = fixture(root)
             self.rebase_fixture(root, scope)
-            note = root / 'note.md'
-            note.write_text('## 부록. 문항 ↔ 개념 매핑\n| 1강 | 18 | example |\n')
-            output = root / 'output/lock.json'
-            p = subprocess.run([sys.executable, str(SCRIPTS / 'build_question_scope.py'), str(note), str(output), '--web-scope', str(scope)], cwd=cwd, capture_output=True, text=True)
-            self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
-            self.assertEqual(len(json.loads(output.read_text())['questions']), 2)
             generated = root / 'test_note_0999.py'
             p = subprocess.run([sys.executable, str(ROOT / 'scripts/new_note_test.py'), '0999',
                                 '--web-scope', str(scope), '--out', str(generated)],
                                cwd=cwd, capture_output=True, text=True)
             self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
             self.assertIn('WEB_SCOPE =', generated.read_text())
-            code = '''import builtins, runpy, sys
-original = builtins.__import__
-def blocked(name, *args, **kwargs):
-    if name == 'jsonschema' or name.startswith('jsonschema.'):
-        raise ImportError('jsonschema unavailable')
-    return original(name, *args, **kwargs)
-builtins.__import__ = blocked
-sys.path.insert(0, sys.argv[1])
-sys.argv = sys.argv[2:]
-runpy.run_path(sys.argv[0], run_name='__main__')
-'''
-            for script, args in [('build_question_scope.py', [str(note), str(root / 'legacy.json')]),
-                                 ('build_guide.py', ['--help'])]:
-                p = subprocess.run([sys.executable, '-c', code, str(SCRIPTS), str(SCRIPTS / script), *args], cwd=cwd, capture_output=True, text=True)
-                self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
 
 
 class NoteScopeCliTests(unittest.TestCase):

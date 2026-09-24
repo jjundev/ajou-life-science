@@ -29,6 +29,18 @@ class BioReviewPackEntrypointTests(unittest.TestCase):
         self.assertLessEqual(len(text.splitlines()), 20)
         self.assertNotRegex(text, r"\n### \d\. ")
 
+    def test_rules_point_to_new_skill_only(self):
+        rules = (ROOT / "정리노트/CLAUDE.md").read_text(encoding="utf-8")
+        self.assertIn(".agents/skills/bio-review-pack/SKILL.md", rules)
+        self.assertNotIn(".agents/skills/summary-note/SKILL.md", rules)
+        self.assertNotIn(".agents/skills/study-note-eli5/SKILL.md", rules)
+
+    def test_old_skills_removed(self):
+        for name in ("summary-note", "study-note-eli5"):
+            for base in (".agents/skills", ".claude/skills"):
+                with self.subTest(path=f"{base}/{name}"):
+                    self.assertFalse((ROOT / base / name).exists())
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,5 +1,7 @@
 # 정리노트 작성 규칙
 
+> 새 회차 복습팩은 `/bio-review-pack` 스킬(정본 `.agents/skills/bio-review-pack/SKILL.md`)이 `복습노트/<range>/`에 만든다. 이 문서는 기존 `정리노트/MMDD.md`·`MMDD.html`·`eli5/` 산출물을 고칠 때의 규칙으로 남긴다.
+
 이 디렉터리의 회차 노트를 만들거나 고칠 때 반드시 따른다.
 
 ## 1. 파일 = 강의 회차
@@ -69,8 +71,7 @@ ELI5 파일은 원천 MD와 원본 퀴즈 HTML에서 생성하는 파생 학습 
 않는다. ELI5는 원본의 전체 학습 내용을 쉬운 표현과 시각 자료로
 재구성하고, 원본 문제·회상 질문·복습 연결을 제공한다.
 
-생성 절차는 .agents/skills/study-note-eli5/SKILL.md, coverage 데이터 계약은
-해당 스킬의 references/coverage-contract.md를 따른다. 원본 정답·설명과
+생성 스킬 study-note-eli5는 2026-09-24에 bio-review-pack으로 대체되어 삭제되었다. 기존 ELI5 산출물은 git 이력의 그 스킬 규칙을 기준으로 읽는다. 원본 정답·설명과
 판단이 충돌하면 원문 주장과 근거를 표시하며 원천 파일을 자동 수정하지
 않는다. 원천 변경 시 해당 가이드와 검토 기록을 재확인한다.
 ELI5 가이드 및 파이프라인 산출물은 정리노트 루트를 깨끗하게 유지하기 위해
@@ -153,7 +154,7 @@ strict JSON marker 계약으로 생성한다.
 
 ## 12. 스킬과 생성기
 
-절차는 `/summary-note MMDD` 스킬의 canonical 파일 `../.agents/skills/summary-note/SKILL.md`가 맡는다. `.claude/skills/summary-note/SKILL.md`는 그 파일을 가리키는 얇은 진입점만 둔다. **규칙이 바뀌면 이 파일을, 절차가 바뀌면 canonical SKILL.md를** 고친다. 둘에 같은 내용을 쓰지 않는다.
+새 회차 절차는 `/bio-review-pack` 스킬(정본 `../.agents/skills/bio-review-pack/SKILL.md`, 진입점 `.claude/skills/bio-review-pack/SKILL.md`)이 맡는다. 옛 `summary-note` 스킬은 2026-09-24에 삭제되었고, 아래 생성기 사용법은 기존 회차를 고칠 때만 쓴다.
 
 테스트 파일은 손으로 베끼지 않는다:
 
