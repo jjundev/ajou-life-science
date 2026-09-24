@@ -4,6 +4,7 @@ r"""정리노트/복습문제 HTML → GitHub 마크다운 변환기 (표준 라
 - 본문, 수식($...$ / $$...$$), 목록, 표, 인용을 변환한다.
 - <details>(원문/힌트/풀이)는 접히는 HTML <details>로 남긴다.
 - 인라인 SVG 그림은 figures_<range>/ 에 스타일을 인라인한 독립 SVG로 내보낸다.
+- <img>(카드 원문 그림)는 같은 상대 경로의 ![alt](src)로 옮긴다.
 - 위젯은 .widget-static(정적 SVG·표)으로 대체한다. 없으면 "HTML 버전에서 조작" 안내만 남긴다.
 - 표 안 수식의 \| 는 \Vert, | 는 \vert 로 바꾼다(GFM 표 구분자 충돌 방지).
 CLI:
@@ -197,6 +198,9 @@ def inline(node, ctx):
         return f"`{node.text()}`"
     if t in ("sub", "sup"):
         return f"<{t}>{inner().strip()}</{t}>"
+    if t == "img":
+        alt = node.attrs.get("alt", "그림").replace("[", "(").replace("]", ")")
+        return f"![{alt}]({node.attrs.get('src', '')})"
     if t == "a":
         return f"[{inner().strip()}]({fix_href(node.attrs.get('href', ''), ctx)})"
     if t == "span" and ("layer-title" in cls or "badge" in cls):
@@ -403,9 +407,15 @@ def block(node, ctx):
         return ["> " + l if l else ">" for l in body]
     if t == "figure":
         svg = next(node.find_all(lambda n: n.tag == "svg"), None)
+        img = None if svg else next(node.find_all(lambda n: n.tag == "img"), None)
         cap = next(node.find_all(lambda n: n.tag == "figcaption"), None)
         alt = (svg.attrs.get("aria-label", "그림") if svg else "그림").replace("[", "(").replace("]", ")")
-        lines = [f"![{alt}]({export_svg(svg, ctx)})"] if svg else []
+        if svg:
+            lines = [f"![{alt}]({export_svg(svg, ctx)})"]
+        elif img:
+            lines = [inline(img, ctx)]
+        else:
+            lines = []
         if cap:
             lines += ["", "*" + "".join(inline(c, ctx) for c in cap.children).strip() + "*"]
         return lines

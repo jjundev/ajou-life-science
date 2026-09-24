@@ -40,6 +40,12 @@ class TestHtml2Md(unittest.TestCase):
         self.assertEqual(html2md.check_md(self.note, self.note_md), [])
         self.assertEqual(html2md.check_md(self.review, self.review_md), [])
 
+    def test_card_image_kept_in_markdown(self):
+        review_md = Path(self.review_md).read_text(encoding="utf-8")
+        self.assertIn("![중기 염색체 그림](figures_0101-0102/p2.png)", review_md)
+        self.assertIn("자매염색분체가 서로 부착되어 있는", review_md)
+        self.assertEqual(html2md.check_md(self.review, self.review_md), [])
+
     def test_page_summary_rendered(self):
         self.assertIn("**페이지 요약**", self.md)
         self.assertIn("*핵심 식*", self.md)
