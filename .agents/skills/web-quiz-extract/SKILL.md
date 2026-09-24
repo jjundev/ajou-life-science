@@ -27,6 +27,8 @@ description: 웹과제 완료 후 제공된 문제 스크린샷을 생명과학 
 
 화면별 원문·모든 보기·캡처 관찰, 그림, 분석 근거를 다시 대조한다. 번호 집합은 `1..expected_question_count`와 같아야 하고 raw source는 모두 참조되어야 한다. 검토가 끝난 문항·그림에만 `review.status=verified`를 쓰고 검토 기록을 남긴다. 저장할 `payload_sha256`는 현재 파일에 대해 `scripts.question_bank.model`의 `canonical_digest(question_payload(bank, question, bank_dir))` 또는 `canonical_digest(asset_payload(bank, asset, bank_dir))`로 계산한다. 검토 없이 해시만 갱신하지 않는다.
 
-저장소 루트에서 `.venv-question-bank/bin/python -m scripts.question_bank validate '웹과제/N장/questions.json' --complete`를 실행한다. venv가 없다면 `.agents/skills/bio-review-pack/references/problem-selection.md` 2절의 환경 설정을 따른다. 성공한 뒤 `.venv-question-bank/bin/python -m scripts.question_bank preview '웹과제/N장/questions.json' --output '웹과제/N장/preview.html'`을 실행한다. 실제 브라우저에서 데스크톱과 375px 너비로 문제·보기·SVG·출처 링크와 정답 공개 위치를 본다. complete 검증 실패나 시각 대조 미완료를 성공으로 보고하지 않는다.
+새 bank는 같은 장 폴더의 고유한 `questions.candidate-<id>.json`에 먼저 저장한다. `questions.json`과 `preview.html`이 없는지 확인한다. 저장소 루트에서 `.venv-question-bank/bin/python -m scripts.question_bank validate '웹과제/N장/questions.candidate-<id>.json' --complete`를 실행한다. venv가 없다면 `.agents/skills/bio-review-pack/references/problem-selection.md` 2절의 환경 설정을 따른다. 성공한 뒤 `.venv-question-bank/bin/python -m scripts.question_bank preview '웹과제/N장/questions.candidate-<id>.json' --output '웹과제/N장/preview.candidate-<id>.html'`을 실행한다. 후보 미리보기를 실제 브라우저의 데스크톱과 375px 너비에서 문제·보기·SVG·출처 링크와 정답 공개 위치까지 확인한다. 후보 파일은 같은 장 폴더에 있어야 상대 경로가 최종 미리보기와 같다.
 
-끝에 원본 화면 수·문항 수·보기 수·그림 수, 생성 파일, 검증 결과, 공식 답 확인 여부와 미해결 항목을 구분해 보고한다. `bio-review-pack`은 같은 장의 `questions.json`에 대해 `--complete`가 성공해야 문제를 사용한다.
+모든 검증이 끝난 뒤 후보 두 파일의 SHA256을 기록하고 정본 두 경로의 부재를 다시 확인한다. 같은 폴더에 후보와 바이트가 일치하는 별도 배포용 임시 사본을 만든다. 덮어쓰기를 허용하지 않는 원자적 생성으로 `preview.html`을 먼저, `questions.json`을 마지막에 게시한다(예: 준비된 임시 사본에서 `os.link`로 각 정본 경로를 독점 생성). 후보 파일을 정본에 직접 하드 링크하지 않는다. 게시 중 실패하면 이번 실행이 새로 만든 정본만 확인해 제거하고, 기존 파일은 삭제·수정하지 않는다. 성공하면 배포용 임시 사본만 정리한다. 검증 실패나 시각 대조 미완료 때는 후보와 `intake.md`에 미해결 사항을 남기되 정본 `questions.json`을 만들지 않는다.
+
+끝에 원본 화면 수·문항 수·보기 수·그림 수, 생성 파일, 검증 결과, 공식 답 확인 여부와 미해결 항목을 구분해 보고한다. `bio-review-pack`은 기존 정본 bank의 검증이 실패해도 문항을 사용할 수 있으므로, 이 스킬이 검증된 새 bank만 정본 경로에 게시해야 한다.

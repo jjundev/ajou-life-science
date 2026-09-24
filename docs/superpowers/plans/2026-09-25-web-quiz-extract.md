@@ -16,6 +16,7 @@
 - 모델 호출을 켠다. 설명은 웹과제 종료 스크린샷 등록 요청에만 반응하도록 간결하게 쓴다. `disable-model-invocation: true`를 넣지 않는다.
 - 저장 형식은 `웹과제/question-bank.schema.json` 버전 1이다. schema, `scripts/question_bank/`, `bio-review-pack`, 기존 `웹과제/1장/`은 수정하지 않는다.
 - 한 평가의 대상 경로는 `웹과제/N장/questions.json`; 기존 파일을 자동 덮어쓰거나 병합하지 않는다.
+- 새 bank는 같은 장 폴더의 고유한 후보 JSON·미리보기를 먼저 complete 검증·시각 대조한다. 정본 미리보기를 덮어쓰기 없이 먼저 게시하고 `questions.json`을 마지막에 게시한다. 게시 실패 시 이번 실행의 새 정본만 거두며 기존 파일은 건드리지 않는다.
 - 원본은 `raw/`에 바이트·실제 파일명을 유지한다. NFC는 조회 비교에만 사용한다. 같은 이름·다른 바이트는 충돌이다.
 - 지원 문항은 기존 단일 선택형, 그림은 기존 안전한 SVG만이다. unsupported 자료나 빠진 원본을 complete로 등록하지 않는다.
 - 캡처 선택, 공식 답, 분석 답은 별도 필드다. 공식 답의 직접 화면 근거가 없으면 `null`이다.
@@ -91,9 +92,9 @@ description: 웹과제 완료 후 제공된 문제 스크린샷을 생명과학 
 
 화면별 원문·모든 보기·캡처 관찰, 그림, 분석 근거를 다시 대조한다. 번호 집합은 `1..expected_question_count`와 같아야 하고 raw source는 모두 참조되어야 한다. 검토가 끝난 문항/그림에만 `review.status=verified`를 쓰고 검토 기록을 남긴다. 저장할 `payload_sha256`는 현재 파일에 대해 `scripts.question_bank.model`의 `canonical_digest(question_payload(bank, question, bank_dir))` 또는 `canonical_digest(asset_payload(bank, asset, bank_dir))`로 계산한다. 검토 없이 해시만 갱신하지 않는다.
 
-저장소 루트에서 `.venv-question-bank/bin/python -m scripts.question_bank validate '웹과제/N장/questions.json' --complete`를 실행한다. venv가 없다면 기존 `bio-review-pack/references/problem-selection.md` 2절의 환경 설정을 따른다. 성공한 뒤 `.venv-question-bank/bin/python -m scripts.question_bank preview '웹과제/N장/questions.json' --output '웹과제/N장/preview.html'`을 실행한다. 실제 브라우저에서 데스크톱과 375px 너비로 문제·보기·SVG·출처 링크와 정답 공개 위치를 본다. complete 검증 실패나 시각 대조 미완료를 성공으로 보고하지 않는다.
+새 bank는 같은 장 폴더의 고유한 `questions.candidate-<id>.json`에 저장한다. 저장소 루트에서 `.venv-question-bank/bin/python -m scripts.question_bank validate '웹과제/N장/questions.candidate-<id>.json' --complete`를 실행한다. venv가 없다면 `.agents/skills/bio-review-pack/references/problem-selection.md` 2절의 환경 설정을 따른다. 성공한 뒤 `.venv-question-bank/bin/python -m scripts.question_bank preview '웹과제/N장/questions.candidate-<id>.json' --output '웹과제/N장/preview.candidate-<id>.html'`을 실행한다. 후보 미리보기를 실제 브라우저에서 데스크톱과 375px 너비로 문제·보기·SVG·출처 링크와 정답 공개 위치까지 확인한다. 모든 검증 뒤에도 정본 두 경로가 없는지 다시 확인하고, 후보와 바이트가 같은 별도 임시 사본에서 덮어쓰기 없는 원자적 생성으로 `preview.html`을 먼저, `questions.json`을 마지막에 게시한다. 실패 시 이번 실행이 만든 정본만 확인해 제거한다.
 
-끝에 원본 화면 수/문항 수/보기 수/그림 수, 생성 파일, 검증 결과, 공식 답 확인 여부와 미해결 항목을 구분해 보고한다. `bio-review-pack`은 같은 장의 `questions.json`에 대해 `--complete`가 성공해야 문제를 사용한다.
+끝에 원본 화면 수/문항 수/보기 수/그림 수, 생성 파일, 검증 결과, 공식 답 확인 여부와 미해결 항목을 구분해 보고한다. `bio-review-pack`은 기존 정본 bank의 검증 실패 후에도 문항을 사용할 수 있으므로, 이 스킬은 검증된 새 bank만 정본 경로에 게시한다.
 ````
 
 Completion criterion: description has a distinct extraction trigger and no `disable-model-invocation`; all four stages state observable stop conditions; schema field definitions are referenced, not recopied.
