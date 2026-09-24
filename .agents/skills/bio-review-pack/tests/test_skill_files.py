@@ -164,5 +164,69 @@ class TestBackupSnippet(unittest.TestCase):
         self.assertEqual(self.backups(), [])
 
 
+class TestBlindCopySnippet(unittest.TestCase):
+    """references/review-prompt.md 블라인드 사본 스니펫을 임시 복습문제 HTML로 실제로 실행한다."""
+
+    REVIEW_HTML = """<main>
+<article class="card" id="p1" data-source="기출 3강 12">
+  <h3>P1. 그림 문항</h3>
+  <div class="problem"><p>그림에서 옳은 것은?</p>
+    <figure class="figure"><img src="figures_x/p1.png" alt="세포 그림"></figure>
+    <ul class="choices"><li>(1) 가</li><li>(2) 나</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 3강 합본 12번</details>
+  <details class="hint"><summary>힌트 보기</summary>HINT_ONE</details>
+  <details class="solution"><summary>풀이 보기</summary><p class="answer">정답: (2)</p> SOLUTION_ONE</details>
+</article>
+<article class="card" id="p2" data-source="웹과제 3장 4">
+  <h3>P2. SVG 문항</h3>
+  <div class="problem"><p>다음 그림을 보고 답하시오.</p>
+    <figure class="figure"><svg viewBox="0 0 10 10" aria-label="막 구조"><rect id="p2-r" width="5" height="5"/><text x="1" y="8">ATP</text></svg></figure>
+    <ul class="choices"><li>A. 하나</li><li>B. 둘</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>웹과제 3장 4번</details>
+  <details class="hint"><summary>힌트 보기</summary>HINT_TWO</details>
+  <details class="solution"><summary>풀이 보기</summary><p class="answer">정답: B</p> SOLUTION_TWO</details>
+</article>
+</main>
+"""
+
+    @classmethod
+    def setUpClass(cls):
+        text = (SKILL / "references" / "review-prompt.md").read_text(encoding="utf-8")
+        m = re.search(r"```bash\n(REVIEW=[^\n]*)\n(.*?)\nEOF\n```", text, re.S)
+        assert m, "review-prompt.md 블라인드 사본 스니펫을 찾지 못함"
+        cls.code = m.group(2)
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.tmp = Path(self._tmp.name)
+        self.review = self.tmp / "pack" / "복습문제_x_A.html"
+        self.review.parent.mkdir()
+        self.review.write_text(self.REVIEW_HTML, encoding="utf-8")
+        self.out = self.tmp / "work" / "blind-x.md"
+        self.out.parent.mkdir()
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_blind_copy_keeps_png_and_svg_figures(self):
+        env = dict(os.environ, REVIEW=str(self.review), OUT=str(self.out))
+        r = subprocess.run([sys.executable, "-"], input=self.code, env=env, capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn("2 문항", r.stdout)
+        out = self.out.read_text(encoding="utf-8")
+        self.assertIn("## p1.", out)
+        self.assertIn("## p2.", out)
+        figs = re.findall(r"^\[그림: (.+)\]$", out, re.M)
+        self.assertTrue(any(f.endswith("figures_x/p1.png") for f in figs), figs)
+        svgs = [Path(f) for f in figs if f.endswith(".svg")]
+        self.assertEqual(len(svgs), 1, figs)
+        self.assertEqual(svgs[0].parent.name, "blind-figs")
+        self.assertTrue(svgs[0].exists(), svgs[0])
+        self.assertIn("<svg", svgs[0].read_text(encoding="utf-8"))
+        for leaked in ("details", "풀이 보기", "힌트 보기", "HINT_", "SOLUTION_", "정답:"):
+            with self.subTest(leaked=leaked):
+                self.assertNotIn(leaked, out)
+
+
 if __name__ == "__main__":
     unittest.main()

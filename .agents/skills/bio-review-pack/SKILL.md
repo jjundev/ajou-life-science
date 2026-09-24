@@ -21,7 +21,7 @@ description: 생명과학 수업의 STT·강의노트·교과서와 23·24 기�
 - `SKILL` = 이 파일이 있는 폴더(`.agents/skills/bio-review-pack`)의 절대 경로. `.claude/skills/bio-review-pack/SKILL.md`는 이 파일을 가리키는 진입점일 뿐이다.
 - `REPO` = 저장소 루트
 - `RUN` = `<scratchpad>/review-pack/<range>/` (scratchpad가 없으면 `/tmp/bio-review-pack/<range>/`)
-- 셸 상태는 Bash 호출 사이에 이어지지 않는다. 아래 명령의 `$SKILL`, `$RUN`, `$REPO`는 실행할 때마다 실제 절대 경로로 바꿔 쓰거나, 같은 명령 앞에 `SKILL=… RUN=… REPO=…`를 붙여 설정한다. `cd`는 쓰지 않고 파일도 절대 경로로 넘긴다.
+- 셸 상태는 Bash 호출 사이에 이어지지 않는다. 아래 셸 명령의 `$SKILL`, `$RUN`, `$REPO`는 실행할 때마다 실제 절대 경로로 바꿔 쓰거나, 같은 Bash 호출 맨 앞에 세미콜론으로 먼저 설정한다(`SKILL=…; RUN=…; REPO=…; python3 "$SKILL/scripts/…" …`). `RUN=… mkdir "$RUN"`처럼 같은 명령 앞에 붙이는 형식은 쓰지 않는다. 셸이 인자의 `"$RUN"`을 그 설정보다 먼저 펼쳐 빈 경로가 되기 때문이다. `os.environ`으로 값을 읽는 파이썬 heredoc 스니펫(`REPO=… python3 - <<'EOF'` 형식)만 앞에 붙이는 형식을 그대로 쓴다. `cd`는 쓰지 않고 파일도 절대 경로로 넘긴다.
 - 장 번호 `N`은 `강의노트/N장 *.pdf`, `23, 24 소스/N강 합본.pdf`(파일명에 `+`가 섞여 있다), `교과서/생명과학_기초와_응용_2판/0N장_*.pdf`(두 자리), `웹과제/N장/`에서 같은 수를 쓴다.
 
 ## 절차
@@ -62,22 +62,22 @@ EOF
 
 ### 1. 범위 파악
 1. 이번 STT가 다룰 장을 정한다. 직전 노트(가장 최근 `복습노트/*/정리노트_*.md` 또는 `정리노트/MMDD.md`)의 마지막 장과 끊긴 지점, STT 앞부분을 본다. 확실하지 않으면 다음 장까지 넣는다. **먼저** 그 장들의 강의노트 텍스트를 쪽 번호와 함께 `RUN/slides.txt`에 추출한다. 요약 에이전트는 이 파일이 있다고 보고 시작하므로 추출이 끝난 뒤에 띄운다.
-   ```bash
-   REPO=… RUN=… CH="3" python3 - <<'EOF'
-   import fitz, os, unicodedata as u
-   repo, run = os.environ["REPO"], os.environ["RUN"]
-   d = os.path.join(repo, "강의노트")
-   out = []
-   for n in sorted(os.listdir(d)):
-       name = u.normalize("NFC", n)
-       ch = name.split("장", 1)[0]
-       if name.endswith(".pdf") and ch in os.environ["CH"].split():
-           for i, page in enumerate(fitz.open(os.path.join(d, n)), 1):
-               out.append(f"=== {ch}장 p{i} ===\n{page.get_text()}")
-   open(os.path.join(run, "slides.txt"), "w", encoding="utf-8").write("\n".join(out))
-   print(len(out), "쪽")
-   EOF
-   ```
+```bash
+REPO=… RUN=… CH="3" python3 - <<'EOF'
+import fitz, os, unicodedata as u
+repo, run = os.environ["REPO"], os.environ["RUN"]
+d = os.path.join(repo, "강의노트")
+out = []
+for n in sorted(os.listdir(d)):
+    name = u.normalize("NFC", n)
+    ch = name.split("장", 1)[0]
+    if name.endswith(".pdf") and ch in os.environ["CH"].split():
+        for i, page in enumerate(fitz.open(os.path.join(d, n)), 1):
+            out.append(f"=== {ch}장 p{i} ===\n{page.get_text()}")
+open(os.path.join(run, "slides.txt"), "w", encoding="utf-8").write("\n".join(out))
+print(len(out), "쪽")
+EOF
+```
    추출에 실패하면 STT만으로 진행하고 보고서에 적는다(브리프의 `slides.txt` 줄은 "없음"으로 바꿔 넘긴다).
 2. 그다음 STT 날짜마다 요약 에이전트 1명을 **병렬로** 띄운다. 브리프는 `references/stt-summary-prompt.md`에 있다.
    - `<N장 *.pdf>`: 그 날짜가 다룬 강의노트 파일 이름. 확실하지 않으면 1의 장을 모두 적는다.
@@ -146,7 +146,7 @@ python3 "$SKILL/scripts/check_html.py" --manifest "$RUN/manifest.json" --note "$
 
 ### 6. 리뷰
 - 브리프는 `references/review-prompt.md`에 있다. 두 리뷰어를 한 메시지에서 병렬로 띄운다.
-  - **블라인드 풀이 검사**(항상, `lite` 포함): 문서의 스니펫으로 `RUN/work/blind-<range>.md`를 만든 뒤 리뷰어 1명에게 정리노트와 이 사본만 준다.
+  - **블라인드 풀이 검사**(항상, `lite` 포함): `references/review-prompt.md`의 "블라인드 풀이 검사" 스니펫으로 `RUN/work/blind-<range>.md`를 만든 뒤 리뷰어 1명에게 정리노트와 이 사본만 준다.
   - **일반 리뷰**(`lite`면 생략): 리뷰어 1명.
 - 블라인드 리뷰어의 답이 manifest `answer`와 다르거나 "근거 없음"이면, `anchor` 토픽의 섹션 작성자에게 빠진 사실을 가르치도록 되돌린다. 카드 풀이를 바꿔서 맞추지 않는다.
 - 일반 리뷰의 Critical과 Important는 모두, Minor는 쉬운 것만 고친다.

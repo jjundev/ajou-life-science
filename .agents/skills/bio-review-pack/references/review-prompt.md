@@ -4,20 +4,33 @@
 
 ## 블라인드 풀이 검사
 
-먼저 메인 에이전트가 복습문제에서 문제·보기·그림만 뽑은 사본을 만든다(`REVIEW`는 조립된 복습문제 HTML 절대 경로).
+먼저 메인 에이전트가 복습문제에서 문제·보기·그림만 뽑은 사본을 만든다(`REVIEW`는 조립된 복습문제 HTML 절대 경로). 기출 그림(`<img>`)은 PNG 경로를, 웹과제 인라인 `<svg>`는 `OUT`과 같은 폴더의 `blind-figs/<pid>-<n>.svg` 파일로 저장한 경로를 `[그림: …]` 줄로 남긴다. `OUT`의 `$RUN`은 같은 명령 앞에 붙인 `RUN=…`로는 펼쳐지지 않으므로, 같은 Bash 호출 맨 앞에 `RUN=…;`로 먼저 설정하거나 `OUT`에 절대 경로를 직접 쓴다.
 ```bash
 REVIEW=… OUT="$RUN/work/blind-<range>.md" python3 - <<'EOF'
 import html, os, re
 src = open(os.environ["REVIEW"], encoding="utf-8").read()
 base = os.path.dirname(os.environ["REVIEW"])
 cards = re.findall(r'<article class="card" id="(p\d+)"[^>]*>\s*<h3>(.*?)</h3>\s*<div class="problem">(.*?)</div>\s*<details', src, re.S)
-def text(h):
+figs = os.path.join(os.path.dirname(os.path.abspath(os.environ["OUT"])), "blind-figs")
+def text(pid, h):
+    n = 0
+    def svg(m):  # 웹과제 인라인 SVG → blind-figs/<pid>-<n>.svg
+        nonlocal n
+        n += 1
+        os.makedirs(figs, exist_ok=True)
+        path = os.path.join(figs, f"{pid}-{n}.svg")
+        s = m.group(0)
+        if "xmlns=" not in s.split(">", 1)[0]:
+            s = s.replace("<svg", '<svg xmlns="http://www.w3.org/2000/svg"', 1)
+        open(path, "w", encoding="utf-8").write(s)
+        return f"\n[그림: {path}]\n"
+    h = re.sub(r"<svg\b.*?</svg>", svg, h, flags=re.S)
     h = re.sub(r'<img [^>]*src="([^"]+)"[^>]*>', lambda m: f"\n[그림: {os.path.join(base, m.group(1))}]\n", h)
     h = re.sub(r"</(p|li|figure)>|<br\s*/?>", "\n", h)
     return html.unescape(re.sub(r"<[^>]+>", "", h)).strip()
 with open(os.environ["OUT"], "w", encoding="utf-8") as f:
     for pid, title, body in cards:
-        f.write(f"## {pid}. {html.unescape(re.sub(r'<[^>]+>', '', title))}\n\n{text(body)}\n\n")
+        f.write(f"## {pid}. {html.unescape(re.sub(r'<[^>]+>', '', title))}\n\n{text(pid, body)}\n\n")
 print(len(cards), "문항")
 EOF
 ```
@@ -26,7 +39,7 @@ EOF
 ---
 생명과학 복습팩의 블라인드 풀이 검사를 한다. 파일은 수정하지 않는다.
 
-- 열 수 있는 파일은 **두 개뿐**이다: 정리노트 `<RUN>/repo/복습노트/<range>/<정리노트 html>`, 문항 사본 `<RUN>/work/blind-<range>.md`(그 안의 `[그림: …]` 경로 이미지도 볼 수 있다). 복습문제 HTML, manifest, 요약, 교과서, 인터넷, 다른 파일은 열지 않는다. 자기 배경지식으로 풀지 말고 정리노트에 쓰인 내용만 근거로 삼는다.
+- 열 수 있는 파일은 **두 개뿐**이다: 정리노트 `<RUN>/repo/복습노트/<range>/<정리노트 html>`, 문항 사본 `<RUN>/work/blind-<range>.md`(그 안의 `[그림: …]` 줄이 가리키는 그림 파일 — 기출 PNG와 `<RUN>/work/blind-figs/`의 웹과제 SVG — 도 볼 수 있다). 복습문제 HTML, manifest, 요약, 교과서, 인터넷, 다른 파일은 열지 않는다. 자기 배경지식으로 풀지 말고 정리노트에 쓰인 내용만 근거로 삼는다.
 - 문항마다 답을 고르고, 근거가 된 정리노트 토픽 id와 문장을 적는다. 정리노트만으로 판단할 수 없는 보기가 있으면 "근거 없음"으로 적고 무엇이 빠졌는지 쓴다.
 
 출력 형식(이것만):
