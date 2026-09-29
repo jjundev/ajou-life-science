@@ -1,5 +1,9 @@
 (function (scope) {
   'use strict';
+  function stripDiagnosticPrefix(text, id) {
+    const match = text.match(/^\s*(?:\((\d+)\)|([A-Z])[.)])\s*/);
+    return match && (match[1] || match[2]) === id ? text.slice(match[0].length) : text;
+  }
   function grade(card, selected) {
     if (!card.options.some(o => o.id === selected)) return null;
     if (card.mode === 'ambiguous') return 'ambiguous';
@@ -46,6 +50,7 @@
           new Set(options.map(o => o.diagnostic)).size !== options.length ||
           options.some(o => !choices[o.index] || !diagnostics[o.diagnostic])) continue;
       const positions = diagnostics.map(n => ({node:n, parent:n.parentNode, next:n.nextSibling}));
+      const diagnosticTexts = [];
       const choiceNodes = choices.map(n => Array.from(n.childNodes));
       const summary = solution.querySelector('summary');
       const summaryText = summary ? summary.textContent : '';
@@ -84,6 +89,11 @@
           const list = element('ol', 'review-diagnostics');
           list.id = id + '-review-diagnostics-' + o.index;
           const diagnostic = diagnostics[o.diagnostic];
+          const first = diagnostic.firstChild;
+          if (first && first.nodeType === 3) {
+            diagnosticTexts.push({node:first, text:first.textContent});
+            first.textContent = stripDiagnosticPrefix(first.textContent, o.id);
+          }
           diagnostic.classList.add('review-diagnostic');
           diagnostic.hidden = true;
           list.append(diagnostic);
@@ -177,6 +187,7 @@
         }
       } catch (error) {
         // Keep a readable static question if enhancement cannot be completed.
+        diagnosticTexts.forEach(p => { p.node.textContent = p.text; });
         choices.forEach((li, i) => li.replaceChildren(...choiceNodes[i]));
         positions.slice().reverse().forEach(p => {
           p.node.hidden = false;
@@ -215,7 +226,7 @@
       });
     }
   }
-  const api = {grade, storageKey, readAttempt, writeAttempt, mount};
+  const api = {stripDiagnosticPrefix, grade, storageKey, readAttempt, writeAttempt, mount};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else scope.ReviewInteraction = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

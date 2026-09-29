@@ -30,3 +30,11 @@ test('선택 저장과 초기화', () => {
   api.writeAttempt(storage,'k',card,null);
   assert.equal(api.readAttempt(storage,'k',card),null);
 });
+
+test('펼친 해설의 선두 식별자만 제거', () => {
+  assert.equal(api.stripDiagnosticPrefix('(1) 틀려요. 보기 (2)는 맞아요.', '1'),
+    '틀려요. 보기 (2)는 맞아요.');
+  assert.equal(api.stripDiagnosticPrefix(' A. 맞아요.', 'A'), '맞아요.');
+  assert.equal(api.stripDiagnosticPrefix('(2) 다른 보기', '1'), '(2) 다른 보기');
+  assert.equal(api.stripDiagnosticPrefix('번호 없는 해설', '1'), '번호 없는 해설');
+});
