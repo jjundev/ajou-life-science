@@ -71,6 +71,72 @@ class TestReviewBrowser(unittest.TestCase):
         expect(card.locator('.review-choice').nth(1)).to_have_attribute('data-selected','true')
         expect(card.locator('.review-diagnostic:visible')).to_have_count(1)
 
+    def test_answer_scroll_shows_selected_and_answer(self):
+        card = self.open('0910', 'p8')
+        self.page.locator('.content').evaluate('(e) => { e.scrollTop = 0; }')
+        card.locator('.review-choice').nth(0).evaluate('(e) => e.click()')
+        self.page.evaluate('() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))')
+        state = self.page.evaluate('''() => {
+          const sc = document.querySelector('.content');
+          const card = document.querySelector('#p8');
+          const buttons = [0, 1].map(i => card.querySelectorAll('.review-choice')[i].getBoundingClientRect());
+          const viewport = sc.getBoundingClientRect();
+          return {scroll:sc.scrollTop, visible:buttons.every(b =>
+            b.top >= viewport.top && b.bottom <= viewport.bottom),
+            text:card.querySelector('.review-diagnostic:not([hidden])').textContent.trim()};
+        }''')
+        self.assertGreater(state['scroll'], 0)
+        self.assertTrue(state['visible'])
+        self.assertFalse(state['text'].startswith('(1)'))
+
+    def test_correct_answer_centers_expanded_card(self):
+        card = self.open('0910', 'p8')
+        card.locator('.review-choice').nth(1).evaluate('(e) => e.click()')
+        self.page.evaluate('() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))')
+        center_gap = self.page.evaluate('''() => {
+          const sc=document.querySelector('.content').getBoundingClientRect();
+          const li=document.querySelector('#p8 .choices > li:nth-child(2)').getBoundingClientRect();
+          return Math.abs((li.top+li.bottom-sc.top-sc.bottom)/2);
+        }''')
+        self.assertLess(center_gap, 24)
+        self.page.locator('.content').evaluate('(e) => { e.scrollTop = 0; }')
+        card.locator('.review-choice').nth(1).evaluate('(e) => e.click()')
+        self.page.evaluate('() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))')
+        self.assertEqual(self.page.locator('.content').evaluate('(e) => e.scrollTop'), 0)
+
+    def test_small_viewport_scroll_fallback(self):
+        for height in (480, 240):
+            with self.subTest(height=height):
+                ctx = self.browser.new_context(viewport={'width': 375, 'height': height})
+                page = ctx.new_page()
+                try:
+                    page.goto(self.url('0910', 'p8'))
+                    page.locator('#p8 .review-choice').nth(4).evaluate('(e) => e.click()')
+                    page.evaluate('() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))')
+                    state = page.evaluate('''() => {
+                      const sc=document.querySelector('.content').getBoundingClientRect();
+                      const b=document.querySelectorAll('#p8 .review-choice');
+                      const a=b[4].getBoundingClientRect(), z=b[1].getBoundingClientRect();
+                      const fits=Math.max(a.bottom,z.bottom)-Math.min(a.top,z.top) <= sc.height-32;
+                      const visible=r => r.top >= sc.top-2 && r.bottom <= sc.bottom+2;
+                      return {fits, both:visible(a)&&visible(z),
+                        selectedCenterGap:Math.abs((a.top+a.bottom-sc.top-sc.bottom)/2)};
+                    }''')
+                    if state['fits']:
+                        self.assertTrue(state['both'], state)
+                    else:
+                        self.assertLess(state['selectedCenterGap'], 2, state)
+                finally:
+                    ctx.close()
+
+    def test_restored_answer_does_not_scroll(self):
+        card = self.open('0910', 'p8')
+        card.locator('.review-choice').nth(1).evaluate('(e) => e.click()')
+        self.page.reload()
+        expect(card.locator('.review-choice').nth(1)).to_have_attribute('data-selected', 'true')
+        self.page.evaluate('() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))')
+        self.assertEqual(self.page.locator('.content').evaluate('(e) => e.scrollTop'), 0)
+
     def test_disclosures_toggle_independently_without_regrading(self):
         card = self.open()
         buttons = card.locator('.review-choice')
