@@ -56,6 +56,14 @@ class TestModel(unittest.TestCase):
         self.assertEqual(ri.install(output, 'test.html'), output)
         self.assertEqual(output.count('id="review-interaction-model"'), 1)
 
+    def test_existing_packs_embed_current_interaction_assets(self):
+        files = sorted((REPO / '복습노트').glob('*/복습문제_*.html'))
+        self.assertEqual(len(files), 8)
+        for path in files:
+            with self.subTest(file=path.name):
+                source = path.read_text(encoding='utf-8')
+                self.assertEqual(ri.install(source, path.name), source)
+
     def test_safe_json(self):
         override = {'test.html': {'p1': {'mode':'ambiguous','notice':'</script><script>alert(1)</script>'}}}
         output = ri.install('<body>'+CARD+'</body>', 'test.html', override)

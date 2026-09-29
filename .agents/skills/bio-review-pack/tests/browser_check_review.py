@@ -348,7 +348,8 @@ class TestReviewBrowser(unittest.TestCase):
         self.assertEqual(self.page.locator('svg,img').count(), count)
         self.page.locator('#theme-toggle').click()
         self.assertTrue(self.page.evaluate('document.documentElement.scrollWidth <= innerWidth'))
-        shots = REPO / '.superpowers/sdd/bio-review-interactive'
+        shots = REPO / '.superpowers/sdd/bio-review-browser-check'
+        shots.mkdir(parents=True, exist_ok=True)
         self.page.screenshot(path=str(shots/'mobile.png'))
         self.page.set_viewport_size({'width':1280,'height':850})
         self.page.screenshot(path=str(shots/'desktop.png'))
