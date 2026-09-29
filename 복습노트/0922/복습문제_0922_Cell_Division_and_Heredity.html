@@ -1085,6 +1085,7 @@
         cards.forEach((card) => {
           const g = document.createElement('div');
           g.className = 'aid';
+          g.dataset.cardId = card.id;
           g.hidden = true;
           card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
           aids.appendChild(g);
@@ -1101,6 +1102,15 @@
           if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
           store.set(KEY, Array.from(solved));
           paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:answer', ({detail}) => {
+          if (!cards.some(c => c.id === detail.id)) return;
+          if (detail.restored && detail.selected !== null) return;
+          if (detail.selected === null) solved.delete(detail.id);
+          else solved.add(detail.id);
+          store.set(KEY, Array.from(solved));
+          if (curId) paintBtn();
           markToc(solved, cards.length, '푼 문제');
         });
         document.addEventListener('od:screen', (e) => {
@@ -1268,5 +1278,279 @@
       fromUrl();
     })();
   </script>
+<!-- review-interaction:start -->
+<style>
+/* Progressive enhancement: original source remains readable without scripts. */
+.review-ready .choices { list-style:none; padding:0; }
+.review-ready .choices > li { margin:0 0 var(--s3); }
+.review-choice {
+  display:block; width:100%; min-height:44px; text-align:left; font:inherit;
+  color:var(--ink); background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:12px 16px; cursor:pointer; overflow-wrap:anywhere;
+}
+.review-choice:hover { border-color:var(--accent); }
+.review-choice:focus-visible, .review-reset:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+.review-choice[aria-expanded] { position:relative; padding-right:44px; }
+.review-choice[aria-expanded]::after { content:""; position:absolute; right:18px; top:20px; width:8px; height:8px; border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor; transform:rotate(45deg); }
+.review-choice[aria-expanded="true"]::after { transform:rotate(225deg); top:24px; }
+.review-choice[data-result="correct"], .review-choice[data-result="intended"] { border-color:var(--accent); }
+.review-choice[data-selected="true"] { box-shadow:inset 0 0 0 1px var(--ink); }
+.review-choice-label { display:block; margin-top:6px; font-size:var(--fs-small); font-weight:700; color:var(--ink); }
+.review-choice-label[hidden], .review-diagnostic[hidden], .review-extra[hidden],
+.review-help[hidden], .review-reset[hidden], .review-diagnostics[hidden] { display:none; }
+.review-diagnostics { list-style:none; padding:0; margin:0; }
+.review-diagnostic { padding:12px 16px 8px; color:var(--ink-2); overflow-wrap:anywhere; }
+.review-status { margin:var(--s3) 0; font-weight:650; }
+.review-status:empty { display:none; }
+.review-help { color:var(--ink-2); font-size:var(--fs-small); }
+.review-reset { min-height:44px; margin:var(--s2) 0 var(--s4); }
+.review-choice-content { padding:var(--s2) 0; }
+@media print {
+  .review-reset, .review-status, .review-help, .review-choice-label { display:none !important; }
+  .review-diagnostic[hidden] { display:list-item !important; }
+  .review-diagnostics[hidden] { display:block !important; }
+  .review-choice::after { display:none; }
+  .review-extra[hidden] { display:block !important; }
+  .review-choice { border:0; box-shadow:none !important; padding:0; }
+}
+
+</style>
+<script id="review-interaction-model" type="application/json">{"cards": {"p1": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "495a3a29acde0ffbf327abc41950e8cbdb1b2ef48ed602d7755748c5a6f5fbe8"}, "p10": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "6220fe6d03168afcb95358a05f0e518a497c73620012a31f09b4ad5fc704f087"}, "p11": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "81b70ad0e2d1968687c5c9daf6b518db542e8a200a0521433f6a117ef65fc089"}, "p12": {"answer": "1", "mode": "ambiguous", "notice": "인쇄된 답안지의 답도 (1) 말기이고 그대로 따라요. 다만 이 답은 수업 영상(0922 14:15)처럼 말기에 세포질 분열이 시작된다고 보는 모형에서 성립해요. 동물세포는 후기가 끝날 무렵부터 분열홈이 보이기 시작한다고 적는 자료도 있으니, 다른 시험에서 이 부분을 물으면 기준으로 삼는 모형을 확인하세요.", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "57737c0d91340697af309440fc7d7d811445d058ccc85766e50f1cc6f83a1d68"}, "p13": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "dbc53c131a41a80033fddd3718aec34ad9eb2e671ccdbf01661051df3ef09516"}, "p14": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "2ba73620d23677068d2f0e7d6477783b238681a56645941271d9b8eab9c59cdf"}, "p15": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "4d83fbd396c6af9e915c9241ee47498459c44c69355e313bd2d27b52e82c44e3"}, "p16": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "f46097fffc6a020ef8df95bd28f35b7c32bdfd19e410a370a66c15b608bf078c"}, "p17": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "080899531ef5c03a5424ba29635e0c284bcf1af0410a8b98352783b548fe962f"}, "p18": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "7808caf82b2d4ea60f5ba7b93e12265c5fd12c9533fe0b18606115fc59b8b62f"}, "p19": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "c092654c3e8ae7bd46f2432fdbbef269e6a0c20ef6dfb9f7eaebf04155bf53ca"}, "p2": {"answer": "5", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "8912e1446dc203a6ec1bc092f21ba242e74650cfef45ca570b5f264990c3aa1a"}, "p20": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "c7be6f64847ea1ac2c831b82b8c7a79e9325cbfbca53f551c1beefcdc3c28ddc"}, "p21": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "2d2d77c2ae34220f44c079a4cf7763833385d2c2f6646dff188f450261e2827e"}, "p22": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "7ff7a2659826c27b3e3328258b7fcee8f8de8917510b2b900d1d7703ad264374"}, "p23": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "dbf06ae1c9ebf10fc947b2070b7846176699d1792397d106985812b54628599f"}, "p24": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "c54a1b176bbe70c0f006b2a44771e22e0207562df1df32ec039553d4eefa0d7b"}, "p25": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "5987c1c6f17606f5670ec32fc5c8deaa8ce8b65162d709c73fb7d5b5d455d72e"}, "p26": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "20d5cb7fd12b0c24a7726747516e714653af3a81b344259caf90b788351f1f40"}, "p27": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "b97c8fb1e5a3119ff647a7011a9be5f2ea625bfd479b78a973b68a4be3f1cbf2"}, "p28": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "146fb36d8d7dd440d95782f65ec9cbf0efb4c72a822c3d6a1584c327d960e09a"}, "p29": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "f794ed680a18343fd036c33300e43dd8c2c66a10e015e95c71d2125b33287b90"}, "p3": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 1, "id": "1", "index": 0}, {"diagnostic": 2, "id": "2", "index": 1}, {"diagnostic": 3, "id": "3", "index": 2}, {"diagnostic": 4, "id": "4", "index": 3}, {"diagnostic": 5, "id": "5", "index": 4}], "version": "09a5aab5624edd88c9a347a76a371cf6d2d7004aceb218202a1f16783db9299b"}, "p30": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "78c639efbb7f432c276db0fb0662afc36df3c13af33f6ca98602b7ba8ff3606c"}, "p31": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "d79aa9108ea5b70289f1336724004e15215ed45155b5fb07433acfcc7fd80bbc"}, "p32": {"answer": "5", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "b018cb2f1dfcd9dbb5000d81b2ea34b37850251a8e594b143ce30e35ff649322"}, "p33": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 1, "id": "1", "index": 0}, {"diagnostic": 2, "id": "2", "index": 1}, {"diagnostic": 3, "id": "3", "index": 2}, {"diagnostic": 4, "id": "4", "index": 3}], "version": "a20f4f7a6a4a7d20fc95a53a112da57f2ae921590fda08e1fd98c580be25b51d"}, "p34": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 2, "id": "1", "index": 0}, {"diagnostic": 3, "id": "2", "index": 1}, {"diagnostic": 4, "id": "3", "index": 2}, {"diagnostic": 5, "id": "4", "index": 3}, {"diagnostic": 6, "id": "5", "index": 4}], "version": "de7b2b6d681181cc1f81d5b8164b0e15ff1d3bf303a762bc6de2cfc74d41e38d"}, "p35": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "8d6057a0aaeb0bb0a058cf05460dd1e9937ab75f3de417d7145de9d8a16ba09e"}, "p36": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 1, "id": "1", "index": 0}, {"diagnostic": 2, "id": "2", "index": 1}, {"diagnostic": 3, "id": "3", "index": 2}, {"diagnostic": 4, "id": "4", "index": 3}], "version": "f2b371b9d5c34d3a804d86f56db053518b10c35d01bcfe0f1a96b6ea74c18a59"}, "p37": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 1, "id": "1", "index": 0}, {"diagnostic": 2, "id": "2", "index": 1}, {"diagnostic": 3, "id": "3", "index": 2}, {"diagnostic": 4, "id": "4", "index": 3}, {"diagnostic": 5, "id": "5", "index": 4}], "version": "4da8e2be6fe96670b947298e1ccb5ce540be20e8f95ec03ebc3d59c1b3c3b960"}, "p4": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "c8fdbc5424c8baa1a148b59ea3d6424ae6b043535a0142f2257edb27da130571"}, "p5": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "032234ffdda7436777fb6b05c40ad3f54500ec4739ef73b47ae72eb56dff08db"}, "p6": {"answer": "5", "mode": "single", "notice": "", "options": [{"diagnostic": 1, "id": "1", "index": 0}, {"diagnostic": 2, "id": "2", "index": 1}, {"diagnostic": 3, "id": "3", "index": 2}, {"diagnostic": 4, "id": "4", "index": 3}, {"diagnostic": 5, "id": "5", "index": 4}], "version": "f42a8ad613a1f4894da7fb11aec82c46a29b1ccc8144306ab41249ea80408064"}, "p7": {"answer": "4", "mode": "ambiguous", "notice": "이 문항은 모호한 데가 있어요. 보기 (5) \"염색체의 수\"도 2의 n승에서 가능한 조합의 가짓수를 정하므로 배우자의 조합에 영향을 준다고 볼 수 있는데, \"모두 맞다\"가 (4)에 있고 (5)가 그 뒤에 따로 나와요. 출제 의도는 (1)~(3)을 묶은 (4)로 보여서 인쇄된 답 (4)를 정답으로 두었어요.", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "e0a9a9a4f602871d27f4c71d189fe84d4137e7b020f37d5c24d598a0c02b3e14"}, "p8": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "3a6678f6902dfc7aaf5f1f45e413d338c3ddbf33202ed0c7971751040255feab"}, "p9": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "dbccdaa467df4efe2c78921645ea1e385428306134055bc143e06fa42428354e"}}, "documentId": "복습문제_0922_Cell_Division_and_Heredity.html", "errors": [], "schema": 1, "skipped": []}</script>
+<script>
+(function (scope) {
+  'use strict';
+  function grade(card, selected) {
+    if (!card.options.some(o => o.id === selected)) return null;
+    if (card.mode === 'ambiguous') return 'ambiguous';
+    return selected === card.answer ? 'correct' : 'incorrect';
+  }
+  function storageKey(documentId, cardId) {
+    return 'od-review-attempt:v1:' + encodeURIComponent(documentId) + ':' + encodeURIComponent(cardId);
+  }
+  function readAttempt(storage, key, card) {
+    try {
+      const value = JSON.parse(storage.getItem(key));
+      return value && value.version === card.version && grade(card, value.selected) !== null ? value.selected : null;
+    } catch { return null; }
+  }
+  function writeAttempt(storage, key, card, selected) {
+    try {
+      if (selected === null) storage.removeItem(key);
+      else storage.setItem(key, JSON.stringify({version:card.version, selected}));
+    } catch {}
+  }
+  function mount(root, model, storage) {
+    if (!model || model.schema !== 1 || !model.cards) return;
+    const win = root.defaultView;
+    const emit = (id, selected, result, restored = false) => root.dispatchEvent(
+      new win.CustomEvent('od:answer', {detail:{id, selected, result, restored}}));
+    const element = (tag, cls, text) => {
+      const el = root.createElement(tag);
+      el.className = cls;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    };
+    for (const [id, data] of Object.entries(model.cards)) {
+      const card = root.getElementById(id);
+      if (!card || card.classList.contains('review-ready')) continue;
+      const aid = Array.from(root.querySelectorAll('.aid')).find(n => n.dataset.cardId === id);
+      const solution = (aid || card).querySelector('details.solution');
+      const choices = Array.from(card.querySelectorAll('.choices > li'));
+      const diagnostics = solution ? Array.from(solution.querySelectorAll('ol.steps > li')) : [];
+      const options = data.options;
+      // Validate every reference before moving a single original node.
+      if (!solution || !Array.isArray(options) || choices.length !== options.length ||
+          !options.length || !options.some(o => o.id === data.answer) ||
+          new Set(options.map(o => o.index)).size !== options.length ||
+          new Set(options.map(o => o.diagnostic)).size !== options.length ||
+          options.some(o => !choices[o.index] || !diagnostics[o.diagnostic])) continue;
+      const positions = diagnostics.map(n => ({node:n, parent:n.parentNode, next:n.nextSibling}));
+      const choiceNodes = choices.map(n => Array.from(n.childNodes));
+      const summary = solution.querySelector('summary');
+      const summaryText = summary ? summary.textContent : '';
+      const originalOpen = solution.open;
+      const originalHidden = solution.hidden;
+      let status, reset, help, notice;
+      try {
+        // Some future cards supply the caution only as metadata. Keep its full
+        // explanation in the solution panel, without duplicating existing prose.
+        const compact = text => text.replace(/\s+/g, '');
+        if (data.mode === 'ambiguous' && data.notice &&
+            !compact(solution.textContent).includes(compact(data.notice))) {
+          notice = element('p', 'review-notice', data.notice);
+          solution.append(notice);
+        }
+        const controls = options.map(o => {
+          const li = choices[o.index];
+          const button = element('button', 'review-choice');
+          button.type = 'button';
+          const complex = li.querySelector('a,button,input,select,textarea,table,div,p,figure,ul,ol');
+          if (complex) {
+            button.textContent = o.id + '번 선택';
+            const content = element('div', 'review-choice-content');
+            content.id = id + '-choice-content-' + o.index;
+            content.append(...Array.from(li.childNodes));
+            button.setAttribute('aria-describedby', content.id);
+            li.append(button, content);
+          } else {
+            button.append(...Array.from(li.childNodes));
+            li.append(button);
+          }
+          const badge = element('span', 'review-choice-label');
+          badge.hidden = true;
+          button.append(badge);
+          button.setAttribute('aria-pressed', 'false');
+          const list = element('ol', 'review-diagnostics');
+          list.id = id + '-review-diagnostics-' + o.index;
+          const diagnostic = diagnostics[o.diagnostic];
+          diagnostic.classList.add('review-diagnostic');
+          diagnostic.hidden = true;
+          list.append(diagnostic);
+          li.append(list);
+          return {id:o.id, button, badge, diagnostic, list};
+        });
+        help = element('p', 'review-help', '답을 선택하면 내 선택과 정답의 해설이 열려요. 다른 보기도 눌러 해설을 확인할 수 있어요.');
+        status = element('p', 'review-status');
+        status.setAttribute('role', 'status');
+        status.setAttribute('aria-live', 'polite');
+        reset = element('button', 'review-reset text-btn', '다시 풀기');
+        reset.type = 'button';
+        card.querySelector('.choices').before(help, status);
+        card.querySelector('.choices').after(reset);
+        const key = storageKey(model.documentId, id);
+        let selected = readAttempt(storage, key, data);
+        const expanded = new Set(selected === null ? [] : [selected, data.answer]);
+        function paintDisclosure(c) {
+          const answered = selected !== null;
+          const open = answered && expanded.has(c.id);
+          c.diagnostic.hidden = !open;
+          c.list.hidden = !open;
+          if (answered) {
+            c.button.setAttribute('aria-expanded', String(open));
+            c.button.setAttribute('aria-controls', c.list.id);
+          } else {
+            c.button.removeAttribute('aria-expanded');
+            c.button.removeAttribute('aria-controls');
+          }
+        }
+        function paint() {
+          const answered = selected !== null;
+          const result = grade(data, selected);
+          help.hidden = answered;
+          reset.hidden = !answered;
+          status.textContent = !answered ? '' : result === 'ambiguous'
+            ? '단일 정답 판정 주의'
+            : result === 'correct' ? '정답이에요.' : '정답이 아니에요. 보기별 이유를 확인해 보세요.';
+          status.dataset.result = result || '';
+          controls.forEach(c => {
+            c.button.dataset.selected = String(c.id === selected);
+            if (answered) c.button.removeAttribute('aria-pressed');
+            else c.button.setAttribute('aria-pressed', 'false');
+            c.button.dataset.result = !answered ? '' : c.id === data.answer
+              ? (data.mode === 'ambiguous' ? 'intended' : 'correct') : c.id === selected ? 'selected' : '';
+            c.badge.hidden = !answered;
+            c.badge.textContent = !answered ? '' : [
+              c.id === selected ? '내 선택' : '',
+              c.id === data.answer ? (data.mode === 'ambiguous' ? '출제 의도상 답' : '정답')
+                : data.mode === 'single' ? '정답 아님' : ''
+            ].filter(Boolean).join(' · ');
+            paintDisclosure(c);
+          });
+          solution.hidden = !answered;
+          solution.open = answered;
+          if (summary) summary.textContent = '추가 해설 · 수업과의 연결';
+        }
+        controls.forEach(c => c.button.addEventListener('click', () => {
+          if (selected !== null) {
+            if (expanded.has(c.id)) expanded.delete(c.id);
+            else expanded.add(c.id);
+            paintDisclosure(c);
+            return;
+          }
+          selected = c.id;
+          expanded.add(selected);
+          expanded.add(data.answer);
+          writeAttempt(storage, key, data, selected);
+          paint();
+          emit(id, selected, grade(data, selected));
+        }));
+        reset.addEventListener('click', () => {
+          selected = null;
+          expanded.clear();
+          writeAttempt(storage, key, data, null);
+          paint();
+          emit(id, null, null);
+          controls[0].button.focus();
+        });
+        card.classList.add('review-ready');
+        solution.classList.add('review-extra');
+        paint();
+        if (selected !== null) emit(id, selected, grade(data, selected), true);
+        else {
+          try {
+            if (storage.getItem(key) !== null) {
+              writeAttempt(storage, key, data, null);
+              emit(id, null, null, true);
+            }
+          } catch {}
+        }
+      } catch (error) {
+        // Keep a readable static question if enhancement cannot be completed.
+        choices.forEach((li, i) => li.replaceChildren(...choiceNodes[i]));
+        positions.slice().reverse().forEach(p => {
+          p.node.hidden = false;
+          p.node.classList.remove('review-diagnostic');
+          p.parent.insertBefore(p.node, p.next);
+        });
+        for (const el of [status, reset, help, notice]) if (el) el.remove();
+        solution.hidden = originalHidden;
+        solution.open = originalOpen;
+        if (summary) summary.textContent = summaryText;
+        solution.classList.remove('review-extra');
+        card.classList.remove('review-ready');
+        win.console.warn('문항 상호작용을 적용하지 못했습니다:', id, error);
+      }
+    }
+    // Existing page CSS hides side panels when printing. Move original details,
+    // including static questions, into their cards for print, then restore them.
+    if (!root.documentElement.dataset.reviewPrint) {
+      root.documentElement.dataset.reviewPrint = 'ready';
+      let printPositions = [];
+      win.addEventListener('beforeprint', () => {
+        if (printPositions.length) return;
+        root.querySelectorAll('.aid[data-card-id]').forEach(aid => {
+          const card = root.getElementById(aid.dataset.cardId);
+          if (!card) return;
+          Array.from(aid.children).forEach(node => {
+            printPositions.push({node, parent:aid, open:node.open});
+            if (node.tagName === 'DETAILS') node.open = true;
+            card.append(node);
+          });
+        });
+      });
+      win.addEventListener('afterprint', () => {
+        printPositions.forEach(p => {p.parent.append(p.node); p.node.open = p.open;});
+        printPositions = [];
+      });
+    }
+  }
+  const api = {grade, storageKey, readAttempt, writeAttempt, mount};
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else scope.ReviewInteraction = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
+</script>
+<script>(function () {
+      function start() {
+        try {
+          let storage = null;
+          try { storage = window.localStorage; } catch {}
+          ReviewInteraction.mount(document, JSON.parse(document.getElementById('review-interaction-model').textContent), storage);
+        } catch (error) { console.warn('복습문제 상호작용 초기화 실패:', error); }
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
+      else start();
+    })();</script>
+<!-- review-interaction:end -->
 </body>
 </html>

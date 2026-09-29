@@ -1245,6 +1245,7 @@
         cards.forEach((card) => {
           const g = document.createElement('div');
           g.className = 'aid';
+          g.dataset.cardId = card.id;
           g.hidden = true;
           card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
           aids.appendChild(g);
@@ -1261,6 +1262,15 @@
           if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
           store.set(KEY, Array.from(solved));
           paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:answer', ({detail}) => {
+          if (!cards.some(c => c.id === detail.id)) return;
+          if (detail.restored && detail.selected !== null) return;
+          if (detail.selected === null) solved.delete(detail.id);
+          else solved.add(detail.id);
+          store.set(KEY, Array.from(solved));
+          if (curId) paintBtn();
           markToc(solved, cards.length, '푼 문제');
         });
         document.addEventListener('od:screen', (e) => {
@@ -1428,5 +1438,279 @@
       fromUrl();
     })();
   </script>
+<!-- review-interaction:start -->
+<style>
+/* Progressive enhancement: original source remains readable without scripts. */
+.review-ready .choices { list-style:none; padding:0; }
+.review-ready .choices > li { margin:0 0 var(--s3); }
+.review-choice {
+  display:block; width:100%; min-height:44px; text-align:left; font:inherit;
+  color:var(--ink); background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:12px 16px; cursor:pointer; overflow-wrap:anywhere;
+}
+.review-choice:hover { border-color:var(--accent); }
+.review-choice:focus-visible, .review-reset:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+.review-choice[aria-expanded] { position:relative; padding-right:44px; }
+.review-choice[aria-expanded]::after { content:""; position:absolute; right:18px; top:20px; width:8px; height:8px; border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor; transform:rotate(45deg); }
+.review-choice[aria-expanded="true"]::after { transform:rotate(225deg); top:24px; }
+.review-choice[data-result="correct"], .review-choice[data-result="intended"] { border-color:var(--accent); }
+.review-choice[data-selected="true"] { box-shadow:inset 0 0 0 1px var(--ink); }
+.review-choice-label { display:block; margin-top:6px; font-size:var(--fs-small); font-weight:700; color:var(--ink); }
+.review-choice-label[hidden], .review-diagnostic[hidden], .review-extra[hidden],
+.review-help[hidden], .review-reset[hidden], .review-diagnostics[hidden] { display:none; }
+.review-diagnostics { list-style:none; padding:0; margin:0; }
+.review-diagnostic { padding:12px 16px 8px; color:var(--ink-2); overflow-wrap:anywhere; }
+.review-status { margin:var(--s3) 0; font-weight:650; }
+.review-status:empty { display:none; }
+.review-help { color:var(--ink-2); font-size:var(--fs-small); }
+.review-reset { min-height:44px; margin:var(--s2) 0 var(--s4); }
+.review-choice-content { padding:var(--s2) 0; }
+@media print {
+  .review-reset, .review-status, .review-help, .review-choice-label { display:none !important; }
+  .review-diagnostic[hidden] { display:list-item !important; }
+  .review-diagnostics[hidden] { display:block !important; }
+  .review-choice::after { display:none; }
+  .review-extra[hidden] { display:block !important; }
+  .review-choice { border:0; box-shadow:none !important; padding:0; }
+}
+
+</style>
+<script id="review-interaction-model" type="application/json">{"cards": {"p1": {"answer": "A", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "af315c472c289478b74347652b99ce7a84c9f955996a3abbe974a09b097c8ac4"}, "p10": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "bb3641d84aa86a907969d00bf092ac73efbd412888ec25c1365d98bea79c9865"}, "p11": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "dd759cabc7105b5ab84c474ab75d5d7213fb4fb2e35b4e6f8e1b5cbe428cfd0a"}, "p12": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "2999570e0e2a6a65d32984baee9694133758984c9a3f4e00c2f204715ceb644f"}, "p13": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "5b8797924d366ff5e4c8b024f1f077126a4722bc62d56ddd7b2802943bcf90c2"}, "p14": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "b10c0401039a54ae3b5260df105037ff4ad2dfa71513151a9164a23167dcab0f"}, "p15": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "57dda8558f6883632b079dfd86f91b2a6ba8bfc3da2f86e767b7cc8a490de86e"}, "p16": {"answer": "5", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "d34a3b6620f06864dc66377d3f9751b020e3208febd4b0ae96563c31a7ba1a09"}, "p17": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "ffd23839678926de3471fde9b1c8de2447200381b70dcf533abdd0542907642d"}, "p18": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "2f90490ebd49131359cad5757b24780b83f48f0136457d4376a79c42b434ff20"}, "p19": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "c419ff3b3fb5c97b4651b8e5505c0e8c04118a9c5cded210785f20bbb69375ab"}, "p2": {"answer": "B", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "38e5e777d1f11bab9e9a58f77f95f5f210121ab4092072e97815503c5fe5da0d"}, "p20": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "be03234dde7af746c10ae2c155719ab297bfaede597adb7ecda0b5836a70830c"}, "p22": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "02aef9c07c59d9f71ed0f741b0fc3c4a893f0767b21c3ac3a129996a8981732d"}, "p23": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "fdff06fd5c39fc17384d4f2ffe2c5485b497725e4799ee73ba53366b3a9fb690"}, "p24": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "91017afa54ef63878061116633408b77261f3f23e45acaa72b53b5f2ce3eed85"}, "p25": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "fc634be5bceb5d0349da80e85d62e723f5aa0de8cbc4ebb139e161dc9e6a8cf0"}, "p26": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "fa829434dfa07ab730e82b06a1968927564cbd8da9d2c4c8e7b1fcd7a8d4994f"}, "p27": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "3299b35e63ec45fe3d4e3be438bdffe9d9a5fc8dffc7fbbf946cd8144b39324d"}, "p28": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "0a73b98949e36b19ff11961f7b60e1c95c05cf90041c715db54f17750d09d53a"}, "p29": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "b83a27d96ff42b4209cb38ec71d62445747b45ca0d63316c5ae963b69f7de9ce"}, "p3": {"answer": "D", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "772a1053fbe36e09ada2e4f9d1676cba68c5821d0181e84d494a4fdd2d4f3e95"}, "p30": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "35548760576b94566fbdd6efee4b82a8924ccdb737857cf06135ee35eed31569"}, "p31": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "56f33f37783ce7664c3b1c044e3bb27173604aaa6db40a14a557b08806707a0d"}, "p32": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "da2345c63e81deff460d11acb21b263c5624d09f15814b35059e3cd8eccb352d"}, "p33": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "0e447920b5a1c4e445c42df095ec11b83036c7310d27de6eb718211d2d4ea474"}, "p34": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "83d80a17fceb776d16e1f6f53cc91a043d56177c85b8a1c6c8ae3690864cf0c7"}, "p35": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "2d70eb1c78aa8d1350b9ef8d14f4ac51e04b1bd511709428c771c25500081d91"}, "p36": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "a3c7558f6d521bc8eec65d8e8019c32b0dfb7a49d99861e46fc97a6f7144000d"}, "p37": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "e1d48015a9607aa8131384d41c525055960f8aa0f63332e6a1ca254ed7409b10"}, "p38": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "68172070584ea94897634ff09ba9694ce0c45dead64e8d37c6a4242ab1342bce"}, "p39": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "8e0b91ba1520239da5393bc8ba418680e3ec8d4ad7ee50932d38f126ad72c24e"}, "p4": {"answer": "C", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "6ccef6695b9ede08c48e590647128dda6265cb9fff992da635d168370b2bcc45"}, "p40": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "b70cbbd790bfbbc5e84d1e23c4b9126b81ee7b348085d2c173760a631ace5df9"}, "p5": {"answer": "E", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "847cb8b05be14f9f0cc7a76e0ee518738e48b0a21e7444d5d4901921bd0f49d7"}, "p6": {"answer": "E", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "0df98551241707c397af379185b86856877d5511127d9240fc206a2bb4522b5f"}, "p7": {"answer": "D", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "9fa7bbb132466a0c296c5e5378a1a9aa70dc3f50ac6e5dc2140c8ee7aedfa1f1"}, "p8": {"answer": "B", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "ec1f3e5420208ba95cb1463e0bc67717d488a083323baf218dd43c4337bb9646"}, "p9": {"answer": "C", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}], "version": "70babc03caf1c78dd59706f8f8434685b400efeddc01b13153bd051d0201322f"}}, "documentId": "복습문제_0903_Biomolecules_and_Cells.html", "errors": [], "schema": 1, "skipped": ["p21"]}</script>
+<script>
+(function (scope) {
+  'use strict';
+  function grade(card, selected) {
+    if (!card.options.some(o => o.id === selected)) return null;
+    if (card.mode === 'ambiguous') return 'ambiguous';
+    return selected === card.answer ? 'correct' : 'incorrect';
+  }
+  function storageKey(documentId, cardId) {
+    return 'od-review-attempt:v1:' + encodeURIComponent(documentId) + ':' + encodeURIComponent(cardId);
+  }
+  function readAttempt(storage, key, card) {
+    try {
+      const value = JSON.parse(storage.getItem(key));
+      return value && value.version === card.version && grade(card, value.selected) !== null ? value.selected : null;
+    } catch { return null; }
+  }
+  function writeAttempt(storage, key, card, selected) {
+    try {
+      if (selected === null) storage.removeItem(key);
+      else storage.setItem(key, JSON.stringify({version:card.version, selected}));
+    } catch {}
+  }
+  function mount(root, model, storage) {
+    if (!model || model.schema !== 1 || !model.cards) return;
+    const win = root.defaultView;
+    const emit = (id, selected, result, restored = false) => root.dispatchEvent(
+      new win.CustomEvent('od:answer', {detail:{id, selected, result, restored}}));
+    const element = (tag, cls, text) => {
+      const el = root.createElement(tag);
+      el.className = cls;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    };
+    for (const [id, data] of Object.entries(model.cards)) {
+      const card = root.getElementById(id);
+      if (!card || card.classList.contains('review-ready')) continue;
+      const aid = Array.from(root.querySelectorAll('.aid')).find(n => n.dataset.cardId === id);
+      const solution = (aid || card).querySelector('details.solution');
+      const choices = Array.from(card.querySelectorAll('.choices > li'));
+      const diagnostics = solution ? Array.from(solution.querySelectorAll('ol.steps > li')) : [];
+      const options = data.options;
+      // Validate every reference before moving a single original node.
+      if (!solution || !Array.isArray(options) || choices.length !== options.length ||
+          !options.length || !options.some(o => o.id === data.answer) ||
+          new Set(options.map(o => o.index)).size !== options.length ||
+          new Set(options.map(o => o.diagnostic)).size !== options.length ||
+          options.some(o => !choices[o.index] || !diagnostics[o.diagnostic])) continue;
+      const positions = diagnostics.map(n => ({node:n, parent:n.parentNode, next:n.nextSibling}));
+      const choiceNodes = choices.map(n => Array.from(n.childNodes));
+      const summary = solution.querySelector('summary');
+      const summaryText = summary ? summary.textContent : '';
+      const originalOpen = solution.open;
+      const originalHidden = solution.hidden;
+      let status, reset, help, notice;
+      try {
+        // Some future cards supply the caution only as metadata. Keep its full
+        // explanation in the solution panel, without duplicating existing prose.
+        const compact = text => text.replace(/\s+/g, '');
+        if (data.mode === 'ambiguous' && data.notice &&
+            !compact(solution.textContent).includes(compact(data.notice))) {
+          notice = element('p', 'review-notice', data.notice);
+          solution.append(notice);
+        }
+        const controls = options.map(o => {
+          const li = choices[o.index];
+          const button = element('button', 'review-choice');
+          button.type = 'button';
+          const complex = li.querySelector('a,button,input,select,textarea,table,div,p,figure,ul,ol');
+          if (complex) {
+            button.textContent = o.id + '번 선택';
+            const content = element('div', 'review-choice-content');
+            content.id = id + '-choice-content-' + o.index;
+            content.append(...Array.from(li.childNodes));
+            button.setAttribute('aria-describedby', content.id);
+            li.append(button, content);
+          } else {
+            button.append(...Array.from(li.childNodes));
+            li.append(button);
+          }
+          const badge = element('span', 'review-choice-label');
+          badge.hidden = true;
+          button.append(badge);
+          button.setAttribute('aria-pressed', 'false');
+          const list = element('ol', 'review-diagnostics');
+          list.id = id + '-review-diagnostics-' + o.index;
+          const diagnostic = diagnostics[o.diagnostic];
+          diagnostic.classList.add('review-diagnostic');
+          diagnostic.hidden = true;
+          list.append(diagnostic);
+          li.append(list);
+          return {id:o.id, button, badge, diagnostic, list};
+        });
+        help = element('p', 'review-help', '답을 선택하면 내 선택과 정답의 해설이 열려요. 다른 보기도 눌러 해설을 확인할 수 있어요.');
+        status = element('p', 'review-status');
+        status.setAttribute('role', 'status');
+        status.setAttribute('aria-live', 'polite');
+        reset = element('button', 'review-reset text-btn', '다시 풀기');
+        reset.type = 'button';
+        card.querySelector('.choices').before(help, status);
+        card.querySelector('.choices').after(reset);
+        const key = storageKey(model.documentId, id);
+        let selected = readAttempt(storage, key, data);
+        const expanded = new Set(selected === null ? [] : [selected, data.answer]);
+        function paintDisclosure(c) {
+          const answered = selected !== null;
+          const open = answered && expanded.has(c.id);
+          c.diagnostic.hidden = !open;
+          c.list.hidden = !open;
+          if (answered) {
+            c.button.setAttribute('aria-expanded', String(open));
+            c.button.setAttribute('aria-controls', c.list.id);
+          } else {
+            c.button.removeAttribute('aria-expanded');
+            c.button.removeAttribute('aria-controls');
+          }
+        }
+        function paint() {
+          const answered = selected !== null;
+          const result = grade(data, selected);
+          help.hidden = answered;
+          reset.hidden = !answered;
+          status.textContent = !answered ? '' : result === 'ambiguous'
+            ? '단일 정답 판정 주의'
+            : result === 'correct' ? '정답이에요.' : '정답이 아니에요. 보기별 이유를 확인해 보세요.';
+          status.dataset.result = result || '';
+          controls.forEach(c => {
+            c.button.dataset.selected = String(c.id === selected);
+            if (answered) c.button.removeAttribute('aria-pressed');
+            else c.button.setAttribute('aria-pressed', 'false');
+            c.button.dataset.result = !answered ? '' : c.id === data.answer
+              ? (data.mode === 'ambiguous' ? 'intended' : 'correct') : c.id === selected ? 'selected' : '';
+            c.badge.hidden = !answered;
+            c.badge.textContent = !answered ? '' : [
+              c.id === selected ? '내 선택' : '',
+              c.id === data.answer ? (data.mode === 'ambiguous' ? '출제 의도상 답' : '정답')
+                : data.mode === 'single' ? '정답 아님' : ''
+            ].filter(Boolean).join(' · ');
+            paintDisclosure(c);
+          });
+          solution.hidden = !answered;
+          solution.open = answered;
+          if (summary) summary.textContent = '추가 해설 · 수업과의 연결';
+        }
+        controls.forEach(c => c.button.addEventListener('click', () => {
+          if (selected !== null) {
+            if (expanded.has(c.id)) expanded.delete(c.id);
+            else expanded.add(c.id);
+            paintDisclosure(c);
+            return;
+          }
+          selected = c.id;
+          expanded.add(selected);
+          expanded.add(data.answer);
+          writeAttempt(storage, key, data, selected);
+          paint();
+          emit(id, selected, grade(data, selected));
+        }));
+        reset.addEventListener('click', () => {
+          selected = null;
+          expanded.clear();
+          writeAttempt(storage, key, data, null);
+          paint();
+          emit(id, null, null);
+          controls[0].button.focus();
+        });
+        card.classList.add('review-ready');
+        solution.classList.add('review-extra');
+        paint();
+        if (selected !== null) emit(id, selected, grade(data, selected), true);
+        else {
+          try {
+            if (storage.getItem(key) !== null) {
+              writeAttempt(storage, key, data, null);
+              emit(id, null, null, true);
+            }
+          } catch {}
+        }
+      } catch (error) {
+        // Keep a readable static question if enhancement cannot be completed.
+        choices.forEach((li, i) => li.replaceChildren(...choiceNodes[i]));
+        positions.slice().reverse().forEach(p => {
+          p.node.hidden = false;
+          p.node.classList.remove('review-diagnostic');
+          p.parent.insertBefore(p.node, p.next);
+        });
+        for (const el of [status, reset, help, notice]) if (el) el.remove();
+        solution.hidden = originalHidden;
+        solution.open = originalOpen;
+        if (summary) summary.textContent = summaryText;
+        solution.classList.remove('review-extra');
+        card.classList.remove('review-ready');
+        win.console.warn('문항 상호작용을 적용하지 못했습니다:', id, error);
+      }
+    }
+    // Existing page CSS hides side panels when printing. Move original details,
+    // including static questions, into their cards for print, then restore them.
+    if (!root.documentElement.dataset.reviewPrint) {
+      root.documentElement.dataset.reviewPrint = 'ready';
+      let printPositions = [];
+      win.addEventListener('beforeprint', () => {
+        if (printPositions.length) return;
+        root.querySelectorAll('.aid[data-card-id]').forEach(aid => {
+          const card = root.getElementById(aid.dataset.cardId);
+          if (!card) return;
+          Array.from(aid.children).forEach(node => {
+            printPositions.push({node, parent:aid, open:node.open});
+            if (node.tagName === 'DETAILS') node.open = true;
+            card.append(node);
+          });
+        });
+      });
+      win.addEventListener('afterprint', () => {
+        printPositions.forEach(p => {p.parent.append(p.node); p.node.open = p.open;});
+        printPositions = [];
+      });
+    }
+  }
+  const api = {grade, storageKey, readAttempt, writeAttempt, mount};
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else scope.ReviewInteraction = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
+</script>
+<script>(function () {
+      function start() {
+        try {
+          let storage = null;
+          try { storage = window.localStorage; } catch {}
+          ReviewInteraction.mount(document, JSON.parse(document.getElementById('review-interaction-model').textContent), storage);
+        } catch (error) { console.warn('복습문제 상호작용 초기화 실패:', error); }
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
+      else start();
+    })();</script>
+<!-- review-interaction:end -->
 </body>
 </html>

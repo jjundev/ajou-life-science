@@ -61,6 +61,18 @@ const textNodes = Array.from(document.querySelectorAll('main *, #panel-right *')
 `resize_window`(`preset: "mobile"`, `colorScheme: "dark"`) → 새로고침 → `clientWidth > 0` 확인 → 위 스크립트 재실행(`hScroll: []`) → 스크린샷으로 그림·위젯 글자가 보이는지 확인 → 상단 바의 테마 버튼(`#theme-toggle`)을 눌러 `document.body` 배경색이 바뀌고 `aria-label`이 반대 모드로 바뀌는지 확인한 뒤 `localStorage.removeItem('od-theme')`로 지운다 → `preset: "desktop"`, `colorScheme: "light"`로 되돌린다.
 
 ## 복습문제
+### 선택·채점 필수 확인
+
+- 추가 해설이 있는 문항은 중앙에 짧은 판정만 표시되고, 긴 추가 설명은 오른쪽 패널에 한 번만 표시되는지 확인한다.
+
+- 보기 선택 전 해설이 숨겨지고, 정답을 선택하면 한 개, 오답을 선택하면 내 선택과 정답 두 개의 해설만 펼쳐지는지 확인한다.
+- ‘틀린 것을 고르시오’는 문장의 참·거짓과 답 여부를 혼동하지 않는다. 모호한 기출은 ‘단일 정답 판정 주의’와 출제 의도상 답을 표시한다.
+- 제출 뒤 각 보기를 클릭하면 그 해설만 접거나 펼치고 답은 바꾸지 않는다. Enter/Space로도 동작하며 aria-expanded와 실제 표시가 일치해야 한다. 다시 풀기는 해설·선택·완료 표시를 초기화하고 첫 보기로 포커스를 돌린다.
+- 새로고침·화면 이동 뒤 선택이 유지된다. 저장 차단·잘못된 저장값은 풀이를 막지 않는다.
+- Tab/Enter/Space, 390px/1280px, 밝은/어두운 테마, 비JavaScript 정적 풀이, 인쇄 해설을 확인한다.
+- 그림·수식 노드 수와 id가 늘어나지 않는다. 인쇄가 끝나면 추가 해설이 오른쪽 패널로 돌아간다.
+- 회귀 검사는 `python .agents/skills/bio-review-pack/tests/browser_check_review.py`로 실행한다(개발 환경의 Playwright/Chromium 필요, 생성 HTML에는 추가 의존성 없음).
+
 측정 전에 다시 `resize_window`(`width: 1280`, `height: 900`) → `clientWidth > 0` 확인(앞 단계의 `preset: "desktop"`은 창 크기를 창 자체 크기로 되돌려 숨은 창에서는 0이 될 수 있다). 이번에도 `overflowScreens` 정의를 붙여 넣는다.
 ```js
 await new Promise((r) => setTimeout(r, 1500));

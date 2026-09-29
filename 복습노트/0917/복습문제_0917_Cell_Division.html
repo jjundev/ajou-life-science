@@ -996,6 +996,7 @@
         cards.forEach((card) => {
           const g = document.createElement('div');
           g.className = 'aid';
+          g.dataset.cardId = card.id;
           g.hidden = true;
           card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
           aids.appendChild(g);
@@ -1012,6 +1013,15 @@
           if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
           store.set(KEY, Array.from(solved));
           paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:answer', ({detail}) => {
+          if (!cards.some(c => c.id === detail.id)) return;
+          if (detail.restored && detail.selected !== null) return;
+          if (detail.selected === null) solved.delete(detail.id);
+          else solved.add(detail.id);
+          store.set(KEY, Array.from(solved));
+          if (curId) paintBtn();
           markToc(solved, cards.length, '푼 문제');
         });
         document.addEventListener('od:screen', (e) => {
@@ -1179,5 +1189,279 @@
       fromUrl();
     })();
   </script>
+<!-- review-interaction:start -->
+<style>
+/* Progressive enhancement: original source remains readable without scripts. */
+.review-ready .choices { list-style:none; padding:0; }
+.review-ready .choices > li { margin:0 0 var(--s3); }
+.review-choice {
+  display:block; width:100%; min-height:44px; text-align:left; font:inherit;
+  color:var(--ink); background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:12px 16px; cursor:pointer; overflow-wrap:anywhere;
+}
+.review-choice:hover { border-color:var(--accent); }
+.review-choice:focus-visible, .review-reset:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+.review-choice[aria-expanded] { position:relative; padding-right:44px; }
+.review-choice[aria-expanded]::after { content:""; position:absolute; right:18px; top:20px; width:8px; height:8px; border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor; transform:rotate(45deg); }
+.review-choice[aria-expanded="true"]::after { transform:rotate(225deg); top:24px; }
+.review-choice[data-result="correct"], .review-choice[data-result="intended"] { border-color:var(--accent); }
+.review-choice[data-selected="true"] { box-shadow:inset 0 0 0 1px var(--ink); }
+.review-choice-label { display:block; margin-top:6px; font-size:var(--fs-small); font-weight:700; color:var(--ink); }
+.review-choice-label[hidden], .review-diagnostic[hidden], .review-extra[hidden],
+.review-help[hidden], .review-reset[hidden], .review-diagnostics[hidden] { display:none; }
+.review-diagnostics { list-style:none; padding:0; margin:0; }
+.review-diagnostic { padding:12px 16px 8px; color:var(--ink-2); overflow-wrap:anywhere; }
+.review-status { margin:var(--s3) 0; font-weight:650; }
+.review-status:empty { display:none; }
+.review-help { color:var(--ink-2); font-size:var(--fs-small); }
+.review-reset { min-height:44px; margin:var(--s2) 0 var(--s4); }
+.review-choice-content { padding:var(--s2) 0; }
+@media print {
+  .review-reset, .review-status, .review-help, .review-choice-label { display:none !important; }
+  .review-diagnostic[hidden] { display:list-item !important; }
+  .review-diagnostics[hidden] { display:block !important; }
+  .review-choice::after { display:none; }
+  .review-extra[hidden] { display:block !important; }
+  .review-choice { border:0; box-shadow:none !important; padding:0; }
+}
+
+</style>
+<script id="review-interaction-model" type="application/json">{"cards": {"p1": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "99765310fc3e1176e812ff71df930e6915b158341f4a747126b830bda2ab5153"}, "p10": {"answer": "5", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "eb7143942bab2e7f5f6d265e3dbe44c347cd37bd18566b97d47497d7489107ed"}, "p11": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "1eba1d9d4d0b6f730de1ac3aa922badfa8961a0288abf14da7332f8b6493b08c"}, "p12": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "cec3bc8d4c6e8c4e1898e0e7fbf316ac20586bf407516e7777beb446046dfd32"}, "p13": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "6d5539988dc0676f624e3d615c3ee4c71f7d56007ca4ce702f86a7ffc2f07a1a"}, "p14": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "4519c721d6cc01e5e01bcd700b8328583ee59822182bfa6c98df83902947dcca"}, "p15": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "20e944595eb1981a0814e866a7c855d5b6a543a56c41474907545706ba7725cf"}, "p16": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "9c28129456f0a6c7582882924eb016b07888662154340cf7e39932eab90f54f5"}, "p17": {"answer": "5", "mode": "ambiguous", "notice": "인쇄된 답안지의 답도 (5)예요. 다만 현대 세포생물학에서는 S기가 진행되는 도중에 DNA 손상을 점검하는 장치(S기 안의 점검)도 소개되기 때문에 (5)를 옳은 설명으로 볼 여지가 있어요. 나머지 (1)~(4)가 모두 확실히 옳으므로, 수업 모형에 따른 출제 의도상 답은 (5)예요.", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "2a0f5f61507517f5936a85a4d73d21171bc11cbd0d89c32f003fab593f3bb29c"}, "p18": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "1d32296da2223a6e75e9347347a8bf681bb3c02e4465ec6d137c5c3ef4eb3054"}, "p19": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "cb1efaa49c243a9f457ae93563e460067fdc30a6df82781b46f2fcde6a30544f"}, "p2": {"answer": "4", "mode": "ambiguous", "notice": "인쇄된 답과 같지만, 보기 (1)도 넓게 읽으면 성립할 여지가 있어요. 확인점은 DNA 손상(끊어짐 포함)을 발견하면 세포주기를 멈추고 수선할 시간을 주기 때문이에요. 출제 의도는 수업에서 직접 든 'S기에 DNA가 다 복제되었는지'를 고르는 것이라 (4)를 답으로 두었어요.", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "8eb64811ac6159d47194f167412478e22e74ef5370e42088592b3dc3fdf42911"}, "p20": {"answer": "5", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "8047b8d11acbf2506ba13e493287b51f32d10613048b9522682bf69216b4dffa"}, "p21": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "b42a97a95077599810b7621ceb866de811417c7f6744c64b7f7f7ac4aee76054"}, "p22": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "4d5d5117cb8e28ae2b22f33da10e6c7101547a982a976c92bbdeab41031cdc1b"}, "p23": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "e4c1256f192e49598801164ceb169ecc0398ffb0eff568663947529a5ba4778b"}, "p24": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "dfd1fcb255f10e2c2353abffba8bb51273e61f79adc8823ce3ec1de93e5fece1"}, "p25": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "cbf8489783b42ccf957c826f57e89b077f03f6d76aa2c8b9befaee2896e2eb47"}, "p26": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "063de357370321efb9ea87fcc8177c321adc82b1de787a3afa22e55e771c0768"}, "p27": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "12ea3e3d33a21283725f8dca9feb34d3242fb0cf73222800277125e719f1663a"}, "p28": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "dfa8b53c123a9bc1e9312eb9342c18cf310d8e2b8e6b8dea731eda6eeff67121"}, "p29": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "4451590bf6093db7da69af050dbb85646c5a0c5067ca29bd63be583d711a76ae"}, "p3": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "2cf35208dbba5ecd57d610d7974dba208fbb842279ca62365c66cacd3ce0b614"}, "p4": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "9880696aa89a236dfa58a22c35e11b4abd7833c978a0ed8cef48faa1a7fb8c86"}, "p5": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "9cfc751a9fac20f8b8720a05edaec086e7890aa47cbe63b2394611389fbb554b"}, "p6": {"answer": "5", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "eb3dcaaf339cc4022419fe1d79bbc721d9978c2454721633a440420748163a57"}, "p7": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "3ec41f7e6dc0ab414efb90f04bbf907bedb02afa300282ff80d301089192f298"}, "p8": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "f3657499b234197196f202d8764f88f6b4d26ebb022d32f54b707c69b018b3bc"}, "p9": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "b9c98786eaaf5f21c1fc21bfcc5b293b8d6f210bf288da4aa26f8ced399fcd16"}}, "documentId": "복습문제_0917_Cell_Division.html", "errors": [], "schema": 1, "skipped": []}</script>
+<script>
+(function (scope) {
+  'use strict';
+  function grade(card, selected) {
+    if (!card.options.some(o => o.id === selected)) return null;
+    if (card.mode === 'ambiguous') return 'ambiguous';
+    return selected === card.answer ? 'correct' : 'incorrect';
+  }
+  function storageKey(documentId, cardId) {
+    return 'od-review-attempt:v1:' + encodeURIComponent(documentId) + ':' + encodeURIComponent(cardId);
+  }
+  function readAttempt(storage, key, card) {
+    try {
+      const value = JSON.parse(storage.getItem(key));
+      return value && value.version === card.version && grade(card, value.selected) !== null ? value.selected : null;
+    } catch { return null; }
+  }
+  function writeAttempt(storage, key, card, selected) {
+    try {
+      if (selected === null) storage.removeItem(key);
+      else storage.setItem(key, JSON.stringify({version:card.version, selected}));
+    } catch {}
+  }
+  function mount(root, model, storage) {
+    if (!model || model.schema !== 1 || !model.cards) return;
+    const win = root.defaultView;
+    const emit = (id, selected, result, restored = false) => root.dispatchEvent(
+      new win.CustomEvent('od:answer', {detail:{id, selected, result, restored}}));
+    const element = (tag, cls, text) => {
+      const el = root.createElement(tag);
+      el.className = cls;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    };
+    for (const [id, data] of Object.entries(model.cards)) {
+      const card = root.getElementById(id);
+      if (!card || card.classList.contains('review-ready')) continue;
+      const aid = Array.from(root.querySelectorAll('.aid')).find(n => n.dataset.cardId === id);
+      const solution = (aid || card).querySelector('details.solution');
+      const choices = Array.from(card.querySelectorAll('.choices > li'));
+      const diagnostics = solution ? Array.from(solution.querySelectorAll('ol.steps > li')) : [];
+      const options = data.options;
+      // Validate every reference before moving a single original node.
+      if (!solution || !Array.isArray(options) || choices.length !== options.length ||
+          !options.length || !options.some(o => o.id === data.answer) ||
+          new Set(options.map(o => o.index)).size !== options.length ||
+          new Set(options.map(o => o.diagnostic)).size !== options.length ||
+          options.some(o => !choices[o.index] || !diagnostics[o.diagnostic])) continue;
+      const positions = diagnostics.map(n => ({node:n, parent:n.parentNode, next:n.nextSibling}));
+      const choiceNodes = choices.map(n => Array.from(n.childNodes));
+      const summary = solution.querySelector('summary');
+      const summaryText = summary ? summary.textContent : '';
+      const originalOpen = solution.open;
+      const originalHidden = solution.hidden;
+      let status, reset, help, notice;
+      try {
+        // Some future cards supply the caution only as metadata. Keep its full
+        // explanation in the solution panel, without duplicating existing prose.
+        const compact = text => text.replace(/\s+/g, '');
+        if (data.mode === 'ambiguous' && data.notice &&
+            !compact(solution.textContent).includes(compact(data.notice))) {
+          notice = element('p', 'review-notice', data.notice);
+          solution.append(notice);
+        }
+        const controls = options.map(o => {
+          const li = choices[o.index];
+          const button = element('button', 'review-choice');
+          button.type = 'button';
+          const complex = li.querySelector('a,button,input,select,textarea,table,div,p,figure,ul,ol');
+          if (complex) {
+            button.textContent = o.id + '번 선택';
+            const content = element('div', 'review-choice-content');
+            content.id = id + '-choice-content-' + o.index;
+            content.append(...Array.from(li.childNodes));
+            button.setAttribute('aria-describedby', content.id);
+            li.append(button, content);
+          } else {
+            button.append(...Array.from(li.childNodes));
+            li.append(button);
+          }
+          const badge = element('span', 'review-choice-label');
+          badge.hidden = true;
+          button.append(badge);
+          button.setAttribute('aria-pressed', 'false');
+          const list = element('ol', 'review-diagnostics');
+          list.id = id + '-review-diagnostics-' + o.index;
+          const diagnostic = diagnostics[o.diagnostic];
+          diagnostic.classList.add('review-diagnostic');
+          diagnostic.hidden = true;
+          list.append(diagnostic);
+          li.append(list);
+          return {id:o.id, button, badge, diagnostic, list};
+        });
+        help = element('p', 'review-help', '답을 선택하면 내 선택과 정답의 해설이 열려요. 다른 보기도 눌러 해설을 확인할 수 있어요.');
+        status = element('p', 'review-status');
+        status.setAttribute('role', 'status');
+        status.setAttribute('aria-live', 'polite');
+        reset = element('button', 'review-reset text-btn', '다시 풀기');
+        reset.type = 'button';
+        card.querySelector('.choices').before(help, status);
+        card.querySelector('.choices').after(reset);
+        const key = storageKey(model.documentId, id);
+        let selected = readAttempt(storage, key, data);
+        const expanded = new Set(selected === null ? [] : [selected, data.answer]);
+        function paintDisclosure(c) {
+          const answered = selected !== null;
+          const open = answered && expanded.has(c.id);
+          c.diagnostic.hidden = !open;
+          c.list.hidden = !open;
+          if (answered) {
+            c.button.setAttribute('aria-expanded', String(open));
+            c.button.setAttribute('aria-controls', c.list.id);
+          } else {
+            c.button.removeAttribute('aria-expanded');
+            c.button.removeAttribute('aria-controls');
+          }
+        }
+        function paint() {
+          const answered = selected !== null;
+          const result = grade(data, selected);
+          help.hidden = answered;
+          reset.hidden = !answered;
+          status.textContent = !answered ? '' : result === 'ambiguous'
+            ? '단일 정답 판정 주의'
+            : result === 'correct' ? '정답이에요.' : '정답이 아니에요. 보기별 이유를 확인해 보세요.';
+          status.dataset.result = result || '';
+          controls.forEach(c => {
+            c.button.dataset.selected = String(c.id === selected);
+            if (answered) c.button.removeAttribute('aria-pressed');
+            else c.button.setAttribute('aria-pressed', 'false');
+            c.button.dataset.result = !answered ? '' : c.id === data.answer
+              ? (data.mode === 'ambiguous' ? 'intended' : 'correct') : c.id === selected ? 'selected' : '';
+            c.badge.hidden = !answered;
+            c.badge.textContent = !answered ? '' : [
+              c.id === selected ? '내 선택' : '',
+              c.id === data.answer ? (data.mode === 'ambiguous' ? '출제 의도상 답' : '정답')
+                : data.mode === 'single' ? '정답 아님' : ''
+            ].filter(Boolean).join(' · ');
+            paintDisclosure(c);
+          });
+          solution.hidden = !answered;
+          solution.open = answered;
+          if (summary) summary.textContent = '추가 해설 · 수업과의 연결';
+        }
+        controls.forEach(c => c.button.addEventListener('click', () => {
+          if (selected !== null) {
+            if (expanded.has(c.id)) expanded.delete(c.id);
+            else expanded.add(c.id);
+            paintDisclosure(c);
+            return;
+          }
+          selected = c.id;
+          expanded.add(selected);
+          expanded.add(data.answer);
+          writeAttempt(storage, key, data, selected);
+          paint();
+          emit(id, selected, grade(data, selected));
+        }));
+        reset.addEventListener('click', () => {
+          selected = null;
+          expanded.clear();
+          writeAttempt(storage, key, data, null);
+          paint();
+          emit(id, null, null);
+          controls[0].button.focus();
+        });
+        card.classList.add('review-ready');
+        solution.classList.add('review-extra');
+        paint();
+        if (selected !== null) emit(id, selected, grade(data, selected), true);
+        else {
+          try {
+            if (storage.getItem(key) !== null) {
+              writeAttempt(storage, key, data, null);
+              emit(id, null, null, true);
+            }
+          } catch {}
+        }
+      } catch (error) {
+        // Keep a readable static question if enhancement cannot be completed.
+        choices.forEach((li, i) => li.replaceChildren(...choiceNodes[i]));
+        positions.slice().reverse().forEach(p => {
+          p.node.hidden = false;
+          p.node.classList.remove('review-diagnostic');
+          p.parent.insertBefore(p.node, p.next);
+        });
+        for (const el of [status, reset, help, notice]) if (el) el.remove();
+        solution.hidden = originalHidden;
+        solution.open = originalOpen;
+        if (summary) summary.textContent = summaryText;
+        solution.classList.remove('review-extra');
+        card.classList.remove('review-ready');
+        win.console.warn('문항 상호작용을 적용하지 못했습니다:', id, error);
+      }
+    }
+    // Existing page CSS hides side panels when printing. Move original details,
+    // including static questions, into their cards for print, then restore them.
+    if (!root.documentElement.dataset.reviewPrint) {
+      root.documentElement.dataset.reviewPrint = 'ready';
+      let printPositions = [];
+      win.addEventListener('beforeprint', () => {
+        if (printPositions.length) return;
+        root.querySelectorAll('.aid[data-card-id]').forEach(aid => {
+          const card = root.getElementById(aid.dataset.cardId);
+          if (!card) return;
+          Array.from(aid.children).forEach(node => {
+            printPositions.push({node, parent:aid, open:node.open});
+            if (node.tagName === 'DETAILS') node.open = true;
+            card.append(node);
+          });
+        });
+      });
+      win.addEventListener('afterprint', () => {
+        printPositions.forEach(p => {p.parent.append(p.node); p.node.open = p.open;});
+        printPositions = [];
+      });
+    }
+  }
+  const api = {grade, storageKey, readAttempt, writeAttempt, mount};
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else scope.ReviewInteraction = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
+</script>
+<script>(function () {
+      function start() {
+        try {
+          let storage = null;
+          try { storage = window.localStorage; } catch {}
+          ReviewInteraction.mount(document, JSON.parse(document.getElementById('review-interaction-model').textContent), storage);
+        } catch (error) { console.warn('복습문제 상호작용 초기화 실패:', error); }
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
+      else start();
+    })();</script>
+<!-- review-interaction:end -->
 </body>
 </html>

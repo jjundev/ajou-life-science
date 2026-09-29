@@ -12,6 +12,7 @@ CLI:
 from __future__ import annotations
 
 import argparse
+import json
 from collections import defaultdict
 from dataclasses import dataclass, field
 from html.parser import HTMLParser
@@ -244,6 +245,16 @@ def check_common(doc: Doc, source: str, path: Path) -> list[Problem]:
     out += [Problem("leftover-slot", name, s) for s in sorted(set(SLOT_RE.findall(source)))]
     out += [Problem("widget-static-missing", wid, "위젯에 .widget-static 정적 대체물이 없음")
             for wid, classes in sorted(doc.widgets.items()) if "widget-static" not in classes]
+    if 'review-interaction-model' in doc.scripts_by_id:
+        import review_interaction
+        try:
+            model = json.loads(doc.scripts_by_id['review-interaction-model'])
+            out += [Problem('review-interaction', e['cardId'] or name, e['reason'])
+                    for e in review_interaction.validate_model(source, model)]
+            if isinstance(model, dict) and model.get('documentId') != name:
+                out.append(Problem('review-interaction', name, '문서 식별자 불일치'))
+        except (ValueError, TypeError, KeyError) as exc:
+            out.append(Problem('review-interaction', name, str(exc)))
     return out
 
 

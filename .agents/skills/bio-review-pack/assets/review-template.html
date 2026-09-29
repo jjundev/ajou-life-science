@@ -605,6 +605,7 @@
         cards.forEach((card) => {
           const g = document.createElement('div');
           g.className = 'aid';
+          g.dataset.cardId = card.id;
           g.hidden = true;
           card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
           aids.appendChild(g);
@@ -621,6 +622,15 @@
           if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
           store.set(KEY, Array.from(solved));
           paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:answer', ({detail}) => {
+          if (!cards.some(c => c.id === detail.id)) return;
+          if (detail.restored && detail.selected !== null) return;
+          if (detail.selected === null) solved.delete(detail.id);
+          else solved.add(detail.id);
+          store.set(KEY, Array.from(solved));
+          if (curId) paintBtn();
           markToc(solved, cards.length, '푼 문제');
         });
         document.addEventListener('od:screen', (e) => {

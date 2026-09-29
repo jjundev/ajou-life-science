@@ -1,0 +1,211 @@
+"""Validated choice/diagnostic mapping and self-contained review enhancement."""
+from __future__ import annotations
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import re
+from html2md import Builder, Node
+
+SKILL = Path(__file__).resolve().parent.parent
+LABEL = re.compile(r'^\s*(?:\((\d+)\)|([A-Z])[.)])\s*')
+ANSWER = re.compile(r'^\s*정답:\s*(?:\((\d+)\)|([A-Z]))\s*$')
+CAUTION = re.compile(r'모호|모두 가능|단일 정답|엄밀한.*정답|복수.?정답|답이 하나|성립할 여지|해석에 따라|옳은 설명으로 볼 여지|완전히 옳다고 보기 어려|같은 뜻이 되지만|자료도 있으니')
+
+
+def find(node, cls):
+    return list(node.find_all(lambda n: cls in n.classes))
+
+
+def children(node, tag):
+    return [n for n in node.children if isinstance(n, Node) and n.tag == tag]
+
+
+def label(node, attr):
+    explicit = node.attrs.get(attr)
+    if explicit:
+        if not re.fullmatch(r'\d+|[A-Z]', explicit):
+            raise ValueError('보기 식별자 형식 오류')
+        return explicit
+    match = LABEL.match(node.text())
+    if not match:
+        return None
+    return next(g for g in match.groups() if g is not None)
+
+
+def snapshot(node):
+    if isinstance(node, str):
+        return node
+    return [node.tag, sorted(node.attrs.items()), [snapshot(n) for n in node.children]]
+
+
+def load_overrides():
+    path = SKILL / 'references/interactive-overrides.json'
+    return json.loads(path.read_text(encoding='utf-8')) if path.exists() else {}
+
+
+def build_model(source: str, document_id: str, overrides: dict | None = None) -> dict:
+    tree = Builder()
+    tree.feed(source)
+    result = dict(schema=1, documentId=document_id, cards={}, skipped=[], errors=[])
+    overrides = (load_overrides() if overrides is None else overrides).get(document_id, {})
+    seen = set()
+    for card in find(tree.root, 'card'):
+        cid = card.attrs.get('id', '')
+        try:
+            if not cid or cid in seen:
+                raise ValueError('문항 id 누락 또는 중복')
+            seen.add(cid)
+            lists = find(card, 'choices')
+            if not lists:
+                result['skipped'].append(cid)
+                continue
+            if len(lists) != 1:
+                raise ValueError('보기 목록은 하나여야 함')
+            choices = children(lists[0], 'li')
+            solutions = find(card, 'solution')
+            answers = find(card, 'answer')
+            if len(solutions) != 1 or len(answers) != 1:
+                raise ValueError('풀이 또는 정답이 없거나 중복됨')
+            steps = find(solutions[0], 'steps')
+            if len(steps) != 1:
+                raise ValueError('보기별 해설 목록이 없거나 중복됨')
+            diagnostics = children(steps[0], 'li')
+            match = ANSWER.fullmatch(answers[0].text())
+            if not match:
+                raise ValueError('명시 정답 형식을 해석할 수 없음')
+            answer = next(g for g in match.groups() if g is not None)
+            ids = [label(n, 'data-choice') for n in choices]
+            if len(ids) < 2 or None in ids or len(set(ids)) != len(ids) or answer not in ids:
+                raise ValueError('보기 식별자 누락/중복 또는 정답이 보기에 없음')
+            override = overrides.get(cid, {})
+            mapping = {}
+            for i, n in enumerate(diagnostics):
+                key = label(n, 'data-explains')
+                if key is not None:
+                    if key in mapping:
+                        raise ValueError('보기별 해설 식별자 중복')
+                    mapping[key] = i
+            mapping.update(override.get('diagnostics', {}))
+            positions = [mapping.get(key) for key in ids]
+            if any(type(i) is not int or not 0 <= i < len(diagnostics) for i in positions):
+                raise ValueError('보기별 해설 연결 누락 또는 범위 오류')
+            if len(set(positions)) != len(positions):
+                raise ValueError('여러 보기에 동일 해설 연결')
+            mode = override.get('mode', card.attrs.get('data-grade-mode', 'single'))
+            notice = override.get('notice', card.attrs.get('data-grade-notice', ''))
+            if mode not in ('single', 'ambiguous') or (mode == 'ambiguous' and not notice.strip()):
+                raise ValueError('채점 모드 또는 모호성 설명 오류')
+            if CAUTION.search(solutions[0].text()) and 'mode' not in override and 'data-grade-mode' not in card.attrs:
+                raise ValueError('모호성 문구 수동 검토 필요')
+            model = dict(answer=answer, mode=mode, notice=notice,
+                         options=[dict(id=key, index=i, diagnostic=mapping[key]) for i, key in enumerate(ids)])
+            payload = json.dumps([snapshot(card), model], ensure_ascii=False, sort_keys=True)
+            model['version'] = hashlib.sha256(payload.encode('utf-8')).hexdigest()
+            result['cards'][cid] = model
+        except ValueError as exc:
+            result['cards'].pop(cid, None)
+            result['errors'].append(dict(cardId=cid, reason=str(exc)))
+    return result
+
+
+def validate_model(source: str, model: dict) -> list[dict]:
+    if not isinstance(model, dict):
+        return [dict(cardId='', reason='채점 모델은 객체여야 함')]
+    expected = build_model(source, model.get('documentId', ''))
+    errors = list(expected['errors'])
+    if model != expected:
+        errors.append(dict(cardId='', reason='내장 채점 데이터와 원본이 일치하지 않음'))
+    return errors
+
+
+START = '<!-- review-interaction:start -->'
+END = '<!-- review-interaction:end -->'
+BLOCK = re.compile(re.escape(START) + r'.*?' + re.escape(END) + r'\n?', re.S)
+ANSWER_EVENT = """        document.addEventListener('od:answer', ({detail}) => {
+          if (!cards.some(c => c.id === detail.id)) return;
+          if (detail.restored && detail.selected !== null) return;
+          if (detail.selected === null) solved.delete(detail.id);
+          else solved.add(detail.id);
+          store.set(KEY, Array.from(solved));
+          if (curId) paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+"""
+
+
+def patch_review_shell(source: str) -> str:
+    if 'function setupReview()' not in source:
+        return source
+    begin = source.index('function setupReview()')
+    end = source.index('function setupNote()', begin)
+    section = source[begin:end]
+    if "g.dataset.cardId = card.id;" not in section:
+        needle = "g.className = 'aid';"
+        if section.count(needle) != 1:
+            raise ValueError('setupReview aid 구조 불일치')
+        section = section.replace(needle, needle + '\n          g.dataset.cardId = card.id;')
+    if "document.addEventListener('od:answer'" not in section:
+        needle = "        document.addEventListener('od:screen', (e) => {"
+        if section.count(needle) != 1:
+            raise ValueError('setupReview 이벤트 구조 불일치')
+        section = section.replace(needle, ANSWER_EVENT + needle)
+    elif 'if (detail.restored && detail.selected !== null) return;' not in section:
+        needle = "          if (!cards.some(c => c.id === detail.id)) return;"
+        if section.count(needle) != 1:
+            raise ValueError('setupReview 완료 상태 연결 구조 불일치')
+        section = section.replace(needle, needle + '\n          if (detail.restored && detail.selected !== null) return;')
+    return source[:begin] + section + source[end:]
+
+
+def install(source: str, document_id: str, overrides: dict | None = None, strict: bool = True) -> str:
+    source = BLOCK.sub('', source)
+    source = patch_review_shell(source)
+    model = build_model(source, document_id, overrides)
+    if strict and model['errors']:
+        raise ValueError(json.dumps(model['errors'], ensure_ascii=False))
+    if source.count('</body>') != 1:
+        raise ValueError('body 종료 태그는 하나여야 함')
+    payload = json.dumps(model, ensure_ascii=False, sort_keys=True).replace('<', '\\u003c')
+    css = (SKILL / 'assets/review-interaction.css').read_text(encoding='utf-8')
+    js = (SKILL / 'assets/review-interaction.js').read_text(encoding='utf-8')
+    boot = """(function () {
+      function start() {
+        try {
+          let storage = null;
+          try { storage = window.localStorage; } catch {}
+          ReviewInteraction.mount(document, JSON.parse(document.getElementById('review-interaction-model').textContent), storage);
+        } catch (error) { console.warn('복습문제 상호작용 초기화 실패:', error); }
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
+      else start();
+    })();"""
+    block = (START + '\n<style>\n' + css + '\n</style>\n'
+             + '<script id="review-interaction-model" type="application/json">' + payload + '</script>\n'
+             + '<script>\n' + js + '\n</script>\n<script>' + boot + '</script>\n' + END + '\n')
+    return source.replace('</body>', block + '</body>')
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument('--root', type=Path, required=True)
+    ap.add_argument('--audit', action='store_true')
+    ap.add_argument('--write', action='store_true')
+    args = ap.parse_args()
+    failed = False
+    pending = []
+    for path in sorted(args.root.glob('*/복습문제_*.html')):
+        model = build_model(path.read_text(encoding='utf-8'), path.name)
+        failed |= bool(model['errors'])
+        if args.write and not model['errors']:
+            pending.append((path, install(path.read_text(encoding='utf-8'), path.name)))
+        print(json.dumps(dict(file=path.name, interactive=len(model['cards']), skipped=model['skipped'], errors=model['errors']), ensure_ascii=False))
+    if args.write and not failed:
+        for path, output in pending:
+            if path.read_text(encoding='utf-8') != output:
+                path.write_text(output, encoding='utf-8')
+    return int(failed)
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

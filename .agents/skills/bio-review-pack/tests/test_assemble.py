@@ -20,6 +20,8 @@ class TestAssemble(unittest.TestCase):
         shutil.rmtree(self.tmp)
 
     def test_output_names(self):
+        self.assertIn('id="review-interaction-model"', self.review_html)
+        self.assertNotIn('id="review-interaction-model"', self.note_html)
         self.assertEqual(self.note.name, "정리노트_0101-0102_Mini_Test.html")
         self.assertEqual(self.review.name, "복습문제_0101-0102_Mini_Test.html")
 
