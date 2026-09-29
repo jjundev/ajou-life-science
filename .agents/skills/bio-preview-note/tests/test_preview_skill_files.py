@@ -65,6 +65,12 @@ class TestSkillFiles(unittest.TestCase):
         guide = (SKILL / "references" / "manifest-guide.md").read_text(encoding="utf-8")
         self.assertIn("장 경계", guide)
 
+    def test_content_rules_height_budget(self):
+        rules = (SKILL / "references" / "content-rules.md").read_text(encoding="utf-8")
+        for needle in ("높이 예산", "650px", "130px", "560×140", "<p><b>"):
+            with self.subTest(needle=needle):
+                self.assertIn(needle, rules)
+
     def test_textbook_thumbnail_snippet_finds_nfd_file(self):
         try:
             import fitz  # noqa: F401

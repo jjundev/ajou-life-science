@@ -158,7 +158,7 @@ python3 "$SKILL/scripts/preview_check.py" --manifest "$RUN/manifest.json" --note
 ```
 - `FAIL`이면 Problem의 `where`(토픽·섹션 id)로 담당 작성자를 찾아 문제 목록을 보낸다(SendMessage, 안 되면 같은 브리프로 새 에이전트).
 - `topic-long`·`eli5-long`·`listen-long`은 "줄여 주세요"로 보낸다. 내용을 다른 토픽으로 옮기지 말고 덜 중요한 문장을 뺀다.
-- `figure`·`figure-source`는 참고 PNG를 보고 SVG를 그리거나 figcaption 출처를 채우게 한다. `textbook-image`는 `<img>`를 지우고 SVG로 다시 그리게 한다.
+- `figure`·`figure-source`는 참고 PNG를 보고 SVG를 그리거나 figcaption 출처를 채우게 한다. `figure-size`는 viewBox를 560×110~140으로 낮추게 한다(content-rules "높이 예산"). `textbook-image`는 `<img>`를 지우고 SVG로 다시 그리게 한다.
 - `exam-mark`는 manifest `exam_terms`와 들을 때 포인트를 맞추게 한다. 배지를 지우는 것으로 맞추지 않는다(1단계 5의 결과가 근거다).
 - 고친 뒤 4단계(조립)부터 다시 한다. 최대 2회, 그래도 남으면 "미해결"로 보고한다.
 

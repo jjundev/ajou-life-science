@@ -148,6 +148,24 @@ class TestPreviewCheck(unittest.TestCase):
         self.patch("s1", '<rect x="10"', '<image href="data:image/png;base64,AAAA" width="160" height="40"/><rect x="10"')
         self.assertIn(("textbook-image", "예습노트_0101_Mini_Preview.html"), self.codes())
 
+    def test_figure_too_tall(self):
+        # 가로:세로 4:1보다 세로로 길면 720×900 한 화면을 넘기 쉽다(0929 첫 초안 560×200)
+        self.patch("s1", 'viewBox="0 0 160 40"', 'viewBox="0 0 560 200"')
+        self.assertIn(("figure-size", "s1-dihybrid"), self.codes())
+
+    def test_figure_too_wide(self):
+        # 템플릿 .figure svg max-width 560px: 폭이 넓으면 12px 글자가 9px대로 줄어든다
+        self.patch("s1", 'viewBox="0 0 160 40"', 'viewBox="0 0 820 200"')
+        self.assertIn(("figure-size", "s1-dihybrid"), self.codes())
+
+    def test_figure_size_ok_at_budget(self):
+        self.patch("s1", 'viewBox="0 0 160 40"', 'viewBox="0 0 560 140"')
+        self.assertNotIn(("figure-size", "s1-dihybrid"), self.codes())
+
+    def test_figure_without_viewbox(self):
+        self.patch("s1", 'viewBox="0 0 160 40"', 'width="560" height="140"')
+        self.assertIn(("figure-size", "s1-dihybrid"), self.codes())
+
     def test_helpers(self):
         self.assertEqual(pc.visible_chars("가 나 $x^2$ $$y$$ 다"), 3)
         self.assertEqual(pc.sentences(" 하나예요. 둘이에요? 셋 "), 3)

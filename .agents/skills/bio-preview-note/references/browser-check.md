@@ -46,7 +46,7 @@ const textNodes = Array.from(document.querySelectorAll('main *, #panel-right *')
   ...(await measureScreens()),
 })
 ```
-통과: `brand: "예습노트"`, `katexErrors: 0`, `rawDollar: false`, `sumsInPanel`이 manifest에서 `layers`가 빈 목록이 아닌 토픽 수, `sumsLeftInMain: 0`, `widgets: 0`, `examBadges`가 `exam_terms`가 비어 있지 않은 토픽 수, `over: []`, `tall: []`. `tall`에 나온 토픽은 작성자에게 "720×900 한 화면에 들어가게 줄여 주세요"로 되돌린다. `read_console_messages`에 오류가 없어야 한다.
+통과: `brand: "예습노트"`, `katexErrors: 0`, `rawDollar: false`, `sumsInPanel`이 manifest에서 `layers`가 빈 목록이 아닌 토픽 수, `sumsLeftInMain: 0`, `widgets: 0`, `examBadges`가 `exam_terms`가 비어 있지 않은 토픽 수, `over: []`, `tall: []`. `tall`에 나온 토픽은 부분별 높이(h3, 태그, 각 레이어, figure, `dl`·`p.lead`)를 재서 content-rules "높이 예산"의 어느 한도를 넘었는지와 함께 작성자에게 되돌린다("lead 66px → 한 줄로", "dl 202px → `<p><b>` 형식으로" 처럼 줄일 곳과 목표 px를 적는다). `read_console_messages`에 오류가 없어야 한다.
 
 개념 토픽 하나로 넘겨(`location.hash = '#<토픽 id>'`) 스크린샷을 찍고, 쪽 태그, "들을 때 포인트" 박스, 기출 배지가 보이는지 확인한다.
 

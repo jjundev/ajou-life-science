@@ -12,6 +12,8 @@
 - 기출 배지(<span class="badge exam">기출</span>)는 exam_terms가 있는 토픽의 들을 때 포인트에만, 그 용어와 함께 쓴다.
 - 그림: 쉽게 말하면 레이어의 SVG는 1개까지. figure_ref가 있는 토픽은 SVG 1개와, figcaption에 figure_ref·"다시 그렸어요"(출처)가 필요하다.
   교과서 그림을 잘라 넣은 <img>나 SVG 안 <image>는 src 종류(data: URI 포함)와 관계없이 쓰지 않는다(textbook-image).
+- 그림 크기(높이 예산): 쉽게 말하면 SVG는 viewBox가 있어야 하고, 폭 600 이하(템플릿 max-width 560px에서 글자가
+  줄지 않게), 세로/가로 0.25 이하(560×140, 가로:세로 4:1)여야 한다(figure-size). 토픽 전체 높이는 브라우저 검사가 본다.
 CLI: preview_check.py --manifest RUN/manifest.json --note NOTE.html
 """
 
@@ -34,6 +36,8 @@ SUPP_LABEL = "교과서 보충"
 EXAM_LABEL = "기출"
 FIG_SOURCE = "다시 그렸어요"
 MAX_FIGURES = 1
+MAX_FIG_WIDTH = 600
+MAX_FIG_RATIO = 0.25  # 세로/가로: 560×140
 STT_LAYERS = {"prof", "warn"}
 MAX_CHARS = 600
 MAX_ELI5_SENTENCES = 2
@@ -56,6 +60,7 @@ class TopicStats:
     exam_badges: int = 0
     eli5_svgs: int = 0
     captions: str = ""
+    svg_boxes: list[str] = field(default_factory=list)
     slide_tags: list[str] = field(default_factory=list)
 
 
@@ -90,6 +95,7 @@ class _StatsParser(HTMLParser):
             self.stats[topic].exam_badges += 1
         if topic and layer == "eli5" and tag == "svg":
             self.stats[topic].eli5_svgs += 1
+            self.stats[topic].svg_boxes.append(a.get("viewbox", ""))  # HTMLParser는 속성 이름을 소문자로 준다
         skip = skip or tag in SKIP_TAGS or bool(cls & SKIP_CLASSES)
         if topic and layer == "listen" and tag == "li" and not skip:
             self.stats[topic].listen_items += 1
@@ -188,9 +194,26 @@ def _exam_problems(t: dict, st: TopicStats) -> list[Problem]:
     return out
 
 
+def _figure_size_problems(topic_id: str, box: str) -> list[Problem]:
+    try:
+        _, _, w, h = (float(x) for x in box.replace(",", " ").split())
+    except ValueError:
+        return [Problem("figure-size", topic_id, f"SVG viewBox 필요(예: \"0 0 560 140\"): {box!r}")]
+    if w <= 0 or h <= 0:
+        return [Problem("figure-size", topic_id, f"viewBox 폭·높이가 양수여야 함: {box!r}")]
+    out: list[Problem] = []
+    if w > MAX_FIG_WIDTH:
+        out.append(Problem("figure-size", topic_id, f"viewBox 폭 {w:g} > {MAX_FIG_WIDTH}: 560 안팎으로(넓으면 글자가 줄어든다)"))
+    if h / w > MAX_FIG_RATIO:
+        out.append(Problem("figure-size", topic_id, f"viewBox {w:g}×{h:g}: 세로/가로 {h / w:.2f} > {MAX_FIG_RATIO} (560×140 이하로 낮춘다)"))
+    return out
+
+
 def _figure_problems(t: dict, st: TopicStats) -> list[Problem]:
     ref = t.get("figure_ref")
     out: list[Problem] = []
+    for box in st.svg_boxes:
+        out += _figure_size_problems(t["id"], box)
     if st.eli5_svgs > MAX_FIGURES:
         out.append(Problem("figure", t["id"], f"쉽게 말하면 그림 {st.eli5_svgs}개 > {MAX_FIGURES}개"))
     if ref and not st.eli5_svgs:
