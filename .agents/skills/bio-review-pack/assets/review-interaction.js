@@ -51,6 +51,32 @@
       if (text !== undefined) el.textContent = text;
       return el;
     };
+    let feedback = null;
+    let feedbackTimer = null;
+    let feedbackOwner = null;
+    function clearFeedback(owner = null) {
+      if (owner !== null && owner !== feedbackOwner) return;
+      if (feedbackTimer !== null) win.clearTimeout(feedbackTimer);
+      feedbackTimer = null;
+      if (feedback) feedback.remove();
+      feedback = null;
+      feedbackOwner = null;
+    }
+    function showFeedback(result, id) {
+      if (result !== 'correct' && result !== 'incorrect') return;
+      clearFeedback();
+      feedback = element('div', 'review-feedback');
+      feedback.dataset.reviewFeedback = '';
+      feedback.dataset.result = result;
+      feedback.setAttribute('aria-hidden', 'true');
+      feedback.append(
+        element('span', 'review-feedback-icon'),
+        element('span', 'review-feedback-text', result === 'correct' ? '정답이에요' : '다시 확인해요')
+      );
+      root.body.append(feedback);
+      feedbackOwner = id;
+      feedbackTimer = win.setTimeout(clearFeedback, 1100);
+    }
     for (const [id, data] of Object.entries(model.cards)) {
       const card = root.getElementById(id);
       if (!card || card.classList.contains('review-ready')) continue;
@@ -181,6 +207,7 @@
           writeAttempt(storage, key, data, selected);
           paint();
           emit(id, selected, grade(data, selected));
+          showFeedback(grade(data, selected), id);
           const selectedOption = options.find(o => o.id === selected);
           const answerOption = options.find(o => o.id === data.answer);
           const selectedControl = controls.find(control => control.id === selected);
@@ -193,6 +220,7 @@
           });
         }));
         reset.addEventListener('click', () => {
+          clearFeedback(id);
           selected = null;
           expanded.clear();
           writeAttempt(storage, key, data, null);

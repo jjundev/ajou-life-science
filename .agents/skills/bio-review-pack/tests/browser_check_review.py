@@ -78,6 +78,55 @@ class TestReviewBrowser(unittest.TestCase):
         self.assertNotEqual(buttons.nth(0).evaluate('(e) => getComputedStyle(e).borderTopColor'),
                             buttons.nth(2).evaluate('(e) => getComputedStyle(e).borderTopColor'))
 
+    def test_feedback_once_for_first_answer_only(self):
+        card = self.open_current_assets('0929', 'p1')
+        card.locator('.review-choice').nth(1).click()
+        feedback = self.page.locator('[data-review-feedback]')
+        expect(feedback).to_have_attribute('data-result', 'correct')
+        expect(feedback).to_contain_text('정답이에요')
+        self.assertEqual(feedback.get_attribute('aria-hidden'), 'true')
+        card.locator('.review-choice').nth(0).click()  # 해설만 펼침
+        expect(feedback).to_have_attribute('data-result', 'correct')
+        expect(feedback).to_have_count(0, timeout=2500)
+        card = self.open_current_assets('0929', 'p11')
+        card.locator('.review-choice').first.click()
+        expect(self.page.locator('[data-review-feedback]')).to_have_count(0)
+
+    def test_feedback_replaces_previous_answer(self):
+        card = self.open_current_assets('0929', 'p1')
+        card.locator('.review-choice').first.click()
+        expect(self.page.locator('[data-review-feedback]')).to_have_attribute('data-result', 'incorrect')
+        self.page.wait_for_timeout(500)
+        card = self.open_current_assets('0929', 'p2')
+        card.locator('.review-choice').nth(4).click()  # p2의 정답 5번
+        expect(self.page.locator('[data-review-feedback]')).to_have_attribute('data-result', 'correct')
+        self.page.wait_for_timeout(650)
+        expect(self.page.locator('[data-review-feedback]')).to_have_attribute('data-result', 'correct')
+        expect(self.page.locator('[data-review-feedback]')).to_have_count(0, timeout=2500)
+
+    def test_feedback_reset_and_restore(self):
+        card = self.open_current_assets('0929', 'p1')
+        card.locator('.review-choice').first.click()
+        expect(self.page.locator('[data-review-feedback]')).to_have_count(1)
+        card.locator('.review-reset').click()
+        expect(self.page.locator('[data-review-feedback]')).to_have_count(0)
+        card.locator('.review-choice').nth(1).click()
+        self.page.reload()
+        expect(card.locator('.review-choice').nth(1)).to_have_attribute('data-selected', 'true')
+        expect(self.page.locator('[data-review-feedback]')).to_have_count(0)
+
+    def test_feedback_reduced_motion_and_mobile(self):
+        self.page.set_viewport_size({'width': 320, 'height': 568})
+        self.page.emulate_media(reduced_motion='reduce')
+        card = self.open_current_assets('0929', 'p1')
+        card.locator('.review-choice').nth(1).click()
+        box = self.page.locator('[data-review-feedback]').bounding_box()
+        self.assertGreaterEqual(box['x'], 0)
+        self.assertLessEqual(box['x'] + box['width'], 320)
+        self.assertEqual(self.page.locator('.review-feedback-icon').evaluate('(e) => getComputedStyle(e).animationName'), 'none')
+        self.page.emulate_media(media='print', reduced_motion='reduce')
+        self.assertEqual(self.page.locator('[data-review-feedback]').evaluate('(e) => getComputedStyle(e).display'), 'none')
+
     def test_wrong_reset_correct_restore(self):
         card = self.open()
         choices = card.locator('.review-choice')
