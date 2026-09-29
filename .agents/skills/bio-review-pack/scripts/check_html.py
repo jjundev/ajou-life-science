@@ -42,6 +42,8 @@ SLOT_RE = re.compile(r"\{\{[A-Z_]+\}\}")
 REMOTE_PREFIXES = ("http://", "https://", "//")
 # CSS 안의 url(...) 과 @import "..." 대상
 CSS_URL_RE = re.compile(r"""url\(\s*['"]?([^'")\s]+)|@import\s+['"]([^'"]+)['"]""", re.IGNORECASE)
+STT_CLOCK_RE = re.compile(r"(?<!\d)\d{1,3}:[0-5]\d(?!\d)")
+CALENDAR_DATE_RE = re.compile(r"(?:\d{1,2}월\s*)?\d{1,2}일\s*$")
 
 
 def is_remote(url: str) -> bool:
@@ -232,6 +234,21 @@ class Problem:
         return f"[{self.code}] {self.where}: {self.detail}"
 
 
+def stt_time_problems(text: str, where: str) -> list[Problem]:
+    """Find recording clock tokens in reader-facing text, one diagnostic per line."""
+    problems: list[Problem] = []
+    for n, line in enumerate(text.splitlines(), 1):
+        for match in STT_CLOCK_RE.finditer(line):
+            before, after = line[:match.start()], line[match.end():]
+            is_deadline = CALENDAR_DATE_RE.search(before) and re.match(r"\s*(?:까지|부터|에)", after)
+            is_ratio = re.match(r"\s*비율", after)
+            if is_deadline or is_ratio:
+                continue
+            problems.append(Problem("stt-time", where, f"text line {n}: {line.strip()[:120]}"))
+            break
+    return problems
+
+
 def check_common(doc: Doc, source: str, path: Path) -> list[Problem]:
     name = Path(path).name
     out: list[Problem] = []
@@ -240,6 +257,7 @@ def check_common(doc: Doc, source: str, path: Path) -> list[Problem]:
     out += [Problem("duplicate-id", name, i) for i in sorted(doc.duplicate_ids)]
     out += [Problem("external", name, u) for u in doc.external_resources if not u.startswith(ALLOWED_EXTERNAL_PREFIXES)]
     out += [Problem("math", name, e) for e in math_delimiter_errors(doc.body_text)]
+    out += stt_time_problems(doc.body_text, name)
     out += [Problem("broken-link", name, h) for h in broken_links(doc, Path(path).parent)]
     out += [Problem("broken-image", name, s) for s in doc.img_srcs if not (Path(path).parent / unquote(s)).exists()]
     out += [Problem("leftover-slot", name, s) for s in sorted(set(SLOT_RE.findall(source)))]
@@ -249,6 +267,10 @@ def check_common(doc: Doc, source: str, path: Path) -> list[Problem]:
         import review_interaction
         try:
             model = json.loads(doc.scripts_by_id['review-interaction-model'])
+            if isinstance(model, dict) and isinstance(model.get('cards'), dict):
+                for card_id, card in model['cards'].items():
+                    if isinstance(card, dict) and isinstance(card.get('notice'), str):
+                        out += stt_time_problems(card['notice'], f'{name}#{card_id} notice')
             out += [Problem('review-interaction', e['cardId'] or name, e['reason'])
                     for e in review_interaction.validate_model(source, model)]
             if isinstance(model, dict) and model.get('documentId') != name:
