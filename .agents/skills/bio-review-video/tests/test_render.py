@@ -9,6 +9,11 @@ class RenderTest(unittest.TestCase):
         b=choose_backend([{'encoder':'h264_nvenc','ok':False,'seconds':0,'workers':1},
                           {'encoder':'libx264','ok':True,'seconds':2,'workers':1}])
         self.assertEqual(b['encoder'],'libx264')
+    def test_probe_duration_not_part_of_render_key(self):
+        from lib.render import stable_backend
+        a={'encoder':'h264_nvenc','seconds':1,'workers':1,'ok':True}
+        b=dict(a,seconds=2,workers=2)
+        self.assertEqual(stable_backend(a),stable_backend(b))
     @unittest.skipUnless(shutil.which('ffmpeg'),'FFmpeg required')
     def test_mux_korean_quote_path_and_decode(self):
         with tempfile.TemporaryDirectory(prefix="생명 O'Brien ") as d:

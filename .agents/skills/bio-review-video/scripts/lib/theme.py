@@ -2,6 +2,7 @@
 from pathlib import Path
 import hashlib, json, re, shutil
 from html.parser import HTMLParser
+from .cache import atomic_json
 
 ASSETS=Path(__file__).resolve().parents[2]/'assets'
 
@@ -45,7 +46,7 @@ def snapshot_theme(pack,run):
     layout=run/'source/video-layout.css'
     shutil.copyfile(ASSETS/'video-layout.css',layout)
     theme['hashes'][layout.relative_to(run).as_posix()]=_hash(layout)
-    record.write_text(json.dumps(theme,ensure_ascii=False,indent=2),encoding='utf-8')
+    atomic_json(record,theme)
     return theme
 
 def scene_shell(fragment,kind,theme):

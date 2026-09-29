@@ -1,8 +1,19 @@
 from pathlib import Path
 import json,os
 from .cache import digest,file_hash,cache_valid,atomic_json
-from .render import command,frames_ok
+from .render import command,frames_ok,stable_backend
 from .timing import frame_at
+
+def picture_fingerprint(run,sid):
+    run=Path(run); files={}
+    paths=list((run/'assets').rglob('*'))
+    paths += list((run/'source').glob('*.css'))
+    paths += [run/'source/theme.json']
+    paths += [run/'source/scene-fragments'/(sid+ext) for ext in ('.html','.motion.json')]
+    for p in paths:
+        if p.is_file() and 'voice' not in p.relative_to(run).parts:
+            files[p.relative_to(run).as_posix()]=file_hash(p)
+    return digest(files)
 
 def retime_input(timeline):
     windows=[]
@@ -43,7 +54,7 @@ def render_revoice(source,windows,run,backend,replacements):
             if w['scene_id'] not in used: out.append(Path(replacements[w['scene_id']])); used.add(w['scene_id'])
             continue
         path=dest/f'window-{i:04d}.mp4'; receipt=path.with_suffix('.json')
-        key=digest({'window':w,'source':before,'backend':backend})
+        key=digest({'window':w,'source':before,'backend':stable_backend(backend)})
         frames=w['last_frame']-w['first_frame']
         if receipt.exists() and cache_valid(path,json.loads(receipt.read_text()),key) and frames_ok(path,frames):
             out.append(path); continue

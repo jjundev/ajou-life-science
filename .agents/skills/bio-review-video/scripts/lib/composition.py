@@ -76,7 +76,7 @@ def assemble(m,timeline,theme,run):
             local=seg['start_sample']/24000-start
             length=(seg['end_sample']-seg['start_sample']+7200)/24000
             cid='caption-'+seg['id']
-            captions.append(f'<p id="{cid}" class="clip video-caption" data-start="{local:.9f}" data-duration="{length:.9f}" data-track-index="3">{html.escape(seg["caption"])}</p>')
+            captions.append(f'<div id="clip-{cid}" class="clip" data-start="{local:.9f}" data-duration="{length:.9f}" data-track-index="3" style="position:absolute;inset:0"><p id="{cid}" class="video-caption">{html.escape(seg["caption"])}</p></div>')
             # Seeking standalone scenes must also show exactly one caption.
             js.append(f'tl.set("#{cid}",{{autoAlpha:0}},0);tl.set("#{cid}",{{autoAlpha:1}},{local});tl.set("#{cid}",{{autoAlpha:0}},{local+length});')
         js.append('window.__timelines=window.__timelines||{};window.__timelines['+json.dumps(sid)+']=tl;')
@@ -100,7 +100,7 @@ def assemble(m,timeline,theme,run):
     audio=[]
     for s in timeline['segments']:
         if s.get('path'):
-            audio.append(f'<audio src="{html.escape(s["path"],quote=True)}" data-start="{s["start_sample"]/24000:.9f}" data-duration="{(s["end_sample"]-s["start_sample"])/24000:.9f}" data-track-index="2"></audio>')
+            audio.append(f'<audio id="audio-{s["id"]}" src="{html.escape(s["path"],quote=True)}" data-start="{s["start_sample"]/24000:.9f}" data-duration="{(s["end_sample"]-s["start_sample"])/24000:.9f}" data-track-index="2"></audio>')
     root=f'<div id="main" data-composition-id="main" data-width="1920" data-height="1080" data-duration="{timeline["total_frames"]/30:.9f}">'+''.join(hosts+audio)+'</div><script>window.__timelines=window.__timelines||{};window.__timelines.main=gsap.timeline({paused:true});</script>'
     (run/'index.html').write_text(scene_shell(root,'note',theme),encoding='utf-8')
     atomic_json(run/'source/parts.json',{'parts':parts})

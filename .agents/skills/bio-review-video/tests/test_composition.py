@@ -18,6 +18,8 @@ class CompositionTest(unittest.TestCase):
             parts=assemble(m,t,theme,run)
             page=(run/parts[0]['entry']).read_text(encoding='utf-8')
             self.assertIn('data-theme="dark"',page); self.assertIn('scene-atp-count',page)
+            self.assertNotIn('class="clip video-caption"',page)
+            self.assertIn('id="audio-seg-atp"',(run/'index.html').read_text(encoding='utf-8'))
             self.assertEqual(parts[0]['frames'],78)
             motions[0]['target']='#missing'
             (p/'scene-atp.motion.json').write_text(json.dumps(motions))

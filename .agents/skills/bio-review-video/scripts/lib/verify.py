@@ -1,6 +1,6 @@
 from pathlib import Path
 from fractions import Fraction
-import array,json,math,wave,shutil,tempfile
+import array,json,math,wave,shutil,tempfile,subprocess
 from .cache import atomic_json,digest,file_hash
 from .manifest import validate_manifest
 from .render import command,probe_media
@@ -54,14 +54,34 @@ def verify_audio(run,audio,timeline):
     if set(positions)!={r['id'] for r in audio}: errors.append('audio-ID-mismatch')
     return {'status':'failed' if errors else 'passed','errors':errors,'metrics':metrics}
 
+def verify_sync(run,audio,timeline):
+    run=Path(run); decoded=run/'work/sync-decoded.wav'; decoded.parent.mkdir(parents=True,exist_ok=True)
+    r=command(['ffmpeg','-y','-v','error','-i',run/'review.mp4','-map','0:a:0','-ac','1','-ar','24000','-c:a','pcm_s16le',decoded],timeout=1800)
+    if r.returncode: return {'status':'failed','errors':['cannot decode final audio']}
+    with wave.open(str(decoded),'rb') as f: actual=array.array('h',f.readframes(f.getnframes()))
+    voices={a['id']:a for a in audio}; errors=[]; metrics=[]
+    if abs(len(actual)-timeline['total_samples'])>1024: errors.append('final audio sample count')
+    for s in timeline['segments']:
+        with wave.open(str(run/voices[s['id']]['path']),'rb') as f: expected=array.array('h',f.readframes(f.getnframes()))
+        trim=min(1200,len(expected)//10)
+        left=list(expected[trim:len(expected)-trim:4])
+        right=list(actual[s['start_sample']+trim:s['end_sample']-trim:4])
+        if len(left)!=len(right) or not left:
+            errors.append(s['id']+':missing-final-audio'); continue
+        energy=sum(x*x for x in left); error=sum((x-y)**2 for x,y in zip(left,right))
+        relative=math.sqrt(error/max(energy,1))
+        metrics.append({'id':s['id'],'relative_pcm_error':relative,'start_sample':s['start_sample']})
+        if relative>.20: errors.append(s['id']+':final-audio-position-or-content')
+    return {'status':'failed' if errors else 'passed','errors':errors,'segments':metrics}
+
 def check_sources(run,entry,timeout=300):
     run=Path(run)
     parts=json.loads((run/'source/parts.json').read_text(encoding='utf-8'))['parts']
-    evidence=[]; errors=[]
+    evidence=[]; errors=[]; timed_out=False
     (run/'work').mkdir(exist_ok=True)
     # Raw template snapshots are reference inputs, not compositions. Check a
     # clean staging project containing only the real editable render sources.
-    with tempfile.TemporaryDirectory(dir=run/'work',prefix='source-check-') as d:
+    with tempfile.TemporaryDirectory(dir=run/'work',prefix='source-check-',ignore_cleanup_errors=True) as d:
         stage=Path(d)
         shutil.copytree(run/'assets',stage/'assets')
         (stage/'source').mkdir()
@@ -69,11 +89,15 @@ def check_sources(run,entry,timeout=300):
         shutil.copytree(run/'source/compositions',stage/'source/compositions')
         for part in parts+[{'id':'main','entry':'index.html'}]:
             shutil.copyfile(run/part['entry'],stage/'index.html')
-            r=command(['node',entry,'check',str(stage),'--json','--at-transitions'],stage,timeout=timeout)
             p=run/'verification'/('source-check-'+part['id']+'.txt'); p.parent.mkdir(parents=True,exist_ok=True)
+            try: r=command(['node',entry,'check',str(stage),'--json','--at-transitions'],stage,timeout=timeout)
+            except subprocess.TimeoutExpired:
+                p.write_text('Source check timed out; not verified.',encoding='utf-8')
+                evidence.append(p.relative_to(run).as_posix()); errors.append('timeout: '+part['id']); timed_out=True
+                continue
             p.write_text(r.stdout+'\n'+r.stderr,encoding='utf-8'); evidence.append(p.relative_to(run).as_posix())
             if r.returncode: errors.append('HyperFrames source check: '+part['id'])
-    return {'status':'failed' if errors else 'passed','evidence':evidence,'errors':errors}
+    return {'status':'unverified' if timed_out else ('failed' if errors else 'passed'),'evidence':evidence,'errors':errors}
 
 def verify_run(run,m,reports):
     run=Path(run); key=review_fingerprint(run,m); result={}

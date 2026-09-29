@@ -23,6 +23,9 @@ def choose_backend(probes):
     if not valid: raise RuntimeError('No working video encoder')
     return min(valid,key=lambda p:p['seconds']/p['workers'])
 
+def stable_backend(backend):
+    return {k:v for k,v in backend.items() if k not in ('seconds','workers','ok')}
+
 def probe_backends(run):
     dest=Path(run)/'work/probes'; dest.mkdir(parents=True,exist_ok=True)
     versions={k:command([k,'-version']).stdout.splitlines()[0] for k in ('ffmpeg','ffprobe')}
@@ -60,10 +63,11 @@ def render_parts(parts,run,backend):
     if version.returncode: raise RuntimeError('HyperFrames unavailable')
     versions['hyperframes']=version.stdout.strip()
     dependencies={p.relative_to(run).as_posix():file_hash(p) for p in run.rglob('*')
-                  if p.is_file() and p.suffix in ('.html','.css','.js','.svg','.png','.jpg','.woff2') and 'renders' not in p.relative_to(run).parts and 'verification' not in p.relative_to(run).parts}
+                  if p.is_file() and p.suffix in ('.html','.css','.js','.svg','.png','.jpg','.jpeg','.webp','.woff2')
+                  and p.relative_to(run).parts[0] not in ('renders','verification','work')}
     def render(part):
         out=dest/(part['id']+'.mp4'); receipt=out.with_suffix('.json')
-        key=digest({'part':part,'dependencies':dependencies,'backend':backend,'versions':versions})
+        key=digest({'part':part,'dependencies':dependencies,'backend':stable_backend(backend),'versions':versions})
         if receipt.exists():
             old=json.loads(receipt.read_text(encoding='utf-8'))
             if cache_valid(out,old,key) and frames_ok(out,part['frames']): return out

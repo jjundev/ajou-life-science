@@ -6,6 +6,8 @@ import http from 'node:http';
 import {createRequire} from 'node:module';
 const [runArg,pkg,executablePath]=process.argv.slice(2);
 const root=path.resolve(runArg);
+await fs.mkdir(path.join(root,'verification'),{recursive:true});
+await fs.writeFile(path.join(root,'verification/browser.json'),JSON.stringify({status:'unverified',errors:['browser check has not completed']}));
 const require=createRequire(path.resolve(pkg));
 const puppeteer=require('puppeteer-core');
 const server=http.createServer(async(req,res)=>{
@@ -20,7 +22,7 @@ const server=http.createServer(async(req,res)=>{
 });
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const base='http://127.0.0.1:'+server.address().port+'/';
-const browser=await puppeteer.launch({executablePath,headless:true,args:['--no-sandbox','--hide-scrollbars']});
+const browser=await puppeteer.launch({executablePath,headless:true,args:['--no-sandbox','--hide-scrollbars','--explicitly-allowed-ports='+server.address().port]});
 const results=[];
 try{
  const timeline=JSON.parse(await fs.readFile(path.join(root,'source/timeline.json'),'utf8'));
@@ -61,7 +63,7 @@ try{
     const tokenMatch=Object.entries(theme.tokens[meta.template_kind]).every(([k,v])=>!Object.hasOwn(result.tokens,k)||result.tokens[k]===v.trim());
     results.push({scene:scene.id,osTheme,time:t,...result,tokenMatch,errors:[...failures]});
    }
-   await page.evaluate(({id,t})=>window.__timelines[id].seek(t,false),{id:scene.id,t:duration/2});
+   await page.evaluate(({id,t})=>{window.__timelines[id].seek(t,false);},{id:scene.id,t:duration/2});
    await page.screenshot({path:path.join(root,'verification/frames',scene.id+'-'+osTheme+'.png')});
    await page.close();
   }

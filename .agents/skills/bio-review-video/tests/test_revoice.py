@@ -13,3 +13,13 @@ class RevoiceTest(unittest.TestCase):
     def test_mismatch_and_overlap(self):
         old={'fps':30,'windows':[{'id':'a','scene_id':'a','first_frame':0,'last_frame':30}]}
         with self.assertRaises(ValueError): plan_revoice(old,{'fps':30,'windows':[]},'a',{'a'})
+    def test_picture_dependency_change_invalidates_retime(self):
+        import tempfile
+        from pathlib import Path
+        from lib.revoice import picture_fingerprint
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d); p=root/'assets/diagram.svg'; p.parent.mkdir()
+            p.write_text('<svg/>')
+            a=picture_fingerprint(root,'scene-a')
+            p.write_text('<svg><rect/></svg>')
+            self.assertNotEqual(a,picture_fingerprint(root,'scene-a'))

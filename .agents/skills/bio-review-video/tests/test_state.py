@@ -40,3 +40,12 @@ class StateTest(unittest.TestCase):
             with store.lock():
                 with self.assertRaises(RuntimeError):
                     with RunStore(Path(d)).lock(): pass
+    def test_resume_detects_changed_voice_config(self):
+        from video import finish
+        with tempfile.TemporaryDirectory() as d:
+            run=Path(d); atomic_json(run/'config.json',{'voice':'Aoede'})
+            atomic_json(run/'manifest.json',{'segments':[]})
+            atomic_json(run/'source/audio.json',{'voices':[]})
+            finish(run,'voice',[run/'source/audio.json'])
+            atomic_json(run/'config.json',{'voice':'Charon'})
+            self.assertEqual(RunStore(run).recover(),'voice')
