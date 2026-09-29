@@ -154,7 +154,8 @@
             if (answered) c.button.removeAttribute('aria-pressed');
             else c.button.setAttribute('aria-pressed', 'false');
             c.button.dataset.result = !answered ? '' : c.id === data.answer
-              ? (data.mode === 'ambiguous' ? 'intended' : 'correct') : c.id === selected ? 'selected' : '';
+              ? (data.mode === 'ambiguous' ? 'intended' : 'correct')
+              : c.id === selected ? (data.mode === 'ambiguous' ? 'uncertain' : 'selected') : '';
             c.badge.hidden = !answered;
             c.badge.textContent = !answered ? '' : [
               c.id === selected ? '내 선택' : '',

@@ -7,6 +7,7 @@ import unittest
 from urllib.parse import quote
 from playwright.sync_api import sync_playwright, expect
 from _util import REPO
+import review_interaction as ri
 
 
 class QuietHandler(SimpleHTTPRequestHandler):
@@ -49,6 +50,33 @@ class TestReviewBrowser(unittest.TestCase):
         self.page.goto(self.url(date, card))
         expect(self.page.locator('#'+card)).to_be_visible()
         return self.page.locator('#'+card)
+
+    def open_current_assets(self, date='0929', card='p1'):
+        path = next((REPO / '복습노트' / date).glob('복습문제*.html'))
+        url = self.url(date, card).split('#', 1)[0]
+        source = ri.install(path.read_text(encoding='utf-8'), path.name)
+        self.page.route(url, lambda route: route.fulfill(body=source, content_type='text/html'))
+        return self.open(date, card)
+
+    def test_answer_borders_distinguish_correct_selected_and_ambiguous(self):
+        card = self.open_current_assets('0929', 'p1')  # 정답 2번
+        buttons = card.locator('.review-choice')
+        buttons.nth(0).click()
+        self.assertEqual(buttons.nth(0).get_attribute('data-result'), 'selected')
+        self.assertEqual(buttons.nth(1).get_attribute('data-result'), 'correct')
+        self.assertEqual(buttons.nth(0).evaluate('(e) => getComputedStyle(e).borderTopWidth'), '3px')
+        self.assertEqual(buttons.nth(1).evaluate('(e) => getComputedStyle(e).borderTopWidth'), '3px')
+        self.assertNotEqual(buttons.nth(0).evaluate('(e) => getComputedStyle(e).borderTopColor'),
+                            buttons.nth(1).evaluate('(e) => getComputedStyle(e).borderTopColor'))
+        card.locator('.review-reset').click()
+        self.assertEqual(buttons.nth(0).evaluate('(e) => getComputedStyle(e).borderTopWidth'), '1px')
+        card = self.open_current_assets('0929', 'p11')  # 모호 문항, 출제 의도상 답 3번
+        buttons = card.locator('.review-choice')
+        buttons.nth(0).click()
+        self.assertEqual(buttons.nth(0).get_attribute('data-result'), 'uncertain')
+        self.assertEqual(buttons.nth(2).get_attribute('data-result'), 'intended')
+        self.assertNotEqual(buttons.nth(0).evaluate('(e) => getComputedStyle(e).borderTopColor'),
+                            buttons.nth(2).evaluate('(e) => getComputedStyle(e).borderTopColor'))
 
     def test_wrong_reset_correct_restore(self):
         card = self.open()
