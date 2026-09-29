@@ -140,6 +140,14 @@ class TestPreviewCheck(unittest.TestCase):
         self.patch("s0", "나눠 담는 과정이에요.</p>", '나눠 담는 과정이에요.</p><img src="fig.png" alt="교과서 그림">')
         self.assertIn(("textbook-image", "예습노트_0101_Mini_Preview.html"), self.codes())
 
+    def test_data_uri_image_rejected(self):
+        self.patch("s1", f'<p class="lead">{LEAD}</p>', f'<p class="lead">{LEAD}</p><img src="data:image/png;base64,AAAA" alt="교과서 그림">')
+        self.assertIn(("textbook-image", "예습노트_0101_Mini_Preview.html"), self.codes())
+
+    def test_svg_embedded_image_rejected(self):
+        self.patch("s1", '<rect x="10"', '<image href="data:image/png;base64,AAAA" width="160" height="40"/><rect x="10"')
+        self.assertIn(("textbook-image", "예습노트_0101_Mini_Preview.html"), self.codes())
+
     def test_helpers(self):
         self.assertEqual(pc.visible_chars("가 나 $x^2$ $$y$$ 다"), 3)
         self.assertEqual(pc.sentences(" 하나예요. 둘이에요? 셋 "), 3)

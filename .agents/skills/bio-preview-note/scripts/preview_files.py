@@ -6,6 +6,8 @@
 - 대상 날짜의 STT가 이미 있으면(끝난 수업) 멈추고 bio-review-pack을 안내한다.
 - 날짜 없이 골랐는데 그 날짜 예습노트가 이미 있으면 멈춘다(날짜를 주면 다시 만든다).
 - 시작 쪽: 가장 최근 정리노트(범위의 끝 날짜 기준) HTML의 .tag.slide 중 가장 큰 (장, 쪽). 그 쪽을 포함한다.
+  정리노트 끝의 "다음 시간 예고" 토픽(id가 -next로 끝남)은 아직 안 배운 쪽이라 뺀다.
+- 정리노트보다 뒤의 STT가 있으면(끝난 수업의 복습팩이 아직 없음) 멈추고 bio-review-pack을 먼저 안내한다.
 - macOS NFD 폴더·파일명도 NFC로 비교해 찾는다.
 CLI:
   preview_files.py pick --repo REPO [--date 0929]   → "0929<TAB>4<TAB>2<TAB>강의노트 PDF 절대 경로"
@@ -35,6 +37,8 @@ STT_RE = re.compile(r"(\d{4})[ _]생명\.md")
 REVIEW_NOTE_RE = re.compile(r"정리노트_(?:\d{4}-)?(\d{4})_.+\.html")
 TAG_RE = re.compile(r'class="tag slide">\s*(\d+)장 p(\d+)(?:–p?(\d+))?\s*<')
 CHAPTER_PDF_RE = re.compile(r"(\d+)장 .+\.pdf")
+ARTICLE_RE = re.compile(r'<article\b[^>]*\bid="([^"]+)"')
+NEXT_TOPIC_SUFFIX = "-next"  # bio-review-pack의 "다음 시간 예고" 토픽
 
 
 class PickError(RuntimeError):
@@ -90,7 +94,13 @@ def latest_review_note(repo) -> tuple[str, Path]:
 
 
 def last_page(note: Path) -> tuple[int, int]:
-    found = [(int(ch), int(end or start)) for ch, start, end in TAG_RE.findall(note.read_text(encoding="utf-8"))]
+    text = note.read_text(encoding="utf-8")
+    bounds = [("", 0)] + [(m.group(1), m.start()) for m in ARTICLE_RE.finditer(text)] + [("", len(text))]
+    found = []
+    for (topic, a), (_, b) in zip(bounds, bounds[1:]):
+        if topic.endswith(NEXT_TOPIC_SUFFIX):
+            continue
+        found += [(int(ch), int(end or start)) for ch, start, end in TAG_RE.findall(text[a:b])]
     if not found:
         raise PickError(f"정리노트에 쪽 태그(예: '4장 p2')가 없어요: {nfc(note.name)}. 장과 쪽을 직접 고르세요.")
     return max(found)
@@ -120,7 +130,12 @@ def pick(repo, date: str | None = None, today: dt.date | None = None) -> tuple[s
             raise PickError(f"{date} 수업의 예습노트가 이미 있어요. 다시 만들려면 날짜를 인자로 주세요.")
     if date in done:
         raise PickError(f"{date} 수업은 이미 STT가 있어요(수업이 끝났어요). 복습은 /bio-review-pack {date}을 쓰세요.")
-    _, note = latest_review_note(repo)
+    reviewed, note = latest_review_note(repo)
+    behind = sorted(d for d in done if reviewed < d < date)
+    if behind:
+        span = behind[0] if len(behind) == 1 else f"{behind[0]}-{behind[-1]}"
+        raise PickError(f"{', '.join(behind)} 수업은 STT가 있는데 정리노트가 아직 없어요. "
+                        f"시작 쪽을 정확히 잡으려면 먼저 /bio-review-pack {span}을 돌리세요.")
     chapter, page = last_page(note)
     return date, chapter, page, chapter_pdf(repo, chapter)
 

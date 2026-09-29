@@ -57,6 +57,19 @@ class TestPick(RepoCase):
         write(self.repo / "복습노트" / "0924" / "정리노트_0924_X.html", tags("12장 p1"))
         self.assertEqual(unicodedata.normalize("NFC", pf.pick(self.repo, "0929")[3].name), "12장 신경계와 감각계.pdf")
 
+    def test_next_class_topic_ignored(self):
+        # bio-review-pack 정리노트 끝의 "다음 시간 예고"(-next) 토픽은 아직 안 배운 쪽이라 시작 쪽에서 뺀다(0910 실제 구조)
+        write(self.repo / "복습노트" / "0924" / "정리노트_0924_X.html",
+              '<article class="topic" id="s1-glycolysis">' + tags("4장 p3") + "</article>"
+              '<article class="topic" id="s6-next">' + tags("4장 p3–p5") + "</article>")
+        self.assertEqual(pf.pick(self.repo, "0929")[1:3], (4, 3))
+
+    def test_unreviewed_finished_class_stops(self):
+        write(self.repo / "STT" / "0924 생명.md")
+        with self.assertRaises(pf.PickError) as cm:
+            pf.pick(self.repo, "0929")
+        self.assertIn("/bio-review-pack 0924", str(cm.exception))
+
     def test_default_date_skips_class_with_stt(self):
         self.assertEqual(pf.next_class_date(TUE_0922, {"0922"}), "0924")
         self.assertEqual(pf.pick(self.repo, today=TUE_0922)[0], "0924")

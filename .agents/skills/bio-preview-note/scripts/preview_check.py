@@ -11,7 +11,7 @@
 - 들을 때 포인트는 교수님 발언을 예측하지 않는다("~하실 거예요" 같은 문장은 listen-predicts).
 - 기출 배지(<span class="badge exam">기출</span>)는 exam_terms가 있는 토픽의 들을 때 포인트에만, 그 용어와 함께 쓴다.
 - 그림: 쉽게 말하면 레이어의 SVG는 1개까지. figure_ref가 있는 토픽은 SVG 1개와, figcaption에 figure_ref·"다시 그렸어요"(출처)가 필요하다.
-  교과서 그림을 잘라 넣은 <img>는 어디에도 쓰지 않는다(textbook-image).
+  교과서 그림을 잘라 넣은 <img>나 SVG 안 <image>는 src 종류(data: URI 포함)와 관계없이 쓰지 않는다(textbook-image).
 CLI: preview_check.py --manifest RUN/manifest.json --note NOTE.html
 """
 
@@ -124,6 +124,27 @@ class _StatsParser(HTMLParser):
                 st.listen += data
 
 
+class _ImageParser(HTMLParser):
+    """<img>와 SVG 안 <image>를 src 종류(파일·data: URI)와 관계없이 모두 찾는다."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.found: list[str] = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag in ("img", "image"):
+            a = {k: (v or "") for k, v in attrs}
+            src = a.get("src") or a.get("href") or a.get("xlink:href") or ""
+            self.found.append(f"<{tag}> {src[:40]}")
+
+
+def embedded_images(source: str) -> list[str]:
+    parser = _ImageParser()
+    parser.feed(source)
+    parser.close()
+    return parser.found
+
+
 def topic_stats(source: str) -> dict[str, TopicStats]:
     parser = _StatsParser()
     parser.feed(source)
@@ -184,8 +205,8 @@ def check_preview(m: dict, note_path: Path | str) -> list[Problem]:
     source = path.read_text(encoding="utf-8")
     doc = parse_html(source)
     out = check_common(doc, source, path) + check_note(doc, contract_view(m))
-    out += [Problem("textbook-image", path.name, f"<img src=\"{s}\">: 교과서 그림은 잘라 넣지 말고 SVG로 다시 그린다")
-            for s in doc.img_srcs]
+    out += [Problem("textbook-image", path.name, f"{img}: 교과서 그림은 잘라 넣지 말고 SVG로 다시 그린다")
+            for img in embedded_images(source)]
     stats = topic_stats(source)
     for sec in m["sections"]:
         for t in sec["topics"]:
