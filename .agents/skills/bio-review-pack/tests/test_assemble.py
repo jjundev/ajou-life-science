@@ -30,6 +30,9 @@ class TestAssemble(unittest.TestCase):
         self.assertIn("<title>생명과학 정리노트 0101-0102</title>", self.note_html)
         self.assertIn("<title>생명과학 복습문제 0101-0102</title>", self.review_html)
 
+    def test_note_brand(self):
+        self.assertIn('<strong class="brand">정리노트</strong>', self.note_html)
+
     def test_scripts_moved_after_main(self):
         main_end = self.note_html.index("</main>")
         self.assertGreater(self.note_html.index('<script id="widget-mean-ui">'), main_end)
