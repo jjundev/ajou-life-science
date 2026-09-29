@@ -42,6 +42,7 @@ REMOTE_PREFIXES = ("http://", "https://", "//")
 # CSS 안의 url(...) 과 @import "..." 대상
 CSS_URL_RE = re.compile(r"""url\(\s*['"]?([^'")\s]+)|@import\s+['"]([^'"]+)['"]""", re.IGNORECASE)
 STT_CLOCK_RE = re.compile(r"(?<!\d)\d{1,3}:[0-5]\d(?!\d)")
+CALENDAR_DATE_RE = re.compile(r"(?:\d{1,2}월\s*)?\d{1,2}일\s*$")
 
 
 def is_remote(url: str) -> bool:
@@ -234,8 +235,17 @@ class Problem:
 
 def stt_time_problems(text: str, where: str) -> list[Problem]:
     """Find recording clock tokens in reader-facing text, one diagnostic per line."""
-    return [Problem("stt-time", where, f"text line {n}: {line.strip()[:120]}")
-            for n, line in enumerate(text.splitlines(), 1) if STT_CLOCK_RE.search(line)]
+    problems: list[Problem] = []
+    for n, line in enumerate(text.splitlines(), 1):
+        for match in STT_CLOCK_RE.finditer(line):
+            before, after = line[:match.start()], line[match.end():]
+            is_deadline = CALENDAR_DATE_RE.search(before) and re.match(r"\s*(?:까지|부터|에)", after)
+            is_ratio = re.match(r"\s*비율", after)
+            if is_deadline or is_ratio:
+                continue
+            problems.append(Problem("stt-time", where, f"text line {n}: {line.strip()[:120]}"))
+            break
+    return problems
 
 
 def check_common(doc: Doc, source: str, path: Path) -> list[Problem]:

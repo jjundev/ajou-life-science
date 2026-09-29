@@ -17,8 +17,9 @@ class TestPrimitives(unittest.TestCase):
         for value in ("(0910 22:05–22:22)", "0910 22:05–22:22에서", "(P03 04:12)", "14:37에 생략", "(0910 24:42)", "(0915 63:04)", "(0910 22:05, 강의노트 2장 p3)"):
             with self.subTest(value=value):
                 self.assertEqual([p.code for p in check_html.stt_time_problems(value, "x.html")], ["stt-time"])
-        for value in ("0910 수업", "강의노트 2장 p14", "24시간 뒤", "교재 p.68"):
+        for value in ("0910 수업", "강의노트 2장 p14", "24시간 뒤", "교재 p.68", "28일 23:59까지 동영상 시청", "교배 결과 1:15 비율이 나타나요"):
             self.assertEqual(check_html.stt_time_problems(value, "x.html"), [])
+        self.assertEqual([p.code for p in check_html.stt_time_problems("28일 23:59까지 시청, 교수님(0922 40:10)", "x.html")], ["stt-time"])
 
     def test_stt_clock_only_in_display_text(self):
         src = '<html lang="ko"><head><script>const t="0910 22:05"</script></head><body><p>0910 수업</p></body></html>'
