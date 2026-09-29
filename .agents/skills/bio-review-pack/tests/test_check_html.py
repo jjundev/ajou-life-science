@@ -13,6 +13,18 @@ import check_html
 
 
 class TestPrimitives(unittest.TestCase):
+    def test_stt_clock_is_rejected(self):
+        for value in ("(0910 22:05–22:22)", "0910 22:05–22:22에서", "(P03 04:12)", "14:37에 생략", "(0910 24:42)", "(0915 63:04)", "(0910 22:05, 강의노트 2장 p3)"):
+            with self.subTest(value=value):
+                self.assertEqual([p.code for p in check_html.stt_time_problems(value, "x.html")], ["stt-time"])
+        for value in ("0910 수업", "강의노트 2장 p14", "24시간 뒤", "교재 p.68"):
+            self.assertEqual(check_html.stt_time_problems(value, "x.html"), [])
+
+    def test_stt_clock_only_in_display_text(self):
+        src = '<html lang="ko"><head><script>const t="0910 22:05"</script></head><body><p>0910 수업</p></body></html>'
+        problems = check_html.check_common(check_html.parse_html(src), src, Path("x.html"))
+        self.assertNotIn("stt-time", [p.code for p in problems])
+
     def test_adjacent_inline_math_in_list_items_is_not_display_math(self):
         doc = check_html.parse_html('<html lang="ko"><body><ol><li>$a$</li><li>$b$</li></ol></body></html>')
         self.assertEqual(check_html.math_delimiter_errors(doc.body_text), [])
@@ -95,7 +107,7 @@ class TestPack(unittest.TestCase):
         self.assertEqual(self.codes(), ["forbidden-term"])
 
     def test_missing_layer(self):
-        self.edit("sections/s1.html", '<div class="layer prof"><span class="layer-title">교수님 말씀</span><p>"평균부터 봐요." (0101 01:00)</p></div>', "")
+        self.edit("sections/s1.html", '<div class="layer prof"><span class="layer-title">교수님 말씀</span><p>"평균부터 봐요."</p></div>', "")
         self.assertEqual(self.codes(), ["missing-layer"])
 
     def test_missing_supp_badge(self):

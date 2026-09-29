@@ -41,6 +41,7 @@ SLOT_RE = re.compile(r"\{\{[A-Z_]+\}\}")
 REMOTE_PREFIXES = ("http://", "https://", "//")
 # CSS 안의 url(...) 과 @import "..." 대상
 CSS_URL_RE = re.compile(r"""url\(\s*['"]?([^'")\s]+)|@import\s+['"]([^'"]+)['"]""", re.IGNORECASE)
+STT_CLOCK_RE = re.compile(r"(?<!\d)\d{1,3}:[0-5]\d(?!\d)")
 
 
 def is_remote(url: str) -> bool:
@@ -231,6 +232,12 @@ class Problem:
         return f"[{self.code}] {self.where}: {self.detail}"
 
 
+def stt_time_problems(text: str, where: str) -> list[Problem]:
+    """Find recording clock tokens in reader-facing text, one diagnostic per line."""
+    return [Problem("stt-time", where, f"text line {n}: {line.strip()[:120]}")
+            for n, line in enumerate(text.splitlines(), 1) if STT_CLOCK_RE.search(line)]
+
+
 def check_common(doc: Doc, source: str, path: Path) -> list[Problem]:
     name = Path(path).name
     out: list[Problem] = []
@@ -239,6 +246,7 @@ def check_common(doc: Doc, source: str, path: Path) -> list[Problem]:
     out += [Problem("duplicate-id", name, i) for i in sorted(doc.duplicate_ids)]
     out += [Problem("external", name, u) for u in doc.external_resources if not u.startswith(ALLOWED_EXTERNAL_PREFIXES)]
     out += [Problem("math", name, e) for e in math_delimiter_errors(doc.body_text)]
+    out += stt_time_problems(doc.body_text, name)
     out += [Problem("broken-link", name, h) for h in broken_links(doc, Path(path).parent)]
     out += [Problem("broken-image", name, s) for s in doc.img_srcs if not (Path(path).parent / unquote(s)).exists()]
     out += [Problem("leftover-slot", name, s) for s in sorted(set(SLOT_RE.findall(source)))]
