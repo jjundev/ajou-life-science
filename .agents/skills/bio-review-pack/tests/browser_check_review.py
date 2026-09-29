@@ -104,6 +104,15 @@ class TestReviewBrowser(unittest.TestCase):
         expect(self.page.locator('[data-review-feedback]')).to_have_attribute('data-result', 'correct')
         expect(self.page.locator('[data-review-feedback]')).to_have_count(0, timeout=2500)
 
+    def test_ambiguous_answer_clears_prior_feedback(self):
+        self.open_current_assets('0929', 'p1')
+        self.page.evaluate('''() => {
+          document.querySelector('#p1 .review-choice').click();
+          document.querySelector('#p11 .review-choice').click();
+        }''')
+        expect(self.page.locator('#p11 .review-status')).to_have_text('단일 정답 판정 주의')
+        self.assertEqual(self.page.locator('[data-review-feedback]').count(), 0)
+
     def test_feedback_reset_and_restore(self):
         card = self.open_current_assets('0929', 'p1')
         card.locator('.review-choice').first.click()
