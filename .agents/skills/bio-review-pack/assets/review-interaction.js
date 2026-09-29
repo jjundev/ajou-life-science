@@ -4,6 +4,22 @@
     const match = text.match(/^\s*(?:\((\d+)\)|([A-Z])[.)])\s*/);
     return match && (match[1] || match[2]) === id ? text.slice(match[0].length) : text;
   }
+  function scrollAnswerIntoView(scroller, selectedLi, answerLi, selectedButton, answerButton) {
+    if (!scroller || !selectedLi.getClientRects().length) return;
+    const viewport = scroller.getBoundingClientRect();
+    const height = scroller.clientHeight;
+    const margin = 16;
+    const span = (a, b) => {
+      const x = a.getBoundingClientRect(), y = b.getBoundingClientRect();
+      return {top:Math.min(x.top, y.top), bottom:Math.max(x.bottom, y.bottom)};
+    };
+    let target = span(selectedLi, answerLi);
+    if (target.bottom - target.top > height - 2 * margin)
+      target = span(selectedButton, answerButton);
+    if (target.bottom - target.top > height - 2 * margin)
+      target = span(selectedButton, selectedButton);
+    scroller.scrollTop += (target.top + target.bottom - viewport.top - viewport.bottom) / 2;
+  }
   function grade(card, selected) {
     if (!card.options.some(o => o.id === selected)) return null;
     if (card.mode === 'ambiguous') return 'ambiguous';
@@ -164,6 +180,16 @@
           writeAttempt(storage, key, data, selected);
           paint();
           emit(id, selected, grade(data, selected));
+          const selectedOption = options.find(o => o.id === selected);
+          const answerOption = options.find(o => o.id === data.answer);
+          const selectedControl = controls.find(control => control.id === selected);
+          const answerControl = controls.find(control => control.id === data.answer);
+          win.requestAnimationFrame(() => {
+            if (!card.isConnected || !card.getClientRects().length) return;
+            scrollAnswerIntoView(root.querySelector('.content'),
+              choices[selectedOption.index], choices[answerOption.index],
+              selectedControl.button, answerControl.button);
+          });
         }));
         reset.addEventListener('click', () => {
           selected = null;
