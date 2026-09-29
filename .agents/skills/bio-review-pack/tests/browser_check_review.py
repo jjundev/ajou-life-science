@@ -7,6 +7,7 @@ import unittest
 from urllib.parse import quote
 from playwright.sync_api import sync_playwright, expect
 from _util import REPO
+import review_interaction as ri
 
 
 class QuietHandler(SimpleHTTPRequestHandler):
@@ -49,6 +50,91 @@ class TestReviewBrowser(unittest.TestCase):
         self.page.goto(self.url(date, card))
         expect(self.page.locator('#'+card)).to_be_visible()
         return self.page.locator('#'+card)
+
+    def open_current_assets(self, date='0929', card='p1'):
+        path = next((REPO / '복습노트' / date).glob('복습문제*.html'))
+        url = self.url(date, card).split('#', 1)[0]
+        source = ri.install(path.read_text(encoding='utf-8'), path.name)
+        self.page.route(url, lambda route: route.fulfill(body=source, content_type='text/html'))
+        return self.open(date, card)
+
+    def test_answer_borders_distinguish_correct_selected_and_ambiguous(self):
+        card = self.open_current_assets('0929', 'p1')  # 정답 2번
+        buttons = card.locator('.review-choice')
+        buttons.nth(0).click()
+        self.assertEqual(buttons.nth(0).get_attribute('data-result'), 'selected')
+        self.assertEqual(buttons.nth(1).get_attribute('data-result'), 'correct')
+        self.assertEqual(buttons.nth(0).evaluate('(e) => getComputedStyle(e).borderTopWidth'), '3px')
+        self.assertEqual(buttons.nth(1).evaluate('(e) => getComputedStyle(e).borderTopWidth'), '3px')
+        self.assertNotEqual(buttons.nth(0).evaluate('(e) => getComputedStyle(e).borderTopColor'),
+                            buttons.nth(1).evaluate('(e) => getComputedStyle(e).borderTopColor'))
+        card.locator('.review-reset').click()
+        self.assertEqual(buttons.nth(0).evaluate('(e) => getComputedStyle(e).borderTopWidth'), '1px')
+        card = self.open_current_assets('0929', 'p11')  # 모호 문항, 출제 의도상 답 3번
+        buttons = card.locator('.review-choice')
+        buttons.nth(0).click()
+        self.assertEqual(buttons.nth(0).get_attribute('data-result'), 'uncertain')
+        self.assertEqual(buttons.nth(2).get_attribute('data-result'), 'intended')
+        self.assertNotEqual(buttons.nth(0).evaluate('(e) => getComputedStyle(e).borderTopColor'),
+                            buttons.nth(2).evaluate('(e) => getComputedStyle(e).borderTopColor'))
+
+    def test_feedback_once_for_first_answer_only(self):
+        card = self.open_current_assets('0929', 'p1')
+        card.locator('.review-choice').nth(1).click()
+        feedback = self.page.locator('[data-review-feedback]')
+        expect(feedback).to_have_attribute('data-result', 'correct')
+        expect(feedback).to_contain_text('정답이에요')
+        self.assertEqual(feedback.get_attribute('aria-hidden'), 'true')
+        card.locator('.review-choice').nth(0).click()  # 해설만 펼침
+        expect(feedback).to_have_attribute('data-result', 'correct')
+        expect(feedback).to_have_count(0, timeout=2500)
+        card = self.open_current_assets('0929', 'p11')
+        card.locator('.review-choice').first.click()
+        expect(self.page.locator('[data-review-feedback]')).to_have_count(0)
+
+    def test_feedback_replaces_previous_answer(self):
+        card = self.open_current_assets('0929', 'p1')
+        card.locator('.review-choice').first.click()
+        expect(self.page.locator('[data-review-feedback]')).to_have_attribute('data-result', 'incorrect')
+        self.page.wait_for_timeout(500)
+        card = self.open_current_assets('0929', 'p2')
+        card.locator('.review-choice').nth(4).click()  # p2의 정답 5번
+        expect(self.page.locator('[data-review-feedback]')).to_have_attribute('data-result', 'correct')
+        self.page.wait_for_timeout(650)
+        expect(self.page.locator('[data-review-feedback]')).to_have_attribute('data-result', 'correct')
+        expect(self.page.locator('[data-review-feedback]')).to_have_count(0, timeout=2500)
+
+    def test_ambiguous_answer_clears_prior_feedback(self):
+        self.open_current_assets('0929', 'p1')
+        self.page.evaluate('''() => {
+          document.querySelector('#p1 .review-choice').click();
+          document.querySelector('#p11 .review-choice').click();
+        }''')
+        expect(self.page.locator('#p11 .review-status')).to_have_text('단일 정답 판정 주의')
+        self.assertEqual(self.page.locator('[data-review-feedback]').count(), 0)
+
+    def test_feedback_reset_and_restore(self):
+        card = self.open_current_assets('0929', 'p1')
+        card.locator('.review-choice').first.click()
+        expect(self.page.locator('[data-review-feedback]')).to_have_count(1)
+        card.locator('.review-reset').click()
+        expect(self.page.locator('[data-review-feedback]')).to_have_count(0)
+        card.locator('.review-choice').nth(1).click()
+        self.page.reload()
+        expect(card.locator('.review-choice').nth(1)).to_have_attribute('data-selected', 'true')
+        expect(self.page.locator('[data-review-feedback]')).to_have_count(0)
+
+    def test_feedback_reduced_motion_and_mobile(self):
+        self.page.set_viewport_size({'width': 320, 'height': 568})
+        self.page.emulate_media(reduced_motion='reduce')
+        card = self.open_current_assets('0929', 'p1')
+        card.locator('.review-choice').nth(1).click()
+        box = self.page.locator('[data-review-feedback]').bounding_box()
+        self.assertGreaterEqual(box['x'], 0)
+        self.assertLessEqual(box['x'] + box['width'], 320)
+        self.assertEqual(self.page.locator('.review-feedback-icon').evaluate('(e) => getComputedStyle(e).animationName'), 'none')
+        self.page.emulate_media(media='print', reduced_motion='reduce')
+        self.assertEqual(self.page.locator('[data-review-feedback]').evaluate('(e) => getComputedStyle(e).display'), 'none')
 
     def test_wrong_reset_correct_restore(self):
         card = self.open()
@@ -271,7 +357,8 @@ class TestReviewBrowser(unittest.TestCase):
         self.assertEqual(self.page.locator('svg,img').count(), count)
         self.page.locator('#theme-toggle').click()
         self.assertTrue(self.page.evaluate('document.documentElement.scrollWidth <= innerWidth'))
-        shots = REPO / '.superpowers/sdd/bio-review-interactive'
+        shots = REPO / '.superpowers/sdd/bio-review-browser-check'
+        shots.mkdir(parents=True, exist_ok=True)
         self.page.screenshot(path=str(shots/'mobile.png'))
         self.page.set_viewport_size({'width':1280,'height':850})
         self.page.screenshot(path=str(shots/'desktop.png'))

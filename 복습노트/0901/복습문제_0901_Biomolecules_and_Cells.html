@@ -916,8 +916,9 @@
 .review-choice[aria-expanded] { position:relative; padding-right:44px; }
 .review-choice[aria-expanded]::after { content:""; position:absolute; right:18px; top:20px; width:8px; height:8px; border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor; transform:rotate(45deg); }
 .review-choice[aria-expanded="true"]::after { transform:rotate(225deg); top:24px; }
-.review-choice[data-result="correct"], .review-choice[data-result="intended"] { border-color:var(--accent); }
-.review-choice[data-selected="true"] { box-shadow:inset 0 0 0 1px var(--ink); }
+.review-choice[data-result="correct"], .review-choice[data-result="intended"] { border:3px solid var(--accent); }
+.review-choice[data-result="selected"] { border:3px solid var(--danger); }
+.review-choice[data-result="uncertain"] { border:3px solid var(--ink-2); }
 .review-choice-label { display:block; margin-top:6px; font-size:var(--fs-small); font-weight:700; color:var(--ink); }
 .review-choice-label[hidden], .review-diagnostic[hidden], .review-extra[hidden],
 .review-help[hidden], .review-reset[hidden], .review-diagnostics[hidden] { display:none; }
@@ -928,13 +929,66 @@
 .review-help { color:var(--ink-2); font-size:var(--fs-small); }
 .review-reset { min-height:44px; margin:var(--s2) 0 var(--s4); }
 .review-choice-content { padding:var(--s2) 0; }
+.review-feedback {
+  position:fixed; top:calc(env(safe-area-inset-top) + 72px); left:50%; z-index:100;
+  transform:translateX(-50%); width:max-content; max-width:calc(100vw - 32px);
+  display:flex; align-items:center; gap:12px; padding:10px 16px;
+  border:2px solid var(--line); border-radius:12px; background:var(--bg);
+  color:var(--ink); font-weight:700; pointer-events:none;
+  animation:review-feedback-in 180ms ease-out both;
+}
+.review-feedback[data-result="correct"] { border-color:var(--accent); }
+.review-feedback[data-result="incorrect"] { border-color:var(--danger); }
+.review-feedback-icon { position:relative; flex:none; width:20px; height:20px; }
+.review-feedback[data-result="correct"] .review-feedback-icon {
+  border-radius:50%; background:var(--accent); transform:scale(.45);
+  animation:review-pop 350ms ease-out both;
+}
+.review-feedback[data-result="correct"] .review-feedback-icon::before,
+.review-feedback[data-result="correct"] .review-feedback-icon::after {
+  content:""; position:absolute; left:8px; top:8px; width:4px; height:4px;
+  border-radius:50%; background:var(--accent);
+  box-shadow:0 -16px var(--accent), 16px 0 var(--accent), 0 16px var(--accent), -16px 0 var(--accent);
+  animation:review-burst 650ms ease-out both;
+}
+.review-feedback[data-result="correct"] .review-feedback-icon::after {
+  rotate:45deg; animation-delay:80ms;
+}
+.review-feedback[data-result="incorrect"] .review-feedback-icon {
+  animation:review-shake 320ms ease-in-out;
+}
+.review-feedback[data-result="incorrect"] .review-feedback-icon::before,
+.review-feedback[data-result="incorrect"] .review-feedback-icon::after {
+  content:""; position:absolute; left:9px; top:0; width:3px; height:20px;
+  border-radius:2px; background:var(--danger); rotate:45deg;
+}
+.review-feedback[data-result="incorrect"] .review-feedback-icon::after { rotate:-45deg; }
+@keyframes review-feedback-in {
+  from { opacity:0; translate:0 -8px; } to { opacity:1; translate:0 0; }
+}
+@keyframes review-pop {
+  from { transform:scale(.35); opacity:.5; } to { transform:scale(.65); opacity:1; }
+}
+@keyframes review-shake {
+  0%,100% { translate:0; } 25%,75% { translate:-5px; } 50% { translate:5px; }
+}
+@keyframes review-burst {
+  from { opacity:1; scale:.45; } to { opacity:0; scale:1.5; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .review-feedback, .review-feedback-icon, .review-feedback-icon::before,
+  .review-feedback-icon::after { animation:none !important; }
+  .review-feedback[data-result="correct"] .review-feedback-icon::before,
+  .review-feedback[data-result="correct"] .review-feedback-icon::after { display:none; }
+}
 @media print {
+  .review-feedback { display:none !important; }
   .review-reset, .review-status, .review-help, .review-choice-label { display:none !important; }
   .review-diagnostic[hidden] { display:list-item !important; }
   .review-diagnostics[hidden] { display:block !important; }
   .review-choice::after { display:none; }
   .review-extra[hidden] { display:block !important; }
-  .review-choice { border:0; box-shadow:none !important; padding:0; }
+  .review-choice { border:0 !important; box-shadow:none !important; padding:0; }
 }
 
 </style>
@@ -993,6 +1047,32 @@
       if (text !== undefined) el.textContent = text;
       return el;
     };
+    let feedback = null;
+    let feedbackTimer = null;
+    let feedbackOwner = null;
+    function clearFeedback(owner = null) {
+      if (owner !== null && owner !== feedbackOwner) return;
+      if (feedbackTimer !== null) win.clearTimeout(feedbackTimer);
+      feedbackTimer = null;
+      if (feedback) feedback.remove();
+      feedback = null;
+      feedbackOwner = null;
+    }
+    function showFeedback(result, id) {
+      clearFeedback();
+      if (result !== 'correct' && result !== 'incorrect') return;
+      feedback = element('div', 'review-feedback');
+      feedback.dataset.reviewFeedback = '';
+      feedback.dataset.result = result;
+      feedback.setAttribute('aria-hidden', 'true');
+      feedback.append(
+        element('span', 'review-feedback-icon'),
+        element('span', 'review-feedback-text', result === 'correct' ? '정답이에요' : '다시 확인해요')
+      );
+      root.body.append(feedback);
+      feedbackOwner = id;
+      feedbackTimer = win.setTimeout(clearFeedback, 1100);
+    }
     for (const [id, data] of Object.entries(model.cards)) {
       const card = root.getElementById(id);
       if (!card || card.classList.contains('review-ready')) continue;
@@ -1096,7 +1176,8 @@
             if (answered) c.button.removeAttribute('aria-pressed');
             else c.button.setAttribute('aria-pressed', 'false');
             c.button.dataset.result = !answered ? '' : c.id === data.answer
-              ? (data.mode === 'ambiguous' ? 'intended' : 'correct') : c.id === selected ? 'selected' : '';
+              ? (data.mode === 'ambiguous' ? 'intended' : 'correct')
+              : c.id === selected ? (data.mode === 'ambiguous' ? 'uncertain' : 'selected') : '';
             c.badge.hidden = !answered;
             c.badge.textContent = !answered ? '' : [
               c.id === selected ? '내 선택' : '',
@@ -1122,6 +1203,7 @@
           writeAttempt(storage, key, data, selected);
           paint();
           emit(id, selected, grade(data, selected));
+          showFeedback(grade(data, selected), id);
           const selectedOption = options.find(o => o.id === selected);
           const answerOption = options.find(o => o.id === data.answer);
           const selectedControl = controls.find(control => control.id === selected);
@@ -1134,6 +1216,7 @@
           });
         }));
         reset.addEventListener('click', () => {
+          clearFeedback(id);
           selected = null;
           expanded.clear();
           writeAttempt(storage, key, data, null);
