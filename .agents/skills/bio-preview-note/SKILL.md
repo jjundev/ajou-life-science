@@ -35,7 +35,7 @@ description: 생명과학 다음 수업의 강의노트 범위(직전 복습노�
    출력은 `MMDD<TAB>장<TAB>시작쪽<TAB>강의노트 PDF 경로`. 종료 코드가 1이면 표준에러 메시지를 그대로 보여 주고 멈춘다.
 3. 실행 폴더를 만든다. 서브에이전트에게는 `RUN`, `RUN/repo`, `SKILL` 경로만 넘긴다.
    ```bash
-   SKILL=…; RUN=…; REPO=…; rm -rf "$RUN/sections" "$RUN/work" && mkdir -p "$RUN"/{sections,work} && ln -sfn "$REPO" "$RUN/repo"
+   SKILL=…; RUN=…; REPO=…; rm -rf "${RUN:?}/sections" "${RUN:?}/work" && mkdir -p "$RUN"/{sections,work} && ln -sfn "$REPO" "$RUN/repo"
    ```
    에이전트는 `RUN` 밖에 쓰지 않는다. 임시 파일은 `RUN/work/`에만 둔다. `예습노트/`에는 메인 에이전트만 쓴다.
 
@@ -98,8 +98,12 @@ description: 생명과학 다음 수업의 강의노트 범위(직전 복습노�
 6. 교과서 쪽을 찾는다. 교과서 PDF는 **스캔본이라 텍스트가 없다**(`get_text()`가 빈 문자열). 장 PDF 전체를 작은 PNG로 렌더링해 눈으로 훑는다.
    ```bash
    REPO=… RUN=… CH=04 python3 - <<'EOF'
-   import fitz, glob, os
-   f = glob.glob(os.path.join(os.environ["REPO"], "교과서/생명과학_기초와_응용_2판", os.environ["CH"] + "장_*.pdf"))[0]
+   import fitz, os, unicodedata as u
+   def find(d, name):  # NFD 폴더명도 찾는다
+       return next(os.path.join(d, n) for n in os.listdir(d) if u.normalize("NFC", n) == name)
+   book = find(find(os.environ["REPO"], "교과서"), "생명과학_기초와_응용_2판")
+   f = next(os.path.join(book, n) for n in sorted(os.listdir(book))
+            if u.normalize("NFC", n).startswith(os.environ["CH"] + "장_") and n.endswith(".pdf"))
    out = os.path.join(os.environ["RUN"], "work", "textbook-pages")
    os.makedirs(out, exist_ok=True)
    for i, page in enumerate(fitz.open(f), 1):
@@ -108,7 +112,7 @@ description: 생명과학 다음 수업의 강의노트 범위(직전 복습노�
    print(out, len(os.listdir(out)), "쪽")
    EOF
    ```
-   Read 도구로 `RUN/work/textbook-pages/pNN.png`를 보고, 범위의 절 제목이 있는 쪽(링크 `#page=N`의 N = 파일 번호)과 그 절의 그림(`그림 4.3` 같은 번호)이 있는 쪽을 적는다. 글자가 작아 안 읽히는 쪽만 dpi 100으로 다시 렌더링한다.
+   Read 도구로 `RUN/work/textbook-pages/pNN.png`를 보고, 범위의 절 제목이 있는 쪽(링크 `#page=N`의 N = 파일 번호)과 그 절의 그림(`그림 4.3` 같은 번호)이 있는 쪽을 적는다. 글자가 작아 안 읽히는 쪽만 dpi 140으로 다시 렌더링한다.
 7. 참고 그림을 준비한다. 토픽 후보 중 강의노트나 교과서가 **그림으로 설명하는** 개념(분열 단계, 교배 결과, 구조도 등)을 고르고, 6에서 찾은 그림 쪽을 쓴다.
    토픽마다 쪽 하나를 골라 참고 PNG로 렌더링한다. 이 PNG는 작성자와 리뷰어가 보는 **참고용**이다. 저장소나 산출물(`예습노트/`)에 넣지 않는다.
    ```bash

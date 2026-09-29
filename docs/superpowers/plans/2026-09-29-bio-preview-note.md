@@ -1930,6 +1930,8 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 ### Task 7: SKILL.md, references, 진입점 심링크
 
+> **구현 중 변경(2026-09-29):** 교과서 PDF가 스캔본이라(텍스트 없음) 1단계 6·7의 글자 검색을 dpi 50 썸네일(`RUN/work/textbook-pages/`)을 눈으로 보는 방식으로 바꿨다. 아래 SKILL.md·references 본문은 저장소의 실제 파일과 같다.
+
 **Files:**
 - Create: `.agents/skills/bio-preview-note/SKILL.md`
 - Create: `.agents/skills/bio-preview-note/references/content-rules.md`, `manifest-guide.md`, `review-prompt.md`, `browser-check.md`
@@ -2047,7 +2049,7 @@ description: 생명과학 다음 수업의 강의노트 범위(직전 복습노�
    출력은 `MMDD<TAB>장<TAB>시작쪽<TAB>강의노트 PDF 경로`. 종료 코드가 1이면 표준에러 메시지를 그대로 보여 주고 멈춘다.
 3. 실행 폴더를 만든다. 서브에이전트에게는 `RUN`, `RUN/repo`, `SKILL` 경로만 넘긴다.
    ```bash
-   SKILL=…; RUN=…; REPO=…; rm -rf "$RUN/sections" "$RUN/work" && mkdir -p "$RUN"/{sections,work} && ln -sfn "$REPO" "$RUN/repo"
+   SKILL=…; RUN=…; REPO=…; rm -rf "${RUN:?}/sections" "${RUN:?}/work" && mkdir -p "$RUN"/{sections,work} && ln -sfn "$REPO" "$RUN/repo"
    ```
    에이전트는 `RUN` 밖에 쓰지 않는다. 임시 파일은 `RUN/work/`에만 둔다. `예습노트/`에는 메인 에이전트만 쓴다.
 
@@ -2107,30 +2109,25 @@ description: 생명과학 다음 수업의 강의노트 범위(직전 복습노�
    EOF
    ```
    합본 텍스트는 2단 조판이 섞이고 정답 표시가 사라지지만, 용어가 있는지만 보므로 텍스트로 충분하다. 결과는 manifest `exam_terms`에 쓴다.
-6. 교과서 쪽을 찾는다(장 PDF 안의 쪽 번호, 링크 `#page=N`의 N). `keys`는 토픽 핵심어다.
+6. 교과서 쪽을 찾는다. 교과서 PDF는 **스캔본이라 텍스트가 없다**(`get_text()`가 빈 문자열). 장 PDF 전체를 작은 PNG로 렌더링해 눈으로 훑는다.
    ```bash
-   REPO=… CH=04 python3 - <<'EOF'
-   import fitz, glob, os
-   f = glob.glob(os.path.join(os.environ["REPO"], "교과서/생명과학_기초와_응용_2판", os.environ["CH"] + "장_*.pdf"))[0]
-   keys = ["양성잡종", "독립의 법칙", "불완전우성"]
-   for i, p in enumerate(fitz.open(f)):
-       hit = [k for k in keys if k in p.get_text()]
-       if hit:
-           print(os.path.basename(f), i + 1, hit)
-   EOF
-   ```
-7. 참고 그림을 준비한다. 토픽 후보 중 강의노트나 교과서가 **그림으로 설명하는** 개념(분열 단계, 교배 결과, 구조도 등)을 고르고, 교과서 장 PDF에서 그 그림이 있는 쪽을 찾는다.
-   ```bash
-   REPO=… CH=04 python3 - <<'EOF'
-   import fitz, glob, os, re
-   f = glob.glob(os.path.join(os.environ["REPO"], "교과서/생명과학_기초와_응용_2판", os.environ["CH"] + "장_*.pdf"))[0]
+   REPO=… RUN=… CH=04 python3 - <<'EOF'
+   import fitz, os, unicodedata as u
+   def find(d, name):  # NFD 폴더명도 찾는다
+       return next(os.path.join(d, n) for n in os.listdir(d) if u.normalize("NFC", n) == name)
+   book = find(find(os.environ["REPO"], "교과서"), "생명과학_기초와_응용_2판")
+   f = next(os.path.join(book, n) for n in sorted(os.listdir(book))
+            if u.normalize("NFC", n).startswith(os.environ["CH"] + "장_") and n.endswith(".pdf"))
+   out = os.path.join(os.environ["RUN"], "work", "textbook-pages")
+   os.makedirs(out, exist_ok=True)
+   for i, page in enumerate(fitz.open(f), 1):
+       page.get_pixmap(dpi=50).save(os.path.join(out, f"p{i:02d}.png"))
    print(f)
-   for i, p in enumerate(fitz.open(f), 1):
-       for line in p.get_text().splitlines():
-           if re.match(r"\s*그림\s*\d+\.\d+", line):
-               print(i, line.strip()[:70])
+   print(out, len(os.listdir(out)), "쪽")
    EOF
    ```
+   Read 도구로 `RUN/work/textbook-pages/pNN.png`를 보고, 범위의 절 제목이 있는 쪽(링크 `#page=N`의 N = 파일 번호)과 그 절의 그림(`그림 4.3` 같은 번호)이 있는 쪽을 적는다. 글자가 작아 안 읽히는 쪽만 dpi 140으로 다시 렌더링한다.
+7. 참고 그림을 준비한다. 토픽 후보 중 강의노트나 교과서가 **그림으로 설명하는** 개념(분열 단계, 교배 결과, 구조도 등)을 고르고, 6에서 찾은 그림 쪽을 쓴다.
    토픽마다 쪽 하나를 골라 참고 PNG로 렌더링한다. 이 PNG는 작성자와 리뷰어가 보는 **참고용**이다. 저장소나 산출물(`예습노트/`)에 넣지 않는다.
    ```bash
    RUN=… PDF="<교과서 장 PDF 절대 경로>" FIGS="s1-dihybrid=12 s2-meiosis=15" python3 - <<'EOF'
@@ -2245,6 +2242,7 @@ manifest는 이번 예습노트의 계약이다. 작성자, 검사기, 조립기
 - 섹션 id는 `s0`, `s1`, … 순서(검사기가 강제). `s0`은 "0. 미리 알아둘 것", 마지막 섹션은 "N. 한눈에 보기"이며 토픽 `s<N>-cheatsheet`, `s<N>-links`를 둔다.
 - 가운데 섹션은 **강의노트 순서**대로, 절(`4.1`, `4.2`) 단위로 묶는다. 토픽 id는 `s<n>-<kebab>`(영문 소문자), 섹션 id로 시작.
 - 토픽 하나 = 소절 1~2개. `slides`는 `"4장 p3"` 또는 `"4장 p3–p4"`(en dash, 양쪽에 `p`). 요약 섹션 토픽은 `""`. `s0` 토픽은 선수 개념이므로 기본 `""`.
+- 토픽은 **장 경계**를 넘지 않는다. `slides`는 한 장 안의 쪽만 쓸 수 있다(`4장 p9–5장 p1`은 검증 실패). 범위가 다음 장으로 넘어가면 장이 바뀌는 곳에서 토픽(가능하면 섹션)을 나눈다.
 - `short`는 상단 목차 글자(예: `"2 독립의 법칙"`), `title`은 `"2. 독립의 법칙과 양성잡종"`.
 - `layers`
   - 개념 토픽: `["eli5", "formal", "listen"]`. 들을 거리가 없는 짧은 정의 토픽은 `["eli5", "formal"]`.
@@ -2274,7 +2272,7 @@ manifest는 이번 예습노트의 계약이다. 작성자, 검사기, 조립기
 - 읽기: `<SKILL>/references/content-rules.md`(이 파일 전체)
 - 계약: `<RUN>/manifest.json`의 섹션 `<sid>` — 토픽 id·제목·`slides`·`required_terms`·`exam_terms`·`layers`·`supp`를 정확히 따른다.
 - 링크: 이 섹션 토픽의 `links` `<이 섹션의 links 목록>`을 그 토픽 안에 `<a href="…">`로 넣는다. `href`는 글자 그대로.
-- 근거: `<RUN>/slides.txt`(`=== N장 pK ===` 구획), 필요하면 교과서 `<RUN>/repo/교과서/생명과학_기초와_응용_2판/<0N장_…pdf>` <쪽>
+- 근거: `<RUN>/slides.txt`(`=== N장 pK ===` 구획), 필요하면 교과서 `<RUN>/repo/교과서/생명과학_기초와_응용_2판/<0N장_…pdf>` <쪽> (스캔본이라 텍스트가 없다. `<RUN>/work/textbook-pages/pNN.png`를 Read 도구로 보고, 작으면 그 쪽만 dpi 140 PNG를 `<RUN>/work/`에 렌더링해 읽는다)
 - 그림: <그림 토픽 id → figure_ref, 참고 PNG `<RUN>/work/textbook-figs/<토픽id>.png` 목록, 없으면 "그림 토픽 없음">. 참고 PNG를 Read 도구로 보고 아래 "교과서 그림 따라 그리기"대로 SVG를 그린다. PNG를 복사하거나 `<img>`로 넣지 않는다.
 - 출력: `<RUN>/sections/<sid>.html` **한 파일만**. `<section>`/`<h2>`는 쓰지 않는다(조립기가 감싼다). 임시 파일은 `<RUN>/work/`에만.
 - 자기 검사(끝내기 전): `required_terms`가 문자 그대로 있는지, 쪽 태그가 manifest `slides`와 글자 그대로 같은지(범위는 en dash `–`), 토픽 본문 600자 이하(공백·그림 제외), 쉽게 말하면 2문장 이하이고 전문용어가 없는지, 들을 때 포인트 2항목 이하이고 "~하실 거예요" 같은 예측이 없는지, `exam_terms`가 있는 토픽만 기출 배지가 있고 그 용어가 같은 항목에 있는지, 그림 방향·레이블이 강의노트와 맞는지, `figure_ref` 토픽은 쉽게 말하면 레이어에 SVG 1개가 있고 figcaption에 `figure_ref` 글자와 "다시 그렸어요"가 있는지, 단계 순서·배치·화살표 방향·표지 이름이 참고 PNG와 같은지, 이모지 없음, `layers`가 빈 목록이 아닌 토픽마다 맨 끝에 `<div class="sum" hidden>`.
@@ -2355,7 +2353,7 @@ manifest는 이번 예습노트의 계약이다. 작성자, 검사기, 조립기
 생명과학 예습노트 초안을 검토한다. 파일은 수정하지 않는다.
 
 - 대상: `<RUN>/repo/예습노트/<MMDD>/<예습노트 html>`
-- 근거: `<RUN>/slides.txt`, `<RUN>/manifest.json`, 교과서 `<RUN>/repo/교과서/생명과학_기초와_응용_2판/<0N장_…pdf>`, 참고 그림 `<RUN>/work/textbook-figs/<토픽id>.png`
+- 근거: `<RUN>/slides.txt`, `<RUN>/manifest.json`, 교과서 `<RUN>/repo/교과서/생명과학_기초와_응용_2판/<0N장_…pdf>`(스캔본: `<RUN>/work/textbook-pages/pNN.png`로 본다), 참고 그림 `<RUN>/work/textbook-figs/<토픽id>.png`
 - 규칙: `<SKILL>/references/content-rules.md`
 
 확인할 것:
