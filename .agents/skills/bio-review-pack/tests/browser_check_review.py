@@ -140,6 +140,7 @@ class TestReviewBrowser(unittest.TestCase):
         card = self.open()
         choices = card.locator('.review-choice')
         expect(choices).to_have_count(5)
+        expect(card.locator('.review-help')).to_have_count(0)
         choices.nth(0).click()
         expect(card.locator('.review-status')).to_contain_text('정답이 아니에요')
         expect(card.locator('.review-diagnostic:visible')).to_have_count(2)

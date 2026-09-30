@@ -58,11 +58,28 @@ class TestModel(unittest.TestCase):
 
     def test_existing_packs_embed_current_interaction_assets(self):
         files = sorted((REPO / '복습노트').glob('*/복습문제_*.html'))
-        self.assertEqual(len(files), 8)
+        self.assertGreaterEqual(len(files), 8)
         for path in files:
             with self.subTest(file=path.name):
                 source = path.read_text(encoding='utf-8')
                 self.assertEqual(ri.install(source, path.name), source)
+
+    def test_assets_have_no_help_text(self):
+        for name in ('review-interaction.js', 'review-interaction.css'):
+            text = (SKILL / 'assets' / name).read_text(encoding='utf-8')
+            with self.subTest(asset=name):
+                self.assertNotIn('review-help', text)
+                self.assertNotIn('해설이 열려요', text)
+                self.assertNotIn('다른 보기도 눌러', text)
+
+    def test_generated_packs_have_no_help_text(self):
+        files = sorted((REPO / '복습노트').glob('**/복습문제_*.html'))
+        self.assertGreaterEqual(len(files), 8)
+        for path in files:
+            text = path.read_text(encoding='utf-8')
+            with self.subTest(file=str(path.relative_to(REPO))):
+                self.assertNotIn('review-help', text)
+                self.assertNotIn('해설이 열려요', text)
 
     def test_safe_json(self):
         override = {'test.html': {'p1': {'mode':'ambiguous','notice':'</script><script>alert(1)</script>'}}}
