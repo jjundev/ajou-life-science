@@ -138,20 +138,20 @@
       feedback = null;
       feedbackOwner = null;
     }
-    function showFeedback(result, id) {
+    function showFeedback(result, id, message, duration) {
       clearFeedback();
-      if (result !== 'correct' && result !== 'incorrect') return;
+      if (!message && result !== 'correct' && result !== 'incorrect') return;
       feedback = element('div', 'review-feedback');
       feedback.dataset.reviewFeedback = '';
       feedback.dataset.result = result;
       feedback.setAttribute('aria-hidden', 'true');
       feedback.append(
         element('span', 'review-feedback-icon'),
-        element('span', 'review-feedback-text', result === 'correct' ? '정답이에요' : '다시 확인해요')
+        element('span', 'review-feedback-text', message || (result === 'correct' ? '정답이에요' : '다시 확인해요'))
       );
       root.body.append(feedback);
       feedbackOwner = id;
-      feedbackTimer = win.setTimeout(clearFeedback, 1100);
+      feedbackTimer = win.setTimeout(clearFeedback, duration || 1100);
     }
     for (const [id, data] of Object.entries(model.cards)) {
       const card = root.getElementById(id);
@@ -352,7 +352,7 @@
       const bar = element('div', 'review-export-bar');
       const button = element('button', 'btn btn-primary review-export', 'JSON 내보내기');
       button.type = 'button';
-      const note = element('p', 'review-export-note');
+      const note = element('p', 'review-export-note sr-only');
       note.setAttribute('role', 'status');
       note.setAttribute('aria-live', 'polite');
       const helpWrap = element('div', 'review-export-help-wrap');
@@ -394,8 +394,10 @@
         let outcome;
         try { outcome = await saveExport(win, JSON.stringify(data, null, 2) + '\n', exportFilename(model.documentId, now)); }
         finally { button.disabled = false; }
-        note.textContent = outcome === 'saved' ? '고른 폴더에 저장했어요.'
-          : outcome === 'downloaded' ? '다운로드 폴더에 저장했어요.' : '저장을 취소했어요.';
+        const message = outcome === 'saved' ? '고른 폴더에 저장했어요'
+          : outcome === 'downloaded' ? '다운로드 폴더에 저장했어요' : '저장을 취소했어요';
+        note.textContent = message + '.';
+        showFeedback(outcome, 'export', message, 2200);
       });
     }
     // Existing page CSS hides side panels when printing. Move original details,

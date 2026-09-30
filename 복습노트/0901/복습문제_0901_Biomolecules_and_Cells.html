@@ -944,6 +944,15 @@
 }
 .review-feedback[data-result="correct"] { border-color:var(--accent); }
 .review-feedback[data-result="incorrect"] { border-color:var(--danger); }
+.review-feedback[data-result="saved"], .review-feedback[data-result="downloaded"] { border-color:var(--accent); }
+.review-feedback[data-result="saved"] .review-feedback-icon,
+.review-feedback[data-result="downloaded"] .review-feedback-icon { border-radius:50%; background:var(--accent); }
+.review-feedback[data-result="saved"] .review-feedback-icon::after,
+.review-feedback[data-result="downloaded"] .review-feedback-icon::after {
+  content:""; position:absolute; left:7px; top:3px; width:5px; height:10px;
+  border:solid var(--on-btn); border-width:0 2px 2px 0; rotate:45deg;
+}
+.review-feedback[data-result="cancelled"] .review-feedback-icon { display:none; }
 .review-feedback-icon { position:relative; flex:none; width:20px; height:20px; }
 .review-feedback[data-result="correct"] .review-feedback-icon {
   border-radius:50%; background:var(--accent); transform:scale(.45);
@@ -1161,20 +1170,20 @@ body:not(.at-end) .review-export-bar { display:none; }
       feedback = null;
       feedbackOwner = null;
     }
-    function showFeedback(result, id) {
+    function showFeedback(result, id, message, duration) {
       clearFeedback();
-      if (result !== 'correct' && result !== 'incorrect') return;
+      if (!message && result !== 'correct' && result !== 'incorrect') return;
       feedback = element('div', 'review-feedback');
       feedback.dataset.reviewFeedback = '';
       feedback.dataset.result = result;
       feedback.setAttribute('aria-hidden', 'true');
       feedback.append(
         element('span', 'review-feedback-icon'),
-        element('span', 'review-feedback-text', result === 'correct' ? '정답이에요' : '다시 확인해요')
+        element('span', 'review-feedback-text', message || (result === 'correct' ? '정답이에요' : '다시 확인해요'))
       );
       root.body.append(feedback);
       feedbackOwner = id;
-      feedbackTimer = win.setTimeout(clearFeedback, 1100);
+      feedbackTimer = win.setTimeout(clearFeedback, duration || 1100);
     }
     for (const [id, data] of Object.entries(model.cards)) {
       const card = root.getElementById(id);
@@ -1375,7 +1384,7 @@ body:not(.at-end) .review-export-bar { display:none; }
       const bar = element('div', 'review-export-bar');
       const button = element('button', 'btn btn-primary review-export', 'JSON 내보내기');
       button.type = 'button';
-      const note = element('p', 'review-export-note');
+      const note = element('p', 'review-export-note sr-only');
       note.setAttribute('role', 'status');
       note.setAttribute('aria-live', 'polite');
       const helpWrap = element('div', 'review-export-help-wrap');
@@ -1417,8 +1426,10 @@ body:not(.at-end) .review-export-bar { display:none; }
         let outcome;
         try { outcome = await saveExport(win, JSON.stringify(data, null, 2) + '\n', exportFilename(model.documentId, now)); }
         finally { button.disabled = false; }
-        note.textContent = outcome === 'saved' ? '고른 폴더에 저장했어요.'
-          : outcome === 'downloaded' ? '다운로드 폴더에 저장했어요.' : '저장을 취소했어요.';
+        const message = outcome === 'saved' ? '고른 폴더에 저장했어요'
+          : outcome === 'downloaded' ? '다운로드 폴더에 저장했어요' : '저장을 취소했어요';
+        note.textContent = message + '.';
+        showFeedback(outcome, 'export', message, 2200);
       });
     }
     // Existing page CSS hides side panels when printing. Move original details,

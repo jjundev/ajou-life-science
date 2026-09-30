@@ -372,6 +372,27 @@ class TestReviewBrowser(unittest.TestCase):
         button.click(force=True)
         self.assertEqual(self.page.evaluate('window.__calls'), 1)
 
+    def test_export_result_shows_top_toast(self):
+        self.context.add_init_script(self.PICKER_MOCK)
+        card = self.open()
+        card.locator('.review-choice').first.click()
+        self.go_to_last()
+        self.page.locator('.review-export').click()
+        toast = self.page.locator('[data-review-feedback]')
+        expect(toast).to_have_attribute('data-result', 'saved')
+        expect(toast).to_contain_text('고른 폴더에 저장했어요')
+        self.assertLess(toast.bounding_box()['y'], 150)
+        expect(toast).to_have_count(0, timeout=4000)
+
+    def test_export_cancel_shows_neutral_toast(self):
+        self.context.add_init_script(
+            "window.showDirectoryPicker = async () => { const e = new Error('cancel'); e.name = 'AbortError'; throw e; };")
+        self.open()
+        self.go_to_last()
+        self.page.locator('.review-export').click()
+        expect(self.page.locator('[data-review-feedback]')).to_have_attribute('data-result', 'cancelled')
+        expect(self.page.locator('[data-review-feedback]')).to_contain_text('저장을 취소했어요')
+
     def test_export_help_popup(self):
         self.open()
         self.go_to_last()
