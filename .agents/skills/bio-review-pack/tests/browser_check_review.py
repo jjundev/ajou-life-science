@@ -278,7 +278,22 @@ class TestReviewBrowser(unittest.TestCase):
                 }""")
                 self.assertTrue(result)
 
-    NO_PICKER = "window.__pickerCalls = 0; window.showDirectoryPicker = async () => { window.__pickerCalls++; throw new Error('picker must not open'); };"
+    PICKER_MOCK = """
+      window.__saved = null;
+      window.__pickerCalls = 0;
+      const writer = (name) => ({ async createWritable() {
+        let text = '';
+        return { async write(t) { text += t; }, async close() { window.__saved = { name, text, dir: '풀이기록' }; } };
+      } });
+      const outDir = { name: '풀이기록', async getFileHandle(name) { return writer(name); } };
+      window.showDirectoryPicker = async (opts) => {
+        window.__pickerCalls++;
+        window.__pickerOpts = opts;
+        return { name: '0929',
+          async getFileHandle(name, o) { if (o && o.create) throw new Error('unexpected'); return {}; },
+          async getDirectoryHandle(name) { return outDir; } };
+      };
+    """
     SNAP_KEY = "Object.keys(sessionStorage).find(k => k.startsWith('od-review-export:v1:'))"
 
     def go_to_last(self):
@@ -287,10 +302,8 @@ class TestReviewBrowser(unittest.TestCase):
         expect(self.page.locator('#' + last)).to_be_visible()
         return last
 
-    def export_data(self):
-        with self.page.expect_download() as info:
-            self.page.locator('.review-export').click()
-        return json.loads(Path(info.value.path()).read_text(encoding='utf-8'))
+    def saved_json(self):
+        return json.loads(self.page.evaluate('window.__saved.text'))
 
     def test_leaving_a_card_updates_snapshot(self):
         card = self.open()
@@ -309,17 +322,16 @@ class TestReviewBrowser(unittest.TestCase):
         expect(self.page.locator('.review-export')).to_be_visible()
         expect(self.page.locator('.review-export')).to_have_text('JSON 내보내기')
 
-    def test_export_downloads_json(self):
-        self.context.add_init_script(self.NO_PICKER)
+    def test_export_to_chosen_folder(self):
+        self.context.add_init_script(self.PICKER_MOCK)
         card = self.open()
         card.locator('.review-choice').first.click()
         self.go_to_last()
-        with self.page.expect_download() as info:
-            self.page.locator('.review-export').click()
-        self.assertRegex(info.value.suggested_filename, r'^복습문제_0929_Heredity_풀이기록_\d{8}-\d{4}\.json$')
-        expect(self.page.locator('.review-export-note')).to_have_text('다운로드 폴더에 저장했어요.')
-        self.assertEqual(self.page.evaluate('window.__pickerCalls'), 0)
-        data = json.loads(Path(info.value.path()).read_text(encoding='utf-8'))
+        self.page.locator('.review-export').click()
+        expect(self.page.locator('.review-export-note')).to_have_text('풀이기록 폴더에 저장했어요.')
+        saved = self.page.evaluate('window.__saved')
+        self.assertRegex(saved['name'], r'^복습문제_0929_Heredity_풀이기록_\d{8}-\d{4}\.json$')
+        data = self.saved_json()
         dom_ids = self.page.evaluate("Array.from(document.querySelectorAll('main article.card')).map(e => e.id)")
         exported = [c['id'] for c in data['cards']]
         self.assertEqual(exported, [i for i in dom_ids if i in set(exported)])
@@ -331,27 +343,99 @@ class TestReviewBrowser(unittest.TestCase):
         self.assertIsNotNone(data['cards'][0]['updatedAt'])
         self.assertIsNone(data['cards'][-1]['selected'])
 
+    def test_export_goes_to_fixed_folder_with_remembered_picker_id(self):
+        self.context.add_init_script(self.PICKER_MOCK)
+        card = self.open()
+        card.locator('.review-choice').first.click()
+        self.go_to_last()
+        self.page.locator('.review-export').click()
+        expect(self.page.locator('.review-export-note')).to_have_text('풀이기록 폴더에 저장했어요.')
+        self.assertEqual(self.page.evaluate('window.__saved.dir'), '풀이기록')
+        self.assertEqual(self.page.evaluate('window.__pickerOpts'), {'mode': 'readwrite', 'id': 'od-review-export'})
+
+    def test_export_wrong_folder_saves_nothing(self):
+        self.context.add_init_script(self.PICKER_MOCK)
+        self.context.add_init_script(
+            "const real = () => window.showDirectoryPicker; "
+            "window.__origPicker = null; "
+            "window.addEventListener('DOMContentLoaded', () => { window.showDirectoryPicker = async () => ({ name: 'etc', "
+            "async getFileHandle() { const e = new Error('nf'); e.name = 'NotFoundError'; throw e; } }); });")
+        card = self.open()
+        card.locator('.review-choice').first.click()
+        self.go_to_last()
+        self.page.locator('.review-export').click()
+        expect(self.page.locator('[data-review-feedback]')).to_contain_text('폴더를 골라 주세요')
+        self.assertIsNone(self.page.evaluate('window.__saved'))
+
+    def test_handle_store_round_trip_in_real_indexeddb(self):
+        self.open()
+        result = self.page.evaluate("""async () => {
+          const s = ReviewInteraction.handleStore(window);
+          await s.clear();
+          const empty = await s.get();
+          await s.set({name: 'x'});
+          const got = await s.get();
+          await s.clear();
+          return [empty, got, await s.get()];
+        }""")
+        self.assertEqual(result, [None, {'name': 'x'}, None])
+
     def test_export_reflects_reset(self):
-        self.context.add_init_script(self.NO_PICKER)
+        self.context.add_init_script(self.PICKER_MOCK)
         card = self.open()
         card.locator('.review-choice').first.click()
         card.locator('.review-reset').click()
         self.go_to_last()
-        data = self.export_data()
+        self.page.locator('.review-export').click()
+        expect(self.page.locator('.review-export-note')).to_have_text('풀이기록 폴더에 저장했어요.')
+        data = self.saved_json()
         self.assertEqual(data['summary']['answered'], 0)
         self.assertIsNone(data['cards'][0]['selected'])
 
+    def test_export_cancel_saves_nothing(self):
+        self.context.add_init_script(
+            "window.showDirectoryPicker = async () => { const e = new Error('cancel'); e.name = 'AbortError'; throw e; };")
+        self.open()
+        self.go_to_last()
+        downloads = []
+        self.page.on('download', lambda d: downloads.append(d))
+        self.page.locator('.review-export').click()
+        expect(self.page.locator('.review-export-note')).to_have_text('저장을 취소했어요.')
+        self.assertEqual(downloads, [])
+
+    def test_export_button_is_disabled_while_picker_is_open(self):
+        self.context.add_init_script(
+            "window.__calls = 0; window.showDirectoryPicker = () => { window.__calls++; return new Promise(() => {}); };")
+        self.open()
+        self.go_to_last()
+        button = self.page.locator('.review-export')
+        button.click()
+        expect(button).to_be_disabled()
+        self.page.wait_for_function('window.__calls === 1')
+        button.click(force=True)
+        self.page.wait_for_timeout(300)
+        self.assertEqual(self.page.evaluate('window.__calls'), 1)
+
     def test_export_result_shows_top_toast(self):
-        self.context.add_init_script(self.NO_PICKER)
+        self.context.add_init_script(self.PICKER_MOCK)
         card = self.open()
         card.locator('.review-choice').first.click()
         self.go_to_last()
         self.page.locator('.review-export').click()
         toast = self.page.locator('[data-review-feedback]')
-        expect(toast).to_have_attribute('data-result', 'downloaded')
-        expect(toast).to_contain_text('다운로드 폴더에 저장했어요')
+        expect(toast).to_have_attribute('data-result', 'saved')
+        expect(toast).to_contain_text('풀이기록 폴더에 저장했어요')
         self.assertLess(toast.bounding_box()['y'], 150)
         expect(toast).to_have_count(0, timeout=4000)
+
+    def test_export_cancel_shows_neutral_toast(self):
+        self.context.add_init_script(
+            "window.showDirectoryPicker = async () => { const e = new Error('cancel'); e.name = 'AbortError'; throw e; };")
+        self.open()
+        self.go_to_last()
+        self.page.locator('.review-export').click()
+        expect(self.page.locator('[data-review-feedback]')).to_have_attribute('data-result', 'cancelled')
+        expect(self.page.locator('[data-review-feedback]')).to_contain_text('저장을 취소했어요')
 
     def test_export_help_popup(self):
         self.open()
@@ -364,7 +448,7 @@ class TestReviewBrowser(unittest.TestCase):
         help_btn.click()
         expect(help_btn).to_have_attribute('aria-expanded', 'true')
         expect(popup).to_be_visible()
-        expect(popup).to_contain_text('collect_solves.py')
+        expect(popup).to_contain_text('풀이기록 폴더에 바로 저장')
         self.page.keyboard.press('Escape')
         expect(popup).to_be_hidden()
         help_btn.click()
@@ -375,14 +459,30 @@ class TestReviewBrowser(unittest.TestCase):
         self.page.locator('.hero, main').first.click(position={'x': 5, 'y': 5}, force=True)
         expect(popup).to_be_hidden()
 
-    def test_export_with_storage_blocked(self):
+    def test_export_falls_back_to_download(self):
         self.context.add_init_script(
-            "for(const n of ['localStorage','sessionStorage']) Object.defineProperty(window,n,{get(){throw Error('blocked')}});")
-        self.context.add_init_script(self.NO_PICKER)
+            "window.showDirectoryPicker = async () => { const e = new Error('no'); e.name = 'SecurityError'; throw e; };")
         card = self.open()
         card.locator('.review-choice').first.click()
         self.go_to_last()
-        self.assertEqual(self.export_data()['summary']['answered'], 1)
+        with self.page.expect_download() as info:
+            self.page.locator('.review-export').click()
+        download = info.value
+        self.assertRegex(download.suggested_filename, r'\.json$')
+        data = json.loads(Path(download.path()).read_text(encoding='utf-8'))
+        self.assertEqual(data['summary']['answered'], 1)
+        expect(self.page.locator('.review-export-note')).to_have_text('다운로드 폴더에 저장했어요.')
+
+    def test_export_with_storage_blocked(self):
+        self.context.add_init_script(
+            "for(const n of ['localStorage','sessionStorage']) Object.defineProperty(window,n,{get(){throw Error('blocked')}});")
+        self.context.add_init_script(self.PICKER_MOCK)
+        card = self.open()
+        card.locator('.review-choice').first.click()
+        self.go_to_last()
+        self.page.locator('.review-export').click()
+        expect(self.page.locator('.review-export-note')).to_have_text('풀이기록 폴더에 저장했어요.')
+        self.assertEqual(self.saved_json()['summary']['answered'], 1)
 
     def unsure_button(self, cid='p1'):
         return self.page.locator(f'.aid[data-card-id="{cid}"] .review-unsure')
@@ -415,31 +515,37 @@ class TestReviewBrowser(unittest.TestCase):
         expect(self.unsure_button()).to_have_attribute('aria-pressed', 'true')
 
     def test_unsure_is_exported_and_reset_clears_it(self):
-        self.context.add_init_script(self.NO_PICKER)
+        self.context.add_init_script(self.PICKER_MOCK)
         card = self.open()
         card.locator('.review-choice').first.click()
         self.unsure_button().click()
         self.go_to_last()
-        data = self.export_data()
+        self.page.locator('.review-export').click()
+        expect(self.page.locator('.review-export-note')).to_have_text('풀이기록 폴더에 저장했어요.')
+        data = self.saved_json()
         self.assertTrue(data['cards'][0]['unsure'])
         self.assertEqual(data['summary']['unsure'], 1)
         self.assertFalse(data['cards'][-1]['unsure'])
         self.page.evaluate("location.hash = '#p1'")
         card.locator('.review-reset').click()
         self.go_to_last()
-        data = self.export_data()
+        self.page.locator('.review-export').click()
+        expect(self.page.locator('.review-export-note')).to_have_text('풀이기록 폴더에 저장했어요.')
+        data = self.saved_json()
         self.assertFalse(data['cards'][0]['unsure'])
         self.assertEqual(data['summary']['unsure'], 0)
 
     def test_unsure_export_with_storage_blocked(self):
         self.context.add_init_script(
             "for(const n of ['localStorage','sessionStorage']) Object.defineProperty(window,n,{get(){throw Error('blocked')}});")
-        self.context.add_init_script(self.NO_PICKER)
+        self.context.add_init_script(self.PICKER_MOCK)
         card = self.open()
         card.locator('.review-choice').first.click()
         self.unsure_button().click()
         self.go_to_last()
-        self.assertEqual(self.export_data()['summary']['unsure'], 1)
+        self.page.locator('.review-export').click()
+        expect(self.page.locator('.review-export-note')).to_have_text('풀이기록 폴더에 저장했어요.')
+        self.assertEqual(self.saved_json()['summary']['unsure'], 1)
 
     def test_snapshot_does_not_survive_a_new_tab(self):
         card = self.open()

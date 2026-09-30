@@ -182,17 +182,128 @@ function fakeWin(picker) {
   return {win, log, anchor};
 }
 
-test('내보내기는 폴더 선택창 없이 다운로드로 저장', async () => {
-  let picked = 0;
-  const {win, log, anchor} = fakeWin(async () => { picked++; throw new Error('no picker'); });
-  assert.equal(await api.saveExport(win, '{"a":1}', 'f.json'), 'downloaded');
-  assert.equal(picked, 0);
-  assert.equal(log.clicks, 1);
-  assert.equal(anchor.download, 'f.json');
+function notFound() { const e = new Error('nf'); e.name = 'NotFoundError'; return e; }
+function fakeDir(name, {files = [], dirs = {}} = {}, written = {}) {
+  const dir = {
+    name, files: new Set(files), dirs: {...dirs},
+    async getFileHandle(n, opts) {
+      if (!dir.files.has(n) && !(opts && opts.create)) throw notFound();
+      return {async createWritable() {
+        return {async write(t){ written.name = n; written.text = t; written.dir = name; }, async close(){ written.closed = true; }};
+      }};
+    },
+    async getDirectoryHandle(n, opts) {
+      if (!dir.dirs[n]) {
+        if (!(opts && opts.create)) throw notFound();
+        dir.dirs[n] = fakeDir(n, {}, written);
+      }
+      return dir.dirs[n];
+    }
+  };
+  return dir;
+}
+function fakeStore(initial) {
+  const s = {value: initial || null, sets: 0, clears: 0,
+    async get(){ return s.value; }, async set(h){ s.value = h; s.sets++; }, async clear(){ s.value = null; s.clears++; }};
+  return s;
+}
+const META = {documentId:'d.html', range:'0929'};
+
+test('날짜 폴더를 고르면 풀이기록 안에 저장하고 핸들을 기억', async () => {
+  const written = {};
+  const root = fakeDir('0929', {files:['d.html']}, written);
+  const store = fakeStore();
+  let opts;
+  const {win, log} = fakeWin(async o => { opts = o; return root; });
+  assert.equal(await api.saveExport(win, '{"a":1}', 'f.json', {...META, store}), 'saved');
+  assert.deepEqual(opts, {mode:'readwrite', id:'od-review-export'});
+  assert.equal(written.dir, '풀이기록');
+  assert.equal(written.name, 'f.json');
+  assert.equal(written.text, '{"a":1}');
+  assert.equal(written.closed, true);
+  assert.equal(store.value, root);
+  assert.equal(log.clicks, 0);
 });
 
-test('폴더 API가 없어도 다운로드', async () => {
-  const {win, log} = fakeWin(undefined);
-  assert.equal(await api.saveExport(win, '{}', 'f.json'), 'downloaded');
-  assert.equal(log.clicks, 1);
+test('풀이기록·복습노트 폴더를 골라도 같은 위치에 저장', async () => {
+  const w1 = {};
+  const out = fakeDir('풀이기록', {}, w1);
+  assert.equal(await api.saveExport(fakeWin(async () => out).win, '{}', 'f.json', {...META, store:fakeStore()}), 'saved');
+  assert.equal(w1.dir, '풀이기록');
+  const w2 = {};
+  const notes = fakeDir('복습노트', {}, w2);
+  notes.dirs['0929'] = fakeDir('0929', {}, w2);
+  assert.equal(await api.saveExport(fakeWin(async () => notes).win, '{}', 'f.json', {...META, store:fakeStore()}), 'saved');
+  assert.equal(w2.dir, '풀이기록');
+  assert.ok(notes.dirs['0929'].dirs['풀이기록']);
+});
+
+test('관계없는 폴더는 저장하지 않고 wrong-folder', async () => {
+  const written = {};
+  const store = fakeStore();
+  const {win, log} = fakeWin(async () => fakeDir('etc', {}, written));
+  assert.equal(await api.saveExport(win, '{}', 'f.json', {...META, store}), 'wrong-folder');
+  assert.deepEqual(written, {});
+  assert.equal(store.sets, 0);
+  assert.equal(log.clicks, 0);
+});
+
+test('기억한 폴더가 있으면 선택창 없이 바로 저장', async () => {
+  const written = {};
+  const root = fakeDir('복습노트', {}, written);
+  root.dirs['0929'] = fakeDir('0929', {}, written);
+  root.queryPermission = async () => 'granted';
+  let picked = 0;
+  const {win} = fakeWin(async () => { picked++; return null; });
+  assert.equal(await api.saveExport(win, '{}', 'f.json', {...META, store:fakeStore(root)}), 'saved');
+  assert.equal(picked, 0);
+  assert.equal(written.dir, '풀이기록');
+});
+
+test('기억한 폴더 권한이 꺼져 있으면 다시 요청하고, 거부하면 취소', async () => {
+  const root = fakeDir('풀이기록');
+  root.queryPermission = async () => 'prompt';
+  root.requestPermission = async () => 'granted';
+  const {win} = fakeWin(async () => { throw new Error('no picker'); });
+  assert.equal(await api.saveExport(win, '{}', 'f.json', {...META, store:fakeStore(root)}), 'saved');
+  root.requestPermission = async () => 'denied';
+  const store = fakeStore(root);
+  assert.equal(await api.saveExport(win, '{}', 'f.json', {...META, store}), 'cancelled');
+  assert.equal(store.clears, 0);
+});
+
+test('기억한 폴더가 이 문서와 안 맞으면 지우고 선택창으로', async () => {
+  const stale = fakeDir('etc');
+  stale.queryPermission = async () => 'granted';
+  const store = fakeStore(stale);
+  const written = {};
+  const fresh = fakeDir('0929', {files:['d.html']}, written);
+  const {win} = fakeWin(async () => fresh);
+  assert.equal(await api.saveExport(win, '{}', 'f.json', {...META, store}), 'saved');
+  assert.equal(store.clears, 1);
+  assert.equal(store.value, fresh);
+});
+
+test('선택창 취소는 아무것도 저장하지 않음', async () => {
+  const picker = async () => { const e = new Error('cancel'); e.name = 'AbortError'; throw e; };
+  const {win, log} = fakeWin(picker);
+  assert.equal(await api.saveExport(win, '{}', 'f.json', {...META, store:fakeStore()}), 'cancelled');
+  assert.equal(log.clicks, 0);
+});
+
+test('폴더 API 거부·미지원이면 다운로드로 대체', async () => {
+  const denied = async () => { const e = new Error('no'); e.name = 'SecurityError'; throw e; };
+  for (const picker of [denied, undefined]) {
+    const {win, log, anchor} = fakeWin(picker);
+    assert.equal(await api.saveExport(win, '{}', 'f.json', {...META, store:fakeStore()}), 'downloaded');
+    assert.equal(log.clicks, 1);
+    assert.equal(anchor.download, 'f.json');
+  }
+});
+
+test('권한 거부(NotAllowedError)는 취소로 처리하고 다운로드하지 않음', async () => {
+  const picker = async () => { const e = new Error('picker active'); e.name = 'NotAllowedError'; throw e; };
+  const {win, log} = fakeWin(picker);
+  assert.equal(await api.saveExport(win, '{}', 'f.json', {...META, store:fakeStore()}), 'cancelled');
+  assert.equal(log.clicks, 0);
 });
