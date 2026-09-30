@@ -440,6 +440,69 @@ class TestReviewBrowser(unittest.TestCase):
         expect(self.page.locator('.review-export-note')).to_have_text('고른 폴더에 저장했어요.')
         self.assertEqual(self.saved_json()['summary']['answered'], 1)
 
+    def unsure_button(self, cid='p1'):
+        return self.page.locator(f'.aid[data-card-id="{cid}"] .review-unsure')
+
+    def test_unsure_button_appears_only_after_answer_and_toggles(self):
+        card = self.open()
+        expect(self.unsure_button()).to_be_hidden()
+        card.locator('.review-choice').first.click()
+        button = self.unsure_button()
+        expect(button).to_be_visible()
+        expect(button).to_have_text('애매함으로 표시')
+        button.click()
+        expect(button).to_have_text('애매함 표시 취소')
+        expect(button).to_have_attribute('aria-pressed', 'true')
+        expect(self.page.locator('[data-review-feedback]')).to_contain_text('애매함으로 표시했어요')
+        button.click()
+        expect(button).to_have_text('애매함으로 표시')
+        expect(self.page.locator('[data-review-feedback]')).to_contain_text('애매함 표시를 취소했어요')
+
+    def test_unsure_updates_snapshot_immediately_and_survives_navigation(self):
+        card = self.open()
+        card.locator('.review-choice').first.click()
+        self.unsure_button().click()
+        snap = self.page.evaluate(f"JSON.parse(sessionStorage.getItem({self.SNAP_KEY}))")
+        self.assertTrue(snap['cards']['p1']['unsure'])
+        self.page.locator('#pager-next').click()
+        self.page.locator('#pager-prev').click()
+        expect(self.unsure_button()).to_have_attribute('aria-pressed', 'true')
+        self.page.reload()
+        expect(self.unsure_button()).to_have_attribute('aria-pressed', 'true')
+
+    def test_unsure_is_exported_and_reset_clears_it(self):
+        self.context.add_init_script(self.PICKER_MOCK)
+        card = self.open()
+        card.locator('.review-choice').first.click()
+        self.unsure_button().click()
+        self.go_to_last()
+        self.page.locator('.review-export').click()
+        expect(self.page.locator('.review-export-note')).to_have_text('고른 폴더에 저장했어요.')
+        data = self.saved_json()
+        self.assertTrue(data['cards'][0]['unsure'])
+        self.assertEqual(data['summary']['unsure'], 1)
+        self.assertFalse(data['cards'][-1]['unsure'])
+        self.page.evaluate("location.hash = '#p1'")
+        card.locator('.review-reset').click()
+        self.go_to_last()
+        self.page.locator('.review-export').click()
+        expect(self.page.locator('.review-export-note')).to_have_text('고른 폴더에 저장했어요.')
+        data = self.saved_json()
+        self.assertFalse(data['cards'][0]['unsure'])
+        self.assertEqual(data['summary']['unsure'], 0)
+
+    def test_unsure_export_with_storage_blocked(self):
+        self.context.add_init_script(
+            "for(const n of ['localStorage','sessionStorage']) Object.defineProperty(window,n,{get(){throw Error('blocked')}});")
+        self.context.add_init_script(self.PICKER_MOCK)
+        card = self.open()
+        card.locator('.review-choice').first.click()
+        self.unsure_button().click()
+        self.go_to_last()
+        self.page.locator('.review-export').click()
+        expect(self.page.locator('.review-export-note')).to_have_text('고른 폴더에 저장했어요.')
+        self.assertEqual(self.saved_json()['summary']['unsure'], 1)
+
     def test_snapshot_does_not_survive_a_new_tab(self):
         card = self.open()
         card.locator('.review-choice').first.click()

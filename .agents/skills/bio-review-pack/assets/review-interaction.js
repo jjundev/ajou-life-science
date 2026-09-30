@@ -34,10 +34,16 @@
       return value && value.version === card.version && grade(card, value.selected) !== null ? value.selected : null;
     } catch { return null; }
   }
-  function writeAttempt(storage, key, card, selected) {
+  function readUnsure(storage, key, card) {
+    try {
+      const value = JSON.parse(storage.getItem(key));
+      return !!value && value.version === card.version && grade(card, value.selected) !== null && value.unsure === true;
+    } catch { return false; }
+  }
+  function writeAttempt(storage, key, card, selected, unsure) {
     try {
       if (selected === null) storage.removeItem(key);
-      else storage.setItem(key, JSON.stringify({version:card.version, selected}));
+      else storage.setItem(key, JSON.stringify({version:card.version, selected, unsure:unsure === true}));
     } catch {}
   }
   function exportKey(documentId) {
@@ -54,27 +60,31 @@
   function writeSnapshot(storage, key, snapshot) {
     try { storage.setItem(key, JSON.stringify(snapshot)); } catch {}
   }
-  function updateSnapshot(snapshot, selectedById, ids, now) {
+  function updateSnapshot(snapshot, selectedById, ids, now, unsureById) {
     const cards = Object.assign({}, snapshot.cards);
     for (const id of ids) {
       const selected = selectedById[id] === undefined ? null : selectedById[id];
+      const unsure = selected !== null && !!unsureById && unsureById[id] === true;
       const prev = cards[id];
-      if (prev && prev.selected === selected) continue;
-      cards[id] = {selected, updatedAt: selected === null ? null : now.toISOString()};
+      if (prev && prev.selected === selected && (prev.unsure === true) === unsure) continue;
+      cards[id] = {selected, unsure, updatedAt: selected === null ? null : now.toISOString()};
     }
     return {schema:1, cards};
   }
   function buildExport(model, snapshot, meta) {
     const counts = {correct:0, incorrect:0, ambiguous:0};
+    let unsure = 0;
     const cards = meta.ids.map(id => {
       const data = model.cards[id];
       const entry = snapshot.cards[id] || {};
       const result = grade(data, entry.selected);
       if (result !== null) counts[result] += 1;
+      const marked = result !== null && entry.unsure === true;
+      if (marked) unsure += 1;
       return {
         id, title: meta.titles[id] || '',
         selected: result === null ? null : entry.selected,
-        answer: data.answer, result,
+        answer: data.answer, result, unsure: marked,
         updatedAt: result === null ? null : (entry.updatedAt || null)
       };
     });
@@ -82,7 +92,7 @@
     return {
       schema:1, documentId:model.documentId, range:meta.range, exportedAt:meta.now.toISOString(),
       summary:{total:cards.length, answered, unanswered:cards.length - answered,
-        correct:counts.correct, incorrect:counts.incorrect, ambiguous:counts.ambiguous},
+        correct:counts.correct, incorrect:counts.incorrect, ambiguous:counts.ambiguous, unsure},
       skipped: model.skipped || [], cards
     };
   }
@@ -127,6 +137,7 @@
       return el;
     };
     const selectedById = {};
+    const unsureById = {};
     let feedback = null;
     let feedbackTimer = null;
     let feedbackOwner = null;
@@ -174,7 +185,7 @@
       const summaryText = summary ? summary.textContent : '';
       const originalOpen = solution.open;
       const originalHidden = solution.hidden;
-      let status, reset, notice;
+      let status, reset, notice, unsureBtn;
       try {
         // Some future cards supply the caution only as metadata. Keep its full
         // explanation in the solution panel, without duplicating existing prose.
@@ -227,7 +238,12 @@
         card.querySelector('.choices').after(reset);
         const key = storageKey(model.documentId, id);
         let selected = readAttempt(storage, key, data);
+        let unsure = selected !== null && readUnsure(storage, key, data);
         selectedById[id] = selected;
+        unsureById[id] = unsure;
+        unsureBtn = element('button', 'review-unsure text-btn');
+        unsureBtn.type = 'button';
+        solution.prepend(unsureBtn);
         const expanded = new Set(selected === null ? [] : [selected, data.answer]);
         function paintDisclosure(c) {
           const answered = selected !== null;
@@ -246,6 +262,9 @@
           const answered = selected !== null;
           const result = grade(data, selected);
           reset.hidden = !answered;
+          unsureBtn.textContent = unsure ? '애매함 표시 취소' : '애매함으로 표시';
+          unsureBtn.setAttribute('aria-pressed', String(unsure));
+          unsureBtn.dataset.unsure = String(unsure);
           status.textContent = !answered ? '' : result === 'ambiguous'
             ? '단일 정답 판정 주의'
             : result === 'correct' ? '정답이에요.' : '정답이 아니에요. 보기별 이유를 확인해 보세요.';
@@ -278,6 +297,8 @@
           }
           selected = c.id;
           selectedById[id] = selected;
+          unsure = false;
+          unsureById[id] = false;
           expanded.add(selected);
           expanded.add(data.answer);
           writeAttempt(storage, key, data, selected);
@@ -299,11 +320,23 @@
           clearFeedback(id);
           selected = null;
           selectedById[id] = null;
+          unsure = false;
+          unsureById[id] = false;
           expanded.clear();
           writeAttempt(storage, key, data, null);
           paint();
           emit(id, null, null);
+          root.dispatchEvent(new win.CustomEvent('od:mark', {detail:{id}}));
           controls[0].button.focus();
+        });
+        unsureBtn.addEventListener('click', () => {
+          if (selected === null) return;
+          unsure = !unsure;
+          unsureById[id] = unsure;
+          writeAttempt(storage, key, data, selected, unsure);
+          paint();
+          root.dispatchEvent(new win.CustomEvent('od:mark', {detail:{id}}));
+          showFeedback('unsure', id, unsure ? '애매함으로 표시했어요' : '애매함 표시를 취소했어요');
         });
         card.classList.add('review-ready');
         solution.classList.add('review-extra');
@@ -326,7 +359,7 @@
           p.node.classList.remove('review-diagnostic');
           p.parent.insertBefore(p.node, p.next);
         });
-        for (const el of [status, reset, notice]) if (el) el.remove();
+        for (const el of [status, reset, notice, unsureBtn]) if (el) el.remove();
         solution.hidden = originalHidden;
         solution.open = originalOpen;
         if (summary) summary.textContent = summaryText;
@@ -346,7 +379,13 @@
       root.addEventListener('od:leave', ({detail}) => {
         const id = detail && detail.screen && detail.screen.id;
         if (!model.cards[id]) return;
-        snapshot = updateSnapshot(snapshot, selectedById, [id], new Date());
+        snapshot = updateSnapshot(snapshot, selectedById, [id], new Date(), unsureById);
+        writeSnapshot(storage, snapKey, snapshot);
+      });
+      root.addEventListener('od:mark', ({detail}) => {
+        const id = detail && detail.id;
+        if (!model.cards[id]) return;
+        snapshot = updateSnapshot(snapshot, selectedById, [id], new Date(), unsureById);
         writeSnapshot(storage, snapKey, snapshot);
       });
       const bar = element('div', 'review-export-bar');
@@ -388,7 +427,7 @@
         if (button.disabled) return;
         button.disabled = true;
         const now = new Date();
-        snapshot = updateSnapshot(snapshot, selectedById, ids, now);
+        snapshot = updateSnapshot(snapshot, selectedById, ids, now, unsureById);
         writeSnapshot(storage, snapKey, snapshot);
         const data = buildExport(model, snapshot, {ids, titles, range: root.body.dataset.range || '', now});
         let outcome;
@@ -423,7 +462,7 @@
       });
     }
   }
-  const api = {stripDiagnosticPrefix, grade, storageKey, readAttempt, writeAttempt, mount,
+  const api = {stripDiagnosticPrefix, grade, storageKey, readAttempt, readUnsure, writeAttempt, mount,
     exportKey, readSnapshot, writeSnapshot, updateSnapshot, buildExport, exportFilename, saveExport};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else scope.ReviewInteraction = api;

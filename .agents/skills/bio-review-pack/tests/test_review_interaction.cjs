@@ -83,13 +83,13 @@ test('스냅샷 저장과 복원', () => {
 
 test('스냅샷 갱신: 같은 답은 시각 유지, 바뀌면 새 시각, 초기화하면 null', () => {
   let snap = api.updateSnapshot({schema:1, cards:{}}, {p2:'1'}, ['p2'], T0);
-  assert.deepEqual(snap.cards.p2, {selected:'1', updatedAt:T0.toISOString()});
+  assert.deepEqual(snap.cards.p2, {selected:'1', unsure:false, updatedAt:T0.toISOString()});
   snap = api.updateSnapshot(snap, {p2:'1'}, ['p2'], T1);
   assert.equal(snap.cards.p2.updatedAt, T0.toISOString());
   snap = api.updateSnapshot(snap, {p2:'2'}, ['p2'], T1);
-  assert.deepEqual(snap.cards.p2, {selected:'2', updatedAt:T1.toISOString()});
+  assert.deepEqual(snap.cards.p2, {selected:'2', unsure:false, updatedAt:T1.toISOString()});
   snap = api.updateSnapshot(snap, {p2:null}, ['p2'], T1);
-  assert.deepEqual(snap.cards.p2, {selected:null, updatedAt:null});
+  assert.deepEqual(snap.cards.p2, {selected:null, unsure:false, updatedAt:null});
   const before = {schema:1, cards:{}};
   api.updateSnapshot(before, {p2:'1'}, ['p2'], T0);
   assert.deepEqual(before, {schema:1, cards:{}}, '입력 스냅샷은 바꾸지 않는다');
@@ -97,7 +97,7 @@ test('스냅샷 갱신: 같은 답은 시각 유지, 바뀌면 새 시각, 초�
 
 test('스냅샷 갱신: selectedById에 없는 문항은 안 푼 것', () => {
   const snap = api.updateSnapshot({schema:1, cards:{}}, {}, ['p2'], T0);
-  assert.deepEqual(snap.cards.p2, {selected:null, updatedAt:null});
+  assert.deepEqual(snap.cards.p2, {selected:null, unsure:false, updatedAt:null});
 });
 
 test('내보내기: DOM 순서·안 푼 문제 null·요약', () => {
@@ -114,11 +114,11 @@ test('내보내기: DOM 순서·안 푼 문제 null·요약', () => {
   assert.equal(out.exportedAt, T1.toISOString());
   assert.deepEqual(out.skipped, ['s1']);
   assert.deepEqual(out.cards.map(c => c.id), ['p2', 'p3', 'p4', 'p10']);
-  assert.deepEqual(out.cards[0], {id:'p2', title:'둘째', selected:'1', answer:'1', result:'correct', updatedAt:T0.toISOString()});
+  assert.deepEqual(out.cards[0], {id:'p2', title:'둘째', selected:'1', answer:'1', result:'correct', unsure:false, updatedAt:T0.toISOString()});
   assert.equal(out.cards[1].result, 'ambiguous');
-  assert.deepEqual(out.cards[2], {id:'p4', title:'넷째', selected:null, answer:'1', result:null, updatedAt:null});
+  assert.deepEqual(out.cards[2], {id:'p4', title:'넷째', selected:null, answer:'1', result:null, unsure:false, updatedAt:null});
   assert.equal(out.cards[3].result, 'incorrect');
-  assert.deepEqual(out.summary, {total:4, answered:3, unanswered:1, correct:1, incorrect:1, ambiguous:1});
+  assert.deepEqual(out.summary, {total:4, answered:3, unanswered:1, correct:1, incorrect:1, ambiguous:1, unsure:0});
 });
 
 test('내보내기: 스냅샷의 없는 보기·누락 항목은 안 푼 것', () => {
@@ -129,6 +129,44 @@ test('내보내기: 스냅샷의 없는 보기·누락 항목은 안 푼 것', (
   assert.equal(out.cards[0].title, '');
   assert.equal(out.summary.answered, 0);
   assert.equal(out.summary.unanswered, 2);
+});
+
+test('애매함 표시: 바뀌면 새 시각, 안 푼 문제는 항상 false', () => {
+  let snap = api.updateSnapshot({schema:1, cards:{}}, {p2:'1'}, ['p2'], T0, {p2:true});
+  assert.deepEqual(snap.cards.p2, {selected:'1', unsure:true, updatedAt:T0.toISOString()});
+  snap = api.updateSnapshot(snap, {p2:'1'}, ['p2'], T1, {p2:true});
+  assert.equal(snap.cards.p2.updatedAt, T0.toISOString());
+  snap = api.updateSnapshot(snap, {p2:'1'}, ['p2'], T1, {p2:false});
+  assert.deepEqual(snap.cards.p2, {selected:'1', unsure:false, updatedAt:T1.toISOString()});
+  snap = api.updateSnapshot(snap, {p2:null}, ['p2'], T1, {p2:true});
+  assert.deepEqual(snap.cards.p2, {selected:null, unsure:false, updatedAt:null});
+});
+
+test('내보내기: 카드별 unsure와 요약, 옛 스냅샷은 false, 출제 모호와 별개', () => {
+  const snap = {schema:1, cards:{
+    p2:{selected:'1', unsure:true, updatedAt:T0.toISOString()},
+    p3:{selected:'2', unsure:true, updatedAt:T0.toISOString()},
+    p10:{selected:'1', updatedAt:T0.toISOString()},
+    p4:{selected:null, unsure:true, updatedAt:null}}};
+  const out = api.buildExport(model, snap, {ids:['p2', 'p3', 'p4', 'p10'], titles:{}, range:'', now:T1});
+  assert.deepEqual(out.cards.map(c => c.unsure), [true, true, false, false]);
+  assert.equal(out.cards[1].result, 'ambiguous');
+  assert.equal(out.summary.unsure, 2);
+});
+
+test('시도 저장: 애매함 표시 복원, 다시 풀기로 삭제, 구레코드는 false', () => {
+  const data = new Map();
+  const storage = {getItem:k=>data.get(k), setItem:(k,v)=>data.set(k,v), removeItem:k=>data.delete(k)};
+  api.writeAttempt(storage, 'k', card, '2', true);
+  assert.equal(api.readAttempt(storage, 'k', card), '2');
+  assert.equal(api.readUnsure(storage, 'k', card), true);
+  api.writeAttempt(storage, 'k', card, '2');
+  assert.equal(api.readUnsure(storage, 'k', card), false);
+  api.writeAttempt(storage, 'k', card, '2', true);
+  api.writeAttempt(storage, 'k', card, null, true);
+  assert.equal(api.readUnsure(storage, 'k', card), false);
+  assert.equal(api.readUnsure({getItem:()=>'{"version":"v1","selected":"2"}'}, 'k', card), false);
+  assert.equal(api.readUnsure({getItem(){throw Error('x')}}, 'k', card), false);
 });
 
 function fakeWin(picker) {

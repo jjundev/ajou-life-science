@@ -23,6 +23,9 @@
 .review-status:empty { display:none; }
 .review-reset { min-height:44px; margin:var(--s2) 0 var(--s4); }
 .review-choice-content { padding:var(--s2) 0; }
+.review-unsure { min-height:44px; margin:0 0 var(--s3); padding:0 14px; border:1.5px solid var(--line, currentColor); border-radius:999px; }
+.review-unsure[aria-pressed="true"] { border-color:var(--accent); background:var(--accent); color:var(--on-btn); }
+.review-unsure:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
 .review-feedback {
   position:fixed; top:calc(env(safe-area-inset-top) + 72px); left:50%; z-index:100;
   transform:translateX(-50%); width:max-content; max-width:calc(100vw - 32px);
@@ -41,6 +44,7 @@
   content:""; position:absolute; left:7px; top:3px; width:5px; height:10px;
   border:solid var(--on-btn); border-width:0 2px 2px 0; rotate:45deg;
 }
+.review-feedback[data-result="unsure"] .review-feedback-icon { display:none; }
 .review-feedback[data-result="cancelled"] .review-feedback-icon { display:none; }
 .review-feedback-icon { position:relative; flex:none; width:20px; height:20px; }
 .review-feedback[data-result="correct"] .review-feedback-icon {
@@ -108,7 +112,7 @@ body:not(.at-end) .review-export-bar { display:none; }
 @media print {
   .review-export-bar { display:none !important; }
   .review-feedback { display:none !important; }
-  .review-reset, .review-status, .review-choice-label { display:none !important; }
+  .review-reset, .review-status, .review-choice-label, .review-unsure { display:none !important; }
   .review-diagnostic[hidden] { display:list-item !important; }
   .review-diagnostics[hidden] { display:block !important; }
   .review-choice::after { display:none; }
