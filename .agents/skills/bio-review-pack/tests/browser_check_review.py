@@ -278,7 +278,7 @@ class TestReviewBrowser(unittest.TestCase):
                 self.assertTrue(result)
 
     def test_storage_blocked(self):
-        self.context.add_init_script("Object.defineProperty(window,'localStorage',{get(){throw Error('blocked')}});")
+        self.context.add_init_script("for(const n of ['localStorage','sessionStorage']) Object.defineProperty(window,n,{get(){throw Error('blocked')}});")
         card = self.open()
         card.locator('.review-choice').first.click()
         expect(card.locator('.review-diagnostic:visible')).to_have_count(2)
@@ -330,9 +330,9 @@ class TestReviewBrowser(unittest.TestCase):
         card = self.open()
         card.locator('.review-choice').first.click()
         self.page.evaluate("""() => {
-          for(let i=0;i<localStorage.length;i++){
-            const key=localStorage.key(i);
-            if(key.startsWith('od-review-attempt:')) localStorage.setItem(key,'{');
+          for(let i=0;i<sessionStorage.length;i++){
+            const key=sessionStorage.key(i);
+            if(key.startsWith('od-review-attempt:')) sessionStorage.setItem(key,'{');
           }
         }""")
         self.page.reload()
@@ -340,9 +340,9 @@ class TestReviewBrowser(unittest.TestCase):
         expect(self.page.locator('#progress-n')).to_have_text('0')
         card.locator('.review-choice').first.click()
         self.page.evaluate("""() => {
-          for(let i=0;i<localStorage.length;i++){
-            const key=localStorage.key(i);
-            if(key.startsWith('od-review-attempt:')) localStorage.setItem(key,JSON.stringify({version:'old',selected:'1'}));
+          for(let i=0;i<sessionStorage.length;i++){
+            const key=sessionStorage.key(i);
+            if(key.startsWith('od-review-attempt:')) sessionStorage.setItem(key,JSON.stringify({version:'old',selected:'1'}));
           }
         }""")
         self.page.reload()

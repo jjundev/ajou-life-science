@@ -138,7 +138,7 @@ python3 "$SKILL/scripts/assemble.py" --run "$RUN" --out "$REPO/복습노트/<ran
 조립기는 `RUN/figures/`의 카드 그림을 `복습노트/<range>/figures_<range>/`로 복사한다.
 
 ### 5. 기계 검사
-객관식은 `references/content-rules.md`의 보기·해설 식별자 규칙을 따른다. 조립 시 채점 모델이 자동 내장되며 연결 오류는 카드 원본에서 해결한다. 아래 검사기는 내장 채점 데이터와 원본의 일치도 검사한다. 브라우저 검증 때 정답·오답 선택, 내 선택·정답만 자동 펼침, 모든 보기별 해설의 개별 접기·펼치기, 다시 풀기와 선택 복원을 함께 확인한다.
+객관식은 `references/content-rules.md`의 보기·해설 식별자 규칙을 따른다. 조립 시 채점 모델이 자동 내장되며 연결 오류는 카드 원본에서 해결한다. 아래 검사기는 내장 채점 데이터와 원본의 일치도 검사한다. 브라우저 검증 때 정답·오답 선택, 내 선택·정답만 자동 펼침, 모든 보기별 해설의 개별 접기·펼치기, 다시 풀기와 선택 복원을 함께 확인한다. 선택·푼 기록은 `sessionStorage`라 새로고침·뒤로가기엔 남고 새 탭에서 다시 열면 초기화돼야 한다(`localStorage` 사용 금지).
 
 ```bash
 python3 "$SKILL/scripts/check_html.py" --manifest "$RUN/manifest.json" --note "$REPO/복습노트/<range>/<정리노트>.html" --review "$REPO/복습노트/<range>/<복습문제>.html"

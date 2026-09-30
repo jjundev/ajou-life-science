@@ -173,7 +173,7 @@ def install(source: str, document_id: str, overrides: dict | None = None, strict
       function start() {
         try {
           let storage = null;
-          try { storage = window.localStorage; } catch {}
+          try { storage = window.sessionStorage; } catch {}
           ReviewInteraction.mount(document, JSON.parse(document.getElementById('review-interaction-model').textContent), storage);
         } catch (error) { console.warn('복습문제 상호작용 초기화 실패:', error); }
       }

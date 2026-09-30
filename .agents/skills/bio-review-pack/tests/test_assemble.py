@@ -60,6 +60,16 @@ class TestAssemble(unittest.TestCase):
             self.assertIn("const KEY = 'od-review-solved:' + RANGE;", html)
             self.assertIn("const KEY = 'od-note-read:' + RANGE;", html)
 
+    def test_answers_and_progress_use_session_storage_only(self):
+        # 푼 흔적은 탭을 닫으면 사라져야 한다(뒤로가기·새로고침엔 유지). 영구 저장(localStorage)은 화면 설정 전용.
+        self.assertIn("window.sessionStorage", self.review_html)
+        self.assertNotIn("window.localStorage", self.review_html)
+        review = self.review_html
+        section = review[review.index("function setupReview()"):review.index("function setupNote()")]
+        self.assertIn("tabStore.get(KEY", section)
+        self.assertNotIn("store.get(KEY", section)
+        self.assertNotIn("store.set(KEY", section)
+
     def test_theme_toggle_in_both_pages(self):
         for html in (self.note_html, self.review_html):
             self.assertIn('id="theme-toggle"', html)
