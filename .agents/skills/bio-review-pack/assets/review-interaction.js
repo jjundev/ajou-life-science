@@ -40,6 +40,81 @@
       else storage.setItem(key, JSON.stringify({version:card.version, selected}));
     } catch {}
   }
+  function exportKey(documentId) {
+    return 'od-review-export:v1:' + encodeURIComponent(documentId);
+  }
+  function readSnapshot(storage, key) {
+    const empty = () => ({schema:1, cards:{}});
+    try {
+      const value = JSON.parse(storage.getItem(key));
+      return value && value.schema === 1 && value.cards && typeof value.cards === 'object' && !Array.isArray(value.cards)
+        ? value : empty();
+    } catch { return empty(); }
+  }
+  function writeSnapshot(storage, key, snapshot) {
+    try { storage.setItem(key, JSON.stringify(snapshot)); } catch {}
+  }
+  function updateSnapshot(snapshot, selectedById, ids, now) {
+    const cards = Object.assign({}, snapshot.cards);
+    for (const id of ids) {
+      const selected = selectedById[id] === undefined ? null : selectedById[id];
+      const prev = cards[id];
+      if (prev && prev.selected === selected) continue;
+      cards[id] = {selected, updatedAt: selected === null ? null : now.toISOString()};
+    }
+    return {schema:1, cards};
+  }
+  function buildExport(model, snapshot, meta) {
+    const counts = {correct:0, incorrect:0, ambiguous:0};
+    const cards = meta.ids.map(id => {
+      const data = model.cards[id];
+      const entry = snapshot.cards[id] || {};
+      const result = grade(data, entry.selected);
+      if (result !== null) counts[result] += 1;
+      return {
+        id, title: meta.titles[id] || '',
+        selected: result === null ? null : entry.selected,
+        answer: data.answer, result,
+        updatedAt: result === null ? null : (entry.updatedAt || null)
+      };
+    });
+    const answered = counts.correct + counts.incorrect + counts.ambiguous;
+    return {
+      schema:1, documentId:model.documentId, range:meta.range, exportedAt:meta.now.toISOString(),
+      summary:{total:cards.length, answered, unanswered:cards.length - answered,
+        correct:counts.correct, incorrect:counts.incorrect, ambiguous:counts.ambiguous},
+      skipped: model.skipped || [], cards
+    };
+  }
+  function exportFilename(documentId, now) {
+    const p = n => String(n).padStart(2, '0');
+    const stamp = now.getFullYear() + p(now.getMonth() + 1) + p(now.getDate()) +
+      '-' + p(now.getHours()) + p(now.getMinutes());
+    return documentId.replace(/\.html?$/i, '') + '_풀이기록_' + stamp + '.json';
+  }
+  async function saveExport(win, text, filename) {
+    if (typeof win.showDirectoryPicker === 'function') {
+      try {
+        const dir = await win.showDirectoryPicker({mode:'readwrite'});
+        const file = await dir.getFileHandle(filename, {create:true});
+        const out = await file.createWritable();
+        await out.write(text);
+        await out.close();
+        return 'saved';
+      } catch (error) {
+        if (error && error.name === 'AbortError') return 'cancelled';
+      }
+    }
+    const url = win.URL.createObjectURL(new win.Blob([text], {type:'application/json'}));
+    const a = win.document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    win.document.body.append(a);
+    a.click();
+    a.remove();
+    win.setTimeout(() => win.URL.revokeObjectURL(url), 1000);
+    return 'downloaded';
+  }
   function mount(root, model, storage) {
     if (!model || model.schema !== 1 || !model.cards) return;
     const win = root.defaultView;
@@ -279,7 +354,8 @@
       });
     }
   }
-  const api = {stripDiagnosticPrefix, grade, storageKey, readAttempt, writeAttempt, mount};
+  const api = {stripDiagnosticPrefix, grade, storageKey, readAttempt, writeAttempt, mount,
+    exportKey, readSnapshot, writeSnapshot, updateSnapshot, buildExport, exportFilename, saveExport};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else scope.ReviewInteraction = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

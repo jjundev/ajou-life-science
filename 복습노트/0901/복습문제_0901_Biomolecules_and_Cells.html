@@ -539,6 +539,11 @@
         get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
         set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
       };
+      // 푼 기록은 탭(세션) 단위로만 유지: 뒤로가기·새로고침엔 남고, 창을 닫고 다시 열면 초기화
+      const tabStore = {
+        get(k, d) { try { const v = sessionStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
       const PREF = 'od-panels:' + kind;
       // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
       const RANGE = body.dataset.range || '';
@@ -704,7 +709,7 @@
         const empty = panels.right.querySelector('.panel-empty');
         const btn = document.getElementById('solved-btn');
         const groups = {};
-        const solved = new Set(store.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        const solved = new Set(tabStore.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
         cards.forEach((card) => {
           const g = document.createElement('div');
           g.className = 'aid';
@@ -723,7 +728,7 @@
         btn.addEventListener('click', () => {
           if (!curId) return;
           if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
-          store.set(KEY, Array.from(solved));
+          tabStore.set(KEY, Array.from(solved));
           paintBtn();
           markToc(solved, cards.length, '푼 문제');
         });
@@ -732,7 +737,7 @@
           if (detail.restored && detail.selected !== null) return;
           if (detail.selected === null) solved.delete(detail.id);
           else solved.add(detail.id);
-          store.set(KEY, Array.from(solved));
+          tabStore.set(KEY, Array.from(solved));
           if (curId) paintBtn();
           markToc(solved, cards.length, '푼 문제');
         });
@@ -1035,6 +1040,81 @@
       else storage.setItem(key, JSON.stringify({version:card.version, selected}));
     } catch {}
   }
+  function exportKey(documentId) {
+    return 'od-review-export:v1:' + encodeURIComponent(documentId);
+  }
+  function readSnapshot(storage, key) {
+    const empty = () => ({schema:1, cards:{}});
+    try {
+      const value = JSON.parse(storage.getItem(key));
+      return value && value.schema === 1 && value.cards && typeof value.cards === 'object' && !Array.isArray(value.cards)
+        ? value : empty();
+    } catch { return empty(); }
+  }
+  function writeSnapshot(storage, key, snapshot) {
+    try { storage.setItem(key, JSON.stringify(snapshot)); } catch {}
+  }
+  function updateSnapshot(snapshot, selectedById, ids, now) {
+    const cards = Object.assign({}, snapshot.cards);
+    for (const id of ids) {
+      const selected = selectedById[id] === undefined ? null : selectedById[id];
+      const prev = cards[id];
+      if (prev && prev.selected === selected) continue;
+      cards[id] = {selected, updatedAt: selected === null ? null : now.toISOString()};
+    }
+    return {schema:1, cards};
+  }
+  function buildExport(model, snapshot, meta) {
+    const counts = {correct:0, incorrect:0, ambiguous:0};
+    const cards = meta.ids.map(id => {
+      const data = model.cards[id];
+      const entry = snapshot.cards[id] || {};
+      const result = grade(data, entry.selected);
+      if (result !== null) counts[result] += 1;
+      return {
+        id, title: meta.titles[id] || '',
+        selected: result === null ? null : entry.selected,
+        answer: data.answer, result,
+        updatedAt: result === null ? null : (entry.updatedAt || null)
+      };
+    });
+    const answered = counts.correct + counts.incorrect + counts.ambiguous;
+    return {
+      schema:1, documentId:model.documentId, range:meta.range, exportedAt:meta.now.toISOString(),
+      summary:{total:cards.length, answered, unanswered:cards.length - answered,
+        correct:counts.correct, incorrect:counts.incorrect, ambiguous:counts.ambiguous},
+      skipped: model.skipped || [], cards
+    };
+  }
+  function exportFilename(documentId, now) {
+    const p = n => String(n).padStart(2, '0');
+    const stamp = now.getFullYear() + p(now.getMonth() + 1) + p(now.getDate()) +
+      '-' + p(now.getHours()) + p(now.getMinutes());
+    return documentId.replace(/\.html?$/i, '') + '_풀이기록_' + stamp + '.json';
+  }
+  async function saveExport(win, text, filename) {
+    if (typeof win.showDirectoryPicker === 'function') {
+      try {
+        const dir = await win.showDirectoryPicker({mode:'readwrite'});
+        const file = await dir.getFileHandle(filename, {create:true});
+        const out = await file.createWritable();
+        await out.write(text);
+        await out.close();
+        return 'saved';
+      } catch (error) {
+        if (error && error.name === 'AbortError') return 'cancelled';
+      }
+    }
+    const url = win.URL.createObjectURL(new win.Blob([text], {type:'application/json'}));
+    const a = win.document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    win.document.body.append(a);
+    a.click();
+    a.remove();
+    win.setTimeout(() => win.URL.revokeObjectURL(url), 1000);
+    return 'downloaded';
+  }
   function mount(root, model, storage) {
     if (!model || model.schema !== 1 || !model.cards) return;
     const win = root.defaultView;
@@ -1274,7 +1354,8 @@
       });
     }
   }
-  const api = {stripDiagnosticPrefix, grade, storageKey, readAttempt, writeAttempt, mount};
+  const api = {stripDiagnosticPrefix, grade, storageKey, readAttempt, writeAttempt, mount,
+    exportKey, readSnapshot, writeSnapshot, updateSnapshot, buildExport, exportFilename, saveExport};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else scope.ReviewInteraction = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);
@@ -1284,7 +1365,7 @@
       function start() {
         try {
           let storage = null;
-          try { storage = window.localStorage; } catch {}
+          try { storage = window.sessionStorage; } catch {}
           ReviewInteraction.mount(document, JSON.parse(document.getElementById('review-interaction-model').textContent), storage);
         } catch (error) { console.warn('복습문제 상호작용 초기화 실패:', error); }
       }
