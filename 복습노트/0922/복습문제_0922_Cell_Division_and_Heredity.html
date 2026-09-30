@@ -1224,6 +1224,7 @@
       function render(i, target) {
         const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
         if (i !== cur) {
+          if (cur >= 0) document.dispatchEvent(new CustomEvent('od:leave', { detail: { index: cur, screen: screens[cur] } }));
           if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
           main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
           const s = screens[i];

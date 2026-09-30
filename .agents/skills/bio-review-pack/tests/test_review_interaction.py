@@ -56,6 +56,35 @@ class TestModel(unittest.TestCase):
         self.assertEqual(ri.install(output, 'test.html'), output)
         self.assertEqual(output.count('id="review-interaction-model"'), 1)
 
+    def test_install_adds_pager_leave_event_once(self):
+        pager = '\n'.join([
+            '<script id="pager-ui">',
+            '      function render(i, target) {',
+            '        if (i !== cur) {',
+            "          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');",
+            '        }',
+            '      }',
+            '</script>'])
+        source = '<html><body>' + CARD + pager + '</body></html>'
+        output = ri.install(source, 'test.html')
+        marker = "detail: { index: cur, screen: screens[cur] }"
+        self.assertEqual(output.count(marker), 1)
+        self.assertLess(output.index(marker), output.index("screens[cur].classList.remove"))
+        self.assertEqual(ri.install(output, 'test.html'), output)
+
+    def test_pager_patch_leaves_pages_without_pager_alone(self):
+        source = '<html><body>' + CARD + '</body></html>'
+        self.assertEqual(ri.patch_pager_shell(source), source)
+
+    def test_pager_patch_rejects_unknown_pager_structure(self):
+        with self.assertRaises(ValueError):
+            ri.patch_pager_shell('<script id="pager-ui">function render(){}</script>')
+
+    def test_review_template_already_has_pager_leave_event(self):
+        template = (SKILL / 'assets/review-template.html').read_text(encoding='utf-8')
+        self.assertEqual(ri.patch_pager_shell(template), template)
+        self.assertEqual(template.count("detail: { index: cur, screen: screens[cur] }"), 1)
+
     def test_existing_packs_embed_current_interaction_assets(self):
         files = sorted((REPO / '복습노트').glob('*/복습문제_*.html'))
         self.assertGreaterEqual(len(files), 8)

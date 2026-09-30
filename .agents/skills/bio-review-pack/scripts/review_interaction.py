@@ -134,6 +134,19 @@ ANSWER_EVENT = """        document.addEventListener('od:answer', ({detail}) => {
 """
 
 
+LEAVE_ANCHOR = "          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');\n"
+LEAVE_LINE = ("          if (cur >= 0) document.dispatchEvent(new CustomEvent('od:leave', "
+              "{ detail: { index: cur, screen: screens[cur] } }));\n")
+
+
+def patch_pager_shell(source: str) -> str:
+    if '<script id="pager-ui">' not in source or "detail: { index: cur, screen: screens[cur] }" in source:
+        return source
+    if source.count(LEAVE_ANCHOR) != 1:
+        raise ValueError('pager 화면 전환 구조 불일치')
+    return source.replace(LEAVE_ANCHOR, LEAVE_LINE + LEAVE_ANCHOR)
+
+
 def patch_review_shell(source: str) -> str:
     if 'function setupReview()' not in source:
         return source
@@ -161,6 +174,7 @@ def patch_review_shell(source: str) -> str:
 def install(source: str, document_id: str, overrides: dict | None = None, strict: bool = True) -> str:
     source = BLOCK.sub('', source)
     source = patch_review_shell(source)
+    source = patch_pager_shell(source)
     model = build_model(source, document_id, overrides)
     if strict and model['errors']:
         raise ValueError(json.dumps(model['errors'], ensure_ascii=False))
