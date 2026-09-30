@@ -98,7 +98,7 @@
       const summaryText = summary ? summary.textContent : '';
       const originalOpen = solution.open;
       const originalHidden = solution.hidden;
-      let status, reset, help, notice;
+      let status, reset, notice;
       try {
         // Some future cards supply the caution only as metadata. Keep its full
         // explanation in the solution panel, without duplicating existing prose.
@@ -142,13 +142,12 @@
           li.append(list);
           return {id:o.id, button, badge, diagnostic, list};
         });
-        help = element('p', 'review-help', '답을 선택하면 내 선택과 정답의 해설이 열려요. 다른 보기도 눌러 해설을 확인할 수 있어요.');
         status = element('p', 'review-status');
         status.setAttribute('role', 'status');
         status.setAttribute('aria-live', 'polite');
         reset = element('button', 'review-reset text-btn', '다시 풀기');
         reset.type = 'button';
-        card.querySelector('.choices').before(help, status);
+        card.querySelector('.choices').before(status);
         card.querySelector('.choices').after(reset);
         const key = storageKey(model.documentId, id);
         let selected = readAttempt(storage, key, data);
@@ -169,7 +168,6 @@
         function paint() {
           const answered = selected !== null;
           const result = grade(data, selected);
-          help.hidden = answered;
           reset.hidden = !answered;
           status.textContent = !answered ? '' : result === 'ambiguous'
             ? '단일 정답 판정 주의'
@@ -249,7 +247,7 @@
           p.node.classList.remove('review-diagnostic');
           p.parent.insertBefore(p.node, p.next);
         });
-        for (const el of [status, reset, help, notice]) if (el) el.remove();
+        for (const el of [status, reset, notice]) if (el) el.remove();
         solution.hidden = originalHidden;
         solution.open = originalOpen;
         if (summary) summary.textContent = summaryText;

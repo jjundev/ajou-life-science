@@ -60,3 +60,9 @@ page.get_pixmap(dpi=170, clip=rect).save(os.path.join(os.environ["RUN"], "figure
 EOF
 ```
 보기에 답이 인쇄된 빨간 표시가 그림 안에 들어가지 않게 자른다. 들어가면 영역을 줄인다.
+
+## 화면에 넣지 않는 안내 문구
+
+- 문항 카드에 “답을 선택하면 …해설이 열려요”, “다른 보기도 눌러 …”, “여기를 눌러 …” 같은 **사용법·조작 안내 문장을 넣지 않는다.** 보기 버튼과 판정 문구(`review-status`), `내 선택`·`정답` 배지만으로 충분하다.
+- `assets/review-interaction.js`·`.css`에 안내용 `<p>`(예: `review-help`)를 다시 추가하지 않는다. 새 상호작용을 만들 때도 화면에는 결과(판정·배지)만 보이고 설명 문장은 만들지 않는다.
+- `tests/test_review_interaction.py`의 `test_assets_have_no_help_text`, `test_generated_packs_have_no_help_text`가 이 규칙을 강제한다.
