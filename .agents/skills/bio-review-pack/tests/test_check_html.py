@@ -56,6 +56,13 @@ class TestPrimitives(unittest.TestCase):
             codes = [p.code for p in check_html.check_common(check_html.parse_html(src), src, path)]
             self.assertEqual(codes, [])
 
+    def test_terms_list_needs_label(self):
+        ok = '<html lang="ko"><body><p class="panel-label">용어</p><dl class="terms"><dt>a</dt><dd>b</dd></dl></body></html>'
+        bad = '<html lang="ko"><body><dl class="terms"><dt>a</dt><dd>b</dd></dl></body></html>'
+        codes = lambda src: [p.code for p in check_html.check_common(check_html.parse_html(src), src, Path("x.html"))]
+        self.assertEqual(codes(ok), [])
+        self.assertEqual(codes(bad), ["terms-label-missing"])
+
     def test_leftover_slot_and_external(self):
         src = '<html lang="ko"><head><script src="https://cdn.tailwindcss.com"></script></head><body>{{TOC}}</body></html>'
         codes = sorted(p.code for p in check_html.check_common(check_html.parse_html(src), src, Path("x.html")))

@@ -2,7 +2,7 @@
 """
 정리노트/복습문제 HTML 검사기 (표준 라이브러리만 사용).
 
-- 공통 검사: lang, 중복 id, 외부 리소스 허용 목록, 수식 구분자, 링크, 남은 슬롯, 위젯 정적 대체물, 로컬 그림 파일
+- 공통 검사: lang, 중복 id, 외부 리소스 허용 목록, 수식 구분자, 링크, 남은 슬롯, 위젯 정적 대체물, 로컬 그림 파일, 용어 목록의 "용어" 라벨
 - manifest 검사: 섹션·토픽 id, 필수 용어, 레이어, 보충 배지, 예고 밖 금지어, 링크, 문제 카드
 CLI:
   check_html.py FILE [FILE ...]
@@ -249,6 +249,9 @@ def stt_time_problems(text: str, where: str) -> list[Problem]:
     return problems
 
 
+TERMS_RE = re.compile(r'(<p class="panel-label">용어</p>\s*)?<dl class="terms">')
+
+
 def check_common(doc: Doc, source: str, path: Path) -> list[Problem]:
     name = Path(path).name
     out: list[Problem] = []
@@ -261,6 +264,8 @@ def check_common(doc: Doc, source: str, path: Path) -> list[Problem]:
     out += [Problem("broken-link", name, h) for h in broken_links(doc, Path(path).parent)]
     out += [Problem("broken-image", name, s) for s in doc.img_srcs if not (Path(path).parent / unquote(s)).exists()]
     out += [Problem("leftover-slot", name, s) for s in sorted(set(SLOT_RE.findall(source)))]
+    out += [Problem("terms-label-missing", name, f"용어 목록 {i + 1}번째")
+            for i, m in enumerate(TERMS_RE.finditer(source)) if not m.group(1)]
     out += [Problem("widget-static-missing", wid, "위젯에 .widget-static 정적 대체물이 없음")
             for wid, classes in sorted(doc.widgets.items()) if "widget-static" not in classes]
     if 'review-interaction-model' in doc.scripts_by_id:
