@@ -174,3 +174,10 @@ test('폴더 API 거부·미지원이면 다운로드로 대체', async () => {
     assert.equal(anchor.download, 'f.json');
   }
 });
+
+test('권한 거부(NotAllowedError)는 취소로 처리하고 다운로드하지 않음', async () => {
+  const picker = async () => { const e = new Error('picker active'); e.name = 'NotAllowedError'; throw e; };
+  const {win, log} = fakeWin(picker);
+  assert.equal(await api.saveExport(win, '{}', 'f.json'), 'cancelled');
+  assert.equal(log.clicks, 0);
+});

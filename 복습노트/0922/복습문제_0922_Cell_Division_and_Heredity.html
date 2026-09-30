@@ -1488,7 +1488,7 @@ body:not(.at-end) .review-export-bar { display:none; }
         await out.close();
         return 'saved';
       } catch (error) {
-        if (error && error.name === 'AbortError') return 'cancelled';
+        if (error && (error.name === 'AbortError' || error.name === 'NotAllowedError')) return 'cancelled';
       }
     }
     const url = win.URL.createObjectURL(new win.Blob([text], {type:'application/json'}));
@@ -1745,11 +1745,15 @@ body:not(.at-end) .review-export-bar { display:none; }
       pager.prepend(bar);
       root.addEventListener('od:screen', () => { note.textContent = ''; });
       button.addEventListener('click', async () => {
+        if (button.disabled) return;
+        button.disabled = true;
         const now = new Date();
         snapshot = updateSnapshot(snapshot, selectedById, ids, now);
         writeSnapshot(storage, snapKey, snapshot);
         const data = buildExport(model, snapshot, {ids, titles, range: root.body.dataset.range || '', now});
-        const outcome = await saveExport(win, JSON.stringify(data, null, 2) + '\n', exportFilename(model.documentId, now));
+        let outcome;
+        try { outcome = await saveExport(win, JSON.stringify(data, null, 2) + '\n', exportFilename(model.documentId, now)); }
+        finally { button.disabled = false; }
         note.textContent = outcome === 'saved' ? '고른 폴더에 저장했어요.'
           : outcome === 'downloaded' ? '다운로드 폴더에 저장했어요.' : '저장을 취소했어요.';
       });

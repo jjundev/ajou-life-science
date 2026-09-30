@@ -361,6 +361,17 @@ class TestReviewBrowser(unittest.TestCase):
         expect(self.page.locator('.review-export-note')).to_have_text('저장을 취소했어요.')
         self.assertEqual(downloads, [])
 
+    def test_export_button_is_disabled_while_picker_is_open(self):
+        self.context.add_init_script(
+            "window.__calls = 0; window.showDirectoryPicker = () => { window.__calls++; return new Promise(() => {}); };")
+        self.open()
+        self.go_to_last()
+        button = self.page.locator('.review-export')
+        button.click()
+        expect(button).to_be_disabled()
+        button.click(force=True)
+        self.assertEqual(self.page.evaluate('window.__calls'), 1)
+
     def test_export_falls_back_to_download(self):
         self.context.add_init_script(
             "window.showDirectoryPicker = async () => { const e = new Error('no'); e.name = 'SecurityError'; throw e; };")

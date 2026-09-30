@@ -127,7 +127,7 @@ ANSWER_EVENT = """        document.addEventListener('od:answer', ({detail}) => {
           if (detail.restored && detail.selected !== null) return;
           if (detail.selected === null) solved.delete(detail.id);
           else solved.add(detail.id);
-          store.set(KEY, Array.from(solved));
+          tabStore.set(KEY, Array.from(solved));
           if (curId) paintBtn();
           markToc(solved, cards.length, '푼 문제');
         });

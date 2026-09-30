@@ -72,6 +72,10 @@ class TestModel(unittest.TestCase):
         self.assertLess(output.index(marker), output.index("screens[cur].classList.remove"))
         self.assertEqual(ri.install(output, 'test.html'), output)
 
+    def test_injected_answer_event_stores_solved_state_per_tab(self):
+        self.assertNotIn('store.set(KEY', ri.ANSWER_EVENT.replace('tabStore.set(KEY', ''))
+        self.assertIn('tabStore.set(KEY', ri.ANSWER_EVENT)
+
     def test_pager_patch_leaves_pages_without_pager_alone(self):
         source = '<html><body>' + CARD + '</body></html>'
         self.assertEqual(ri.patch_pager_shell(source), source)
