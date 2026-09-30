@@ -1389,7 +1389,15 @@
   .review-feedback[data-result="correct"] .review-feedback-icon::before,
   .review-feedback[data-result="correct"] .review-feedback-icon::after { display:none; }
 }
+.review-export-bar {
+  display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:12px;
+  max-width:var(--measure); margin:0 auto; padding:12px 16px 0;
+}
+body:not(.at-end) .review-export-bar { display:none; }
+.review-export-note { margin:0; font-size:var(--fs-small); color:var(--ink-2); }
+.review-export-note:empty { display:none; }
 @media print {
+  .review-export-bar { display:none !important; }
   .review-feedback { display:none !important; }
   .review-reset, .review-status, .review-choice-label { display:none !important; }
   .review-diagnostic[hidden] { display:list-item !important; }
@@ -1530,6 +1538,7 @@
       if (text !== undefined) el.textContent = text;
       return el;
     };
+    const selectedById = {};
     let feedback = null;
     let feedbackTimer = null;
     let feedbackOwner = null;
@@ -1630,6 +1639,7 @@
         card.querySelector('.choices').after(reset);
         const key = storageKey(model.documentId, id);
         let selected = readAttempt(storage, key, data);
+        selectedById[id] = selected;
         const expanded = new Set(selected === null ? [] : [selected, data.answer]);
         function paintDisclosure(c) {
           const answered = selected !== null;
@@ -1679,6 +1689,7 @@
             return;
           }
           selected = c.id;
+          selectedById[id] = selected;
           expanded.add(selected);
           expanded.add(data.answer);
           writeAttempt(storage, key, data, selected);
@@ -1699,6 +1710,7 @@
         reset.addEventListener('click', () => {
           clearFeedback(id);
           selected = null;
+          selectedById[id] = null;
           expanded.clear();
           writeAttempt(storage, key, data, null);
           paint();
@@ -1734,6 +1746,39 @@
         card.classList.remove('review-ready');
         win.console.warn('문항 상호작용을 적용하지 못했습니다:', id, error);
       }
+    }
+    const exportCards = Array.from(root.querySelectorAll('main article.card')).filter(el => model.cards[el.id]);
+    const pager = root.querySelector('.pager');
+    if (exportCards.length && pager && !pager.querySelector('.review-export-bar')) {
+      const ids = exportCards.map(el => el.id);
+      const titles = {};
+      exportCards.forEach(el => { titles[el.id] = ((el.querySelector('h3') || {}).textContent || '').trim(); });
+      const snapKey = exportKey(model.documentId);
+      let snapshot = readSnapshot(storage, snapKey);
+      root.addEventListener('od:leave', ({detail}) => {
+        const id = detail && detail.screen && detail.screen.id;
+        if (!model.cards[id]) return;
+        snapshot = updateSnapshot(snapshot, selectedById, [id], new Date());
+        writeSnapshot(storage, snapKey, snapshot);
+      });
+      const bar = element('div', 'review-export-bar');
+      const button = element('button', 'btn btn-primary review-export', 'JSON 내보내기');
+      button.type = 'button';
+      const note = element('p', 'review-export-note');
+      note.setAttribute('role', 'status');
+      note.setAttribute('aria-live', 'polite');
+      bar.append(button, note);
+      pager.prepend(bar);
+      root.addEventListener('od:screen', () => { note.textContent = ''; });
+      button.addEventListener('click', async () => {
+        const now = new Date();
+        snapshot = updateSnapshot(snapshot, selectedById, ids, now);
+        writeSnapshot(storage, snapKey, snapshot);
+        const data = buildExport(model, snapshot, {ids, titles, range: root.body.dataset.range || '', now});
+        const outcome = await saveExport(win, JSON.stringify(data, null, 2) + '\n', exportFilename(model.documentId, now));
+        note.textContent = outcome === 'saved' ? '고른 폴더에 저장했어요.'
+          : outcome === 'downloaded' ? '다운로드 폴더에 저장했어요.' : '저장을 취소했어요.';
+      });
     }
     // Existing page CSS hides side panels when printing. Move original details,
     // including static questions, into their cards for print, then restore them.

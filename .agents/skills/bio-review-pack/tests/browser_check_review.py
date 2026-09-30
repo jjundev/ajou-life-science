@@ -1,5 +1,6 @@
 """Run explicitly: python .agents/skills/bio-review-pack/tests/browser_check_review.py"""
 from functools import partial
+import json
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 import threading
@@ -276,6 +277,123 @@ class TestReviewBrowser(unittest.TestCase):
                   }) && new Set([...document.querySelectorAll('[id]')].map(e=>e.id)).size===document.querySelectorAll('[id]').length;
                 }""")
                 self.assertTrue(result)
+
+    PICKER_MOCK = """
+      window.__saved = null;
+      window.showDirectoryPicker = async () => ({
+        async getFileHandle(name) {
+          return { async createWritable() {
+            let text = '';
+            return { async write(t) { text += t; }, async close() { window.__saved = { name, text }; } };
+          } };
+        }
+      });
+    """
+    SNAP_KEY = "Object.keys(sessionStorage).find(k => k.startsWith('od-review-export:v1:'))"
+
+    def go_to_last(self):
+        last = self.page.evaluate("Array.from(document.querySelectorAll('main article.card')).pop().id")
+        self.page.evaluate("id => { location.hash = '#' + id; }", last)
+        expect(self.page.locator('#' + last)).to_be_visible()
+        return last
+
+    def saved_json(self):
+        return json.loads(self.page.evaluate('window.__saved.text'))
+
+    def test_leaving_a_card_updates_snapshot(self):
+        card = self.open()
+        card.locator('.review-choice').first.click()
+        self.assertIsNone(self.page.evaluate(f"sessionStorage.getItem({self.SNAP_KEY})"))
+        self.page.locator('#pager-next').click()
+        snap = self.page.evaluate(f"JSON.parse(sessionStorage.getItem({self.SNAP_KEY}))")
+        self.assertEqual(snap['schema'], 1)
+        self.assertIsNotNone(snap['cards']['p1']['selected'])
+        self.assertIsNotNone(snap['cards']['p1']['updatedAt'])
+
+    def test_export_button_only_on_last_screen(self):
+        self.open()
+        expect(self.page.locator('.review-export')).to_be_hidden()
+        self.go_to_last()
+        expect(self.page.locator('.review-export')).to_be_visible()
+        expect(self.page.locator('.review-export')).to_have_text('JSON 내보내기')
+
+    def test_export_to_chosen_folder(self):
+        self.context.add_init_script(self.PICKER_MOCK)
+        card = self.open()
+        card.locator('.review-choice').first.click()
+        self.go_to_last()
+        self.page.locator('.review-export').click()
+        expect(self.page.locator('.review-export-note')).to_have_text('고른 폴더에 저장했어요.')
+        saved = self.page.evaluate('window.__saved')
+        self.assertRegex(saved['name'], r'^복습문제_0929_Heredity_풀이기록_\d{8}-\d{4}\.json$')
+        data = self.saved_json()
+        dom_ids = self.page.evaluate("Array.from(document.querySelectorAll('main article.card')).map(e => e.id)")
+        exported = [c['id'] for c in data['cards']]
+        self.assertEqual(exported, [i for i in dom_ids if i in set(exported)])
+        self.assertEqual(data['summary']['total'], len(exported))
+        self.assertEqual(data['summary']['answered'], 1)
+        self.assertEqual(data['summary']['unanswered'], len(exported) - 1)
+        self.assertEqual(data['cards'][0]['id'], 'p1')
+        self.assertIsNotNone(data['cards'][0]['selected'])
+        self.assertIsNotNone(data['cards'][0]['updatedAt'])
+        self.assertIsNone(data['cards'][-1]['selected'])
+
+    def test_export_reflects_reset(self):
+        self.context.add_init_script(self.PICKER_MOCK)
+        card = self.open()
+        card.locator('.review-choice').first.click()
+        card.locator('.review-reset').click()
+        self.go_to_last()
+        self.page.locator('.review-export').click()
+        expect(self.page.locator('.review-export-note')).to_have_text('고른 폴더에 저장했어요.')
+        data = self.saved_json()
+        self.assertEqual(data['summary']['answered'], 0)
+        self.assertIsNone(data['cards'][0]['selected'])
+
+    def test_export_cancel_saves_nothing(self):
+        self.context.add_init_script(
+            "window.showDirectoryPicker = async () => { const e = new Error('cancel'); e.name = 'AbortError'; throw e; };")
+        self.open()
+        self.go_to_last()
+        downloads = []
+        self.page.on('download', lambda d: downloads.append(d))
+        self.page.locator('.review-export').click()
+        expect(self.page.locator('.review-export-note')).to_have_text('저장을 취소했어요.')
+        self.assertEqual(downloads, [])
+
+    def test_export_falls_back_to_download(self):
+        self.context.add_init_script(
+            "window.showDirectoryPicker = async () => { const e = new Error('no'); e.name = 'SecurityError'; throw e; };")
+        card = self.open()
+        card.locator('.review-choice').first.click()
+        self.go_to_last()
+        with self.page.expect_download() as info:
+            self.page.locator('.review-export').click()
+        download = info.value
+        self.assertRegex(download.suggested_filename, r'\.json$')
+        data = json.loads(Path(download.path()).read_text(encoding='utf-8'))
+        self.assertEqual(data['summary']['answered'], 1)
+        expect(self.page.locator('.review-export-note')).to_have_text('다운로드 폴더에 저장했어요.')
+
+    def test_export_with_storage_blocked(self):
+        self.context.add_init_script(
+            "for(const n of ['localStorage','sessionStorage']) Object.defineProperty(window,n,{get(){throw Error('blocked')}});")
+        self.context.add_init_script(self.PICKER_MOCK)
+        card = self.open()
+        card.locator('.review-choice').first.click()
+        self.go_to_last()
+        self.page.locator('.review-export').click()
+        expect(self.page.locator('.review-export-note')).to_have_text('고른 폴더에 저장했어요.')
+        self.assertEqual(self.saved_json()['summary']['answered'], 1)
+
+    def test_snapshot_does_not_survive_a_new_tab(self):
+        card = self.open()
+        card.locator('.review-choice').first.click()
+        self.page.locator('#pager-next').click()
+        other = self.context.new_page()
+        other.goto(self.url('0929'))
+        self.assertEqual(other.evaluate("Object.keys(sessionStorage).filter(k => k.startsWith('od-review-export:'))"), [])
+        other.close()
 
     def test_storage_blocked(self):
         self.context.add_init_script("for(const n of ['localStorage','sessionStorage']) Object.defineProperty(window,n,{get(){throw Error('blocked')}});")
