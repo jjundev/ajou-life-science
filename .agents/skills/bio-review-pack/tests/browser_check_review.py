@@ -372,6 +372,28 @@ class TestReviewBrowser(unittest.TestCase):
         button.click(force=True)
         self.assertEqual(self.page.evaluate('window.__calls'), 1)
 
+    def test_export_help_popup(self):
+        self.open()
+        self.go_to_last()
+        help_btn = self.page.locator('.review-export-help')
+        popup = self.page.locator('.review-export-popup')
+        expect(help_btn).to_be_visible()
+        expect(help_btn).to_have_attribute('aria-expanded', 'false')
+        expect(popup).to_be_hidden()
+        help_btn.click()
+        expect(help_btn).to_have_attribute('aria-expanded', 'true')
+        expect(popup).to_be_visible()
+        expect(popup).to_contain_text('하위 폴더')
+        self.page.keyboard.press('Escape')
+        expect(popup).to_be_hidden()
+        help_btn.click()
+        expect(popup).to_be_visible()
+        self.page.locator('.review-export-popup-close').click()
+        expect(popup).to_be_hidden()
+        help_btn.click()
+        self.page.locator('.hero, main').first.click(position={'x': 5, 'y': 5}, force=True)
+        expect(popup).to_be_hidden()
+
     def test_export_falls_back_to_download(self):
         self.context.add_init_script(
             "window.showDirectoryPicker = async () => { const e = new Error('no'); e.name = 'SecurityError'; throw e; };")

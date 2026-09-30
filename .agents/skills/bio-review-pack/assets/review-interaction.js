@@ -355,7 +355,33 @@
       const note = element('p', 'review-export-note');
       note.setAttribute('role', 'status');
       note.setAttribute('aria-live', 'polite');
-      bar.append(button, note);
+      const helpWrap = element('div', 'review-export-help-wrap');
+      const help = element('button', 'text-btn review-export-help', '?');
+      help.type = 'button';
+      help.setAttribute('aria-label', '저장 폴더 도움말');
+      help.setAttribute('aria-expanded', 'false');
+      const popup = element('div', 'review-export-popup');
+      popup.id = 'review-export-popup';
+      popup.setAttribute('role', 'note');
+      popup.hidden = true;
+      help.setAttribute('aria-controls', popup.id);
+      popup.append(
+        element('p', 'review-export-popup-text',
+          'Chrome은 다운로드·문서·바탕 화면 같은 시스템 폴더를 막아요. 그 안에 만들어 둔 하위 폴더를 골라 주세요. ' +
+          '막힌 폴더를 골랐다면 "다른 폴더 선택"을 눌러 다시 고르면 돼요.'),
+        element('button', 'text-btn review-export-popup-close', '닫기'));
+      popup.querySelector('button').type = 'button';
+      helpWrap.append(help, popup);
+      const setHelp = open => {
+        popup.hidden = !open;
+        help.setAttribute('aria-expanded', String(open));
+      };
+      help.addEventListener('click', () => setHelp(popup.hidden));
+      popup.querySelector('button').addEventListener('click', () => { setHelp(false); help.focus(); });
+      root.addEventListener('keydown', e => { if (e.key === 'Escape' && !popup.hidden) { setHelp(false); help.focus(); } });
+      root.addEventListener('click', e => { if (!popup.hidden && !helpWrap.contains(e.target)) setHelp(false); });
+      root.addEventListener('od:screen', () => setHelp(false));
+      bar.append(button, helpWrap, note);
       pager.prepend(bar);
       root.addEventListener('od:screen', () => { note.textContent = ''; });
       button.addEventListener('click', async () => {
