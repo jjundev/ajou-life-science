@@ -69,7 +69,8 @@ const textNodes = Array.from(document.querySelectorAll('main *, #panel-right *')
 - 선택 전·후 어느 때도 “해설이 열려요” 같은 사용법 안내 문장(`.review-help`)이 카드에 없어야 한다.
 - ‘틀린 것을 고르시오’는 문장의 참·거짓과 답 여부를 혼동하지 않는다. 모호한 기출은 ‘단일 정답 판정 주의’와 출제 의도상 답을 표시한다.
 - 제출 뒤 각 보기를 클릭하면 그 해설만 접거나 펼치고 답은 바꾸지 않는다. Enter/Space로도 동작하며 aria-expanded와 실제 표시가 일치해야 한다. 다시 풀기는 해설·선택·완료 표시를 초기화하고 첫 보기로 포커스를 돌린다.
-- 새로고침·화면 이동 뒤 선택이 유지된다(`sessionStorage`). 탭을 닫고 새 탭에서 다시 열면 푼 흔적이 없다(`localStorage`에 `od-review-*` 키가 없어야 한다). 저장 차단·잘못된 저장값은 풀이를 막지 않는다.
+- 새로고침·화면 이동 뒤 선택이 유지된다(`sessionStorage`). 탭을 닫고 새 탭에서 다시 열면 푼 흔적이 없다(`localStorage`에 `od-review-*` 키가 없어야 한다).
+- 마지막 문제 화면에서만 **JSON 내보내기** 버튼이 보인다. 클릭하면 폴더 선택창으로 저장하고(취소하면 저장 없음, 폴더 API가 거부되면 다운로드), 파일에는 모든 문제가 문서 순서로 들어 있고 안 푼 문제는 `selected: null`이다. 저장소가 막혀도 내보내기가 된다. 저장 차단·잘못된 저장값은 풀이를 막지 않는다.
 - Tab/Enter/Space, 390px/1280px, 밝은/어두운 테마, 비JavaScript 정적 풀이, 인쇄 해설을 확인한다.
 - 그림·수식 노드 수와 id가 늘어나지 않는다. 인쇄가 끝나면 추가 해설이 오른쪽 패널로 돌아간다.
 - 회귀 검사는 `python .agents/skills/bio-review-pack/tests/browser_check_review.py`로 실행한다(개발 환경의 Playwright/Chromium 필요, 생성 HTML에는 추가 의존성 없음).
