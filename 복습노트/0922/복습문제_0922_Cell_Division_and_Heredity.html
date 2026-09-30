@@ -1333,6 +1333,7 @@
   border:solid var(--on-btn); border-width:0 2px 2px 0; rotate:45deg;
 }
 .review-feedback[data-result="unsure"] .review-feedback-icon { display:none; }
+.review-feedback[data-result="wrong-folder"] .review-feedback-icon { display:none; }
 .review-feedback[data-result="cancelled"] .review-feedback-icon { display:none; }
 .review-feedback-icon { position:relative; flex:none; width:20px; height:20px; }
 .review-feedback[data-result="correct"] .review-feedback-icon {
@@ -1515,17 +1516,76 @@ body:not(.at-end) .review-export-bar { display:none; }
       '-' + p(now.getHours()) + p(now.getMinutes());
     return documentId.replace(/\.html?$/i, '') + '_풀이기록_' + stamp + '.json';
   }
-  async function saveExport(win, text, filename) {
-    if (typeof win.showDirectoryPicker === 'function') {
+  function handleStore(win) {
+    const run = async (mode, fn) => {
+      const db = await new Promise((resolve, reject) => {
+        const req = win.indexedDB.open('od-review-export', 1);
+        req.onupgradeneeded = () => req.result.createObjectStore('handles');
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
       try {
-        const dir = await win.showDirectoryPicker({mode:'readwrite'});
+        return await new Promise((resolve, reject) => {
+          const tx = db.transaction('handles', mode);
+          const req = fn(tx.objectStore('handles'));
+          tx.oncomplete = () => resolve(req.result);
+          tx.onerror = tx.onabort = () => reject(tx.error);
+        });
+      } finally { db.close(); }
+    };
+    return {
+      get: () => run('readonly', st => st.get('root')).then(h => h || null, () => null),
+      set: h => run('readwrite', st => st.put(h, 'root')).catch(() => {}),
+      clear: () => run('readwrite', st => st.delete('root')).catch(() => {})
+    };
+  }
+  async function resolveExportDir(root, documentId, range) {
+    const child = async (dir, name, create) => {
+      try { return await dir.getDirectoryHandle(name, create ? {create:true} : undefined); }
+      catch (error) { if (error && error.name === 'NotFoundError') return null; throw error; }
+    };
+    if (root.name === '풀이기록') return root;
+    if (root.name === '복습노트') {
+      const day = range ? await child(root, range, false) : null;
+      return day ? child(day, '풀이기록', true) : null;
+    }
+    try { await root.getFileHandle(documentId); }
+    catch (error) { if (error && error.name === 'NotFoundError') return null; throw error; }
+    return child(root, '풀이기록', true);
+  }
+  const isCancel = error => !!error && (error.name === 'AbortError' || error.name === 'NotAllowedError');
+  // The first export asks for the folder once and remembers it (IndexedDB), so
+  // later exports write straight into <날짜>/풀이기록 without a picker.
+  async function saveExport(win, text, filename, meta) {
+    meta = meta || {};
+    if (typeof win.showDirectoryPicker === 'function') {
+      const store = meta.store || handleStore(win);
+      const write = async root => {
+        const dir = await resolveExportDir(root, meta.documentId, meta.range);
+        if (!dir) return 'wrong-folder';
         const file = await dir.getFileHandle(filename, {create:true});
         const out = await file.createWritable();
         await out.write(text);
         await out.close();
         return 'saved';
+      };
+      try {
+        const remembered = await store.get();
+        if (remembered) {
+          try {
+            let permission = await remembered.queryPermission({mode:'readwrite'});
+            if (permission !== 'granted') permission = await remembered.requestPermission({mode:'readwrite'});
+            if (permission !== 'granted') return 'cancelled';
+            if (await write(remembered) === 'saved') return 'saved';
+          } catch (error) { if (isCancel(error)) return 'cancelled'; }
+          await store.clear();
+        }
+        const root = await win.showDirectoryPicker({mode:'readwrite', id:'od-review-export'});
+        const result = await write(root);
+        if (result === 'saved') await store.set(root);
+        return result;
       } catch (error) {
-        if (error && (error.name === 'AbortError' || error.name === 'NotAllowedError')) return 'cancelled';
+        if (isCancel(error)) return 'cancelled';
       }
     }
     const url = win.URL.createObjectURL(new win.Blob([text], {type:'application/json'}));
@@ -1819,8 +1879,8 @@ body:not(.at-end) .review-export-bar { display:none; }
       help.setAttribute('aria-controls', popup.id);
       popup.append(
         element('p', 'review-export-popup-text',
-          'Chrome은 다운로드·문서·바탕 화면 같은 시스템 폴더를 막아요. 그 안에 만들어 둔 하위 폴더를 골라 주세요. ' +
-          '막힌 폴더를 골랐다면 "다른 폴더 선택"을 눌러 다시 고르면 돼요.'),
+          '처음 한 번만 이 HTML이 들어 있는 복습노트/날짜 폴더(또는 복습노트 폴더)를 골라 주세요. ' +
+          '그 뒤로는 창 없이 풀이기록 폴더에 바로 저장돼요. Chrome은 다운로드·문서·바탕 화면 자체는 막아요.'),
         element('button', 'text-btn review-export-popup-close', '닫기'));
       popup.querySelector('button').type = 'button';
       helpWrap.append(help, popup);
@@ -1844,10 +1904,15 @@ body:not(.at-end) .review-export-bar { display:none; }
         writeSnapshot(storage, snapKey, snapshot);
         const data = buildExport(model, snapshot, {ids, titles, range: root.body.dataset.range || '', now});
         let outcome;
-        try { outcome = await saveExport(win, JSON.stringify(data, null, 2) + '\n', exportFilename(model.documentId, now)); }
+        try {
+          outcome = await saveExport(win, JSON.stringify(data, null, 2) + '\n', exportFilename(model.documentId, now),
+            {documentId: model.documentId, range: root.body.dataset.range || ''});
+        }
         finally { button.disabled = false; }
-        const message = outcome === 'saved' ? '고른 폴더에 저장했어요'
-          : outcome === 'downloaded' ? '다운로드 폴더에 저장했어요' : '저장을 취소했어요';
+        const message = outcome === 'saved' ? '풀이기록 폴더에 저장했어요'
+          : outcome === 'downloaded' ? '다운로드 폴더에 저장했어요'
+          : outcome === 'wrong-folder' ? '복습노트/' + (root.body.dataset.range || '날짜') + ' 폴더를 골라 주세요'
+          : '저장을 취소했어요';
         note.textContent = message + '.';
         showFeedback(outcome, 'export', message, 2200);
       });
@@ -1876,7 +1941,7 @@ body:not(.at-end) .review-export-bar { display:none; }
     }
   }
   const api = {stripDiagnosticPrefix, grade, storageKey, readAttempt, readUnsure, writeAttempt, mount,
-    exportKey, readSnapshot, writeSnapshot, updateSnapshot, buildExport, exportFilename, saveExport};
+    exportKey, readSnapshot, writeSnapshot, updateSnapshot, buildExport, exportFilename, saveExport, resolveExportDir, handleStore};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else scope.ReviewInteraction = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);
