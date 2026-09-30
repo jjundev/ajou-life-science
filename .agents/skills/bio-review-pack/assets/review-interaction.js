@@ -223,6 +223,8 @@
       feedbackOwner = id;
       feedbackTimer = win.setTimeout(clearFeedback, duration || 1100);
     }
+    const UNSURE_ICON_OFF = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+    const UNSURE_ICON_ON = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
     for (const [id, data] of Object.entries(model.cards)) {
       const card = root.getElementById(id);
       if (!card || card.classList.contains('review-ready')) continue;
@@ -300,9 +302,10 @@
         let unsure = selected !== null && readUnsure(storage, key, data);
         selectedById[id] = selected;
         unsureById[id] = unsure;
-        unsureBtn = element('button', 'review-unsure text-btn');
+        unsureBtn = element('button', 'review-unsure solved-btn');
         unsureBtn.type = 'button';
-        solution.prepend(unsureBtn);
+        // Same look and place as the 푼 문제 button: bottom of the aid panel.
+        (aid || solution).append(unsureBtn);
         const expanded = new Set(selected === null ? [] : [selected, data.answer]);
         function paintDisclosure(c) {
           const answered = selected !== null;
@@ -321,7 +324,9 @@
           const answered = selected !== null;
           const result = grade(data, selected);
           reset.hidden = !answered;
-          unsureBtn.textContent = unsure ? '애매함 표시 취소' : '애매함으로 표시';
+          unsureBtn.hidden = !answered;
+          unsureBtn.innerHTML = (unsure ? UNSURE_ICON_ON : UNSURE_ICON_OFF) +
+            '<span>' + (unsure ? '애매함 표시 취소' : '애매함으로 표시') + '</span>';
           unsureBtn.setAttribute('aria-pressed', String(unsure));
           unsureBtn.dataset.unsure = String(unsure);
           status.textContent = !answered ? '' : result === 'ambiguous'

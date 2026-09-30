@@ -1311,8 +1311,9 @@
 .review-status:empty { display:none; }
 .review-reset { min-height:44px; margin:var(--s2) 0 var(--s4); }
 .review-choice-content { padding:var(--s2) 0; }
-.review-unsure { min-height:44px; margin:0 0 var(--s3); padding:0 14px; border:1.5px solid var(--line, currentColor); border-radius:999px; }
-.review-unsure[aria-pressed="true"] { border-color:var(--accent); background:var(--accent); color:var(--on-btn); }
+/* Look comes from the template's .solved-btn; only visibility and focus live here. */
+.review-unsure[hidden] { display:none; }
+.review-unsure.solved-btn[aria-pressed="true"] { border-color:#ffa030; color:#ffa030; }
 .review-unsure:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
 .review-feedback {
   position:fixed; top:calc(env(safe-area-inset-top) + 72px); left:50%; z-index:100;
@@ -1637,6 +1638,8 @@ body:not(.at-end) .review-export-bar { display:none; }
       feedbackOwner = id;
       feedbackTimer = win.setTimeout(clearFeedback, duration || 1100);
     }
+    const UNSURE_ICON_OFF = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+    const UNSURE_ICON_ON = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
     for (const [id, data] of Object.entries(model.cards)) {
       const card = root.getElementById(id);
       if (!card || card.classList.contains('review-ready')) continue;
@@ -1714,9 +1717,10 @@ body:not(.at-end) .review-export-bar { display:none; }
         let unsure = selected !== null && readUnsure(storage, key, data);
         selectedById[id] = selected;
         unsureById[id] = unsure;
-        unsureBtn = element('button', 'review-unsure text-btn');
+        unsureBtn = element('button', 'review-unsure solved-btn');
         unsureBtn.type = 'button';
-        solution.prepend(unsureBtn);
+        // Same look and place as the 푼 문제 button: bottom of the aid panel.
+        (aid || solution).append(unsureBtn);
         const expanded = new Set(selected === null ? [] : [selected, data.answer]);
         function paintDisclosure(c) {
           const answered = selected !== null;
@@ -1735,7 +1739,9 @@ body:not(.at-end) .review-export-bar { display:none; }
           const answered = selected !== null;
           const result = grade(data, selected);
           reset.hidden = !answered;
-          unsureBtn.textContent = unsure ? '애매함 표시 취소' : '애매함으로 표시';
+          unsureBtn.hidden = !answered;
+          unsureBtn.innerHTML = (unsure ? UNSURE_ICON_ON : UNSURE_ICON_OFF) +
+            '<span>' + (unsure ? '애매함 표시 취소' : '애매함으로 표시') + '</span>';
           unsureBtn.setAttribute('aria-pressed', String(unsure));
           unsureBtn.dataset.unsure = String(unsure);
           status.textContent = !answered ? '' : result === 'ambiguous'
