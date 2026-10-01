@@ -56,6 +56,13 @@ class TestExtract(unittest.TestCase):
         self.assertEqual(m["problems"][1]["answer"], "(2)")
         self.assertIn("금지어 미복원", (self.run / "work" / "reconstructed.txt").read_text(encoding="utf-8"))
 
+    def test_reconstruct_sees_note_gap_badge(self):
+        note, review = augment.find_pack_files(self.pack)
+        text = note.read_text(encoding="utf-8").replace("보충 · 수업에서 다루지 않았어요", "보충 · 노트에 빠졌던 수업 내용")
+        note.write_text(text, encoding="utf-8")
+        m = augment.reconstruct(note, review)
+        self.assertTrue(m["sections"][0]["topics"][1]["supp"])
+
     def test_pack_manifest_mismatch_stops(self):
         m = json.loads((self.pack / ".pack" / "manifest.json").read_text(encoding="utf-8"))
         m["problems"] = [q for q in m["problems"] if q["id"] != "p2"]

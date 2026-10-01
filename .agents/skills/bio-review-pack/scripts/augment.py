@@ -93,7 +93,7 @@ def reconstruct(note_path: Path, review_path: Path) -> dict:
                     layers.append(layer)
             tid = tm.group(1)
             topics.append({"id": tid, "title": html.unescape(tm.group(2)), "required_terms": [],
-                           "layers": layers, "supp": check_html.SUPP_LABEL in chunk})
+                           "layers": layers, "supp": any(label in chunk for label in check_html.SUPP_LABELS)})
             topic_ids.append(tid)
             if tid.endswith("-links"):
                 links += [{"topic": tid, "href": h} for h in re.findall(r'href="([^"#][^"]*)"', chunk)]

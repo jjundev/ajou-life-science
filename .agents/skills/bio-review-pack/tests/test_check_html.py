@@ -163,5 +163,23 @@ class TestPack(unittest.TestCase):
         self.assertIn("[lang]", out.getvalue())
 
 
+class TestSuppBadges(unittest.TestCase):
+    def note(self, badge):
+        src = ('<html lang="ko"><body><main><section id="s1"><h2>1</h2>'
+               '<article class="topic" id="s1-a"><h3>A</h3>'
+               f'<div class="layer supp"><span class="badge supp">{badge}</span><p>사실</p><p>출처: 0903 수업</p></div>'
+               '</article></section></main></body></html>')
+        m = {"sections": [{"id": "s1", "topics": [{"id": "s1-a", "required_terms": [], "layers": [], "supp": True}]}],
+             "preview_topic": "s1-a", "forbidden_outside_preview": [], "links": []}
+        return [p for p in check_html.check_note(check_html.parse_html(src), m) if p.code == "missing-supp"]
+
+    def test_both_badges_accepted(self):
+        self.assertEqual(self.note("보충 · 수업에서 다루지 않았어요"), [])
+        self.assertEqual(self.note("보충 · 노트에 빠졌던 수업 내용"), [])
+
+    def test_other_badge_rejected(self):
+        self.assertEqual(len(self.note("보충")), 1)
+
+
 if __name__ == "__main__":
     unittest.main()
