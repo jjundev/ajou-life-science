@@ -25,6 +25,7 @@ from urllib.parse import unquote
 
 VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"}
 NAME_RE = re.compile(r"^(정리노트|복습문제)_(\d{4}(?:-\d{4})?)_([A-Za-z0-9_]+)\.html$")
+SVG_REF_RE = re.compile(r"\]\(figures_[^/)]+/([^)]+\.svg)\)")
 FONT = "-apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif"
 LIGHT = {"ink": "#1b2130", "ink-2": "#4a5468", "line": "#dde2ea", "accent": "#2f6fdb", "warn": "#b54708",
          "prof": "#6941c6", "supp": "#067647", "danger": "#d92d20", "surface": "#ffffff"}
@@ -621,8 +622,18 @@ def check_md(html_path, md_path):
     return problems
 
 
-def convert_pack(note_path, review_path):
-    """두 HTML을 같은 폴더에 .md로 변환한다. (md 경로 두 개, 그림 파일 수)를 돌려준다."""
+def _md_svg_refs(md_path):
+    """MD가 참조하는 figures_<range>/ SVG 파일명 집합."""
+    if not os.path.isfile(md_path):
+        return set()
+    return set(SVG_REF_RE.findall(_read(md_path)))
+
+
+def convert_pack(note_path, review_path, only=None):
+    """두 HTML을 같은 폴더에 .md로 변환한다. (md 경로 목록, 그림 파일 수)를 돌려준다.
+    only="review"면 복습문제 MD만 다시 쓰고, 정리노트 MD와 그 SVG는 건드리지 않는다."""
+    if only not in (None, "review"):
+        raise ValueError(f"only는 None 또는 'review': {only!r}")
     out_dir = os.path.dirname(os.path.abspath(note_path))
     srcs = [os.path.abspath(note_path), os.path.abspath(review_path)]
     names = [nfc(os.path.basename(p)) for p in srcs]
@@ -634,9 +645,17 @@ def convert_pack(note_path, review_path):
     fig_name = f"figures_{matches[0].group(2)}"
     fig_abs = os.path.join(out_dir, fig_name)
     os.makedirs(fig_abs, exist_ok=True)
-    for entry in os.listdir(fig_abs):  # 다시 변환할 때 이전 실행의 고아 SVG를 남기지 않는다(.svg만, 이 폴더만)
+    mds = [os.path.join(out_dir, n[:-5] + ".md") for n in names]
+    if only == "review":
+        keep = _md_svg_refs(mds[0])
+        drop = _md_svg_refs(mds[1]) - keep
+        registry = set(keep)  # 전체 변환 때처럼 정리노트 그림 이름을 먼저 차지시켜 이름이 같게 나온다
+    else:
+        drop = {e for e in os.listdir(fig_abs) if e.lower().endswith(".svg")}
+        registry = set()
+    for entry in drop:  # 다시 변환할 때 이전 실행의 고아 SVG를 남기지 않는다(.svg만, 이 폴더만)
         old_svg = os.path.join(fig_abs, entry)
-        if entry.lower().endswith(".svg") and os.path.isfile(old_svg) and not os.path.islink(old_svg):
+        if os.path.isfile(old_svg) and not os.path.islink(old_svg):
             os.remove(old_svg)
     link_map = [(n, n[:-5] + ".md") for n in names]  # fix_href가 NFC로 비교하므로 NFD 링크도 잡힌다
     intros = [
@@ -645,29 +664,32 @@ def convert_pack(note_path, review_path):
         [f"> `{names[1]}`를 마크다운으로 옮겼어요. "
          "원문, 힌트, 풀이는 접혀 있어요. 먼저 풀어 보고 펼쳐 보세요."],
     ]
-    outs, registry = [], set()
-    for src, name, intro, prefix in zip(srcs, names, intros, ("note", "review")):
+    jobs = list(zip(srcs, mds, intros, ("note", "review")))
+    if only == "review":
+        jobs = jobs[1:]
+    outs = []
+    for src, out, intro, prefix in jobs:
         ctx = Ctx(link_map, fig_abs, fig_name, prefix=prefix, registry=registry)
-        out = os.path.join(out_dir, name[:-5] + ".md")
         convert(src, out, ctx, intro)
         outs.append(out)
     return outs, len(registry)
-
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("note")
     ap.add_argument("review")
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--only", choices=["review"])
     args = ap.parse_args(argv)
-    outs, fig_count = convert_pack(args.note, args.review)
+    outs, fig_count = convert_pack(args.note, args.review, only=args.only)
     for out in outs:
         print(out)
     print(f"figures: {fig_count}")
     if not args.check:
         return 0
+    htmls = (args.review,) if args.only else (args.note, args.review)
     problems = []
-    for html_path, md_path in zip((args.note, args.review), outs):
+    for html_path, md_path in zip(htmls, outs):
         problems += [f"{os.path.basename(md_path)}: {p}" for p in check_md(html_path, md_path)]
     for p in problems:
         print(p)

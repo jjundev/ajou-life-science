@@ -171,5 +171,39 @@ class TestHtml2Md(unittest.TestCase):
         self.assertEqual(html2md.check_md(note, note_md), [])
 
 
+class TestOnlyReview(unittest.TestCase):
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp())
+        self.note, self.review = assemble.assemble(MINI_RUN, self.tmp)
+        html2md.convert_pack(self.note, self.review)
+        self.note_md = self.note.with_suffix(".md")
+        self.review_md = self.review.with_suffix(".md")
+        self.figs = self.tmp / "figures_0101-0102"
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp)
+
+    def snapshot(self):
+        return {p.name: p.read_bytes() for p in self.figs.iterdir()}
+
+    def test_only_review_leaves_note_md_and_figures(self):
+        before_review, before_figs = self.review_md.read_bytes(), self.snapshot()
+        marked = self.note_md.read_bytes() + b"\n<!-- untouched -->\n"
+        self.note_md.write_bytes(marked)
+        outs, _ = html2md.convert_pack(self.note, self.review, only="review")
+        self.assertEqual([Path(o).name for o in outs], [self.review_md.name])
+        self.assertEqual(self.note_md.read_bytes(), marked)
+        self.assertEqual(self.review_md.read_bytes(), before_review)
+        self.assertEqual(self.snapshot(), before_figs)
+
+    def test_only_rejects_other_values(self):
+        with self.assertRaises(ValueError):
+            html2md.convert_pack(self.note, self.review, only="note")
+
+    def test_cli_only_review_check(self):
+        rc = html2md.main([str(self.note), str(self.review), "--only", "review", "--check"])
+        self.assertEqual(rc, 0)
+
+
 if __name__ == "__main__":
     unittest.main()
