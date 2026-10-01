@@ -157,6 +157,17 @@ class TestSections(Base):
 
     def test_s04_enzyme(self):
         self.assertHas("④ 효소", "활성화 에너지", "활성 부위", "특이성", "보조인자", "조효소", "변성", "최적 온도", "펩신", "트립신", "젖당")
+    def test_s05_respiration_map(self):
+        self.assertHas("⑤ 세포호흡 지도", "해당과정", "세포질", "피루브산 산화", "아세틸-CoA", "시트르산 회로",
+                       "기질", "내막", "기질 수준 인산화", "산화적 인산화", "FADH₂")
+        self.assertEqual(section("⑤ 세포호흡 지도").count('<table class="cmp">'), 2)
+
+    def test_s06_atp32(self):
+        self.assertHas("⑥ ATP 32", "28", "4", "32", "NADH 10", "30", "34%", "66%")
+
+    def test_s07_etc(self):
+        self.assertHas("⑦ 전자전달·화학삼투", "막 사이 공간", "ATP 합성효소", "최종 전자수용체", "H⁺ 농도 기울기", "환원", "미첼")
+        self.assertIn("<svg", section("⑦ 전자전달·화학삼투"))
 
 if __name__ == "__main__":
     unittest.main()
