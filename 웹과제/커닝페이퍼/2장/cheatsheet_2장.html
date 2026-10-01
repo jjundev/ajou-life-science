@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<!--
+  웹과제 커닝페이퍼 — 2장 세포호흡과 광합성 (A4 세로, 쪽 수 제한 없음)
+  디자인 출처: .agents/skills/bio-review-pack/assets/review-template.html (색 토큰·Pretendard·.layer/.badge/table/fig-* 방식)
+
+  ■ 크기 토큰 위치
+    <style> 맨 위 :root 블록의 "크기 토큰" 줄. 글자 크기·줄간격·간격·모서리는 전부 여기서만 정의한다.
+    --fs-body 하나만 바꾸면 본문·표·흐름·함정 줄이 같이 바뀐다(표는 calc로 본문에 묶여 있다).
+    규칙: 7.5pt(--fs-label)는 라벨·배지·그림 속 글자 전용. 그 밖의 글자는 8pt 이상.
+
+  ■ 쪽 추가·삭제
+    <section class="page"> 하나가 A4 한 쪽이다.
+    - 쪽 수 제한 없음. 넘침 경고가 뜨면 <section class="page">를 복사해 다음 쪽을 만들고 넘친 구역과 @SECTIONS 표시 주석을 옮긴다.
+    - 쪽 번호는 모두 "n / N"으로 고친다. 테마 버튼(label)은 1쪽에만 둔다.
+    - 쪽 머리 목차 줄의 번호(①②…)는 본문 구역 라벨 번호와 맞춘다.
+
+  ■ 넘칠 때의 규칙
+    한 쪽 내용은 다음 쪽으로 넘어가지 않는다. 넘치면 쪽 오른쪽 밖으로 잘려 PDF에서 사라진다.
+    넘치면 글자 크기를 줄이지 말고 구역(<section class="sec">)을 뺀다.
+
+  ■ 넘침 경고 (화면 전용, 맨 아래 <script>)
+    브라우저로 열면 각 쪽을 PDF와 같은 크기(A4 본문 194×280mm, 왼쪽 단부터 채움)로 몰래 배치해 본다.
+    잘릴 구역이 있으면 맨 위에 주황 경고 줄이 뜨고, 그 구역에 주황 점선 테두리와 "PDF에서 잘림" 표시가 붙는다.
+    경고·테두리는 인쇄되지 않는다. PDF 출력 전에 확인하거나, 터미널에서 이 명령이 아무것도 출력하지 않아야 한다:
+      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --virtual-time-budget=15000 \
+        --dump-dom "file://$PWD/cheatsheet_2장.html" 2>/dev/null | grep -o 'data-overflow="[^"]*"'
+
+  ■ PDF 출력 명령 (라이트 테마로 출력된다. 이 폴더에서 실행)
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu \
+      --no-pdf-header-footer --run-all-compositor-stages-before-draw --virtual-time-budget=15000 \
+      --print-to-pdf="$PWD/cheatsheet_2장.pdf" "file://$PWD/cheatsheet_2장.html"
+    --virtual-time-budget는 Pretendard 웹폰트가 다 받아질 때까지(document.fonts.ready에 해당) 인쇄를 미룬다.
+    폰트가 빠져 시스템 폰트로 대체되면 줄바꿈이 달라져 쪽이 깨지므로 네트워크가 되는 상태에서 출력한다.
+
+  ■ 테마 (화면 전용)
+    기본은 다크 모드. 1쪽 제목 줄 오른쪽 끝 이모지 버튼(☀️/🌙)(체크박스 #theme-light + CSS :has, JS 없음)으로 바꾼다.
+    새로고침하면 다시 다크로 돌아간다. 인쇄·PDF는 버튼과 상관없이 항상 라이트이고 버튼은 출력되지 않는다.
+
+  ■ 강조 규칙
+    굵게(<b>)만 쓴다. 밑줄·형광 배경·기울임·취소선 금지. 색은 파랑(accent)·주황(warn)·보라(prof) 세 가지뿐.
+    모든 글자는 실제 텍스트로 넣는다(SVG 라벨도 <text>). PDF에서 ⌘F 검색에 걸려야 한다.
+-->
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2장 커닝페이퍼</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <style>
+    :root {
+      color-scheme: dark;
+      /* 색 토큰 — 복습문제 HTML과 동일. 기본은 다크 */
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff;
+      --warn: #f5a15c; --prof: #b69cff;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+
+      /* 크기 토큰 — 인쇄용. 여기만 고친다 */
+      --fs-body: 9pt;                              /* 본문 */
+      --fs-table: calc(var(--fs-body) - 0.5pt);    /* 표 셀 8.5pt */
+      --fs-label: 7.5pt;                           /* 구역 라벨·배지·그림 속 글자 전용 */
+      --fs-sec: calc(var(--fs-body) + 1pt);        /* 구역 제목 10pt */
+      --fs-page: calc(var(--fs-body) + 5pt);       /* 쪽 머리 제목 14pt */
+      --lh: 1.35;
+      --s1: 1mm; --s2: 1.5mm; --s3: 2.5mm; --s4: 4mm;
+      --radius: 1.5mm;
+      --col-gap: 5mm;
+      --fig-max: 35mm;                             /* 축소 도식 최대 높이 */
+      --page-w: 210mm; --page-margin: 8mm;
+      --page-h: 280mm;                             /* A4 297mm − 위아래 여백 16mm − 반올림 여유 1mm */
+      --tap: 8mm;                                  /* 테마 이모지 버튼 크기(화면 전용) */
+    }
+    /* 라이트 모드 — 테마 버튼(#theme-light)을 켰을 때 */
+    :root:has(#theme-light:checked) {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da;
+      --warn: #b54708; --prof: #6941c6;
+    }
+    /* PDF는 항상 라이트 테마 */
+    @media print {
+      :root {
+        color-scheme: light;
+        --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+        --accent: #1677ff; --accent-ink: #1b64da;
+        --warn: #b54708; --prof: #6941c6;
+      }
+    }
+
+    @page { size: A4; margin: 8mm; }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    body {
+      margin: 0; background: var(--bg); color: var(--ink);
+      font-family: var(--font); font-size: var(--fs-body); line-height: var(--lh);
+      word-break: keep-all; overflow-wrap: anywhere;
+      font-variant-numeric: tabular-nums;
+    }
+    b, strong { font-weight: 700; }
+    p { margin: 0; }
+
+    /* ── 쪽 ── */
+    .page {
+      width: min(var(--page-w), 100%); margin: 0 auto; padding: var(--page-margin);
+      display: flex; flex-direction: column;
+    }
+    .page + .page { margin-top: var(--s4); }
+    @media print {
+      .page { width: auto; height: var(--page-h); margin: 0; padding: 0; break-after: page; overflow: hidden; }
+      .page + .page { margin-top: 0; }
+      .page:last-child { break-after: auto; }
+    }
+
+    /* ── 테마 버튼 (화면 전용, 인쇄 안 됨) — 1쪽 제목 줄 오른쪽 끝의 이모지 버튼 ── */
+    .theme-input { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; opacity: 0; }
+    .theme-btn {
+      flex: none; align-self: center; display: inline-flex; align-items: center; justify-content: center;
+      width: var(--tap); height: var(--tap); border-radius: var(--radius);
+      font-size: var(--fs-sec); line-height: 1; cursor: pointer; user-select: none;
+    }
+    @media (hover: hover) { .theme-btn:hover { background: var(--surface); } }
+    :root:has(#theme-light:focus-visible) .theme-btn { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .theme-btn .to-dark { display: none; }
+    :root:has(#theme-light:checked) .theme-btn .to-light { display: none; }
+    :root:has(#theme-light:checked) .theme-btn .to-dark { display: inline; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    @media print { .theme-input, .theme-btn { display: none; } }
+
+    /* 쪽 머리 */
+    .page-head { flex: none; margin-bottom: var(--s3); }
+    .page-title-row { display: flex; align-items: baseline; gap: var(--s3); }
+    .page-title { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-page); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+    .page-no { flex: none; color: var(--ink-2); font-size: var(--fs-body); white-space: nowrap; }
+    .page-bar { height: 2px; background: var(--accent); margin: var(--s2) 0; }
+    .page-toc { margin: 0; color: var(--ink-2); font-size: var(--fs-label); font-weight: 600; }
+
+    /* 본문 2단 */
+    .page-body { flex: 1 1 auto; min-height: 0; column-count: 2; column-gap: var(--col-gap); column-fill: auto; }
+    /* 화면에는 쪽 높이가 없어 auto면 왼쪽 단에만 쌓인다 → 두 단에 고르게 나눈다. PDF는 위의 auto 그대로 */
+    @media screen { .page-body { column-fill: balance; } }
+    @media screen and (max-width: 520px) { .page-body { column-count: 1; } }
+
+    /* ── 구역 (.layer 방식: 라벨 + 1px 구분선) ── */
+    .sec { break-inside: avoid; border-top: 1px solid var(--line); padding-top: var(--s2); margin-bottom: var(--s3); }
+    .sec-label { display: block; color: var(--accent-ink); font-size: var(--fs-label); font-weight: 600; }
+    .sec-title { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s1) var(--s2); margin: 0 0 var(--s1); font-size: var(--fs-sec); font-weight: 700; line-height: 1.3; }
+    .sec > * + * { margin-top: var(--s1); }
+    .sec > .sec-title { margin-top: 0; }
+
+    /* 배지 */
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.4; padding: 0 var(--s1); border-radius: calc(var(--radius) * 0.75); background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+    .badge.prof { color: var(--prof); }
+
+    /* 비교표 (복습문제 table 스타일) */
+    .cmp { border-collapse: collapse; width: 100%; font-size: var(--fs-table); line-height: 1.3; }
+    .cmp th, .cmp td { border-bottom: 1px solid var(--line); padding: var(--s1) var(--s1); text-align: left; vertical-align: top; }
+    .cmp th { color: var(--ink-2); font-weight: 600; }
+    .cmp td:first-child { font-weight: 700; }
+
+    /* 흐름 줄 */
+    .flow { margin: 0; }
+    .flow-arrow { color: var(--ink-2); padding: 0 0.2em; }
+    .flow-num { color: var(--accent-ink); font-weight: 700; white-space: nowrap; }
+
+    /* 함정 줄 (.layer.warn 방식) */
+    .trap { background: var(--surface); border-radius: var(--radius); padding: var(--s2) var(--s3); }
+    .trap-label { display: block; color: var(--warn); font-size: var(--fs-label); font-weight: 600; }
+    .trap-x { display: block; color: var(--ink-2); }
+    .trap-ok { display: block; color: var(--ink); }
+    .trap-x + .trap-ok { margin-top: 0.2em; }
+    .trap-ok + .trap-x { margin-top: var(--s1); }
+
+    /* 키워드–한 줄 정의 목록 */
+    .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--s1) var(--s2); margin: 0; }
+    .kv dt { font-weight: 700; }
+    .kv dd { margin: 0; }
+
+    /* 점 목록 */
+    .pts { margin: 0; padding-left: 1.1em; }
+    .pts li + li { margin-top: 0.15em; }
+
+    /* 축소 도식 */
+    .mini-fig { display: block; margin: 0; }
+    .mini-fig svg { display: block; width: 100%; height: auto; max-height: var(--fig-max); color: var(--ink); }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 1.5; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 1.8; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: var(--fs-label); font-weight: 600; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-label); font-weight: 600; font-family: inherit; }
+
+    /* 교수님: 몰라도 됨 — 구역 맨 끝 */
+    .later { color: var(--ink-2); }
+    .later .badge { margin-right: var(--s1); }
+
+    /* ── 넘침 경고 (화면 전용) ── */
+    /* PDF 배치를 흉내 내는 보이지 않는 복제본. 크기는 인쇄 규칙과 같다 */
+    .page-probe { position: absolute; left: -10000px; top: 0; width: calc(var(--page-w) - 2 * var(--page-margin)); height: var(--page-h);
+      margin: 0; padding: 0; visibility: hidden; pointer-events: none; }
+    .page-probe .page-body { column-count: 2; column-fill: auto; }
+    .page-probe .theme-btn { display: none; }
+    .overflow-alert { width: min(var(--page-w), 100%); margin: 0 auto; padding: var(--s2) var(--page-margin);
+      background: var(--surface); color: var(--warn); font-weight: 700; border-bottom: 2px solid var(--warn); }
+    .overflow-alert span { display: block; color: var(--ink); font-weight: 400; }
+    .sec.is-overflow { outline: 2px dashed var(--warn); outline-offset: var(--s1); }
+    .sec.is-overflow::before { content: "PDF에서 잘림"; display: block; color: var(--warn); font-size: var(--fs-label); font-weight: 700; }
+    @media print { .overflow-alert { display: none; } .sec.is-overflow { outline: none; } .sec.is-overflow::before { content: none; } }
+  </style>
+</head>
+<body>
+
+<!-- 테마 스위치: 기본 다크, 켜면 라이트. 버튼(label)은 1쪽 제목 줄에 있다. 인쇄에서는 숨겨진다. -->
+<input type="checkbox" id="theme-light" class="theme-input">
+
+<!-- ════════════ 1쪽 ════════════ -->
+<section class="page" aria-label="1쪽">
+  <!-- 쪽 머리: 제목 · 쪽 번호 → 2px 파란 막대 → 목차 줄(번호는 아래 구역 라벨과 같게) -->
+  <header class="page-head">
+    <div class="page-title-row">
+      <h1 class="page-title">2장 세포호흡과 광합성</h1>
+      <span class="page-no">1 / 1</span>
+      <label for="theme-light" class="theme-btn" title="테마 바꾸기"><span class="to-light" aria-hidden="true">☀️</span><span class="to-dark" aria-hidden="true">🌙</span><span class="sr-only">라이트·다크 모드 바꾸기</span></label>
+    </div>
+    <div class="page-bar" aria-hidden="true"></div>
+    <p class="page-toc">① 시험장 체크 · ② 용어 바꿔 부르기</p>
+  </header>
+
+  <div class="page-body">
+
+    <!-- ① 출처: docs/2026-09-17-1장-웹과제-분석과-노트-개선안.md §3·§5 -->
+    <section class="sec">
+      <span class="sec-label">① 시험장 체크</span>
+      <h2 class="sec-title">1장 웹과제가 기출과 달랐던 점</h2>
+      <p>1장 기준: 17문항 11분, 문항당 약 <b class="flow-num">39초</b>. 보기는 4개·5개가 섞임.</p>
+      <ul class="pts">
+        <li>기출과 같은 문제도 <b>보기 순서</b>가 바뀐다(1장 Q1·Q7) → 번호 말고 내용으로 확인</li>
+        <li>17문항 중 15문항은 <b>기출과 다른 문장</b> → 개념으로 찾기, 표기가 다르면 ②</li>
+        <li>8/17이 <b>"옳지 않은 것"</b> → 각 구역 <b>함정</b> 상자부터 본다</li>
+        <li><b>그림</b>이 다르게 그려진다(이온형·회전·표지 교체) → 뼈대로 판독: ③ ⑦ ⑨ ⑪ ⑫</li>
+        <li><b>조건</b>이 바뀐다(같은 종 → 여러 종+무생물) → 산소 없음 ⑥⑧, 기울기 깨짐 ⑦, 기공 닫힘 ⑭, 온도 ④</li>
+        <li><b>거꾸로</b> 묻는다(기능 → 세포) → 사례 → 발효 종류 ⑧, 반응 → 장소 ⑤⑮</li>
+        <li><b>포함·제외</b>와 <b>결정 단서</b>(이중막인데 내막계 아님, 핵양체) → 투입물 아닌 것 ⑬, NADPH·P680·RuBP면 광합성 ⑮</li>
+      </ul>
+    </section>
+
+    <!-- ② 출처: 0915 정리노트 30초 요약(명반응·암반응), 0910 정리노트 L1259(크렙스·TCA), L1444(막간 공간),
+         0915 정리노트 L174(ATP 생성효소), L171(화학삼투설), 웹과제/1장/questions.json(전자전달사슬·뉴클레오티드) -->
+    <section class="sec">
+      <span class="sec-label">② 용어 바꿔 부르기</span>
+      <h2 class="sec-title">문제에 이렇게 나와도 같은 것</h2>
+      <table class="cmp">
+        <thead><tr><th>이 말</th><th>같은 것</th></tr></thead>
+        <tbody>
+          <tr><td>광의존반응</td><td>명반응</td></tr>
+          <tr><td>광독립반응</td><td>암반응 = 캘빈 회로 (빛이 직접 필요 없을 뿐)</td></tr>
+          <tr><td>시트르산 회로</td><td>크렙스 회로 = TCA 회로</td></tr>
+          <tr><td>전자전달계</td><td>전자전달사슬 (1장 웹과제 표기)</td></tr>
+          <tr><td>막 사이 공간</td><td>막간 공간</td></tr>
+          <tr><td>ATP 합성효소</td><td>ATP 생성효소 (같은 효소)</td></tr>
+          <tr><td>화학삼투설</td><td>이론 이름. 과정 이름은 산화적 인산화</td></tr>
+          <tr><td>뉴클레오타이드</td><td>뉴클레오티드 (리보스 = 리보오스)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!--@SECTIONS-->
+
+  </div>
+</section>
+
+<!-- 넘침 경고: 각 쪽을 PDF 크기로 복제해 배치한 뒤, 본문 영역 밖으로 밀려난 구역을 찾는다. 화면 전용, 인쇄에는 영향 없음 -->
+<script>
+(async () => {
+  try { await document.fonts.ready; } catch (e) {}
+  const found = [];
+  document.querySelectorAll('.page:not(.page-probe)').forEach((page, pi) => {
+    const probe = page.cloneNode(true);
+    probe.classList.add('page-probe');
+    probe.removeAttribute('aria-label');
+    document.body.appendChild(probe);
+    const box = probe.querySelector('.page-body').getBoundingClientRect();
+    const real = page.querySelectorAll('.sec');
+    probe.querySelectorAll('.sec').forEach((sec, i) => {
+      const r = sec.getBoundingClientRect();
+      if (r.right > box.right + 1 || r.bottom > box.bottom + 1) {
+        real[i].classList.add('is-overflow');
+        found.push(`${pi + 1}쪽 ${(real[i].querySelector('.sec-label') || {}).textContent || '(라벨 없음)'}`);
+      }
+    });
+    probe.remove();
+  });
+  if (!found.length) return;
+  const alert = document.createElement('div');
+  alert.className = 'overflow-alert';
+  alert.setAttribute('role', 'alert');
+  alert.dataset.overflow = found.join(', ');
+  alert.textContent = `⚠ 구역 ${found.length}개가 넘쳐 PDF에서 잘립니다. 글자를 줄이지 말고 구역을 빼세요.`;
+  const list = document.createElement('span');
+  list.textContent = found.join(' · ');
+  alert.appendChild(list);
+  document.body.prepend(alert);
+})();
+</script>
+
+</body>
+</html>
