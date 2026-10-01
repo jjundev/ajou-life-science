@@ -6,11 +6,14 @@
 
 먼저 메인 에이전트가 복습문제에서 문제·보기·그림만 뽑은 사본을 만든다(`REVIEW`는 조립된 복습문제 HTML 절대 경로). 기출 그림(`<img>`)은 PNG 경로를, 웹과제 인라인 `<svg>`는 `OUT`과 같은 폴더의 `blind-figs/<pid>-<n>.svg` 파일로 저장한 경로를 `[그림: …]` 줄로 남긴다. `OUT`의 `$RUN`은 같은 명령 앞에 붙인 `RUN=…`로는 펼쳐지지 않으므로, 같은 Bash 호출 맨 앞에 `RUN=…;`로 먼저 설정하거나 `OUT`에 절대 경로를 직접 쓴다.
 ```bash
-REVIEW=… OUT="$RUN/work/blind-<range>.md" python3 - <<'EOF'
+REVIEW=… OUT="$RUN/work/blind-<range>.md" IDS="" python3 - <<'EOF'
 import html, os, re
 src = open(os.environ["REVIEW"], encoding="utf-8").read()
 base = os.path.dirname(os.environ["REVIEW"])
 cards = re.findall(r'<article class="card" id="(p\d+)"[^>]*>\s*<h3>(.*?)</h3>\s*<div class="problem">(.*?)</div>\s*<details', src, re.S)
+ids = {i for i in os.environ.get("IDS", "").split(",") if i}
+if ids:  # 보강 모드: 새 카드만
+    cards = [c for c in cards if c[0] in ids]
 figs = os.path.join(os.path.dirname(os.path.abspath(os.environ["OUT"])), "blind-figs")
 def text(pid, h):
     n = 0
@@ -34,7 +37,7 @@ with open(os.environ["OUT"], "w", encoding="utf-8") as f:
 print(len(cards), "문항")
 EOF
 ```
-출력 문항 수가 manifest 문제 수와 다르면 카드 마크업 순서를 고친 뒤 다시 만든다.
+출력 문항 수가 manifest 문제 수와 다르면 카드 마크업 순서를 고친 뒤 다시 만든다. 보강 모드에서는 `IDS`에 새 카드 id만 넣는다(출력 문항 수 = 새 카드 수).
 
 ---
 생명과학 복습팩의 블라인드 풀이 검사를 한다. 파일은 수정하지 않는다.

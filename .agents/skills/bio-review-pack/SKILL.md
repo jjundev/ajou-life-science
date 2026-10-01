@@ -10,8 +10,9 @@ description: 생명과학 수업의 STT·강의노트·교과서와 23·24 기�
 **산출물** (`복습노트/<range>/`, 기간(range)마다 폴더 하나):
 `정리노트_<range>_<slug>.html`, `복습문제_<range>_<slug>.html`, 같은 이름의 `.md` 두 개, `figures_<range>/`, (장이 끝난 범위면) `장마감_<range>_<N>장.md`
 
-**인자**: `[MMDD | MMDD-MMDD] [lite]`
+**인자**: `[MMDD | MMDD-MMDD] [lite] [augment]`
 - `lite`: 작성자·요약 에이전트를 sonnet으로 하고, 6단계의 일반 리뷰를 생략한다. 블라인드 풀이 검사, 기계 검사, 브라우저 검사는 그대로 한다.
+- `augment`: 이미 만든 팩에 웹과제 원문(partA)과 새 변형(partC)을 덧붙인다. 0~9단계 대신 아래 **보강 모드**를 따른다. range가 꼭 있어야 한다.
 
 **진행 표시**: 단계마다 한 줄만 쓴다. 예: `3/9 작성 중: 섹션 5개 + 카드 23개 (병렬)`
 
@@ -204,6 +205,47 @@ python3 "$SKILL/scripts/html2md.py" "$REPO/복습노트/<range>/<정리노트>.h
 
 장 마감 파일은 새 장 요약 노트가 아니다. 본문을 복제하지 않고 원천 노트의 토픽으로 링크한다.
 
+## 보강 모드
+
+웹과제 bank는 그 장 응시 뒤에 생긴다. 이미 만든 팩을 다시 만들면 카드 번호가 바뀌어 `references/interactive-overrides.json`(카드 id 키)과 `복습노트/<range>/풀이기록/`이 엉뚱한 문항에 붙는다. 그래서 보강은 **기존 카드 번호를 그대로 두고** 복습문제만 다시 쓴다. 정리노트 HTML·MD와 `풀이기록/`은 건드리지 않는다. `RUN` 경로 약속은 위와 같다(`<scratchpad>/review-pack/<range>-augment/`).
+
+**A1. 추출**
+```bash
+SKILL=…; REPO=…; RUN=…; python3 "$SKILL/scripts/augment.py" extract "$REPO/복습노트/<range>" "$RUN"
+```
+- 기존 카드를 `RUN/cards/pN.html`로, manifest를 `RUN/manifest.json`으로 꺼내고 다음 id를 출력한다.
+- manifest는 `복습노트/<range>/.pack/manifest.json`을 쓴다. 없으면 HTML에서 복원한다(출력에 "금지어 미복원"). 복원했거나 `.pack/log.md`에 "금지어 미복원"이 있으면 A2에서 금지어를 다시 정한다.
+- `.pack` manifest와 HTML 카드가 다르다고 멈추면, 누가 HTML을 손으로 고친 것이다. 차이를 보고하고 멈춘다.
+
+**A2. 새 문항 정하기** (기존 절차 재사용)
+- 장 bank를 `references/problem-selection.md` 2절로 검증하고 3절 감사표를 `RUN/question-audit.md`에 쓴다. "이전 팩" 판정에 **이 팩 자신의 기존 `data-source`도** 넣는다.
+- 변형은 6절과 `references/webquiz-style.md`대로 `RUN/variants.md`에 설계한다. 쌍둥이 재료 판단의 "같은 팩 partA"는 기존 카드와 새 partA를 합친 집합이다.
+- 금지어 미복원이면: 정리노트 예고 토픽(`preview_topic`) 본문의 용어 중 다른 토픽에 나오지 않는 것을 후보로 다시 정해 `RUN/manifest.json`에 넣고 보고서에 "금지어 재도출"이라고 적는다.
+- 새 문항을 `RUN/manifest.json` `problems` 끝에 A1이 출력한 다음 id부터 붙이고, 카드 작성자(`references/card-rules.md` 브리프)가 `RUN/cards/<새 id>.html`을 쓴다. 기출 그림은 `RUN/figures/`.
+
+**A3. 조립**
+```bash
+SKILL=…; REPO=…; RUN=…; python3 "$SKILL/scripts/augment.py" build "$REPO/복습노트/<range>" "$RUN"
+```
+- 기존 카드의 id·part·source·answer가 바뀌었거나 카드가 사라졌으면 아무것도 쓰지 않고 멈춘다. 카드 본문 수정은 허용한다.
+- part 순서(A·B·C)로 정렬하고, 제목의 "N선"·안내의 문항 수·꼬리말의 `웹과제(N장)`을 맞춘다. `경고:` 줄이 나오면 그 문구를 `RUN/manifest.json`에서 직접 고치고 A3을 다시 한다(`base-ids.json`이 그대로라 다시 해도 된다).
+- 복습문제 HTML만 쓰고 `.pack/`에 기록을 남긴다(`log.md`에 augment 한 줄).
+
+**A4. 검사**
+- `python3 "$SKILL/scripts/check_html.py" --manifest "$RUN/manifest.json" --note … --review …` → `OK`. 복원 manifest라면 정리노트 쪽은 구조만 검사된다는 한계를 보고서에 적는다.
+- 블라인드 검사: `references/review-prompt.md` 스니펫을 `IDS=<새 id 쉼표 목록>`과 함께 돌려 **새 카드만** 사본을 만들고 6단계 규칙대로 검사한다.
+- 브라우저: `references/browser-check.md`대로, 새 카드 하나 이상과 기존 카드 하나를 연다.
+
+**A5. MD 변환**
+```bash
+python3 "$SKILL/scripts/html2md.py" "$REPO/복습노트/<range>/<정리노트>.html" "$REPO/복습노트/<range>/<복습문제>.html" --only review --check
+```
+- 복습문제 MD만 다시 쓴다. 정리노트 MD와 그 그림은 그대로다.
+
+**A6. 보고**
+- 9단계 형식에 `보강:`을 앞에 붙이고 `추가 pX–pY`를 더한다. `git status 복습노트/<range>/풀이기록`이 비어 있는지 확인해 적는다. 기존 카드 번호를 바꾸지 않았음을 확인하는 줄을 넣는다.
+- 커밋 제안: `git add 복습노트/<range> && git commit -m "docs(notes): augment review pack <range> with <N>장 webquiz"`
+
 ## 오류 처리
 | 상황 | 동작 |
 |---|---|
@@ -216,3 +258,5 @@ python3 "$SKILL/scripts/html2md.py" "$REPO/복습노트/<range>/<정리노트>.h
 | 포트 사용 중 | 다른 빈 포트 사용 |
 | 같은 range의 팩이 이미 있음 | 4단계 첫 조립 전에 기존 html·md·`장마감_<range>_*.md`·`figures_<range>/`를 새 폴더 `RUN/previous-<시각>-<임의>/`에 복사하고(다시 조립할 때는 복사하지 않음) 백업 경로를 보고서에 적음. 백업 명령이 실패하면 조립하지 않고 원인을 고친다 |
 | 검사 2회 실패 | 멈추지 않고 나머지 단계를 끝낸 뒤 "미해결"로 보고 |
+| 보강: `.pack` manifest와 HTML 카드 불일치 | 차이를 보고하고 멈춤(HTML을 덮어쓰지 않음) |
+| 보강: 기존 카드 보호 검사 실패 | 쓰지 않고 멈춤, 바뀐 카드와 필드를 보고 |
