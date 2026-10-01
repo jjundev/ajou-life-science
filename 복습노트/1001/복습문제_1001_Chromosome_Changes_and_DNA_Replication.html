@@ -1,0 +1,2030 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>생명과학 복습문제 1001</title>
+  <meta name="description" content="복습문제 34선 — 1001 수업 범위">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('od-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']})"></script>
+  <style>
+    /* ---------- 토큰 ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #b54708; --prof: #6941c6; --supp: #067647; --danger: #d92d20;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --fs-body: 17px; --fs-lead: 20px; --fs-small: 14px; --fs-label: 13px; --fs-fig: 12px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+      --radius: 8px; --measure: 680px; --tap: 48px; --btn-min: 160px;
+      --dur: 220ms; --dur-exit: 150ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+      /* 예전 조각이 참조할 수 있는 이름 */
+      --surface-2: var(--surface); --accent-soft: var(--surface); --warn-soft: var(--surface);
+      --prof-soft: var(--surface); --supp-soft: var(--surface); --eli5: var(--accent-ink); --eli5-soft: var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+        --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+        --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+    }
+
+    /* ---------- 기본 ---------- */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent-ink); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+
+    /* ---------- 상단 바 ---------- */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s2) var(--s4); display: flex; align-items: center; gap: var(--s3); min-height: 56px; }
+    .brand { flex: 1 1 auto; min-width: 0; font-size: var(--fs-body); font-weight: 700; white-space: nowrap; }
+    .text-btn { flex: none; min-height: 44px; min-width: 44px; padding: 0 var(--s3); border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); font: 600 var(--fs-small)/1 var(--font); cursor: pointer; }
+    .bar { height: 2px; background: var(--line); overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+
+    /* ---------- 본문 ---------- */
+    main { flex: 1 0 auto; width: 100%; max-width: var(--measure); margin: 0 auto; padding: var(--s6) var(--s5) var(--s7); }
+    .hero h1 { font-size: clamp(28px, 6vw, 36px); line-height: 1.3; margin: 0 0 var(--s3); letter-spacing: -0.02em; }
+    .hero p { color: var(--ink-2); margin: 0; }
+    section { margin-top: var(--s7); }
+    section > h2 { font-size: 22px; line-height: 1.4; margin: 0 0 var(--s4); }
+    .topic { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .topic h3 { margin: 0 0 var(--s2); font-size: clamp(24px, 5vw, 28px); line-height: 1.35; letter-spacing: -0.01em; }
+    .tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+    .tag { font-size: var(--fs-label); line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+
+    /* 레이어: 배경 없이 라벨과 구분선으로 나눈다 */
+    .layer { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .layer.eli5 { margin-top: 0; padding-top: 0; border-top: 0; }
+    .layer > :first-child { margin-top: 0; }
+    .layer > :last-child { margin-bottom: 0; }
+    .layer-title { display: block; font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); margin-bottom: var(--s2); }
+    .layer.eli5 .layer-title { color: var(--accent-ink); }
+    .layer.eli5 .lead { font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; margin: 0 0 var(--s3); }
+    .layer.prof .layer-title { color: var(--prof); }
+    .layer.warn { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn .layer-title { color: var(--warn); }
+    .layer.supp .badge.supp { margin-bottom: var(--s2); }
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
+    .badge.supp { color: var(--supp); }
+    blockquote { margin: var(--s2) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
+    ol.steps { padding-left: 1.4em; }
+    ol.steps li { margin: var(--s2) 0; }
+
+    /* 그림 · 수식 · 표 */
+    .figure { margin: var(--s4) 0; text-align: center; }
+    .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
+    .figure img { max-width: 100%; height: auto; }
+    .figure figcaption { font-size: var(--fs-small); color: var(--ink-2); margin-top: var(--s1); }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: var(--s1) 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+    th, td { border-bottom: 1px solid var(--line); padding: var(--s2); text-align: left; vertical-align: top; }
+    th { color: var(--ink-2); font-weight: 600; }
+    td:first-child, th:first-child { min-width: 6em; }
+
+    /* 위젯 */
+    .widget { background: var(--surface); border-radius: var(--radius); padding: var(--s4); margin: var(--s5) 0; }
+    .widget h4 { margin: 0 0 var(--s1); font-size: var(--fs-body); }
+    .widget-help { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s3); }
+    .controls { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--s2); font-size: var(--fs-small); }
+    .controls label { display: flex; align-items: center; gap: var(--s2); min-height: 44px; }
+    .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .widget svg { width: 100%; height: auto; background: var(--bg); border-radius: var(--radius); }
+    .readout { font-size: var(--fs-small); margin-top: var(--s2); }
+    .legend { font-size: var(--fs-label); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .sw { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: var(--s1); border-radius: 2px; }
+    .sw.truth { background: var(--ink-2); } .sw.fit { background: var(--accent); } .sw.train { background: var(--accent); height: 10px; width: 10px; border-radius: 50%; }
+    .sw.test { background: var(--warn); height: 10px; width: 10px; border-radius: 50%; } .sw.like { background: var(--accent); } .sw.prior { background: var(--prof); } .sw.post { background: var(--supp); }
+    .axis { stroke: var(--line); stroke-width: 1.5; }
+    .tick { fill: var(--ink-2); font-size: 11px; }
+    .plot-truth { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .plot-fit { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+    .pt-train { fill: var(--accent); }
+    .pt-test { fill: var(--warn); }
+    .plot-like { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .plot-prior { fill: none; stroke: var(--prof); stroke-width: 2; stroke-dasharray: 6 4; }
+    .plot-post { fill: none; stroke: var(--supp); stroke-width: 3; }
+    .mark-ml { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .mark-map { stroke: var(--supp); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 2; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 2.5; }
+    .fig-danger { stroke: var(--danger); fill: none; stroke-width: 2.5; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: 13px; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-fig); font-family: inherit; }
+
+    footer { width: 100%; max-width: var(--measure); margin: 0 auto; padding: 0 var(--s5) var(--s6); color: var(--ink-2); font-size: var(--fs-small); }
+
+    /* ---------- 문제 카드 ---------- */
+    .card { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .card h3 { margin: 0 0 var(--s4); font-size: clamp(22px, 5vw, 26px); line-height: 1.4; letter-spacing: -0.01em; }
+    .problem { margin: 0 0 var(--s5); }
+    .problem ol { padding-left: 1.4em; }
+    details { border-top: 1px solid var(--line); }
+    .card details:last-of-type { border-bottom: 1px solid var(--line); }
+    details[open] { padding-bottom: var(--s4); }
+    details > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: var(--s3);
+      min-height: var(--tap); cursor: pointer; font-weight: 600; }
+    details > summary::-webkit-details-marker { display: none; }
+    details > summary::after { content: ""; flex: none; width: 8px; height: 8px; margin-right: var(--s1);
+      border-right: 2px solid var(--ink-2); border-bottom: 2px solid var(--ink-2); transform: rotate(45deg); transition: transform 150ms ease-out; }
+    details[open] > summary::after { transform: rotate(-135deg); }
+    details.original { color: var(--ink-2); font-size: var(--fs-small); }
+    details.original > summary { color: var(--ink); font-size: var(--fs-body); }
+    .answer { font-weight: 700; background: var(--surface); border-radius: var(--radius); padding: var(--s3) var(--s4); }
+    .link-back { font-size: var(--fs-small); color: var(--ink-2); margin: var(--s5) 0 var(--s4); }
+    .top-link { flex: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--s2);
+      font-size: var(--fs-small); font-weight: 600; text-decoration: none; }
+    .js .card { padding: 0; border-top: 0; }
+    @media (prefers-reduced-motion: reduce) { details > summary::after { transition: none; } }
+
+    /* ---------- 하단 이동 바 ---------- */
+    .pager { position: sticky; bottom: 0; z-index: 10; background: var(--bg); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .pager-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s3) var(--s4); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); }
+    .pager-count { font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; min-width: 4em; }
+    .btn { min-height: var(--tap); min-width: var(--btn-min); padding: 0 var(--s6); border-radius: var(--radius); border: 0; font: 700 var(--fs-body)/1 var(--font); cursor: pointer; white-space: nowrap;
+      transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+    .btn-ghost { justify-self: start; background: var(--surface); color: var(--ink); }
+    .btn-primary { justify-self: end; background: var(--btn-bg); color: var(--on-btn); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    @media (hover: hover) {
+      .text-btn:hover, .btn-ghost:not(:disabled):hover { background: var(--line); }
+      .btn-primary:not(:disabled):hover { box-shadow: inset 0 0 0 100px rgba(0, 0, 0, .14); }
+    }
+
+    /* ---------- 목차 시트 ---------- */
+    .sheet { width: min(100%, var(--measure)); max-width: 100%; max-height: 80dvh; margin: auto auto 0; padding: 0; border: 0;
+      border-radius: 16px 16px 0 0; background: var(--bg); color: var(--ink); }
+    .sheet::backdrop { background: rgba(0, 0, 0, .4); }
+    .sheet-inner { padding: var(--s4) var(--s5) calc(var(--s5) + env(safe-area-inset-bottom)); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s2); }
+    .sheet-head h2 { margin: 0; font-size: var(--fs-lead); }
+    .toc { display: flex; flex-direction: column; }
+    .toc > a, .toc-group > a { display: block; padding: var(--s3) 0 var(--s1); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); text-decoration: none; }
+    .toc-list { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+    .toc-list a { display: flex; align-items: center; gap: var(--s3); min-height: var(--tap); padding: var(--s2) var(--s3); margin: 0 calc(-1 * var(--s3));
+      border-radius: var(--radius); color: var(--ink); text-decoration: none; line-height: 1.4; }
+    .toc-list a[aria-current="true"] { background: var(--surface); font-weight: 700; color: var(--accent-ink); }
+    .toc-list .toc-title { flex: 1 1 0; min-width: 0; }
+    @media (hover: hover) { .toc-list a:hover { background: var(--surface); } }
+
+    /* ---------- 한 화면에 하나씩 (JS가 켤 때만) ---------- */
+    html:not(.js) .pager, html:not(.js) #toc-open { display: none; }
+    html:not(.js) .sheet { display: block; position: static; width: 100%; max-height: none; margin: 0 auto; border-radius: 0; border-bottom: 1px solid var(--line); }
+    html:not(.js) .sheet-close { display: none; }
+    .js main > .hero:not(.is-current), .js main > section:not(.is-on), .js .screen:not(.is-current) { display: none; }
+    .js main > section { margin-top: 0; }
+    .js main > section > h2 { font-size: var(--fs-label); font-weight: 600; color: var(--accent-ink); margin: 0 0 var(--s2); }
+    .js .topic { padding: 0; border-top: 0; }
+    .js .hero { padding-top: 12vh; }
+    .js footer { display: none; }
+    .js body.at-end footer { display: block; }
+    .screen.enter-next { animation: enter-next var(--dur) var(--ease-out); }
+    .screen.enter-prev { animation: enter-prev var(--dur) var(--ease-out); }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .screen.enter-next, .screen.enter-prev { animation: none; }
+      .bar > span, .btn { transition: none; }
+    }
+    @media (max-width: 480px) {
+      main { padding: var(--s5) var(--s4) var(--s6); }
+      footer { padding: 0 var(--s4) var(--s5); }
+      .btn { min-width: 120px; padding: 0 var(--s5); }
+    }
+    @media print {
+      .topbar, .pager, .sheet { display: none !important; }
+      .js main > .hero, .js main > section, .js .screen, .js footer { display: block !important; }
+    }
+
+    /* ---------- 좌우 패널 (drawer) ---------- */
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
+    .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
+    .panel-toggle svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-toggle .strip { fill: transparent; stroke: none; transition: fill 150ms ease-out; }
+    .panel-toggle[aria-expanded="true"] { color: var(--accent-ink); }
+    .panel-toggle[aria-expanded="true"] .strip { fill: currentColor; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .i-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .theme-toggle .i-sun { display: block; }
+      :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
+    }
+
+    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
+    .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
+    .content { grid-column: 2; }
+    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
+    .panel-resize { display: none; }
+    .panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 44px; margin-bottom: var(--s2); }
+    .panel-head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-lead); line-height: 1.4; }
+    .panel-sub { margin: 0 0 var(--s4); font-weight: 700; line-height: 1.45; }
+    .panel-empty { margin: 0; color: var(--ink-2); }
+    .panel-label { display: block; margin: var(--s5) 0 var(--s2); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+
+    /* 진행 상태 */
+    .panel-meta { margin: 0 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .panel-meta b { color: var(--ink); }
+    .progress { height: 4px; margin-bottom: var(--s3); border-radius: 2px; background: var(--line); overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+    .panel .toc-list a { margin: 0 calc(-1 * var(--s2)); padding: var(--s2); font-size: var(--fs-panel); }
+    .toc-mark { flex: none; display: block; width: 20px; height: 20px; color: var(--ink-2); }
+    .toc-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .toc-mark.is-done { color: var(--accent-ink); }
+
+    /* 복습문제: 원문 · 힌트 · 풀이 */
+    .aid details:last-of-type { border-bottom: 1px solid var(--line); }
+    .aid details.original > summary { font-size: var(--fs-panel); }
+    .solved-btn { display: flex; align-items: center; justify-content: center; gap: var(--s2); width: 100%; min-height: var(--tap); margin-top: var(--s5); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .solved-btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
+
+    /* 정리노트: 섹션 요약 */
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+    .eq-list li:first-child { padding-top: 0; }
+    .eq-name { display: block; font-size: var(--fs-small); font-weight: 600; color: var(--ink-2); }
+    .eq-list .katex-display { margin: var(--s1) 0 0; text-align: left; }
+    .eq-list .katex-display > .katex { text-align: left; }
+    .terms { margin: 0; }
+    .terms dt { font-weight: 700; margin-top: var(--s3); }
+    .terms dt:first-child { margin-top: 0; }
+    .terms dd { margin: var(--s1) 0 0; }
+    .flow { margin: 0; padding-left: 1.4em; }
+    .flow li { margin: var(--s2) 0; }
+
+    @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
+
+    /* 넓은 화면: 본문 옆에 붙는 패널 */
+    @media (min-width: 1024px) {
+      .layout { --l: var(--panel-l-user, var(--panel-l)); }
+      .layout[data-left="closed"] { --l: 0px; }
+      .panel-left { width: var(--l); }
+      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
+      .panel-left .panel-resize { right: 0; }
+      .panel-right .panel-resize { left: 0; }
+      .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
+      .panel-left .panel-resize::after { right: 0; }
+      .panel-right .panel-resize::after { left: 0; }
+      .panel-resize:focus-visible { outline: none; }
+      .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
+      @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
+      body.is-resizing { cursor: col-resize; user-select: none; }
+      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
+      .scrim, .panel-close { display: none; }
+    }
+    @keyframes panel-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 좁은 화면: 가장자리에서 밀려 나오는 drawer */
+    @media (max-width: 1023.98px) {
+      .panel { position: fixed; top: 0; bottom: 0; z-index: 40; visibility: hidden;
+        transition: transform var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .panel-left { left: 0; width: min(var(--drawer-l), 88vw); transform: translateX(-100%); }
+      .panel-right { right: 0; width: min(var(--drawer-r), 88vw); transform: translateX(100%); }
+      .panel.is-open { visibility: visible; transform: none; transition: transform var(--dur) var(--ease-out); }
+      .panel-inner { padding-top: calc(var(--s3) + env(safe-area-inset-top)); padding-bottom: calc(var(--s6) + env(safe-area-inset-bottom)); }
+      .scrim { position: fixed; inset: 0; z-index: 35; background: var(--scrim); opacity: 0; visibility: hidden;
+        transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
+      html:not(.js) .panel-left { display: none; }
+    }
+    @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
+      .panel.is-shown { animation: none; }
+      .panel-resize::after { transition: none; }
+    }
+    @media print {
+      body { display: block; height: auto; overflow: visible; }
+      .layout { display: block; }
+      .content { overflow: visible; }
+      .panel, .scrim { display: none !important; }
+    }
+  </style>
+</head>
+<body data-screens="article.card" data-panels="review" data-range="1001">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <strong class="brand">복습문제</strong>
+      <a class="top-link" href="정리노트_1001_Chromosome_Changes_and_DNA_Replication.html">정리노트</a>
+      <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>풀이</span></button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
+  </header>
+  <div class="layout" data-left="open" data-right="closed">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
+      <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-left-title">문제 목록</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-meta">푼 문제 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <nav class="toc" aria-label="목차"><a href="#partB">B 기출</a><a href="#partC">C 변형</a></nav>
+      </div>
+    </aside>
+    <div class="content">
+  <main>
+    <div class="hero">
+      <h1>복습문제 34선 — 1001 수업 범위</h1>
+      <p>기출 <b>20개</b>와 변형 연습 <b>14개</b>입니다. 먼저 풀어 보고, 막히면 힌트를 열어 보세요.</p>
+    </div>
+    <section id="partB"><h2>B. 기출</h2>
+<article class="card" id="p1" data-source="기출 5강 1">
+  <h3>P1. 반보존적 복제의 뜻</h3>
+  <div class="problem">
+    <p>반보존적 복제가 지칭하는 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) DNA는 9개의 가능한 뉴클레오타이드 중 단지 4개만으로 만들어 진다</li>
+      <li data-choice="2">(2) 각 분자의 양쪽 가닥은 오래된 절편과 새로운 절편이 섞인 상태로 갖는다</li>
+      <li data-choice="3">(3) DNA의 이중나선은 항상 부모 가닥과 새로이 합성된 가닥으로 구성된다</li>
+      <li data-choice="4">(4) DNA는 단일 나선이 아니라 서로 상보적인 이중나선으로 되어 있다</li>
+      <li data-choice="5">(5) DNA복제의 방법은 잘 알려져 있지 않다</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 5강 합본 1번 (PDF 1쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>복제 뒤 생긴 이중나선 한 분자 안에서 두 가닥이 각각 언제 만들어졌는지 구분해 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. DNA는 A·T·G·C를 가진 네 종류의 뉴클레오타이드를 쓰지만, 이것은 복제 모형의 뜻이 아니에요.</li>
+      <li data-explains="2">(2) 틀려요. 오래된 절편과 새 절편이 한 가닥 안에 섞이는 설명은 분산적 복제 모형에 가까워요.</li>
+      <li data-explains="3">(3) 맞아요. 복제 산물마다 부모에게서 물려받은 기존 가닥 하나와 새로 합성한 가닥 하나가 있어요.</li>
+      <li data-explains="4">(4) 틀려요. DNA가 상보적 이중나선이라는 사실만으로는 어느 가닥을 보존하는지 알 수 없어 반보존적 복제의 정의가 아니에요.</li>
+      <li data-explains="5">(5) 틀려요. 실제 복제가 반보존적이라는 것은 실험으로 확인됐어요.</li>
+      <li>수업과의 연결: 기존 가닥이 한 가닥씩 남는 반보존적 복제를 배웠어요.</li>
+    </ol>
+    <p class="answer">정답: (3)</p>
+  </details>
+</article>
+<article class="card" id="p2" data-source="기출 5강 2">
+  <h3>P2. 전사는 무엇을 만들까</h3>
+  <div class="problem">
+    <p>다음 중 전사에 관한 설명으로 옳은 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 리보솜에서 일어난다</li>
+      <li data-choice="2">(2) 번역될 유전자의 RNA 사본을 생성한다</li>
+      <li data-choice="3">(3) 타이민과 아데닌 쌍을 만든다</li>
+      <li data-choice="4">(4) 존재하는 DNA 분자로부터 새로운 딸 DNA 분자를 합성한다</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 5강 합본 2번 (PDF 1쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>DNA의 일부를 RNA로 옮기는 과정과 RNA를 단백질로 읽는 과정을 구분해 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 리보솜은 RNA를 바탕으로 폴리펩티드를 만드는 번역의 장소예요.</li>
+      <li data-explains="2">(2) 맞아요. 전사는 DNA의 유전자 정보를 RNA 사본으로 옮겨요. 단백질 암호화 유전자라면 이 사본이 mRNA예요.</li>
+      <li data-explains="3">(3) 틀려요. DNA에서 A와 짝을 이루는 염기는 T지만, RNA 사본에서는 U를 사용해요.</li>
+      <li data-explains="4">(4) 틀려요. 기존 DNA로 새 DNA를 만드는 일은 전사가 아니라 복제예요.</li>
+      <li>수업과의 연결: 전체 DNA 복제와 유전자 부분의 RNA 전사를 구분했어요.</li>
+    </ol>
+    <p class="answer">정답: (2)</p>
+  </details>
+</article>
+<article class="card" id="p3" data-source="기출 5강 4">
+  <h3>P3. 전사의 주형</h3>
+  <div class="problem">
+    <p>다음 중 전사가 일어나는 동안 주형으로 이용되는 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) miRNA</li>
+      <li data-choice="2">(2) DNA</li>
+      <li data-choice="3">(3) mRNA</li>
+      <li data-choice="4">(4) tRNA</li>
+      <li data-choice="5">(5) 중합효소</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 5강 합본 4번 (PDF 1쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>복제는 DNA로 DNA를 만들고, 전사는 DNA로 RNA를 만들어요. 그때 출발 정보는 어느 분자인가요?</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. miRNA는 RNA의 한 종류이지, 이 문항의 전사 주형이 아니에요.</li>
+      <li data-explains="2">(2) 맞아요. 전사에서는 DNA의 유전자 부분을 주형으로 RNA를 합성해요.</li>
+      <li data-explains="3">(3) 틀려요. mRNA는 단백질 암호화 유전자가 전사되며 만들어지는 사본이에요.</li>
+      <li data-explains="4">(4) 틀려요. tRNA는 RNA의 한 종류이지, 전사에 쓰이는 DNA 주형이 아니에요.</li>
+      <li data-explains="5">(5) 틀려요. 중합효소는 반응을 돕는 효소이고 유전 정보가 적힌 주형은 DNA예요.</li>
+      <li>수업과의 연결: 전사는 DNA 유전자에서 RNA 사본을 만드는 과정이라고 배웠어요.</li>
+    </ol>
+    <p class="answer">정답: (2)</p>
+  </details>
+</article>
+<article class="card" id="p4" data-source="기출 5강 7">
+  <h3>P4. 전사와 복제·번역 구별</h3>
+  <div class="problem">
+    <p>다음 중 전사 과정 동안 일어나는 현상으로 옳은 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 단백질을 만들기 위하여 RNA가 주형으로 사용된다</li>
+      <li data-choice="2">(2) RNA를 만들기 위하여 DNA가 주형으로 사용된다</li>
+      <li data-choice="3">(3) 단백질을 만들기 위하여 DNA가 주형으로 사용된다</li>
+      <li data-choice="4">(4) DNA를 만들기 위하여 DNA가 주형으로 사용된다</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 5강 합본 7번 (PDF 1쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>무엇을 주형으로 삼고 무엇을 결과물로 만드는지 두 칸으로 적어 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. RNA를 바탕으로 단백질을 만드는 것은 번역이에요.</li>
+      <li data-explains="2">(2) 맞아요. DNA가 주형이고 RNA가 산물이면 전사예요.</li>
+      <li data-explains="3">(3) 틀려요. DNA 정보가 단백질로 전달되기 전에 먼저 RNA 사본이 만들어져요.</li>
+      <li data-explains="4">(4) 틀려요. DNA를 바탕으로 DNA를 만드는 것은 복제예요.</li>
+      <li>수업과의 연결: DNA → RNA → 단백질 흐름에서 전사는 첫 번째 전달 단계예요.</li>
+    </ol>
+    <p class="answer">정답: (2)</p>
+  </details>
+</article>
+<article class="card" id="p5" data-source="기출 5강 8">
+  <h3>P5. 복제 효소와 프라이머</h3>
+  <div class="problem">
+    <p>다음은 DNA 복제에 관한 내용이다. 보기 중 틀린 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 한 가닥의 새로운 DNA는 연속적으로 합성되고, 다른 가닥은 불연속적으로 합성된다</li>
+      <li data-choice="2">(2) DNA로 구성되는 프라이머에 의해 DNA 중합효소는 합성의 시작점을 제공받는다</li>
+      <li data-choice="3">(3) DNA의 복제 시, 주형과 상보적인 복사본 사슬은 서로 감긴 채로 있어서 반은 오래된 그리고 반은 새로운 분자체를 형성한다</li>
+      <li data-choice="4">(4) DNA 주형가닥의 분리는 DNA 헬리케이스에 의해 촉매된다</li>
+      <li data-choice="5">(5) DNA 중합효소는 5’ -&gt; 3’ 방향으로만 뉴클레오타이드 사슬을 만든다</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 5강 합본 8번 (PDF 1쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>DNA 중합효소가 첫 염기를 맨땅에서 붙일 수 있는지, 프라이머의 재료가 무엇인지 떠올려 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. 선도가닥은 연속적으로, 지연가닥은 짧은 조각을 만들며 불연속적으로 합성돼요.</li>
+      <li data-explains="2">(2) 틀려요. 시작점을 주는 프라이머는 DNA가 아니라 RNA예요. 프라이메이스가 만들어요.</li>
+      <li data-explains="3">(3) 맞아요. 복제된 이중나선에는 부모 가닥과 그에 상보적으로 새로 만든 가닥이 함께 있어요.</li>
+      <li data-explains="4">(4) 맞아요. 헬리케이스가 수소결합을 풀어 DNA 주형 두 가닥을 분리해요.</li>
+      <li data-explains="5">(5) 맞아요. DNA 중합효소는 새 뉴클레오타이드를 3′ 끝에 붙여 새 가닥을 5′→3′ 방향으로 늘려요.</li>
+      <li>수업과의 연결: 헬리케이스, RNA 프라이머, DNA 중합효소의 역할을 순서대로 배웠어요.</li>
+    </ol>
+    <p class="answer">정답: (2)</p>
+  </details>
+</article>
+<article class="card" id="p6" data-source="기출 5강 14">
+  <h3>P6. 번역의 직접 산물</h3>
+  <div class="problem">
+    <p>번역 과정은 최종적으로 ________을(를) 생산한다.</p>
+    <ul class="choices">
+      <li data-choice="1">(1) DNA</li>
+      <li data-choice="2">(2) 각 아미노산</li>
+      <li data-choice="3">(3) 폴리펩타이드</li>
+      <li data-choice="4">(4) RNA</li>
+      <li data-choice="5">(5) 운반 RNA 분자</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 5강 합본 14번 (PDF 2쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>번역은 유전자 정보를 아미노산으로 이루어진 한 줄에 옮기는 과정이에요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. DNA는 번역으로 만들어지지 않아요.</li>
+      <li data-explains="2">(2) 틀려요. 아미노산은 재료이고, 번역의 결과는 아미노산들이 연결된 사슬이에요.</li>
+      <li data-explains="3">(3) 맞아요. 번역 결과로 아미노산이 연결된 폴리펩티드가 만들어져요.</li>
+      <li data-explains="4">(4) 틀려요. RNA는 전사에서 만들어지는 분자예요.</li>
+      <li data-explains="5">(5) 틀려요. 운반 RNA는 번역의 산물이 아니라 이미 존재하는 RNA의 한 종류예요.</li>
+      <li>수업과의 연결: 1유전자 1폴리펩티드설에서 폴리펩티드 한 줄이 번역 산물임을 배웠어요.</li>
+    </ol>
+    <p class="answer">정답: (3)</p>
+  </details>
+</article>
+<article class="card" id="p7" data-source="기출 5강 15" data-grade-mode="ambiguous" data-grade-notice="(2) 모두 맞다도 논리적으로 틀려 단일 정답 판정이 어려워요.">
+  <h3>P7. 교정과 수선</h3>
+  <div class="problem">
+    <p>다음 중 DNA 복제의 오류를 수정하는 메커니즘에 대한 설명으로 잘못된 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 교정 후에도 남아 있는 염기쌍 불일치들은 DNA 수선 메커니즘에 의해 수정된다</li>
+      <li data-choice="2">(2) 모두 맞다</li>
+      <li data-choice="3">(3) 교정과 DNA 수선 이후에도 돌연변이는 발생 할 수 있다</li>
+      <li data-choice="4">(4) DNA 중합효소는 불일치 뉴클레오타이드를 제거하고 되돌릴 수 있다</li>
+      <li data-choice="5">(5) DNA 중합효소는 새로운 뉴클레오타이드 사슬을 조립할 때 많은 오류를 범한다</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 5강 합본 15번 (PDF 2쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>복제 중 바로 고치는 교정과, 복제 뒤 남은 불일치를 고치는 수선을 구분해 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. 복제 중 교정을 빠져나간 염기쌍 불일치는 복제 뒤 수선될 수 있어요.</li>
+      <li data-explains="2">(2) 출제 의도로는 답이 아니지만, (5)가 잘못됐다고 판단하면 “모두 맞다”인 이 보기도 논리적으로 틀려요.</li>
+      <li data-explains="3">(3) 맞아요. 교정과 수선이 오류를 크게 줄여도 돌연변이 가능성을 0으로 만들지는 못해요.</li>
+      <li data-explains="4">(4) 맞아요. DNA 중합효소는 잘못 붙인 뉴클레오타이드를 교정하며 제거하고 다시 진행할 수 있어요.</li>
+      <li data-explains="5">(5) 출제 의도상 틀려요. DNA 중합효소는 상보성을 확인하고 교정도 하므로 오류를 아무렇게나 많이 남기는 효소로 설명할 수 없어요.</li>
+      <li>수업과의 연결: 교수님은 복제 중 교정을 백스페이스, 복제 후 수선을 다시 찾아 고치는 작업에 비유했어요.</li>
+    </ol>
+    <p class="answer">정답: (5)</p>
+    <p>인쇄된 답안지는 (5)를 표시해요. 그러나 (5)가 틀리면 “모두 맞다”라는 (2)도 틀리므로 이 문항에는 단일 정답이 없어요.</p>
+  </details>
+</article>
+<article class="card" id="p8" data-source="기출 5강 17">
+  <h3>P8. 상보 가닥과 역평행</h3>
+  <div class="problem">
+    <p>만약 어떤 유전자의 일부가 5’-TAACAGGTCA-3’ 이라면 상보 DNA 가닥의 서열은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 3’-ATTGTCCAGT-5’</li>
+      <li data-choice="2">(2) 3’-UUACAGGUCC-5’</li>
+      <li data-choice="3">(3) 3’-ATUGUCCAGU-5’</li>
+      <li data-choice="4">(4) 3’-GGAGTGGACC-5&#x27;</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 5강 합본 17번 (PDF 2쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>A는 T, G는 C로 짝을 만들어요. 원래 가닥의 5′와 3′ 방향도 함께 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. T-A, A-T, A-T, C-G, A-T, G-C, G-C, T-A, C-G, A-T로 짝짓고 3′→5′로 적은 가닥이에요.</li>
+      <li data-explains="2">(2) 틀려요. U는 RNA의 염기이며, 이 문제는 상보 DNA 가닥을 물어요.</li>
+      <li data-explains="3">(3) 틀려요. U가 섞여 있어 DNA 가닥의 서열이 될 수 없어요.</li>
+      <li data-explains="4">(4) 틀려요. 원래 서열의 각 자리와 A-T, G-C로 상보적으로 짝지은 결과가 아니에요.</li>
+      <li>수업과의 연결: DNA의 두 가닥은 상보적 염기쌍을 이루며 방향이 서로 역평행이라고 배웠어요.</li>
+    </ol>
+    <p class="answer">정답: (1)</p>
+  </details>
+</article>
+<article class="card" id="p9" data-source="기출 5강 22">
+  <h3>P9. DNA 정보의 최종 산물</h3>
+  <div class="problem">
+    <p>DNA 암호의 서열은 최종적으로 어떠한 분자를 만드는가?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 단당류</li>
+      <li data-choice="2">(2) 이당류</li>
+      <li data-choice="3">(3) 글리세롤</li>
+      <li data-choice="4">(4) 지질</li>
+      <li data-choice="5">(5) 단백질</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 5강 합본 22번 (PDF 3쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>유전자 발현의 큰 흐름을 DNA → RNA → 무엇으로 외워 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 단당류는 당 분자이고 유전자 발현의 직접 정보 산물이 아니에요.</li>
+      <li data-explains="2">(2) 틀려요. 이당류는 당 분자이고 수업에서 배운 정보 흐름의 최종 산물이 아니에요.</li>
+      <li data-explains="3">(3) 틀려요. 글리세롤은 지질 구성에 쓰일 수 있지만 DNA 암호를 번역한 산물이 아니에요.</li>
+      <li data-explains="4">(4) 틀려요. 지질은 이 문항이 묻는 유전자 발현의 번역 산물이 아니에요.</li>
+      <li data-explains="5">(5) 맞아요. DNA 유전자 정보는 RNA를 거쳐 폴리펩티드로 번역되고 단백질 형성으로 이어져요.</li>
+      <li>수업과의 연결: 중심 원리인 DNA → RNA → 단백질 흐름을 배웠어요.</li>
+    </ol>
+    <p class="answer">정답: (5)</p>
+  </details>
+</article>
+<article class="card" id="p10" data-source="기출 5강 27">
+  <h3>P10. DNA와 RNA의 공통 구성</h3>
+  <div class="problem">
+    <p>( )때문에 RNA와 DNA의 구조는 유사하다.</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 둘 다 디옥시리보스 당을 갖기</li>
+      <li data-choice="2">(2) 둘 다 이중나선을 이루기</li>
+      <li data-choice="3">(3) 둘 다 우라실이 발견되기</li>
+      <li data-choice="4">(4) 둘 다 당과 인산과 염기로 이루어졌기</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 5강 합본 27번 (PDF 3쪽)</details>
+  <details class="hint"><summary>힌트 보기</summary>DNA와 RNA의 차이를 찾기 전에, 둘 다 같은 종류의 단위체로 만들어진다는 점을 떠올려 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. DNA는 디옥시리보스를 쓰지만 RNA는 리보스를 써요.</li>
+      <li data-explains="2">(2) 틀려요. DNA는 보통 이중 가닥이고 RNA는 보통 단일 가닥이에요.</li>
+      <li data-explains="3">(3) 틀려요. 우라실은 RNA에 있으며 DNA에는 보통 타이민이 있어요.</li>
+      <li data-explains="4">(4) 맞아요. 두 핵산 모두 뉴클레오타이드로 만들어지고, 각 단위체에는 당·인산·염기가 있어요.</li>
+      <li>수업과의 연결: DNA와 RNA를 비교하면서 뉴클레오타이드의 세 부분을 다시 배웠어요.</li>
+    </ol>
+    <p class="answer">정답: (4)</p>
+  </details>
+</article>
+<article class="card" id="p11" data-source="기출 5강 29"><h3>P11. RNA에 들어가는 네 염기</h3><div class="problem"><p>RNA를 구성하는 염기들은 어느 것인가?</p><ul class="choices"><li data-choice="1">(1) 우라실, 아데닌, 구아닌, 아데노신</li><li data-choice="2">(2) 아데닌, 구아닌, 사이토신, 우라실</li><li data-choice="3">(3) 아데닌, 구아닌, 타이민, 우라실</li><li data-choice="4">(4) 타이민, 아데닌, 구아닌, 사이토신</li></ul></div><details class="original"><summary>원문 정보 보기</summary>기출 5강 29번 (PDF 4쪽)</details><details class="hint"><summary>힌트 보기</summary><p>RNA 염기에는 타이민 대신 우라실이 있어요. 아데노신은 염기인지도 구분해 보세요.</p></details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 틀려요. 아데노신은 아데닌 염기를 포함한 뉴클레오사이드이지 염기 이름이 아니고, 사이토신도 빠졌어요.</li><li data-explains="2">(2) 맞아요. RNA 염기는 아데닌, 구아닌, 사이토신, 우라실 네 가지예요.</li><li data-explains="3">(3) 틀려요. RNA 염기 목록에는 타이민 대신 사이토신이 들어가야 해요.</li><li data-explains="4">(4) 틀려요. 타이민이 아니라 우라실을 쓰는 것이 RNA의 특징이에요.</li><li>수업과의 연결: 수업에서는 DNA의 ATGC와 RNA의 AUGC를 나란히 비교했어요.</li></ol><p class="answer">정답: (2)</p></details></article>
+<article class="card" id="p12" data-source="기출 5강 30"><h3>P12. 유전자는 무엇을 만드는 정보인가</h3><div class="problem"><p>한 생물의 염색체에 포함된 유전자가 제품의 사용설명서와 비슷하다면, 유전자가 세포에게 지시하는 내용은 무엇인가?</p><ul class="choices"><li data-choice="1">(1) 주변 환경의 요구에 맞게 모양과 구조를 바꾼다.</li><li data-choice="2">(2) 설정된 크기만큼 성장하고, 복제한다.</li><li data-choice="3">(3) 탄수화물을 효소로 바꾼다.</li><li data-choice="4">(4) 아미노산으로부터 특정 단백질을 합성한다.</li></ul></div><details class="original"><summary>원문 정보 보기</summary>기출 5강 30번 (PDF 4쪽)</details><details class="hint"><summary>힌트 보기</summary><p>사용설명서의 내용이 세포가 만들 분자의 재료와 순서를 어떻게 정하는지 생각해 보세요.</p></details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 틀려요. 유전자에는 환경에 맞춰 세포 모양을 직접 바꾸라는 명령이 적힌 것은 아니에요.</li><li data-explains="2">(2) 틀려요. 유전자 하나가 정해진 성장 크기와 복제 자체를 지시한다고 볼 수 없어요.</li><li data-explains="3">(3) 틀려요. 유전자는 탄수화물을 효소로 바꾸는 재료 변환 장치가 아니에요.</li><li data-explains="4">(4) 맞아요. 이 수업의 단백질 암호화 유전자는 아미노산을 특정 순서로 연결할 정보를 담아요.</li><li>수업과의 연결: 수업의 1유전자 1효소에서 1폴리펩티드로 이어지는 역사적 설명과 연결돼요.</li></ol><p class="answer">정답: (4)</p></details></article>
+<article class="card" id="p13" data-source="기출 5강 31"><h3>P13. RNA의 당은 무엇인가</h3><div class="problem"><p>RNA에 들어 있는 뉴클레오타이드를 구성하는 요소가 아닌 것은?</p><ul class="choices"><li data-choice="1">(1) 질소함유 염기</li><li data-choice="2">(2) 디옥시리보스</li><li data-choice="3">(3) 당</li><li data-choice="4">(4) 인산</li></ul></div><details class="original"><summary>원문 정보 보기</summary>기출 5강 31번 (PDF 4쪽)</details><details class="hint"><summary>힌트 보기</summary><p>뉴클레오타이드의 세 구성 요소는 공통이고, DNA와 RNA는 당의 종류가 달라요.</p></details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 틀려요. RNA 뉴클레오타이드에도 질소함유 염기가 들어 있어요.</li><li data-explains="2">(2) 맞아요. 디옥시리보스는 DNA의 당이고 RNA의 당은 리보스예요.</li><li data-explains="3">(3) 틀려요. RNA 뉴클레오타이드에도 리보스라는 당이 들어 있어요.</li><li data-explains="4">(4) 틀려요. RNA 뉴클레오타이드에도 인산이 들어 있어요.</li><li>수업과의 연결: 수업에서 디옥시리보스와 리보스의 차이를 2′ 탄소의 산소 유무로 설명했어요.</li></ol><p class="answer">정답: (2)</p></details></article>
+<article class="card" id="p14" data-source="기출 5강 32"><h3>P14. DNA와 RNA의 일반적인 가닥 수</h3><div class="problem"><p>다음 보기 중 DNA와 RNA의 차이점으로 옳은 것은?</p><ul class="choices"><li data-choice="1">(1) RNA는 아데닌을 갖지 않는다.</li><li data-choice="2">(2) RNA는 단백질 합성과 관련되지 않는다.</li><li data-choice="3">(3) RNA는 단일 가닥이다.</li><li data-choice="4">(4) RNA는 당을 갖지 않는다.</li></ul></div><details class="original"><summary>원문 정보 보기</summary>기출 5강 32번 (PDF 4쪽)</details><details class="hint"><summary>힌트 보기</summary><p>수업에서 DNA 이중 가닥과 일반적인 RNA 가닥 수를 어떻게 대비했는지 떠올려 보세요.</p></details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 틀려요. RNA도 아데닌을 염기로 가져요.</li><li data-explains="2">(2) 틀려요. RNA는 단백질 합성에서 전사 정보와 번역 과정에 관련돼요.</li><li data-explains="3">(3) 맞아요. 수업에서 대비한 일반적인 세포 RNA는 단일 가닥이고 DNA는 이중 가닥이에요.</li><li data-explains="4">(4) 틀려요. RNA 뉴클레오타이드에는 리보스 당이 들어 있어요.</li><li>수업과의 연결: DNA는 이중나선, RNA는 일반적으로 한 가닥이라는 수업의 구조 비교예요.</li></ol><p class="answer">정답: (3)</p></details></article>
+<article class="card" id="p15" data-source="기출 5강 39"><h3>P15. 단백질까지의 정보 흐름</h3><div class="problem"><p>단백질 합성과정의 바른 순서는 어느 것인가?</p><ul class="choices"><li data-choice="1">(1) 단백질 → RNA → DNA</li><li data-choice="2">(2) RNA → DNA → 단백질</li><li data-choice="3">(3) RNA → 단백질 → DNA</li><li data-choice="4">(4) DNA → RNA → 단백질</li></ul></div><details class="original"><summary>원문 정보 보기</summary>기출 5강 39번 (PDF 5쪽)</details><details class="hint"><summary>힌트 보기</summary><p>전사는 DNA 정보를 RNA로 옮기고 번역은 RNA 정보를 폴리펩티드로 옮겨요.</p></details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 틀려요. 수업의 기본 흐름은 단백질에서 RNA로 거꾸로 올라가지 않아요.</li><li data-explains="2">(2) 틀려요. 기본 발현 흐름에서 RNA가 먼저 DNA로 바뀌는 순서가 아니에요.</li><li data-explains="3">(3) 틀려요. 단백질을 만든 다음 DNA로 되돌아가는 순서가 아니에요.</li><li data-explains="4">(4) 맞아요. 이 수업의 중심 원리는 DNA에서 RNA를 거쳐 단백질로 이어져요.</li><li>수업과의 연결: 교수님이 전사와 번역을 합쳐 유전자 발현이라고 소개한 순서예요.</li></ol><p class="answer">정답: (4)</p></details></article>
+<article class="card" id="p16" data-source="기출 5강 40"><h3>P16. 전사로 만들어지는 사본</h3><div class="problem"><p>유전자가 전사에 의해 사본이 만들어질 때 이 사본의 형태는?</p><ul class="choices"><li data-choice="1">(1) mRNA 사슬</li><li data-choice="2">(2) tRNA 분자</li><li data-choice="3">(3) 내부상보성</li><li data-choice="4">(4) DNA의 상보적 사슬</li></ul></div><details class="original"><summary>원문 정보 보기</summary>기출 5강 40번 (PDF 5쪽)</details><details class="hint"><summary>힌트 보기</summary><p>단백질을 암호화하는 유전자의 DNA 정보를 전사하면 어떤 RNA가 될까요?</p></details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 맞아요. 이 문항이 말하는 단백질 암호화 유전자의 전사 사본은 mRNA 사슬이에요.</li><li data-explains="2">(2) 틀려요. tRNA도 RNA의 한 종류지만 이 문항의 단백질 암호화 유전자 사본을 가리키지 않아요.</li><li data-explains="3">(3) 틀려요. 내부상보성은 사본 분자의 종류가 아니에요.</li><li data-explains="4">(4) 틀려요. DNA의 상보적 사슬은 DNA 복제의 산물이지 전사의 직접 산물이 아니에요.</li><li>수업과의 연결: 수업에서 DNA 전체 복제와 유전자 부분의 mRNA 전사를 구분했어요.</li></ol><p class="answer">정답: (1)</p></details></article>
+<article class="card" id="p17" data-source="기출 5강 41"><h3>P17. G가 22%일 때 나머지 염기</h3><div class="problem"><p>DNA 이중가닥 한 분자가 구아닌을 22% 갖고 있으면 다음 중 옳지 않은 것은?</p><ul class="choices"><li data-choice="1">(1) 우라실은 갖지 않는다.</li><li data-choice="2">(2) 타이민을 28%, 사이토신을 22% 갖는다</li><li data-choice="3">(3) 타이민을 28% 갖는다.</li><li data-choice="4">(4) 아데닌을 44% 갖는다.</li><li data-choice="5">(5) 사이토신을 22% 갖는다.</li></ul></div><details class="original"><summary>원문 정보 보기</summary>기출 5강 41번 (PDF 5쪽)</details><details class="hint"><summary>힌트 보기</summary><p>이중가닥 DNA에는 G=C와 A=T가 성립해요. 네 비율의 합은 100%예요.</p></details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 틀려요. 우라실은 일반적인 DNA의 네 염기에 포함되지 않으므로 이 설명은 옳아요.</li><li data-explains="2">(2) 틀려요. G=C=22%를 빼면 A=T=28%라서 이 설명은 옳아요.</li><li data-explains="3">(3) 틀려요. 타이민은 아데닌과 같은 28%라서 이 설명은 옳아요.</li><li data-explains="4">(4) 맞아요. 샤가프 법칙으로 A는 28%이고 44%가 아니므로 옳지 않은 설명이에요.</li><li data-explains="5">(5) 틀려요. 사이토신은 구아닌과 같은 22%라서 이 설명은 옳아요.</li><li>수업과의 연결: 수업에서 A와 T, G와 C가 각각 상보적으로 짝을 이룬다고 배웠어요.</li></ol><p class="answer">정답: (4)</p></details></article>
+<article class="card" id="p18" data-source="기출 5강 43" data-grade-mode="ambiguous" data-grade-notice="(3)의 ‘역평행일 때만’도 엄밀히는 틀려 단일 정답 판정이 어려워요."><h3>P18. 샤가프의 규칙이 말하는 것</h3><div class="problem"><p>다음 DNA 구조에 대한 설명 중 옳지 않은 것은?</p><ul class="choices"><li data-choice="1">(1) 아데닌과 구아닌은 이중고리 구조이고, 타이민과 사이토신은 단일고리 구조이다.</li><li data-choice="2">(2) 프랭클린은 X-선 회절법을 통해 DNA의 구조가 나선형이라는 것을 밝혀냈다.</li><li data-choice="3">(3) 이중나선의 두 가닥이 역평행일 때만 화학적으로 안정하게 맞춰진다.</li><li data-choice="4">(4) DNA에서 퓨린 - 피리미딘 염기쌍은 A-T, G-C 쌍이다.</li><li data-choice="5">(5) 샤가프의 법칙이 따르면 퓨린 염기인 아데닌과 구아닌의 양은 서로 같다.</li></ul></div><details class="original"><summary>원문 정보 보기</summary>기출 5강 43번 (PDF 5쪽)</details><details class="hint"><summary>힌트 보기</summary><p>샤가프 법칙은 서로 짝인 염기의 양을 비교해요. 같은 고리 종류끼리 같다는 뜻일까요?</p></details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 틀려요. 아데닌과 구아닌은 퓨린, 타이민과 사이토신은 피리미딘이라 이 설명은 옳아요.</li><li data-explains="2">(2) 틀려요. 프랭클린의 X선 회절 자료는 나선 구조 추론에 기여해 이 설명은 옳아요.</li><li data-explains="3">(3) 출제 의도로는 답이 아니지만, 보통 DNA의 역평행 구조를 모든 안정한 DNA 이중가닥에 적용한 ‘때만’은 지나친 표현이에요. 특별한 조건에서는 안정한 평행 이중가닥도 형성돼요.</li><li data-explains="4">(4) 틀려요. 상보적인 염기쌍은 A-T와 G-C라 이 설명은 옳아요.</li><li data-explains="5">(5) 맞아요. 샤가프 법칙은 A=T, G=C이지 퓨린인 A와 G의 양이 같다는 뜻은 아니에요.</li><li>수업과의 연결: 수업의 염기쌍 그림과 프랭클린의 회절 자료 설명을 함께 적용해요.</li></ol><p class="answer">정답: (5)</p><p>인쇄 답은 (5)이지만 (3)도 엄밀히 틀릴 수 있어 원문은 단일 정답으로 판정하기 어려워요. 일반적인 B형 DNA의 역평행과 모든 가능한 이중가닥을 구별해요. <a href="https://pubmed.ncbi.nlm.nih.gov/3399411/">평행 이중가닥 실험 근거</a></p></details></article>
+<article class="card" id="p19" data-source="기출 5강 44"><h3>P19. 핵산과 효소의 재료 구분</h3><div class="problem"><p>다음 고분자 중 뉴클레오타이드로 구성되지 않은 것은?</p><ul class="choices"><li data-choice="1">(1) DNA</li><li data-choice="2">(2) mRNA</li><li data-choice="3">(3) tRNA</li><li data-choice="4">(4) RNA 중합효소</li></ul></div><details class="original"><summary>원문 정보 보기</summary>기출 5강 44번 (PDF 5쪽)</details><details class="hint"><summary>힌트 보기</summary><p>DNA와 여러 RNA는 핵산이에요. 중합효소라는 이름의 효소는 어떤 재료로 만들어졌을까요?</p></details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 틀려요. DNA는 뉴클레오타이드가 이어진 핵산이에요.</li><li data-explains="2">(2) 틀려요. mRNA도 뉴클레오타이드가 이어진 핵산이에요.</li><li data-explains="3">(3) 틀려요. tRNA도 뉴클레오타이드로 만들어진 RNA예요.</li><li data-explains="4">(4) 맞아요. RNA 중합효소는 RNA라는 산물을 만드는 단백질 효소이지 뉴클레오타이드 중합체가 아니에요.</li><li>수업과의 연결: 수업의 핵산 단위체인 뉴클레오타이드와 효소 단백질의 구분을 적용해요.</li></ol><p class="answer">정답: (4)</p></details></article>
+<article class="card" id="p20" data-source="기출 5강 46"><h3>P20. 새 DNA 가닥이 자라는 쪽</h3><div class="problem"><p>복제 동안에 DNA는 5’ → 3’ 방향으로 합성이 된다. 이것은 무엇을 의미하는가?</p><ul class="choices"><li data-choice="1">(1) 주형은 5’ → 3’ 방향으로 읽혀진다.</li><li data-choice="2">(2) 프라이메이즈는 복제되는 가닥의 3’ 말단에 작용한다.</li><li data-choice="3">(3) 연속되는 뉴클레오타이들은 새롭게 형성되는 사슬의 3’ - OH 말단에 첨가된다.</li><li data-choice="4">(4) 양쪽 가닥들은 거의 동시에 복제되기 때문에 복제는 양쪽으로 연속적이어야만 한다.</li><li data-choice="5">(5) 연결효소는 5’ → 3’ 방향으로 DNA를 푼다.</li></ul></div><details class="original"><summary>원문 정보 보기</summary>기출 5강 46번 (PDF 5쪽)</details><details class="hint"><summary>힌트 보기</summary><p>새 뉴클레오타이드는 이미 자라는 가닥의 어느 말단에 붙을까요? 주형을 읽는 방향과 구별해요.</p></details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 틀려요. 새 가닥을 5′→3′으로 합성하려면 주형은 반대인 3′→5′으로 읽혀요.</li><li data-explains="2">(2) 틀려요. 프라이메이즈는 주형에 상보적인 RNA 프라이머를 만들어요. 새 DNA 신장을 직접 맡는 효소가 아니에요.</li><li data-explains="3">(3) 맞아요. 새 뉴클레오타이드는 자라는 가닥의 3′-OH 말단에 첨가돼서 5′→3′ 합성이 돼요.</li><li data-explains="4">(4) 틀려요. 두 새 가닥은 모두 5′→3′으로 만들어지지만 한쪽은 연속, 다른 쪽은 불연속이에요.</li><li data-explains="5">(5) 틀려요. DNA를 푸는 효소는 헬리케이스이고 연결효소는 조각 사이의 틈을 이어 줘요.</li><li>수업과의 연결: 수업에서 3′-OH가 없으면 DNA 중합효소가 새 뉴클레오타이드를 붙일 수 없다고 강조했어요.</li></ol><p class="answer">정답: (3)</p><p>인쇄된 답안지에는 (1)로 표시되어 있지만 오류예요. 주형은 3′→5′으로 읽고 새 가닥은 5′→3′으로 합성하므로 (3)이 맞아요.</p></details></article>
+    </section>
+    <section id="partC"><h2>C. 변형 연습</h2>
+<article class="card" id="p21" data-source="생성 변형 s1-nondisjunction"><h3>P21. [변형] 두 번째 분열의 비분리</h3><div class="problem"><p>어떤 염색체 쌍의 감수 1분열은 정상이고, 감수 2분열에서 한 세포의 자매염색분체만 분리되지 않았다. 이 염색체에 대해 네 배우자의 수 분포는?</p><ul class="choices"><li data-choice="1">(1) n+1 두 개와 n−1 두 개</li><li data-choice="2">(2) 정상 n 두 개, n+1 한 개, n−1 한 개</li><li data-choice="3">(3) 정상 n 네 개</li><li data-choice="4">(4) n+1 한 개와 정상 n 세 개</li></ul></div><details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 두 번째 분열의 비분리. 근거 토픽: s1-nondisjunction.</details><details class="hint"><summary>힌트 보기</summary>감수 1분열과 2분열의 비분리가 미치는 배우자 수를 비교해요.</details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 틀려요. 이 결과는 감수 1분열에서 상동염색체가 갈라지지 않았을 때의 분포예요.</li><li data-explains="2">(2) 맞아요. 둘째 분열의 한 세포에서 나온 두 배우자만 영향을 받고, 다른 두 배우자는 정상이에요.</li><li data-explains="3">(3) 틀려요. 비분리가 일어난 쪽의 두 배우자는 서로 반대 방향의 수 이상이 있어요.</li><li data-explains="4">(4) 틀려요. 한쪽에 하나가 더 갔다면 다른 쪽에서는 그 하나가 모자라요.</li><li>수업과의 연결: 감수 1분열과 2분열에서 갈라지는 대상이 다르다는 설명을 적용해요.</li></ol><p class="answer">정답: (2)</p><p><a href="정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s1-nondisjunction">정리노트에서 다시 보기</a></p></details></article>
+<article class="card" id="p22" data-source="생성 변형 s1-polyploidy"><h3>P22. [변형] 한 염색체와 한 세트</h3><div class="problem"><p>다음 두 개체를 바르게 분류한 것은? A: 21번 염색체만 세 사본이며 나머지는 보통의 쌍이다. B: 모든 염색체가 세 세트(3n)이다.</p><ul class="choices"><li data-choice="1">(1) A와 B 모두 이수체</li><li data-choice="2">(2) A와 B 모두 다배수체</li><li data-choice="3">(3) A는 이수체, B는 다배수체</li><li data-choice="4">(4) A는 다배수체, B는 이수체</li></ul></div><details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 한 염색체와 한 세트. 근거 토픽: s1-polyploidy.</details><details class="hint"><summary>힌트 보기</summary>이수성은 한 종류의 수 변화예요. 숫자 3이 아니라 한 종류와 전체 세트 중 무엇이 늘었는지 봐요.</details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 틀려요. B에서는 특정 염색체 하나가 아닌 전체 세트가 세 벌이에요.</li><li data-explains="2">(2) 틀려요. A에서는 21번만 한 사본 더 있어요.</li><li data-explains="3">(3) 맞아요. A는 개별 염색체 수 변화, B는 세트 전체의 증가예요.</li><li data-explains="4">(4) 틀려요. 두 분류의 기준을 거꾸로 적용했어요.</li><li>수업과의 연결: 염색체 하나의 수 오류와 전체 세트 증가를 나눠 본 설명을 적용해요.</li></ol><p class="answer">정답: (3)</p><p><a href="정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s1-polyploidy">정리노트에서 다시 보기</a></p></details></article>
+<article class="card" id="p23" data-source="생성 변형 s4-meselson-stahl"><h3>P23. [변형] 두 세대 뒤의 DNA 밀도</h3><div class="problem"><p>두 가닥 모두 ¹⁵N인 DNA를 가진 세포를 ¹⁴N 배지로 옮겨 두 번 복제했다. 반보존적 복제라면 DNA 분자들의 밀도 분포는?</p><ul class="choices"><li data-choice="1">(1) 모두 무거운 밀도</li><li data-choice="2">(2) 중간 밀도 절반, 가벼운 밀도 절반</li><li data-choice="3">(3) 모두 중간 밀도</li><li data-choice="4">(4) 무거운 밀도 절반, 가벼운 밀도 절반</li></ul></div><details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 두 세대 뒤의 DNA 밀도. 근거 토픽: s4-meselson-stahl.</details><details class="hint"><summary>힌트 보기</summary>원래 ¹⁵N 가닥 두 개가 각각 어떤 새 가닥과 짝이 되는지 따라가요.</details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 틀려요. 새 가닥에는 배지의 ¹⁴N이 들어가요.</li><li data-explains="2">(2) 맞아요. 두 번째 복제 뒤 네 분자 중 두 분자는 ¹⁵N/¹⁴N, 두 분자는 ¹⁴N/¹⁴N이에요.</li><li data-explains="3">(3) 틀려요. 모두 중간 밀도인 것은 첫 번째 복제 뒤예요.</li><li data-explains="4">(4) 틀려요. 반보존적 복제에서 ¹⁵N/¹⁵N 원래 분자는 첫 복제 뒤 남지 않아요.</li><li>수업과의 연결: ¹⁵N에서 ¹⁴N으로 옮긴 반보존적 복제 실험의 두 번째 세대를 따라가요.</li></ol><p class="answer">정답: (2)</p><p><a href="정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s4-meselson-stahl">정리노트에서 다시 보기</a></p></details></article>
+<article class="card" id="p24" data-source="생성 변형 s5-strands"><h3>P24. [변형] 복제분기점의 두 새 가닥</h3><div class="problem"><p>DNA 복제분기점이 오른쪽으로 이동할 때, 새로 합성되는 선도가닥과 지연가닥에 대한 설명으로 옳은 것은?</p><ul class="choices"><li data-choice="1">(1) 선도가닥은 5′→3′, 지연가닥은 3′→5′로 늘어난다</li><li data-choice="2">(2) 두 가닥 모두 3′→5′로 늘어나고 지연가닥만 끊어진다</li><li data-choice="3">(3) 지연가닥은 프라이머 없이 이어 붙인다</li><li data-choice="4">(4) 두 가닥 모두 5′→3′으로 늘어나지만 지연가닥은 여러 조각으로 합성된다</li></ul></div><details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 복제분기점의 두 새 가닥. 근거 토픽: s5-strands.</details><details class="hint"><summary>힌트 보기</summary>새 가닥이 늘어나는 5′→3′ 방향과 분기점의 이동 방향을 구별해요.</details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 틀려요. 새 DNA 사슬은 어느 쪽도 3′→5′로 늘어나지 않아요.</li><li data-explains="2">(2) 틀려요. 주형을 읽는 방향과 새 가닥이 늘어나는 방향을 바꿨어요.</li><li data-explains="3">(3) 틀려요. 지연가닥의 각 조각도 시작할 3′-OH를 주는 프라이머가 필요해요.</li><li data-explains="4">(4) 맞아요. 합성 방향은 둘 다 같고, 복제분기점과의 상대 방향 때문에 지연가닥만 불연속이에요.</li><li>수업과의 연결: 두 새 가닥 모두 5′→3′으로 늘어난다는 복제 방향 원리를 적용해요.</li></ol><p class="answer">정답: (4)</p><p><a href="정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s5-strands">정리노트에서 다시 보기</a></p></details></article>
+<article class="card" id="p25" data-source="생성 변형 s6-proofreading"><h3>P25. [변형] 오류를 고치는 시점</h3><div class="problem"><p>DNA 복제 중 방금 잘못 넣은 염기를 즉시 제거하는 일과 복제 후 남은 염기쌍 불일치를 다시 고치는 일을 순서대로 부르면?</p><ul class="choices"><li data-choice="1">(1) 교정, 불일치 수선</li><li data-choice="2">(2) 불일치 수선, 교정</li><li data-choice="3">(3) 교정, 교정</li><li data-choice="4">(4) 불일치 수선, 수선 불필요</li></ul></div><details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 오류를 고치는 시점. 근거 토픽: s6-proofreading.</details><details class="hint"><summary>힌트 보기</summary>문장 속 복제 중과 복제 후를 표시해요.</details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 맞아요. DNA 중합효소의 복제 중 교정과 복제 후 불일치 수선의 순서예요.</li><li data-explains="2">(2) 틀려요. 두 단계의 시점을 뒤바꿨어요.</li><li data-explains="3">(3) 틀려요. 두 번째 단계는 복제 후 남은 오류를 찾아 고치는 불일치 수선이에요.</li><li data-explains="4">(4) 틀려요. 복제 중 교정이 있어도 남는 불일치를 수선할 수 있어요.</li><li>수업과의 연결: 타이핑 중 백스페이스와 작성 후 재검토라는 교수님 비유를 적용해요.</li></ol><p class="answer">정답: (1)</p><p><a href="정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s6-proofreading">정리노트에서 다시 보기</a></p></details></article>
+<article class="card" id="p26" data-source="생성 변형 s7-expression"><h3>P26. [변형] 전체 복제와 일부 정보 읽기</h3><div class="problem"><p>세포가 분열 전에 DNA 전체를 사본으로 만들고, 이후 한 유전자의 정보를 RNA로 옮긴 다음 폴리펩티드를 만들었다. 세 일을 순서대로 부르면?</p><ul class="choices"><li data-choice="1">(1) 전사, 번역, DNA 복제</li><li data-choice="2">(2) DNA 복제, 전사, 번역</li><li data-choice="3">(3) DNA 복제, 번역, 전사</li><li data-choice="4">(4) 번역, 전사, DNA 복제</li></ul></div><details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 전체 복제와 일부 정보 읽기. 근거 토픽: s7-expression.</details><details class="hint"><summary>힌트 보기</summary>산물이 DNA, RNA, 폴리펩티드 중 무엇인지 차례로 봐요.</details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 틀려요. DNA 전체를 사본으로 만드는 첫 단계는 전사가 아니에요.</li><li data-explains="2">(2) 맞아요. 전체 DNA 사본, 유전자 RNA 사본, RNA 정보의 폴리펩티드 산물 순서예요.</li><li data-explains="3">(3) 틀려요. RNA 사본을 만드는 일이 전사이고 폴리펩티드를 만드는 일이 번역이에요.</li><li data-explains="4">(4) 틀려요. 번역은 RNA 정보로 폴리펩티드를 만드는 마지막 단계예요.</li><li>수업과의 연결: DNA 전체를 복사하는 일과 책의 일부 정보를 읽는 교수님 비유를 적용해요.</li></ol><p class="answer">정답: (2)</p><p><a href="정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s7-expression">정리노트에서 다시 보기</a></p></details></article>
+<article class="card" id="p27" data-source="생성 변형 s5-replication-machinery">
+  <h3>P27. [변형] 복제 효소와 두 새 가닥의 방향</h3>
+  <div class="problem">
+    <p>다음은 DNA 복제에 관한 내용이다. 보기 중 틀린 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 선도가닥은 복제분기점이 열리는 방향으로 끊기지 않고 이어서 합성된다.</li>
+      <li data-choice="2">(2) DNA 중합효소는 RNA로 된 프라이머(시발체)의 3′-OH 끝에 뉴클레오타이드를 붙이며 합성을 시작한다.</li>
+      <li data-choice="3">(3) 헬리케이스는 두 가닥 사이의 수소결합을 끊어 주형 가닥을 드러낸다.</li>
+      <li data-choice="4">(4) 지체가닥은 복제분기점 쪽으로 3′→5′ 방향으로 늘어나 한 번에 이어서 합성된다.</li>
+      <li data-choice="5">(5) 복제가 끝난 DNA 분자는 각각 옛 가닥 하나와 새 가닥 하나로 이루어진다.</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 5강 8번 발문에 정답을 바꾼 생성 변형이에요. 다루는 혼동: 프라이머의 재료와 시작점, 지연가닥의 합성 방향과 불연속 합성. 근거 토픽: s5-replication-machinery.</details>
+  <details class="hint"><summary>힌트 보기</summary>DNA 중합효소가 새 가닥을 늘릴 수 있는 방향은 하나뿐이에요. 그 방향이 분기점 쪽과 반대가 되는 새 가닥은 어떻게 만들어질지 떠올려 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. 복제분기점이 열리는 방향과 같은 방향으로 끊김 없이 합성되는 새 가닥이 선도가닥이에요.</li>
+      <li data-explains="2">(2) 맞아요. 보기의 "시발체"는 정리노트의 "프라이머"와 같은 말이에요. 프라이메이스가 짧은 RNA 프라이머를 놓으면, DNA 중합효소가 그 3′-OH에 주형과 짝이 맞는 뉴클레오타이드를 붙여 나가요. 프라이머가 없으면 합성을 새로 시작하지 못해요.</li>
+      <li data-explains="3">(3) 맞아요. 헬리케이스는 ATP의 에너지를 써서 두 가닥의 수소결합을 끊고 주형을 노출해요.</li>
+      <li data-explains="4">(4) 틀려요. 보기의 "지체가닥"은 정리노트의 "지연가닥"과 같은 말이에요. 새 가닥은 두 가닥 모두 5′→3′ 방향으로만 늘어나요. 그래서 지체가닥(지연가닥)은 분기점에서 멀어지는 방향으로, 분기점이 열릴 때마다 짧은 조각(오카자키 절편)을 여러 번 나누어 만들어요. "3′→5′"도 "한 번에 이어서"도 틀린 말이에요.</li>
+      <li data-explains="5">(5) 맞아요. 반보존적 복제라서 두 딸 DNA는 각각 부모 가닥 하나와 새 가닥 하나를 가져요.</li>
+      <li>원문 정답과 달라진 점: 원문에서는 "DNA로 된 프라이머"가 틀린 보기였지만, 여기서는 프라이머가 RNA라고 바르게 쓰고 지체가닥의 방향과 연속성을 틀리게 바꿨어요.</li>
+      <li>수업과의 연결: 1001 수업에서 교수님이 프라이머를 시발체라고도 부른다고 소개하고, 선도가닥은 한 번에 쭉, 지체가닥은 조금씩 만든다고 비교한 내용과 이어져요.</li>
+    </ol>
+    <p class="answer">정답: (4)</p>
+    <p><a href="정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s5-replication-machinery">정리노트에서 다시 보기</a></p>
+  </details>
+</article>
+<article class="card" id="p28" data-source="생성 변형 s6-proofreading">
+  <h3>P28. [변형] 교정과 수선 뒤에도 남는 오류</h3>
+  <div class="problem">
+    <p>다음 중 DNA 복제의 오류를 수정하는 메커니즘에 대한 설명으로 잘못된 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) DNA 중합효소는 방금 잘못 넣은 뉴클레오타이드를 복제 도중에 잘라 내고 다시 넣을 수 있다.</li>
+      <li data-choice="2">(2) 복제가 끝난 뒤 남은 염기쌍 불일치는 미스매치 리페어로 고친다.</li>
+      <li data-choice="3">(3) 교정과 수선을 모두 거치면 복제 오류가 완전히 없어져 돌연변이가 생기지 않는다.</li>
+      <li data-choice="4">(4) 자외선이나 화학물질로 손상된 DNA도 수선의 대상이 된다.</li>
+      <li data-choice="5">(5) 교정만 거쳤을 때보다 수선까지 거쳤을 때 남는 오류의 빈도가 더 낮다.</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 5강 15번 발문에 정답을 바꾼 생성 변형이에요. 다루는 혼동: 복제 중 교정과 복제 후 불일치 수선, 그리고 두 단계를 거친 뒤에도 오류가 0이 되지 않는다는 점. 근거 토픽: s6-proofreading.</details>
+  <details class="hint"><summary>힌트 보기</summary>교정과 수선이 오류를 "줄이는" 것인지 "없애는" 것인지 따져 봐요. 남은 오류가 무엇이 되는지도 떠올려 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. 복제 도중 맞지 않는 염기가 들어오면 DNA 중합효소가 바로 제거하고 맞는 염기를 넣어요. 이것이 교정이에요.</li>
+      <li data-explains="2">(2) 맞아요. 보기의 "미스매치 리페어"는 정리노트의 "불일치 수선"과 같은 말이에요. 복제가 끝난 뒤 남은 잘못된 짝을 찾아 그 부분을 제거하고 바른 염기로 다시 채워요.</li>
+      <li data-explains="3">(3) 틀려요. 교정과 수선은 오류율을 크게 낮출 뿐 0으로 만들지는 못해요. 수선까지 거쳐도 약 10억~100억 염기당 하나 정도의 오류가 남고, 이 남은 변화가 자발적 돌연변이로 이어질 수 있어요.</li>
+      <li data-explains="4">(4) 맞아요. 복제 중 생긴 짝 오류뿐 아니라 자외선·화학물질로 생긴 DNA 손상도 수선의 대상이 될 수 있어요.</li>
+      <li data-explains="5">(5) 맞아요. 수업의 예로 교정만 거친 뒤에는 약 백만 염기당 하나, 수선까지 거친 뒤에는 약 10억~100억 염기당 하나 수준이라 수선을 거친 쪽이 훨씬 낮아요.</li>
+      <li>원문 정답과 달라진 점: 원문에서는 "DNA 중합효소가 많은 오류를 범한다"가 의도된 틀린 보기였지만, 여기서는 "교정과 수선을 거치면 돌연변이가 생기지 않는다"가 틀린 보기예요.</li>
+      <li>수업과의 연결: 1001 수업에서 교수님이 복제 중 고치는 것은 교정, 복제가 끝난 뒤 다시 고치는 것은 미스매치 리페어라고 나누고, 돌연변이는 생길 수밖에 없다고 강조한 내용과 이어져요.</li>
+    </ol>
+    <p class="answer">정답: (3)</p>
+    <p><a href="정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s6-proofreading">정리노트에서 다시 보기</a></p>
+  </details>
+</article>
+<article class="card" id="p29" data-source="생성 변형 s5-strands">
+  <h3>P29. [변형] 그림으로 두 새 가닥 판별하기</h3>
+  <div class="problem">
+    <p>그림은 복제분기점에서 새 가닥 (가)와 (나)가 합성되는 모습이다(굵은 화살표는 분기점이 움직이는 방향). 이에 대한 설명으로 옳지 않은 것은?</p>
+    <figure class="figure"><svg id="p29-fork" viewBox="0 0 360 224" role="img" aria-label="오른쪽에 아직 풀리지 않은 두 가닥이 있고 왼쪽으로 Y자로 벌어진 복제분기점. 오른쪽 위에 굵은 화살표가 오른쪽을 가리켜 분기점이 오른쪽으로 움직임을 나타낸다. 위쪽 부모 가닥 아래의 새 가닥 (가)는 왼쪽 끝의 작은 프라이머 칸 하나에서 시작해 분기점 쪽인 오른쪽으로 길게 이어진 화살표 하나이다. 아래쪽 부모 가닥 위의 새 가닥 (나)는 왼쪽을 가리키는 짧은 화살표 세 개로 나뉘어 있고, 조각마다 오른쪽 시작 끝에 작은 프라이머 칸이 있으며 조각 사이에는 틈이 있다.">
+      <polygon class="fig-dot" points="238,20 300,20 300,11 322,25 300,39 300,30 238,30"/>
+      <text class="fig-muted" x="14" y="30">분기점이 움직이는 방향</text>
+      <path class="fig-ink" d="M272 98H350 M272 110H350 M272 98L238 62H40 M272 110L238 146H40"/>
+      <rect class="fig-danger" x="54" y="71" width="14" height="10"/>
+      <path class="fig-accent" d="M68 76H224 M215 70L224 76L215 82"/>
+      <rect class="fig-danger" x="212" y="127" width="14" height="10"/>
+      <path class="fig-accent" d="M212 132H160 M169 126L160 132L169 138"/>
+      <rect class="fig-danger" x="138" y="127" width="14" height="10"/>
+      <path class="fig-accent" d="M138 132H86 M95 126L86 132L95 138"/>
+      <rect class="fig-danger" x="64" y="127" width="14" height="10"/>
+      <path class="fig-accent" d="M64 132H44 M53 126L44 132L53 138"/>
+      <text class="fig-text" x="6" y="81">(가)</text>
+      <text class="fig-text" x="6" y="137">(나)</text>
+      <path class="fig-ink" d="M14 180H44"/>
+      <text class="fig-muted" x="52" y="184">부모(주형) 가닥</text>
+      <path class="fig-accent" d="M14 208H44"/>
+      <text class="fig-muted" x="52" y="212">새 가닥</text>
+      <rect class="fig-danger" x="188" y="203" width="14" height="10"/>
+      <text class="fig-muted" x="218" y="212">프라이머</text>
+    </svg></figure>
+    <ul class="choices">
+      <li data-choice="1">(1) (가)는 분기점이 움직이는 방향으로 이어서 합성되는 선도가닥이다.</li>
+      <li data-choice="2">(2) (나)는 짧은 조각으로 나뉘어 합성된다.</li>
+      <li data-choice="3">(3) (가)는 조각마다 프라이머를 새로 만들어야 한다.</li>
+      <li data-choice="4">(4) (가)와 (나)는 모두 새 가닥의 5′→3′ 방향으로 늘어난다.</li>
+      <li data-choice="5">(5) 프라이머를 DNA로 바꾼 뒤 (나)의 조각 사이에 남는 틈(닉)은 DNA 연결효소가 잇는다.</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 선도가닥과 지연가닥의 판별, 프라이머가 필요한 횟수, 조각을 잇는 연결효소. 근거 토픽: s5-strands.</details>
+  <details class="hint"><summary>힌트 보기</summary>화살표 끝이 분기점 쪽을 향하는 새 가닥과 반대쪽을 향하는 새 가닥을 먼저 나눠요. 그다음 프라이머 칸이 각 가닥에 몇 개 있는지 세어 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. (가)는 분기점이 움직이는 오른쪽으로 끊김 없이 이어진 한 가닥이므로 선도가닥이에요.</li>
+      <li data-explains="2">(2) 맞아요. (나)는 분기점 반대쪽을 향하는 짧은 화살표 여러 개로 나뉘어 있어요. 분기점이 열릴 때마다 새로 드러난 주형에서 조각(오카자키 조각)을 하나씩 만드는 지연가닥이에요.</li>
+      <li data-explains="3">(3) 틀려요. (가)는 분기점을 따라 계속 이어서 합성되므로 처음 한 번 놓인 프라이머 하나면 돼요. 그림에서도 (가)의 프라이머 칸은 하나뿐이에요. 조각마다 프라이머를 새로 놓아야 하는 것은 (나)예요.</li>
+      <li data-explains="4">(4) 맞아요. DNA 중합효소는 새 가닥을 5′→3′ 방향으로만 늘려요. 두 새 가닥의 화학적 방향(5′→3′)은 같지만, 분기점에 대해서는 서로 반대로 자라서 한쪽만 조각으로 합성돼요.</li>
+      <li data-explains="5">(5) 맞아요. 프라이머를 제거하고 그 자리를 DNA로 채워도 조각 사이의 골격 결합 하나가 끊긴 닉이 남고, DNA 연결효소가 이 결합을 만들어 조각을 하나로 이어요.</li>
+      <li>수업과의 연결: 1001 수업에서 교수님이 두 가닥이 반대로 놓여 있으니 한쪽은 한 번에 쭉, 다른 쪽은 조금씩 만들 수밖에 없다고 설명하고, 프라이머를 채운 뒤에도 남는 틈을 연결효소가 잇는다고 거듭 짚은 내용과 이어져요.</li>
+    </ol>
+    <p class="answer">정답: (3)</p>
+    <p><a href="정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s5-strands">정리노트에서 다시 보기</a></p>
+  </details>
+</article>
+<article class="card" id="p30" data-source="생성 변형 s1-nondisjunction">
+  <h3>P30. [변형] 배우자 속 염색체 색으로 비분리 시기 읽기</h3>
+  <div class="problem">
+    <p>그림은 상동염색체 한 쌍(빨강·파랑)을 가진 세포가 감수분열하여 만든 배우자 (가)~(라)에 들어 있는 이 염색체를 나타낸 것이다. 이에 대한 설명으로 옳은 것은? (교차는 생각하지 않는다.)</p>
+    <figure class="figure"><svg id="p30-gametes" viewBox="0 0 360 262" role="img" aria-label="맨 위 원 모양 세포 하나에 빨간 실선 막대 하나와 파란 점선 막대 하나가 들어 있다. 이 세포에서 선이 아래 배우자 원 네 개로 이어진다. (가)에는 빨간 실선 막대 1개, (나)에는 빨간 실선 막대 1개, (다)에는 파란 점선 막대 2개가 들어 있고 (라)에는 막대가 없다. 범례: 빨간 실선 막대와 파란 점선 막대는 상동염색체 한 쌍의 두 염색체이다.">
+      <circle class="fig-ink" cx="180" cy="48" r="34"/>
+      <rect class="fig-danger" x="164" y="28" width="9" height="40" rx="4"/>
+      <rect class="fig-accent" x="187" y="28" width="9" height="40" rx="4" stroke-dasharray="5 3"/>
+      <path class="fig-ink" d="M180 82L50 124 M180 82L136 124 M180 82L222 124 M180 82L308 124"/>
+      <circle class="fig-ink" cx="50" cy="152" r="28"/>
+      <circle class="fig-ink" cx="136" cy="152" r="28"/>
+      <circle class="fig-ink" cx="222" cy="152" r="28"/>
+      <circle class="fig-ink" cx="308" cy="152" r="28"/>
+      <rect class="fig-danger" x="46" y="136" width="9" height="32" rx="4"/>
+      <rect class="fig-danger" x="132" y="136" width="9" height="32" rx="4"/>
+      <rect class="fig-accent" x="206" y="136" width="9" height="32" rx="4" stroke-dasharray="5 3"/>
+      <rect class="fig-accent" x="229" y="136" width="9" height="32" rx="4" stroke-dasharray="5 3"/>
+      <text class="fig-text" x="38" y="202">(가)</text>
+      <text class="fig-text" x="124" y="202">(나)</text>
+      <text class="fig-text" x="210" y="202">(다)</text>
+      <text class="fig-text" x="296" y="202">(라)</text>
+      <rect class="fig-danger" x="20" y="218" width="9" height="18" rx="4"/>
+      <text class="fig-muted" x="40" y="232">빨강(실선): 상동염색체 한 쌍 중 하나</text>
+      <rect class="fig-accent" x="20" y="240" width="9" height="18" rx="4" stroke-dasharray="5 3"/>
+      <text class="fig-muted" x="40" y="254">파랑(점선): 같은 쌍의 다른 하나</text>
+    </svg></figure>
+    <ul class="choices">
+      <li data-choice="1">(1) 비분리는 감수 1분열에서 일어났다.</li>
+      <li data-choice="2">(2) (다)는 상동염색체 두 개를 함께 받았다.</li>
+      <li data-choice="3">(3) (가)와 (나)는 이 염색체에 대해 정상(n)이다.</li>
+      <li data-choice="4">(4) (라)가 정상 배우자와 수정하면 이 염색체를 세 개 가진 자손이 된다.</li>
+      <li data-choice="5">(5) 이 배우자들은 다배수성의 원인이 된다.</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 감수 1분열 비분리와 감수 2분열 비분리(상동염색체와 자매염색분체), 이수성과 다배수성. 근거 토픽: s1-nondisjunction.</details>
+  <details class="hint"><summary>힌트 보기</summary>막대가 두 개 들어간 배우자를 찾아 두 막대의 색이 같은지 다른지 봐요. 감수 1분열과 감수 2분열이 각각 무엇을 나누는지 떠올려 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 감수 1분열은 상동염색체를 나누는데, 여기서 비분리가 일어나면 빨강과 파랑이 함께 한쪽 세포로 가요. 그러면 배우자 두 개에 빨강과 파랑이 하나씩 함께 들어 있고 나머지 두 개에는 없어서 네 배우자가 모두 비정상이에요. 그림에서는 (다)의 두 막대가 같은 파랑이고 (가)와 (나)가 정상이므로 감수 1분열 비분리가 아니에요.</li>
+      <li data-explains="2">(2) 틀려요. (다)의 두 막대는 둘 다 파랑이라 같은 염색체가 복제되어 생긴 자매염색분체 두 개예요. 상동염색체 두 개를 받았다면 빨강과 파랑이 하나씩 있어야 해요.</li>
+      <li data-explains="3">(3) 맞아요. 감수 1분열은 정상이어서 빨강은 한쪽 세포로, 파랑은 다른 쪽 세포로 갔어요. 빨강 쪽 세포는 감수 2분열에서도 정상으로 나뉘어 (가)와 (나)가 빨강을 하나씩 받은 정상 n이에요. 파랑 쪽 세포에서만 감수 2분열 때 자매염색분체가 갈라지지 않아 (다)는 n+1, (라)는 n−1이 됐어요.</li>
+      <li data-explains="4">(4) 틀려요. (라)는 이 염색체가 없는 n−1이라서 정상 배우자(n)와 수정하면 이 염색체를 한 개만 가진 단염색체성 자손이 돼요. 세 개를 가진 삼염색체성 자손은 (다)가 정상 배우자와 수정할 때 생겨요.</li>
+      <li data-explains="5">(5) 틀려요. 염색체 한 종류의 수만 하나 더 있거나 모자란 상태는 이수성이에요. 다배수성은 염색체 세트 전체가 늘어난 것이라 이 경우와 달라요.</li>
+      <li>수업과의 연결: 1001 수업에서 교수님이 감수 1분열 비분리는 네 세포 모두에, 감수 2분열 비분리는 두 세포에만 영향을 준다고 비교한 내용과 이어져요.</li>
+    </ol>
+    <p class="answer">정답: (3)</p>
+    <p><a href="정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s1-nondisjunction">정리노트에서 다시 보기</a></p>
+  </details>
+</article>
+<article class="card" id="p31" data-source="생성 변형 s1-sex-aneuploidy">
+  <h3>P31. [변형] 성염색체 조합과 SRY 진술 판정</h3>
+  <div class="problem">
+    <p>성염색체 비분리로 생긴 조합에 대한 설명으로 옳은 것만을 있는 대로 고른 것은?</p>
+    <ul>
+      <li>ㄱ. XXY인 클라인펠터 증후군은 Y 염색체의 SRY가 있어 보통 남성으로 발달한다.</li>
+      <li>ㄴ. X0인 터너 증후군은 성염색체가 하나 모자란 이수성이다.</li>
+      <li>ㄷ. X 없이 Y만 있는 조합도 SRY가 있으므로 남성으로 정상 발생할 수 있다.</li>
+    </ul>
+    <ul class="choices">
+      <li data-choice="1">(1) ㄱ</li>
+      <li data-choice="2">(2) ㄴ</li>
+      <li data-choice="3">(3) ㄷ</li>
+      <li data-choice="4">(4) ㄱ, ㄴ</li>
+      <li data-choice="5">(5) ㄱ, ㄴ, ㄷ</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 성염색체의 수와 발생 방향(SRY 유무), X 염색체가 꼭 필요하다는 점. 근거 토픽: s1-sex-aneuploidy.</details>
+  <details class="hint"><summary>힌트 보기</summary>"Y가 있으면 남성 방향"이라는 규칙과 "살아남을 수 있는가"는 다른 질문이에요. X가 하나도 없는 조합이 어떻게 되는지 떠올려 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>ㄱ. 맞아요. XXY에도 Y가 있고, Y의 SRY 유전자가 남성 방향의 발생을 시작하므로 클라인펠터 증후군은 보통 남성으로 발달해요.</li>
+      <li>ㄴ. 맞아요. X0의 0은 두 번째 성염색체가 없다는 뜻이에요. 성염색체 하나가 모자란 이수성이고, Y가 없으니 보통 여성으로 발달해요.</li>
+      <li>ㄷ. 틀려요. SRY가 있으면 남성 방향으로 발생한다는 규칙은 맞지만, X가 하나도 없고 Y만 있는 조합은 생존할 수 없어요. SRY 규칙을 X가 꼭 필요하다는 사실과 바꿔 쓴 함정이에요.</li>
+      <li data-explains="1">(1) 틀려요. 맞는 진술 ㄴ이 빠졌어요.</li>
+      <li data-explains="2">(2) 틀려요. 맞는 진술 ㄱ이 빠졌어요.</li>
+      <li data-explains="3">(3) 틀려요. ㄷ은 틀린 진술이고, 맞는 ㄱ과 ㄴ이 빠졌어요.</li>
+      <li data-explains="4">(4) 맞아요. 맞는 진술 ㄱ과 ㄴ만 골랐어요.</li>
+      <li data-explains="5">(5) 틀려요. Y만 있는 조합을 생존 가능하다고 본 ㄷ이 들어 있어요.</li>
+      <li>수업과의 연결: 1001 수업에서 교수님이 남성이 남성인 이유는 Y 염색체 때문이라고 SRY를 다시 짚으면서, Y만 있고 X가 없는 경우는 생존할 수 없다고 설명한 내용과 이어져요.</li>
+    </ol>
+    <p class="answer">정답: (4)</p>
+    <p><a href="정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s1-sex-aneuploidy">정리노트에서 다시 보기</a></p>
+  </details>
+</article>
+<article class="card" id="p32" data-source="생성 변형 s2-dominant-disease">
+  <h3>P32. [변형] 우성 질환 가족의 자녀 확률</h3>
+  <div class="problem">
+    <p>연골발육부전증은 상염색체 우성 질환이다. 질환 대립유전자를 D, 정상 대립유전자를 d라고 할 때, Dd인 아버지와 dd인 정상 어머니 사이의 자녀에 대한 설명으로 옳지 않은 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 자녀가 질환 대립유전자를 물려받을 확률은 1/2이다.</li>
+      <li data-choice="2">(2) D를 하나라도 물려받은 자녀는 이 질환을 나타낸다.</li>
+      <li data-choice="3">(3) 첫째가 질환을 가졌더라도 둘째가 D를 물려받을 확률은 1/2이다.</li>
+      <li data-choice="4">(4) 자녀의 1/2은 증상 없이 질환 대립유전자를 하나 가진 보인자이다.</li>
+      <li data-choice="5">(5) 어머니는 정상 대립유전자만 두 개 가진 동형접합자이다.</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 우성 질환과 열성 질환의 보인자, 자녀마다 독립인 확률. 근거 토픽: s2-dominant-disease.</details>
+  <details class="hint"><summary>힌트 보기</summary>우성 질환은 질환 대립유전자가 몇 개 있으면 나타나는지부터 떠올려요. 그 조건에서 "증상 없는 보인자"가 있을 수 있는지 따져 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. 아버지는 D와 d 중 하나를, 어머니는 늘 d를 주므로 자녀는 Dd와 dd가 1:1이에요. D를 받을 확률은 1/2이에요.</li>
+      <li data-explains="2">(2) 맞아요. 상염색체 우성 질환은 질환 대립유전자 하나만 있어도 나타나는 모형이라서 Dd인 자녀는 질환을 나타내요.</li>
+      <li data-explains="3">(3) 맞아요. 확률은 자녀마다 독립이라서 첫째의 결과로 둘째의 결과가 정해지지 않아요. 둘째도 1/2이에요.</li>
+      <li data-explains="4">(4) 틀려요. 보인자는 열성 질환 대립유전자를 하나 가지지만 증상이 없는 이형접합자를 말해요. 우성 질환에서는 D를 하나만 가져도 질환이 나타나므로 증상 없이 D만 지닌 보인자가 없어요. 자녀는 Dd(질환) 1/2, dd(정상) 1/2이에요.</li>
+      <li data-explains="5">(5) 맞아요. 어머니의 유전자형 dd는 정상 대립유전자 d를 두 개 가진 동형접합이에요.</li>
+      <li>수업과의 연결: 1001 수업에서 교수님이 헌팅턴병의 Hh×hh 가족으로 "이 아이가 걸릴 확률"을 1:1로 설명하고, 같은 우성 질환 예로 연골발육부전증을 소개한 내용을 다른 기호로 옮긴 거예요.</li>
+    </ol>
+    <p class="answer">정답: (4)</p>
+    <p><a href="정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s2-dominant-disease">정리노트에서 다시 보기</a></p>
+  </details>
+</article>
+<article class="card" id="p33" data-source="생성 변형 s2-recessive-disease">
+  <h3>P33. [변형] 정상 부부에게서 태어난 환자 아이</h3>
+  <div class="problem">
+    <p>낭포성 섬유증은 상염색체 열성 질환이다. 정상 대립유전자를 C, 질환 대립유전자를 c라고 할 때, 증상이 없는 부부 사이에서 낭포성 섬유증인 첫째 아이가 태어났다. 이 가족에 대한 설명으로 옳지 않은 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 부부는 모두 Cc인 보인자이다.</li>
+      <li data-choice="2">(2) 둘째가 이 질환을 가질 확률은 1/4이다.</li>
+      <li data-choice="3">(3) 둘째가 보인자일 확률은 1/2이다.</li>
+      <li data-choice="4">(4) 둘째가 증상이 없을 확률은 3/4이다.</li>
+      <li data-choice="5">(5) 첫째가 환자이므로 둘째가 환자일 확률은 1/2로 높아진다.</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 열성 질환의 보인자(Cc)와 환자(cc), 자녀마다 독립인 확률. 근거 토픽: s2-recessive-disease.</details>
+  <details class="hint"><summary>힌트 보기</summary>환자 아이 cc는 c를 부모 양쪽에서 하나씩 받아요. 부부의 유전자형을 정한 뒤 Cc×Cc 자녀의 비율을 써 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. 첫째가 cc이니 부모 양쪽에서 c를 하나씩 받았어요. 그런데 부부는 증상이 없으니 cc가 아니고, 둘 다 c를 하나 가진 Cc 보인자예요.</li>
+      <li data-explains="2">(2) 맞아요. Cc×Cc의 자녀는 CC 1/4, Cc 1/2, cc 1/4이에요. 질환을 가지는 cc는 1/4이에요.</li>
+      <li data-explains="3">(3) 맞아요. 증상 없이 c를 하나 가진 Cc가 보인자이고, 그 확률은 1/2이에요.</li>
+      <li data-explains="4">(4) 맞아요. 증상이 없는 자녀는 CC와 Cc를 합친 1/4 + 1/2 = 3/4이에요.</li>
+      <li data-explains="5">(5) 틀려요. 아이마다 부모에게서 대립유전자를 따로 받으므로 첫째의 결과는 둘째의 확률을 바꾸지 않아요. 둘째가 환자일 확률은 여전히 1/4이에요.</li>
+      <li>수업과의 연결: 1001 수업에서 교수님이 CC·Cc·cc로 정상·보인자·환자를 나누고, 열성 질환은 정상 대립유전자를 하나라도 가지면 증상이 없다고 강조한 내용과 이어져요.</li>
+    </ol>
+    <p class="answer">정답: (5)</p>
+    <p><a href="정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s2-recessive-disease">정리노트에서 다시 보기</a></p>
+  </details>
+</article>
+<article class="card" id="p34" data-source="생성 변형 s3-double-helix">
+  <h3>P34. [변형] 100 염기쌍 조각의 길이와 수소결합</h3>
+  <div class="problem">
+    <p>어떤 DNA 이중나선 조각이 100 염기쌍으로 되어 있고, 그중 G–C 쌍이 40개이다. 이 조각에 대한 설명으로 옳은 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 이 조각의 길이는 약 340 nm이다.</li>
+      <li data-choice="2">(2) 이 조각은 약 100바퀴 감겨 있다.</li>
+      <li data-choice="3">(3) A–T 쌍은 40개이다.</li>
+      <li data-choice="4">(4) 두 가닥 사이의 수소결합은 모두 240개이다.</li>
+      <li data-choice="5">(5) 이 조각에는 퓨린 염기가 피리미딘 염기보다 많다.</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 염기쌍 간격 0.34 nm와 한 바퀴 3.4 nm, A–T와 G–C의 수소결합 수. 근거 토픽: s3-double-helix.</details>
+  <details class="hint"><summary>힌트 보기</summary>먼저 A–T 쌍의 수를 구해요. 그다음 쌍마다 수소결합이 몇 개인지, 염기쌍 하나가 축 방향으로 얼마를 차지하는지 떠올려 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 인접 염기쌍 간격은 약 0.34 nm이므로 100쌍이면 약 100 × 0.34 = 34 nm예요. 340 nm는 한 바퀴 길이 3.4 nm를 염기쌍 간격으로 잘못 읽은 값이에요.</li>
+      <li data-explains="2">(2) 틀려요. 한 바퀴에 약 10염기쌍이 들어가므로 100쌍은 약 10바퀴예요.</li>
+      <li data-explains="3">(3) 틀려요. 100쌍 중 G–C가 40쌍이니 A–T는 100 − 40 = 60쌍이에요.</li>
+      <li data-explains="4">(4) 맞아요. A–T 쌍에는 수소결합이 2개, G–C 쌍에는 3개 있으므로 60 × 2 + 40 × 3 = 120 + 120 = 240개예요.</li>
+      <li data-explains="5">(5) 틀려요. 상보적 짝은 늘 퓨린(A·G) 하나와 피리미딘(T·C) 하나로 이루어지므로, 이중가닥 전체에서 퓨린과 피리미딘의 수는 같아요. 여기서는 둘 다 100개예요.</li>
+      <li>수업과의 연결: 1001 수업에서 교수님이 염기쌍 사이 거리를 3.4 nm라고 말했다가 0.34 nm로 바로 고치고, A–T는 수소결합 2개, G–C는 3개라고 복습한 내용과 이어져요.</li>
+    </ol>
+    <p class="answer">정답: (4)</p>
+    <p><a href="정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s3-double-helix">정리노트에서 다시 보기</a></p>
+  </details>
+</article>
+    </section>
+  </main>
+  <footer>출처: 2023·2024 생명과학 기출(4·5강 합본). 정답은 인쇄된 답안지와 독립 판단을 대조했고, 어긋난 곳은 풀이에 밝혔습니다. 변형 연습은 수업 내용으로 만든 생성 문제입니다.</footer>
+    </div>
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="panel-right-title">
+      <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-right-title">풀이 도움</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-sub" id="aid-for" hidden></p>
+        <p class="panel-empty">문제로 넘어가면 그 문제의 교과서 원문, 힌트, 풀이가 여기에 나옵니다. 먼저 스스로 풀어 본 뒤 여세요.</p>
+        <div class="aids"></div>
+        <button class="solved-btn" id="solved-btn" type="button" aria-pressed="false" hidden><span>푼 문제로 표시</span></button>
+      </div>
+    </aside>
+  </div>
+  <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
+  <nav class="pager" aria-label="화면 이동">
+    <div class="pager-inner">
+      <button class="btn btn-ghost" id="pager-prev" type="button">이전</button>
+      <span class="pager-count" id="pager-count"></span>
+      <button class="btn btn-primary" id="pager-next" type="button">시작하기</button>
+    </div>
+  </nav>
+  <p class="sr-only" id="pager-status" aria-live="polite"></p>
+
+  <script id="theme-ui">
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const sysDark = matchMedia('(prefers-color-scheme: dark)');
+      const KEY = 'od-theme';
+      const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+      function label() {
+        const next = isDark() ? '라이트 모드로 전환' : '다크 모드로 전환';
+        btn.setAttribute('aria-label', next);
+        btn.title = next;
+      }
+      btn.addEventListener('click', () => {
+        const t = isDark() ? 'light' : 'dark';
+        // 시스템 설정과 같아지면 저장을 지워 다시 시스템을 따른다
+        if ((t === 'dark') === sysDark.matches) { delete root.dataset.theme; try { localStorage.removeItem(KEY); } catch (e) {} }
+        else { root.dataset.theme = t; try { localStorage.setItem(KEY, t); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+        label();
+      });
+      sysDark.addEventListener('change', label);
+      window.addEventListener('storage', (e) => {
+        if (e.key !== KEY) return;
+        if (e.newValue === 'light' || e.newValue === 'dark') root.dataset.theme = e.newValue; else delete root.dataset.theme;
+        label();
+      });
+      label();
+    })();
+  </script>
+  <script id="panels-ui">
+    (function () {
+      const body = document.body;
+      const layout = document.querySelector('.layout');
+      const kind = body.dataset.panels;
+      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const scrim = document.getElementById('panel-scrim');
+      const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
+      const wideMq = matchMedia('(min-width: 1024px)');
+      const roomyMq = matchMedia('(min-width: 1280px)');
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      // 푼 기록은 탭(세션) 단위로만 유지: 뒤로가기·새로고침엔 남고, 창을 닫고 다시 열면 초기화
+      const tabStore = {
+        get(k, d) { try { const v = sessionStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      const PREF = 'od-panels:' + kind;
+      // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
+      const RANGE = body.dataset.range || '';
+      const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+      const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+      let overlay = null;
+
+      // ---------- 열고 닫기 ----------
+      function docked() {
+        const pref = store.get(PREF, {});
+        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+      }
+      function sync() {
+        const wide = wideMq.matches;
+        const d = docked();
+        ['left', 'right'].forEach((side) => {
+          const open = wide ? d[side] : overlay === side;
+          const p = panels[side];
+          layout.dataset[side] = open ? 'open' : 'closed';
+          p.classList.toggle('is-open', !wide && open);
+          p.inert = !open;
+          if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
+          toggles[side].setAttribute('aria-expanded', String(open));
+        });
+        const drawer = !wide && overlay !== null;
+        scrim.classList.toggle('is-on', drawer);
+        body.classList.toggle('drawer-open', drawer);
+        blockers.forEach((el) => { el.inert = drawer; });
+      }
+      function openDrawer(side) {
+        overlay = side;
+        sync();
+        requestAnimationFrame(() => panels[side].querySelector('[data-panel-close]').focus());
+      }
+      function closeDrawer(refocus) {
+        if (overlay === null) return;
+        const side = overlay;
+        overlay = null;
+        sync();
+        if (refocus) toggles[side].focus();
+      }
+      function toggle(side) {
+        if (wideMq.matches) {
+          const d = docked();
+          d[side] = !d[side];
+          store.set(PREF, d);
+          sync();
+          if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+        } else if (overlay === side) closeDrawer(true);
+        else openDrawer(side);
+      }
+
+      toggles.left.addEventListener('click', () => toggle('left'));
+      toggles.right.addEventListener('click', () => toggle('right'));
+      scrim.addEventListener('click', () => closeDrawer(true));
+      document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
+      panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
+
+      // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      function applyWidths() {
+        const w = store.get(PREF + ':w', {});
+        ['left', 'right'].forEach((side) => {
+          if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
+          else layout.style.removeProperty(WIDTH[side].prop);
+        });
+      }
+      function maxFor(side) {
+        const other = side === 'left' ? panels.right : panels.left;
+        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
+      }
+      function setWidth(side, px, save) {
+        const v = Math.round(Math.min(Math.max(px, WIDTH[side].min), maxFor(side)));
+        layout.style.setProperty(WIDTH[side].prop, v + 'px');
+        panels[side].querySelector('.panel-resize').setAttribute('aria-valuenow', String(v));
+        if (save) { const w = store.get(PREF + ':w', {}); w[side] = v; store.set(PREF + ':w', w); }
+      }
+      function resetWidth(side) {
+        const w = store.get(PREF + ':w', {});
+        delete w[side];
+        store.set(PREF + ':w', w);
+        layout.style.removeProperty(WIDTH[side].prop);
+      }
+      document.querySelectorAll('.panel-resize').forEach((handle) => {
+        const side = handle.dataset.side;
+        const dir = side === 'left' ? 1 : -1;
+        handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
+        handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
+        handle.addEventListener('pointerdown', (e) => {
+          if (!wideMq.matches || e.button !== 0) return;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startW = panels[side].getBoundingClientRect().width;
+          handle.setPointerCapture(e.pointerId);
+          body.classList.add('is-resizing');
+          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const up = () => {
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', up);
+            handle.removeEventListener('pointercancel', up);
+            body.classList.remove('is-resizing');
+            setWidth(side, panels[side].getBoundingClientRect().width, true);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', up);
+          handle.addEventListener('pointercancel', up);
+        });
+        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('keydown', (e) => {
+          const step = e.shiftKey ? 64 : 16;
+          const cur = panels[side].getBoundingClientRect().width;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+        });
+      });
+      applyWidths();
+      const onMq = () => { overlay = null; sync(); };
+      wideMq.addEventListener('change', onMq);
+      roomyMq.addEventListener('change', onMq);
+
+      // ---------- 목차의 진행 표시 ----------
+      const progressN = document.getElementById('progress-n');
+      const progressBar = document.getElementById('progress-bar');
+      const progressTotal = document.getElementById('progress-total');
+      function markToc(done, total, doneLabel) {
+        panels.left.querySelectorAll('.toc-list a').forEach((a) => {
+          const id = decodeURIComponent(a.getAttribute('href').slice(1));
+          let mark = a.querySelector('.toc-mark');
+          if (!mark) {
+            mark = document.createElement('span');
+            mark.className = 'toc-mark';
+            mark.setAttribute('aria-hidden', 'true');
+            const state = document.createElement('span');
+            state.className = 'sr-only toc-state';
+            a.append(mark, state);
+          }
+          const isDone = done.has(id);
+          mark.classList.toggle('is-done', isDone);
+          mark.innerHTML = isDone ? ICON_DONE : ICON_TODO;
+          a.querySelector('.toc-state').textContent = isDone ? ' (' + doneLabel + ')' : '';
+        });
+        progressN.textContent = String(done.size);
+        progressTotal.textContent = String(total);
+        progressBar.style.transform = 'scaleX(' + (total ? done.size / total : 0) + ')';
+      }
+      function revealCurrent() {
+        const link = panels.left.querySelector('.toc-list a[aria-current="true"]');
+        if (link && layout.dataset.left === 'open') link.scrollIntoView({ block: 'nearest' });
+      }
+
+      // ---------- 복습문제: 오른쪽 = 원문 · 힌트 · 풀이 ----------
+      function setupReview() {
+        const KEY = 'od-review-solved:' + RANGE;
+        const cards = Array.from(document.querySelectorAll('main article.card'));
+        const aids = panels.right.querySelector('.aids');
+        const sub = document.getElementById('aid-for');
+        const empty = panels.right.querySelector('.panel-empty');
+        const btn = document.getElementById('solved-btn');
+        const groups = {};
+        const solved = new Set(tabStore.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        cards.forEach((card) => {
+          const g = document.createElement('div');
+          g.className = 'aid';
+          g.dataset.cardId = card.id;
+          g.hidden = true;
+          card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
+          aids.appendChild(g);
+          groups[card.id] = g;
+        });
+        let curId = null;
+        function paintBtn() {
+          const on = solved.has(curId);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.innerHTML = (on ? ICON_DONE : ICON_TODO) + '<span>' + (on ? '푼 문제 · 표시 해제' : '푼 문제로 표시') + '</span>';
+        }
+        btn.addEventListener('click', () => {
+          if (!curId) return;
+          if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
+          tabStore.set(KEY, Array.from(solved));
+          paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:answer', ({detail}) => {
+          if (!cards.some(c => c.id === detail.id)) return;
+          if (detail.restored && detail.selected !== null) return;
+          if (detail.selected === null) solved.delete(detail.id);
+          else solved.add(detail.id);
+          tabStore.set(KEY, Array.from(solved));
+          if (curId) paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          curId = s.matches('article.card') ? s.id : null;
+          Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
+          empty.hidden = Boolean(curId);
+          btn.hidden = !curId;
+          sub.textContent = curId ? ((s.querySelector('h3') || {}).textContent || '').trim() : '';
+          sub.hidden = !curId;
+          if (curId) paintBtn();
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(solved, cards.length, '푼 문제');
+          revealCurrent();
+        });
+      }
+
+      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
+      function setupNote() {
+        const KEY = 'od-note-read:' + RANGE;
+        const topics = Array.from(document.querySelectorAll('main article.topic'));
+        const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
+        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
+        const box = panels.right.querySelector('.sums');
+        const sums = {};
+        topics.forEach((t) => {
+          const el = t.querySelector(':scope > .sum');
+          if (!el) return;
+          el.hidden = true;
+          box.appendChild(el);
+          sums[t.id] = el;
+        });
+        const sub = document.getElementById('sum-for');
+        const empty = document.getElementById('sum-empty');
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          const key = s.matches('article.topic') ? s.id : 'intro';
+          Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
+          empty.hidden = Boolean(sums[key]);
+          sub.textContent = key === 'intro' ? '전체 흐름' : ((s.querySelector('h3') || {}).textContent || '').trim();
+          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(read, topics.length, '읽음');
+          revealCurrent();
+        });
+      }
+
+      if (kind === 'review') setupReview();
+      if (kind === 'note') setupNote();
+      sync();
+    })();
+  </script>
+  <script id="pager-ui">
+    (function () {
+      const root = document.documentElement;
+      const main = document.querySelector('main');
+      const hero = main.querySelector('.hero');
+      const screens = [hero].concat(Array.from(main.querySelectorAll(document.body.dataset.screens)));
+      if (screens.length < 2) { root.classList.remove('js'); return; }
+      screens.forEach((s) => s.classList.add('screen'));
+
+      const last = screens.length - 1;
+      const prevBtn = document.getElementById('pager-prev');
+      const nextBtn = document.getElementById('pager-next');
+      const count = document.getElementById('pager-count');
+      const bar = document.getElementById('pager-bar');
+      const status = document.getElementById('pager-status');
+      const toc = document.querySelector('#panel-left .toc');
+      const scroller = document.querySelector('.content');
+      const titleOf = (s) => ((s.querySelector('h3') || s.querySelector('h1') || {}).textContent || '').trim();
+      let cur = -1;
+
+      // 목차: 섹션 링크 아래에 화면(토픽·카드) 목록을 붙인다
+      const tocLinks = [];
+      Array.from(toc.querySelectorAll(':scope > a')).forEach((a) => {
+        const sec = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+        const group = document.createElement('div');
+        group.className = 'toc-group';
+        a.replaceWith(group);
+        group.appendChild(a);
+        if (!sec) return;
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        screens.forEach((s, i) => {
+          if (!sec.contains(s)) return;
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#' + s.id;
+          link.innerHTML = '<span class="toc-title"></span>';
+          link.firstChild.textContent = titleOf(s);
+          li.appendChild(link);
+          list.appendChild(li);
+          tocLinks[i] = link;
+        });
+        group.appendChild(list);
+      });
+
+      function indexFor(hash) {
+        const id = decodeURIComponent((hash || '').replace(/^#/, ''));
+        const el = id && document.getElementById(id);
+        if (!el || !main.contains(el)) return { i: 0 };
+        const i = screens.findIndex((s) => s.contains(el) || el.contains(s));
+        return { i: Math.max(i, 0), target: i >= 0 && screens[i].contains(el) && screens[i] !== el ? el : null };
+      }
+
+      function render(i, target) {
+        const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
+        if (i !== cur) {
+          if (cur >= 0) document.dispatchEvent(new CustomEvent('od:leave', { detail: { index: cur, screen: screens[cur] } }));
+          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
+          main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
+          const s = screens[i];
+          const sec = s.closest('section');
+          if (sec) sec.classList.add('is-on');
+          s.classList.add('is-current');
+          if (dir) { s.classList.remove('enter-next', 'enter-prev'); void s.offsetWidth; s.classList.add(dir); }
+          cur = i;
+          document.body.classList.toggle('at-end', i === last);
+          prevBtn.disabled = i === 0;
+          nextBtn.textContent = i === 0 ? '시작하기' : i === last ? '처음으로' : '다음';
+          count.textContent = i === 0 ? '' : i + ' / ' + last;
+          bar.style.transform = 'scaleX(' + (i / last) + ')';
+          status.textContent = i === 0 ? titleOf(s) : i + ' / ' + last + ', ' + titleOf(s);
+          tocLinks.forEach((link, k) => link && link.setAttribute('aria-current', String(k === i)));
+          document.dispatchEvent(new CustomEvent('od:screen', { detail: { index: i, screen: s } }));
+        }
+        if (target) target.scrollIntoView({ block: 'start' });
+        else scroller.scrollTo(0, 0);
+      }
+
+      function go(i) {
+        i = Math.min(Math.max(i, 0), last);
+        if (i === cur) return;
+        const url = i === 0 ? location.pathname + location.search : '#' + screens[i].id;
+        history.pushState(null, '', url);
+        render(i);
+      }
+
+      prevBtn.addEventListener('click', () => go(cur - 1));
+      nextBtn.addEventListener('click', () => go(cur === last ? 0 : cur + 1));
+      const fromUrl = () => { const r = indexFor(location.hash); render(r.i, r.target); };
+      window.addEventListener('hashchange', fromUrl);
+      window.addEventListener('popstate', fromUrl);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+
+      // 좌우로 밀어서 넘기기 (가로로 스크롤되는 영역은 제외)
+      let sx = 0, sy = 0, skip = true;
+      main.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (skip) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 64 && Math.abs(dx) > 2 * Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      fromUrl();
+    })();
+  </script>
+<!-- review-interaction:start -->
+<style>
+/* Progressive enhancement: original source remains readable without scripts. */
+.review-ready .choices { list-style:none; padding:0; }
+.review-ready .choices > li { margin:0 0 var(--s3); }
+.review-choice {
+  display:block; width:100%; min-height:44px; text-align:left; font:inherit;
+  color:var(--ink); background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:12px 16px; cursor:pointer; overflow-wrap:anywhere;
+}
+.review-choice:hover { border-color:var(--accent); }
+.review-choice:focus-visible, .review-reset:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+.review-choice[aria-expanded] { position:relative; padding-right:44px; }
+.review-choice[aria-expanded]::after { content:""; position:absolute; right:18px; top:20px; width:8px; height:8px; border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor; transform:rotate(45deg); }
+.review-choice[aria-expanded="true"]::after { transform:rotate(225deg); top:24px; }
+.review-choice[data-result="correct"], .review-choice[data-result="intended"] { border:3px solid var(--accent); }
+.review-choice[data-result="selected"] { border:3px solid var(--danger); }
+.review-choice[data-result="uncertain"] { border:3px solid var(--ink-2); }
+.review-choice-label { display:block; margin-top:6px; font-size:var(--fs-small); font-weight:700; color:var(--ink); }
+.review-choice-label[hidden], .review-diagnostic[hidden], .review-extra[hidden],
+.review-reset[hidden], .review-diagnostics[hidden] { display:none; }
+.review-diagnostics { list-style:none; padding:0; margin:0; }
+.review-diagnostic { padding:12px 16px 8px; color:var(--ink-2); overflow-wrap:anywhere; }
+.review-status { margin:var(--s3) 0; font-weight:650; }
+.review-status:empty { display:none; }
+.review-reset { min-height:44px; margin:var(--s2) 0 var(--s4); }
+.review-choice-content { padding:var(--s2) 0; }
+/* Look comes from the template's .solved-btn; only visibility and focus live here. */
+.review-unsure[hidden] { display:none; }
+.review-unsure.solved-btn[aria-pressed="true"] { border-color:#ffa030; color:#ffa030; }
+.review-unsure:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+.review-feedback {
+  position:fixed; top:calc(env(safe-area-inset-top) + 72px); left:50%; z-index:100;
+  transform:translateX(-50%); width:max-content; max-width:calc(100vw - 32px);
+  display:flex; align-items:center; gap:12px; padding:10px 16px;
+  border:2px solid var(--line); border-radius:12px; background:var(--bg);
+  color:var(--ink); font-weight:700; pointer-events:none;
+  animation:review-feedback-in 180ms ease-out both;
+}
+.review-feedback[data-result="correct"] { border-color:var(--accent); }
+.review-feedback[data-result="incorrect"] { border-color:var(--danger); }
+.review-feedback[data-result="saved"], .review-feedback[data-result="downloaded"] { border-color:var(--accent); }
+.review-feedback[data-result="saved"] .review-feedback-icon,
+.review-feedback[data-result="downloaded"] .review-feedback-icon { border-radius:50%; background:var(--accent); }
+.review-feedback[data-result="saved"] .review-feedback-icon::after,
+.review-feedback[data-result="downloaded"] .review-feedback-icon::after {
+  content:""; position:absolute; left:7px; top:3px; width:5px; height:10px;
+  border:solid var(--on-btn); border-width:0 2px 2px 0; rotate:45deg;
+}
+.review-feedback[data-result="unsure"] .review-feedback-icon { display:none; }
+.review-feedback[data-result="wrong-folder"] .review-feedback-icon { display:none; }
+.review-feedback[data-result="cancelled"] .review-feedback-icon { display:none; }
+.review-feedback-icon { position:relative; flex:none; width:20px; height:20px; }
+.review-feedback[data-result="correct"] .review-feedback-icon {
+  border-radius:50%; background:var(--accent); transform:scale(.45);
+  animation:review-pop 350ms ease-out both;
+}
+.review-feedback[data-result="correct"] .review-feedback-icon::before,
+.review-feedback[data-result="correct"] .review-feedback-icon::after {
+  content:""; position:absolute; left:8px; top:8px; width:4px; height:4px;
+  border-radius:50%; background:var(--accent);
+  box-shadow:0 -16px var(--accent), 16px 0 var(--accent), 0 16px var(--accent), -16px 0 var(--accent);
+  animation:review-burst 650ms ease-out both;
+}
+.review-feedback[data-result="correct"] .review-feedback-icon::after {
+  rotate:45deg; animation-delay:80ms;
+}
+.review-feedback[data-result="incorrect"] .review-feedback-icon {
+  animation:review-shake 320ms ease-in-out;
+}
+.review-feedback[data-result="incorrect"] .review-feedback-icon::before,
+.review-feedback[data-result="incorrect"] .review-feedback-icon::after {
+  content:""; position:absolute; left:9px; top:0; width:3px; height:20px;
+  border-radius:2px; background:var(--danger); rotate:45deg;
+}
+.review-feedback[data-result="incorrect"] .review-feedback-icon::after { rotate:-45deg; }
+@keyframes review-feedback-in {
+  from { opacity:0; translate:0 -8px; } to { opacity:1; translate:0 0; }
+}
+@keyframes review-pop {
+  from { transform:scale(.35); opacity:.5; } to { transform:scale(.65); opacity:1; }
+}
+@keyframes review-shake {
+  0%,100% { translate:0; } 25%,75% { translate:-5px; } 50% { translate:5px; }
+}
+@keyframes review-burst {
+  from { opacity:1; scale:.45; } to { opacity:0; scale:1.5; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .review-feedback, .review-feedback-icon, .review-feedback-icon::before,
+  .review-feedback-icon::after { animation:none !important; }
+  .review-feedback[data-result="correct"] .review-feedback-icon::before,
+  .review-feedback[data-result="correct"] .review-feedback-icon::after { display:none; }
+}
+.review-export-bar {
+  display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:12px;
+  max-width:var(--measure); margin:0 auto; padding:12px 16px 0;
+}
+body:not(.at-end) .review-export-bar { display:none; }
+.review-export-note { margin:0; font-size:var(--fs-small); color:var(--ink-2); }
+.review-export-note:empty { display:none; }
+.review-export-help-wrap { position:relative; }
+.review-export-help {
+  width:32px; height:32px; padding:0; border:1px solid var(--line); border-radius:50%;
+  color:var(--ink-2); font-weight:700; line-height:1;
+}
+.review-export-popup {
+  position:absolute; bottom:calc(100% + 10px); left:50%; translate:-50% 0; z-index:20;
+  width:min(320px, calc(100vw - 32px)); padding:14px 16px;
+  background:var(--surface); color:var(--ink); border:1px solid var(--line); border-radius:12px;
+  box-shadow:0 8px 24px rgba(0,0,0,.18); text-align:left;
+}
+.review-export-popup[hidden] { display:none; }
+.review-export-popup-text { margin:0 0 8px; font-size:var(--fs-small); line-height:1.6; }
+.review-export-popup-close { display:block; margin-left:auto; }
+@media print {
+  .review-export-bar { display:none !important; }
+  .review-feedback { display:none !important; }
+  .review-reset, .review-status, .review-choice-label, .review-unsure { display:none !important; }
+  .review-diagnostic[hidden] { display:list-item !important; }
+  .review-diagnostics[hidden] { display:block !important; }
+  .review-choice::after { display:none; }
+  .review-extra[hidden] { display:block !important; }
+  .review-choice { border:0 !important; box-shadow:none !important; padding:0; }
+}
+
+</style>
+<script id="review-interaction-model" type="application/json">{"cards": {"p1": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "8570170e7e3948bb81fa0859ba6e1a3f3156e01cf38093df5fd4174383762ba9"}, "p10": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "fd64479c47896e9c48cbada9d2436bec372d1c7b601ca971bc7fc7f87aa3f0d1"}, "p11": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "3cc28c76224274a7f08909cc138856a26cd253550a389a2a34beaf6c8712c641"}, "p12": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "f6d4d4a558aedf8d63b6c649f90798529836a1f6dcac34f6b6d9bf6f2b408b9b"}, "p13": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "8e9b0050ebcc47cc8b82081fa29e2dac0698c31ec0d246e6b7f4e683fca7a84e"}, "p14": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "40c8d74d126235569771f3a429b5ff734195a003ae353079252f8f97a4474940"}, "p15": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "f48ca41bd5a9a3e25a807340f5d5f7ec804aa486d195133427db0d139e6fef47"}, "p16": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "5fb29ed2e0672f75546d77655f379c1d37d89b51c71d74326f73929efbfaad4f"}, "p17": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "d2c2ff4d05867b6f42c58a53b695a80858a2352435e978a728c654f2df366fdd"}, "p18": {"answer": "5", "mode": "ambiguous", "notice": "(3)의 ‘역평행일 때만’도 엄밀히는 틀려 단일 정답 판정이 어려워요.", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "42c997353258b636719cc7c90ed4d4699c2853428e2f9e65c3670fd82cf9578e"}, "p19": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "05141c65d502ccfa0207e283678e629f09f98dfab9261ee9abfcc474b2545a42"}, "p2": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "a6e1aa1904f8cda556295a41f9778782356a7b599dc08f4367aa29cc7161292c"}, "p20": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "2127bc474a48c5179e6ed11ab72dc86ef372f621b36af7b298f6db1645d66812"}, "p21": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "68d23dfcc3201a03dde1e95f8f2fcf9bf9c3b2b029f69af57d4c55217be5835d"}, "p22": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "59a8f95209ecb045453585b44b3ebe045ece5a94d96c829ec8b5a02ddcd8497a"}, "p23": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "e7df0e9a97f0b3a58442d355e66ecf57149f8232c1b17552d5f367cebe8ebce8"}, "p24": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "948fb4c862ea7ed6c89ba94091c74eff8be4bbfecb42fa81f2ceb8665bbdf3bd"}, "p25": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "e371ade3e7068469b6ea6adf317c7ce96dadfb9b8c0becadfcf7e6453cb3b0ba"}, "p26": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "5a5c25fd7f22444752d4c22169dadebf0100be85c2d36158a43a70815fd8248c"}, "p27": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "7e802cfbf1e3d1ab87416debd962065a2bc9350fb42f0d88694ea0f71d679b0d"}, "p28": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "f1b4751588e843d2689ea248ffcd8987282ea82161ac800362bee47bfb5b78af"}, "p29": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "585684e86830d4aa7178938ca2e2ad05df3e6b007071c52e18937cfcac1a0509"}, "p3": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "a0d535d6b63e582ba50100c162f23c2300651de1ed00f7f413b8c65a9b2c5ea5"}, "p30": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "3b3e083d87131feab068a3435876dbe5774d0fdbb37a874bf1ccdced60a53c9c"}, "p31": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 3, "id": "1", "index": 0}, {"diagnostic": 4, "id": "2", "index": 1}, {"diagnostic": 5, "id": "3", "index": 2}, {"diagnostic": 6, "id": "4", "index": 3}, {"diagnostic": 7, "id": "5", "index": 4}], "version": "bd8c2c1c0b7b1bdf48784f7d32cdf5cdc7c7f0dc858968b729d0444bb42dd349"}, "p32": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "35898e2351f9fe42859c3e0e8791108c62856916887cd6673b211d98ef51db00"}, "p33": {"answer": "5", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "140dd148be40d39f4ee893ed98bda628be8fc4eb83022d97182e00eb3f885988"}, "p34": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "764b0a817e87f97cdc682c07419a265af612d74040aac46ea24d83c224961e44"}, "p4": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "059c9749f98369c8bbe63a0770e98f853e4bd38c0cb6892857f3183636c94ec7"}, "p5": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "e0f11f7b63293fc2292ec2a2d659cb8b538d143683c6b64b068654358a736511"}, "p6": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "001e216dfe8a5fc0c3154362a8f79ec7e6beb07b42c569519aa70833e8e613d0"}, "p7": {"answer": "5", "mode": "ambiguous", "notice": "(2) 모두 맞다도 논리적으로 틀려 단일 정답 판정이 어려워요.", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "b6ffcff8ff7315a665e29e8422c354a7537b498d31436fcf573ac114480a837b"}, "p8": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "de0e3d0e561f25d1f7e472323796141e384e611d853d8a4529014548cb347fcc"}, "p9": {"answer": "5", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "57913e7249827ffd1250711c6bb5bf78724a91ac1f8d25bd992c8e215fed6e3d"}}, "documentId": "복습문제_1001_Chromosome_Changes_and_DNA_Replication.html", "errors": [], "schema": 1, "skipped": []}</script>
+<script>
+(function (scope) {
+  'use strict';
+  function stripDiagnosticPrefix(text, id) {
+    const match = text.match(/^\s*(?:\((\d+)\)|([A-Z])[.)])\s*/);
+    return match && (match[1] || match[2]) === id ? text.slice(match[0].length) : text;
+  }
+  function scrollAnswerIntoView(scroller, selectedLi, answerLi, selectedButton, answerButton) {
+    if (!scroller || !selectedLi.getClientRects().length) return;
+    const viewport = scroller.getBoundingClientRect();
+    const height = scroller.clientHeight;
+    const margin = 16;
+    const span = (a, b) => {
+      const x = a.getBoundingClientRect(), y = b.getBoundingClientRect();
+      return {top:Math.min(x.top, y.top), bottom:Math.max(x.bottom, y.bottom)};
+    };
+    let target = span(selectedLi, answerLi);
+    if (target.bottom - target.top > height - 2 * margin)
+      target = span(selectedButton, answerButton);
+    if (target.bottom - target.top > height - 2 * margin)
+      target = span(selectedButton, selectedButton);
+    scroller.scrollTop += (target.top + target.bottom - viewport.top - viewport.bottom) / 2;
+  }
+  function grade(card, selected) {
+    if (!card.options.some(o => o.id === selected)) return null;
+    if (card.mode === 'ambiguous') return 'ambiguous';
+    return selected === card.answer ? 'correct' : 'incorrect';
+  }
+  function storageKey(documentId, cardId) {
+    return 'od-review-attempt:v1:' + encodeURIComponent(documentId) + ':' + encodeURIComponent(cardId);
+  }
+  function readAttempt(storage, key, card) {
+    try {
+      const value = JSON.parse(storage.getItem(key));
+      return value && value.version === card.version && grade(card, value.selected) !== null ? value.selected : null;
+    } catch { return null; }
+  }
+  function readUnsure(storage, key, card) {
+    try {
+      const value = JSON.parse(storage.getItem(key));
+      return !!value && value.version === card.version && grade(card, value.selected) !== null && value.unsure === true;
+    } catch { return false; }
+  }
+  function writeAttempt(storage, key, card, selected, unsure) {
+    try {
+      if (selected === null) storage.removeItem(key);
+      else storage.setItem(key, JSON.stringify({version:card.version, selected, unsure:unsure === true}));
+    } catch {}
+  }
+  function exportKey(documentId) {
+    return 'od-review-export:v1:' + encodeURIComponent(documentId);
+  }
+  function readSnapshot(storage, key) {
+    const empty = () => ({schema:1, cards:{}});
+    try {
+      const value = JSON.parse(storage.getItem(key));
+      return value && value.schema === 1 && value.cards && typeof value.cards === 'object' && !Array.isArray(value.cards)
+        ? value : empty();
+    } catch { return empty(); }
+  }
+  function writeSnapshot(storage, key, snapshot) {
+    try { storage.setItem(key, JSON.stringify(snapshot)); } catch {}
+  }
+  function updateSnapshot(snapshot, selectedById, ids, now, unsureById) {
+    const cards = Object.assign({}, snapshot.cards);
+    for (const id of ids) {
+      const selected = selectedById[id] === undefined ? null : selectedById[id];
+      const unsure = selected !== null && !!unsureById && unsureById[id] === true;
+      const prev = cards[id];
+      if (prev && prev.selected === selected && (prev.unsure === true) === unsure) continue;
+      cards[id] = {selected, unsure, updatedAt: selected === null ? null : now.toISOString()};
+    }
+    return {schema:1, cards};
+  }
+  function buildExport(model, snapshot, meta) {
+    const counts = {correct:0, incorrect:0, ambiguous:0};
+    let unsure = 0;
+    const cards = meta.ids.map(id => {
+      const data = model.cards[id];
+      const entry = snapshot.cards[id] || {};
+      const result = grade(data, entry.selected);
+      if (result !== null) counts[result] += 1;
+      const marked = result !== null && entry.unsure === true;
+      if (marked) unsure += 1;
+      return {
+        id, title: meta.titles[id] || '',
+        selected: result === null ? null : entry.selected,
+        answer: data.answer, result, unsure: marked,
+        updatedAt: result === null ? null : (entry.updatedAt || null)
+      };
+    });
+    const answered = counts.correct + counts.incorrect + counts.ambiguous;
+    return {
+      schema:1, documentId:model.documentId, range:meta.range, exportedAt:meta.now.toISOString(),
+      summary:{total:cards.length, answered, unanswered:cards.length - answered,
+        correct:counts.correct, incorrect:counts.incorrect, ambiguous:counts.ambiguous, unsure},
+      skipped: model.skipped || [], cards
+    };
+  }
+  function exportFilename(documentId, now) {
+    const p = n => String(n).padStart(2, '0');
+    const stamp = now.getFullYear() + p(now.getMonth() + 1) + p(now.getDate()) +
+      '-' + p(now.getHours()) + p(now.getMinutes());
+    return documentId.replace(/\.html?$/i, '') + '_풀이기록_' + stamp + '.json';
+  }
+  function handleStore(win) {
+    const run = async (mode, fn) => {
+      const db = await new Promise((resolve, reject) => {
+        const req = win.indexedDB.open('od-review-export', 1);
+        req.onupgradeneeded = () => req.result.createObjectStore('handles');
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+      try {
+        return await new Promise((resolve, reject) => {
+          const tx = db.transaction('handles', mode);
+          const req = fn(tx.objectStore('handles'));
+          tx.oncomplete = () => resolve(req.result);
+          tx.onerror = tx.onabort = () => reject(tx.error);
+        });
+      } finally { db.close(); }
+    };
+    return {
+      get: () => run('readonly', st => st.get('root')).then(h => h || null, () => null),
+      set: h => run('readwrite', st => st.put(h, 'root')).catch(() => {}),
+      clear: () => run('readwrite', st => st.delete('root')).catch(() => {})
+    };
+  }
+  async function resolveExportDir(root, documentId, range) {
+    const child = async (dir, name, create) => {
+      try { return await dir.getDirectoryHandle(name, create ? {create:true} : undefined); }
+      catch (error) { if (error && error.name === 'NotFoundError') return null; throw error; }
+    };
+    if (root.name === '풀이기록') return root;
+    if (root.name === '복습노트') {
+      const day = range ? await child(root, range, false) : null;
+      return day ? child(day, '풀이기록', true) : null;
+    }
+    try { await root.getFileHandle(documentId); }
+    catch (error) { if (error && error.name === 'NotFoundError') return null; throw error; }
+    return child(root, '풀이기록', true);
+  }
+  const isCancel = error => !!error && (error.name === 'AbortError' || error.name === 'NotAllowedError');
+  // The first export asks for the folder once and remembers it (IndexedDB), so
+  // later exports write straight into <날짜>/풀이기록 without a picker.
+  async function saveExport(win, text, filename, meta) {
+    meta = meta || {};
+    if (typeof win.showDirectoryPicker === 'function') {
+      const store = meta.store || handleStore(win);
+      const write = async root => {
+        const dir = await resolveExportDir(root, meta.documentId, meta.range);
+        if (!dir) return 'wrong-folder';
+        const file = await dir.getFileHandle(filename, {create:true});
+        const out = await file.createWritable();
+        await out.write(text);
+        await out.close();
+        return 'saved';
+      };
+      try {
+        const remembered = await store.get();
+        if (remembered) {
+          try {
+            let permission = await remembered.queryPermission({mode:'readwrite'});
+            if (permission !== 'granted') permission = await remembered.requestPermission({mode:'readwrite'});
+            if (permission !== 'granted') return 'cancelled';
+            if (await write(remembered) === 'saved') return 'saved';
+          } catch (error) { if (isCancel(error)) return 'cancelled'; }
+          await store.clear();
+        }
+        const root = await win.showDirectoryPicker({mode:'readwrite', id:'od-review-export'});
+        const result = await write(root);
+        if (result === 'saved') await store.set(root);
+        return result;
+      } catch (error) {
+        if (isCancel(error)) return 'cancelled';
+      }
+    }
+    const url = win.URL.createObjectURL(new win.Blob([text], {type:'application/json'}));
+    const a = win.document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    win.document.body.append(a);
+    a.click();
+    a.remove();
+    win.setTimeout(() => win.URL.revokeObjectURL(url), 1000);
+    return 'downloaded';
+  }
+  function mount(root, model, storage) {
+    if (!model || model.schema !== 1 || !model.cards) return;
+    const win = root.defaultView;
+    const emit = (id, selected, result, restored = false) => root.dispatchEvent(
+      new win.CustomEvent('od:answer', {detail:{id, selected, result, restored}}));
+    const element = (tag, cls, text) => {
+      const el = root.createElement(tag);
+      el.className = cls;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    };
+    const selectedById = {};
+    const unsureById = {};
+    let feedback = null;
+    let feedbackTimer = null;
+    let feedbackOwner = null;
+    function clearFeedback(owner = null) {
+      if (owner !== null && owner !== feedbackOwner) return;
+      if (feedbackTimer !== null) win.clearTimeout(feedbackTimer);
+      feedbackTimer = null;
+      if (feedback) feedback.remove();
+      feedback = null;
+      feedbackOwner = null;
+    }
+    function showFeedback(result, id, message, duration) {
+      clearFeedback();
+      if (!message && result !== 'correct' && result !== 'incorrect') return;
+      feedback = element('div', 'review-feedback');
+      feedback.dataset.reviewFeedback = '';
+      feedback.dataset.result = result;
+      feedback.setAttribute('aria-hidden', 'true');
+      feedback.append(
+        element('span', 'review-feedback-icon'),
+        element('span', 'review-feedback-text', message || (result === 'correct' ? '정답이에요' : '다시 확인해요'))
+      );
+      root.body.append(feedback);
+      feedbackOwner = id;
+      feedbackTimer = win.setTimeout(clearFeedback, duration || 1100);
+    }
+    const UNSURE_ICON_OFF = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+    const UNSURE_ICON_ON = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+    for (const [id, data] of Object.entries(model.cards)) {
+      const card = root.getElementById(id);
+      if (!card || card.classList.contains('review-ready')) continue;
+      const aid = Array.from(root.querySelectorAll('.aid')).find(n => n.dataset.cardId === id);
+      const solution = (aid || card).querySelector('details.solution');
+      const choices = Array.from(card.querySelectorAll('.choices > li'));
+      const diagnostics = solution ? Array.from(solution.querySelectorAll('ol.steps > li')) : [];
+      const options = data.options;
+      // Validate every reference before moving a single original node.
+      if (!solution || !Array.isArray(options) || choices.length !== options.length ||
+          !options.length || !options.some(o => o.id === data.answer) ||
+          new Set(options.map(o => o.index)).size !== options.length ||
+          new Set(options.map(o => o.diagnostic)).size !== options.length ||
+          options.some(o => !choices[o.index] || !diagnostics[o.diagnostic])) continue;
+      const positions = diagnostics.map(n => ({node:n, parent:n.parentNode, next:n.nextSibling}));
+      const diagnosticTexts = [];
+      const choiceNodes = choices.map(n => Array.from(n.childNodes));
+      const summary = solution.querySelector('summary');
+      const summaryText = summary ? summary.textContent : '';
+      const originalOpen = solution.open;
+      const originalHidden = solution.hidden;
+      let status, reset, notice, unsureBtn;
+      try {
+        // Some future cards supply the caution only as metadata. Keep its full
+        // explanation in the solution panel, without duplicating existing prose.
+        const compact = text => text.replace(/\s+/g, '');
+        if (data.mode === 'ambiguous' && data.notice &&
+            !compact(solution.textContent).includes(compact(data.notice))) {
+          notice = element('p', 'review-notice', data.notice);
+          solution.append(notice);
+        }
+        const controls = options.map(o => {
+          const li = choices[o.index];
+          const button = element('button', 'review-choice');
+          button.type = 'button';
+          const complex = li.querySelector('a,button,input,select,textarea,table,div,p,figure,ul,ol');
+          if (complex) {
+            button.textContent = o.id + '번 선택';
+            const content = element('div', 'review-choice-content');
+            content.id = id + '-choice-content-' + o.index;
+            content.append(...Array.from(li.childNodes));
+            button.setAttribute('aria-describedby', content.id);
+            li.append(button, content);
+          } else {
+            button.append(...Array.from(li.childNodes));
+            li.append(button);
+          }
+          const badge = element('span', 'review-choice-label');
+          badge.hidden = true;
+          button.append(badge);
+          button.setAttribute('aria-pressed', 'false');
+          const list = element('ol', 'review-diagnostics');
+          list.id = id + '-review-diagnostics-' + o.index;
+          const diagnostic = diagnostics[o.diagnostic];
+          const first = diagnostic.firstChild;
+          if (first && first.nodeType === 3) {
+            diagnosticTexts.push({node:first, text:first.textContent});
+            first.textContent = stripDiagnosticPrefix(first.textContent, o.id);
+          }
+          diagnostic.classList.add('review-diagnostic');
+          diagnostic.hidden = true;
+          list.append(diagnostic);
+          li.append(list);
+          return {id:o.id, button, badge, diagnostic, list};
+        });
+        status = element('p', 'review-status');
+        status.setAttribute('role', 'status');
+        status.setAttribute('aria-live', 'polite');
+        reset = element('button', 'review-reset text-btn', '다시 풀기');
+        reset.type = 'button';
+        card.querySelector('.choices').before(status);
+        card.querySelector('.choices').after(reset);
+        const key = storageKey(model.documentId, id);
+        let selected = readAttempt(storage, key, data);
+        let unsure = selected !== null && readUnsure(storage, key, data);
+        selectedById[id] = selected;
+        unsureById[id] = unsure;
+        unsureBtn = element('button', 'review-unsure solved-btn');
+        unsureBtn.type = 'button';
+        // Same look and place as the 푼 문제 button: bottom of the aid panel.
+        (aid || solution).append(unsureBtn);
+        const expanded = new Set(selected === null ? [] : [selected, data.answer]);
+        function paintDisclosure(c) {
+          const answered = selected !== null;
+          const open = answered && expanded.has(c.id);
+          c.diagnostic.hidden = !open;
+          c.list.hidden = !open;
+          if (answered) {
+            c.button.setAttribute('aria-expanded', String(open));
+            c.button.setAttribute('aria-controls', c.list.id);
+          } else {
+            c.button.removeAttribute('aria-expanded');
+            c.button.removeAttribute('aria-controls');
+          }
+        }
+        function paint() {
+          const answered = selected !== null;
+          const result = grade(data, selected);
+          reset.hidden = !answered;
+          unsureBtn.hidden = !answered;
+          unsureBtn.innerHTML = (unsure ? UNSURE_ICON_ON : UNSURE_ICON_OFF) +
+            '<span>' + (unsure ? '애매함 표시 취소' : '애매함으로 표시') + '</span>';
+          unsureBtn.setAttribute('aria-pressed', String(unsure));
+          unsureBtn.dataset.unsure = String(unsure);
+          status.textContent = !answered ? '' : result === 'ambiguous'
+            ? '단일 정답 판정 주의'
+            : result === 'correct' ? '정답이에요.' : '정답이 아니에요. 보기별 이유를 확인해 보세요.';
+          status.dataset.result = result || '';
+          controls.forEach(c => {
+            c.button.dataset.selected = String(c.id === selected);
+            if (answered) c.button.removeAttribute('aria-pressed');
+            else c.button.setAttribute('aria-pressed', 'false');
+            c.button.dataset.result = !answered ? '' : c.id === data.answer
+              ? (data.mode === 'ambiguous' ? 'intended' : 'correct')
+              : c.id === selected ? (data.mode === 'ambiguous' ? 'uncertain' : 'selected') : '';
+            c.badge.hidden = !answered;
+            c.badge.textContent = !answered ? '' : [
+              c.id === selected ? '내 선택' : '',
+              c.id === data.answer ? (data.mode === 'ambiguous' ? '출제 의도상 답' : '정답')
+                : data.mode === 'single' ? '정답 아님' : ''
+            ].filter(Boolean).join(' · ');
+            paintDisclosure(c);
+          });
+          solution.hidden = !answered;
+          solution.open = answered;
+          if (summary) summary.textContent = '추가 해설 · 수업과의 연결';
+        }
+        controls.forEach(c => c.button.addEventListener('click', () => {
+          if (selected !== null) {
+            if (expanded.has(c.id)) expanded.delete(c.id);
+            else expanded.add(c.id);
+            paintDisclosure(c);
+            return;
+          }
+          selected = c.id;
+          selectedById[id] = selected;
+          unsure = false;
+          unsureById[id] = false;
+          expanded.add(selected);
+          expanded.add(data.answer);
+          writeAttempt(storage, key, data, selected);
+          paint();
+          emit(id, selected, grade(data, selected));
+          showFeedback(grade(data, selected), id);
+          const selectedOption = options.find(o => o.id === selected);
+          const answerOption = options.find(o => o.id === data.answer);
+          const selectedControl = controls.find(control => control.id === selected);
+          const answerControl = controls.find(control => control.id === data.answer);
+          win.requestAnimationFrame(() => {
+            if (!card.isConnected || !card.getClientRects().length) return;
+            scrollAnswerIntoView(root.querySelector('.content'),
+              choices[selectedOption.index], choices[answerOption.index],
+              selectedControl.button, answerControl.button);
+          });
+        }));
+        reset.addEventListener('click', () => {
+          clearFeedback(id);
+          selected = null;
+          selectedById[id] = null;
+          unsure = false;
+          unsureById[id] = false;
+          expanded.clear();
+          writeAttempt(storage, key, data, null);
+          paint();
+          emit(id, null, null);
+          root.dispatchEvent(new win.CustomEvent('od:mark', {detail:{id}}));
+          controls[0].button.focus();
+        });
+        unsureBtn.addEventListener('click', () => {
+          if (selected === null) return;
+          unsure = !unsure;
+          unsureById[id] = unsure;
+          writeAttempt(storage, key, data, selected, unsure);
+          paint();
+          root.dispatchEvent(new win.CustomEvent('od:mark', {detail:{id}}));
+          showFeedback('unsure', id, unsure ? '애매함으로 표시했어요' : '애매함 표시를 취소했어요');
+        });
+        card.classList.add('review-ready');
+        solution.classList.add('review-extra');
+        paint();
+        if (selected !== null) emit(id, selected, grade(data, selected), true);
+        else {
+          try {
+            if (storage.getItem(key) !== null) {
+              writeAttempt(storage, key, data, null);
+              emit(id, null, null, true);
+            }
+          } catch {}
+        }
+      } catch (error) {
+        // Keep a readable static question if enhancement cannot be completed.
+        diagnosticTexts.forEach(p => { p.node.textContent = p.text; });
+        choices.forEach((li, i) => li.replaceChildren(...choiceNodes[i]));
+        positions.slice().reverse().forEach(p => {
+          p.node.hidden = false;
+          p.node.classList.remove('review-diagnostic');
+          p.parent.insertBefore(p.node, p.next);
+        });
+        for (const el of [status, reset, notice, unsureBtn]) if (el) el.remove();
+        solution.hidden = originalHidden;
+        solution.open = originalOpen;
+        if (summary) summary.textContent = summaryText;
+        solution.classList.remove('review-extra');
+        card.classList.remove('review-ready');
+        win.console.warn('문항 상호작용을 적용하지 못했습니다:', id, error);
+      }
+    }
+    const exportCards = Array.from(root.querySelectorAll('main article.card')).filter(el => model.cards[el.id]);
+    const pager = root.querySelector('.pager');
+    if (exportCards.length && pager && !pager.querySelector('.review-export-bar')) {
+      const ids = exportCards.map(el => el.id);
+      const titles = {};
+      exportCards.forEach(el => { titles[el.id] = ((el.querySelector('h3') || {}).textContent || '').trim(); });
+      const snapKey = exportKey(model.documentId);
+      let snapshot = readSnapshot(storage, snapKey);
+      root.addEventListener('od:leave', ({detail}) => {
+        const id = detail && detail.screen && detail.screen.id;
+        if (!model.cards[id]) return;
+        snapshot = updateSnapshot(snapshot, selectedById, [id], new Date(), unsureById);
+        writeSnapshot(storage, snapKey, snapshot);
+      });
+      root.addEventListener('od:mark', ({detail}) => {
+        const id = detail && detail.id;
+        if (!model.cards[id]) return;
+        snapshot = updateSnapshot(snapshot, selectedById, [id], new Date(), unsureById);
+        writeSnapshot(storage, snapKey, snapshot);
+      });
+      const bar = element('div', 'review-export-bar');
+      const button = element('button', 'btn btn-primary review-export', 'JSON 내보내기');
+      button.type = 'button';
+      const note = element('p', 'review-export-note sr-only');
+      note.setAttribute('role', 'status');
+      note.setAttribute('aria-live', 'polite');
+      const helpWrap = element('div', 'review-export-help-wrap');
+      const help = element('button', 'text-btn review-export-help', '?');
+      help.type = 'button';
+      help.setAttribute('aria-label', '저장 폴더 도움말');
+      help.setAttribute('aria-expanded', 'false');
+      const popup = element('div', 'review-export-popup');
+      popup.id = 'review-export-popup';
+      popup.setAttribute('role', 'note');
+      popup.hidden = true;
+      help.setAttribute('aria-controls', popup.id);
+      popup.append(
+        element('p', 'review-export-popup-text',
+          '처음 한 번만 이 HTML이 들어 있는 복습노트/날짜 폴더(또는 복습노트 폴더)를 골라 주세요. ' +
+          '그 뒤로는 창 없이 풀이기록 폴더에 바로 저장돼요. Chrome은 다운로드·문서·바탕 화면 자체는 막아요.'),
+        element('button', 'text-btn review-export-popup-close', '닫기'));
+      popup.querySelector('button').type = 'button';
+      helpWrap.append(help, popup);
+      const setHelp = open => {
+        popup.hidden = !open;
+        help.setAttribute('aria-expanded', String(open));
+      };
+      help.addEventListener('click', () => setHelp(popup.hidden));
+      popup.querySelector('button').addEventListener('click', () => { setHelp(false); help.focus(); });
+      root.addEventListener('keydown', e => { if (e.key === 'Escape' && !popup.hidden) { setHelp(false); help.focus(); } });
+      root.addEventListener('click', e => { if (!popup.hidden && !helpWrap.contains(e.target)) setHelp(false); });
+      root.addEventListener('od:screen', () => setHelp(false));
+      bar.append(button, helpWrap, note);
+      pager.prepend(bar);
+      root.addEventListener('od:screen', () => { note.textContent = ''; });
+      button.addEventListener('click', async () => {
+        if (button.disabled) return;
+        button.disabled = true;
+        const now = new Date();
+        snapshot = updateSnapshot(snapshot, selectedById, ids, now, unsureById);
+        writeSnapshot(storage, snapKey, snapshot);
+        const data = buildExport(model, snapshot, {ids, titles, range: root.body.dataset.range || '', now});
+        let outcome;
+        try {
+          outcome = await saveExport(win, JSON.stringify(data, null, 2) + '\n', exportFilename(model.documentId, now),
+            {documentId: model.documentId, range: root.body.dataset.range || ''});
+        }
+        finally { button.disabled = false; }
+        const message = outcome === 'saved' ? '풀이기록 폴더에 저장했어요'
+          : outcome === 'downloaded' ? '다운로드 폴더에 저장했어요'
+          : outcome === 'wrong-folder' ? '복습노트/' + (root.body.dataset.range || '날짜') + ' 폴더를 골라 주세요'
+          : '저장을 취소했어요';
+        note.textContent = message + '.';
+        showFeedback(outcome, 'export', message, 2200);
+      });
+    }
+    // Existing page CSS hides side panels when printing. Move original details,
+    // including static questions, into their cards for print, then restore them.
+    if (!root.documentElement.dataset.reviewPrint) {
+      root.documentElement.dataset.reviewPrint = 'ready';
+      let printPositions = [];
+      win.addEventListener('beforeprint', () => {
+        if (printPositions.length) return;
+        root.querySelectorAll('.aid[data-card-id]').forEach(aid => {
+          const card = root.getElementById(aid.dataset.cardId);
+          if (!card) return;
+          Array.from(aid.children).forEach(node => {
+            printPositions.push({node, parent:aid, open:node.open});
+            if (node.tagName === 'DETAILS') node.open = true;
+            card.append(node);
+          });
+        });
+      });
+      win.addEventListener('afterprint', () => {
+        printPositions.forEach(p => {p.parent.append(p.node); p.node.open = p.open;});
+        printPositions = [];
+      });
+    }
+  }
+  const api = {stripDiagnosticPrefix, grade, storageKey, readAttempt, readUnsure, writeAttempt, mount,
+    exportKey, readSnapshot, writeSnapshot, updateSnapshot, buildExport, exportFilename, saveExport, resolveExportDir, handleStore};
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else scope.ReviewInteraction = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
+</script>
+<script>(function () {
+      function start() {
+        try {
+          let storage = null;
+          try { storage = window.sessionStorage; } catch {}
+          ReviewInteraction.mount(document, JSON.parse(document.getElementById('review-interaction-model').textContent), storage);
+        } catch (error) { console.warn('복습문제 상호작용 초기화 실패:', error); }
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
+      else start();
+    })();</script>
+<!-- review-interaction:end -->
+</body>
+</html>
