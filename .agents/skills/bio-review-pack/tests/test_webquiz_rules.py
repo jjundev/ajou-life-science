@@ -95,5 +95,21 @@ class TestSelectionRules(unittest.TestCase):
         self.assertIn("`ㄱ.`~`ㄷ.`", self.cards)
 
 
+class TestReportRules(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.skill = read(SKILL / "SKILL.md")
+        # 9단계 안 코드 블록에 "## 복습팩 …" 줄이 있어 section()은 거기서 끊긴다. 다음 절 제목까지 직접 자른다.
+        cls.report = cls.skill[cls.skill.index("### 9. 보고"):cls.skill.index("## 오류 처리")]
+
+    def test_report_counts_types(self):
+        self.assertIn("변형 v (쌍둥이 a · 그림 b · 상황 c · ㄱㄴㄷ d · 부정형 e)", self.report)
+        self.assertIn("0개인 유형은 사유", self.report)
+
+    def test_report_mentions_style_update(self):
+        self.assertIn("webquiz-style.md 갱신 제안", self.report)
+        self.assertIn("풀이기록", self.report)
+
+
 if __name__ == "__main__":
     unittest.main()
