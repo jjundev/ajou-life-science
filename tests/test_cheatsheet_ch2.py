@@ -151,6 +151,12 @@ class TestSections(Base):
         self.assertHas("② 용어 바꿔 부르기", "명반응", "광의존반응", "암반응", "광독립반응", "크렙스 회로",
                        "TCA 회로", "전자전달사슬", "막간 공간", "ATP 생성효소", "화학삼투설", "뉴클레오티드")
 
+    def test_s03_atp(self):
+        self.assertHas("③ ATP", "아데닌", "리보스", "인산기", "ADP", "능동수송", "확산")
+        self.assertIn("<svg", section("③ ATP"))
+
+    def test_s04_enzyme(self):
+        self.assertHas("④ 효소", "활성화 에너지", "활성 부위", "특이성", "보조인자", "조효소", "변성", "최적 온도", "펩신", "트립신", "젖당")
 
 if __name__ == "__main__":
     unittest.main()
