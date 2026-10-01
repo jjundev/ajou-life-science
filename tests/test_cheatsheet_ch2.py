@@ -168,6 +168,12 @@ class TestSections(Base):
     def test_s07_etc(self):
         self.assertHas("⑦ 전자전달·화학삼투", "막 사이 공간", "ATP 합성효소", "최종 전자수용체", "H⁺ 농도 기울기", "환원", "미첼")
         self.assertIn("<svg", section("⑦ 전자전달·화학삼투"))
+    def test_s08_fermentation(self):
+        self.assertHas("⑧ 발효", "젖산", "알코올", "아세트알데하이드", "에탄올", "NAD⁺", "해당과정", "효모", "요구르트", "중간 대사산물")
+
+    def test_s09_organelles(self):
+        self.assertHas("⑨ 미토콘드리아↔엽록체", "크리스테", "틸라코이드", "스트로마", "그라나", "막 사이 공간", "기질", "내막계")
+        self.assertIn("<svg", section("⑨ 미토콘드리아↔엽록체"))
 
 if __name__ == "__main__":
     unittest.main()
