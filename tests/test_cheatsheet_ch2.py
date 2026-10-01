@@ -174,6 +174,16 @@ class TestSections(Base):
     def test_s09_organelles(self):
         self.assertHas("⑨ 미토콘드리아↔엽록체", "크리스테", "틸라코이드", "스트로마", "그라나", "막 사이 공간", "기질", "내막계")
         self.assertIn("<svg", section("⑨ 미토콘드리아↔엽록체"))
+    def test_s10_equation(self):
+        self.assertHas("⑩ 광합성 반응식", "6CO₂ + 6H₂O", "C₆H₁₂O₆ + 6O₂", "물", "NADPH", "광독립영양", "종속영양")
+
+    def test_s11_spectrum(self):
+        self.assertHas("⑪ 색소·스펙트럼", "흡수 스펙트럼", "작용 스펙트럼", "흡광도", "반사", "카로티노이드", "틸라코이드 막")
+        self.assertIn("<svg", section("⑪ 색소·스펙트럼"))
+
+    def test_s12_light_reactions(self):
+        self.assertHas("⑫ 광의존반응", "광계 2", "광계 1", "P680", "P700", "NADP⁺", "물의 광분해", "안테나", "반응 중심")
+        self.assertIn("<svg", section("⑫ 광의존반응"))
 
 if __name__ == "__main__":
     unittest.main()
