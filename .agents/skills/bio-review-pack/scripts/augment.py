@@ -49,6 +49,8 @@ def find_pack_files(pack_dir: Path | str) -> tuple[Path, Path]:
     for p in pack_dir.iterdir() if pack_dir.is_dir() else []:
         m = PACK_NAME_RE.match(nfc(p.name))
         if m and p.is_file():
+            if m.group(1) in found:
+                raise AugmentError(f"{pack_dir}: {m.group(1)} HTML이 둘 이상 있음 — 백업 사본을 폴더 밖으로 옮길 것")
             found[m.group(1)] = p
     if "정리노트" not in found or "복습문제" not in found:
         raise AugmentError(f"{pack_dir}: 정리노트·복습문제 HTML이 둘 다 있어야 함")
@@ -160,8 +162,20 @@ def extract(pack_dir: Path | str, run_dir: Path | str) -> dict:
         note_file.write_text(RECONSTRUCTED_NOTE + "\n", encoding="utf-8")
     elif note_file.exists():
         note_file.unlink()
+    warnings = []
+    if not reconstructed:  # 카드 밖(제목·안내·꼬리말·part 제목)을 HTML에서 손으로 고쳤으면 build가 manifest 값으로 되돌린다
+        try:
+            same = assemble.build_review(m, run_dir) == review
+        except (assemble.AssembleError, ValueError) as e:
+            same, why = False, f" ({e})"
+        else:
+            why = ""
+        if not same:
+            warnings.append("복습문제 HTML이 .pack manifest로 다시 조립한 결과와 다름(카드 밖 수정?) — "
+                            "build하면 제목·안내·꼬리말이 manifest 값으로 덮인다. 필요하면 RUN/manifest.json에 옮겨 적을 것" + why)
     return {"next_id": f"p{max(int(i[1:]) for i in base) + 1}",
-            "parts": dict(Counter(q["part"] for q in m["problems"])), "reconstructed": reconstructed}
+            "parts": dict(Counter(q["part"] for q in m["problems"])), "reconstructed": reconstructed,
+            "warnings": warnings}
 
 
 COUNT_LABELS = {"partA": r"웹과제", "partB": r"기출", "partC": r"(?:생성 )?변형(?: 연습)?"}
@@ -208,6 +222,8 @@ def refresh_texts(m: dict, base_parts: set[str]) -> list[str]:
                 intro = intro[:exam.end()] + f", {_phrase(intro, part, counts[part])}" + intro[exam.end():]
             else:
                 warnings.append(f"review_intro에 {NEW_LABELS[part]} 문항 수를 넣지 못함(직접 고칠 것)")
+        elif counts.get(part):
+            warnings.append(f"review_intro에 {NEW_LABELS[part]} 문항 수 표현이 없어 그대로 둠(직접 확인할 것)")
     m["review_intro"] = intro
     footer = m["footer_review"]
     chapters = sorted({int(mo.group(1)) for q in m["problems"] if q["part"] == "partA"
@@ -291,6 +307,8 @@ def main(argv: list[str] | None = None) -> int:
             print(f"다음 id: {info['next_id']}")
             print("part별 카드:", ", ".join(f"{k} {v}" for k, v in sorted(info["parts"].items())))
             print("manifest:", "HTML에서 복원(금지어 미복원)" if info["reconstructed"] else ".pack/manifest.json")
+            for w in info["warnings"]:
+                print("경고:", w)
         else:
             result = build(args.pack, args.run)
             print(result["review"])

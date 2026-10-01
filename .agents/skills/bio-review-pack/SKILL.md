@@ -216,6 +216,7 @@ SKILL=…; REPO=…; RUN=…; python3 "$SKILL/scripts/augment.py" extract "$REPO
 - 기존 카드를 `RUN/cards/pN.html`로, manifest를 `RUN/manifest.json`으로 꺼내고 다음 id를 출력한다.
 - manifest는 `복습노트/<range>/.pack/manifest.json`을 쓴다. 없으면 HTML에서 복원한다(출력에 "금지어 미복원"). 복원했거나 `.pack/log.md`에 "금지어 미복원"이 있으면 A2에서 금지어를 다시 정한다.
 - `.pack` manifest와 HTML 카드가 다르다고 멈추면, 누가 HTML을 손으로 고친 것이다. 차이를 보고하고 멈춘다.
+- `경고:`로 "HTML이 .pack manifest로 다시 조립한 결과와 다름"이 나오면 카드 밖(제목·안내·꼬리말)을 손으로 고친 것이다. A3이 manifest 값으로 덮으므로, 살릴 수정이면 `RUN/manifest.json`에 옮겨 적는다. 같은 종류 HTML이 둘 이상이라고 멈추면 백업 사본을 팩 폴더 밖으로 옮긴다.
 
 **A2. 새 문항 정하기** (기존 절차 재사용)
 - 장 bank를 `references/problem-selection.md` 2절로 검증하고 3절 감사표를 `RUN/question-audit.md`에 쓴다. "이전 팩" 판정에 **이 팩 자신의 기존 `data-source`도** 넣는다.

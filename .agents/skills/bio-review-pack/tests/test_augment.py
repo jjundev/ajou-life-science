@@ -63,6 +63,22 @@ class TestExtract(unittest.TestCase):
         m = augment.reconstruct(note, review)
         self.assertTrue(m["sections"][0]["topics"][1]["supp"])
 
+    def test_html_drift_from_pack_manifest_warns(self):
+        _, review = augment.find_pack_files(self.pack)
+        review.write_text(review.read_text(encoding="utf-8").replace("<h1>복습문제 2선 — 테스트</h1>", "<h1>복습문제 2선 — 손으로 고침</h1>"), encoding="utf-8")
+        info = augment.extract(self.pack, self.run)
+        self.assertTrue(any("manifest" in w for w in info["warnings"]), info["warnings"])
+
+    def test_clean_pack_has_no_warnings(self):
+        self.assertEqual(augment.extract(self.pack, self.run)["warnings"], [])
+
+    def test_duplicate_review_files_stop(self):
+        _, review = augment.find_pack_files(self.pack)
+        (self.pack / "복습문제_0101-0102_Old_Copy.html").write_text(review.read_text(encoding="utf-8"), encoding="utf-8")
+        with self.assertRaises(augment.AugmentError) as cm:
+            augment.find_pack_files(self.pack)
+        self.assertIn("둘 이상", str(cm.exception))
+
     def test_pack_manifest_mismatch_stops(self):
         m = json.loads((self.pack / ".pack" / "manifest.json").read_text(encoding="utf-8"))
         m["problems"] = [q for q in m["problems"] if q["id"] != "p2"]
@@ -203,6 +219,14 @@ class TestRefreshTexts(unittest.TestCase):
         warnings = augment.refresh_texts(m, {"partB"})
         self.assertEqual(m["review_intro"], intro)
         self.assertTrue(any("review_intro" in w for w in warnings))
+
+    def test_existing_part_without_count_phrase_warns(self):
+        intro = "기출을 먼저 풀고 변형으로 확인해요."
+        m = self.manifest(intro, "출처: 기출(4강 합본). 변형 연습은 수업 내용으로 만든 생성 문제입니다.", {"partB": 15, "partC": 6})
+        warnings = augment.refresh_texts(m, {"partB", "partC"})
+        self.assertEqual(m["review_intro"], intro)
+        self.assertTrue(any("기출" in w for w in warnings), warnings)
+        self.assertTrue(any("생성 변형" in w for w in warnings), warnings)
 
     def test_ensure_parts_orders_defaults(self):
         m = {"parts": [{"id": "partB", "title": "B. 기출", "short": "B 기출"}],
