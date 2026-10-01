@@ -1,0 +1,33 @@
+import re
+import unittest
+
+from _util import SKILL
+
+
+class TestSkillFiles(unittest.TestCase):
+    def setUp(self):
+        self.md = (SKILL / "SKILL.md").read_text(encoding="utf-8")
+
+    def test_frontmatter(self):
+        m = re.match(r"---\nname: (.+)\ndescription: (.+)\n---\n", self.md)
+        self.assertIsNotNone(m)
+        self.assertEqual(m.group(1), "bio-cheatsheet")
+        self.assertLessEqual(len(m.group(2)), 1024)
+
+    def test_referenced_files_exist(self):
+        refs = set(re.findall(r"`((?:references|scripts|assets)/[\w.-]+)`", self.md))
+        refs |= set(re.findall(r"\$SKILL/((?:references|scripts|assets)/[\w.-]+)", self.md))
+        self.assertTrue(refs)
+        for r in sorted(refs):
+            self.assertTrue((SKILL / r).exists(), r)
+
+    def test_briefs_point_to_existing_files(self):
+        for name in ("section-brief.md", "review-brief.md"):
+            text = (SKILL / "references" / name).read_text(encoding="utf-8")
+            for r in re.findall(r"\{SKILL\}/((?:references|assets|scripts)/[\w.-]+)", text):
+                self.assertTrue((SKILL / r).exists(), f"{name}: {r}")
+
+    def test_claude_symlink(self):
+        link = SKILL.parents[2] / ".claude" / "skills" / "bio-cheatsheet"
+        self.assertTrue(link.is_symlink())
+        self.assertEqual(link.resolve(), SKILL.resolve())
