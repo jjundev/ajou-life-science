@@ -11,6 +11,7 @@ manifest는 <팩 폴더>/.pack/manifest.json을 쓰고, 없으면 정리노트·
 
 from __future__ import annotations
 
+import argparse
 from collections import Counter
 import html
 import json
@@ -20,6 +21,7 @@ import sys
 import unicodedata
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import assemble  # noqa: E402
 import check_html  # noqa: E402
 import manifest as manifest_mod  # noqa: E402
 
@@ -160,3 +162,146 @@ def extract(pack_dir: Path | str, run_dir: Path | str) -> dict:
         note_file.unlink()
     return {"next_id": f"p{max(int(i[1:]) for i in base) + 1}",
             "parts": dict(Counter(q["part"] for q in m["problems"])), "reconstructed": reconstructed}
+
+
+COUNT_LABELS = {"partA": r"웹과제", "partB": r"기출", "partC": r"(?:생성 )?변형(?: 연습)?"}
+NEW_LABELS = {"partA": "웹과제", "partB": "기출", "partC": "생성 변형"}
+STYLE_RE = re.compile(r"(?:웹과제|기출|(?:생성 )?변형(?: 연습)?) (<b>)?\d+(개|문항)")
+PARTC_NOTE = "변형 연습은 수업 내용으로 만든 생성 문제"
+
+
+def ensure_parts(m: dict) -> None:
+    have = {p["id"] for p in m["parts"]}
+    for pid in sorted({q["part"] for q in m["problems"]} - have):
+        if pid not in DEFAULT_PARTS:
+            raise AugmentError(f"알 수 없는 part: {pid}")
+        title, short = DEFAULT_PARTS[pid]
+        m["parts"].append({"id": pid, "title": title, "short": short})
+    m["parts"].sort(key=lambda p: p["id"])
+
+
+def _phrase(intro: str, part: str, count: int) -> str:
+    style = STYLE_RE.search(intro)
+    bold, unit = (bool(style.group(1)), style.group(2)) if style else (False, "문항")
+    num = f"<b>{count}{unit}</b>" if bold else f"{count}{unit}"
+    return f"{NEW_LABELS[part]} {num}"
+
+
+def refresh_texts(m: dict, base_parts: set[str]) -> list[str]:
+    """제목의 N선, 안내의 문항 수, 꼬리말의 웹과제(N장)을 맞춘다. 숫자만 바꾸고 문장은 자르지 않는다."""
+    warnings: list[str] = []
+    counts = Counter(q["part"] for q in m["problems"])
+    title, n = re.subn(r"\d+선", f"{len(m['problems'])}선", m["review_title"], count=1)
+    m["review_title"] = title
+    if not n:
+        warnings.append("review_title에 'N선'이 없어 그대로 둠")
+    intro = m["review_intro"]
+    for part, label in COUNT_LABELS.items():
+        pat = re.compile(rf"({label} (?:<b>)?)(\d+)(?=(?:개|문항))")
+        if pat.search(intro):
+            intro = pat.sub(lambda mo: f"{mo.group(1)}{counts.get(part, 0)}", intro, count=1)
+        elif counts.get(part) and part not in base_parts:
+            exam = re.search(r"기출 (?:<b>)?\d+(?:개|문항)(?:</b>)?", intro)
+            if part == "partA" and STYLE_RE.search(intro):
+                intro = f"{_phrase(intro, part, counts[part])}, {intro}"
+            elif part == "partC" and exam:
+                intro = intro[:exam.end()] + f", {_phrase(intro, part, counts[part])}" + intro[exam.end():]
+            else:
+                warnings.append(f"review_intro에 {NEW_LABELS[part]} 문항 수를 넣지 못함(직접 고칠 것)")
+    m["review_intro"] = intro
+    footer = m["footer_review"]
+    chapters = sorted({int(mo.group(1)) for q in m["problems"] if q["part"] == "partA"
+                       for mo in [re.match(r"웹과제 (\d+)장", q["source"])] if mo})
+    if chapters:
+        label = "웹과제(" + "·".join(f"{c}장" for c in chapters) + ")"
+        exam = re.search(r"기출\([^)]*\)", footer)
+        if re.search(r"웹과제\([^)]*\)", footer):
+            footer = re.sub(r"웹과제\([^)]*\)", label, footer, count=1)
+        elif exam:
+            footer = footer[:exam.end()] + f" · {label}" + footer[exam.end():]
+        else:
+            warnings.append(f"footer_review에 {label}을 넣지 못함(직접 고칠 것)")
+    if counts.get("partC") and PARTC_NOTE not in footer:
+        footer = footer.rstrip() + f" {PARTC_NOTE}입니다."
+    m["footer_review"] = footer
+    return warnings
+
+
+def build(pack_dir: Path | str, run_dir: Path | str, today: str | None = None) -> dict:
+    pack_dir, run_dir = Path(pack_dir), Path(run_dir)
+    note_path, review_path = find_pack_files(pack_dir)
+    base_file = run_dir / "work" / "base-ids.json"
+    if not base_file.is_file():
+        raise AugmentError("RUN/work/base-ids.json 없음 — extract를 먼저 실행")
+    base = json.loads(base_file.read_text(encoding="utf-8"))
+    try:
+        m = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as e:
+        raise AugmentError(f"RUN/manifest.json 읽기 실패: {e}") from e
+    probs = {q.get("id"): q for q in m.get("problems", [])}
+    top = max(int(i[1:]) for i in base)
+    errors = []
+    for pid, old in base.items():
+        q = probs.get(pid)
+        if q is None:
+            errors.append(f"{pid}: manifest에서 사라짐")
+            continue
+        errors += [f"{pid}.{k}: {old[k]!r} → {q.get(k)!r}" for k in ("part", "source", "answer") if q.get(k) != old[k]]
+    added = [q["id"] for q in m["problems"] if q["id"] not in base]
+    for pid in added:
+        if not re.fullmatch(r"p\d+", pid) or int(pid[1:]) <= top:
+            errors.append(f"{pid}: 새 문항 id는 p{top + 1}부터")
+    for pid in probs:
+        card = run_dir / "cards" / f"{pid}.html"
+        if not card.is_file():
+            errors.append(f"{pid}: 카드 파일 없음")
+        elif f'id="{pid}"' not in card.read_text(encoding="utf-8"):
+            errors.append(f"{pid}: 카드 안 id가 파일 이름과 다름")
+    if errors:
+        raise AugmentError("기존 카드 보호 검사 실패:\n" + "\n".join(errors))
+    ensure_parts(m)
+    order = {p["id"]: i for i, p in enumerate(m["parts"])}
+    m["problems"].sort(key=lambda q: order[q["part"]])  # 안정 정렬: part 안의 기존 순서 + 새 문항은 끝
+    warnings = refresh_texts(m, {v["part"] for v in base.values()})
+    problems = manifest_mod.validate(m)
+    if problems:
+        raise AugmentError("manifest 검증 실패:\n" + "\n".join(problems))
+    if manifest_mod.review_name(m) != nfc(review_path.name):
+        raise AugmentError(f"manifest 이름 {manifest_mod.review_name(m)} ≠ 팩 파일 {nfc(review_path.name)}")
+    review_html = assemble.build_review(m, run_dir)
+    assemble.check_figures(run_dir)
+    (run_dir / "manifest.json").write_text(json.dumps(m, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    review_path.write_text(review_html, encoding="utf-8")
+    assemble.copy_figures(run_dir, pack_dir, m["range"])
+    note_file = run_dir / "work" / "reconstructed.txt"
+    note = note_file.read_text(encoding="utf-8").strip() if note_file.is_file() else ""
+    assemble.save_pack_records(run_dir, pack_dir, "augment", added, today=today, note=note)
+    return {"review": review_path, "added": added, "warnings": warnings}
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("command", choices=["extract", "build"])
+    ap.add_argument("pack")
+    ap.add_argument("run")
+    args = ap.parse_args(argv)
+    try:
+        if args.command == "extract":
+            info = extract(args.pack, args.run)
+            print(f"다음 id: {info['next_id']}")
+            print("part별 카드:", ", ".join(f"{k} {v}" for k, v in sorted(info["parts"].items())))
+            print("manifest:", "HTML에서 복원(금지어 미복원)" if info["reconstructed"] else ".pack/manifest.json")
+        else:
+            result = build(args.pack, args.run)
+            print(result["review"])
+            print("추가:", ", ".join(result["added"]) or "없음")
+            for w in result["warnings"]:
+                print("경고:", w)
+    except (AugmentError, manifest_mod.ManifestError, assemble.AssembleError, OSError, ValueError) as e:
+        print(f"augment 실패: {e}", file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
