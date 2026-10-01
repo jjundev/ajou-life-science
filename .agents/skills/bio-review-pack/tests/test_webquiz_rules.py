@@ -66,5 +66,34 @@ class TestWebquizStyle(unittest.TestCase):
         self.assertIn("이 파일은 고치지 않는다", u)
 
 
+class TestSelectionRules(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.s6 = section(read(REFS / "problem-selection.md"), "## 6. 변형 연습")
+        cls.cards = read(REFS / "card-rules.md")
+
+    def test_section6_points_to_style(self):
+        self.assertIn("`references/webquiz-style.md`", self.s6)
+        self.assertIn("10~15개", self.s6)
+        self.assertIn("못 채우면", self.s6)
+        self.assertNotIn("3~8개", self.s6)
+
+    def test_twin_exception_and_five_options(self):
+        self.assertIn("쌍둥이는 발문만 원문 그대로", self.s6)
+        self.assertIn("보기는 5개가 기본", self.s6)
+        self.assertNotIn("보기 수는 원문 형식에 맞출 필요가 없다", self.s6)
+
+    def test_variants_table_has_type_column(self):
+        self.assertIn("| id | 혼동 묶음 | 웹과제 유형 | 형태 |", self.s6)
+        for v in ("`쌍둥이`", "`그림`", "`상황`", "`ㄱㄴㄷ`", "`없음`", "`+부정형`", "`+용어`"):
+            with self.subTest(v=v):
+                self.assertIn(v, self.s6)
+
+    def test_card_rules_for_twin_and_statements(self):
+        self.assertIn("정답을 바꾼 생성 변형이에요", self.cards)
+        self.assertIn("원문 정답과 달라진 점", self.cards)
+        self.assertIn("`ㄱ.`~`ㄷ.`", self.cards)
+
+
 if __name__ == "__main__":
     unittest.main()
