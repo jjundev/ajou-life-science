@@ -26,6 +26,17 @@ class TestSkillFiles(unittest.TestCase):
     def setUpClass(cls):
         cls.text = SKILL_MD.read_text(encoding="utf-8")
 
+    def test_augment_mode_documented(self):
+        self.assertIn("`[MMDD | MMDD-MMDD] [lite] [augment]`", self.text)
+        body = self.text[self.text.index("## 보강 모드"):self.text.index("## 오류 처리")]
+        for s in ("scripts/augment.py", "extract", "build", "--only review", "IDS=", ".pack/manifest.json",
+                  "풀이기록", "금지어 미복원", "기존 카드 번호"):
+            with self.subTest(s=s):
+                self.assertIn(s, body)
+        for step in ("A1", "A2", "A3", "A4", "A5", "A6"):
+            with self.subTest(step=step):
+                self.assertIn(f"**{step}.", body)
+
     def test_frontmatter(self):
         m = re.match(r"---\nname: (.+)\ndescription: (.+)\n---\n", self.text)
         self.assertIsNotNone(m, "frontmatter는 name, description 두 줄")
@@ -147,6 +158,17 @@ class TestBackupSnippet(unittest.TestCase):
         names = sorted(unicodedata.normalize("NFC", n) for n in os.listdir(d))
         self.assertEqual(names, ["figures_0922", "복습문제_0922_A.md", "장마감_0922_3장.md", "정리노트_0922_A.html"])
 
+    def test_backs_up_pack_records(self):
+        pack = self.notes / "0922"
+        (pack / ".pack").mkdir(parents=True)
+        (pack / ".pack" / "manifest.json").write_text("{}", encoding="utf-8")
+        (pack / "복습문제_0922_A.html").write_text("r", encoding="utf-8")
+        r = self.backup("0922")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn("백업 2항목(파일 2개)", r.stdout)
+        (d,) = self.backups()
+        self.assertTrue((d / ".pack" / "manifest.json").is_file())
+
     def test_bad_range_fails_loudly(self):
         (self.notes / "정리노트_0922_A.html").write_text("n", encoding="utf-8")
         for bad in ("", "<range>", "922"):
@@ -200,6 +222,15 @@ class TestBlindCopySnippet(unittest.TestCase):
 
     def tearDown(self):
         self._tmp.cleanup()
+
+    def test_ids_filter_keeps_only_listed_cards(self):
+        env = dict(os.environ, REVIEW=str(self.review), OUT=str(self.out), IDS="p2")
+        r = subprocess.run([sys.executable, "-"], input=self.code, env=env, capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        out = self.out.read_text(encoding="utf-8")
+        self.assertIn("## p2.", out)
+        self.assertNotIn("## p1.", out)
+        self.assertIn("1 문항", r.stdout)
 
     def test_blind_copy_keeps_png_and_svg_figures(self):
         env = dict(os.environ, REVIEW=str(self.review), OUT=str(self.out))

@@ -338,9 +338,9 @@ class TestReviewBrowser(unittest.TestCase):
         self.assertEqual(data['summary']['total'], len(exported))
         self.assertEqual(data['summary']['answered'], 1)
         self.assertEqual(data['summary']['unanswered'], len(exported) - 1)
-        self.assertEqual(data['cards'][0]['id'], 'p1')
-        self.assertIsNotNone(data['cards'][0]['selected'])
-        self.assertIsNotNone(data['cards'][0]['updatedAt'])
+        first = next(c for c in data['cards'] if c['id'] == 'p1')  # partA가 앞에 붙으면 p1이 첫 카드가 아닐 수 있다
+        self.assertIsNotNone(first['selected'])
+        self.assertIsNotNone(first['updatedAt'])
         self.assertIsNone(data['cards'][-1]['selected'])
 
     def test_export_goes_to_fixed_folder_with_remembered_picker_id(self):
@@ -523,7 +523,7 @@ class TestReviewBrowser(unittest.TestCase):
         self.page.locator('.review-export').click()
         expect(self.page.locator('.review-export-note')).to_have_text('풀이기록 폴더에 저장했어요.')
         data = self.saved_json()
-        self.assertTrue(data['cards'][0]['unsure'])
+        self.assertTrue(next(c for c in data['cards'] if c['id'] == 'p1')['unsure'])
         self.assertEqual(data['summary']['unsure'], 1)
         self.assertFalse(data['cards'][-1]['unsure'])
         self.page.evaluate("location.hash = '#p1'")
@@ -532,7 +532,7 @@ class TestReviewBrowser(unittest.TestCase):
         self.page.locator('.review-export').click()
         expect(self.page.locator('.review-export-note')).to_have_text('풀이기록 폴더에 저장했어요.')
         data = self.saved_json()
-        self.assertFalse(data['cards'][0]['unsure'])
+        self.assertFalse(next(c for c in data['cards'] if c['id'] == 'p1')['unsure'])
         self.assertEqual(data['summary']['unsure'], 0)
 
     def test_unsure_export_with_storage_blocked(self):

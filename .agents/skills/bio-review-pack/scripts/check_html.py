@@ -34,6 +34,8 @@ ALLOWED_EXTERNAL_PREFIXES = (
     "https://cdn.jsdelivr.net/npm/pretendard@1.3.9/",
 )
 SUPP_LABEL = "보충 · 수업에서 다루지 않았어요"
+SUPP_LABEL_NOTE_GAP = "보충 · 노트에 빠졌던 수업 내용"
+SUPP_LABELS = (SUPP_LABEL, SUPP_LABEL_NOTE_GAP)
 # 스킬 템플릿을 바꾸기 전에 만든 팩의 라벨도 받아 준다.
 LEGACY_SUPP_LABELS = ("📎 보충 · 수업 미유도",)
 CARD_PARTS = {"problem", "original", "hint", "solution", "answer"}
@@ -303,8 +305,8 @@ def check_note(doc: Doc, m: dict) -> list[Problem]:
             out += [Problem("missing-term", t["id"], term) for term in t["required_terms"] if term not in con.text]
             out += [Problem("missing-layer", t["id"], layer) for layer in t["layers"] if layer not in con.child_classes]
             if t["supp"] and ("supp" not in con.child_classes
-                              or not any(label in con.text for label in (SUPP_LABEL, *LEGACY_SUPP_LABELS))):
-                out.append(Problem("missing-supp", t["id"], f"layer supp + '{SUPP_LABEL}' 필요"))
+                              or not any(label in con.text for label in (*SUPP_LABELS, *LEGACY_SUPP_LABELS))):
+                out.append(Problem("missing-supp", t["id"], f"layer supp + '{SUPP_LABEL}' 또는 '{SUPP_LABEL_NOTE_GAP}' 필요"))
             # 페이지 요약 패널(#sum-for)이 있는 템플릿으로 만든 팩만 검사한다.
             if SUM_PANEL_ID in doc.ids and t["layers"] and "sum" not in con.child_classes:
                 out.append(Problem("missing-sum", t["id"], '<div class="sum" hidden> 페이지 요약 없음'))

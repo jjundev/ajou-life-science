@@ -15,6 +15,7 @@ CLI: assemble.py --run RUN --out 복습노트/<range>
 from __future__ import annotations
 
 import argparse
+from datetime import date
 import html
 from pathlib import Path
 import re
@@ -126,6 +127,43 @@ def copy_figures(run_dir: Path, out_dir: Path, range_: str) -> int:
     return count
 
 
+PACK_RECORDS = ("manifest.json", "question-audit.md", "key-check.md", "variants.md", "problem-pages.txt")
+APPEND_ON_AUGMENT = ("question-audit.md", "key-check.md", "variants.md")
+
+
+def _ids_text(ids: list[str]) -> str:
+    if not ids:
+        return "없음"
+    if len(ids) <= 4:
+        return ", ".join(ids)
+    return f"{ids[0]}–{ids[-1]} ({len(ids)}개)"
+
+
+def save_pack_records(run_dir: Path | str, out_dir: Path | str, mode: str, added_ids: list[str],
+                      today: str | None = None, note: str = "") -> Path:
+    """RUN의 설계 기록을 out/.pack/ 에 남긴다. 보강이면 감사·변형 기록은 이어 붙이고, 없는 파일은 이전 것을 둔다."""
+    if mode not in ("full", "augment"):
+        raise AssembleError(f"알 수 없는 mode: {mode}")
+    run_dir, pack = Path(run_dir), Path(out_dir) / ".pack"
+    pack.mkdir(parents=True, exist_ok=True)
+    today = today or date.today().isoformat()
+    for name in PACK_RECORDS:
+        src, dst = run_dir / name, pack / name
+        if not src.is_file():
+            continue
+        if mode == "augment" and name in APPEND_ON_AUGMENT and dst.is_file():
+            old = dst.read_text(encoding="utf-8").rstrip("\n")
+            dst.write_text(f"{old}\n\n## {today} 보강\n\n{src.read_text(encoding='utf-8')}", encoding="utf-8")
+        else:
+            shutil.copyfile(src, dst)
+    log = pack / "log.md"
+    head = "" if log.is_file() else "# 팩 실행 기록\n\n"
+    line = f"- {today} {mode}: 추가 {_ids_text(added_ids)}" + (f" — {note}" if note else "") + "\n"
+    with open(log, "a", encoding="utf-8") as f:
+        f.write(head + line)
+    return pack
+
+
 def assemble(run_dir: Path | str, out_dir: Path | str) -> tuple[Path, Path]:
     run_dir, out_dir = Path(run_dir), Path(out_dir)
     m = manifest_mod.load(run_dir / "manifest.json")
@@ -138,6 +176,7 @@ def assemble(run_dir: Path | str, out_dir: Path | str) -> tuple[Path, Path]:
     note_path.write_text(note_html, encoding="utf-8")
     review_path.write_text(review_html, encoding="utf-8")
     copy_figures(run_dir, out_dir, m["range"])
+    save_pack_records(run_dir, out_dir, "full", [q["id"] for q in m["problems"]])
     return note_path, review_path
 
 
