@@ -110,6 +110,12 @@ class TestReportRules(unittest.TestCase):
         self.assertIn("webquiz-style.md 갱신 제안", self.report)
         self.assertIn("풀이기록", self.report)
 
+    def test_regeneration_protects_card_ids(self):
+        # 다시 만들 때 카드 번호가 바뀌면 interactive-overrides.json(카드 id 키)과 풀이기록이 엉뚱한 문항에 붙는다
+        self.assertIn("interactive-overrides.json", self.report)
+        self.assertIn("기존 카드 번호를 유지", self.report)
+        self.assertIn("git", self.report)
+
 
 if __name__ == "__main__":
     unittest.main()
