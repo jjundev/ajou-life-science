@@ -125,5 +125,50 @@ class TestAssemble(unittest.TestCase):
         self.assertEqual(assemble.fill("{{A}}", {"A": "{{B}}"}), "{{B}}")
 
 
+class TestPackRecords(unittest.TestCase):
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp())
+        self.run = self.tmp / "run"
+        shutil.copytree(MINI_RUN, self.run)
+        self.out = self.tmp / "out"
+        self.pack = self.out / ".pack"
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp)
+
+    def test_full_assemble_saves_manifest_records_and_log(self):
+        (self.run / "variants.md").write_text("| id |\n", encoding="utf-8")
+        assemble.assemble(self.run, self.out)
+        self.assertEqual(json.loads((self.pack / "manifest.json").read_text(encoding="utf-8"))["range"], "0101-0102")
+        self.assertEqual((self.pack / "variants.md").read_text(encoding="utf-8"), "| id |\n")
+        log = (self.pack / "log.md").read_text(encoding="utf-8")
+        self.assertTrue(log.startswith("# 팩 실행 기록\n\n"))
+        self.assertRegex(log, r"- \d{4}-\d{2}-\d{2} full: 추가 p1, p2\n")
+
+    def test_augment_appends_variants_and_log(self):
+        self.pack.mkdir(parents=True)
+        (self.pack / "variants.md").write_text("old\n", encoding="utf-8")
+        (self.pack / "log.md").write_text("# 팩 실행 기록\n\n- 2026-10-01 full: 추가 p1, p2\n", encoding="utf-8")
+        (self.run / "variants.md").write_text("new\n", encoding="utf-8")
+        assemble.save_pack_records(self.run, self.out, "augment", ["p3", "p4"], today="2026-10-09", note="HTML에서 복원")
+        v = (self.pack / "variants.md").read_text(encoding="utf-8")
+        self.assertEqual(v, "old\n\n## 2026-10-09 보강\n\nnew\n")
+        log = (self.pack / "log.md").read_text(encoding="utf-8")
+        self.assertTrue(log.endswith("- 2026-10-09 augment: 추가 p3, p4 — HTML에서 복원\n"))
+        self.assertEqual(log.count("\n- "), 2)
+
+    def test_missing_records_keep_previous(self):
+        self.pack.mkdir(parents=True)
+        (self.pack / "key-check.md").write_text("keep\n", encoding="utf-8")
+        assemble.save_pack_records(self.run, self.out, "augment", [], today="2026-10-09")
+        self.assertEqual((self.pack / "key-check.md").read_text(encoding="utf-8"), "keep\n")
+        self.assertIn("augment: 추가 없음", (self.pack / "log.md").read_text(encoding="utf-8"))
+
+    def test_long_id_list_is_summarised(self):
+        ids = [f"p{i}" for i in range(1, 57)]
+        assemble.save_pack_records(self.run, self.out, "full", ids, today="2026-10-09")
+        self.assertIn("full: 추가 p1–p56 (56개)", (self.pack / "log.md").read_text(encoding="utf-8"))
+
+
 if __name__ == "__main__":
     unittest.main()

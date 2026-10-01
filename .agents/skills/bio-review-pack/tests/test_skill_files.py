@@ -147,6 +147,17 @@ class TestBackupSnippet(unittest.TestCase):
         names = sorted(unicodedata.normalize("NFC", n) for n in os.listdir(d))
         self.assertEqual(names, ["figures_0922", "복습문제_0922_A.md", "장마감_0922_3장.md", "정리노트_0922_A.html"])
 
+    def test_backs_up_pack_records(self):
+        pack = self.notes / "0922"
+        (pack / ".pack").mkdir(parents=True)
+        (pack / ".pack" / "manifest.json").write_text("{}", encoding="utf-8")
+        (pack / "복습문제_0922_A.html").write_text("r", encoding="utf-8")
+        r = self.backup("0922")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn("백업 2항목(파일 2개)", r.stdout)
+        (d,) = self.backups()
+        self.assertTrue((d / ".pack" / "manifest.json").is_file())
+
     def test_bad_range_fails_loudly(self):
         (self.notes / "정리노트_0922_A.html").write_text("n", encoding="utf-8")
         for bad in ("", "<range>", "922"):

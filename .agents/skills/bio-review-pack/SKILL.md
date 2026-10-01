@@ -113,7 +113,7 @@ if not re.fullmatch(r"\d{4}(-\d{4})?", r) or not os.path.isdir(run):
     sys.exit(f"백업 중단: RANGE={r!r} 또는 RUN={run!r} 잘못됨")
 def want(n):
     n = u.normalize("NFC", n)
-    return n.startswith((f"정리노트_{r}_", f"복습문제_{r}_", f"장마감_{r}_")) or n == f"figures_{r}"
+    return n.startswith((f"정리노트_{r}_", f"복습문제_{r}_", f"장마감_{r}_")) or n in (f"figures_{r}", ".pack")
 def listdir_nfc(d):  # NFD 폴더명도 찾는다
     return {u.normalize("NFC", n): os.path.join(d, n) for n in os.listdir(d)} if os.path.isdir(d) else {}
 srcs = [listdir_nfc(notes).get(r), notes]  # 날짜 폴더, 예전 형식(바로 아래)
@@ -136,6 +136,7 @@ EOF
 python3 "$SKILL/scripts/assemble.py" --run "$RUN" --out "$REPO/복습노트/<range>"
 ```
 조립기는 `RUN/figures/`의 카드 그림을 `복습노트/<range>/figures_<range>/`로 복사한다.
+조립기는 `RUN`의 `manifest.json`·`question-audit.md`·`key-check.md`·`variants.md`·`problem-pages.txt`를 `복습노트/<range>/.pack/`에 복사하고 `.pack/log.md`에 실행 한 줄을 더한다. `.pack/`은 git으로 추적한다(금지어 목록과 감사표를 다음 보강에서 다시 쓴다). 내부 기록이라 STT 시각이 있어도 된다.
 
 ### 5. 기계 검사
 객관식은 `references/content-rules.md`의 보기·해설 식별자 규칙을 따른다. 조립 시 채점 모델이 자동 내장되며 연결 오류는 카드 원본에서 해결한다. 아래 검사기는 내장 채점 데이터와 원본의 일치도 검사한다. 브라우저 검증 때 정답·오답 선택, 내 선택·정답만 자동 펼침, 모든 보기별 해설의 개별 접기·펼치기, 다시 풀기와 선택 복원을 함께 확인한다. 선택·푼 기록은 `sessionStorage`라 새로고침·뒤로가기엔 남고 새 탭에서 다시 열면 초기화돼야 한다(`localStorage` 사용 금지). 마지막 문제 화면의 **JSON 내보내기** 버튼(폴더 선택창 저장, 취소·거부 처리)과 화면을 벗어날 때의 스냅샷 갱신, 풀이 패널의 **애매함으로 표시** 토글(JSON `unsure`)도 함께 확인한다.
