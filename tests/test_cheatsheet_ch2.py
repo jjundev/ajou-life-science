@@ -201,6 +201,22 @@ class TestSections(Base):
         for term in ["기질 수준 인산화", "산화적 인산화", "화학삼투설", "최종 전자수용체", "NAD⁺ 재생", "중간 대사산물",
                      "광계 1", "광계 2", "P680", "P700", "NADP⁺", "RuBP", "PGA", "G3P", "루비스코", "CAM"]:
             self.assertIn(term, t, term)
+    def test_s09_grana_is_thylakoid_stack(self):
+        self.assertHas("⑨ 미토콘드리아↔엽록체", "그라나 = 틸라코이드 더미")
+
+    def test_s13_no_stage_claim_above_counts(self):
+        self.assertNotIn("환원 단계에서", text(section("⑬ 캘빈 회로")))
+
+    def test_s01_chapter1_numbers_are_labelled(self):
+        for li in re.findall(r"<li>(.*?)</li>", section("① 시험장 체크"), re.S):
+            if "/17" in li or "17문항" in li:
+                self.assertIn("1장", text(li), text(li))
+
+    def test_svg_height_fits_fig_max(self):
+        # 단 너비 약 357px에서 --fig-max 35mm(≈132px)에 걸리면 그림이 축소돼 글자가 7.5pt 아래로 떨어진다
+        for w, h in re.findall(r'viewBox="0 0 (\d+) (\d+)"', body()):
+            if int(w) > 8:
+                self.assertLessEqual(int(h) * 357 / int(w), 132, f"viewBox {w}x{h}")
 
 if __name__ == "__main__":
     unittest.main()
