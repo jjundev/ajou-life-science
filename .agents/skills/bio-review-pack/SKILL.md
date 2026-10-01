@@ -90,7 +90,7 @@ EOF
 - 문항 감사와 선별은 `references/problem-selection.md`를 따른다.
   - 장의 모든 문항 분류는 `RUN/question-audit.md`, 정답 대조는 `RUN/key-check.md`, 문항별 원문 위치는 `RUN/problem-pages.txt`에 적는다.
   - 포함 문항은 **전부** manifest `problems`에 넣는다.
-  - 변형 연습(partC)은 `references/problem-selection.md` 6절로 설계해 포함 문항 뒤에 넣는다(`RUN/variants.md`).
+  - 변형 연습(partC)은 `references/problem-selection.md` 6절과 `references/webquiz-style.md`의 유형 할당으로 설계해 포함 문항 뒤에 넣는다(`RUN/variants.md`).
 - 검증: `python3 "$SKILL/scripts/manifest.py" "$RUN/manifest.json"` 결과가 `OK`여야 한다.
 
 ### 3. 작성
