@@ -1196,7 +1196,7 @@ BRCA1이 망가진 것을 **백스페이스**가 없는 키보드에 빗댔어�
 
 *0917 수업*
 
-- [복습문제 29선 — 9/17 수업 범위](복습문제_0917_Cell_Division.md)
+- [복습문제 44선 — 9/17 수업 범위](복습문제_0917_Cell_Division.md)
 - [직전 수업 0915 정리노트: 2장 세포호흡과 광합성](../0915/정리노트_0915_Cellular_Respiration_and_Photosynthesis.html)
 - [다음 수업 0922 복습팩: 유사분열·감수분열 과정과 멘델 유전](../0922/정리노트_0922_Cell_Division_and_Heredity.html)
 
