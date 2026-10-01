@@ -43,7 +43,7 @@ class TestWebquizStyle(unittest.TestCase):
 
     def test_evidence_numbers(self):
         body = section(self.text, "## 2. 수치")
-        for s in ("46", "70%", "33%", "17%"):
+        for s in ("46", "70%", "39%", "17%", "| 부정형 발문 | 8 | 4 | 6 | 18 (39%) |"):
             with self.subTest(s=s):
                 self.assertIn(s, body)
 
