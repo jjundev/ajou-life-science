@@ -181,7 +181,7 @@ python3 "$SKILL/scripts/html2md.py" "$REPO/복습노트/<range>/<정리노트>.h
 ## 복습팩 <range> 완료
 - 파일: 복습노트/<range>/… (html 2, md 2, figures_<range>/ N개)
 - 범위: 배운 쪽 … / 예고만: … / 끊긴 지점: "…"
-- 문항: 포함 N (웹과제 a, 기출 b) · 변형 v (쌍둥이 a · 그림 b · 상황 c · ㄱㄴㄷ d · 부정형 e) · 이전 팩 N · 보류 N · 범위 밖 N — 분류표 RUN/question-audit.md, 변형 RUN/variants.md. 0개인 유형은 사유를 한 줄씩
+- 문항: 포함 N (웹과제 w, 기출 x) · 변형 v (쌍둥이 t · 그림 g · 상황 s · ㄱㄴㄷ k · 부정형 n · 용어 r · 낯선참 u · 장섞기 c) · 이전 팩 N · 보류 N · 범위 밖 N — 분류표 RUN/question-audit.md, 변형 RUN/variants.md. 0개인 유형은 사유를 한 줄씩
 - 보류·범위 밖 문항: 번호와 사유를 한 줄씩(보고서만 읽어도 분류를 알 수 있게; RUN은 세션이 끝나면 사라질 수 있다)
 - 답안지 오류: 기출 3강 12 (인쇄 (2) → 판단 (3)) … (없으면 "없음")
 - 블라인드 검사: N/N 풀림 (고친 토픽: …)
