@@ -184,6 +184,23 @@ class TestSections(Base):
     def test_s12_light_reactions(self):
         self.assertHas("⑫ 광의존반응", "광계 2", "광계 1", "P680", "P700", "NADP⁺", "물의 광분해", "안테나", "반응 중심")
         self.assertIn("<svg", section("⑫ 광의존반응"))
+    def test_s13_calvin(self):
+        self.assertHas("⑬ 캘빈 회로", "RuBP", "루비스코", "PGA", "G3P", "스트로마", "6바퀴", "투입물", "18", "12")
+
+    def test_s14_photorespiration(self):
+        self.assertHas("⑭ 광호흡·C3/C4/CAM", "광호흡", "기공", "첫 번째로 안정한 분자", "옥수수", "사탕수수", "선인장", "밤")
+
+    def test_s15_compare(self):
+        self.assertHas("⑮ 호흡 vs 광합성", "NADH", "NADPH", "미토콘드리아", "엽록체", "식물세포", "동물세포", "물 → 산소")
+
+    def test_all_sections_present(self):
+        self.assertEqual([l for l, _ in sections()], LABELS)
+
+    def test_required_terms_from_chapter_close(self):
+        t = text(body())
+        for term in ["기질 수준 인산화", "산화적 인산화", "화학삼투설", "최종 전자수용체", "NAD⁺ 재생", "중간 대사산물",
+                     "광계 1", "광계 2", "P680", "P700", "NADP⁺", "RuBP", "PGA", "G3P", "루비스코", "CAM"]:
+            self.assertIn(term, t, term)
 
 if __name__ == "__main__":
     unittest.main()
