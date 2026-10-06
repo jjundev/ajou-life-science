@@ -3,13 +3,12 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILL_DIR = ROOT / ".gemini/skills/bio-stt"
-AGENTS_DIR = ROOT / ".agents/skills/bio-stt"
+SKILL_DIR = ROOT / ".agents/skills/bio-stt"
 CLAUDE_DIR = ROOT / ".claude/skills/bio-stt"
 
 class BioSttTests(unittest.TestCase):
     def setUp(self):
-        # We import from .gemini/skills/bio-stt/scripts/infer_context.py
+        # We import from .agents/skills/bio-stt/scripts/infer_context.py
         import sys
         scripts_dir = str(SKILL_DIR / "scripts")
         if scripts_dir not in sys.path:
@@ -17,9 +16,8 @@ class BioSttTests(unittest.TestCase):
 
     def test_01_skill_entrypoints_and_metadata(self):
         skill_md = SKILL_DIR / "SKILL.md"
-        self.assertTrue(skill_md.is_file(), "SKILL.md must exist in .gemini/skills/bio-stt/")
-        # Ensure it is NOT present in .agents/skills or .claude/skills (Gemini only)
-        self.assertFalse(AGENTS_DIR.exists(), ".agents/skills/bio-stt must NOT exist (disallow GPT/Codex)")
+        self.assertTrue(skill_md.is_file(), "SKILL.md must exist in .agents/skills/bio-stt/")
+        # Ensure it is NOT linked into .claude/skills (disallow Claude)
         self.assertFalse(CLAUDE_DIR.exists(), ".claude/skills/bio-stt must NOT exist (disallow Claude)")
 
         content = skill_md.read_text(encoding="utf-8")

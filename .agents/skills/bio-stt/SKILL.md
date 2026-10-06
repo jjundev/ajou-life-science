@@ -35,7 +35,7 @@ description: Use when transcribing biology lecture audio or video recordings (.m
 
 ```bash
 REPO="$(git rev-parse --show-toplevel)"
-python3 "$REPO/.gemini/skills/bio-stt/scripts/infer_context.py" "<AUDIO_PATH>" --repo "$REPO" --json > "/tmp/bio_stt_context.json"
+python3 "$REPO/.agents/skills/bio-stt/scripts/infer_context.py" "<AUDIO_PATH>" --repo "$REPO" --json > "/tmp/bio_stt_context.json"
 ```
 
 - 파일명에 날짜가 명시되어 있지 않은 경우 에러가 발생하므로, 사용자가 `--date MMDD`를 지정해야 한다.
@@ -99,7 +99,7 @@ Instructions:
 
 ```bash
 REPO="$(git rev-parse --show-toplevel)"
-python3 "$REPO/.gemini/skills/bio-stt/scripts/merge_transcripts.py" \
+python3 "$REPO/.agents/skills/bio-stt/scripts/merge_transcripts.py" \
   --dir "$WORK_DIR" \
   --prefix "${DATE}_생명" \
   --out "$REPO/STT/${DATE} 생명.md"
