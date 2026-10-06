@@ -37,7 +37,7 @@
   function readUnsure(storage, key, card) {
     try {
       const value = JSON.parse(storage.getItem(key));
-      return !!value && value.version === card.version && grade(card, value.selected) !== null && value.unsure === true;
+      return !!value && value.version === card.version && grade(card, value.selected) === 'correct' && value.unsure === true;
     } catch { return false; }
   }
   function writeAttempt(storage, key, card, selected, unsure) {
@@ -324,7 +324,7 @@
           const answered = selected !== null;
           const result = grade(data, selected);
           reset.hidden = !answered;
-          unsureBtn.hidden = !answered;
+          unsureBtn.hidden = result !== 'correct';
           unsureBtn.innerHTML = (unsure ? UNSURE_ICON_ON : UNSURE_ICON_OFF) +
             '<span>' + (unsure ? '애매함 표시 취소' : '애매함으로 표시') + '</span>';
           unsureBtn.setAttribute('aria-pressed', String(unsure));

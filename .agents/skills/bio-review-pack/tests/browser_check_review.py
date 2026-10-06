@@ -487,10 +487,14 @@ class TestReviewBrowser(unittest.TestCase):
     def unsure_button(self, cid='p1'):
         return self.page.locator(f'.aid[data-card-id="{cid}"] .review-unsure')
 
-    def test_unsure_button_appears_only_after_answer_and_toggles(self):
-        card = self.open()
+    def test_unsure_button_appears_only_after_correct_answer_and_toggles(self):
+        card = self.open()  # 정답 2번
         expect(self.unsure_button()).to_be_hidden()
-        card.locator('.review-choice').first.click()
+        card.locator('.review-choice').nth(0).click()
+        expect(self.unsure_button()).to_be_hidden()
+        card.locator('.review-reset').click()
+        expect(self.unsure_button()).to_be_hidden()
+        card.locator('.review-choice').nth(1).click()
         button = self.unsure_button()
         expect(button).to_be_visible()
         expect(button).to_have_text('애매함으로 표시')
@@ -502,9 +506,17 @@ class TestReviewBrowser(unittest.TestCase):
         expect(button).to_have_text('애매함으로 표시')
         expect(self.page.locator('[data-review-feedback]')).to_contain_text('애매함 표시를 취소했어요')
 
+    def test_unsure_button_hidden_on_ambiguous_question(self):
+        card = self.open('0929', 'p11')  # 모호 문항, 출제 의도상 답 3번
+        card.locator('.review-choice').nth(0).click()
+        expect(self.unsure_button('p11')).to_be_hidden()
+        card.locator('.review-reset').click()
+        card.locator('.review-choice').nth(2).click()
+        expect(self.unsure_button('p11')).to_be_hidden()
+
     def test_unsure_updates_snapshot_immediately_and_survives_navigation(self):
         card = self.open()
-        card.locator('.review-choice').first.click()
+        card.locator('.review-choice').nth(1).click()
         self.unsure_button().click()
         snap = self.page.evaluate(f"JSON.parse(sessionStorage.getItem({self.SNAP_KEY}))")
         self.assertTrue(snap['cards']['p1']['unsure'])
@@ -517,7 +529,7 @@ class TestReviewBrowser(unittest.TestCase):
     def test_unsure_is_exported_and_reset_clears_it(self):
         self.context.add_init_script(self.PICKER_MOCK)
         card = self.open()
-        card.locator('.review-choice').first.click()
+        card.locator('.review-choice').nth(1).click()
         self.unsure_button().click()
         self.go_to_last()
         self.page.locator('.review-export').click()
@@ -540,7 +552,7 @@ class TestReviewBrowser(unittest.TestCase):
             "for(const n of ['localStorage','sessionStorage']) Object.defineProperty(window,n,{get(){throw Error('blocked')}});")
         self.context.add_init_script(self.PICKER_MOCK)
         card = self.open()
-        card.locator('.review-choice').first.click()
+        card.locator('.review-choice').nth(1).click()
         self.unsure_button().click()
         self.go_to_last()
         self.page.locator('.review-export').click()

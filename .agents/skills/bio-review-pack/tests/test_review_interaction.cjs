@@ -154,7 +154,7 @@ test('내보내기: 카드별 unsure와 요약, 옛 스냅샷은 false, 출제 �
   assert.equal(out.summary.unsure, 2);
 });
 
-test('시도 저장: 애매함 표시 복원, 다시 풀기로 삭제, 구레코드는 false', () => {
+test('시도 저장: 애매함 표시 복원(정답만), 다시 풀기로 삭제, 구레코드는 false', () => {
   const data = new Map();
   const storage = {getItem:k=>data.get(k), setItem:(k,v)=>data.set(k,v), removeItem:k=>data.delete(k)};
   api.writeAttempt(storage, 'k', card, '2', true);
@@ -167,6 +167,10 @@ test('시도 저장: 애매함 표시 복원, 다시 풀기로 삭제, 구레코
   assert.equal(api.readUnsure(storage, 'k', card), false);
   assert.equal(api.readUnsure({getItem:()=>'{"version":"v1","selected":"2"}'}, 'k', card), false);
   assert.equal(api.readUnsure({getItem(){throw Error('x')}}, 'k', card), false);
+  api.writeAttempt(storage, 'k', card, '1', true);
+  assert.equal(api.readUnsure(storage, 'k', card), false);
+  api.writeAttempt(storage, 'k', {...card, mode:'ambiguous'}, '1', true);
+  assert.equal(api.readUnsure(storage, 'k', {...card, mode:'ambiguous'}), false);
 });
 
 function fakeWin(picker) {
