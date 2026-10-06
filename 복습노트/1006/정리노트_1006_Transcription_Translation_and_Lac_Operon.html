@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>생명과학 정리노트 1006</title>
+  <meta name="description" content="이영만 교수님 생명과학 · 1006 수업 (5장 DNA 복제와 유전자의 발현)">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('od-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']})"></script>
+  <style>
+    /* ---------- 토큰 ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #b54708; --prof: #6941c6; --supp: #067647; --danger: #d92d20;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --fs-title: clamp(28px, 6vw, 36px); --fs-h3: clamp(26px, 5.4vw, 32px); --fs-layer: 19px; --fs-lead: 22px; --fs-body: 17px; --fs-sub: 15px; --fs-small: 14px; --fs-label: 13px; --fs-fig: 12px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+      --radius: 8px; --measure: 680px; --tap: 48px; --btn-min: 160px;
+      --dur: 220ms; --dur-exit: 150ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+      /* 예전 조각이 참조할 수 있는 이름 */
+      --surface-2: var(--surface); --accent-soft: var(--surface); --warn-soft: var(--surface);
+      --prof-soft: var(--surface); --supp-soft: var(--surface); --eli5: var(--accent-ink); --eli5-soft: var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+        --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+        --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+    }
+
+    /* ---------- 기본 ---------- */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent-ink); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+
+    /* ---------- 상단 바 ---------- */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s2) var(--s4); display: flex; align-items: center; gap: var(--s3); min-height: 56px; }
+    .brand { flex: 1 1 auto; min-width: 0; font-size: var(--fs-body); font-weight: 700; white-space: nowrap; }
+    .text-btn { flex: none; min-height: 44px; min-width: 44px; padding: 0 var(--s3); border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); font: 600 var(--fs-small)/1 var(--font); cursor: pointer; }
+    .bar { height: 2px; background: var(--line); overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+
+    /* ---------- 본문 ---------- */
+    main { flex: 1 0 auto; width: 100%; max-width: var(--measure); margin: 0 auto; padding: var(--s6) var(--s5) var(--s7); }
+    .hero h1 { font-size: var(--fs-title); line-height: 1.3; margin: 0 0 var(--s3); letter-spacing: -0.02em; }
+    .hero p { color: var(--ink-2); margin: 0; }
+    section { margin-top: var(--s7); }
+    section > h2 { font-size: 22px; line-height: 1.4; margin: 0 0 var(--s4); }
+    .topic { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .topic h3 { margin: 0 0 var(--s2); font-size: var(--fs-h3); font-weight: 800; line-height: 1.3; letter-spacing: -0.02em; }
+    .tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+    .tag { font-size: var(--fs-label); line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+
+    /* 레이어: 배경 없이 라벨과 구분선으로 나눈다 */
+    .layer { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .layer.eli5 { margin-top: 0; padding-top: 0; border-top: 0; }
+    .layer > :first-child { margin-top: 0; }
+    .layer > :last-child { margin-bottom: 0; }
+    .layer-title { display: block; font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; color: var(--ink); margin-bottom: var(--s3); }
+    .layer.eli5 .layer-title { color: var(--accent-ink); }
+    .layer.eli5 .lead { font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; letter-spacing: -0.01em; margin: 0 0 var(--s4); }
+    /* 정확히 말하면: 본문 크기 그대로, 굵은 첫머리만 진하게 */
+    .layer.formal b { font-weight: 700; color: var(--ink); }
+    /* 교수님 말씀 · 주의: 보조 정보는 한 단계 작게 */
+    .layer.prof, .layer.warn, .layer.listen { font-size: var(--fs-sub); line-height: 1.7; }
+    .layer.prof blockquote { font-size: var(--fs-sub); }
+    .layer.prof .layer-title { color: var(--prof); }
+    .layer.warn, .layer.listen { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn .layer-title { color: var(--warn); font-size: var(--fs-body); }
+    .layer.listen .layer-title { color: var(--accent-ink); font-size: var(--fs-body); }
+    .layer.supp .badge.supp { margin-bottom: var(--s2); }
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
+    .badge.supp { color: var(--supp); }
+    .badge.exam { color: var(--warn); margin-right: var(--s1); }
+    blockquote { margin: var(--s3) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
+    ol.steps { padding-left: 1.4em; }
+    ol.steps li { margin: var(--s2) 0; }
+
+    /* 그림 · 수식 · 표 */
+    .figure { margin: var(--s4) 0; text-align: center; }
+    .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
+    .figure img { max-width: 100%; height: auto; }
+    .figure figcaption { font-size: var(--fs-small); color: var(--ink-2); margin-top: var(--s1); }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: var(--s1) 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+    th, td { border-bottom: 1px solid var(--line); padding: var(--s2); text-align: left; vertical-align: top; }
+    th { color: var(--ink-2); font-weight: 600; }
+    td:first-child, th:first-child { min-width: 6em; }
+
+    /* 위젯 */
+    .widget { background: var(--surface); border-radius: var(--radius); padding: var(--s4); margin: var(--s5) 0; }
+    .widget h4 { margin: 0 0 var(--s1); font-size: var(--fs-layer); line-height: 1.4; }
+    .widget-help { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s3); }
+    .controls { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--s2); font-size: var(--fs-small); }
+    .controls label { display: flex; align-items: center; gap: var(--s2); min-height: 44px; }
+    .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .widget svg { width: 100%; height: auto; background: var(--bg); border-radius: var(--radius); }
+    .readout { font-size: var(--fs-small); margin-top: var(--s2); }
+    .legend { font-size: var(--fs-label); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .sw { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: var(--s1); border-radius: 2px; }
+    .sw.truth { background: var(--ink-2); } .sw.fit { background: var(--accent); } .sw.train { background: var(--accent); height: 10px; width: 10px; border-radius: 50%; }
+    .sw.test { background: var(--warn); height: 10px; width: 10px; border-radius: 50%; } .sw.like { background: var(--accent); } .sw.prior { background: var(--prof); } .sw.post { background: var(--supp); }
+    .axis { stroke: var(--line); stroke-width: 1.5; }
+    .tick { fill: var(--ink-2); font-size: 11px; }
+    .plot-truth { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .plot-fit { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+    .pt-train { fill: var(--accent); }
+    .pt-test { fill: var(--warn); }
+    .plot-like { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .plot-prior { fill: none; stroke: var(--prof); stroke-width: 2; stroke-dasharray: 6 4; }
+    .plot-post { fill: none; stroke: var(--supp); stroke-width: 3; }
+    .mark-ml { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .mark-map { stroke: var(--supp); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 2; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 2.5; }
+    .fig-danger { stroke: var(--danger); fill: none; stroke-width: 2.5; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: 13px; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-fig); font-family: inherit; }
+
+    footer { width: 100%; max-width: var(--measure); margin: 0 auto; padding: 0 var(--s5) var(--s6); color: var(--ink-2); font-size: var(--fs-small); }
+
+    /* ---------- 하단 이동 바 ---------- */
+    .pager { position: sticky; bottom: 0; z-index: 10; background: var(--bg); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .pager-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s3) var(--s4); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); }
+    .pager-count { font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; min-width: 4em; }
+    .btn { min-height: var(--tap); min-width: var(--btn-min); padding: 0 var(--s6); border-radius: var(--radius); border: 0; font: 700 var(--fs-body)/1 var(--font); cursor: pointer; white-space: nowrap;
+      transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+    .btn-ghost { justify-self: start; background: var(--surface); color: var(--ink); }
+    .btn-primary { justify-self: end; background: var(--btn-bg); color: var(--on-btn); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    @media (hover: hover) {
+      .text-btn:hover, .btn-ghost:not(:disabled):hover { background: var(--line); }
+      .btn-primary:not(:disabled):hover { box-shadow: inset 0 0 0 100px rgba(0, 0, 0, .14); }
+    }
+
+    /* ---------- 목차 시트 ---------- */
+    .sheet { width: min(100%, var(--measure)); max-width: 100%; max-height: 80dvh; margin: auto auto 0; padding: 0; border: 0;
+      border-radius: 16px 16px 0 0; background: var(--bg); color: var(--ink); }
+    .sheet::backdrop { background: rgba(0, 0, 0, .4); }
+    .sheet-inner { padding: var(--s4) var(--s5) calc(var(--s5) + env(safe-area-inset-bottom)); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s2); }
+    .sheet-head h2 { margin: 0; font-size: var(--fs-lead); }
+    .toc { display: flex; flex-direction: column; }
+    .toc > a, .toc-group > a { display: block; padding: var(--s3) 0 var(--s1); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); text-decoration: none; }
+    .toc-list { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+    .toc-list a { display: flex; align-items: center; gap: var(--s3); min-height: var(--tap); padding: var(--s2) var(--s3); margin: 0 calc(-1 * var(--s3));
+      border-radius: var(--radius); color: var(--ink); text-decoration: none; line-height: 1.4; }
+    .toc-list a[aria-current="true"] { background: var(--surface); font-weight: 700; color: var(--accent-ink); }
+    .toc-list .toc-title { flex: 1 1 0; min-width: 0; }
+    @media (hover: hover) { .toc-list a:hover { background: var(--surface); } }
+
+    /* ---------- 한 화면에 하나씩 (JS가 켤 때만) ---------- */
+    html:not(.js) .pager, html:not(.js) #toc-open { display: none; }
+    html:not(.js) .sheet { display: block; position: static; width: 100%; max-height: none; margin: 0 auto; border-radius: 0; border-bottom: 1px solid var(--line); }
+    html:not(.js) .sheet-close { display: none; }
+    .js main > .hero:not(.is-current), .js main > section:not(.is-on), .js .screen:not(.is-current) { display: none; }
+    .js main > section { margin-top: 0; }
+    .js main > section > h2 { font-size: var(--fs-small); font-weight: 600; color: var(--accent-ink); margin: 0 0 var(--s2); }
+    .js .topic { padding: 0; border-top: 0; }
+    .js .hero { padding-top: 12vh; }
+    .js footer { display: none; }
+    .js body.at-end footer { display: block; }
+    .screen.enter-next { animation: enter-next var(--dur) var(--ease-out); }
+    .screen.enter-prev { animation: enter-prev var(--dur) var(--ease-out); }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .screen.enter-next, .screen.enter-prev { animation: none; }
+      .bar > span, .btn { transition: none; }
+    }
+    @media (max-width: 480px) {
+      main { padding: var(--s5) var(--s4) var(--s6); }
+      footer { padding: 0 var(--s4) var(--s5); }
+      .btn { min-width: 120px; padding: 0 var(--s5); }
+    }
+    @media print {
+      .topbar, .pager, .sheet { display: none !important; }
+      .js main > .hero, .js main > section, .js .screen, .js footer { display: block !important; }
+    }
+
+    /* ---------- 좌우 패널 (drawer) ---------- */
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
+    .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
+    .panel-toggle svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-toggle .strip { fill: transparent; stroke: none; transition: fill 150ms ease-out; }
+    .panel-toggle[aria-expanded="true"] { color: var(--accent-ink); }
+    .panel-toggle[aria-expanded="true"] .strip { fill: currentColor; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .i-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .theme-toggle .i-sun { display: block; }
+      :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
+    }
+
+    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
+    .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
+    .content { grid-column: 2; }
+    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
+    .panel-resize { display: none; }
+    .panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 44px; margin-bottom: var(--s2); }
+    .panel-head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-lead); line-height: 1.4; }
+    .panel-sub { margin: 0 0 var(--s4); font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; }
+    .panel-empty { margin: 0; color: var(--ink-2); }
+    .panel-label { display: block; margin: var(--s5) 0 var(--s2); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+
+    /* 진행 상태 */
+    .panel-meta { margin: 0 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .panel-meta b { color: var(--ink); }
+    .progress { height: 4px; margin-bottom: var(--s3); border-radius: 2px; background: var(--line); overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+    .panel .toc-list a { margin: 0 calc(-1 * var(--s2)); padding: var(--s2); font-size: var(--fs-panel); }
+    .toc-mark { flex: none; display: block; width: 20px; height: 20px; color: var(--ink-2); }
+    .toc-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .toc-mark.is-done { color: var(--accent-ink); }
+
+    /* 복습문제: 원문 · 힌트 · 풀이 */
+    .aid details:last-of-type { border-bottom: 1px solid var(--line); }
+    .aid details.original > summary { font-size: var(--fs-panel); }
+    .solved-btn { display: flex; align-items: center; justify-content: center; gap: var(--s2); width: 100%; min-height: var(--tap); margin-top: var(--s5); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .solved-btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
+
+    /* 정리노트: 페이지 요약 */
+    .sum-lead { margin: 0; font-size: var(--fs-body); font-weight: 700; line-height: 1.6; }
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+    .eq-list li:first-child { padding-top: 0; }
+    .eq-name { display: block; font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+    .eq-list .katex-display { margin: var(--s1) 0 0; text-align: left; }
+    .eq-list .katex-display > .katex { text-align: left; }
+    .terms { margin: 0; }
+    .terms dt { font-size: var(--fs-panel); font-weight: 700; margin-top: var(--s4); }
+    .terms dt:first-child { margin-top: 0; }
+    .terms dd { margin: var(--s1) 0 0; font-size: var(--fs-sub); line-height: 1.6; color: var(--ink-2); }
+    .flow { margin: 0; padding-left: 1.4em; font-size: var(--fs-sub); }
+    .flow li { margin: var(--s2) 0; }
+
+    @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
+
+    /* 넓은 화면: 본문 옆에 붙는 패널 */
+    @media (min-width: 1024px) {
+      .layout { --l: var(--panel-l-user, var(--panel-l)); }
+      .layout[data-left="closed"] { --l: 0px; }
+      .panel-left { width: var(--l); }
+      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
+      .panel-left .panel-resize { right: 0; }
+      .panel-right .panel-resize { left: 0; }
+      .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
+      .panel-left .panel-resize::after { right: 0; }
+      .panel-right .panel-resize::after { left: 0; }
+      .panel-resize:focus-visible { outline: none; }
+      .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
+      @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
+      body.is-resizing { cursor: col-resize; user-select: none; }
+      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
+      .scrim, .panel-close { display: none; }
+    }
+    @keyframes panel-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 좁은 화면: 가장자리에서 밀려 나오는 drawer */
+    @media (max-width: 1023.98px) {
+      .panel { position: fixed; top: 0; bottom: 0; z-index: 40; visibility: hidden;
+        transition: transform var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .panel-left { left: 0; width: min(var(--drawer-l), 88vw); transform: translateX(-100%); }
+      .panel-right { right: 0; width: min(var(--drawer-r), 88vw); transform: translateX(100%); }
+      .panel.is-open { visibility: visible; transform: none; transition: transform var(--dur) var(--ease-out); }
+      .panel-inner { padding-top: calc(var(--s3) + env(safe-area-inset-top)); padding-bottom: calc(var(--s6) + env(safe-area-inset-bottom)); }
+      .scrim { position: fixed; inset: 0; z-index: 35; background: var(--scrim); opacity: 0; visibility: hidden;
+        transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
+      html:not(.js) .panel-left { display: none; }
+    }
+    @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
+      .panel.is-shown { animation: none; }
+      .panel-resize::after { transition: none; }
+    }
+    @media print {
+      body { display: block; height: auto; overflow: visible; }
+      .layout { display: block; }
+      .content { overflow: visible; }
+      .panel, .scrim { display: none !important; }
+    }
+  </style>
+</head>
+<body data-screens="article.topic" data-panels="note" data-range="1006">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <strong class="brand">정리노트</strong>
+      <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>요약</span></button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
+  </header>
+  <div class="layout" data-left="open" data-right="closed">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
+      <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-left-title">목차</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-meta">읽은 토픽 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <nav class="toc" aria-label="목차"><a href="#s0">0 복습과 유전자 발현</a><a href="#s1">1 전사와 RNA 가공</a><a href="#s2">2 유전암호</a><a href="#s3">3 번역의 도구</a><a href="#s4">4 돌연변이</a><a href="#s5">5 원핵생물의 발현 조절</a><a href="#s6">6 요약 · 예고</a></nav>
+      </div>
+    </aside>
+    <div class="content">
+  <main>
+    <div class="hero">
+      <h1>전사·번역과 lac 오페론 — 5살도 이해하는 정리노트</h1>
+      <p>이영만 교수님 생명과학 · 1006 수업 (5장 DNA 복제와 유전자의 발현)</p>
+    </div>
+    <section id="s0"><h2>0. 복습과 유전자 발현</h2>
+<article class="topic" id="s0-recap"><h3>지난 수업 복습</h3><div class="tags"><span class="tag date">1006 수업</span><span class="tag slide">5장 p1–3</span></div><div class="layer formal"><span class="layer-title">정확히 말하면</span><ul><li>DNA 복제는 세포 분열에 앞서 DNA 전체를 새 DNA로 복사하는 과정이에요.</li><li>두 부모 가닥을 각각 주형으로 쓰며, 새 가닥은 5′→3′로 합성돼요.</li><li>1유전자 1폴리펩티드 설명은 효소 아닌 단백질과 여러 사슬로 이뤄진 단백질도 고려한 수정이에요.</li><li>폴리펩티드는 아미노산 한 줄이고, 단백질은 이런 사슬 하나 또는 여러 개로 기능할 수 있어요.</li></ul><p><a href="../1001/정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s8-cheatsheet">1001 정리노트의 시험 직전 요약</a></p></div><div class="sum" hidden><p class="sum-lead">DNA 복제는 전체 DNA를 복사하고, 1유전자 1폴리펩티드 설명은 사슬 한 줄의 정보를 가리켜요.</p></div></article>
+<article class="topic" id="s0-expression"><h3>요리책은 핵에, 요리는 리보솜에서</h3><div class="tags"><span class="tag date">1006 수업</span><span class="tag slide">5장 p3</span></div><div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">요리책은 방 안에 두고, 필요한 쪽을 베껴 주방으로 가져가 요리해요.</p><figure class="figure"><svg id="fig-expression" viewBox="0 0 520 170" role="img" aria-label="방 안의 책에서 베낀 종이를 주방으로 보내는 그림"><rect x="15" y="25" width="230" height="115" rx="6" class="fig-ink"/><text x="35" y="52" class="fig-text" font-size="14">방 안</text><rect x="38" y="65" width="75" height="45" rx="6" class="fig-ink"/><text x="47" y="93" class="fig-text" font-size="14">요리책</text><rect x="145" y="65" width="72" height="45" rx="6" class="fig-accent"/><text x="154" y="93" class="fig-text" font-size="14">사본</text><path d="M218 87 H292 M283 80 L292 87 L283 94" class="fig-ink"/><rect x="300" y="25" width="202" height="115" rx="6" class="fig-ink"/><text x="320" y="52" class="fig-text" font-size="14">주방</text><text x="322" y="95" class="fig-text" font-size="14">사본을 보고 요리</text></svg><figcaption>원본을 옮기지 않아도 필요한 정보를 전달할 수 있어요.</figcaption></figure></div><div class="layer formal"><span class="layer-title">정확히 말하면</span><p>단백질 암호화 유전자에서 <b>유전자 발현(expression)</b>은 DNA의 염기서열 정보로 폴리펩티드를 만드는 전체 과정이에요. <b>전사(transcription)</b>는 DNA 정보를 상보적인 RNA 사본으로 만들고, <b>번역(translation)</b>은 mRNA 정보를 리보솜에서 아미노산 서열로 바꾸어 폴리펩티드를 만들어요.</p><div class="table-wrap"><table><thead><tr><th>과정</th><th>진핵세포의 핵 유전자</th><th>만드는 것</th></tr></thead><tbody><tr><td>전사</td><td>핵 안</td><td>RNA</td></tr><tr><td>번역</td><td>세포질의 리보솜</td><td>폴리펩티드</td></tr></tbody></table></div><p>핵 DNA는 원본으로 남고, 핵에서 만들어 가공한 mRNA가 핵 밖으로 나와 정보를 전달해요. 원핵생물에는 핵막으로 구분된 핵이 없어서, mRNA가 전사되는 도중에 번역이 시작될 수도 있어요.</p></div><div class="layer prof"><span class="layer-title">교수님 말씀</span><blockquote>“요리책은 도서관에 있는 거고… 요리는 주방에서 하는 거죠.”</blockquote><p>교수님은 진핵세포를 방이 나뉜 아파트, 원핵세포를 텐트에 비유했어요. 아파트에서는 책을 베끼는 방과 요리하는 주방이 나뉘지만, 텐트에서는 같은 공간에서 일을 할 수 있어요.</p></div><div class="layer warn"><span class="layer-title">꼭 기억해요</span><p>유전자 발현 전체를 전사 하나와 같다고 생각하지 않아요. 단백질 암호화 유전자는 전사와 번역을 거쳐 폴리펩티드를 만들어요. 폴리펩티드 한 줄이 언제나 단백질 하나 전체인 것도 아니에요.</p><p>핵 안에 남는 DNA 원본과 밖으로 전달되는 mRNA를 구별해요. 여기서 설명한 장소 구분은 진핵세포의 핵 유전자 기준이에요.</p></div><div class="sum" hidden><p class="sum-lead">진핵세포의 핵 유전자는 핵에서 RNA 사본을 만들고, 세포질 리보솜에서 폴리펩티드를 만들어요.</p><p class="panel-label">용어</p><dl class="terms"><dt>전사(transcription)</dt><dd>DNA 정보로 RNA를 만드는 과정</dd><dt>번역(translation)</dt><dd>mRNA 정보로 폴리펩티드를 만드는 과정</dd></dl></div></article>
+    </section>
+    <section id="s1"><h2>1. 전사와 RNA 가공</h2>
+<article class="topic" id="s1-transcription"><h3>복사 시작점과 RNA 합성</h3><div class="tags"><span class="tag date">1006 수업</span><span class="tag slide">5장 p4</span></div><div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">책 전체를 제본하는 일과, 필요한 쪽만 복사하는 일은 달라요.</p><figure class="figure"><svg id="fig-transcription" viewBox="0 0 520 170" role="img" aria-label="책의 시작 표지에서 필요한 부분만 사본으로 만드는 그림"><rect x="25" y="35" width="465" height="48" rx="6" class="fig-ink"/><text x="40" y="64" class="fig-text" font-size="14">책 전체</text><rect x="170" y="35" width="170" height="48" rx="6" class="fig-accent"/><text x="180" y="22" class="fig-text" font-size="14">시작 표시</text><path d="M255 85 V115 M248 106 L255 115 L262 106" class="fig-ink"/><rect x="170" y="120" width="170" height="35" rx="6" class="fig-accent"/><text x="190" y="143" class="fig-text" font-size="14">필요한 부분의 사본</text></svg><figcaption>복사할 곳을 알려 주는 시작 표시가 필요해요.</figcaption></figure></div><div class="layer formal"><span class="layer-title">정확히 말하면</span><p><b>프로모터(promoter)</b>는 전사 개시를 위한 결합 부위를 제공하는 DNA의 특정 염기서열이에요. <b>RNA 중합효소(RNA polymerase)</b>는 RNA 합성을 촉진하는 효소예요. RNA로 복사되는 DNA 구간을 <b>전사단위(transcription unit)</b>라고 해요. 전사는 매번 유전체 전체를 복사하지 않아요. 한 전사단위에 여러 유전자가 묶인 경우는 <a href="#s5-operon">lac 오페론</a>에서 구별해요.</p><ol class="steps"><li>개시: 수업의 기본 모형에서는 RNA 중합효소가 프로모터에 결합하고 DNA를 국소적으로 풀어 전사 개시점에서 합성을 시작해요. DNA 복제와 달리 미리 만들어 둔 RNA 프라이머가 필요하지 않아요.</li><li>연장: 두 DNA 가닥 중 하나인 <b>주형가닥</b>을 3′→5′로 읽으며, 상보적인 RNA를 <b>5′→3′</b>로 만들어요. 새로운 RNA 뉴클레오타이드는 자라는 RNA의 3′-OH에 붙어요.</li><li>종결: 종결 신호에 이르면 RNA 합성이 끝나고 RNA와 중합효소가 DNA에서 떨어져요.</li></ol><p>RNA는 리보스 당과 A·U·G·C 염기를 사용해요. 주형 DNA의 A에는 RNA의 U, T에는 A, G에는 C, C에는 G가 대응해요. 예를 들어 주형 3′-TAC-5′로부터 RNA 5′-AUG-3′가 만들어져요.</p></div><div class="layer prof"><span class="layer-title">교수님 말씀</span><blockquote>“프로모터는 DNA 상에서의 어떤 염기서열입니다, 염기서열.”</blockquote><p>복사집 직원이 페이지 번호를 보고 시작점을 찾듯 RNA 중합효소는 프로모터를 시작 표지로 이용해요. 46권의 책 전체를 제본하는 비유는 DNA 복제이고, 오징어볶음밥 조리법이나 시험 범위만 복사하는 비유는 전사예요.</p></div><div class="layer warn"><span class="layer-title">꼭 기억해요</span><p>프로모터는 단백질이 아니라 DNA 서열이에요. RNA 중합효소는 단백질 효소이고, DNA 중합효소가 새 DNA를 만드는 것과 달리 RNA를 만들어요.</p><p>복제에서는 헬리케이스가 두 DNA 가닥을 풀고, 프라이메이스가 프라이머를 만들어요. 수업의 전사 기본 모형에서는 RNA 중합효소가 DNA를 국소적으로 풀며 프라이머 없이 합성을 시작해요. “두 가닥을 푸는 효소”라는 질문은 복제인지 전사인지 조건을 먼저 확인해요.</p><p>5′→3′는 새 RNA의 합성 방향이고 주형을 읽는 방향은 3′→5′예요. 한 전사단위에서 두 가닥 모두를 동시에 주형으로 쓰지 않아요. 전사를 끝내는 DNA 신호와 번역을 끝내는 mRNA 종결 코돈도 구별해요.</p></div><div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p>모든 유전자가 단백질을 암호화하는 것은 아니에요. rRNA와 tRNA처럼 RNA 자체가 기능하고 번역되지 않는 비단백질 암호화 유전자도 있어요. 이런 유전자도 각자의 DNA 정보를 전사해 RNA를 만들어요. tRNA와 rRNA가 mRNA를 바꾸어 만들어지는 것은 아니에요. 따라서 “전사의 산물은 모두 번역된다”라는 설명은 맞지 않아요.</p><p>출처: 교재 5장 p.104</p></div><div class="sum" hidden><p class="sum-lead">프로모터에서 시작해 한 DNA 주형을 읽고, 필요한 구간의 RNA를 5′→3′로 만들어요.</p><p class="panel-label">용어</p><dl class="terms"><dt>프로모터(promoter)</dt><dd>전사 개시를 위한 DNA 서열</dd><dt>주형가닥(template strand)</dt><dd>RNA와 상보적 염기쌍을 이루는 DNA 가닥</dd><dt>전사단위(transcription unit)</dt><dd>한 RNA로 전사되는 DNA 구간</dd></dl></div></article>
+<article class="topic" id="s1-processing"><h3>모자·꼬리와 이어맞추기</h3><div class="tags"><span class="tag date">1006 수업</span><span class="tag slide">5장 p4–5</span></div><div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">베낀 종이에 모자와 꼬리를 달아 보호하고, 중간에 끼어든 글을 빼고 남길 글을 이어요.</p><figure class="figure"><svg id="fig-processing" viewBox="0 0 520 170" role="img" aria-label="처음 사본에 있는 세 부분에서 중간 부분을 제거하고 양끝을 연결하는 그림"><text x="24" y="26" class="fig-text" font-size="14">처음 베낀 종이</text><rect x="25" y="42" width="138" height="40" rx="6" class="fig-accent"/><text x="36" y="68" class="fig-text" font-size="14">(가) 남길 글</text><rect x="175" y="42" width="155" height="40" rx="6" class="fig-danger"/><text x="186" y="68" class="fig-text" font-size="14">(나) 뺄 글</text><rect x="342" y="42" width="150" height="40" rx="6" class="fig-accent"/><text x="352" y="68" class="fig-text" font-size="14">(다) 남길 글</text><path d="M80 84 L130 116 M410 84 L355 116" class="fig-ink"/><rect x="116" y="122" width="254" height="35" rx="6" class="fig-accent"/><text x="135" y="145" class="fig-text" font-size="14">모자 | 남길 글끼리 | 꼬리</text></svg><figcaption>처음에는 뺄 부분도 베껴지고, 손질한 뒤에는 남길 부분끼리 이어져요.</figcaption></figure></div><div class="layer formal"><span class="layer-title">정확히 말하면</span><p>진핵세포의 핵 유전자에서 처음 만들어지는 <b>전구체 mRNA(pre-mRNA)</b>는 핵 안에서 가공돼요. 수업에서는 mRNA가 DNA보다 불안정하고 분해되기 쉽다고 설명했어요. 가공은 mRNA를 보호하고 번역에 사용할 사본을 준비해요.</p><ol class="steps"><li><b>5′ cap</b>: 5′ 말단에 구아닌이 거꾸로 연결된 모자 구조가 붙어요.</li><li><b>poly(A) 꼬리</b>: 3′ 말단에 A 뉴클레오타이드가 여러 개 이어진 꼬리가 붙어요. 모자와 꼬리는 mRNA의 안정성에 도움을 줘요.</li><li><b>스플라이싱(splicing)</b>: 전구체에 포함된 <b>인트론(intron)</b>을 제거하고 <b>엑손(exon)</b>끼리 이어요.</li></ol><p>그림의 (가)와 (다)는 성숙 RNA에 남는 엑손, (나)는 가공할 때 제거되는 인트론에 대응해요. 성숙한 mRNA는 핵 밖으로 나와 리보솜에서 번역돼요.</p></div><div class="layer prof"><span class="layer-title">교수님 말씀</span><blockquote>“너 모자 하나 써봐라, 모자.”</blockquote><p>교수님은 짧은 거리라도 불안정한 사본을 보호해야 한다고 설명했어요. 뜻이 통하는 문장 사이에 이상한 글이 끼어든 책에서 그 부분을 잘라 내고 남은 부분을 잇는 비유도 사용했어요.</p><p>BRCA1 분리 사례에서 이어진 핵심은 성숙 mRNA를 역전사효소(reverse transcriptase)로 DNA로 바꾸면, 원래 DNA와 달리 제거된 인트론이 없는 DNA를 실험적으로 얻을 수 있다는 점이에요.</p></div><div class="layer warn"><span class="layer-title">꼭 기억해요</span><p>인트론이 처음부터 전사되지 않는다고 생각하지 않아요. 전구체 RNA에 먼저 포함된 뒤 제거돼요. 이때 DNA 원본에서 인트론을 잘라 내는 것도 아니에요.</p><p>전구체 mRNA와 가공된 성숙 mRNA를 구별해요. 스플라이싱은 여기서 핵 안의 RNA 가공이고, 핵 밖에서 번역한 뒤 인트론을 자르는 과정이 아니에요.</p><p>“엑손은 남는다”와 “엑손 전체가 번역된다”는 다른 말이에요. 인트론을 “의미 없는 부분”이라고 비유해도 생물학적 기능이 전혀 없다는 뜻은 아니에요. 원핵·진핵 비교는 전형적인 단백질 암호화 유전자의 비교이며, 모든 원핵생물에 인트론이 전혀 없다는 절대 규칙으로 외우지 않아요.</p></div><div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p>엑손에는 번역되지 않는 부위(UTR)도 포함될 수 있어요. 따라서 엑손 전체가 번역된다고 단정하지 않아요. 교재 그림의 5′ 비번역 부위와 3′ 비번역 부위는 가공 후 mRNA에도 남아요.</p><p>출처: 교재 5장 p.104 그림 5.13</p></div><div class="sum" hidden><p class="sum-lead">진핵의 전구체 mRNA는 핵 안에서 모자·꼬리를 얻고, 인트론을 빼고 엑손을 이어요.</p><p class="panel-label">용어</p><dl class="terms"><dt>인트론(intron)</dt><dd>전구체 RNA에 포함됐다가 가공 중 제거되는 구간</dd><dt>엑손(exon)</dt><dd>가공 후 성숙 RNA에 남는 구간</dd><dt>스플라이싱(splicing)</dt><dd>인트론 제거와 엑손 연결</dd></dl></div></article>
+    </section>
+    <section id="s2"><h2>2. 유전암호</h2>
+<article class="topic" id="s2-code"><h3>네 글자로 만드는 세 글자 암호</h3><div class="tags"><span class="tag date">1006 수업</span><span class="tag slide">5장 p3–4</span></div><div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">네 종류의 글자를 세 칸에 넣으면, 작은 재료로도 많은 신호를 만들 수 있어요.</p><figure class="figure"><svg id="fig-code" viewBox="0 0 520 170" role="img" aria-label="세 칸에 각각 네 가지 글자를 넣어 64가지 신호를 만드는 그림"><rect x="35" y="40" width="120" height="58" rx="6" class="fig-ink"/><rect x="195" y="40" width="120" height="58" rx="6" class="fig-ink"/><rect x="355" y="40" width="120" height="58" rx="6" class="fig-ink"/><text x="51" y="75" class="fig-text" font-size="14">A U C G</text><text x="211" y="75" class="fig-text" font-size="14">A U C G</text><text x="371" y="75" class="fig-text" font-size="14">A U C G</text><text x="57" y="129" class="fig-text" font-size="14">첫 칸 4가지</text><text x="211" y="129" class="fig-text" font-size="14">둘째 칸 4가지</text><text x="359" y="129" class="fig-text" font-size="14">셋째 칸 4가지</text><text x="195" y="157" class="fig-text" font-size="14">모두 64가지</text></svg><figcaption>세 칸의 선택을 곱해서 신호의 수를 세어요.</figcaption></figure></div><div class="layer formal"><span class="layer-title">정확히 말하면</span><p><b>코돈(codon)</b>은 mRNA에서 연속한 염기 세 개로 된 암호예요. 네 염기 A·U·C·G의 <b>조합</b>을 사용해요. n칸의 경우의 수는 4ⁿ이에요. 한 칸은 4¹=4, 두 칸은 4²=16으로 일반적인 단백질 구성 아미노산 20종을 지정하기에 부족해요. 세 칸이면 4³=64가지예요. 표준 유전암호에서 <b>64</b>개 중 <b>61</b>개는 아미노산을 지정하고, 3개는 종결 신호예요.</p><p>염기가 k종이고 신호가 n칸이면 서로 다른 신호의 최대 수는 kⁿ이에요. 각 칸의 선택을 곱한다는 같은 원리예요.</p><div class="table-wrap"><table><thead><tr><th>특성</th><th>정확한 뜻</th></tr></thead><tbody><tr><td>연속성(commaless)</td><td>번역되는 읽는 틀 안에서 띄어쓰기 없이 세 염기씩 이어 읽어요.</td></tr><tr><td>중복성(redundancy, degeneracy)</td><td>서로 다른 여러 코돈이 같은 아미노산을 지정할 수 있어요.</td></tr><tr><td>보편성(universality)</td><td>극소수 예외를 제외하고 거의 모든 생물이 같은 암호 대응을 사용해요.</td></tr></tbody></table></div><p>코돈표는 mRNA의 <b>5′→3′</b> 서열로 찾아요. 첫 염기는 왼쪽, 둘째는 위, 셋째는 오른쪽에서 찾는 표예요. AUU는 이소류신(Ile), ACG는 트레오닌(Thr), UUU와 UUC는 모두 페닐알라닌(Phe)이에요. CCU와 CCC는 모두 프롤린(Pro), GGU와 GGC는 모두 글리신(Gly)이에요.</p></div><div class="layer prof"><span class="layer-title">교수님 말씀</span><blockquote>“연속성, 중복성, 보편성, 이 세 가지 특징을 반드시 기억을 하셔야 됩니다.”</blockquote><p>자음과 모음을 조합해 시를 쓰듯, 디지털의 0과 1로 복잡한 신호를 표현하듯, 적은 종류의 재료를 조합해 많은 정보를 나타낼 수 있어요.</p><p>코돈 해독 실험에서는 대장균에서 얻은 리보솜을 이용하는 번역 체계에 인공 mRNA를 넣었어요. U만 이어진 RNA로 페닐알라닌 사슬이 만들어지는 결과가 UUU의 뜻을 밝혔고, 반복·혼합 서열 실험을 모아 코돈표를 완성했어요.</p><p>보편성은 공통 조상이라는 설명을 뒷받침하며, 인간 인슐린 정보를 대장균에서 읽을 수 있는 근거예요. 실제 생산에는 대장균에서 전사·번역될 수 있도록 준비한 암호화 서열과 발현 조건이 필요해요. 아무 인간 DNA 조각을 넣기만 하면 자동으로 인슐린이 생긴다는 뜻은 아니에요.</p></div><div class="layer warn"><span class="layer-title">꼭 기억해요</span><p>코돈 하나는 아미노산 세 개가 아니라 염기 세 개예요. 코돈표에서 찾는 것은 DNA 주형이나 tRNA 안티코돈이 아니라 mRNA 코돈이에요.</p><p>중복성은 여러 암호가 같은 아미노산을 뜻한다는 말이에요. 표준 유전암호에서 한 코돈이 여러 아미노산을 마음대로 뜻한다는 모호성과는 달라요. 세 번째 염기를 바꿔도 같은 아미노산인 사례가 있지만, 세 번째 염기의 모든 변화가 침묵하는 것은 아니에요.</p><p>연속성이 있어 한 염기의 삽입·삭제는 뒤의 묶음을 바꿀 수 있어요. 보편성은 예외가 전혀 없다는 뜻이 아니에요. 종결 코돈은 아미노산을 지정하지 않아도 번역을 끝내는 중요한 신호예요.</p></div><div class="sum" hidden><p class="sum-lead">네 종류 염기를 세 개씩 조합한 64개 코돈 중 61개가 아미노산을 지정해요.</p><p class="panel-label">용어</p><dl class="terms"><dt>코돈(codon)</dt><dd>mRNA의 세 염기 암호</dd><dt>중복성(redundancy)</dt><dd>서로 다른 코돈이 같은 아미노산을 지정할 수 있음</dd><dt>보편성(universality)</dt><dd>극소수 예외를 제외한 공통 암호 대응</dd></dl></div></article>
+<article class="topic" id="s2-start-stop"><h3>번역의 시작과 끝</h3><div class="tags"><span class="tag date">1006 수업</span><span class="tag slide">5장 p3–4</span></div><div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">시작 표지가 나오면 재료를 잇고, 끝 표지가 나오면 더 붙이지 않아요.</p><figure class="figure"><svg id="fig-start-stop" viewBox="0 0 520 170" role="img" aria-label="시작 표지와 중간 재료를 지난 후 끝 표지에서 조립을 멈추는 그림"><rect x="20" y="35" width="130" height="55" rx="6" class="fig-accent"/><text x="42" y="67" class="fig-text" font-size="14">시작 표지</text><path d="M152 64 H179 M169 56 L179 64 L169 72" class="fig-ink"/><rect x="185" y="35" width="150" height="55" rx="6" class="fig-ink"/><text x="203" y="67" class="fig-text" font-size="14">재료를 이어요</text><path d="M337 64 H364 M354 56 L364 64 L354 72" class="fig-ink"/><rect x="370" y="35" width="130" height="55" rx="6" class="fig-danger"/><text x="393" y="67" class="fig-text" font-size="14">끝 표지</text><text x="65" y="134" class="fig-text" font-size="14">첫 재료</text><text x="364" y="134" class="fig-text" font-size="14">새 재료 없음</text></svg><figcaption>끝 표지는 마지막 재료의 이름이 아니에요.</figcaption></figure></div><div class="layer formal"><span class="layer-title">정확히 말하면</span><p>표준 유전암호에서 <b>AUG</b>는 <b>메티오닌(methionine)</b>을 지정해요. 개시 코돈(start codon)으로 쓰일 때 번역 시작을 알리고, 처음 붙는 아미노산은 메티오닌이에요. 같은 읽는 틀의 내부 AUG도 메티오닌을 지정해요.</p><p><b>UAA</b>·<b>UAG</b>·<b>UGA</b>는 <b>종결 코돈(stop codon)</b>이에요. 정지 코돈·중지 코돈·termination codon도 같은 뜻이에요. 아미노산을 지정하지 않으며 번역 중 만나면 폴리펩티드 합성이 끝나요. 표준 유전암호의 종결 코돈에 대응해 아미노산을 가져오는 tRNA는 없어요.</p></div><div class="layer prof"><span class="layer-title">교수님 말씀</span><blockquote>“번역을 그만 멈추어라.”</blockquote><p>교수님은 종결 코돈이 아미노산을 지정하지 않는다고 번역과 무관한 것은 아니라며, 종료 신호라는 기능을 강조했어요. 64개 코돈에서 종결 신호 3개를 빼면 아미노산 지정 코돈은 61개예요.</p></div><div class="layer warn"><span class="layer-title">꼭 기억해요</span><p>처음 메티오닌으로 합성이 시작돼도 이후 가공에서 첫 메티오닌이 제거될 수 있어요. 따라서 완성된 모든 단백질의 첫 아미노산이 항상 메티오닌이라는 뜻은 아니에요.</p><p>프로모터는 DNA에서 전사 개시를 위한 표지이고, AUG는 mRNA의 번역 개시 코돈이에요. 둘 사이에 비번역 구간이 있을 수 있으므로 “프로모터 바로 다음이 무조건 AUG”라고 외우지 않아요. 암호화 DNA의 ATG와 mRNA의 AUG도 구별해요.</p><p>전사 종결 신호는 RNA 복사를 끝내고, 종결 코돈은 폴리펩티드 합성을 끝내요. 종결 코돈을 별도의 “정지 아미노산”이라고 생각하지 않아요.</p></div><div class="sum" hidden><p class="sum-lead">AUG는 번역 개시 때 메티오닌을 지정하고, UAA·UAG·UGA는 아미노산 없이 번역을 끝내요.</p><p class="panel-label">용어</p><dl class="terms"><dt>AUG</dt><dd>메티오닌 지정 및 개시 신호</dd><dt>종결 코돈(stop codon)</dt><dd>UAA·UAG·UGA; 아미노산을 지정하지 않는 종료 신호</dd></dl></div></article>
+    </section>
+    <section id="s3"><h2>3. 번역의 도구</h2>
+<article class="topic" id="s3-trna"><h3>가닥 방향과 코돈·안티코돈</h3><div class="tags"><span class="tag date">1006 수업</span><span class="tag slide">5장 p5</span></div>
+<div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">배달차는 한쪽에 재료를 싣고, 반대쪽으로 설명서의 맞는 세 글자를 찾아요.</p><figure class="figure"><svg id="fig-trna-cargo" viewBox="0 0 560 160" role="img" aria-label="배달할 재료와 설명서를 읽는 자리는 달라요."><path class="fig-accent" d="M160 35 L160 62 C100 38 78 86 126 96 C80 124 133 152 166 115 C198 153 251 121 203 95 C251 77 219 35 178 61 L178 35"/><line class="fig-ink" x1="160" y1="40" x2="178" y2="40"/><line class="fig-ink" x1="160" y1="49" x2="178" y2="49"/><line class="fig-ink" x1="160" y1="58" x2="178" y2="58"/><line class="fig-ink" x1="169" y1="35" x2="169" y2="17"/><circle class="fig-dot" cx="169" cy="15" r="8"/><text class="fig-text" x="205" y="25" font-size="14">배달할 재료</text><text class="fig-text" x="108" y="156" font-size="14">맞는 세 글자 찾기</text><rect class="fig-ink" x="318" y="49" width="215" height="77" rx="8"/><text class="fig-text" x="333" y="74" font-size="14">설명서: A C G</text><text class="fig-text" x="333" y="104" font-size="14">맞는 짝: U G C</text></svg><figcaption>배달할 재료와 설명서를 읽는 자리는 달라요.</figcaption></figure></div>
+<div class="layer formal"><span class="layer-title">정확히 말하면</span><p><strong>운반 RNA(tRNA)</strong>는 아미노산을 리보솜으로 운반해요. 한 가닥 RNA가 자기 안의 상보적 부분끼리 수소결합해 부분적으로 이중가닥을 이루고, 평면에서는 세잎클로버 모양으로 접혀요.</p><p>아미노산은 tRNA의 <strong>3′ 말단</strong>, CCA로 끝나는 자리의 마지막 A에 공유결합해요. 반대편의 세 염기는 <strong>안티코돈(anticodon)</strong>이며 mRNA 코돈과 <strong>상보적</strong>으로, 서로 반대 방향인 역평행으로 짝지어요.</p>
+<div class="table-wrap"><table><thead><tr><th>가닥·산물</th><th>트레오닌 예</th><th>메티오닌 예</th></tr></thead><tbody><tr><td>DNA 주형가닥</td><td>3′-TGC-5′</td><td>3′-TAC-5′</td></tr><tr><td>DNA 암호화가닥</td><td>5′-ACG-3′</td><td>5′-ATG-3′</td></tr><tr><td>mRNA 코돈</td><td>5′-ACG-3′</td><td>5′-AUG-3′</td></tr><tr><td>맞춰 놓은 안티코돈</td><td>3′-UGC-5′</td><td>3′-UAC-5′</td></tr><tr><td>안티코돈을 5′부터 쓰면</td><td>5′-CGU-3′</td><td>5′-CAU-3′</td></tr></tbody></table></div><p>mRNA는 주형가닥에 상보적으로 합성돼요. 암호화가닥과 같은 5′부터 비교하면 mRNA는 T 대신 U를 써요. 코돈표에는 mRNA 코돈을 5′에서 3′ 방향으로 넣어요.</p></div>
+<div class="layer prof"><span class="layer-title">교수님 말씀</span><blockquote>안티코돈하고 코돈 관계 그 정도만 알면 됩니다.</blockquote><p>교수님은 ACG와 AUG를 예로 들며 DNA, mRNA, 운반체의 짝을 반복해서 물으셨어요.</p></div>
+<div class="layer warn"><span class="layer-title">꼭 기억해요</span><p>단일가닥 RNA에도 내부 염기쌍의 수소결합은 있어요. 아미노산을 붙이는 공유결합, 코돈과 안티코돈 사이 수소결합, 아미노산끼리의 펩티드 결합은 구분해요. 아미노산을 안티코돈에 달지 않아요.</p><p>안티코돈 UGC와 CAU는 방향 없이 외우면 틀릴 수 있어요. AUG에 맞춰 놓으면 3′-UAC-5′이고, 이를 뒤집어 5′부터 적으면 5′-CAU-3′예요. 표는 수업 서열 설명의 방향을 바로잡았어요.</p><p>DNA 서열만 주고 주형인지 암호화가닥인지, 방향이 무엇인지 생략하면 mRNA를 하나로 확정할 수 없어요. <strong>암호화가닥 5′-TGA-3′라면 mRNA는 5′-UGA-3′</strong>예요. 표준 유전암호의 종결 코돈이므로 대응 아미노산을 싣는 tRNA가 없어요. mRNA는 RNA이며 DNA가 아니에요.</p><p>한 tRNA가 여러 코돈을 읽을 수 있다는 교재의 보충 사실은 <a href="#s3-ribosome">정보·배달·조립의 세 역할</a>에서 함께 확인해요.</p></div>
+<div class="sum" hidden><p class="sum-lead">tRNA는 3′ 말단에 아미노산을 달고, 안티코돈으로 mRNA 코돈과 역평행으로 짝지어요.</p></div></article><article class="topic" id="s3-ribosome"><h3>정보·배달·조립의 세 역할</h3><div class="tags"><span class="tag date">1006 수업</span><span class="tag slide">5장 p5–6</span></div>
+<div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">설명서, 재료 배달차, 조립 작업대가 함께 있어야 물건을 만들 수 있어요.</p><figure class="figure"><svg id="fig-rna-three-roles" viewBox="0 0 560 160" role="img" aria-label="세 역할을 같은 것으로 외우지 않아요."><rect class="fig-ink" x="18" y="43" width="130" height="60" rx="8"/><text class="fig-text" x="33" y="77" font-size="14">설명서</text><rect class="fig-ink" x="204" y="43" width="130" height="60" rx="8"/><text class="fig-text" x="222" y="77" font-size="14">재료 배달</text><rect class="fig-ink" x="390" y="43" width="145" height="60" rx="8"/><text class="fig-text" x="406" y="77" font-size="14">조립 작업대</text><line class="fig-ink" x1="148" y1="72" x2="204" y2="72"/><line class="fig-ink" x1="334" y1="72" x2="390" y2="72"/></svg><figcaption>세 역할을 같은 것으로 외우지 않아요.</figcaption></figure></div>
+<div class="layer formal"><span class="layer-title">정확히 말하면</span><p><strong>mRNA</strong>(전령 RNA)는 번역할 염기서열 정보를 담아요. tRNA는 아미노산을 운반해요. <strong>리보솜(ribosome)</strong>은 큰 단위체와 작은 단위체가 합쳐져 단백질을 조립하는 장소예요. 코돈에 맞는 아미노산이 차례로 펩티드 결합으로 연결되어 <strong>폴리펩티드</strong> 사슬이 길어져요.</p><p>DNA 정보는 먼저 mRNA로 전사되어 전달돼요. 번역에는 mRNA와 tRNA, 리보솜, 아미노산이 직접 참여해요. DNA는 코돈을 읽는 리보솜의 직접 입력이 아니에요.</p></div>
+<div class="layer prof"><span class="layer-title">교수님 말씀</span><blockquote>아미노산들이 순서대로 쫙 붙는 과정이 번역 과정.</blockquote><p>이번 수업에서 확실한 중심은 정보, 운반체, 조립 장소의 연결이에요.</p></div>
+<div class="layer warn"><span class="layer-title">꼭 기억해요</span><p>mRNA가 정보를 담는다는 말은 mRNA가 DNA라는 뜻이 아니에요. rRNA와 단백질도 같은 물질이 아니에요. RNA는 뉴클레오타이드의 중합체이고 단백질은 아미노산의 중합체예요. <a href="../0903/정리노트_0903_Biomolecules_and_Cells.html#s5-amino-acid">0903 아미노산과 펩타이드 결합</a>에서 구성 단위를 확인할 수 있어요.</p></div>
+<div class="layer supp"><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p>리보솜은 <strong>rRNA</strong>(리보솜 RNA)와 단백질의 복합체예요. <strong>아미노아실 tRNA 합성효소</strong>는 알맞은 아미노산을 알맞은 tRNA에 붙여요. 교재의 기본 모형은 20종 아미노산 각각에 대응하는 20종 합성효소를 설명해요.</p><p>입문 수준의 상세 번역 모형에서 A 자리는 다음 아미노산을 싣고 온 tRNA가 들어오는 자리, P 자리는 자라는 사슬을 가진 tRNA의 자리, E 자리는 빈 tRNA가 나가는 자리예요. 개시 tRNA는 P 자리에서 시작해요. 연장 중 펩티드 결합과 자리 이동을 반복하고, 종결 코돈에는 아미노산 운반 tRNA 대신 방출인자가 결합해 사슬이 방출돼요.</p><p>한 tRNA가 여러 코돈을 읽는 경우도 있어요. 예를 들어 페닐알라닌 tRNA는 UUU와 UUC를 읽을 수 있어요.</p><p><strong>범위 주의:</strong> 수업 녹음 전사 자료에는 상세 번역 설명 뒤 조기 종료 발언이 있지만, 뒤이어 코돈과 lac 수업이 계속되고 번역 상세 과정은 생략한다는 발언도 있어요. 자료의 연결이 일치하지 않아 상세 A/P/E 기작을 실제로 배운 필수 범위로 확정하지 않아요.</p><p>출처: 강의노트 5장 p5–6; 교재 5장 p.105–108. 상세 설명이 있는 수업 전사와 뒤의 생략 발언이 충돌해 보충으로 분리했어요.</p></div><div class="sum" hidden><p class="sum-lead">mRNA는 정보, tRNA는 배달, 리보솜은 조립을 맡고 아미노산이 폴리펩티드로 연결돼요.</p></div></article>
+    </section>
+    <section id="s4"><h2>4. 돌연변이</h2>
+<article class="topic" id="s4-substitution"><h3>한 글자를 바꿨을 때</h3><div class="tags"><span class="tag date">1006 수업</span><span class="tag slide">5장 p6</span></div>
+<div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">한 사람을 바꿔도 하는 일이 같을 수 있고, 달라질 수도 있어요.</p><figure class="figure"><svg id="fig-substitution-options" viewBox="0 0 560 160" role="img" aria-label="글자 교체와 결과 변화를 나누어 봐요."><rect class="fig-ink" x="20" y="32" width="160" height="55" rx="8"/><text class="fig-text" x="35" y="65" font-size="14">한 사람 교체</text><rect class="fig-ink" x="200" y="32" width="150" height="55" rx="8"/><text class="fig-text" x="213" y="65" font-size="14">같은 역할 가능</text><rect class="fig-ink" x="370" y="32" width="170" height="55" rx="8"/><text class="fig-text" x="384" y="65" font-size="14">다른 역할 가능</text><line class="fig-ink" x1="180" y1="58" x2="200" y2="58"/><line class="fig-ink" x1="350" y1="58" x2="370" y2="58"/></svg><figcaption>글자 교체와 결과 변화를 나누어 봐요.</figcaption></figure></div>
+<div class="layer formal"><span class="layer-title">정확히 말하면</span><p><strong>치환(substitution)</strong>은 염기쌍이 다른 염기쌍으로 바뀌는 변화예요. 단백질 암호화 부위의 치환은 바뀐 코돈이 무엇을 지정하는지에 따라 구분해요.</p><div class="table-wrap"><table><thead><tr><th>분류</th><th>mRNA 코돈 예</th><th>결과</th></tr></thead><tbody><tr><td>과오 돌연변이(missense mutation)</td><td>UCA가 CCA로</td><td>세린이 프롤린으로 바뀜</td></tr><tr><td>정지 돌연변이(nonsense mutation)</td><td>UGC가 UGA로</td><td>시스테인 지정이 종결 신호로 바뀜</td></tr><tr><td>침묵 돌연변이(silent mutation)</td><td>GGU가 GGC로</td><td>둘 다 글리신, 해당 아미노산 유지</td></tr></tbody></table></div><p>CCU와 CCC도 둘 다 프롤린을 지정해요. 코돈이 바뀌어도 아미노산이 같으면 유전암호의 중복성에 따른 침묵 변이예요. 돌연변이는 자발적으로 생기거나 자외선·돌연변이 유발 물질에 의해 발생률이 높아질 수 있어요. 영향은 변화 위치와 결과에 따라 해롭거나 중립적이거나 이로울 수 있어요.</p></div>
+<div class="layer prof"><span class="layer-title">교수님 말씀</span><p>교수님은 친구가 대리출석해 구별되지 않는 상황을 침묵 변이에 비유하셨어요. 과오의 사례로 낫 모양 적혈구 빈혈증에서 글루타메이트가 발린으로 바뀌어 화학적 성질이 달라지는 점을 설명하셨어요.</p></div>
+<div class="layer warn"><span class="layer-title">꼭 기억해요</span><p>치환이 항상 아미노산을 바꾸지는 않아요. 침묵은 염기 변화가 없다는 뜻이 아니라 아미노산 변화가 없다는 뜻이에요. 정지 코돈은 새로운 ‘정지 아미노산’을 지정하지 않아요.</p><p><strong>과오</strong>는 엄밀하게 치환으로 특정 아미노산이 다른 것으로 바뀌는 분류예요. 삽입·삭제의 틀이동도 아미노산을 바꿀 수 있지만 과오와 같은 유형이라고 분류하지 않아요.</p><p>단백질 기능이 크게 변하지 않았다는 사실만으로 침묵을 확정할 수 없어요. 아미노산이 달라져도 기능이 유지될 수 있으므로 침묵 판정에는 아미노산 서열이 유지됐는지 확인해야 해요. U가 있는 CCU·CCC는 mRNA 코돈 표기예요.</p></div>
+<div class="sum" hidden><p class="sum-lead">치환은 코돈의 결과에 따라 과오·정지·침묵으로 구분해요.</p></div></article><article class="topic" id="s4-frameshift"><h3>한 글자가 빠지면 조가 밀려요</h3><div class="tags"><span class="tag date">1006 수업</span><span class="tag slide">5장 p6</span></div>
+<div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">세 명씩 조를 짰는데 한 명이 빠지면 뒤의 조가 밀려요.</p><figure class="figure"><svg id="fig-frameshift-groups" viewBox="0 0 560 160" role="img" aria-label="세 명이 함께 빠진 경우에는 뒤 조의 경계가 유지돼요."><text class="fig-text" x="24" y="25" font-size="14">원래 묶음</text><text class="fig-text" x="180" y="25" font-size="14">ABC | DEF | GHI | JKL</text><text class="fig-text" x="24" y="69" font-size="14">한 글자 삭제</text><text class="fig-text" x="180" y="69" font-size="14">ABD | EFG | HIJ | KL</text><line class="fig-danger" x1="184" y1="35" x2="184" y2="57"/><text class="fig-text" x="24" y="118" font-size="14">세 글자 삭제</text><text class="fig-text" x="180" y="118" font-size="14">ABC | GHI | JKL</text></svg><figcaption>세 명이 함께 빠진 경우에는 뒤 조의 경계가 유지돼요.</figcaption></figure></div>
+<div class="layer formal"><span class="layer-title">정확히 말하면</span><p><strong>번역틀이동 돌연변이(frameshift mutation)</strong>는 단백질 암호화 부위에서 <strong>삽입</strong>·<strong>삭제</strong>된 염기 수가 3의 배수가 아니어서 이후 세 염기씩 읽는 틀이 달라지는 변화예요. 한 염기가 삽입되거나 삭제되면 뒤의 코돈들이 달라질 수 있고 중간에 종결 코돈이 생길 수도 있어요.</p><p>세 염기처럼 3의 배수를 삭제하면 이후의 읽는 틀은 유지될 수 있어요. 그래도 아미노산이 줄거나 삭제 경계의 코돈이 달라질 수 있으므로 침묵이라고 단정하지 않아요. 이 조건은 수업의 한 염기 예를 일반화할 때 필요한 범위 보정이에요.</p></div>
+<div class="layer prof"><span class="layer-title">교수님 말씀</span><p>교수님은 세 명씩 만든 조에서 한 명을 교체하는 경우와 한 명이 빠지는 경우를 비교하셨어요. 교체는 그 조에 한정될 수 있지만 삭제는 뒤 조들을 밀 수 있어요.</p></div>
+<div class="layer warn"><span class="layer-title">꼭 기억해요</span><p>치환은 염기를 다른 것으로 바꾸고 삽입·삭제는 개수를 바꿔요. 중간 종결 코돈이 생겼다는 결과만 보지 말고 원인이 한 염기 삽입인지 치환인지 확인해요. 틀이동은 흔히 영향이 크지만 항상 더 치명적인 것은 아니에요.</p></div>
+<div class="sum" hidden><p class="sum-lead">암호화 부위의 삽입·삭제 수가 3의 배수가 아니면 이후 읽는 틀이 바뀌어요.</p></div></article>
+    </section>
+    <section id="s5"><h2>5. 원핵생물의 발현 조절</h2>
+<article class="topic" id="s5-switch"><h3>필요한 단백질만 만들어요</h3><div class="tags"><span class="tag date">1006 수업</span><span class="tag slide">5장 p6–7</span></div>
+<div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">쓸 때만 등을 켜면 낭비를 줄일 수 있어요.</p><figure class="figure"><svg id="fig-gene-switch" viewBox="0 0 560 160" role="img" aria-label="필요한 때에 맞춰 켜고 꺼요."><rect class="fig-ink" x="26" y="27" width="225" height="70" rx="8"/><text class="fig-text" x="42" y="53" font-size="14">꺼짐: 쓰지 않는 작업대</text><text class="fig-text" x="42" y="80" font-size="14">재료와 힘을 아껴요</text><rect class="fig-accent" x="303" y="27" width="225" height="70" rx="8"/><text class="fig-text" x="320" y="53" font-size="14">켜짐: 필요한 작업대</text><text class="fig-text" x="320" y="80" font-size="14">쓸 물건을 만들어요</text></svg><figcaption>필요한 때에 맞춰 켜고 꺼요.</figcaption></figure></div>
+<div class="layer formal"><span class="layer-title">정확히 말하면</span><p><strong>유전자 발현의 조절</strong>은 필요한 때 필요한 양의 단백질을 만들게 하는 조절이에요. 단백질 합성은 동화 과정으로 <strong>에너지</strong>와 <strong>아미노산</strong>을 사용해요. 유전자가 있어도 항상 같은 속도로 발현하는 것은 아니에요. 환경에 맞춰 불필요한 합성을 줄이면 자원을 절약해요.</p><p>대장균은 <strong>포도당</strong>을 젖당보다 우선 이용해요. 젖당을 이용할 때는 젖당 운반과 처리에 필요한 단백질들을 함께 만드는 것이 효율적이에요. 젖당은 갈락토스와 포도당으로 이루어진 이당류예요.</p></div>
+<div class="layer prof"><span class="layer-title">교수님 말씀</span><p>교수님은 유전자를 형광등, 발현 조절을 스위치에 비유하셨어요. 포도당은 이미 잘라 포크까지 꽂아 둔 피자, 젖당은 상자를 열고 잘라야 하는 피자예요. 준비가 덜 필요한 먹이를 먼저 쓰는 배경을 설명하는 비유예요.</p><blockquote>필요할 때만 필요한 단백질을 만드는 거야.</blockquote></div>
+<div class="layer warn"><span class="layer-title">꼭 기억해요</span><p>유전자가 존재하는 것과 지금 발현하고 있다는 것은 달라요. 단백질 수명이 제한적이라는 설명도 있었지만 상세 분해 기작을 배웠다는 뜻은 아니에요. 포도당 우선 이용은 배경이고, 이번에는 젖당에 따른 억제 해제를 중심으로 살펴봐요.</p></div>
+<div class="sum" hidden><p class="sum-lead">발현 조절은 필요할 때 단백질을 만들어 에너지와 아미노산의 낭비를 줄여요.</p></div></article><article class="topic" id="s5-operon"><h3>lac 오페론의 억제자 스위치</h3><div class="tags"><span class="tag date">1006 수업</span><span class="tag slide">5장 p6–7</span></div>
+<div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">길목을 막던 장애물이 다른 것에 붙으면, 필요한 세 가지 도구의 설명서를 함께 복사할 수 있어요.</p><figure class="figure"><svg id="fig-lac-open" viewBox="0 0 560 190" role="img" aria-label="젖당 있음: 억제자 이탈, 전사 가능"><line class="fig-ink" x1="28" y1="115" x2="534" y2="115"/><rect class="fig-ink" x="45" y="94" width="110" height="42" rx="8"/><text class="fig-text" x="58" y="120" font-size="14">시작 표지</text><rect class="fig-ink" x="168" y="94" width="102" height="42" rx="8"/><text class="fig-text" x="181" y="120" font-size="14">길목</text><rect class="fig-accent" x="286" y="94" width="70" height="42" rx="8"/><text class="fig-text" x="315" y="120" font-size="14">Z</text><rect class="fig-accent" x="370" y="94" width="70" height="42" rx="8"/><text class="fig-text" x="399" y="120" font-size="14">Y</text><rect class="fig-accent" x="454" y="94" width="70" height="42" rx="8"/><text class="fig-text" x="483" y="120" font-size="14">A</text><rect class="fig-danger" x="130" y="28" width="96" height="40" rx="8"/><text class="fig-text" x="142" y="53" font-size="14">길을 막는 것</text><circle class="fig-dot" cx="116" cy="44" r="9"/><text class="fig-text" x="35" y="24" font-size="14">붙으면 길이 열림</text><text class="fig-text" x="287" y="166" font-size="14">함께 복사 가능</text></svg><figcaption>설명서 한 장에서 도구 세 가지를 따로 만들어요.</figcaption></figure></div>
+<div class="layer formal"><span class="layer-title">정확히 말하면</span><p><strong>오페론(operon)</strong>은 원핵생물에서 유전자들과 발현 조절 DNA 서열을 묶은 단위예요. lac 오페론의 <strong>lacZ</strong>, <strong>lacY</strong>, <strong>lacA</strong>는 하나의 프로모터 아래 나란히 있어 하나의 mRNA로 전사돼요. 이 mRNA에서 서로 다른 세 단백질이 만들어져요. 세 단백질을 이어 붙인 하나의 폴리펩티드를 만드는 것은 아니에요.</p><p>세 산물이 모두 젖당을 직접 자르는 효소는 아니에요.</p><div class="table-wrap"><table><thead><tr><th>구성 요소</th><th>물질·역할</th></tr></thead><tbody><tr><td>프로모터</td><td>RNA 중합효소가 결합해 전사를 시작하는 DNA 서열</td></tr><tr><td>작동자(operator)</td><td>억제자가 결합하는 조절 DNA 서열</td></tr><tr><td>억제자(repressor)</td><td>작동자에 결합해 전사를 막는 조절 단백질</td></tr><tr><td>lacI</td><td>lacZYA 오페론 바깥의 억제자 암호화 조절 유전자</td></tr><tr><td>알로락토스(allolactose)</td><td>억제자에 결합해 억제를 푸는 유도자(inducer)</td></tr></tbody></table></div><p>젖당이 없으면 활성 억제자가 작동자에 결합해 lac 구조유전자 전사를 억제해요. 젖당이 있으면 그로부터 생기는 알로락토스가 억제자에 결합해 구조를 바꾸고 작동자에 잘 결합하지 못하게 해요. 억제가 풀려 전사가 가능해져요. lac는 유도성 오페론이에요.</p><p>젖당이 있고 포도당이 없는 조건에서 강한 유도를 기대하는 단순 모형을 사용해요. 젖당이 있다는 조건 하나로 모든 환경에서 강한 발현을 보장하지는 않아요. 억제자가 변해서 작동자에 결합할 수 없다면 젖당이 없어도 이 억제자가 전사를 막지 못해요.</p><div class="widget" id="widget-lac"><h4>직접 해 보기: 젖당 스위치</h4><p class="widget-help">포도당이 없는 조건에서 젖당의 유무를 바꾸면 억제자의 위치와 전사 상태가 달라져요.</p><div class="controls"><label for="lac-state">젖당 <select id="lac-state"><option value="0">없음</option><option value="1">있음</option></select></label></div><svg id="lac-plot" viewBox="0 0 560 190" role="img" aria-label="젖당 없음: 억제자 결합, 전사 억제"><line class="fig-ink" x1="28" y1="115" x2="534" y2="115"/><rect class="fig-ink" x="45" y="94" width="110" height="42" rx="8"/><text class="fig-text" x="58" y="120" font-size="14">시작 표지</text><rect class="fig-ink" x="168" y="94" width="102" height="42" rx="8"/><text class="fig-text" x="181" y="120" font-size="14">길목</text><rect class="fig-accent" x="286" y="94" width="70" height="42" rx="8"/><text class="fig-text" x="315" y="120" font-size="14">Z</text><rect class="fig-accent" x="370" y="94" width="70" height="42" rx="8"/><text class="fig-text" x="399" y="120" font-size="14">Y</text><rect class="fig-accent" x="454" y="94" width="70" height="42" rx="8"/><text class="fig-text" x="483" y="120" font-size="14">A</text><rect class="fig-danger" x="220" y="28" width="96" height="40" rx="8"/><text class="fig-text" x="232" y="53" font-size="14">길을 막는 것</text><line class="fig-danger" x1="248" y1="68" x2="219" y2="94"/><text class="fig-text" x="287" y="166" font-size="14">함께 복사 억제</text></svg><p class="readout">현재 상태: <b id="lac-out" aria-live="polite">억제자가 작동자에 결합해 전사를 억제해요.</b></p><div class="widget-static" hidden><figure class="figure"><svg id="widget-lac-static-1" viewBox="0 0 560 190" role="img" aria-label="젖당 없음: 억제자 결합, 전사 억제"><line class="fig-ink" x1="28" y1="115" x2="534" y2="115"/><rect class="fig-ink" x="45" y="94" width="110" height="42" rx="8"/><text class="fig-text" x="58" y="120" font-size="14">시작 표지</text><rect class="fig-ink" x="168" y="94" width="102" height="42" rx="8"/><text class="fig-text" x="181" y="120" font-size="14">길목</text><rect class="fig-accent" x="286" y="94" width="70" height="42" rx="8"/><text class="fig-text" x="315" y="120" font-size="14">Z</text><rect class="fig-accent" x="370" y="94" width="70" height="42" rx="8"/><text class="fig-text" x="399" y="120" font-size="14">Y</text><rect class="fig-accent" x="454" y="94" width="70" height="42" rx="8"/><text class="fig-text" x="483" y="120" font-size="14">A</text><rect class="fig-danger" x="220" y="28" width="96" height="40" rx="8"/><text class="fig-text" x="232" y="53" font-size="14">길을 막는 것</text><line class="fig-danger" x1="248" y1="68" x2="219" y2="94"/><text class="fig-text" x="287" y="166" font-size="14">함께 복사 억제</text></svg><figcaption>포도당 없음, 젖당 없음: 작동자 점유와 전사 억제.</figcaption></figure><figure class="figure"><svg id="widget-lac-static-2" viewBox="0 0 560 190" role="img" aria-label="젖당 있음: 억제자 이탈, 전사 가능"><line class="fig-ink" x1="28" y1="115" x2="534" y2="115"/><rect class="fig-ink" x="45" y="94" width="110" height="42" rx="8"/><text class="fig-text" x="58" y="120" font-size="14">시작 표지</text><rect class="fig-ink" x="168" y="94" width="102" height="42" rx="8"/><text class="fig-text" x="181" y="120" font-size="14">길목</text><rect class="fig-accent" x="286" y="94" width="70" height="42" rx="8"/><text class="fig-text" x="315" y="120" font-size="14">Z</text><rect class="fig-accent" x="370" y="94" width="70" height="42" rx="8"/><text class="fig-text" x="399" y="120" font-size="14">Y</text><rect class="fig-accent" x="454" y="94" width="70" height="42" rx="8"/><text class="fig-text" x="483" y="120" font-size="14">A</text><rect class="fig-danger" x="130" y="28" width="96" height="40" rx="8"/><text class="fig-text" x="142" y="53" font-size="14">길을 막는 것</text><circle class="fig-dot" cx="116" cy="44" r="9"/><text class="fig-text" x="35" y="24" font-size="14">붙으면 길이 열림</text><text class="fig-text" x="287" y="166" font-size="14">함께 복사 가능</text></svg><figcaption>포도당 없음, 젖당 있음: 알로락토스 결합으로 억제 해제.</figcaption></figure><div class="table-wrap"><table><thead><tr><th>고정 조건</th><th>젖당</th><th>억제자와 작동자</th><th>전사</th></tr></thead><tbody><tr><td>포도당 없음</td><td>없음</td><td>억제자 결합</td><td>억제</td></tr><tr><td>포도당 없음</td><td>있음</td><td>알로락토스 결합, 억제자 이탈</td><td>가능</td></tr></tbody></table></div></div></div></div>
+<div class="layer prof"><span class="layer-title">교수님 말씀</span><p>교수님은 가위·칼·포크를 함께 필요한 도구 세트로 비유하셨어요. 억제자는 길을 막는 장애물이며, 유도자가 붙으면 장애물의 결합 상태가 바뀐다고 설명하셨어요. 실제 억제자 결합 물질은 알로락토스라고 바로잡으셨어요.</p></div>
+<div class="layer warn"><span class="layer-title">꼭 기억해요</span><p>작동자는 DNA, 억제자는 단백질이에요. 알로락토스는 작동자가 아니라 억제자에 결합해요. lacI는 lacZYA와 함께 전사되는 구조유전자에 포함되지 않아요. 억제자 자체는 젖당이 없어도 만들어져요.</p><p>RNA 중합효소가 프로모터에서 시작하는 것은 전사예요. mRNA를 읽어 아미노산을 연결하는 번역과 구분해요. 아래 모형은 포도당이 없다고 고정하고 젖당에 따른 억제자 상태만 바꿔요.</p></div>
+<div class="sum" hidden><p class="sum-lead">포도당이 없는 단순 모형에서 젖당은 알로락토스를 통해 억제자 결합을 풀어 lac 전사를 유도해요.</p></div></article>
+    </section>
+    <section id="s6"><h2>6. 요약 · 예고</h2>
+<article class="topic" id="s6-cheatsheet"><h3>시험 직전 한 줄</h3><div class="table-wrap"><table><thead><tr><th>주제</th><th>시험 직전 한 줄</th></tr></thead><tbody><tr><td>전사</td><td>DNA의 한 주형가닥으로 RNA를 만들며 RNA 합성은 5′에서 3′ 방향이에요.</td></tr><tr><td>진핵 mRNA 가공</td><td>핵 안에서 모자·꼬리를 붙이고 전구체 RNA의 인트론을 제거해 엑손을 이어요.</td></tr><tr><td>유전암호</td><td>mRNA의 세 염기 코돈은 64가지이고 61가지는 아미노산을 지정해요.</td></tr><tr><td>번역</td><td>mRNA 정보를 리보솜에서 읽고 tRNA가 가져온 아미노산을 폴리펩티드로 연결해요.</td></tr><tr><td>tRNA</td><td>아미노산은 3′ 말단에, 코돈의 역평행·상보적 짝은 안티코돈에 있어요.</td></tr><tr><td>개시와 종결</td><td>AUG는 메티오닌을 지정하며 개시에 쓰이고 UAA·UAG·UGA는 종결 신호예요.</td></tr><tr><td>치환</td><td>암호화 부위의 결과가 다른 아미노산이면 과오, 종결 코돈이면 정지, 같은 아미노산이면 침묵이에요.</td></tr><tr><td>틀이동</td><td>암호화 부위의 삽입·삭제 수가 3의 배수가 아니면 이후 읽는 틀이 달라져요.</td></tr><tr><td>오페론</td><td>lacZYA는 하나의 mRNA로 전사되고 각각의 단백질을 만들어요. lacI는 별도 조절 유전자예요.</td></tr><tr><td>lac 억제</td><td>포도당이 없는 단순 모형에서 젖당이 없으면 억제자가 작동자 DNA를 점유해 전사를 억제해요.</td></tr><tr><td>lac 유도</td><td>같은 조건에서 젖당이 있으면 알로락토스가 억제자 단백질에 붙어 억제를 풀어요.</td></tr></tbody></table></div></article><article class="topic" id="s6-next"><h3>끊긴 지점과 다음 범위 — 예고</h3><p>확정 범위는 5장 전사·RNA 가공·코돈·간단한 번역·돌연변이·lac 오페론까지예요. 진핵생물의 발현 조절은 다음 시간 예고이며 5장을 끝냈다고 판단하지 않아요.</p><blockquote>진핵생물은 다음 시간에 봅시다. 모레는 4장 마저 읽겠습니다.</blockquote><ul><li>진핵생물의 발현 조절: 전사·전사 후·번역·번역 후 조절.</li><li>이름만 예고: TATA 상자, 증폭자, 히스톤 아세틸화, 프로테아좀.</li><li>작은 RNA 조절: miRNA는 다음 범위의 이름만 예고해요.</li><li>4장 남은 범위는 교수님이 다음 일정으로 언급하셨어요.</li></ul></article><article class="topic" id="s6-links"><h3>함께 보면 좋은 자료</h3><ul><li><a href="복습문제_1006_Transcription_Translation_and_Lac_Operon.html">1006 복습문제 풀기</a></li><li><a href="#s3-trna">가닥 방향과 코돈·안티코돈</a></li><li><a href="#s5-operon">lac 오페론의 억제자 스위치</a></li></ul></article>
+    </section>
+  </main>
+  <footer>출처: 이영만 교수님 강의노트(5장) · 수업 녹음 전사(1006 생명) · 『생명과학: 기초와 응용』 2판 5장.</footer>
+    </div>
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="panel-right-title">
+      <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-right-title">페이지 요약</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-sub" id="sum-for">전체 흐름</p>
+        <p class="panel-empty" id="sum-empty">페이지를 넘기면 그 페이지의 핵심 식과 용어가 여기에 나옵니다.</p>
+        <div class="sums"></div>
+      </div>
+    </aside>
+  </div>
+  <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
+  <nav class="pager" aria-label="화면 이동">
+    <div class="pager-inner">
+      <button class="btn btn-ghost" id="pager-prev" type="button">이전</button>
+      <span class="pager-count" id="pager-count"></span>
+      <button class="btn btn-primary" id="pager-next" type="button">시작하기</button>
+    </div>
+  </nav>
+  <p class="sr-only" id="pager-status" aria-live="polite"></p>
+  <script id="widget-lac-ui">(function(){const root=document.getElementById('widget-lac');if(!root)return;const control=root.querySelector('#lac-state');const diagrams=["<svg id=\"lac-plot\" viewBox=\"0 0 560 190\" role=\"img\" aria-label=\"젖당 없음: 억제자 결합, 전사 억제\"><line class=\"fig-ink\" x1=\"28\" y1=\"115\" x2=\"534\" y2=\"115\"/><rect class=\"fig-ink\" x=\"45\" y=\"94\" width=\"110\" height=\"42\" rx=\"8\"/><text class=\"fig-text\" x=\"58\" y=\"120\" font-size=\"14\">시작 표지</text><rect class=\"fig-ink\" x=\"168\" y=\"94\" width=\"102\" height=\"42\" rx=\"8\"/><text class=\"fig-text\" x=\"181\" y=\"120\" font-size=\"14\">길목</text><rect class=\"fig-accent\" x=\"286\" y=\"94\" width=\"70\" height=\"42\" rx=\"8\"/><text class=\"fig-text\" x=\"315\" y=\"120\" font-size=\"14\">Z</text><rect class=\"fig-accent\" x=\"370\" y=\"94\" width=\"70\" height=\"42\" rx=\"8\"/><text class=\"fig-text\" x=\"399\" y=\"120\" font-size=\"14\">Y</text><rect class=\"fig-accent\" x=\"454\" y=\"94\" width=\"70\" height=\"42\" rx=\"8\"/><text class=\"fig-text\" x=\"483\" y=\"120\" font-size=\"14\">A</text><rect class=\"fig-danger\" x=\"220\" y=\"28\" width=\"96\" height=\"40\" rx=\"8\"/><text class=\"fig-text\" x=\"232\" y=\"53\" font-size=\"14\">길을 막는 것</text><line class=\"fig-danger\" x1=\"248\" y1=\"68\" x2=\"219\" y2=\"94\"/><text class=\"fig-text\" x=\"287\" y=\"166\" font-size=\"14\">함께 복사 억제</text></svg>", "<svg id=\"lac-plot\" viewBox=\"0 0 560 190\" role=\"img\" aria-label=\"젖당 있음: 억제자 이탈, 전사 가능\"><line class=\"fig-ink\" x1=\"28\" y1=\"115\" x2=\"534\" y2=\"115\"/><rect class=\"fig-ink\" x=\"45\" y=\"94\" width=\"110\" height=\"42\" rx=\"8\"/><text class=\"fig-text\" x=\"58\" y=\"120\" font-size=\"14\">시작 표지</text><rect class=\"fig-ink\" x=\"168\" y=\"94\" width=\"102\" height=\"42\" rx=\"8\"/><text class=\"fig-text\" x=\"181\" y=\"120\" font-size=\"14\">길목</text><rect class=\"fig-accent\" x=\"286\" y=\"94\" width=\"70\" height=\"42\" rx=\"8\"/><text class=\"fig-text\" x=\"315\" y=\"120\" font-size=\"14\">Z</text><rect class=\"fig-accent\" x=\"370\" y=\"94\" width=\"70\" height=\"42\" rx=\"8\"/><text class=\"fig-text\" x=\"399\" y=\"120\" font-size=\"14\">Y</text><rect class=\"fig-accent\" x=\"454\" y=\"94\" width=\"70\" height=\"42\" rx=\"8\"/><text class=\"fig-text\" x=\"483\" y=\"120\" font-size=\"14\">A</text><rect class=\"fig-danger\" x=\"130\" y=\"28\" width=\"96\" height=\"40\" rx=\"8\"/><text class=\"fig-text\" x=\"142\" y=\"53\" font-size=\"14\">길을 막는 것</text><circle class=\"fig-dot\" cx=\"116\" cy=\"44\" r=\"9\"/><text class=\"fig-text\" x=\"35\" y=\"24\" font-size=\"14\">붙으면 길이 열림</text><text class=\"fig-text\" x=\"287\" y=\"166\" font-size=\"14\">함께 복사 가능</text></svg>"];const states=['억제자가 작동자에 결합해 전사를 억제해요.','알로락토스가 억제자에 결합해 작동자가 비고 전사가 가능해요.'];function draw(){const state=control.value==='1'?1:0;root.querySelector('#lac-plot').outerHTML=diagrams[state];root.querySelector('#lac-out').textContent=states[state];}control.addEventListener('change',draw);draw();})();</script>
+  <script id="theme-ui">
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const sysDark = matchMedia('(prefers-color-scheme: dark)');
+      const KEY = 'od-theme';
+      const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+      function label() {
+        const next = isDark() ? '라이트 모드로 전환' : '다크 모드로 전환';
+        btn.setAttribute('aria-label', next);
+        btn.title = next;
+      }
+      btn.addEventListener('click', () => {
+        const t = isDark() ? 'light' : 'dark';
+        // 시스템 설정과 같아지면 저장을 지워 다시 시스템을 따른다
+        if ((t === 'dark') === sysDark.matches) { delete root.dataset.theme; try { localStorage.removeItem(KEY); } catch (e) {} }
+        else { root.dataset.theme = t; try { localStorage.setItem(KEY, t); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+        label();
+      });
+      sysDark.addEventListener('change', label);
+      window.addEventListener('storage', (e) => {
+        if (e.key !== KEY) return;
+        if (e.newValue === 'light' || e.newValue === 'dark') root.dataset.theme = e.newValue; else delete root.dataset.theme;
+        label();
+      });
+      label();
+    })();
+  </script>
+  <script id="panels-ui">
+    (function () {
+      const body = document.body;
+      const layout = document.querySelector('.layout');
+      const kind = body.dataset.panels;
+      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const scrim = document.getElementById('panel-scrim');
+      const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
+      const wideMq = matchMedia('(min-width: 1024px)');
+      const roomyMq = matchMedia('(min-width: 1280px)');
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      // 푼 기록은 탭(세션) 단위로만 유지: 뒤로가기·새로고침엔 남고, 창을 닫고 다시 열면 초기화
+      const tabStore = {
+        get(k, d) { try { const v = sessionStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      const PREF = 'od-panels:' + kind;
+      // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
+      const RANGE = body.dataset.range || '';
+      const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+      const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+      let overlay = null;
+
+      // ---------- 열고 닫기 ----------
+      function docked() {
+        const pref = store.get(PREF, {});
+        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+      }
+      function sync() {
+        const wide = wideMq.matches;
+        const d = docked();
+        ['left', 'right'].forEach((side) => {
+          const open = wide ? d[side] : overlay === side;
+          const p = panels[side];
+          layout.dataset[side] = open ? 'open' : 'closed';
+          p.classList.toggle('is-open', !wide && open);
+          p.inert = !open;
+          if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
+          toggles[side].setAttribute('aria-expanded', String(open));
+        });
+        const drawer = !wide && overlay !== null;
+        scrim.classList.toggle('is-on', drawer);
+        body.classList.toggle('drawer-open', drawer);
+        blockers.forEach((el) => { el.inert = drawer; });
+      }
+      function openDrawer(side) {
+        overlay = side;
+        sync();
+        requestAnimationFrame(() => panels[side].querySelector('[data-panel-close]').focus());
+      }
+      function closeDrawer(refocus) {
+        if (overlay === null) return;
+        const side = overlay;
+        overlay = null;
+        sync();
+        if (refocus) toggles[side].focus();
+      }
+      function toggle(side) {
+        if (wideMq.matches) {
+          const d = docked();
+          d[side] = !d[side];
+          store.set(PREF, d);
+          sync();
+          if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+        } else if (overlay === side) closeDrawer(true);
+        else openDrawer(side);
+      }
+
+      toggles.left.addEventListener('click', () => toggle('left'));
+      toggles.right.addEventListener('click', () => toggle('right'));
+      scrim.addEventListener('click', () => closeDrawer(true));
+      document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
+      panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
+
+      // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      function applyWidths() {
+        const w = store.get(PREF + ':w', {});
+        ['left', 'right'].forEach((side) => {
+          if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
+          else layout.style.removeProperty(WIDTH[side].prop);
+        });
+      }
+      function maxFor(side) {
+        const other = side === 'left' ? panels.right : panels.left;
+        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
+      }
+      function setWidth(side, px, save) {
+        const v = Math.round(Math.min(Math.max(px, WIDTH[side].min), maxFor(side)));
+        layout.style.setProperty(WIDTH[side].prop, v + 'px');
+        panels[side].querySelector('.panel-resize').setAttribute('aria-valuenow', String(v));
+        if (save) { const w = store.get(PREF + ':w', {}); w[side] = v; store.set(PREF + ':w', w); }
+      }
+      function resetWidth(side) {
+        const w = store.get(PREF + ':w', {});
+        delete w[side];
+        store.set(PREF + ':w', w);
+        layout.style.removeProperty(WIDTH[side].prop);
+      }
+      document.querySelectorAll('.panel-resize').forEach((handle) => {
+        const side = handle.dataset.side;
+        const dir = side === 'left' ? 1 : -1;
+        handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
+        handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
+        handle.addEventListener('pointerdown', (e) => {
+          if (!wideMq.matches || e.button !== 0) return;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startW = panels[side].getBoundingClientRect().width;
+          handle.setPointerCapture(e.pointerId);
+          body.classList.add('is-resizing');
+          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const up = () => {
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', up);
+            handle.removeEventListener('pointercancel', up);
+            body.classList.remove('is-resizing');
+            setWidth(side, panels[side].getBoundingClientRect().width, true);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', up);
+          handle.addEventListener('pointercancel', up);
+        });
+        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('keydown', (e) => {
+          const step = e.shiftKey ? 64 : 16;
+          const cur = panels[side].getBoundingClientRect().width;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+        });
+      });
+      applyWidths();
+      const onMq = () => { overlay = null; sync(); };
+      wideMq.addEventListener('change', onMq);
+      roomyMq.addEventListener('change', onMq);
+
+      // ---------- 목차의 진행 표시 ----------
+      const progressN = document.getElementById('progress-n');
+      const progressBar = document.getElementById('progress-bar');
+      const progressTotal = document.getElementById('progress-total');
+      function markToc(done, total, doneLabel) {
+        panels.left.querySelectorAll('.toc-list a').forEach((a) => {
+          const id = decodeURIComponent(a.getAttribute('href').slice(1));
+          let mark = a.querySelector('.toc-mark');
+          if (!mark) {
+            mark = document.createElement('span');
+            mark.className = 'toc-mark';
+            mark.setAttribute('aria-hidden', 'true');
+            const state = document.createElement('span');
+            state.className = 'sr-only toc-state';
+            a.append(mark, state);
+          }
+          const isDone = done.has(id);
+          mark.classList.toggle('is-done', isDone);
+          mark.innerHTML = isDone ? ICON_DONE : ICON_TODO;
+          a.querySelector('.toc-state').textContent = isDone ? ' (' + doneLabel + ')' : '';
+        });
+        progressN.textContent = String(done.size);
+        progressTotal.textContent = String(total);
+        progressBar.style.transform = 'scaleX(' + (total ? done.size / total : 0) + ')';
+      }
+      function revealCurrent() {
+        const link = panels.left.querySelector('.toc-list a[aria-current="true"]');
+        if (link && layout.dataset.left === 'open') link.scrollIntoView({ block: 'nearest' });
+      }
+
+      // ---------- 복습문제: 오른쪽 = 원문 · 힌트 · 풀이 ----------
+      function setupReview() {
+        const KEY = 'od-review-solved:' + RANGE;
+        const cards = Array.from(document.querySelectorAll('main article.card'));
+        const aids = panels.right.querySelector('.aids');
+        const sub = document.getElementById('aid-for');
+        const empty = panels.right.querySelector('.panel-empty');
+        const btn = document.getElementById('solved-btn');
+        const groups = {};
+        const solved = new Set(tabStore.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        cards.forEach((card) => {
+          const g = document.createElement('div');
+          g.className = 'aid';
+          g.hidden = true;
+          card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
+          aids.appendChild(g);
+          groups[card.id] = g;
+        });
+        let curId = null;
+        function paintBtn() {
+          const on = solved.has(curId);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.innerHTML = (on ? ICON_DONE : ICON_TODO) + '<span>' + (on ? '푼 문제 · 표시 해제' : '푼 문제로 표시') + '</span>';
+        }
+        btn.addEventListener('click', () => {
+          if (!curId) return;
+          if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
+          tabStore.set(KEY, Array.from(solved));
+          paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          curId = s.matches('article.card') ? s.id : null;
+          Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
+          empty.hidden = Boolean(curId);
+          btn.hidden = !curId;
+          sub.textContent = curId ? ((s.querySelector('h3') || {}).textContent || '').trim() : '';
+          sub.hidden = !curId;
+          if (curId) paintBtn();
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(solved, cards.length, '푼 문제');
+          revealCurrent();
+        });
+      }
+
+      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
+      function setupNote() {
+        const KEY = 'od-note-read:' + RANGE;
+        const topics = Array.from(document.querySelectorAll('main article.topic'));
+        const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
+        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
+        const box = panels.right.querySelector('.sums');
+        const sums = {};
+        topics.forEach((t) => {
+          const el = t.querySelector(':scope > .sum');
+          if (!el) return;
+          el.hidden = true;
+          box.appendChild(el);
+          sums[t.id] = el;
+        });
+        const sub = document.getElementById('sum-for');
+        const empty = document.getElementById('sum-empty');
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          const key = s.matches('article.topic') ? s.id : 'intro';
+          Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
+          empty.hidden = Boolean(sums[key]);
+          sub.textContent = key === 'intro' ? '전체 흐름' : ((s.querySelector('h3') || {}).textContent || '').trim();
+          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(read, topics.length, '읽음');
+          revealCurrent();
+        });
+      }
+
+      if (kind === 'review') setupReview();
+      if (kind === 'note') setupNote();
+      sync();
+    })();
+  </script>
+  <script id="pager-ui">
+    (function () {
+      const root = document.documentElement;
+      const main = document.querySelector('main');
+      const hero = main.querySelector('.hero');
+      const screens = [hero].concat(Array.from(main.querySelectorAll(document.body.dataset.screens)));
+      if (screens.length < 2) { root.classList.remove('js'); return; }
+      screens.forEach((s) => s.classList.add('screen'));
+
+      const last = screens.length - 1;
+      const prevBtn = document.getElementById('pager-prev');
+      const nextBtn = document.getElementById('pager-next');
+      const count = document.getElementById('pager-count');
+      const bar = document.getElementById('pager-bar');
+      const status = document.getElementById('pager-status');
+      const toc = document.querySelector('#panel-left .toc');
+      const scroller = document.querySelector('.content');
+      const titleOf = (s) => ((s.querySelector('h3') || s.querySelector('h1') || {}).textContent || '').trim();
+      let cur = -1;
+
+      // 목차: 섹션 링크 아래에 화면(토픽·카드) 목록을 붙인다
+      const tocLinks = [];
+      Array.from(toc.querySelectorAll(':scope > a')).forEach((a) => {
+        const sec = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+        const group = document.createElement('div');
+        group.className = 'toc-group';
+        a.replaceWith(group);
+        group.appendChild(a);
+        if (!sec) return;
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        screens.forEach((s, i) => {
+          if (!sec.contains(s)) return;
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#' + s.id;
+          link.innerHTML = '<span class="toc-title"></span>';
+          link.firstChild.textContent = titleOf(s);
+          li.appendChild(link);
+          list.appendChild(li);
+          tocLinks[i] = link;
+        });
+        group.appendChild(list);
+      });
+
+      function indexFor(hash) {
+        const id = decodeURIComponent((hash || '').replace(/^#/, ''));
+        const el = id && document.getElementById(id);
+        if (!el || !main.contains(el)) return { i: 0 };
+        const i = screens.findIndex((s) => s.contains(el) || el.contains(s));
+        return { i: Math.max(i, 0), target: i >= 0 && screens[i].contains(el) && screens[i] !== el ? el : null };
+      }
+
+      function render(i, target) {
+        const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
+        if (i !== cur) {
+          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
+          main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
+          const s = screens[i];
+          const sec = s.closest('section');
+          if (sec) sec.classList.add('is-on');
+          s.classList.add('is-current');
+          if (dir) { s.classList.remove('enter-next', 'enter-prev'); void s.offsetWidth; s.classList.add(dir); }
+          cur = i;
+          document.body.classList.toggle('at-end', i === last);
+          prevBtn.disabled = i === 0;
+          nextBtn.textContent = i === 0 ? '시작하기' : i === last ? '처음으로' : '다음';
+          count.textContent = i === 0 ? '' : i + ' / ' + last;
+          bar.style.transform = 'scaleX(' + (i / last) + ')';
+          status.textContent = i === 0 ? titleOf(s) : i + ' / ' + last + ', ' + titleOf(s);
+          tocLinks.forEach((link, k) => link && link.setAttribute('aria-current', String(k === i)));
+          document.dispatchEvent(new CustomEvent('od:screen', { detail: { index: i, screen: s } }));
+        }
+        if (target) target.scrollIntoView({ block: 'start' });
+        else scroller.scrollTo(0, 0);
+      }
+
+      function go(i) {
+        i = Math.min(Math.max(i, 0), last);
+        if (i === cur) return;
+        const url = i === 0 ? location.pathname + location.search : '#' + screens[i].id;
+        history.pushState(null, '', url);
+        render(i);
+      }
+
+      prevBtn.addEventListener('click', () => go(cur - 1));
+      nextBtn.addEventListener('click', () => go(cur === last ? 0 : cur + 1));
+      const fromUrl = () => { const r = indexFor(location.hash); render(r.i, r.target); };
+      window.addEventListener('hashchange', fromUrl);
+      window.addEventListener('popstate', fromUrl);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+
+      // 좌우로 밀어서 넘기기 (가로로 스크롤되는 영역은 제외)
+      let sx = 0, sy = 0, skip = true;
+      main.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (skip) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 64 && Math.abs(dx) > 2 * Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      fromUrl();
+    })();
+  </script>
+</body>
+</html>
