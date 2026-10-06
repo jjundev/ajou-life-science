@@ -28,9 +28,10 @@ def merge_transcripts(
     output_file: str = "",
     out_file: str = "",
     timestamps: bool = False,
+    speakers: list[str] | str | None = None,
 ) -> str:
     target_dir = os.path.abspath(target_dir)
-    output_file = output_file or out_file
+    output_path_candidate = output_file or out_file
     pattern = re.compile(rf"^{re.escape(prefix)}.*part(\d+)\.md$" if prefix else r"^.*part(\d+)\.md$")
     timestamp_pattern = re.compile(r"^(\d{1,2}):(\d{2})$")
 
@@ -50,8 +51,8 @@ def merge_transcripts(
 
     part_files.sort(key=lambda x: x[0])
 
-    if output_file:
-        output_path = os.path.abspath(output_file)
+    if output_path_candidate:
+        output_path = os.path.abspath(output_path_candidate)
     elif prefix:
         output_path = os.path.join(target_dir, f"{prefix}.md")
     else:
@@ -84,33 +85,54 @@ def merge_transcripts(
                 continue
             skip_header = False
 
-            if timestamps:
-                tm = timestamp_pattern.match(line_str)
-                if tm:
+            tm = timestamp_pattern.match(line_str)
+            if tm:
+                if timestamps:
                     mins = int(tm.group(1))
                     secs = int(tm.group(2))
                     total_secs = offset_seconds + (mins * 60) + secs
                     new_mins = total_secs // 60
                     new_secs = total_secs % 60
                     content_lines.append(f"{new_mins:02d}:{new_secs:02d}\n")
+                else:
+                    # Strip timestamp line when timestamps is False
                     continue
-
-            content_lines.append(line)
+            else:
+                content_lines.append(line)
 
         body = "".join(content_lines).strip()
         if body:
             full_content.append(body + "\n\n")
 
-    result_text = "".join(full_content).strip() + "\n"
+    raw_text = "".join(full_content)
+    cleaned_text = re.sub(r"\n{3,}", "\n\n", raw_text).strip() + "\n"
 
     with open(output_path, "w", encoding="utf-8") as out:
-        out.write(result_text)
+        out.write(cleaned_text)
 
     print(f"Master transcript successfully created: {output_path}")
+
+    # Validate speaker roster if provided
+    if speakers:
+        if isinstance(speakers, str):
+            speaker_list = [s.strip() for s in speakers.split(",") if s.strip()]
+        else:
+            speaker_list = [s.strip() for s in speakers if s.strip()]
+
+        allowed = set(speaker_list) | {"화자?"}
+        label_pattern = re.compile(r"^\*\*(.+?):\*\*", re.MULTILINE)
+        found = set(label_pattern.findall(cleaned_text))
+        unknown = sorted(found - allowed)
+        if unknown:
+            print(
+                "Warning: speaker labels not in roster: " + ", ".join(repr(u) for u in unknown),
+                file=sys.stderr,
+            )
 
     # Auto-cleanup of intermediate files unless keep_parts is specified
     if not keep_parts and os.path.isfile(output_path) and os.path.getsize(output_path) > 0:
         cleaned_count = 0
+        output_abs = os.path.abspath(output_path)
         for f in os.listdir(target_dir):
             fn = nfc(f)
             is_chunk_md = bool(re.search(r"_part\d+\.md$", fn))
@@ -123,8 +145,11 @@ def merge_transcripts(
                 matches_prefix = True
 
             if matches_prefix and (is_chunk_md or is_chunk_mp3 or is_chunk_mp4):
+                fpath = os.path.join(target_dir, f)
+                if os.path.abspath(fpath) == output_abs:
+                    continue
                 try:
-                    os.remove(os.path.join(target_dir, f))
+                    os.remove(fpath)
                     cleaned_count += 1
                 except OSError as e:
                     print(f"Warning: Failed to delete intermediate file {f}: {e}", file=sys.stderr)
@@ -142,6 +167,7 @@ def main():
     parser.add_argument("--segment-seconds", type=int, default=600, help="Segment length in seconds (default: 600)")
     parser.add_argument("--keep-parts", action="store_true", help="Preserve intermediate part files")
     parser.add_argument("--timestamps", action="store_true", help="Include continuous MM:SS timestamps")
+    parser.add_argument("--speakers", default="", help="Comma-separated allowed speaker labels")
 
     args = parser.parse_args()
     merge_transcripts(
@@ -151,6 +177,7 @@ def main():
         keep_parts=args.keep_parts,
         output_file=args.out,
         timestamps=args.timestamps,
+        speakers=args.speakers,
     )
 
 

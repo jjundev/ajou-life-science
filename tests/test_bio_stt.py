@@ -24,6 +24,8 @@ class BioSttTests(unittest.TestCase):
         self.assertTrue(content.startswith("---"), "SKILL.md must have frontmatter")
         self.assertIn("name: bio-stt", content)
         self.assertIn("description:", content)
+        self.assertIn("Gemini Only", content, "SKILL.md must specify Gemini Only guard")
+        self.assertIn("Model Compatibility Gate", content, "SKILL.md must contain Model Compatibility Gate")
 
     def test_02_parse_date(self):
         from infer_context import parse_date
@@ -93,6 +95,21 @@ class BioSttTests(unittest.TestCase):
             self.assertIn("## Part 02", content)
             self.assertIn("이수체에 대해 설명합니다.", content)
             self.assertIn("헬리케이스 효소가 작동합니다.", content)
+
+            # Test timestamp stripping when timestamps=False
+            part3 = Path(tmpdir) / "1006_생명_part03.md"
+            part3.write_text("00:15\n이 문장은 타임스탬프가 제거되어야 합니다.\n", encoding="utf-8")
+            out_file2 = Path(tmpdir) / "1006_merged2.md"
+            merge_transcripts(
+                target_dir=tmpdir,
+                prefix="1006_생명",
+                out_file=str(out_file2),
+                timestamps=False,
+                keep_parts=True,
+            )
+            content2 = out_file2.read_text(encoding="utf-8")
+            self.assertNotIn("00:15", content2)
+            self.assertIn("이 문장은 타임스탬프가 제거되어야 합니다.", content2)
 
 if __name__ == "__main__":
     unittest.main()
