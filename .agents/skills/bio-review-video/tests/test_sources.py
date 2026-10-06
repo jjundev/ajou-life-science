@@ -1,5 +1,6 @@
 import tempfile, unittest, unicodedata
 from pathlib import Path
+from unittest.mock import patch
 from _util import ROOT
 from lib.sources import discover, asset_path, SourceError
 
@@ -20,9 +21,17 @@ class SourcesTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/'복습노트'/'0915'; p.mkdir(parents=True)
             name='정리노트_0915_호흡.html'
-            for n in (name,unicodedata.normalize('NFD',name)):
+            names=(name,unicodedata.normalize('NFD',name))
+            for n in names:
                 (p/n).write_text('ATP',encoding='utf-8')
-            with self.assertRaises(SourceError): discover(Path(d),'0915')
+            if len(list(p.iterdir()))==1:
+                # APFS treats NFC/NFD spellings as the same file. Simulate an
+                # enumerator reporting both aliases so the collision rule is
+                # tested here too, without requiring a case-sensitive volume.
+                with patch.object(Path,'rglob',return_value=iter(p.resolve()/n for n in names)):
+                    with self.assertRaises(SourceError): discover(Path(d),'0915')
+            else:
+                with self.assertRaises(SourceError): discover(Path(d),'0915')
     def test_partial_range_overlap_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             for date in ('0915-0917','0917-0919'):
