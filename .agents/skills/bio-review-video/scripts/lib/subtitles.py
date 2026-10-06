@@ -5,8 +5,9 @@ from .render import dark_failures
 
 FONT_DIR=Path(__file__).resolve().parents[2]/'assets/fonts'
 # libass 기본 PlayRes(288) 기준 값이다. 1080p에서 글자 약 52px, 하단에서 약 80px 위.
-STYLE=("FontName=Pretendard,FontSize=14,Bold=1,Alignment=2,MarginV=22,Outline=2,Shadow=0,"
-       "BorderStyle=1,PrimaryColour=&HFFFFFF&,OutlineColour=&H000000&")
+# BorderStyle=3은 외곽선 대신 박스를 그린다. 색은 OutlineColour(박스)·BackColour, 알파 4D는 약 70% 불투명, Outline=4가 박스 패딩이다.
+STYLE=("FontName=Pretendard,FontSize=14,Bold=1,Alignment=2,MarginV=22,Outline=4,Shadow=0,"
+       "BorderStyle=3,PrimaryColour=&HFFFFFF&,OutlineColour=&H4D0E0B0B,BackColour=&H4D0E0B0B")
 MAX_SENTENCE=36; MAX_CHUNK=34; WRAP_AT=40
 
 def _seconds(stamp):

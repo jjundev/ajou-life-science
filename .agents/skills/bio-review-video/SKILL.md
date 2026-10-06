@@ -34,7 +34,7 @@ python SKILL/scripts/video.py burn-subtitles --video "<제목>.mp4" --srt RUN/na
 
 `burn-subtitles`는 입력 파일을 덮어쓰지 않으므로 임시 이름(`_자막`)으로 만든다. 자막본 검사(`status: passed`)와 대표 프레임 확인이 끝나면 자막 없는 `<제목>.mp4`를 지우고 `<제목>_자막.mp4`를 `<제목>.mp4`로 바꾼다. 같은 이름의 파일이 이미 있으면 덮어쓰지 말고 멈춘다. 모든 영상을 바꾼 뒤 `복습영상/README.md`·`catalog.json`의 경로·크기·SHA256을 실제 남은 파일 기준으로 갱신한다.
 
-설정은 `scripts/lib/subtitles.py`에 고정했으며 사용자가 바꾸라고 하지 않는 한 건드리지 않는다.
+모양은 Pretendard 굵게 흰 글자, 하단 중앙, 검정 약 70% 불투명 박스(패딩 `Outline=4`)다. 설정은 `scripts/lib/subtitles.py`에 고정했으며 사용자가 바꾸라고 하지 않는 한 건드리지 않는다.
 
 - 폰트 Pretendard Bold(`assets/fonts/Pretendard-Bold.ttf`, 영상 본문과 동일 서체). libass는 woff2를 읽지 못하므로 TTF를 쓴다. 맑은 고딕 등 시스템 폰트로 대체하지 않는다.
 - 하단 중앙 한 줄, 흰 글씨·검은 테두리 2, FontSize 14, MarginV 22(1080p에서 하단 약 80px 위). 화면 하단의 박스·본문과 겹치지 않는다.

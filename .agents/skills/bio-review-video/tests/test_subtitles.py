@@ -13,7 +13,7 @@ class SubtitleTest(unittest.TestCase):
         self.assertTrue(cues[-1].split('\n')[1].endswith('00:00:10,000'))
         for c in cues: self.assertTrue(all(len(l)<=40 for l in c.split('\n')[2:]))
     def test_style_is_fixed(self):
-        for token in ('FontName=Pretendard','FontSize=14','Bold=1','Alignment=2','MarginV=22'): self.assertIn(token,STYLE)
+        for token in ('FontName=Pretendard','FontSize=14','Bold=1','Alignment=2','MarginV=22','BorderStyle=3','Outline=4','OutlineColour=&H4D0E0B0B'):self.assertIn(token,STYLE)
     @unittest.skipUnless(shutil.which('ffmpeg'),'FFmpeg required')
     def test_burn_korean_path_keeps_source(self):
         with tempfile.TemporaryDirectory(prefix='생명 자막 ') as d:
