@@ -20,7 +20,22 @@ SKILL은 이 파일의 폴더, REPO는 생명과학 저장소, RUN은 실행 결
 5. **실측·화면.** assemble --run RUN --pack REPO/.agents/skills/bio-review-pack --assets-from LOCAL_ASSETS를 실행한다. LOCAL_ASSETS는 fonts/와 vendor/를 가진다. 화면은 note-template.html/review-template.html의 스냅샷 CSS와 의미별 클래스를 재사용하고 영상 배치만 덧붙인다. 내용이 많으면 장면을 나눈다.
 6. **렌더.** render --run RUN --hyperframes-entry LOCAL_HYPERFRAMES_BIN을 실행한다. 실제 CPU/NVENC를 시험하고 장면을 렌더한 뒤 PCM을 한 번에 결합한다. 전역 GPU 설정을 바꾸지 않는다. 브라우저 GPU와 인코더 GPU 이용을 구분한다.
 7. **검증.** [렌더·검증](references/rendering-and-verification.md)을 따른다. 모든 장면을 브라우저 검사하고 대표 이미지를 직접 확인한다. 내용/음성/화면 검토를 verification/reviews.json에 현재 input_hash와 증거로 기록한다. verify --run RUN --hyperframes-entry LOCAL_HYPERFRAMES_BIN으로 실제 편집 소스와 최종 파일을 검사한다. 검토 전 verify는 fingerprint와 미확인 항목을 제공한다. 실패하면 원인을 고치고 영향 단계부터 반복한다.
-8. **전달.** 검증 완료 시에만 latest가 갱신된다. review.mp4, narration.srt, chapters.txt를 절대 경로로 전달하고 실제 검증 범위를 구분한다.
+8. **전달.** 검증 완료 시에만 latest가 갱신된다. 아래 고정 출력 형식으로 정리한 뒤 최종 영상, narration.srt, chapters.txt를 절대 경로로 전달하고 실제 검증 범위를 구분한다.
+
+## 고정 출력 형식
+
+사용자가 다른 형식을 요청하지 않는 한 `복습영상/<MMDD 또는 RANGE>/`에는 **제목을 붙인 최종 MP4 하나와 제작자료 폴더 하나**만 둔다. 영상 제목은 학습 내용을 알아볼 수 있는 자연스러운 한국어로 에이전트가 짓는다. 날짜·실행 ID만 있는 영상 이름을 최종 이름으로 쓰지 않는다.
+
+```text
+복습영상/<날짜>/
+├── <영상 제목>.mp4
+└── <주제>_제작자료/
+    └── 자막·장면 시간표·대본·HTML·음성·원자료 스냅샷·검증·실행 메타데이터
+```
+
+`prepare`의 RUN은 작업용 위치다. 완료 후 최종 MP4는 날짜 폴더로 옮기고 나머지 RUN 파일은 제작자료 폴더로 묶는다. `latest.json`도 제작자료 안에 넣어 날짜 폴더에 별도 파일을 남기지 않는다. 재개에 필요한 `review.mp4`는 제작자료 안에서 최종 영상으로 연결하는 상대 심볼릭 링크로 유지할 수 있으며 실제 영상을 중복 저장하지 않는다.
+
+정리 후 영상 해시가 검증한 파일과 같은지, 자막·소스·메타데이터의 경로가 유효한지 확인한다. 이동으로 검증 지문이나 경로가 바뀌면 해당 기록도 새 위치에 맞춘다. 같은 날짜를 다시 제작할 때 기존 결과는 제작자료 안의 이전 버전으로 보존하고 날짜 폴더에는 최신 영상 하나와 제작자료 폴더 하나를 유지한다.
 
 ## 목소리만 변경
 
