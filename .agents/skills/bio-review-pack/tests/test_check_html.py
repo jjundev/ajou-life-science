@@ -21,6 +21,13 @@ class TestPrimitives(unittest.TestCase):
             self.assertEqual(check_html.stt_time_problems(value, "x.html"), [])
         self.assertEqual([p.code for p in check_html.stt_time_problems("28일 23:59까지 시청, 교수님(0922 40:10)", "x.html")], ["stt-time"])
 
+    def test_stt_part_is_rejected(self):
+        for value in ("(0929 Part 05)", "교수님 말씀 (Part 3)", "0929 Part 08 끝"):
+            with self.subTest(value=value):
+                self.assertEqual([p.code for p in check_html.stt_time_problems(value, "x.html")], ["stt-part"])
+        for value in ("0922 수업", "강의노트 3장 p14", "교재 p.68"):
+            self.assertEqual(check_html.stt_time_problems(value, "x.html"), [])
+
     def test_stt_clock_only_in_display_text(self):
         src = '<html lang="ko"><head><script>const t="0910 22:05"</script></head><body><p>0910 수업</p></body></html>'
         problems = check_html.check_common(check_html.parse_html(src), src, Path("x.html"))

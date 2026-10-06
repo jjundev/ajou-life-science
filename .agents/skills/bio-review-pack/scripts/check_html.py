@@ -45,6 +45,7 @@ REMOTE_PREFIXES = ("http://", "https://", "//")
 # CSS 안의 url(...) 과 @import "..." 대상
 CSS_URL_RE = re.compile(r"""url\(\s*['"]?([^'")\s]+)|@import\s+['"]([^'"]+)['"]""", re.IGNORECASE)
 STT_CLOCK_RE = re.compile(r"(?<!\d)\d{1,3}:[0-5]\d(?!\d)")
+STT_PART_RE = re.compile(r"\bPart\s*\d+")
 CALENDAR_DATE_RE = re.compile(r"(?:\d{1,2}월\s*)?\d{1,2}일\s*$")
 
 
@@ -248,6 +249,9 @@ def stt_time_problems(text: str, where: str) -> list[Problem]:
                 continue
             problems.append(Problem("stt-time", where, f"text line {n}: {line.strip()[:120]}"))
             break
+        else:
+            if STT_PART_RE.search(line):
+                problems.append(Problem("stt-part", where, f"text line {n}: {line.strip()[:120]}"))
     return problems
 
 
