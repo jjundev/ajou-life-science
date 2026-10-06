@@ -18,6 +18,8 @@ node tests/browser_check.mjs RUN PUPPETEER_PACKAGE_JSON CHROME_EXE는 로컬 설
 
 완료 보고는 검증한 항목과 미확인 항목을 구분한다. report.complete일 때만 latest.json을 갱신한다. 실패 시 이전 최신 결과를 유지한다. 사용자가 명시한 예산이 소진되면 성공한 문단을 보존하고 사용자에게 예산/실패 사유를 알린다. --resume은 처음 미완료 단계부터 다시 수행한다.
 
-하드 자막본은 마스터 검증 후 만든다. 자막 위치·폰트는 SKILL.md의 "자막 (고정)" 설정을 따르고, 자막본의 대표 프레임에서 박스·본문과 겹치지 않는지 직접 확인한다.
+하드 자막본은 마스터 검증과 publish-set 후 만든다. 자막 위치·폰트는 SKILL.md의 "자막 (고정)" 설정을 따르고, 자막본의 대표 프레임에서 박스·본문과 겹치지 않는지 직접 확인한다.
 
 **다크모드 고정.** 최종 영상은 항상 다크모드다. 렌더는 반드시 `render_parts`(장면별 `scene-NN.html`, `data-theme="dark"` 진입점)와 `mux`로 한다. 프로젝트 `index.html`을 `hyperframes render .`로 한 번에 렌더하면 서브 컴포지션 CSS 때문에 라이트로 나올 수 있으므로 쓰지 않는다. 코드가 이를 강제한다: `render_parts`는 `data-theme="dark"`가 아닌 진입점·`index.html`을 거부하고, `mux`·`verify_media`(`not-dark`)·`burn_subtitles`는 여러 시점의 좌상단 배경 밝기가 기준(80)을 넘으면 실패한다. 이 검사를 끄거나 우회하지 않는다.
+
+최종 날짜 폴더에는 자막본만 접미사 없는 제목으로 남긴다. 마스터 교체 순서와 그 뒤 review.mp4 링크·latest.json 해시가 맞지 않는 점은 SKILL.md "자막 (고정)"을 따른다. 재검증·revoice가 필요하면 RUN에서 render로 마스터를 다시 만든 뒤 진행한다.

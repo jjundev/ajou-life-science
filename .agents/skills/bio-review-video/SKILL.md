@@ -22,22 +22,26 @@ SKILL은 이 파일의 폴더, REPO는 생명과학 저장소, RUN은 실행 결
 5. **실측·화면.** assemble --run RUN --pack REPO/.agents/skills/bio-review-pack --assets-from LOCAL_ASSETS를 실행한다. LOCAL_ASSETS는 fonts/와 vendor/를 가진다. 화면은 note-template.html/review-template.html의 스냅샷 CSS와 의미별 클래스를 재사용하고 영상 배치만 덧붙인다. 내용이 많으면 장면을 나눈다.
 6. **렌더.** render --run RUN --hyperframes-entry LOCAL_HYPERFRAMES_BIN을 실행한다. 실제 CPU/NVENC를 시험하고 장면을 렌더한 뒤 PCM을 한 번에 결합한다. 전역 GPU 설정을 바꾸지 않는다. 브라우저 GPU와 인코더 GPU 이용을 구분한다.
 7. **검증.** [렌더·검증](references/rendering-and-verification.md)을 따른다. 모든 장면을 브라우저 검사하고 대표 이미지를 직접 확인한다. 내용/음성/화면 검토를 verification/reviews.json에 현재 input_hash와 증거로 기록한다. verify --run RUN --hyperframes-entry LOCAL_HYPERFRAMES_BIN으로 실제 편집 소스와 최종 파일을 검사한다. 검토 전 verify는 fingerprint와 미확인 항목을 제공한다. 실패하면 원인을 고치고 영향 단계부터 반복한다.
-8. **묶음 전달.** 각 RUN 검증이 끝나면 publish-set --batch BATCH를 실행한다. 선정한 영상 모두가 현재 지문으로 검증되어야 전체 완료와 latest가 갱신된다. 일부 실패 시 성공한 영상·음성은 보존하고 실패한 단계만 재개한다. 자막이 필요하면 위 "자막" 절의 명령으로 자막본을 만든다. 최종 영상들, 각 영상의 narration.srt·chapters.txt와 제작자료 폴더를 절대 경로로 전달하고 실제 검증 범위를 구분한다. 전체 복습·목소리 교체의 단일 결과도 아래 형식으로 정리한다.
+8. **묶음 전달.** 각 RUN 검증이 끝나면 publish-set --batch BATCH를 실행한다. 선정한 영상 모두가 현재 지문으로 검증되어야 전체 완료와 latest가 갱신된다. 일부 실패 시 성공한 영상·음성은 보존하고 실패한 단계만 재개한다. 이어서 아래 "자막" 절대로 모든 영상에 하드 자막을 굽고 자막본만 남긴다. 최종 영상들, 각 영상의 narration.srt·chapters.txt와 제작자료 폴더를 절대 경로로 전달하고 실제 검증 범위를 구분한다. 전체 복습·목소리 교체의 단일 결과도 아래 형식으로 정리한다.
 
 ## 자막 (고정)
 
-화면 안에는 하단 고정 문구(`.video-caption`)를 넣지 않는다. 핵심 문장은 장면의 "꼭 기억해요" 박스로만 보여 준다. 자막은 렌더 후 **하드 자막**으로 굽는다. 마스터 `review.mp4`와 검증 지문은 자막 없는 상태로 두고, 자막본은 별도 파일로 만든다.
+화면 안에는 하단 고정 문구(`.video-caption`)를 넣지 않는다. 핵심 문장은 장면의 "꼭 기억해요" 박스로만 보여 준다. 자막은 렌더 후 **하드 자막**으로 굽는다. 검증(`verify`)과 `publish-set`은 자막 없는 마스터로 수행하고, 그 뒤 날짜 폴더에는 **자막본만 남긴다.** 자막본의 파일명에는 `_자막` 같은 접미사를 붙이지 않고 영상 제목 그대로(`<영상 제목>.mp4`) 둔다.
 
 ```text
-python SKILL/scripts/video.py burn-subtitles --video 영상.mp4 --srt RUN/narration.srt --output 영상_자막.mp4
+python SKILL/scripts/video.py burn-subtitles --video "<제목>.mp4" --srt RUN/narration.srt --output "<제목>_자막.mp4"
 ```
+
+`burn-subtitles`는 입력 파일을 덮어쓰지 않으므로 임시 이름(`_자막`)으로 만든다. 자막본 검사(`status: passed`)와 대표 프레임 확인이 끝나면 자막 없는 `<제목>.mp4`를 지우고 `<제목>_자막.mp4`를 `<제목>.mp4`로 바꾼다. 같은 이름의 파일이 이미 있으면 덮어쓰지 말고 멈춘다. 모든 영상을 바꾼 뒤 `복습영상/README.md`·`catalog.json`의 경로·크기·SHA256을 실제 남은 파일 기준으로 갱신한다.
 
 설정은 `scripts/lib/subtitles.py`에 고정했으며 사용자가 바꾸라고 하지 않는 한 건드리지 않는다.
 
 - 폰트 Pretendard Bold(`assets/fonts/Pretendard-Bold.ttf`, 영상 본문과 동일 서체). libass는 woff2를 읽지 못하므로 TTF를 쓴다. 맑은 고딕 등 시스템 폰트로 대체하지 않는다.
 - 하단 중앙 한 줄, 흰 글씨·검은 테두리 2, FontSize 14, MarginV 22(1080p에서 하단 약 80px 위). 화면 하단의 박스·본문과 겹치지 않는다.
 - narration.srt의 긴 문단 자막은 문장·쉼표 단위(한 줄 약 34자 이하)로 쪼개고 글자 수 비례로 시간을 나눈다. 실제 음성과 1~2초 어긋날 수 있으므로 대표 프레임과 재생으로 확인한다.
-- 재인코딩은 libx264 crf 18, 오디오는 복사한다. 원본 영상은 덮어쓰지 않는다. 마스터를 revoice 원본으로 쓰므로 자막본을 `--source-run`에 쓰지 않는다.
+- 재인코딩은 libx264 crf 18, 오디오는 복사한다.
+- 마스터를 지운 뒤에는 제작자료의 `review.mp4` 링크와 latest.json의 영상 해시가 남은 자막본과 맞지 않는다. 이는 의도된 상태이며 제작자료를 자막본에 맞춰 고치지 않는다. 자막본은 검증 지문의 대상이 아니다.
+- 목소리 교체·재검증·자막 재굽기에 마스터가 필요하면 해당 RUN에서 `render`를 다시 실행해 마스터를 재생성한다(음성 캐시를 재사용하므로 TTS 유료 요청은 없다). 자막본을 `--source-run`이나 자막 재굽기 입력으로 쓰지 않는다(자막이 이중으로 들어간다).
 
 ## 영상이 필요한 부분과 분할 기준
 
@@ -50,11 +54,11 @@ python SKILL/scripts/video.py burn-subtitles --video 영상.mp4 --srt RUN/narrat
 
 ## 고정 출력 형식
 
-사용자가 다른 형식을 요청하지 않는 한 `복습영상/<MMDD 또는 RANGE>/`에는 **제목을 붙인 최종 MP4 N개와 제작자료 폴더 하나**를 둔다. N은 선정한 독립 주제 수이며 0도 가능하다. 영상 제목은 학습 내용을 알아볼 수 있는 자연스러운 한국어로 에이전트가 짓는다. 날짜·실행 ID만 있는 영상 이름을 최종 이름으로 쓰지 않는다.
+사용자가 다른 형식을 요청하지 않는 한 `복습영상/<MMDD 또는 RANGE>/`에는 **하드 자막을 구운 제목 있는 최종 MP4 N개와 제작자료 폴더 하나**를 둔다. 자막 없는 마스터와 `_자막` 접미사 파일은 남기지 않는다. N은 선정한 독립 주제 수이며 0도 가능하다. 영상 제목은 학습 내용을 알아볼 수 있는 자연스러운 한국어로 에이전트가 짓는다. 날짜·실행 ID만 있는 영상 이름을 최종 이름으로 쓰지 않는다.
 
 ```text
 복습영상/<날짜>/
-├── <영상 제목 1>.mp4
+├── <영상 제목 1>.mp4      # 하드 자막본, 접미사 없음
 ├── <영상 제목 2>.mp4
 └── <날짜>_제작자료/
     ├── latest.json
@@ -64,13 +68,13 @@ python SKILL/scripts/video.py burn-subtitles --video 영상.mp4 --srt RUN/narrat
             └── 자막·장면 시간표·대본·HTML·음성·검증·실행 메타데이터
 ```
 
-`prepare-set`의 RUN은 처음부터 제작자료 안에 생성한다. `publish-set`이 영상 해시·검증 지문·증거 파일을 확인해 제목 있는 MP4를 날짜 폴더로 내보내고 RUN의 review.mp4는 상대 심볼릭 링크로 바꾼다. 각 RUN을 옮겨 검증 지문을 바꾸거나 실제 최종 영상을 중복 저장하지 않는다. 기존 단일 실행은 정리 후 지문·경로를 다시 확인한다.
+`prepare-set`의 RUN은 처음부터 제작자료 안에 생성한다. `publish-set`이 영상 해시·검증 지문·증거 파일을 확인해 제목 있는 마스터 MP4를 날짜 폴더로 내보내고 RUN의 review.mp4는 상대 심볼릭 링크로 바꾼다. 그 뒤 "자막" 절의 순서로 마스터를 자막본으로 교체한다. 각 RUN을 옮겨 검증 지문을 바꾸거나 실제 최종 영상을 중복 저장하지 않는다. 기존 단일 실행은 정리 후 지문·경로를 다시 확인한다.
 
 같은 날짜를 다시 제작할 때 기존 결과는 제작자료 안의 이전버전으로 보존하며 기존 review.mp4 링크도 이전 영상으로 연결한다. 날짜 폴더에는 이번에 선정한 영상 N개와 제작자료 폴더 하나를 유지한다. 파일명 충돌·선정 변경·검증 실패를 조용히 덮어쓰지 않는다. 명시적 커밋 요청이 있을 때만 해당 결과와 목록을 커밋하며 인증 파일은 제외한다.
 
 ## 목소리만 변경
 
-prepare --repo REPO --from-run OLD_RUN --voice Charon으로 별도 RUN을 만든다. 새 run에서 tts → assemble을 수행한 뒤 revoice --run RUN --source-run OLD_RUN --hyperframes-entry LOCAL_HYPERFRAMES_BIN을 실행한다. 기존 문단 경계로 재타이밍하며 내용/그림/가독성이 바뀌면 해당 장면을 재렌더한다. 원본과 이전 버전을 보존한다. 음성 비교 샘플도 같은 예산 ledger를 사용한다.
+prepare --repo REPO --from-run OLD_RUN --voice Charon으로 별도 RUN을 만든다. 원래 RUN의 마스터가 지워졌으면 먼저 OLD_RUN에서 render로 마스터를 재생성한다. 새 run에서 tts → assemble을 수행한 뒤 revoice --run RUN --source-run OLD_RUN --hyperframes-entry LOCAL_HYPERFRAMES_BIN을 실행한다. 기존 문단 경계로 재타이밍하며 내용/그림/가독성이 바뀌면 해당 장면을 재렌더한다. 원본 제작자료와 이전 버전을 보존하고, 최종 결과는 "자막" 절대로 자막본으로 교체한다. 음성 비교 샘플도 같은 예산 ledger를 사용한다.
 
 ## 구현 경계
 
