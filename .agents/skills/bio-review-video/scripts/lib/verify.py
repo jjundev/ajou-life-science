@@ -3,7 +3,7 @@ from fractions import Fraction
 import array,json,math,wave,shutil,tempfile,subprocess
 from .cache import atomic_json,digest,file_hash
 from .manifest import validate_manifest
-from .render import command,probe_media
+from .render import command,probe_media,dark_failures
 
 DOMAINS=('content','audio','visual','source','media','sync')
 
@@ -27,6 +27,7 @@ def verify_media(path,expected):
         if int(v.get('nb_frames',-1))!=expected['total_frames']: errors.append('frames')
         if int(a.get('sample_rate',0))!=24000 or a.get('channels')!=1: errors.append('audio-format')
         if abs(float(v['duration'])-float(a['duration']))>1/30+1024/24000: errors.append('av-end-drift')
+        if dark_failures(path): errors.append('not-dark')
         decoded=command(['ffmpeg','-v','error','-i',path,'-f','null','-'],timeout=1800)
         if decoded.returncode or decoded.stderr.strip(): errors.append('decode')
         return {'status':'failed' if errors else 'passed','errors':errors,'probe':data,'decode_exit':decoded.returncode,'decode_stderr':decoded.stderr}

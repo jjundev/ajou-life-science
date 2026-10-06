@@ -71,17 +71,9 @@ def assemble(m,timeline,theme,run):
             if motion['kind']=='count': values['snap']={'textContent':1}
             js.append('tl.fromTo('+json.dumps(target)+','+json.dumps(motion['from'])+','+json.dumps(values)+','+str(seg['start_sample']/24000-start)+');')
         if not motions: raise ValueError('scene requires meaningful motion')
-        captions=[]
-        for seg in segments.values():
-            local=seg['start_sample']/24000-start
-            length=(seg['end_sample']-seg['start_sample']+7200)/24000
-            cid='caption-'+seg['id']
-            captions.append(f'<div id="clip-{cid}" class="clip" data-start="{local:.9f}" data-duration="{length:.9f}" data-track-index="3" style="position:absolute;inset:0"><p id="{cid}" class="video-caption">{html.escape(seg["caption"])}</p></div>')
-            # Seeking standalone scenes must also show exactly one caption.
-            js.append(f'tl.set("#{cid}",{{autoAlpha:0}},0);tl.set("#{cid}",{{autoAlpha:1}},{local});tl.set("#{cid}",{{autoAlpha:0}},{local+length});')
         js.append('window.__timelines=window.__timelines||{};window.__timelines['+json.dumps(sid)+']=tl;')
         script='<script>(()=>{'+''.join(js).replace('</','<\\/')+'})();</script>'
-        body=f'<div id="{sid}-root" class="video-scene" data-composition-id="{sid}" data-width="1920" data-height="1080" data-duration="{duration:.9f}">'+fragment+''.join(captions)+'</div>'
+        body=f'<div id="{sid}-root" class="video-scene" data-composition-id="{sid}" data-width="1920" data-height="1080" data-duration="{duration:.9f}">'+fragment+'</div>'
         page=scene_shell(body+script,scene['template_kind'],theme)
         if 'class="katex' in fragment or '$' in fragment:
             vendor=run/'assets/vendor/katex'

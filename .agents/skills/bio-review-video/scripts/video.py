@@ -12,6 +12,7 @@ from lib.theme import snapshot_theme
 from lib.composition import stage_assets,assemble
 from lib.timing import build_timeline,write_subtitles
 from lib.render import probe_backends,render_parts,mux
+from lib.subtitles import burn_subtitles
 from lib.revoice import retime_input,plan_revoice,render_revoice,picture_fingerprint
 from lib.verify import verify_media,verify_audio,verify_sync,check_sources,review_fingerprint,verify_run,publish_latest
 from lib.selection import require_selection
@@ -45,6 +46,7 @@ def parser():
         q=sub.add_parser(name); q.add_argument('selector'); q.add_argument('--repo',required=True)
         q.add_argument('--selection',required=True)
         if name=='prepare-set': q.add_argument('--review',action='store_true')
+    q=sub.add_parser('burn-subtitles'); q.add_argument('--video',required=True); q.add_argument('--srt',required=True); q.add_argument('--output',required=True)
     for name in ('resume-set','publish-set'):
         q=sub.add_parser(name); q.add_argument('--batch',required=True)
     for name in ('check','tts','assemble','render','verify','resume','revoice'):
@@ -66,6 +68,8 @@ def main(argv=None):
         if args.command=='prepare-set':
             batch=prepare_set(args.repo,args.selector,read(args.selection),config_for(args),args.review)
             output({'batch':str(batch),'next':'author scoped manifests and scene fragments for each clip','paid_requests':0}); return 0
+        if args.command=='burn-subtitles':
+            output({'status':'passed','video':str(burn_subtitles(args.video,args.srt,args.output))}); return 0
         if args.command=='resume-set': output(resume_set(args.batch)); return 0
         if args.command=='publish-set': output(publish_set(args.batch)); return 0
         if args.command=='prepare':

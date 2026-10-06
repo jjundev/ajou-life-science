@@ -7,7 +7,7 @@ description: 완성된 생명과학 복습노트를 읽고 애니메이션이 �
 
 수업을 이미 들은 학생을 위한 **주제별 애니메이션 복습 영상**이다. 기본 흐름은 **복습노트 전체 읽기 → 영상이 필요한 부분 추출 → 독립 주제로 묶기 → 주제별 제작**이다. 선정한 주제가 두 개면 영상도 두 개 만든다. 전체 내용을 읽어주는 통합 영상은 사용자가 명시적으로 요청할 때만 만든다.
 
-**bio-review-pack HTML 템플릿을 화면 디자인 원본으로 유지**한다. 색상만 비슷한 별도 UI로 바꾸지 않는다. 기본은 다크모드·Pretendard·Vertex AI Aoede·1920×1080 30fps·자동 완주·비용 상한 없음이다. 주제별 길이는 약 1–3분을 목표로 설명에 맞춘다. 길이에 맞추려고 필요한 내용을 누락하거나 모든 영상을 90초로 고정하지 않는다. 사용자 지정 범위·길이가 우선한다. 단가 확인 없이 제작하며 요청별 사용량 기록은 유지한다. 예산은 사용자가 원할 때만 config.budget_usd로 설정하며 여러 영상이 같은 요청의 예산·ledger를 공유한다.
+**bio-review-pack HTML 템플릿을 화면 디자인 원본으로 유지**한다. 색상만 비슷한 별도 UI로 바꾸지 않는다. 기본은 다크모드(항상 고정, 라이트 렌더 금지)·Pretendard·Vertex AI Aoede·1920×1080 30fps·자동 완주·비용 상한 없음이다. 주제별 길이는 약 1–3분을 목표로 설명에 맞춘다. 길이에 맞추려고 필요한 내용을 누락하거나 모든 영상을 90초로 고정하지 않는다. 사용자 지정 범위·길이가 우선한다. 단가 확인 없이 제작하며 요청별 사용량 기록은 유지한다. 예산은 사용자가 원할 때만 config.budget_usd로 설정하며 여러 영상이 같은 요청의 예산·ledger를 공유한다.
 
 SKILL은 이 파일의 폴더, REPO는 생명과학 저장소, RUN은 실행 결과 폴더다. 아래 명령의 python SKILL/scripts/video.py와 경로는 실제 절대 경로로 펼친다. 원자료로 노트를 만드는 일은 bio-review-pack에 맡긴다. 기존 노트·템플릿·영상은 수정하지 않는다.
 
@@ -22,7 +22,22 @@ SKILL은 이 파일의 폴더, REPO는 생명과학 저장소, RUN은 실행 결
 5. **실측·화면.** assemble --run RUN --pack REPO/.agents/skills/bio-review-pack --assets-from LOCAL_ASSETS를 실행한다. LOCAL_ASSETS는 fonts/와 vendor/를 가진다. 화면은 note-template.html/review-template.html의 스냅샷 CSS와 의미별 클래스를 재사용하고 영상 배치만 덧붙인다. 내용이 많으면 장면을 나눈다.
 6. **렌더.** render --run RUN --hyperframes-entry LOCAL_HYPERFRAMES_BIN을 실행한다. 실제 CPU/NVENC를 시험하고 장면을 렌더한 뒤 PCM을 한 번에 결합한다. 전역 GPU 설정을 바꾸지 않는다. 브라우저 GPU와 인코더 GPU 이용을 구분한다.
 7. **검증.** [렌더·검증](references/rendering-and-verification.md)을 따른다. 모든 장면을 브라우저 검사하고 대표 이미지를 직접 확인한다. 내용/음성/화면 검토를 verification/reviews.json에 현재 input_hash와 증거로 기록한다. verify --run RUN --hyperframes-entry LOCAL_HYPERFRAMES_BIN으로 실제 편집 소스와 최종 파일을 검사한다. 검토 전 verify는 fingerprint와 미확인 항목을 제공한다. 실패하면 원인을 고치고 영향 단계부터 반복한다.
-8. **묶음 전달.** 각 RUN 검증이 끝나면 publish-set --batch BATCH를 실행한다. 선정한 영상 모두가 현재 지문으로 검증되어야 전체 완료와 latest가 갱신된다. 일부 실패 시 성공한 영상·음성은 보존하고 실패한 단계만 재개한다. 최종 영상들, 각 영상의 narration.srt·chapters.txt와 제작자료 폴더를 절대 경로로 전달하고 실제 검증 범위를 구분한다. 전체 복습·목소리 교체의 단일 결과도 아래 형식으로 정리한다.
+8. **묶음 전달.** 각 RUN 검증이 끝나면 publish-set --batch BATCH를 실행한다. 선정한 영상 모두가 현재 지문으로 검증되어야 전체 완료와 latest가 갱신된다. 일부 실패 시 성공한 영상·음성은 보존하고 실패한 단계만 재개한다. 자막이 필요하면 위 "자막" 절의 명령으로 자막본을 만든다. 최종 영상들, 각 영상의 narration.srt·chapters.txt와 제작자료 폴더를 절대 경로로 전달하고 실제 검증 범위를 구분한다. 전체 복습·목소리 교체의 단일 결과도 아래 형식으로 정리한다.
+
+## 자막 (고정)
+
+화면 안에는 하단 고정 문구(`.video-caption`)를 넣지 않는다. 핵심 문장은 장면의 "꼭 기억해요" 박스로만 보여 준다. 자막은 렌더 후 **하드 자막**으로 굽는다. 마스터 `review.mp4`와 검증 지문은 자막 없는 상태로 두고, 자막본은 별도 파일로 만든다.
+
+```text
+python SKILL/scripts/video.py burn-subtitles --video 영상.mp4 --srt RUN/narration.srt --output 영상_자막.mp4
+```
+
+설정은 `scripts/lib/subtitles.py`에 고정했으며 사용자가 바꾸라고 하지 않는 한 건드리지 않는다.
+
+- 폰트 Pretendard Bold(`assets/fonts/Pretendard-Bold.ttf`, 영상 본문과 동일 서체). libass는 woff2를 읽지 못하므로 TTF를 쓴다. 맑은 고딕 등 시스템 폰트로 대체하지 않는다.
+- 하단 중앙 한 줄, 흰 글씨·검은 테두리 2, FontSize 14, MarginV 22(1080p에서 하단 약 80px 위). 화면 하단의 박스·본문과 겹치지 않는다.
+- narration.srt의 긴 문단 자막은 문장·쉼표 단위(한 줄 약 34자 이하)로 쪼개고 글자 수 비례로 시간을 나눈다. 실제 음성과 1~2초 어긋날 수 있으므로 대표 프레임과 재생으로 확인한다.
+- 재인코딩은 libx264 crf 18, 오디오는 복사한다. 원본 영상은 덮어쓰지 않는다. 마스터를 revoice 원본으로 쓰므로 자막본을 `--source-run`에 쓰지 않는다.
 
 ## 영상이 필요한 부분과 분할 기준
 

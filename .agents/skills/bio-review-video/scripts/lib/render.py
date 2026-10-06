@@ -1,6 +1,6 @@
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
-import json,os,shutil,subprocess,time,wave
+import json,os,re,shutil,subprocess,time,wave
 from .cache import digest,file_hash,cache_valid,atomic_json
 
 def command(args,cwd=None,timeout=300):
@@ -17,6 +17,26 @@ def frames_ok(path,frames):
         s=next(s for s in probe_media(path)['streams'] if s['codec_type']=='video')
         return int(s['nb_frames'])==frames and int(s['width'])==1920 and int(s['height'])==1080
     except (ValueError,KeyError,StopIteration,OSError): return False
+
+DARK_MAX=80  # 다크 배경은 약 22/255. 라이트 배경은 200 이상이다.
+
+def dark_failures(path,points=(0.1,0.35,0.6,0.85)):
+    """영상 좌상단 8x8 배경 밝기를 여러 시점에서 재서 다크가 아닌 시각 목록을 돌려준다."""
+    duration=float(probe_media(path)['format']['duration']); bad=[]
+    for fraction in points:
+        at=max(0,duration*fraction-0.05)
+        r=subprocess.run(['ffmpeg','-v','error','-ss',str(at),'-i',str(path),'-frames:v','1','-vf','crop=8:8:0:0,scale=1:1,format=gray',
+            '-f','rawvideo','-'],capture_output=True,creationflags=subprocess.CREATE_NO_WINDOW if os.name=='nt' else 0)
+        if r.returncode or len(r.stdout)<1 or r.stdout[0]>DARK_MAX: bad.append(round(at,2))
+    return bad
+
+def require_dark_entries(parts,run):
+    """장면 진입점이 data-theme="dark"여야 한다. 통합 index.html 렌더(라이트로 나올 수 있음)는 거부한다."""
+    for part in parts:
+        entry=part['entry']
+        if Path(entry).name=='index.html': raise ValueError('render scenes via scene-NN.html, never index.html: '+entry)
+        head=(Path(run)/entry).read_text(encoding='utf-8')[:400]
+        if not re.search(r'<html[^>]*data-theme="dark"',head): raise ValueError('scene entry is not dark mode: '+entry)
 
 def choose_backend(probes):
     valid=[p for p in probes if p['ok']]
@@ -55,7 +75,7 @@ def probe_backends(run):
     return result
 
 def render_parts(parts,run,backend):
-    run=Path(run); dest=run/'renders/parts'; dest.mkdir(parents=True,exist_ok=True)
+    run=Path(run); require_dark_entries(parts,run); dest=run/'renders/parts'; dest.mkdir(parents=True,exist_ok=True)
     entry=Path(backend['hyperframes_entry']).resolve()
     if not entry.is_file(): raise ValueError('HyperFrames Node entry is missing')
     versions=dict(backend.get('tool_versions',{}))
@@ -114,4 +134,6 @@ def mux(parts,audio,timeline,destination):
     if r.returncode or not frames_ok(pending,timeline['total_frames']): raise RuntimeError('mux failed')
     decode=command(['ffmpeg','-v','error','-i',pending,'-f','null','-'],timeout=1800)
     if decode.returncode: raise RuntimeError('final decode failed')
+    light=dark_failures(pending)
+    if light: raise RuntimeError(f'final video is not dark mode at {light}s')
     os.replace(pending,destination)
