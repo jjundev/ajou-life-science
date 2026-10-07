@@ -23,7 +23,8 @@ def load_pool(repo: Path | str, chapter: int) -> dict[str, dict]:
     pool: dict[str, dict] = {}
     for f in sorted(repo.glob("복습노트/*/복습문제_*.html")):
         for c in cards.parse_cards(f.read_text(encoding="utf-8")).values():
-            if pat.fullmatch(c["source"]) and c["answer_index"] is not None and c["source"] not in pool:
+            if (pat.fullmatch(c["source"]) and c["answer_index"] is not None
+                    and c["answer_index"] < len(c["options"]) and c["source"] not in pool):
                 pool[c["source"]] = dict(c, file=f.relative_to(repo).as_posix())
     return dict(sorted(pool.items(), key=lambda kv: _num(kv[0])))
 

@@ -36,6 +36,11 @@ def _webquiz_stems(repo: Path, chapter: int) -> set[str]:
     return out
 
 
+def _question(c: dict) -> tuple[str, tuple[str, ...]]:
+    """번호가 달라도 같은 기출 문제인지 가리는 키(발문 + 보기 집합)."""
+    return cards.norm(c["stem"]), tuple(sorted(map(cards.norm, c["options"])))
+
+
 def _earlier(src: Path, version: int) -> tuple[set[str], set[str]]:
     """이전 버전들의 (발문 정규화 집합, 사용한 기출 번호 집합)."""
     stems, sources = set(), set()
@@ -136,6 +141,8 @@ def check(html_path: Path | str) -> list[str]:
         if dict(got) != want:
             probs.append(f"[exam-count] 세트: {dict(got)} ≠ {want}")
         pool = exam_pool.load_pool(repo, pack["chapter"])
+        earlier_qs = {_question(pool[s]) for s in earlier_sources if s in pool}
+        seen_sources, seen_qs = set(), set()
         for cid, e in exams.items():
             c, orig = graded.get(cid), pool.get(e["source"])
             if c is None or orig is None:
@@ -143,6 +150,12 @@ def check(html_path: Path | str) -> list[str]:
                 continue
             if e["source"] in earlier_sources:
                 probs.append(f"[exam-reuse] {cid}: {e['source']}는 이전 버전에서 썼음")
+            elif _question(orig) in earlier_qs:
+                probs.append(f"[exam-reuse] {cid}: {e['source']}는 이전 버전에서 쓴 기출과 같은 문제(번호만 다름)")
+            if e["source"] in seen_sources or _question(orig) in seen_qs:
+                probs.append(f"[exam-reuse] {cid}: {e['source']}와 같은 기출 문제를 이 세트에서 이미 썼음")
+            seen_sources.add(e["source"])
+            seen_qs.add(_question(orig))
             same_stem = cards.norm(c["stem"]) == cards.norm(orig["stem"])
             keyed = cards.norm(c["options"][c["answer_index"]])
             orig_answer = cards.norm(orig["options"][orig["answer_index"]])
@@ -153,6 +166,9 @@ def check(html_path: Path | str) -> list[str]:
             elif e["mode"] == "기출쌍둥이":
                 if not same_stem or keyed == orig_answer:
                     probs.append(f"[exam-twin] {cid}: 발문이 원문과 같고 정답 문장은 원문 정답과 달라야 함")
+            elif e["mode"] == "기출숫자":
+                if same_stem and sorted(map(cards.norm, c["options"])) == sorted(map(cards.norm, orig["options"])):
+                    probs.append(f"[exam-number] {cid}: 숫자·조건이 {e['source']} 원문과 같음")
     exam_ids = set(exams)
     quiz = _webquiz_stems(repo, pack["chapter"])
     for cid, c in graded.items():

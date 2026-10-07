@@ -40,5 +40,21 @@ class TestExamPool(unittest.TestCase):
             self.assertNotIn(leaked, md)
 
 
+    def test_pool_skips_answer_outside_options(self):
+        with tempfile.TemporaryDirectory() as t:
+            repo = make_repo(Path(t))
+            write_pool(repo, [exam_card_html("기출 9강 1", "발문 1?", list("가나다라마"), 6)])
+            self.assertEqual(exam_pool.load_pool(repo, 9), {})
+
+    def test_blind_keeps_figure_and_extra_text(self):
+        html = card_html(1, "B", stem="그림을 보고 답하세요.").replace(
+            '<ul class="choices">',
+            '<figure class="figure"><svg viewBox="0 0 340 200" role="img" aria-label="염색체 (가)~(라) 그림"></svg></figure>'
+            '<p>단, 교차는 없어요.</p><div class="table-wrap"><table><tr><td>표 칸</td></tr></table></div>'
+            '<ul class="choices">')
+        md = blind.blind_markdown(html)
+        for kept in ("염색체 (가)~(라) 그림", "단, 교차는 없어요.", "표 칸"):
+            self.assertIn(kept, md)
+
 if __name__ == "__main__":
     unittest.main()

@@ -7,7 +7,7 @@ CARD_RE = re.compile(r'<article class="card" id="([^"]+)"([^>]*)>(.*?)</article>
 ATTR_RE = re.compile(r'([\w-]+)="([^"]*)"')
 LABEL_RE = re.compile(r"^\s*(?:\((\d+)\)|([A-E])\.)\s*")
 ANSWER_RE = re.compile(r'<p class="answer">\s*정답:\s*(?:\((\d+)\)|([A-E]))\s*</p>')
-DIAG_RE = re.compile(r"<li>([A-E])\. (맞아요|틀려요)")
+DIAG_RE = re.compile(r"<li\b[^>]*>([A-E])\. (맞아요|틀려요)")
 
 
 def text(html: str) -> str:
@@ -22,7 +22,7 @@ def _options(body: str) -> list[str]:
     m = re.search(r'<ul class="choices">(.*?)</ul>', body, re.S)
     if not m:
         return []
-    return [LABEL_RE.sub("", text(li), count=1) for li in re.findall(r"<li>(.*?)</li>", m.group(1), re.S)]
+    return [LABEL_RE.sub("", text(li), count=1) for li in re.findall(r"<li\b[^>]*>(.*?)</li>", m.group(1), re.S)]
 
 
 def parse_cards(html: str) -> dict[str, dict]:

@@ -33,5 +33,14 @@ class TestSkillFiles(unittest.TestCase):
         self.assertEqual(link.resolve(), SKILL.resolve())
 
 
+    def test_card_writers_do_not_build(self):
+        brief = (SKILL / "references" / "card-brief.md").read_text(encoding="utf-8")
+        self.assertNotIn("scripts/build.py", brief)
+        self.assertNotIn("scripts/check.py", brief)
+
+    def test_blind_loop_is_capped(self):
+        step7 = self.md.split("### 7.")[1].split("### 8.")[0]
+        self.assertIn("최대 2회", step7)
+
 if __name__ == "__main__":
     unittest.main()

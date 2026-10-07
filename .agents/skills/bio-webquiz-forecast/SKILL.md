@@ -32,7 +32,7 @@ description: 생명과학 다음 웹과제(장별 퀴즈)를 예상해 복습문
 `references/question-blueprint.md`대로 `src/v<K>/blueprint.md`와 `pack.json`(`answer_key`, `exam_sources`, `types_required`, `forbidden` 포함)을 쓴다.
 
 ### 5. 카드 작성
-`references/card-brief.md`의 브리프로 작성자 3명을 **한 메시지에서 병렬로** 띄운다: p1–p5(기출, 원문 대조), p6–p10, p11–p15. 모델 opus(lite면 sonnet).
+`references/card-brief.md`의 브리프로 작성자 3명을 **한 메시지에서 병렬로** 띄운다: p1–p5(기출, 원문 대조), p6–p10, p11–p15. 모델 opus(lite면 sonnet). 작성자는 빌드·검사를 돌리지 않는다. 세 명이 모두 돌아온 뒤 메인 에이전트가 6단계를 한다.
 
 ### 6. 빌드와 검사
 ```bash
@@ -42,7 +42,7 @@ python "$SKILL/scripts/check.py" "$REPO/웹과제예상/<N>장/복습문제_<N>�
 `OK`가 나와야 한다. 문제 줄의 카드 id로 담당 작성자를 찾아 한 번에 모아 되돌린다(최대 2회). 남으면 "미해결"로 보고한다.
 
 ### 7. 블라인드 풀이
-`python "$SKILL/scripts/blind.py" <html> "$RUN/blind.md"`로 사본을 만들고 `references/blind-brief.md`로 opus 리뷰어 1명을 띄운다. 리뷰어 답이 `answer_key`와 다르거나 "다른 보기도 답이 될 수 있음" 이의가 있으면 그 카드를 고치고 6단계부터 다시 한다. 목표: 15/15 일치, 이의 0.
+`python "$SKILL/scripts/blind.py" <html> "$RUN/blind.md"`로 사본을 만들고 `references/blind-brief.md`로 opus 리뷰어 1명을 띄운다. 리뷰어 답이 `answer_key`와 다르거나 "다른 보기도 답이 될 수 있음" 이의가 있으면 그 카드를 고치고 6단계부터 다시 한다(최대 2회, 매번 새 리뷰어). 목표: 15/15 일치, 이의 0. 2회 뒤에도 남으면 그 카드와 이의를 "미해결"로 보고한다.
 
 ### 8. 브라우저 확인
 저장소 루트에서 `python -m http.server <빈 포트> --bind 127.0.0.1`을 띄우고 세트 HTML을 연다. 375px 가로 스크롤 없음, 콘솔 오류 0, 보기 클릭 채점, 다크 모드 그림을 확인한 뒤 서버를 끈다.

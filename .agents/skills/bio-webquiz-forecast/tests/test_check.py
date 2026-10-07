@@ -97,5 +97,35 @@ class TestCheck(unittest.TestCase):
         self.assertIn("webquiz-copy", codes(check.check(self.built())))
 
 
+    def test_exam_same_source_twice_in_set(self):
+        write_pool(self.repo, [exam_card_html("기출 9강 7", "기출 발문?", ["가", "나", "다", "라", "마"], 2)])
+        p1 = card_html(1, "A", kind="기출 예상", stem="기출 발문?", options=["나", "가", "다", "라", "마"])
+        p2 = card_html(2, "B", kind="기출 예상", stem="기출 발문?", options=["가", "나", "다", "라", "마"])
+        out = self.built(cards=base_cards(p1=p1, p2=p2), extra={
+            "legacy": False, "exam_counts": {"기출그대로": 2},
+            "exam_sources": {"p1": {"source": "기출 9강 7", "mode": "기출그대로"},
+                             "p2": {"source": "기출 9강 7", "mode": "기출그대로"}}})
+        self.assertIn("exam-reuse", codes(check.check(out)))
+
+    def test_exam_same_question_other_number_across_versions(self):
+        write_pool(self.repo, [
+            exam_card_html("기출 9강 7", "기출 발문?", ["가", "나", "다", "라", "마"], 2, "p1"),
+            exam_card_html("기출 9강 8", "기출 발문?", ["가", "나", "다", "라", "마"], 2, "p2")])
+        self.built(version=1, extra={"used_exam_sources": ["기출 9강 7"]})
+        p1 = card_html(1, "A", kind="기출 예상", stem="기출 발문?", options=["나", "가", "다", "라", "마"])
+        cards = base_cards(p1=p1, **{f"p{i}": card_html(i, ANSWERS[i - 1], stem=f"v2 발문 {i}?") for i in range(2, 6)})
+        out = self.built(version=2, cards=cards, extra={
+            "legacy": False, "exam_sources": {"p1": {"source": "기출 9강 8", "mode": "기출그대로"}},
+            "exam_counts": {"기출그대로": 1}})
+        self.assertIn("exam-reuse", codes(check.check(out)))
+
+    def test_exam_number_mode_must_change_something(self):
+        p1 = card_html(1, "A", kind="기출 변형", stem="기출 발문?", options=["나", "가", "다", "라", "마"])
+        self.assertIn("exam-number", codes(check.check(self.exam_extra("기출숫자", p1))))
+
+    def test_exam_number_mode_changed_passes(self):
+        p1 = card_html(1, "A", kind="기출 변형", stem="바뀐 숫자의 기출 발문?", options=["나", "가", "다", "라", "마"])
+        self.assertEqual(check.check(self.exam_extra("기출숫자", p1)), [])
+
 if __name__ == "__main__":
     unittest.main()

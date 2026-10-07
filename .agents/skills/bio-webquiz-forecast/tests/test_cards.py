@@ -30,5 +30,13 @@ class TestCards(unittest.TestCase):
         self.assertEqual((c["options"], c["answer_index"]), ([], None))
 
 
+    def test_parse_data_choice_markup(self):
+        html = exam_card_html("기출 5강 1", "발문?", list("가나다라마"), 3).replace(
+            "<li>(", '<li data-choice="x">(')
+        html = html.replace('<ol class="steps"></ol>', '<ol class="steps"><li data-explains="1">A. 맞아요. 이유.</li></ol>')
+        c = cards.parse_cards(html)["p1"]
+        self.assertEqual(c["options"], list("가나다라마"))
+        self.assertEqual(c["diagnoses"], [("A", "맞아요")])
+
 if __name__ == "__main__":
     unittest.main()
