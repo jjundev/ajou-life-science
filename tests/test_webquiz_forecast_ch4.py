@@ -133,6 +133,16 @@ class Cards(unittest.TestCase):
             self.assertNotIn(banned, cards_text)
         self.assertIsNone(re.search(r"[①-⑳]", cards_text), "원문자 ①~⑳ 금지")
 
+    def test_p8_gamete_sex_neutral(self):
+        # 생식모세포의 성별이 정해지지 않았으므로 ⓐ의 수정 상대는 '정상 배우자'여야 ㄴ이 참으로 확정된다.
+        body = text(card("p8"))
+        self.assertNotIn("정상 난자", body)
+        self.assertIn("ⓐ가 정상 배우자와 수정하면", body)
+
+    def test_export_bar_hidden(self):
+        # 내보내기는 복습노트/<날짜> 폴더 구조를 전제로 해서, 이 페이지에서 쓰면 다른 팩의 저장 폴더 기억을 지운다.
+        self.assertIn('<style id="forecast-overrides">.review-export-bar { display: none !important; }</style>', source())
+
     def test_no_open_details(self):
         self.assertNotRegex(source(), r"<details[^>]*\sopen[\s>=]")
 
