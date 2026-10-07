@@ -74,6 +74,10 @@ def check_html(html: str, spec: dict) -> list[str]:
     want = [s["label"] for s in spec["sections"]]
 
     # 구조
+    b = spec.get("basis")
+    missing = [k for k in ("built", "webquiz", "panic_patterns") if not isinstance(b, dict) or k not in b]
+    if missing:
+        probs.append(f"spec.json basis 키 없음: {missing} — stale.py --basis 값을 넣는다")
     if [l for l, _ in secs] != want:
         probs.append(f"라벨 순서가 spec과 다름: {[l for l, _ in secs]} ≠ {want}")
     for i, p in enumerate(pages, 1):

@@ -55,6 +55,13 @@ class TestStructure(Base):
         html = self.good.replace('<span class="page-no">2 / 2</span>', '<span class="page-no">2 / 2</span>' + btn)
         self.assertFlags(html, "테마 버튼")
 
+    def test_basis_required(self):
+        spec = json.loads(json.dumps(self.spec))
+        del spec["basis"]
+        self.assertFlags(self.good, "basis", spec)
+        spec["basis"] = {"built": "2026-10-07", "webquiz": []}
+        self.assertFlags(self.good, "panic_patterns", spec)
+
     def test_nested_head_comment(self):
         self.assertFlags(self.good.replace("■ 크기 토큰 위치", "■ <!--@X--> 크기 토큰 위치", 1), "head 주석")
 
