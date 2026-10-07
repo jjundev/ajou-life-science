@@ -42,5 +42,14 @@ class TestSkillFiles(unittest.TestCase):
         step7 = self.md.split("### 7.")[1].split("### 8.")[0]
         self.assertIn("최대 2회", step7)
 
+    def test_pool_saved_without_shell_redirect(self):
+        step2 = self.md.split("### 2.")[1].split("### 3.")[0]
+        self.assertIn("--out", step2)
+        self.assertNotIn('> "$RUN', step2)
+
+    def test_card_brief_overrides_review_pack_markup(self):
+        brief = (SKILL / "references" / "card-brief.md").read_text(encoding="utf-8")
+        self.assertIn("이 브리프가 우선", brief)
+
 if __name__ == "__main__":
     unittest.main()

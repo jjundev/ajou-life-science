@@ -56,5 +56,14 @@ class TestExamPool(unittest.TestCase):
         for kept in ("염색체 (가)~(라) 그림", "단, 교차는 없어요.", "표 칸"):
             self.assertIn(kept, md)
 
+    def test_cli_out_writes_utf8_file_and_creates_dir(self):
+        with tempfile.TemporaryDirectory() as t:
+            repo = make_repo(Path(t))
+            write_pool(repo, [exam_card_html("기출 9강 1", "발문 1?", list("가나다라마"), 2)])
+            out = Path(t) / "run" / "pool.json"
+            subprocess.run([sys.executable, str(SCRIPTS / "exam_pool.py"), str(repo), "9", "--out", str(out)],
+                           capture_output=True, check=True)
+            self.assertEqual(json.loads(out.read_text(encoding="utf-8"))[0]["answer"], "나")
+
 if __name__ == "__main__":
     unittest.main()

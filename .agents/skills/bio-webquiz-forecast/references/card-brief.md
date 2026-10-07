@@ -3,7 +3,7 @@
 ---
 생명과학 <N>장 웹과제 예상 세트 v<K>의 카드 `<담당 카드 id>`를 쓴다.
 
-- 읽기: `{SKILL}/references/card-brief.md`(이 파일 전체), `{SKILL}/references/question-blueprint.md`, `.agents/skills/bio-review-pack/references/card-rules.md`의 "마크업" 절.
+- 읽기: `{SKILL}/references/card-brief.md`(이 파일 전체), `{SKILL}/references/question-blueprint.md`, `.agents/skills/bio-review-pack/references/card-rules.md`의 "마크업" 절. card-rules와 다르면 이 브리프가 우선한다. 특히 보기 라벨은 `(1)`이 아니라 `A.`~`E.`, `data-source`는 `기출 <N>강 M`이 아니라 `예상 <N>장 N` 또는 `기출 <N>강 M 예상`이다.
 - 계약: `<SRC>/blueprint.md`의 담당 행(정답·유형·토픽·혼동·기출 출처·노트 앵커)과 `<SRC>/pack.json`의 `forbidden`.
 - 근거: 정리노트 MD(`<노트 경로들>`), 기출 원문 `<RUN>/pool.json`.
 - 출력: `<SRC>/cards/<pid>.html` 카드마다 한 파일. 다른 곳에 쓰지 않는다.
