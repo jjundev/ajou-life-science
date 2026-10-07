@@ -55,7 +55,7 @@ def stale_reasons(spec: dict, repo: Path, panic: Path = PANIC) -> list[str]:
 
 def scan(repo: Path, panic: Path = PANIC) -> list[tuple[str, list[str]]]:
     out = []
-    root = repo / "웹과제" / "커닝페이퍼"
+    root = repo / "웹과제예상" / "커닝페이퍼"
     for spec_path in sorted(root.glob("*장/spec.json"), key=lambda p: int(p.parent.name[:-1])):
         spec = json.loads(spec_path.read_text(encoding="utf-8"))
         why = stale_reasons(spec, repo, panic)

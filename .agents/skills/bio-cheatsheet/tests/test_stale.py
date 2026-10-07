@@ -22,7 +22,7 @@ class TestStale(unittest.TestCase):
         shutil.rmtree(self.repo)
 
     def sheet(self, ch: str, basis: dict | None):
-        d = self.repo / "웹과제" / "커닝페이퍼" / ch
+        d = self.repo / "웹과제예상" / "커닝페이퍼" / ch
         d.mkdir(parents=True)
         spec = {"chapter": int(ch[:-1]), "sections": []}
         if basis is not None:

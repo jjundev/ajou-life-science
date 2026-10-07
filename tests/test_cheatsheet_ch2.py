@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-HTML = ROOT / "웹과제/커닝페이퍼/2장/cheatsheet_2장.html"
+HTML = ROOT / "웹과제예상/커닝페이퍼/2장/cheatsheet_2장.html"
 PDF = HTML.with_suffix(".pdf")
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
