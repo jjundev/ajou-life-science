@@ -81,5 +81,75 @@ class Content(unittest.TestCase):
             self.assertIn(term, t)
 
 
+EXPECTED_ANSWERS = "DBCEBCACEADBEAD"
+REQUIRED_TYPES = {"부정형": 5, "계산": 4, "그림": 2, "ㄱㄴㄷ": 1, "쌍둥이": 1, "장섞기": 1}
+
+
+def questions() -> list[re.Match]:
+    return list(re.finditer(
+        r'<article class="q" id="q(\d\d)" data-answer="([A-E])" data-types="([^"]+)">(.*?)</article>',
+        section("mock"), re.S))
+
+
+class Mock(unittest.TestCase):
+    def test_fifteen_in_order(self):
+        qs = questions()
+        self.assertEqual([m.group(1) for m in qs], [f"{i:02d}" for i in range(1, 16)])
+
+    def test_answer_key(self):
+        self.assertEqual("".join(m.group(2) for m in questions()), EXPECTED_ANSWERS)
+
+    def test_five_options(self):
+        for m in questions():
+            opts = re.findall(r'<li data-opt="([A-E])">', m.group(4))
+            self.assertEqual(opts, list("ABCDE"), f"q{m.group(1)} 보기")
+
+    def test_answer_text_matches(self):
+        for m in questions():
+            sol = re.search(r'<details class="sol">(.*?)</details>', m.group(4), re.S)
+            self.assertIsNotNone(sol, f"q{m.group(1)} 풀이 없음")
+            self.assertIn(f'<p class="ans">정답 {m.group(2)}</p>', sol.group(1))
+            self.assertGreater(len(text(sol.group(1))), 25, f"q{m.group(1)} 풀이가 너무 짧음")
+
+    def test_answers_hidden(self):
+        b = body()
+        self.assertNotRegex(b, r"<details[^>]*\bopen\b")
+        outside = re.sub(r'<details class="sol">.*?</details>', "", b, flags=re.S)
+        self.assertNotIn('class="ans"', outside)
+
+    def test_type_counts(self):
+        counts = {}
+        for m in questions():
+            for t in m.group(3).split():
+                counts[t] = counts.get(t, 0) + 1
+        for t, n in REQUIRED_TYPES.items():
+            self.assertGreaterEqual(counts.get(t, 0), n, f"유형 {t}")
+
+    def test_figures_and_stmts(self):
+        for m in questions():
+            types, inner = m.group(3).split(), m.group(4)
+            if "그림" in types:
+                self.assertIn("<svg", inner, f"q{m.group(1)} 그림 없음")
+            if "ㄱㄴㄷ" in types:
+                for s in ["ㄱ.", "ㄴ.", "ㄷ."]:
+                    self.assertIn(s, text(inner), f"q{m.group(1)} {s}")
+
+    def test_svg_rules(self):
+        for svg in re.findall(r"<svg.*?</svg>", body(), re.S):
+            self.assertNotRegex(svg, r"#[0-9a-fA-F]{3,6}\b")
+            self.assertNotRegex(svg, r'\s(fill|stroke)="')
+            self.assertNotIn("<marker", svg)
+            width = int(re.search(r'viewBox="0 0 (\d+) \d+"', svg).group(1))
+            self.assertLessEqual(width, 360)
+            for cls in re.findall(r'class="([^"]+)"', svg):
+                self.assertIn(cls, {"fig-ink", "fig-accent", "fig-dot", "fig-text", "fig-muted"})
+            self.assertIn('role="img"', svg)
+
+    def test_scope(self):
+        t = text(section("mock"))
+        for banned in ["헬리케이스", "오카자키", "코돈", "전사", "번역", "유전상담"]:
+            self.assertNotIn(banned, t)
+
+
 if __name__ == "__main__":
     unittest.main()
