@@ -94,6 +94,8 @@ EOF
   - 변형 연습(partC)은 `references/problem-selection.md` 6절과 `references/webquiz-style.md`의 유형 할당으로 설계해 포함 문항 뒤에 넣는다(`RUN/variants.md`).
 - 검증: `python3 "$SKILL/scripts/manifest.py" "$RUN/manifest.json"` 결과가 `OK`여야 한다.
 
+설계표의 기본/심화 목표와 실개수를 `review_intro`에 짧게 적는다(예: “변형 연습은 기본 8개·심화 2개예요.”). 기존 카드 번호와 part 순서는 유지하고 난이도 배지는 추가하지 않는다. 보강에서는 기존 partC와 새 변형을 합쳐 실개수를 집계하되, 기존 문항을 배합 때문에 고치거나 제거하지 않는다. 새 문항 블라인드 검사만으로 기존 미검토 난이도가 검증됐다고 쓰지 않는다.
+
 ### 3. 작성
 - 섹션마다 작성자 1명을 띄운다. 브리프는 `references/content-rules.md`, 위젯 규칙은 `references/widget-rules.md`에 있다.
 - 카드 작성자는 카드 10개당 1명이다(`p1`–`p10`, `p11`–`p20`, …). 브리프는 `references/card-rules.md`에 있다.
@@ -156,6 +158,7 @@ python3 "$SKILL/scripts/check_html.py" --manifest "$RUN/manifest.json" --note "$
   - **일반 리뷰**(`lite`면 생략): 리뷰어 1명.
 - 블라인드 리뷰어의 답이 manifest `answer`와 다르거나 "근거 없음"이면, `anchor` 토픽의 섹션 작성자에게 빠진 사실을 가르치도록 되돌린다. 카드 풀이를 바꿔서 맞추지 않는다.
   - 변형 연습(partC)을 못 풀었으면 먼저 변형 자체를 본다. 정답이 하나가 아니거나 범위 밖이면 카드 작성자에게 고치게 하거나 manifest·`variants.md`에서 뺀다. 변형이 멀쩡할 때만 위처럼 섹션 작성자에게 되돌린다. 변형을 빼도 번호를 다시 매기지 않고 빈 번호로 둔다(추가 때처럼 `question-audit.md`가 아닌 `variants.md`에 사유를 적는다). 마지막 변형까지 빠지면 manifest `parts`에서 `partC`를 지우고 `review_intro`·`footer_review`의 변형 문구도 지운다.
+- 독립 수준·최소 풀이 단계를 설계표와 대조한다. 원문 분류는 재검토하고 생성 변형은 수정/교체하거나 목표 차이를 보고한다(`references/review-prompt.md`). lite에서도 수행하며 기존 최대 2회 한도에 포함한다.
 - 일반 리뷰의 Critical과 Important는 모두, Minor는 쉬운 것만 고친다.
 - 담당 작성자별로 **한 번에 모아서** 수정을 요청한다. 수정은 한 번만 한다.
 - 수정 후 4~5단계를 다시 하고, 블라인드 사본을 다시 만들어 틀렸던 문항만 다시 검사한다. 반영하지 않은 항목은 보고서에 적는다.
@@ -181,7 +184,8 @@ python3 "$SKILL/scripts/html2md.py" "$REPO/복습노트/<range>/<정리노트>.h
 ## 복습팩 <range> 완료
 - 파일: 복습노트/<range>/… (html 2, md 2, figures_<range>/ N개)
 - 범위: 배운 쪽 … / 예고만: … / 끊긴 지점: "…"
-- 문항: 포함 N (웹과제 w, 기출 x) · 변형 v (쌍둥이 t · 그림 g · 상황 s · ㄱㄴㄷ k · 부정형 n · 용어 r · 낯선참 u · 장섞기 c) · 이전 팩 N · 보류 N · 범위 밖 N — 분류표 RUN/question-audit.md, 변형 RUN/variants.md. 0개인 유형은 사유를 한 줄씩
+- 난이도: 변형 기본(수준 1~2) N · 심화(수준 3) N · 목표와 실제 유형 수·난이도 차이 및 이유
+- 문항: 포함 N (웹과제 w, 기출 x) · 변형 v (쌍둥이 t · 그림 g · 상황 s · ㄱㄴㄷ k · 부정형 n · 용어 r · 낯선참 u · 장섞기 c) · 이전 팩 N · 보류 N · 범위 밖 N — 분류표 RUN/question-audit.md, 변형 RUN/variants.md. 표 해석은 별도 집계. 목표보다 부족한 유형은 사유를 한 줄씩(의무 최소 0인 선택 유형은 0개 자체가 미해결은 아님)
 - 보류·범위 밖 문항: 번호와 사유를 한 줄씩(보고서만 읽어도 분류를 알 수 있게; RUN은 세션이 끝나면 사라질 수 있다)
 - 답안지 오류: 기출 3강 12 (인쇄 (2) → 판단 (3)) … (없으면 "없음")
 - 블라인드 검사: N/N 풀림 (고친 토픽: …)
@@ -222,6 +226,7 @@ SKILL=…; REPO=…; RUN=…; python3 "$SKILL/scripts/augment.py" extract "$REPO
 - 장 bank를 `references/problem-selection.md` 2절로 검증하고 3절 감사표를 `RUN/question-audit.md`에 쓴다. "이전 팩" 판정에 **이 팩 자신의 기존 `data-source`도** 넣는다.
 - 변형은 6절과 `references/webquiz-style.md`대로 `RUN/variants.md`에 설계한다. 쌍둥이 재료 판단의 "같은 팩 partA"는 기존 카드와 새 partA를 합친 집합이다.
 - 금지어 미복원이면: 정리노트 예고 토픽(`preview_topic`) 본문의 용어 중 다른 토픽에 나오지 않는 것을 후보로 다시 정해 `RUN/manifest.json`에 넣고 보고서에 "금지어 재도출"이라고 적는다.
+- 기존과 새 partC의 기본/심화 실개수·목표 차이를 `review_intro`와 A6 보고에 적는다. 원문과 기존 카드 번호를 유지하고, 부족한 목표를 맞추기 위해 범위 밖 문항을 만들지 않는다.
 - 새 문항을 `RUN/manifest.json` `problems` 끝에 A1이 출력한 다음 id부터 붙이고, 카드 작성자(`references/card-rules.md` 브리프)가 `RUN/cards/<새 id>.html`을 쓴다. 기출 그림은 `RUN/figures/`.
 
 **A3. 조립**

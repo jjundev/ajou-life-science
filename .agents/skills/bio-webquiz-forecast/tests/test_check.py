@@ -35,6 +35,10 @@ class TestCheck(unittest.TestCase):
     def test_clean_set_passes(self):
         self.assertEqual(check.check(self.built()), [])
 
+    def test_optional_types_zero(self):
+        out = self.built(extra={"types_required": {"ㄱㄴㄷ": 0, "장섞기": 0}})
+        self.assertEqual(check.check(out), [])
+
     def test_stale(self):
         out = self.built()
         (out.parent / "src" / "v1" / "cards" / "p1.html").write_text(
