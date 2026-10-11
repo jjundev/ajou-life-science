@@ -111,6 +111,23 @@ class SelectionTest(unittest.TestCase):
 
 
 class BatchTest(unittest.TestCase):
+    def test_new_batches_export_in_order_and_restart_numbering(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);_,plan=fixture(root)
+            first=prepare_set(root,'1001',plan,{})
+            self.assertEqual([r['filename'] for r in read_batch(first)['clips']],
+                             ['01_주제 0.mp4','02_주제 1.mp4'])
+            second=prepare_set(root,'1001',plan,{})
+            self.assertEqual(read_batch(second)['clips'][0]['filename'],'01_주제 0.mp4')
+
+    def test_legacy_unindexed_batch_remains_readable(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);_,plan=fixture(root);batch=prepare_set(root,'1001',plan,{})
+            data=read_batch(batch);data.pop('filename_style',None)
+            for rec in data['clips']:rec['filename']=rec['title']+'.mp4'
+            atomic_json(batch/'batch.json',data)
+            self.assertEqual(resume_set(batch)['selected_count'],2)
+
     def test_scope_checks_actual_source_bytes_and_budget_is_shared(self):
         with tempfile.TemporaryDirectory() as d:
             _,plan=fixture(Path(d));batch=prepare_set(Path(d),'1001',plan,{})
@@ -150,7 +167,7 @@ class BatchTest(unittest.TestCase):
             for rec,clip in zip(data['clips'],plan['clips']):verified_fixture(batch/rec['run'],plan,clip)
             result=publish_set(batch)
             self.assertEqual(result['status'],'complete')
-            self.assertEqual(sorted(p.name for p in date.iterdir()),['1001_제작자료','주제 0.mp4','주제 1.mp4'])
+            self.assertEqual(sorted(p.name for p in date.iterdir()),['01_주제 0.mp4','02_주제 1.mp4','1001_제작자료'])
             for rec in data['clips']:
                 run=batch/rec['run'];self.assertTrue((run/'review.mp4').is_symlink())
                 self.assertTrue((run/'review.mp4').resolve().is_file())
@@ -197,7 +214,7 @@ class BatchTest(unittest.TestCase):
             for rec,clip in zip(data['clips'],plan['clips']):verified_fixture(batch/rec['run'],plan,clip)
             replace=os.replace
             def fail_second(source,dest):
-                if Path(dest)==date/'주제 1.mp4':raise OSError('simulated publication interruption')
+                if Path(dest)==date/'02_주제 1.mp4':raise OSError('simulated publication interruption')
                 return replace(source,dest)
             with patch('lib.batch.os.replace',side_effect=fail_second),self.assertRaises(OSError):publish_set(batch)
             self.assertEqual(publish_set(batch)['status'],'complete')

@@ -33,7 +33,7 @@ def prepare_set(repo,selector,plan,config,review=False):
     frozen=copy.deepcopy(plan);atomic_json(batch/'selection.json',frozen)
     _snapshot(inputs,batch)
     clips=[]
-    for clip in frozen['clips']:
+    for index,clip in enumerate(frozen['clips'],1):
         run=batch/'videos'/clip['id'];run.mkdir(parents=True)
         _snapshot(inputs,run)
         atomic_json(run/'source/selection.json',frozen)
@@ -43,10 +43,10 @@ def prepare_set(repo,selector,plan,config,review=False):
         state['stages']['inputs']={'status':'passed','input_hash':stage_fingerprint(run,'inputs'),
             'output_hashes':{'source/inputs.json':file_hash(run/'source/inputs.json')}}
         RunStore(run).save(state)
-        clips.append({'id':clip['id'],'title':clip['title'],'filename':filename(clip['title']),
+        clips.append({'id':clip['id'],'title':clip['title'],'filename':f'{index:02d}_'+filename(clip['title']),
                       'run':run.relative_to(batch).as_posix()})
     atomic_json(batch/'batch.json',{'schema_version':1,'range':inputs['range'],
-        'selection_hash':digest(frozen),'clips':clips,'review':review,'status':'prepared'})
+        'filename_style':'indexed','selection_hash':digest(frozen),'clips':clips,'review':review,'status':'prepared'})
     return batch
 
 def _load(batch):
@@ -58,9 +58,11 @@ def _load(batch):
         raise SelectionError('unexpected batch location')
     clips=data.get('clips')
     if not isinstance(clips,list) or len(clips)!=len(plan['clips']): raise SelectionError('batch clip inventory mismatch')
-    for rec,clip in zip(clips,plan['clips']):
+    style=data.get('filename_style','legacy')
+    if style not in ('legacy','indexed'):raise SelectionError('unknown filename style')
+    for index,(rec,clip) in enumerate(zip(clips,plan['clips']),1):
         if any(rec.get(k)!=v for k,v in {'id':clip['id'],'title':clip['title'],
-                                      'filename':filename(clip['title']),'run':'videos/'+clip['id']}.items()):
+                                      'filename':(f'{index:02d}_' if style=='indexed' else '')+filename(clip['title']),'run':'videos/'+clip['id']}.items()):
             raise SelectionError('batch clip mapping changed')
         run=(batch/rec['run']).resolve()
         if not run.is_relative_to(batch) or not run.is_dir(): raise SelectionError('unsafe clip run')
