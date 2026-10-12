@@ -1,6 +1,6 @@
 ---
 name: bio-stt
-description: [Gemini Only] Use when transcribing biology lecture audio or video recordings (.m4a, .mp3, .wav) into a verbatim transcript under STT/<MMDD> 생명.md with domain-specific terminology guidance for ajou-life-science, or when invoking /bio-stt. Strictly requires Gemini models; fails on Claude/GPT.
+description: "[Gemini Only] Use when transcribing biology lecture audio or video recordings (.m4a, .mp3, .wav) into a verbatim transcript under STT/<MMDD> 생명.md with domain-specific terminology guidance for ajou-life-science, or when invoking /bio-stt. Strictly requires Gemini models; fails on Claude/GPT."
 ---
 
 # Bio STT (생명과학 강의 음성 전사)
