@@ -50,6 +50,18 @@ def source_file(repo, date='0917', slug='Recursion', empty=False):
     path.write_text('<section id="questions">'+card+'</section>',encoding='utf-8')
     return path
 
+def choice_source_file(repo, date='0915', slug='Cellular_Respiration', choices=('(1) 전자가 흐른다.', '(5) 이 현상을 설명하는 이론은 화학삼투설이다.')):
+    path=repo / '복습노트' / date / f'복습문제_{date}_{slug}.html'
+    path.parent.mkdir(parents=True,exist_ok=True)
+    items=''.join(f'<li>{c}</li>' for c in choices)
+    card=('<article class="card" id="p1" data-source="0915 기출"><h3>1. 세포호흡</h3><div class="problem">'
+          f'<p>옳은 설명은 무엇인가요?</p><ul class="choices">{items}</ul></div>'
+          '<details class="original"><summary>원문</summary><blockquote>원래 질문</blockquote></details>'
+          '<details class="hint"><summary>힌트</summary><p>전자전달계를 떠올려요.</p></details>'
+          '<details class="solution"><summary>풀이</summary><ol class="steps"><li>보기를 확인해요.</li></ol><p class="answer">(1)</p></details></article>')
+    path.write_text('<section id="questions">'+card+'</section>',encoding='utf-8')
+    return path
+
 def acceptance_pack(repo):
     import base64, html
     from mpe_source import load_source

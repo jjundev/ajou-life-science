@@ -4,7 +4,7 @@ import pytest
 from mpe_source import load_source, resolve_sources, subparts
 from mpe_shared import parse
 from mpe_types import ExplainError
-from helpers import source_file
+from helpers import source_file, choice_source_file
 
 def test_legacy_problem_preserves_code(tmp_path):
     path = source_file(tmp_path)
@@ -71,3 +71,43 @@ def test_paragraph_question_labels():
 
 def test_lettered_operation_list_is_single_question():
     assert subparts('<p>다음 연산을 실행한다.</p><ol><li>(a) push(1)</li><li>(b) pop()</li></ol><p>최종 상태를 구하라.</p>', '') == ('main',)
+
+
+CHOICES = '<li>(1) 전자가 흐른다.</li><li>(5) 이 현상을 설명하는 이론은 화학삼투설이다.</li>'
+
+@pytest.mark.parametrize('tag',['ul','ol'])
+def test_choices_never_subparts(tag):
+    assert subparts(f'<p>옳은 설명은 무엇인가요?</p><{tag} class="choices">{CHOICES}</{tag}>', '') == ('main',)
+
+def test_giyeok_statements_single():
+    html = ('<p>옳은 것만 고른 것은?</p><ul><li>ㄱ. 값을 구하는 효소이다.</li><li>ㄴ. 설명하는 그림이다.</li></ul>'
+            '<ul class="choices"><li>(1) ㄱ</li><li>(2) ㄴ</li></ul>')
+    assert subparts(html, '') == ('main',)
+
+def test_choice_card_extracts(tmp_path):
+    p = load_source(choice_source_file(tmp_path), tmp_path).problems[0]
+    assert p.subparts == ('main',)
+    assert 'class="choices"' in p.conditions_html and '화학삼투설' in p.conditions_html
+
+def test_all_newest_first(tmp_path):
+    for d in ('0901', '0922', '1008'): source_file(tmp_path, d)
+    assert [p.parent.name for p in resolve_sources(tmp_path, 'all')] == ['1008', '0922', '0901']
+
+def test_all_finds_nfd_pack(tmp_path):
+    source_file(tmp_path, '0901')
+    nfd = source_file(tmp_path, '0922')
+    old = nfd.parent
+    new = old.with_name(unicodedata.normalize('NFD', old.name))
+    old.rename(new)
+    f = new / nfd.name
+    f.rename(new / unicodedata.normalize('NFD', nfd.name))
+    root = tmp_path / unicodedata.normalize('NFD', '복습노트')
+    result = resolve_sources(tmp_path, 'all')
+    assert len(result) == 2 and result[0].parent.name == '0922'
+
+def test_all_rejects_duplicate_range(tmp_path):
+    source_file(tmp_path, '0917'); source_file(tmp_path, '0917', slug='Other')
+    with pytest.raises(ExplainError, match='여러 후보'): resolve_sources(tmp_path, 'all')
+
+def test_all_empty(tmp_path):
+    with pytest.raises(ExplainError, match='대상 없음'): resolve_sources(tmp_path, 'all')

@@ -73,7 +73,10 @@ def resolve_sources(repo: Path, target: str | None) -> tuple[Path, ...]:
             match = re.fullmatch(profile.filename_re, nfc(path.name))
             if match:
                 candidates.append((profile.name, match[1], path))
-    if target and re.fullmatch(r'(?:과제|hw)\s*[1-9]\d*', target, re.I):
+    if target == 'all':
+        found = [path for kind, _, path in candidates if kind == 'review']
+        reviews = []
+    elif target and re.fullmatch(r'(?:과제|hw)\s*[1-9]\d*', target, re.I):
         raise ExplainError('과제 입력 미지원: 기존 복습문제 HTML을 선택하세요.')
     else:
         reviews = [(value, path) for kind, value, path in candidates if kind == 'review']
@@ -106,6 +109,10 @@ def resolve_sources(repo: Path, target: str | None) -> tuple[Path, ...]:
         by_range.setdefault(match[1], []).append(path)
     if any(len(group) > 1 for group in by_range.values()):
         raise ExplainError('여러 후보: HTML 경로를 명시하세요.\n' + '\n'.join(map(str, found)))
+    if target == 'all':
+        def newest(p):
+            return (re.fullmatch(REVIEW.filename_re, nfc(p.name))[1].split('-')[-1], nfc(p.name))
+        return tuple(inside(path, repo) for path in sorted(found, key=newest, reverse=True))
     return tuple(inside(path, repo) for path in sorted(found, key=lambda p: nfc(p.name)))
 
 def ancestors(node, root):
@@ -117,6 +124,13 @@ def ancestors(node, root):
 def operation_item(text):
     return bool(re.fullmatch(r'\s*\([a-z]\)\s*(?:push|pop|enqueue|dequeue|insert|delete|append|remove)\s*\([^)]*\)\s*[;.]?\s*', text, re.I))
 
+def choice_container(node, root):
+    return bool({'choices', 'options'} & set(node.classes)) or any({'choices', 'options'} & set(a.classes) for a in ancestors(node, root))
+
+def giyeok_list(node):
+    items = [c for c in node.children if isinstance(c, Node) and c.tag == 'li']
+    return bool(items) and all(re.match(r'\s*[ㄱ-ㅎ]\.', c.text()) for c in items)
+
 def subparts(ask: str, original: str) -> tuple[str, ...]:
     # Explicit question labels are authoritative; unlabelled operation lists are not questions.
     if ask and original:
@@ -127,14 +141,16 @@ def subparts(ask: str, original: str) -> tuple[str, ...]:
         return actual
     root = parse(ask or original)
     marked = [n for n in root.find_all(lambda n: 'part' in n.classes or (n.tag == 'p' and re.match(r'\s*\(([a-z])\)', n.text())))
-              if not any('part' in a.classes or a.tag in ('li', 'pre', 'code') for a in ancestors(n, root))]
+              if not choice_container(n, root)
+              and not any('part' in a.classes or a.tag in ('li', 'pre', 'code') for a in ancestors(n, root))]
     labels = []
     for node in marked:
         match = re.match(r'\s*\(([a-z])\)', node.text())
         if not match: raise ExplainError('소문항 표지 모호함')
         labels.append(match[1])
     lists = [n for n in root.find_all(lambda n: n.tag in ('ol','ul'))
-             if not any(a.tag in ('li','ol','ul') for a in ancestors(n,root))]
+             if not any(a.tag in ('li','ol','ul') for a in ancestors(n,root))
+             and not choice_container(n, root) and not giyeok_list(n)]
     for node in lists:
         items = [c for c in node.children if isinstance(c,Node) and c.tag=='li']
         matches = [re.match(r'\s*\(([a-z])\)', c.text()) for c in items]
