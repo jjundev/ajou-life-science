@@ -1,23 +1,23 @@
 # 검토 기록과 발행
 
-기계 검사는 구역·소문항·수식 보존·자원·파일 해시를 검사해요. 의미와 답이 맞다는 판단은 하지 않아요. build가 만든 `review.json`은 전부 `not_run`이에요. 실제 확인을 수행한 에이전트만 기록을 갱신해요. 기출 PDF·문제은행·강의록의 문항 페이지와 대조하고, 원 답안을 독립 검산의 결과로 간주하지 않아요.
+기계 검사는 구역·소문항·수식 보존·자원·파일 해시를 검사해요. 의미와 답이 맞다는 판단은 하지 않아요. build가 만든 `review.json`은 전부 `not_run`이에요. 실제 확인을 수행한 에이전트만 기록을 갱신해요. 기출 합본 PDF·웹과제·교과서의 문항 쪽과 대조하고, 카드의 원 답안을 독립 검산의 결과로 간주하지 않아요.
 
 JSON의 `input_hash`는 현재 원본과 설명 조각에 묶여요. build 출력의 `artifact_hashes`도 그대로 검토 대상이에요. 조각·원본·렌더링 파일을 바꿨다면 다시 build하고 검토해요. 예전 검토 보고서는 통과하지 않아요.
 
-- `source_visual`: 문항 조건·그림·소문항을 원 기출·강의록의 실제 페이지와 대조. reviewer와 evidence에 자료/페이지/대조 결과.
-- `content`: 상위 status/reviewer/evidence 및 items의 모든 `pN:a` 또는 `pN:main`. recall의 문제 단서와 개념 연결·공식·기호의 뜻·적용 가정·선택 이유·소문항별 누락 여부, 첫 줄·유도 이유·모든 답·검산·가정·충돌 여부 확인. recall은 정의/판단 기준만 필요한 문항도 허용하지만 제목만으로는 충분하지 않아요. start와 긴 설명을 복제하지 않았는지, 요약의 핵심 개념·공식이 본문과 일치하는지 확인해요.
-- `independent`: 같은 모든 items, method=`exact|symbolic|numerical|proof|qualitative`, conclusion과 evidence. 검산 스크립트·출력·자료 위치를 구체적으로 기록.
+- `source_visual`: 문항 조건·보기·그림·소문항을 원자료의 실제 쪽과 대조. 기출 문항은 `23, 24 소스/N강 합본.pdf`의 해당 쪽, 웹과제 문항은 `웹과제/N장/questions.json`의 해당 항목, 교과서 그림·표를 옮긴 문항은 `교과서/생명과학_기초와_응용_2판/0N장_*.pdf`의 해당 쪽. reviewer와 evidence에 자료/쪽/대조 결과.
+- `content`: 상위 status/reviewer/evidence 및 items의 모든 `pN:a` 또는 `pN:main`. recall의 문제 단서와 개념 연결·용어와 기호의 뜻·적용 조건·선택 이유·소문항별 누락 여부, 첫 줄·보기별 판정과 근거·ㄱㄴㄷ 진술별 판정·부정형 질문 방향·모든 답·검산·충돌 여부 확인. recall은 정의/판단 기준만 필요한 문항도 허용하지만 제목만으로는 충분하지 않아요. start와 긴 설명을 복제하지 않았는지, 요약의 핵심 개념이 본문과 일치하는지 확인해요.
+- `independent`: 같은 모든 items, method=`exact|symbolic|numerical|proof|qualitative`, conclusion과 evidence. 저작 에이전트와 다른, **정답을 보지 않은** 별도 에이전트가 문항(지문·보기·그림)과 정리노트·교과서·강의노트만으로 다시 풀어 카드 정답과 일치해야 해요. 이 에이전트에게 카드의 정답·풀이·설명 조각을 주지 않아요. method는 주로 `qualitative`, 유전 교배 비율 같은 계산은 `exact`예요. 컨트롤러는 재풀이 답을 카드 정답과 `.pack/key-check.md`의 인쇄·판단 답에 대조하고, 하나라도 다르면 disputed로 둬요. 재풀이 기록(`evidence/independent-<range>.md` 등)과 자료 쪽을 구체적으로 기록.
 - `browser`: 1280×900 및 375×812, light/dark. 모든 문항의 목차·이전/다음·요약·수식·표·그림·링크를 확인. 콘솔·KaTeX 오류·누락 자원·문서 가로 넘침은 0. 짧은 인라인 수식의 스크롤 컨테이너와 수식 영역의 보이는 스크롤바는 0. 구역 24px·제목 아래 12px·소문항 16px 간격, 행렬 잘림과 겹침을 실제 렌더링으로 확인. 긴 수식은 의미 단위 줄바꿈을 우선하고, 더 나눌 수 없는 긴 수식만 안내와 함께 스크롤바 없는 국소 이동을 허용. 외부 요청 없이 로컬 자원으로 렌더링.
 
-각 단계와 items는 status=`pass`, 비어 있지 않은 reviewer/evidence여야 발행돼요. `not_run`, `fail`, `disputed`는 발행을 보류해요. numerical은 유한한 tolerance>0, 0<=residual<=tolerance도 필요해요. proof에 숫자 예제 확인만 있는 evidence는 수동 검토에서 승인하면 안 돼요.
+네 검토 source_visual·content·independent·browser는 `lite`에서도 모두 실제로 수행해요. 각 단계와 items는 status=`pass`, 비어 있지 않은 reviewer/evidence여야 발행돼요. `not_run`, `fail`, `disputed`는 발행을 보류해요. numerical은 유한한 tolerance>0, 0<=residual<=tolerance도 필요해요. proof에 숫자 예제 확인만 있는 evidence는 수동 검토에서 승인하면 안 돼요.
 
 ```json
 {
   "status": "pass",
-  "reviewer": "검증을 수행한 에이전트",
-  "evidence": "evidence/trace.py 및 trace-result.txt: 연산별 상태가 일치",
-  "method": "exact",
-  "conclusion": "독립 시뮬레이션과 손 추적의 모든 상태가 같음"
+  "reviewer": "독립 검산 에이전트(정답 비공개)",
+  "evidence": "evidence/independent-1008.md: 정리노트·교과서 05장 p.NN으로 다시 푼 답 (5), 카드 정답·key-check.md 판단 답과 일치",
+  "method": "qualitative",
+  "conclusion": "보기 (1)~(4)는 교과서 설명과 일치하고 (5)만 틀려 답 (5)"
 }
 ```
 
