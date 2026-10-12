@@ -46,7 +46,7 @@ class TestSkillFiles(unittest.TestCase):
         self.assertLessEqual(len(m.group(2)), 1024)
 
     def test_referenced_files_exist(self):
-        refs = set(re.findall(r"(?:references|scripts|assets)/[\w.-]+\.(?:md|py|html)", self.text))
+        refs = set(re.findall(r"(?<!problem-explain/)(?:references|scripts|assets)/[\w.-]+\.(?:md|py|html)", self.text))
         self.assertGreaterEqual(len(refs), 12)
         for rel in sorted(refs):
             with self.subTest(rel=rel):
@@ -74,6 +74,37 @@ class TestSkillFiles(unittest.TestCase):
             text = path.read_text(encoding="utf-8").replace("①~⑳", "").replace("①~⑤", "")
             with self.subTest(file=path.name):
                 self.assertIsNone(re.search(r"[①-⑳]", text))
+
+    def test_problem_explain_step(self):
+        i8, i8b, i9 = (self.text.index(s) for s in ("\n### 8. ", "\n### 8b. 문제설명", "\n### 9. "))
+        self.assertTrue(i8 < i8b < i9)
+        self.assertIn("references/problem-explain.md", self.text[i8b:i9])
+
+    def test_sibling_check_in_prepare(self):
+        body = self.text[self.text.index("### 0. 준비"):self.text.index("### 1. ")]
+        self.assertIn("bio-problem-explain/SKILL.md", body)
+        self.assertIn("scripts/mpe_cli.py", body)
+
+    def test_augment_reexplains(self):
+        body = self.text[self.text.index("## 보강 모드"):self.text.index("## 오류 처리")]
+        self.assertIn("**A5b.", body)
+        self.assertIn("references/problem-explain.md", body)
+
+    def test_report_has_explain_line(self):
+        body = self.text[self.text.index("### 9. 보고"):self.text.index("## 보강 모드")]
+        self.assertIn("- 문제설명:", body)
+        self.assertIn("복습팩 생성됨 / 문제설명 보류", body)
+
+    def test_lite_keeps_explain_review(self):
+        line = next(l for l in self.text.splitlines() if l.startswith("- `lite`"))
+        self.assertIn("문제설명", line)
+        self.assertIn("생략하지 않는다", line)
+
+    def test_reference_exists_without_forbidden_words(self):
+        t = (SKILL / "references" / "problem-explain.md").read_text(encoding="utf-8")
+        self.assertNotRegex(t, r"자구알|자료구조|\bds\b|ds-")
+        for s in ("ABS_REVIEW", "EXPLAIN_RUN", "bio-problem-explain", "복습팩 생성됨 / 문제설명 보류"):
+            self.assertIn(s, t)
 
 
 class TestRangeSnippet(unittest.TestCase):
@@ -168,6 +199,23 @@ class TestBackupSnippet(unittest.TestCase):
         self.assertIn("백업 2항목(파일 2개)", r.stdout)
         (d,) = self.backups()
         self.assertTrue((d / ".pack" / "manifest.json").is_file())
+
+    def test_backs_up_explanations(self):
+        pack = self.notes / "0922"
+        (pack / "figures_문제설명_0922_X").mkdir(parents=True)
+        (pack / "figures_문제설명_0922_X" / "a.png").write_bytes(b"x")
+        (pack / "자료_문제설명_0922_X").mkdir()
+        (pack / "자료_문제설명_0922_X" / "manifest.json").write_text("{}", encoding="utf-8")
+        (pack / "문제설명_0922_X.html").write_text("e", encoding="utf-8")
+        (pack / "풀이기록").mkdir()
+        (pack / "풀이기록" / "y.json").write_text("{}", encoding="utf-8")
+        r = self.backup("0922")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        (d,) = self.backups()
+        names = sorted(unicodedata.normalize("NFC", n) for n in os.listdir(d))
+        self.assertEqual(names, ["figures_문제설명_0922_X", "문제설명_0922_X.html", "자료_문제설명_0922_X"])
+        self.assertTrue((d / unicodedata.normalize("NFC", "자료_문제설명_0922_X") / "manifest.json").is_file()
+                        or any(True for _ in d.rglob("manifest.json")))
 
     def test_bad_range_fails_loudly(self):
         (self.notes / "정리노트_0922_A.html").write_text("n", encoding="utf-8")
