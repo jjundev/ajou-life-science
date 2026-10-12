@@ -39,7 +39,7 @@ description: 생명과학 복습노트의 기존 복습문제 HTML로 문제 단
 - 기출 합본: `23, 24 소스/N강 합본.pdf` (카드의 `data-source="기출 N강 k"`가 가리키는 쪽)
 - 웹과제: `웹과제/N장/questions.json` (응시한 장만 있다)
 - 정리노트: `복습노트/<range>/정리노트_<range>_<slug>.html`
-- 팩 검토 기록: `복습노트/<range>/.pack/key-check.md`(정답 대조), `복습노트/<range>/.pack/question-audit.md`(문항 감사), `복습노트/<range>/.pack/variants.md`(생성 변형 설계). key-check.md·question-audit.md는 일부 팩(0929·1006·1008)에만 있다. 없으면 카드 정답과 variants.md의 `의도한 정답과 이유` 열로 대조하고 evidence에 "key-check 없음"을 적는다. 파일이 없다는 것만으로는 disputed가 아니다.
+- 팩 검토 기록: `복습노트/<range>/.pack/key-check.md`(정답 대조), `복습노트/<range>/.pack/question-audit.md`(문항 감사), `복습노트/<range>/.pack/variants.md`(생성 변형 설계). key-check.md·question-audit.md는 일부 팩에만 있다. 없으면 카드 정답과 variants.md의 `의도한 정답과 이유` 열로 대조하고 evidence에 "key-check 없음"을 적는다. 파일이 없다는 것만으로는 disputed가 아니다.
 - STT(`STT/MMDD 생명.md`)는 필요한 경우 보조로만 쓴다. 수업 밖 보충은 표시한다.
 
 ## 저작과 독립 검산 분담
@@ -59,7 +59,9 @@ description: 생명과학 복습노트의 기존 복습문제 HTML로 문제 단
 
 2. 대상 디렉터리의 `source.json`을 읽는다. 문항 ID·전체 문제·소문항·보기·원문·그림·참고 풀이를 확인한다. 카드의 출처(기출 합본 쪽, 웹과제 questions.json 항목), 교과서·강의노트의 해당 장, 관련 정리노트를 필요한 범위에서 실제로 읽고 원 페이지와 대조한다. `.pack/key-check.md`와 `.pack/question-audit.md`에서 그 문항의 정답 대조·보류 기록을 확인한다(없는 팩이면 건너뛴다). `data-source="생성 변형 …"` 카드는 `.pack/variants.md`에서 같은 id 행(근거 토픽, 형태 열의 교재 쪽, 의도한 정답과 이유)을 읽는다. STT는 필요한 경우 보조로 사용한다. 수업 밖 보충은 표시한다. `source.json`을 수동 수정하면 재추출 검사가 거부한다.
 3. [저작 규칙](references/authoring.md)을 읽고 `explanations/pN.html`을 작성한다(위 분담대로 병렬 저작). 일곱 직계 구역 `understand → recall → start → solve → verify → pitfall → retry`, 모든 소문항의 solve/verify 표지, 펼친 답과 우측 요약이 필요하다. recall은 문제의 어떤 단서에서 개념을 떠올렸는지, 정의·원리·조건·선택 이유를 연결한다. solve는 보기마다 판정과 근거 개념을 쓴다. CLI는 설명을 자동 저작하지 않는다.
-4. 정답을 보지 않은 별도 에이전트의 재풀이, 교과서 쪽 대조, 교배표 재계산 등으로 답을 확인하고 `evidence/`에 근거를 보관한다. 원문 오타·복수 정답·답안지와 기출 합본·웹과제·`.pack/key-check.md`의 충돌은 몰래 수정하거나 정상 답으로 승인하지 않고 disputed로 남긴다.
+4. 정답을 보지 않은 별도 에이전트의 재풀이, 교과서 쪽 대조, 교배표 재계산 등으로 답을 확인하고 `evidence/`에 근거를 보관한다. 원문 충돌과 문항 결함은 구분한다.
+   - (A) 충돌: 카드 정답이 인쇄 답안지·기출·웹과제·key-check 판단 답 또는 독립 재풀이 답과 다르면 몰래 수정하거나 정상 답으로 승인하지 않고 disputed로 남기며, 그 팩은 발행을 보류한다.
+   - (B) 결함 공개: 카드 정답이 인쇄 답·key-check·독립 재풀이와 모두 같고 문항 표현만 결함(다른 보기도 논쟁 여지, 방향·가닥 누락, 오타)이면 설명을 쓰되 understand에 `<strong>문항 결함:</strong>` 한 줄, solve에서 논쟁 보기를 정직하게 판정("엄밀히는 맞을 수도 있어요 — 이유"), pitfall에 시험 대처를 적는다. content 검토는 공개가 정확한지 확인한다. 이 경우는 disputed가 아니다.
 5. 조립과 기계 검사를 실행한다. build는 새 stage를 만들고 검토 상태를 모두 `not_run`으로 초기화한다.
 
    ```sh

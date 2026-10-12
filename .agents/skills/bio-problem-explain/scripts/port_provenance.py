@@ -13,12 +13,19 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
+def check_git(source):
+    result = subprocess.run(['git', '-C', str(source), 'rev-parse', '--git-dir'], capture_output=True)
+    if result.returncode != 0:
+        raise SystemExit(f'git 저장소가 아니거나 경로가 잘못됐어요: {source}')
+
+
 def source_bytes(source, relative):
     result = subprocess.run(['git', '-C', str(source), 'show', f'{COMMIT}:{SOURCE_SKILL}/{relative}'], capture_output=True)
     return result.stdout if result.returncode == 0 else None
 
 
 def build(source):
+    check_git(source)
     files = []
     for path in sorted(p for p in SKILL.rglob('*') if p.is_file()):
         relative = path.relative_to(SKILL).as_posix()

@@ -111,3 +111,24 @@ def test_all_rejects_duplicate_range(tmp_path):
 
 def test_all_empty(tmp_path):
     with pytest.raises(ExplainError, match='대상 없음'): resolve_sources(tmp_path, 'all')
+
+def test_inside_unicode_normalization_insensitive(tmp_path):
+    from mpe_source import inside
+    repo = tmp_path / unicodedata.normalize('NFC', '생명과학')
+    repo.mkdir()
+    f = repo / unicodedata.normalize('NFC', '복습노트') / 'a.html'
+    f.parent.mkdir(); f.write_text('x')
+    nfd = lambda p: Path(unicodedata.normalize('NFD', str(p)))
+    nfc_ = lambda p: Path(unicodedata.normalize('NFC', str(p)))
+    inside(nfc_(f), nfd(repo))
+    inside(nfd(f), nfc_(repo))
+    with pytest.raises(ExplainError, match='저장소 밖'):
+        inside(tmp_path / 'other.html', nfd(repo))
+
+def test_resolve_sources_nfd_repo_nfc_target(tmp_path):
+    repo = tmp_path / unicodedata.normalize('NFC', '생명과학')
+    repo.mkdir()
+    path = source_file(repo)
+    nfc_target = unicodedata.normalize('NFC', str(path))
+    got = resolve_sources(Path(unicodedata.normalize('NFD', str(repo))), nfc_target)
+    assert got[0].samefile(path)

@@ -16,13 +16,14 @@ def sha256(path: Path) -> str:
 
 def inside(path: Path, repo: Path) -> Path:
     path = Path(path).absolute()
-    try:
-        path.resolve().relative_to(repo.resolve())
-    except ValueError as exc:
-        raise ExplainError(f'저장소 밖 경로: {path}') from exc
+    repo_parts = Path(nfc(repo.resolve())).parts
+    path_parts = Path(nfc(path.resolve())).parts
+    if path_parts[:len(repo_parts)] != repo_parts:
+        raise ExplainError(f'저장소 밖 경로: {path}')
     # Symlinks in the resource path are refused, except the repository's own root.
+    repo_abs = nfc(repo.absolute())
     current = path
-    while current != repo.absolute() and current != current.parent:
+    while nfc(current) != repo_abs and current != current.parent:
         if current.is_symlink():
             raise ExplainError(f'심볼릭 링크 입력 금지: {current}')
         current = current.parent

@@ -112,3 +112,10 @@ def test_rebuild_resets_reviews(tmp_path):
     review=json.loads((item['folder']/'review.json').read_text())
     assert review['browser']['status']=='not_run'
     assert all(v['status']=='not_run' for v in review['independent']['items'].values())
+
+
+def test_port_provenance_requires_git_repo(tmp_path):
+    import subprocess, sys
+    script = Path(__file__).resolve().parents[1] / 'scripts/port_provenance.py'
+    r = subprocess.run([sys.executable, str(script), '--source', str(tmp_path)], capture_output=True, text=True)
+    assert r.returncode != 0 and 'git' in r.stderr

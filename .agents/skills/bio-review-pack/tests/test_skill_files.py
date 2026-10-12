@@ -85,6 +85,13 @@ class TestSkillFiles(unittest.TestCase):
         self.assertIn("bio-problem-explain/SKILL.md", body)
         self.assertIn("scripts/mpe_cli.py", body)
 
+    def test_stale_explanation_reported(self):
+        i8b = self.text.index("### 8b.")
+        self.assertIn("이전 카드 기준(stale)", self.text[i8b:self.text.index("## ", i8b + 5)])
+        self.assertIn("이전 카드 기준(stale)", self.text[self.text.index("## 오류 처리"):])
+        t = (SKILL / "references" / "problem-explain.md").read_text(encoding="utf-8")
+        self.assertIn("이전 카드 기준(stale)", t)
+
     def test_augment_reexplains(self):
         body = self.text[self.text.index("## 보강 모드"):self.text.index("## 오류 처리")]
         self.assertIn("**A5b.", body)
@@ -214,8 +221,7 @@ class TestBackupSnippet(unittest.TestCase):
         (d,) = self.backups()
         names = sorted(unicodedata.normalize("NFC", n) for n in os.listdir(d))
         self.assertEqual(names, ["figures_문제설명_0922_X", "문제설명_0922_X.html", "자료_문제설명_0922_X"])
-        self.assertTrue((d / unicodedata.normalize("NFC", "자료_문제설명_0922_X") / "manifest.json").is_file()
-                        or any(True for _ in d.rglob("manifest.json")))
+        self.assertTrue((d / unicodedata.normalize("NFC", "자료_문제설명_0922_X") / "manifest.json").is_file())
 
     def test_bad_range_fails_loudly(self):
         (self.notes / "정리노트_0922_A.html").write_text("n", encoding="utf-8")
