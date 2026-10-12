@@ -17,6 +17,11 @@ class BioReviewPackEntrypointTests(unittest.TestCase):
     def test_skill_file_reachable_through_entry(self):
         self.assertTrue((ENTRY / "SKILL.md").is_file())
 
+    def test_problem_explain_entry(self):
+        entry = ROOT / ".claude/skills/bio-problem-explain"
+        self.assertEqual(os.readlink(entry), "../../.agents/skills/bio-problem-explain")
+        self.assertTrue((entry / "SKILL.md").is_file())
+
     def test_old_skills_removed(self):
         for name in ("summary-note", "study-note-eli5"):
             for base in (".agents/skills", ".claude/skills"):
