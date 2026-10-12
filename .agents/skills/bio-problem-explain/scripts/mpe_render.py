@@ -47,6 +47,16 @@ def convert_markdown(html_path, md_path, ctx):
     finally:
         temporary.unlink(missing_ok=True)
 
+SVG_STROKE_TAGS = ('rect', 'circle', 'ellipse', 'line', 'polyline', 'polygon', 'path', 'g', 'text')
+
+def _inside_svg(node):
+    parent = node.parent
+    while parent is not None:
+        if getattr(parent, 'tag', None) == 'svg':
+            return True
+        parent = getattr(parent, 'parent', None)
+    return False
+
 def resources(markup, problem, pack, repo, stage, fig_name, destination, scope):
     root = parse(markup)
     nodes = list(root.find_all(lambda n: True))
@@ -59,7 +69,10 @@ def resources(markup, problem, pack, repo, stage, fig_name, destination, scope):
                 node.tag == 'div' and 'figure-scroll' in node.classes and
                 value == 'max-width:100%;overflow-x:auto;background:white') or (
                 node.tag == 'svg' and re.fullmatch(
-                    r'background:white;width:[1-9][0-9]{0,3}px;max-width:none;height:auto', value))
+                    r'background:white;width:[1-9][0-9]{0,3}px;max-width:none;height:auto', value)) or (
+                node.tag in SVG_STROKE_TAGS and
+                re.fullmatch(r'stroke-width:[0-9]+(\.[0-9]+)?(px)?;?', value) and
+                _inside_svg(node))
             if allowed:
                 errors.remove('허용하지 않는 속성: style')
     if errors:

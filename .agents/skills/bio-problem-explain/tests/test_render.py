@@ -115,3 +115,33 @@ def test_authored_style_still_refused(tmp_path):
     pack,fragments=make(tmp_path)
     with pytest.raises(ExplainError,match='style'):
         build_explanation(pack,{'p1':fragments['p1']+'<figure style="margin:16px 0">x</figure>'},tmp_path/'stage',tmp_path/'repo')
+
+SVG_RECT='<svg viewBox="0 0 460 340"><rect class="fig-ink" x="20" y="20" width="420" height="300" rx="14" style="{s}"/>{extra}</svg>'
+
+def test_source_svg_stroke_width_style_preserved(tmp_path):
+    pack,fragments=make(tmp_path)
+    svg=SVG_RECT.format(s='stroke-width:6',extra='<line x1="0" y1="0" x2="9" y2="9" style="stroke-width:2.5px;"/>')
+    p=replace(pack.problems[0],conditions_html=pack.problems[0].conditions_html+svg)
+    pack=replace(pack,problems=(p,))
+    art=build_explanation(pack,fragments,tmp_path/'stage',tmp_path/'repo')
+    assert check_artifacts(pack,art)==[]
+    out=art.html.read_text()
+    assert 'style="stroke-width:6"' in out and 'style="stroke-width:2.5px;"' in out
+
+@pytest.mark.parametrize('style',['fill:url(#x)','stroke-width:6;position:absolute','stroke-width:6 !important'])
+def test_source_svg_style_allowance_is_narrow(tmp_path,style):
+    pack,fragments=make(tmp_path)
+    p=replace(pack.problems[0],conditions_html=pack.problems[0].conditions_html+SVG_RECT.format(s=style,extra=''))
+    with pytest.raises(ExplainError,match='마크업'):
+        build_explanation(replace(pack,problems=(p,)),fragments,tmp_path/'stage',tmp_path/'repo')
+
+def test_source_stroke_width_outside_svg_refused(tmp_path):
+    pack,fragments=make(tmp_path)
+    p=replace(pack.problems[0],conditions_html=pack.problems[0].conditions_html+'<p style="stroke-width:6">x</p>')
+    with pytest.raises(ExplainError,match='마크업'):
+        build_explanation(replace(pack,problems=(p,)),fragments,tmp_path/'stage',tmp_path/'repo')
+
+def test_authored_svg_stroke_width_style_refused(tmp_path):
+    pack,fragments=make(tmp_path)
+    with pytest.raises(ExplainError,match='style'):
+        build_explanation(pack,{'p1':fragments['p1']+SVG_RECT.format(s='stroke-width:6',extra='')},tmp_path/'stage',tmp_path/'repo')
