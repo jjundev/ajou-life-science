@@ -1,0 +1,31 @@
+# Independent blind solve — 1008 (gene regulation & DNA cloning)
+
+Materials: 정리노트_1008_Gene_Regulation_and_DNA_Cloning.html (sections 0–5 + summary). Cited textbook/lecture pages are those the note itself references. No 기출 합본 PDF was opened (stems were self-contained).
+
+| id | answer | method | justification (per choice) | material |
+|---|---|---|---|---|
+| p1 | (5) | qualitative | Moving finished mRNA from nucleus to cytoplasm acts on an RNA that already exists, so it is 전사 후 조절. DNA-level and transcription control act before the RNA exists; translation and post-translation control act on protein synthesis or the finished protein. | Note §2, boxed supplement (교재 5장 p112 그림 5.21; 강의노트 5장 p4–5) |
+| p2 | (1) | qualitative | Cell types share the same genome but express different genes. (2) and (4) are wrong because chromosome number and gene content are the same; (3) is wrong because genes are not deleted during development. | Note §1 supplement (강의노트 5장 p7; 교재 5장 p112–113) |
+| p3 | (4) | qualitative | False: enhancers (증폭자) are distal regulatory sequences, not promoter-proximal elements. (1) PPEs raise rate, (2) repressors exist, (3) hemoglobin/methylation is the example the 기출 itself gives, (5) acetylation loosens chromatin — all true. | Note §1 (근접요소 vs 증폭자), §0, §1 supplement on hemoglobin |
+| p4 | (3) | qualitative | A miRNA is a short RNA of about 22 nt, not 3 nt. Codons, start and stop codons, and anticodons are always triplets. | Note §2 RNAi topic (5장 p8); general knowledge of the triplet code |
+| p5 | (1) | qualitative | The molecular scissors that recognize a specific sequence are restriction enzymes. A vector carries DNA, Taq and DNA polymerase synthesize DNA, and PCR is a method, not a cutter. | Note §5 restriction (6장 p1) |
+| p6 | (3) | qualitative | 유전공학 is defined as manipulating genes with DNA technology. Microarrays, PCR, bioinformatics and recombination are tools or processes, not the name of the field. | Note §4 (6장 p1·3) |
+| p7 | (5) | qualitative | False: each enzyme needs its fixed recognition site, so you cannot cut any position you want. (1) symmetric/palindromic sites, (2) anti-phage defense, (3) EcoRI sticky ends and (4) site recognition are all true. | Note §5 restriction table and caveats |
+| p8 | (3) | qualitative | A recombinant protein is made by a genetically engineered host such as bacteria (the Humulin example). (1) It still requires transcription and translation; (2) and (4) are wrong too, since it is not defined by potency or chemical synthesis. | Note §4 (insulin/Humulin; 재조합 단백질 caveat) |
+| p9 | (4) | qualitative | The bacterial cloning vector is the plasmid. Recombinant DNA is the product, STRs are markers, and a genome is the whole DNA content. | Note §4 |
+| p10 | (2) | qualitative | Acetylation lowers histone positive charge, which loosens DNA binding and makes transcription easier. (1) has the binding direction backwards, and (3), (4) and (5) are nonsensical or confuse acetylation with degradation tags. | Note §0 |
+| p11 | (4) | qualitative | False: an enhancer is a DNA regulatory sequence, not RNA polymerase. (1) TATA/transcription factors, (2) methylation represses, (3) acetylation increases access and (5) repressor definition are all true. | Note §1 |
+| p12 | (3) | qualitative | mRNA 2 skips exon B while keeping the order A→C, which is alternative splicing: one gene gives different proteins. (1) No order swap; (2) one gene; (4) introns are removed; (5) the DNA is unchanged. | Note §2 |
+| p13 | (1) | qualitative | A miRNA complementary only to X blocks X's translation or causes its degradation. It does not delete DNA (2), does not affect all proteins (3), does not carry amino acids (4) and does not replicate DNA (5). | Note §2 RNAi topic (5장 p8) |
+| p14 | (5) | qualitative | Wrong pairing: phosphorylating an already-made protein is 번역 후 조절, not 전사 후 조절. (1) to (4) are matched correctly. | Note §3 (5장 p9) |
+| p15 | (2) | qualitative | With the proteasome weakened, tagged cyclin is degraded more slowly and persists longer. The proteasome is not a synthesis site (1), DNA is unaffected (3), ubiquitin is a tag rather than a raw material (4), and protein cannot become mRNA (5). | Note §3 proteasome (5장 p9) |
+| p16 | (4) | qualitative | Both vectors replicate (they have an ori) and are selected (they have the resistance gene), but only B has a promoter to transcribe the insert. (1) and (2) are false, (3) ignores the missing promoter in A, and (5) is wrong because a promoter is a sequence, not an enzyme. | Note §4 vector element table |
+| p17 | (1) | exact | A: the bottom strand read 5′→3′ is GAATTC, the same as the top, so A is a palindrome. B: the bottom strand read 5′→3′ is GTAATC, not GATTAC, so B is not. (5) is a false reading rule. | Note §5 palindrome rule |
+| p18 | (3) | qualitative | False: EcoRI makes staggered cuts that leave sticky single-strand overhangs; HpaI is the blunt-end enzyme. (1), (2), (4) and (5) are true. | Note §5 table (EcoRI/HpaI) |
+| p19 | (5) | qualitative | DNA ligase seals the nick with a covalent phosphodiester bond in the backbone. The ribosome, the restriction enzyme (it cuts), histones and miRNA do not seal backbones. | Note §5 ligation |
+| p20 | (2) | qualitative | Both E (empty vector) and F carry resistance, so both survive and selection alone cannot confirm the insert. (1) and (5) are false; (3) is wrong because ori-driven replication does not need the insert; (4) is wrong because the antibiotic is not an enzyme. | Note §5 cloning supplement (교재 6장 p120 그림 6.2) |
+| p21 | (4) | qualitative | DNA bending brings the enhancer-bound activator close to the transcription complex in 3D. An enhancer is DNA, not protein (1); it is not excised (2) and is not RNA (3); (5) is nonsensical. | Note §1 (enhancer looping), summary row 410 |
+
+## Notes
+- No problem is UNSURE. p3 depends on the lecture's distinction that enhancers are distal and promoter-proximal elements are proximal. The note explicitly applies that distinction to this 기출 item. Choice (3) on hemoglobin is treated as true because the 기출 itself presents it as an example of methylation-based control.
+- p17 was verified explicitly: B's bottom strand 3′-CTAATG-5′ reads GTAATC from 5′ to 3′.
