@@ -60,6 +60,13 @@ def test_independent_definition():
     for needle in ('정답을 보지 않은','key-check.md'):
         assert needle in text,needle
 
+def test_printed_key_error_rule():
+    for name in ('SKILL.md','references/authoring.md','references/verification.md'):
+        text=(S/name).read_text(encoding='utf-8')
+        assert '인쇄 정답 오류' in text,name
+    text=(S/'references/authoring.md').read_text(encoding='utf-8')
+    assert '<strong>인쇄 정답 오류:</strong>' in text
+
 def test_referenced_files_exist():
     text=(S/'SKILL.md').read_text(encoding='utf-8')
     refs=set(re.findall(r'((?:references/[\w.-]+\.md)|(?:scripts/[\w.-]+\.py)|(?:assets/[\w.-]+\.json))',text))
