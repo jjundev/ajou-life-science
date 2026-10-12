@@ -1,0 +1,50 @@
+# content 0917 (reviewer, key-check 없음 → 기출은 합본 빨간 인쇄 답, 웹과제는 questions.json, 변형은 variants.md와 대조)
+
+| id | 판정 | 근거 | pass/fail |
+|---|---|---|---|
+| p1 | 답 (2) 간기 | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.57 그림 3.2 확인(간기 대부분, G1·S·G2). | pass |
+| p2 | 답 (4), 문항 결함 공개 | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 결함((1) DNA 절단도 손상 점검이라 방어 가능)을 understand에 정확히 밝히고 solve에서 (1)을 '엄밀히는 맞을 수도'로 정직하게 판정, (4) 근거 교재 p.62 'S기에 모든 DNA가 복제되지 않으면 G2기 동안 진행을 늦춰' 확인, pitfall에 시험 대처 포함. | pass |
+| p3 | 답 (1) | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.64 그림 3.8 '제1감수분열은 상동염색체를 분리' 확인. | pass |
+| p4 | 답 (3) | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.56(46개=23쌍, 유사분열 동일 복제품) 확인. 92=분체 수 함정 설명 정확. | pass |
+| p5 | 답 (2), 용어 결함 공개 | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.58 '동원체(kinetochore)…염색분체의 중심절(centromere)에서 형성' 확인 → 중심절/동원체 구분 결함 진술 정확, 의도 답 근거 타당, pitfall 시험 조언 있음. | pass |
+| p6 | 답 (5), 문항 결함 공개 | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 3개 li, 요약 본문 일치. '한 종류만'의 문자적 오독 결함을 정확히 밝히고 (5)를 '의도한 뜻으로 읽을 때' 맞다고 판정. 교재 p.64 '각 생식세포는 각 상동염색체 쌍 중 어느 한 염색체만' 확인. | pass |
+| p7 | 답 (4) | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.56 '부모의 핵과 동일한 유전적 복제품인 딸세포 핵' 확인, 강의노트 '우연한 돌연변이 제외' 예외 처리 적절. | pass |
+| p8 | 답 (4) | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.61 'CDK의 농도는…일정하지만 사이클린의 농도는…변동' 및 p.62 그림 3.6(사이클린 E–CDK2, B–CDK1) 확인. | pass |
+| p9 | 답 (1), 재검토 후 부정형 규칙 준수 | 수정본 solve가 각 보기를 'X는 유사분열기이다'로 판정: (1) 틀려요(간기는 M기 밖), (2)–(5) 맞아요, 마지막 문단 '답은 틀려요로 판정된 (1)'. 요약 핵심 판단도 같은 방향으로 갱신. 교재 p.57 그림 3.2·기출 20번 인쇄 답 ① 일치. 7구역 순서 정상, solve·verify에 data-subpart=main, recall·start·verify·pitfall·retry(2 li)·요약 이상 없음. | pass |
+| p10 | 답 (5) | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 3개 li, 요약 본문 일치. 교재 p.58 후기·p.64 그림 3.8 확인. | pass |
+| p11 | 답 (3) | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.62 '악성 종양이 퍼지는 것을 전이' 확인. 혈관신생 수업 밖 보충 표시. | pass |
+| p12 | 답 (4), 부정형 굵게·틀려요 답 | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.63 대립유전자·p.56 자매염색분체 확인. | pass |
+| p13 | 답 (1), 용어 결함 공개 | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.58 중심절/동원체 구분 확인, 결함 진술 정확, (1) 판정·시험 조언 적절. | pass |
+| p14 | 답 (1) | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.56–57 확인. | pass |
+| p15 | 답 (4) | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.62 '암은…정상적인 조절을 잃어버릴 때 생긴다' 확인. | pass |
+| p16 | 답 (1), 부정형 처리 정상 | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.62 접촉저해·전이 확인. | pass |
+| p17 | 답 (5), 결함 공개 | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. intra-S 확인점(수업 밖 보충)으로 (5) 참 여지를 정직히 밝힘. 교재 p.62 그림 3.6 확인점이 G1→S, G2→M 둘뿐임 확인. 부정형 처리·결함 대처 조언 적절. | pass |
+| p18 | 답 (3) | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.57 그림 3.2(세포질분열은 유사분열 끝날 때 완결) 확인. | pass |
+| p19 | 답 (3) | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.64 그림 3.8 확인. | pass |
+| p20 | 답 (5) | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.63 '2배체 세포에서 각 염색체 쌍은 상동염색체 쌍' 확인. | pass |
+| p21 | 답 (4) | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.56 자매염색분체 정의 확인. | pass |
+| p22 | 답 (2) | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.58 그림 3.3(G2 자매염색분체, 중심립 쌍) 확인. 택솔 수업 밖 보충 표시. | pass |
+| p23 | 답 (1) | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.57 'S는 DNA 합성…G는 DNA 합성이 없다는 gap' 확인. | pass |
+| p24 | 답 (3) = variants.md | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.56·p.63 확인. | pass |
+| p25 | 답 (2) = variants.md | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.64 그림 3.8·p.57 첫머리 확인. | pass |
+| p26 | 답 (1) = variants.md, 결함 공개 | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. (가) '돌연변이가 생긴 유전자' 전/후 모호성을 정확히 공개, (2)를 정직히 판정, 교재 p.63 '한 발암유전자는 고장 난 표면 수용체…항상 활성' 확인, pitfall 시험 조언 있음. | pass |
+| p27 | 답 (4) = variants.md | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.62(양성·악성·전이·접촉저해), p.63(누적) 확인. | pass |
+| p28 | 답 (2) = variants.md, 결함 공개 | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 3개 li, 요약 본문 일치. 최종 분화 논쟁(수업 밖) 공개, (3) 정직 판정, 교재 p.57 'G0기…신경계 대부분 세포는 완전히 성숙하면 분열을 중지' 및 STT 0917 '능력이 없는 게 아니고 그냥 안 하는' 확인. | pass |
+| p29 | 답 (3) = variants.md | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 3개 li, 요약 본문 일치. 교재 p.62 외부 신호분자→수용체→사이클린/CDK, p.63 고장 난 수용체 확인. | pass |
+| p30 | 답 E = questions.json | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.57(G1 성장, 전기 응축)·p.58(방추체 형성) 확인. | pass |
+| p31 | 답 D = questions.json | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 3개 li, 요약 본문 일치. 교재 p.57 전기 응축, p.58 '중기에 응축을 완결' 함정까지 pitfall에서 정확히 다룸, 부록 용어풀이 G-12 히스톤 '작고 양전하 단백질' 확인. | pass |
+| p32 | 답 C = questions.json | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.63·p.56·p.58 확인. | pass |
+| p33 | 답 D = questions.json | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 3개 li, 요약 본문 일치. 교재 p.63 종양억제유전자·누적 문단 확인. 사멸 유도 수업 밖 보충 표시. | pass |
+| p34 | 답 E, 오타 결함 공개 | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. '측징' 오타를 정확히 밝히고 답 불변 명시, 교재 p.62 접촉저해 확인, pitfall 대처 조언 있음. | pass |
+| p35 | 답 D = questions.json | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. ㄱㄴㄷ 진술 먼저 판정 후 조합 대조. 교재 p.57 G2 단백질 합성·강의노트 3장 G2 확인. | pass |
+| p36 | 답 (2) = variants.md | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.56–57 확인. | pass |
+| p37 | 답 (5) = variants.md | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 3개 li, 요약 본문 일치. 교재 p.63 '하나의…종양억제유전자가 비활성화되어서는 암이 거의 발생하지 않는다' 확인. | pass |
+| p38 | 답 (3) = variants.md | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 3개 li, 요약 본문 일치. 교재 p.61 'CDK…사이클린 분자와 합체되었을 때만 활성' 확인, STT 0917 '혼자서 하는 것이 아니고' 확인. | pass |
+| p39 | 답 (5) = variants.md | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 3개 li, 요약 본문 일치. 교재 p.56 '식물에서는 3배체, 4배체' 확인(낯선참, 수업 밖 보충 표시). | pass |
+| p40 | 답 (5) = variants.md | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 2개 li, 요약 본문 일치. 교재 p.63 고장 난 수용체 확인. | pass |
+| p41 | 답 (2) = variants.md | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 3개 li, 요약 본문 일치. 교재 p.62 'S기에 모든 DNA가 복제되지 않으면 G2기 동안…' 확인. 0908 링크 anchor 존재. | pass |
+| p42 | 답 (3) = variants.md | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 3개 li, 요약 본문 일치. ㄱㄴㄷ 진술 판정 후 조합. 교재 p.63 확인. | pass |
+| p43 | 답 (4) = variants.md | 7구역 순서 정상, recall 단서→개념→조건 연결, start는 실제 첫 줄/표, solve 보기별 판정+근거 후 답, verify는 소거·교재 쪽·인쇄 답 등 다른 경로, pitfall 구체, retry 3개 li, 요약 본문 일치. 교재 쪽 인용 없음(수업 도입 내용). STT 0917 11·38·47·378·384행(자궁경부암, 30~50번, 여러 세포주, 하루, 20분) 확인. | pass |
+| p44 | 답 (4), 재검토 후 부정형 규칙 준수 | 수정본 solve가 각 보기를 'X는 외적 조절자이다'로 판정: (1)(2)(3)(5) 맞아요, (4) 틀려요(수용체는 세포 자신의 단백질), 마지막 문단 '답은 틀려요로 판정된 (4)'. 교재 p.62·강의노트 3장 '외적인 조절은 호르몬, 성장인자'·variants.md 의도 정답 (4) 일치. 7구역 순서 정상, solve·verify에 data-subpart=main, recall·start·verify·pitfall·retry(2 li)·요약 이상 없음. | pass |
+
+결론: 44/44 pass(p9·p44는 부정형 판정 방향 수정 후 재검토 통과). 정답 CONFLICT 없음. 정리노트 anchor 13개 모두 존재.
