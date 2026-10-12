@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>생명과학 복습 0901 문제설명</title>
+  <meta name="description" content="첫 줄부터 완성 답과 검산까지 설명해요.">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('od-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+  <link rel="stylesheet" href="자료_문제설명_0901_Biomolecules_and_Cells/vendor/pretendard/pretendard.css">
+  <link rel="stylesheet" href="자료_문제설명_0901_Biomolecules_and_Cells/vendor/katex/katex.min.css">
+  <script defer src="자료_문제설명_0901_Biomolecules_and_Cells/vendor/katex/katex.min.js"></script>
+  <script defer src="자료_문제설명_0901_Biomolecules_and_Cells/vendor/katex/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']});window.mlLayoutMath?.()"></script>
+  <style>
+    /* ---------- 토큰 ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #b54708; --prof: #6941c6; --supp: #067647; --danger: #d92d20;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --fs-title: clamp(28px, 6vw, 36px); --fs-h3: clamp(26px, 5.4vw, 32px); --fs-layer: 19px; --fs-lead: 22px; --fs-body: 17px; --fs-sub: 15px; --fs-small: 14px; --fs-label: 13px; --fs-fig: 12px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+      --radius: 8px; --measure: 680px; --tap: 48px; --btn-min: 160px;
+      --dur: 220ms; --dur-exit: 150ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+      /* 예전 조각이 참조할 수 있는 이름 */
+      --surface-2: var(--surface); --accent-soft: var(--surface); --warn-soft: var(--surface);
+      --prof-soft: var(--surface); --supp-soft: var(--surface); --eli5: var(--accent-ink); --eli5-soft: var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+        --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+        --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+    }
+
+    /* ---------- 기본 ---------- */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent-ink); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+
+    /* ---------- 상단 바 ---------- */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s2) var(--s4); display: flex; align-items: center; gap: var(--s3); min-height: 56px; }
+    .brand { flex: 1 1 auto; min-width: 0; font-size: var(--fs-body); font-weight: 700; white-space: nowrap; }
+    .text-btn { flex: none; min-height: 44px; min-width: 44px; padding: 0 var(--s3); border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); font: 600 var(--fs-small)/1 var(--font); cursor: pointer; }
+    .bar { height: 2px; background: var(--line); overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+
+    /* ---------- 본문 ---------- */
+    main { flex: 1 0 auto; width: 100%; max-width: var(--measure); margin: 0 auto; padding: var(--s6) var(--s5) var(--s7); }
+    .hero h1 { font-size: var(--fs-title); line-height: 1.3; margin: 0 0 var(--s3); letter-spacing: -0.02em; }
+    .hero p { color: var(--ink-2); margin: 0; }
+    section { margin-top: var(--s7); }
+    section > h2 { font-size: 22px; line-height: 1.4; margin: 0 0 var(--s4); }
+    .topic { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .topic h3 { margin: 0 0 var(--s2); font-size: var(--fs-h3); font-weight: 800; line-height: 1.3; letter-spacing: -0.02em; }
+    .tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+    .tag { font-size: var(--fs-label); line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+
+    /* 레이어: 배경 없이 라벨과 구분선으로 나눈다 */
+    .layer { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .topic > .layer:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+    .layer > :first-child { margin-top: 0; }
+    .layer > :last-child { margin-bottom: 0; }
+    .layer h4 { margin: 0 0 var(--s3); font-size: var(--fs-layer); line-height: 1.5; }
+    .layer [data-source-field] + h4 { margin-top: var(--s5); }
+    .layer p { margin: var(--s3) 0; }
+    .layer .part, .layer [data-subpart] + [data-subpart] { margin-top: var(--s4); }
+    .layer li + li { margin-top: var(--s3); }
+    .sum > p + p, .sum > .summary-group + .summary-group { margin-top: var(--s5); }
+    .sum h4 { margin: 0 0 var(--s3); font-size: inherit; line-height: 1.5; }
+    .sum .summary-group > p { margin: 0; }
+    .layer-title { display: block; font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; color: var(--ink); margin-bottom: var(--s3); }
+    .layer.eli5 .layer-title { color: var(--accent-ink); }
+    .layer.eli5 .lead { font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; letter-spacing: -0.01em; margin: 0 0 var(--s4); }
+    /* 정확히 말하면: 본문 크기 그대로, 굵은 첫머리만 진하게 */
+    .layer.formal b { font-weight: 700; color: var(--ink); }
+    /* 교수님 말씀 · 주의: 보조 정보는 한 단계 작게 */
+    .layer.prof, .layer.warn, .layer.listen { font-size: var(--fs-sub); line-height: 1.7; }
+    .layer.prof blockquote { font-size: var(--fs-sub); }
+    .layer.prof .layer-title { color: var(--prof); }
+    .layer.warn, .layer.listen { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn .layer-title { color: var(--warn); font-size: var(--fs-body); }
+    .layer.listen .layer-title { color: var(--accent-ink); font-size: var(--fs-body); }
+    .layer.supp .badge.supp { margin-bottom: var(--s2); }
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
+    .badge.supp { color: var(--supp); }
+    blockquote { margin: var(--s3) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
+    ol.steps { padding-left: 1.4em; }
+    ol.steps li { margin: var(--s2) 0; }
+
+    /* 그림 · 수식 · 표 */
+    .figure { margin: var(--s4) 0; text-align: center; }
+    .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
+    .figure figcaption { font-size: var(--fs-small); color: var(--ink-2); margin-top: var(--s1); }
+    .katex-display { padding: var(--s2) 0; }
+    pre { max-width: 100%; overflow-x: auto; tab-size: 4; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+    th, td { border-bottom: 1px solid var(--line); padding: var(--s2); text-align: left; vertical-align: top; }
+    th { color: var(--ink-2); font-weight: 600; }
+    td:first-child, th:first-child { min-width: 6em; }
+
+    /* 위젯 */
+    .widget { background: var(--surface); border-radius: var(--radius); padding: var(--s4); margin: var(--s5) 0; }
+    .widget h4 { margin: 0 0 var(--s1); font-size: var(--fs-layer); line-height: 1.4; }
+    .widget-help { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s3); }
+    .controls { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--s2); font-size: var(--fs-small); }
+    .controls label { display: flex; align-items: center; gap: var(--s2); min-height: 44px; }
+    .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .widget svg { width: 100%; height: auto; background: var(--bg); border-radius: var(--radius); }
+    .readout { font-size: var(--fs-small); margin-top: var(--s2); }
+    .legend { font-size: var(--fs-label); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .sw { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: var(--s1); border-radius: 2px; }
+    .sw.truth { background: var(--ink-2); } .sw.fit { background: var(--accent); } .sw.train { background: var(--accent); height: 10px; width: 10px; border-radius: 50%; }
+    .sw.test { background: var(--warn); height: 10px; width: 10px; border-radius: 50%; } .sw.like { background: var(--accent); } .sw.prior { background: var(--prof); } .sw.post { background: var(--supp); }
+    .axis { stroke: var(--line); stroke-width: 1.5; }
+    .tick { fill: var(--ink-2); font-size: 11px; }
+    .plot-truth { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .plot-fit { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+    .pt-train { fill: var(--accent); }
+    .pt-test { fill: var(--warn); }
+    .plot-like { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .plot-prior { fill: none; stroke: var(--prof); stroke-width: 2; stroke-dasharray: 6 4; }
+    .plot-post { fill: none; stroke: var(--supp); stroke-width: 3; }
+    .mark-ml { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .mark-map { stroke: var(--supp); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 2; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 2.5; }
+    .fig-danger { stroke: var(--danger); fill: none; stroke-width: 2.5; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: 13px; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-fig); font-family: inherit; }
+
+    footer { width: 100%; max-width: var(--measure); margin: 0 auto; padding: 0 var(--s5) var(--s6); color: var(--ink-2); font-size: var(--fs-small); }
+
+    /* ---------- 하단 이동 바 ---------- */
+    .pager { position: sticky; bottom: 0; z-index: 10; background: var(--bg); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .pager-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s3) var(--s4); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); }
+    .pager-count { font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; min-width: 4em; }
+    .btn { min-height: var(--tap); min-width: var(--btn-min); padding: 0 var(--s6); border-radius: var(--radius); border: 0; font: 700 var(--fs-body)/1 var(--font); cursor: pointer; white-space: nowrap;
+      transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+    .btn-ghost { justify-self: start; background: var(--surface); color: var(--ink); }
+    .btn-primary { justify-self: end; background: var(--btn-bg); color: var(--on-btn); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    @media (hover: hover) {
+      .text-btn:hover, .btn-ghost:not(:disabled):hover { background: var(--line); }
+      .btn-primary:not(:disabled):hover { box-shadow: inset 0 0 0 100px rgba(0, 0, 0, .14); }
+    }
+
+    /* ---------- 목차 시트 ---------- */
+    .sheet { width: min(100%, var(--measure)); max-width: 100%; max-height: 80dvh; margin: auto auto 0; padding: 0; border: 0;
+      border-radius: 16px 16px 0 0; background: var(--bg); color: var(--ink); }
+    .sheet::backdrop { background: rgba(0, 0, 0, .4); }
+    .sheet-inner { padding: var(--s4) var(--s5) calc(var(--s5) + env(safe-area-inset-bottom)); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s2); }
+    .sheet-head h2 { margin: 0; font-size: var(--fs-lead); }
+    .toc { display: flex; flex-direction: column; }
+    .toc > a, .toc-group > a { display: block; padding: var(--s3) 0 var(--s1); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); text-decoration: none; }
+    .toc-list { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+    .toc-list a { display: flex; align-items: center; gap: var(--s3); min-height: var(--tap); padding: var(--s2) var(--s3); margin: 0 calc(-1 * var(--s3));
+      border-radius: var(--radius); color: var(--ink); text-decoration: none; line-height: 1.4; }
+    .toc-list a[aria-current="true"] { background: var(--surface); font-weight: 700; color: var(--accent-ink); }
+    .toc-list .toc-title { flex: 1 1 0; min-width: 0; }
+    @media (hover: hover) { .toc-list a:hover { background: var(--surface); } }
+
+    /* ---------- 한 화면에 하나씩 (JS가 켤 때만) ---------- */
+    html:not(.js) .pager, html:not(.js) #toc-open { display: none; }
+    html:not(.js) .sheet { display: block; position: static; width: 100%; max-height: none; margin: 0 auto; border-radius: 0; border-bottom: 1px solid var(--line); }
+    html:not(.js) .sheet-close { display: none; }
+    .js main > .hero:not(.is-current), .js main > section:not(.is-on), .js .screen:not(.is-current) { display: none; }
+    .js main > section { margin-top: 0; }
+    .js main > section > h2 { font-size: var(--fs-small); font-weight: 600; color: var(--accent-ink); margin: 0 0 var(--s2); }
+    .js .topic { padding: 0; border-top: 0; }
+    .js .hero { padding-top: 12vh; }
+    .js footer { display: none; }
+    .js body.at-end footer { display: block; }
+    .screen.enter-next { animation: enter-next var(--dur) var(--ease-out); }
+    .screen.enter-prev { animation: enter-prev var(--dur) var(--ease-out); }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .screen.enter-next, .screen.enter-prev { animation: none; }
+      .bar > span, .btn { transition: none; }
+    }
+    @media (max-width: 480px) {
+      main { padding: var(--s5) var(--s4) var(--s6); }
+      footer { padding: 0 var(--s4) var(--s5); }
+      .btn { min-width: 120px; padding: 0 var(--s5); }
+    }
+    @media print {
+      .topbar, .pager, .sheet { display: none !important; }
+      .js main > .hero, .js main > section, .js .screen, .js footer { display: block !important; }
+    }
+
+    /* ---------- 좌우 패널 (drawer) ---------- */
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
+    .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
+    .panel-toggle svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-toggle .strip { fill: transparent; stroke: none; transition: fill 150ms ease-out; }
+    .panel-toggle[aria-expanded="true"] { color: var(--accent-ink); }
+    .panel-toggle[aria-expanded="true"] .strip { fill: currentColor; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .i-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .theme-toggle .i-sun { display: block; }
+      :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
+    }
+
+    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
+    .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
+    .content { grid-column: 2; }
+    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
+    .panel-resize { display: none; }
+    .panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 44px; margin-bottom: var(--s2); }
+    .panel-head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-lead); line-height: 1.4; }
+    .panel-sub { margin: 0 0 var(--s4); font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; }
+    .panel-empty { margin: 0; color: var(--ink-2); }
+    .panel-label { display: block; margin: var(--s5) 0 var(--s2); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+
+    /* 진행 상태 */
+    .panel-meta { margin: 0 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .panel-meta b { color: var(--ink); }
+    .progress { height: 4px; margin-bottom: var(--s3); border-radius: 2px; background: var(--line); overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+    .panel .toc-list a { margin: 0 calc(-1 * var(--s2)); padding: var(--s2); font-size: var(--fs-panel); }
+    .toc-mark { flex: none; display: block; width: 20px; height: 20px; color: var(--ink-2); }
+    .toc-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .toc-mark.is-done { color: var(--accent-ink); }
+
+    /* 복습문제: 원문 · 힌트 · 풀이 */
+    .aid details:last-of-type { border-bottom: 1px solid var(--line); }
+    .aid details.original > summary { font-size: var(--fs-panel); }
+    .solved-btn { display: flex; align-items: center; justify-content: center; gap: var(--s2); width: 100%; min-height: var(--tap); margin-top: var(--s5); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .solved-btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
+
+    /* 정리노트: 페이지 요약 */
+    .sum-lead { margin: 0; font-size: var(--fs-body); font-weight: 700; line-height: 1.6; }
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+    .eq-list li:first-child { padding-top: 0; }
+    .eq-name { display: block; font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+    .eq-list .katex-display { margin: var(--s1) 0 0; text-align: left; }
+    .eq-list .katex-display > .katex { text-align: left; }
+    .terms { margin: 0; }
+    .terms dt { font-size: var(--fs-panel); font-weight: 700; margin-top: var(--s4); }
+    .terms dt:first-child { margin-top: 0; }
+    .terms dd { margin: var(--s1) 0 0; font-size: var(--fs-sub); line-height: 1.6; color: var(--ink-2); }
+    .flow { margin: 0; padding-left: 1.4em; font-size: var(--fs-sub); }
+    .flow li { margin: var(--s2) 0; }
+
+    @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
+
+    /* 넓은 화면: 본문 옆에 붙는 패널 */
+    @media (min-width: 1024px) {
+      .layout { --l: var(--panel-l-user, var(--panel-l)); }
+      .layout[data-left="closed"] { --l: 0px; }
+      .panel-left { width: var(--l); }
+      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
+      .panel-left .panel-resize { right: 0; }
+      .panel-right .panel-resize { left: 0; }
+      .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
+      .panel-left .panel-resize::after { right: 0; }
+      .panel-right .panel-resize::after { left: 0; }
+      .panel-resize:focus-visible { outline: none; }
+      .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
+      @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
+      body.is-resizing { cursor: col-resize; user-select: none; }
+      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
+      .scrim, .panel-close { display: none; }
+    }
+    @keyframes panel-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 좁은 화면: 가장자리에서 밀려 나오는 drawer */
+    @media (max-width: 1023.98px) {
+      .panel { position: fixed; top: 0; bottom: 0; z-index: 40; visibility: hidden;
+        transition: transform var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .panel-left { left: 0; width: min(var(--drawer-l), 88vw); transform: translateX(-100%); }
+      .panel-right { right: 0; width: min(var(--drawer-r), 88vw); transform: translateX(100%); }
+      .panel.is-open { visibility: visible; transform: none; transition: transform var(--dur) var(--ease-out); }
+      .panel-inner { padding-top: calc(var(--s3) + env(safe-area-inset-top)); padding-bottom: calc(var(--s6) + env(safe-area-inset-bottom)); }
+      .scrim { position: fixed; inset: 0; z-index: 35; background: var(--scrim); opacity: 0; visibility: hidden;
+        transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
+      html:not(.js) .panel-left { display: none; }
+    }
+    @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
+      .panel.is-shown { animation: none; }
+      .panel-resize::after { transition: none; }
+    }
+    @media print {
+      body { display: block; height: auto; overflow: visible; }
+      .layout { display: block; }
+      .content { overflow: visible; }
+      .panel, .scrim { display: none !important; }
+    }
+
+    .topic, .layer, .content, main { min-width: 0; }
+    /* Inline formulas stay inline; only genuinely wide blocks may be panned. */
+    .katex-display { max-width:100%; }
+    .katex-display > .katex, .katex.math-block { display:block; white-space:normal; text-align:left; }
+    .katex.math-block { margin:0; }
+    .katex-display > .katex > .katex-html { white-space:normal; }
+    .math-row { display:block; max-width:100%; margin:var(--s3) 0; padding:var(--s2) var(--s1); }
+    .math-row .katex-display { margin:0; padding:0; }
+    .math-punctuation { margin-left:.15em; font-family:var(--font); }
+    .math-row.math-pan { overflow-x:auto; overflow-y:hidden; scrollbar-width:none; }
+    .math-row.math-pan::-webkit-scrollbar { display:none; }
+    .math-pan-hint { display:block; margin:var(--s1) 0 var(--s3); color:var(--ink-2); font:var(--fs-small)/1.5 var(--font); }
+    table { display:block; max-width:100%; overflow-x:auto; }
+    img, svg { max-width:100%; height:auto; }
+  </style>
+</head>
+<body data-screens="article.topic" data-panels="note" data-range="bio-problem-explain-review-0901-Biomolecules_and_Cells">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <strong class="brand">문제풀이 입문 설명</strong>
+      <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>요약</span></button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
+  </header>
+  <div class="layout" data-left="open" data-right="closed">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
+      <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-left-title">목차</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-meta">읽은 토픽 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <nav class="toc" aria-label="목차"><ul class="toc-list"><li><a href="#p1">P1. 공통 조상을 지지하는 근거</a></li><li><a href="#p2">P2. 같은 지역, 같은 종의 모임</a></li><li><a href="#p3">P3. 생물의 특징이 아닌 것</a></li><li><a href="#p4">P4. 물질대사에 대한 틀린 설명</a></li><li><a href="#p5">P5. 내부 환경을 유지하는 능력</a></li><li><a href="#p6">P6. [변형] 연못 전체를 부르는 이름</a></li><li><a href="#p7">P7. [변형] 영역과 계의 짝</a></li><li><a href="#p8">P8. [변형] 세균 한 마리에게 없는 특징</a></li><li><a href="#p9">P9. [변형] 되돌아와 다시 쓰이는 것</a></li><li><a href="#p10">P10. [변형] 모든 생물의 공통점이 아닌 것</a></li></ul></nav>
+      </div>
+    </aside>
+    <div class="content">
+  <main>
+    <div class="hero">
+      <h1>생명과학 복습 0901 문제설명</h1>
+      <p>주어진 조건을 읽고, 첫 줄을 쓰고, 이유를 따라가며 답을 확인해요.</p>
+    </div>
+<section id="problems"><h2>문항별 설명</h2><article class="topic" id="p1"><h3>P1. 공통 조상을 지지하는 근거</h3><p class="panel-meta">기출 1강 2 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0901_Biomolecules_and_Cells.html#p1">원 문제 보기</a></p><div class="layer formal" data-source-problem="p1"><h4>주어진 조건</h4><div data-source-field="conditions"><p>진화론에 의하면, 지구상의 모든 생명체는 하나의 공통 조상으로부터 생겨났다고 한다. 이를 지지하는 근거가 될 수 있는 보기는 다음 중 무엇인가?</p>
+    <ul class="choices"><li>(1) 같은 방법으로 생식한다.</li><li>(2) 공통적인 유기 화학을 공유한다.</li><li>(3) 핵 속에 DNA를 갖고 있다</li><li>(4) 기본적으로 같은 세포벽을 보인다.</li></ul></div></div><div class="layer formal" data-original-problem="p1"><h4>기출 원문</h4>기출 1강 합본 2번 (PDF 1쪽)</div><div class="layer eli5" data-explanation="understand">
+  <h4>문제를 내 말로 읽어요</h4>
+  <p>주어진 것: 진화론은 지구의 모든 생명체가 하나의 공통 조상(common ancestor)에서 나왔다고 말해요.</p>
+  <p>구할 것: 이 주장을 뒷받침하는 근거, 즉 <strong>지구의 모든 생물이 예외 없이 공유하는 특징</strong> 하나예요.</p>
+  <p>쉽게 말하면, 온 가족이 한 할머니의 자손이라는 증거를 찾는 문제예요. 몇몇 식구만 가진 특징은 증거가 못 되고, 모든 식구가 똑같이 물려받은 것이어야 해요.</p>
+  <p><strong>인쇄 정답 오류:</strong> 기출 인쇄 정답은 ④(기본적으로 같은 세포벽)이지만 교과서 p.3, p.18 근거로 정답은 (2) 공통적인 유기 화학을 공유한다예요.</p>
+</div>
+<div class="layer formal" data-explanation="recall">
+  <h4>이 문제를 봤을 때 떠올릴 개념과 공식</h4>
+  <p>‘모든 생명체’와 ‘하나의 공통 조상’이라는 단서에서 생물의 특성 중 생물학적 진화(evolution)를 떠올려요. 강의노트 1장 p.1은 현재 생물이 공통조상의 후손이라 다양성을 보인다고 적어요. 공통 조상의 근거가 되려면 그 특징이 <strong>모든 생물에 똑같이</strong> 있어야 해요. 일부 생물에만 있으면 공통 조상에게서 물려받았다고 말할 수 없어요.</p>
+  <p>모든 생물이 공유하는 것으로 강의노트 1장 p.1은 화학적 지령(chemical instruction), 즉 DNA, RNA, 단백질을 꼽아요. 교과서 1장 p.3은 DNA가 모든 생명체에서 비슷하게 작용하고, DNA의 정보가 RNA로 복사되어 단백질 제조를 명령한다고 설명해요. 이처럼 탄소화합물로 된 같은 분자 체계를 쓰는 것이 ‘공통적인 유기 화학(organic chemistry)’이에요.</p>
+  <p>그래서 보기마다 ‘세균부터 동물까지 예외 없이 해당하는가’를 물어 판정해요. 예외가 하나라도 있으면 틀린 보기예요.</p>
+  <p>관련 정리노트: <a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_0901_Biomolecules_and_Cells.html#s1-evolution">진화와 공통조상</a>, <a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_0901_Biomolecules_and_Cells.html#s1-traits">생물의 특성</a></p>
+</div>
+<div class="layer formal" data-explanation="start">
+  <h4>종이에 쓸 첫 줄</h4>
+  <p>판정 기준을 먼저 적어요: <strong>근거 = 모든 생물(세균·식물·동물)이 예외 없이 공유하는 것</strong>.</p>
+  <p>그 아래 보기 네 개를 세로로 적고 ‘예외 생물’ 칸을 달아요. 첫 행은 (1) 같은 방법으로 생식: 세균은 둘로 나뉘고 동물은 암수가 만나 번식 → 예외 있음이에요.</p>
+</div>
+<div class="layer formal" data-explanation="solve">
+  <h4>왜 이렇게 푸는지 함께 따라가요</h4>
+  <div data-subpart="main">
+    <p>(1) 틀려요. 세균은 몸이 둘로 나뉘어 늘어나고 동물은 암수가 만나 번식하듯, 생식 방법은 생물마다 달라요.</p>
+    <p>(2) 맞아요. 모든 생물이 DNA → RNA → 단백질이라는 같은 화학적 지령을 쓰고, 교과서 1장 p.3은 DNA가 모든 생명체에서 비슷하게 작용한다고 적어요. 이런 공통적인 유기 화학은 하나의 조상에게서 물려받았다고 볼 때 가장 잘 설명돼요.</p>
+    <p>(3) 틀려요. 원핵생물은 핵막이 없어 핵이 없고 DNA가 핵양체로 있어요(강의노트 1장 p.5). 그래서 ‘핵 속 DNA’는 모든 생물의 공통점이 아니에요.</p>
+    <p>(4) 틀려요. 기출 인쇄 정답이 고른 보기이지만, 동물세포에는 세포벽이 없어요. 교과서 1장 p.18 그림 1.20 설명은 세포벽을 동물세포에는 없고 식물세포에만 있는 구조로 적어요. 세포벽이 있는 생물끼리도 성분이 달라서 세균의 세포벽(p.17)과 식물의 섬유소 세포벽은 같지 않아요. 모든 생물이 ‘기본적으로 같은 세포벽’을 보인다는 말은 사실이 아니에요.</p>
+    <p>따라서 답은 (2)예요. 인쇄 정답 ④는 동물세포라는 예외 때문에 성립하지 않아요.</p>
+  </div>
+</div>
+<div class="layer formal" data-explanation="verify">
+  <h4>완성 답과 검산</h4>
+  <div data-subpart="main">
+    <p>답 (2) 공통적인 유기 화학을 공유한다.</p>
+    <p>반례로 소거해요: (1)은 세균과 동물의 생식 차이, (3)은 핵이 없는 원핵생물, (4)는 세포벽이 없는 동물세포(교과서 1장 p.18 그림 1.20)라는 반례가 하나씩 있어요. 반례가 없는 보기는 (2)만 남아요.</p>
+    <p>교과서 쪽 대조: 1장 p.3의 ‘생물계는 그들의 구조와 기능을 제어하는 화학적 지령을 함유하고 있다’ 단락과 강의노트 1장 p.1의 ‘화학적 지령 — DNA, RNA, 단백질’이 (2)와 일치해요. 정답을 보지 않은 독립 재풀이도 (2)를 골랐어요.</p>
+  </div>
+</div>
+<div class="layer warn" data-explanation="pitfall">
+  <h4>이 문항에서 하기 쉬운 실수</h4>
+  <p>‘세포벽’은 세포와 관련된 말이라 모든 세포의 공통점처럼 들려요. 모든 세포의 공통 경계는 세포막(원형질막)이고, 세포벽은 동물세포에 없어요.</p>
+  <p>(3)의 ‘DNA’라는 단어만 보고 고르기 쉬워요. DNA는 모든 생물에 있지만 ‘핵 속에’라는 조건이 붙어 원핵생물이 빠져요. 보기의 조건어까지 끝까지 읽어요.</p>
+  <p>인쇄 정답이 교과서와 어긋날 때는 정답표를 외우지 말고 반례가 있는지 교과서 쪽(여기서는 1장 p.18 그림 1.20)으로 확인해요. 시험장에서는 교과서 기준 답(2)를 고르고, 같은 문제가 그대로 나오면 p.3과 p.18을 이의 신청 근거로 기억해 두어요.</p>
+</div>
+<div class="layer formal" data-explanation="retry">
+  <h4>설명을 닫고 다시 해 봐요</h4>
+  <ul>
+    <li>보기 네 개마다 반례 생물을 하나씩 적고, 반례가 없는 보기를 골라 보기</li>
+    <li>모든 생물이 공유하는 화학적 지령 세 가지를 순서대로 써 보기</li>
+    <li>인쇄 정답 ④가 왜 틀렸는지 교과서 쪽과 함께 한 문장으로 말해 보기</li>
+  </ul>
+</div>
+<div class="sum" hidden="">
+  <div class="summary-group"><h4>떠올릴 개념·공식</h4><p>공통 조상의 근거 = 모든 생물이 예외 없이 공유하는 것. 화학적 지령 DNA → RNA → 단백질.</p></div>
+  <div class="summary-group"><h4>첫 줄</h4><p>기준 한 줄 적고 보기마다 ‘예외 생물’ 칸 채우기.</p></div>
+  <div class="summary-group"><h4>핵심 판단</h4><p>(1) 생식 다름, (3) 원핵생물 핵 없음, (4) 동물세포 세포벽 없음 → 답 (2). 인쇄 정답 ④는 오류예요.</p></div>
+  <div class="summary-group"><h4>검산</h4><p>반례 없는 보기는 (2)뿐. 교과서 1장 p.3, p.18 그림 1.20, 강의노트 1장 p.1, 독립 재풀이 모두 (2).</p></div>
+</div>
+</article><article class="topic" id="p2"><h3>P2. 같은 지역, 같은 종의 모임</h3><p class="panel-meta">기출 1강 16 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0901_Biomolecules_and_Cells.html#p2">원 문제 보기</a></p><div class="layer formal" data-source-problem="p2"><h4>주어진 조건</h4><div data-source-field="conditions"><p>생명의 계층구조 중, 같은 지역을 점유하고 있는 같은 종류(종)들의 집단을 뜻하는 것은 무엇인가?</p>
+    <ul class="choices"><li>(1) 개체군</li><li>(2) 생태계</li><li>(3) 군집</li><li>(4) 생물권</li></ul></div></div><div class="layer formal" data-original-problem="p2"><h4>기출 원문</h4>기출 1강 합본 16번 (PDF 1–2쪽)</div><div class="layer eli5" data-explanation="understand">
+  <h4>문제를 내 말로 읽어요</h4>
+  <p>주어진 것: 생명의 계층구조(hierarchy of life) 가운데 한 단계를 설명하는 문장이에요. 조건은 두 가지예요. ‘같은 지역을 점유한다’와 ‘같은 종류(종)들의 집단이다’.</p>
+  <p>구할 것: 이 두 조건을 <strong>모두</strong> 만족하는 단계의 이름 하나를 골라요.</p>
+  <p>쉽게 말하면, 한 연못에 사는 붕어들만 모아 놓은 무리를 뭐라고 부르는지 묻는 문제예요.</p>
+</div>
+<div class="layer formal" data-explanation="recall">
+  <h4>이 문제를 봤을 때 떠올릴 개념과 공식</h4>
+  <p>‘계층구조 중’이라는 표현에서 강의노트 1장 p1의 계층 순서 <strong>세포 → (다세포 생물) → 개체군 → 군집 → 생태계 → 생물권</strong>을 떠올려요. 위 단계는 아래 단계를 모두 포함해요.</p>
+  <p>단계는 <strong>무엇이 들어가는지</strong>로 구별해요. 개체군(population)은 한 지역의 같은 종 개체들, 군집(community)은 한 지역의 여러 종 개체군 전체, 생태계(ecosystem)는 군집에 물·흙·햇빛 같은 무생물 환경을 더한 것, 생물권(biosphere)은 지구의 모든 생태계예요.</p>
+  <p>이 문제는 ‘같은 종’이라는 단서가 있으므로, 종이 하나인지 여럿인지와 무생물이 들어가는지를 판단 기준으로 써요.</p>
+  <p>관련 정리노트: <a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_0901_Biomolecules_and_Cells.html#s2-hierarchy">세포에서 생물권까지 — 계층구조</a></p>
+</div>
+<div class="layer formal" data-explanation="start">
+  <h4>종이에 쓸 첫 줄</h4>
+  <p>표의 첫 행을 이렇게 써요: <strong>단계 | 종이 하나? | 무생물 포함? | 범위</strong>.</p>
+  <p>그 아래에 보기 네 단계를 한 줄씩 채우고, 문제 조건 ‘같은 지역 + 같은 종’과 맞는 줄에 표시해요.</p>
+</div>
+<div class="layer formal" data-explanation="solve">
+  <h4>왜 이렇게 푸는지 함께 따라가요</h4>
+  <div data-subpart="main">
+    <p>(1) 맞아요. 개체군은 같은 지역에 사는 같은 종 개체들의 집단이에요. 두 조건과 정확히 일치해요.</p>
+    <p>(2) 틀려요. 생태계는 군집에 무생물 환경요인까지 합친 단계라 여러 종과 무생물이 함께 들어가요.</p>
+    <p>(3) 틀려요. 군집은 같은 지역에 사는 여러 종의 개체군을 모두 모은 것이에요. ‘같은 종’ 조건에 맞지 않아요.</p>
+    <p>(4) 틀려요. 생물권은 지구의 물·땅·대기에 있는 모든 생태계를 합친 가장 큰 단계예요.</p>
+    <p>따라서 답은 (1) 개체군이에요.</p>
+  </div>
+</div>
+<div class="layer formal" data-explanation="verify">
+  <h4>완성 답과 검산</h4>
+  <div data-subpart="main">
+    <p>답 (1) 개체군.</p>
+    <p>교과서 대조: 교과서 1장 p.2 그림 1.2는 개체군을 ‘같은 지역을 점유하고 있는 같은 종류, 즉 같은 종의 개체들의 집단’으로 적어요. 발문과 거의 같은 문장이에요. 같은 쪽의 군집은 ‘모든 종의 개체군’, p.3의 생태계는 무생물 환경요인을 포함한다고 적혀 있어 나머지가 걸러져요.</p>
+    <p>기출 1강 합본 16번(PDF 1–2쪽)의 인쇄 답도 ①이에요.</p>
+  </div>
+</div>
+<div class="layer warn" data-explanation="pitfall">
+  <h4>이 문항에서 하기 쉬운 실수</h4>
+  <p>‘같은 지역’만 보고 군집(3)을 고르기 쉬워요. 군집도 같은 지역이지만 종이 여럿이에요. <strong>종의 수</strong>까지 확인해요.</p>
+  <p>개체군과 군집의 영어 이름(population, community)을 거꾸로 외우지 않도록 ‘population = 인구, 한 종의 머릿수’로 연결해 두어요.</p>
+</div>
+<div class="layer formal" data-explanation="retry">
+  <h4>설명을 닫고 다시 해 봐요</h4>
+  <ul>
+    <li>세포부터 생물권까지 계층을 순서대로 써 보기</li>
+    <li>개체군·군집·생태계를 ‘종의 수’와 ‘무생물 포함 여부’ 두 기준으로 표에 채워 보기</li>
+  </ul>
+</div>
+<div class="sum" hidden="">
+  <div class="summary-group"><h4>떠올릴 개념·공식</h4><p>계층구조: 개체군(한 종) → 군집(여러 종) → 생태계(+무생물) → 생물권.</p></div>
+  <div class="summary-group"><h4>첫 줄</h4><p>단계 | 종이 하나? | 무생물 포함? 표를 그려요.</p></div>
+  <div class="summary-group"><h4>핵심 판단</h4><p>같은 지역 + 같은 종은 개체군뿐이에요.</p></div>
+  <div class="summary-group"><h4>검산</h4><p>교과서 p.2 그림 1.2 정의와 일치, 기출 인쇄 답 ①. 답 (1).</p></div>
+</div>
+</article><article class="topic" id="p3"><h3>P3. 생물의 특징이 아닌 것</h3><p class="panel-meta">기출 1강 19 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0901_Biomolecules_and_Cells.html#p3">원 문제 보기</a></p><div class="layer formal" data-source-problem="p3"><h4>주어진 조건</h4><div data-source-field="conditions"><p>다음 중 생물체의 특징이 아닌 것은?</p>
+    <ul class="choices"><li>(1) 물질대사</li><li>(2) 세포소기관의 존재</li><li>(3) 항상성</li><li>(4) 생식과 발생</li></ul></div></div><div class="layer formal" data-original-problem="p3"><h4>기출 원문</h4>기출 1강 합본 19번 (PDF 2쪽)</div><div class="layer eli5" data-explanation="understand">
+  <h4>문제를 내 말로 읽어요</h4>
+  <p>주어진 것: 생물체의 특징처럼 보이는 네 가지 항목이에요.</p>
+  <p>구할 것: 이 가운데 생물체의 특징이 <strong>아닌 것</strong> 하나를 골라요. 부정형이라 ‘틀려요’로 판정된 보기가 답이에요.</p>
+  <p>쉽게 말하면, ‘살아 있는 모든 것이 다 가진 성질’ 목록에 끼어 있으면 안 되는 하나를 찾는 문제예요.</p>
+</div>
+<div class="layer formal" data-explanation="recall">
+  <h4>이 문제를 봤을 때 떠올릴 개념과 공식</h4>
+  <p>‘생물체의 특징’이라는 단서에서 강의노트 1장 p1의 <strong>생물의 특성 목록</strong>을 떠올려요. 계층구조, 화학적 지령(DNA·RNA·단백질), 물질대사, 에너지 이동과 물질 순환, 항상성, 생식과 발생, 생물학적 진화, 3영역과 계로 분류가 들어 있어요.</p>
+  <p>판단 기준은 <strong>모든 생물에 해당하는가</strong>예요. 일부 생물에만 있는 구조는 생물 전체의 특징이 될 수 없어요.</p>
+  <p>세포소기관(organelle)은 막으로 둘러싸인 세포 속 구조예요. 진핵세포(eukaryotic cell)에는 있지만, 원핵세포(prokaryotic cell)에는 막으로 둘러싸인 구조가 거의 없거나 아예 없어요. 그래서 ‘세포로 되어 있다’와 ‘세포소기관이 있다’를 구별해야 해요.</p>
+  <p>관련 정리노트: <a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_0901_Biomolecules_and_Cells.html#s1-traits">무엇이 생물인가 — 여덟 가지 특징</a></p>
+</div>
+<div class="layer formal" data-explanation="start">
+  <h4>종이에 쓸 첫 줄</h4>
+  <p>먼저 질문 방향을 적어요: <strong>“특징이 아닌 것 = 목록에 없거나 일부 생물에만 있는 것”</strong>.</p>
+  <p>그다음 보기 옆에 ‘강의노트 목록에 있음/없음’과 ‘세균에도 있음/없음’을 두 칸으로 적어요.</p>
+</div>
+<div class="layer formal" data-explanation="solve">
+  <h4>왜 이렇게 푸는지 함께 따라가요</h4>
+  <div data-subpart="main">
+    <p>(1) 맞아요(생물의 특징이에요). 물질대사(metabolism)는 강의노트 목록의 ‘물질대사 활동’이고, 세균을 포함한 모든 생물이 해요.</p>
+    <p>(2) 틀려요(생물의 특징이 아니에요). 막으로 둘러싸인 세포소기관은 진핵세포에만 있고 원핵세포에는 거의 없거나 아예 없어요. 강의노트 특성 목록에도 없어요.</p>
+    <p>(3) 맞아요(생물의 특징이에요). 항상성(homeostasis)은 강의노트 목록에 한 줄로 들어 있는 특성이에요.</p>
+    <p>(4) 맞아요(생물의 특징이에요). 생식과 발생도 목록에 있어요. 생식은 모든 생물, 발생은 다세포 생물에 해당한다고 나뉘어 적혀 있지만 항목 자체는 생물의 특성이에요.</p>
+    <p>질문이 ‘아닌 것’이므로 <strong>틀려요</strong>로 판정된 (2)가 답이에요.</p>
+  </div>
+</div>
+<div class="layer formal" data-explanation="verify">
+  <h4>완성 답과 검산</h4>
+  <div data-subpart="main">
+    <p>답 (2) 세포소기관의 존재.</p>
+    <p>반대 사례로 확인해요: 대장균 같은 원핵세포는 살아 있는 생물인데, 교과서 1장 p.17 ‘원핵세포는 세포내에 막으로 둘러싸인 구조가 거의 없거나 아예 없다’에 따르면 세포소기관이 없어요. 생물인데 그 특징이 없으니 생물 전체의 특징이 아니에요.</p>
+    <p>소거: (1)(3)(4)는 강의노트 1장 p1 특성 목록에 그대로 있어 남는 것은 (2) 하나예요. 기출 1강 합본 19번(PDF 2쪽)의 인쇄 답도 ②예요.</p>
+  </div>
+</div>
+<div class="layer warn" data-explanation="pitfall">
+  <h4>이 문항에서 하기 쉬운 실수</h4>
+  <p>‘모든 생물은 세포로 되어 있다’를 ‘모든 생물에 세포소기관이 있다’로 넓혀 읽기 쉬워요. 세포는 모든 생물에 있지만 막으로 둘러싸인 세포소기관은 진핵생물에만 있어요.</p>
+  <p>‘발생은 다세포 생물에만’이라는 기억 때문에 (4)를 고르기 쉬워요. 이 문제는 특성 목록에 있는지를 묻고, 생식과 발생은 목록의 한 항목이에요.</p>
+</div>
+<div class="layer formal" data-explanation="retry">
+  <h4>설명을 닫고 다시 해 봐요</h4>
+  <ul>
+    <li>강의노트의 생물 특성 여덟 가지를 보지 않고 써 보기</li>
+    <li>원핵세포에 있는 것과 없는 것을 세 개씩 말해 보기</li>
+  </ul>
+</div>
+<div class="sum" hidden="">
+  <div class="summary-group"><h4>떠올릴 개념·공식</h4><p>생물의 특성 목록(강의노트 1장 p1). 기준: 모든 생물에 해당하는가.</p></div>
+  <div class="summary-group"><h4>첫 줄</h4><p>“아닌 것 = 목록에 없거나 일부 생물에만 있는 것”을 적어요.</p></div>
+  <div class="summary-group"><h4>핵심 판단</h4><p>세포소기관은 진핵세포에만 있어 생물 전체의 특징이 아니에요.</p></div>
+  <div class="summary-group"><h4>검산</h4><p>원핵세포 반례(교과서 p.17), 기출 인쇄 답 ②. 답 (2).</p></div>
+</div>
+</article><article class="topic" id="p4"><h3>P4. 물질대사에 대한 틀린 설명</h3><p class="panel-meta">기출 1강 21 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0901_Biomolecules_and_Cells.html#p4">원 문제 보기</a></p><div class="layer formal" data-source-problem="p4"><h4>주어진 조건</h4><div data-source-field="conditions"><p>다음 중 물질대사에 대한 설명 중 틀린 것은?</p>
+    <ul class="choices"><li>(1) 고분자의 합성</li><li>(2) 노폐물의 분비</li><li>(3) 물 없이 작용하는 능력</li><li>(4) 세포호흡에서의 복잡한 분해과정</li><li>(5) 에너지를 갖고 있는 물질의 분해</li></ul></div></div><div class="layer formal" data-original-problem="p4"><h4>기출 원문</h4>기출 1강 합본 21번 (PDF 2쪽)</div><div class="layer eli5" data-explanation="understand">
+  <h4>문제를 내 말로 읽어요</h4>
+  <p>주어진 것: 물질대사(metabolism)를 설명하는 다섯 문구예요.</p>
+  <p>구할 것: 물질대사에 대한 설명으로 <strong>틀린 것</strong> 하나를 골라요. 부정형이라 ‘틀려요’로 판정된 보기가 답이에요.</p>
+  <p>쉽게 말하면, 세포 속 ‘만들기와 쪼개기’ 공장에 대한 설명 가운데 사실과 다른 한 줄을 찾는 문제예요.</p>
+</div>
+<div class="layer formal" data-explanation="recall">
+  <h4>이 문제를 봤을 때 떠올릴 개념과 공식</h4>
+  <p>‘물질대사’라는 단어에서 교과서 1장 p.3의 정의를 떠올려요. 물질대사는 생명체가 주위 환경에서 에너지를 얻어 자신을 유지·성장·번식하는 데 쓰는 능력이고, 그 일부로 세포는 <strong>분자를 조립하고 변경하고 분해하는 화학반응</strong>을 해요.</p>
+  <p>그래서 물질대사에는 두 방향이 있어요. 작은 분자를 붙여 큰 분자를 만드는 합성, 큰 분자를 쪼개 에너지를 꺼내는 분해(예: 세포호흡 cellular respiration)예요.</p>
+  <p>또 이 화학반응들이 일어나는 장소를 떠올려요. 교과서 1장 p.7은 물이 많은 생화학적 반응에 요구된다고 적어요. 반응할 분자들이 물에 녹아 만나야 하므로 ‘물이 있어야’ 물질대사가 일어난다는 것을 판단 기준으로 써요.</p>
+  <p>관련 정리노트: <a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_0901_Biomolecules_and_Cells.html#s1-metabolism">물질대사와 에너지 흐름</a></p>
+</div>
+<div class="layer formal" data-explanation="start">
+  <h4>종이에 쓸 첫 줄</h4>
+  <p>먼저 정의 한 줄을 써요: <strong>“물질대사 = 물속에서 일어나는 합성 + 분해 화학반응 전체”</strong>.</p>
+  <p>그다음 각 보기 옆에 ‘합성/분해/그 밖’ 중 어디에 들어가는지 적고, 정의와 어긋나는 보기를 찾아요.</p>
+</div>
+<div class="layer formal" data-explanation="solve">
+  <h4>왜 이렇게 푸는지 함께 따라가요</h4>
+  <div data-subpart="main">
+    <p>(1) 맞아요. 고분자의 합성은 분자를 조립하는 반응이라 물질대사의 합성 쪽이에요.</p>
+    <p>(2) 맞아요. 분해하고 남은 노폐물(예: 세포호흡에서 나온 이산화탄소)을 내보내는 일도 물질대사에 딸린 과정이에요. 이 부분은 일반 생물학 교재의 설명으로, 수업 밖 보충이에요.</p>
+    <p>(3) 틀려요. 세포의 화학반응은 물속에서 일어나요. 물질대사는 물 없이 작용하는 것이 아니라 물이 있어야 작용해요.</p>
+    <p>(4) 맞아요. 세포호흡은 복잡한 생물분자를 산소를 이용해 분해하는 물질대사예요.</p>
+    <p>(5) 맞아요. 당처럼 에너지를 가진 물질을 분해해 에너지 일부를 꺼내 쓰는 것도 물질대사예요.</p>
+    <p>질문이 ‘틀린 것’이므로 <strong>틀려요</strong>로 판정된 (3)이 답이에요.</p>
+  </div>
+</div>
+<div class="layer formal" data-explanation="verify">
+  <h4>완성 답과 검산</h4>
+  <div data-subpart="main">
+    <p>답 (3) 물 없이 작용하는 능력.</p>
+    <p>교과서 대조: 교과서 1장 p.3은 물질대사를 ‘분자를 조립하고 변경하고 분해하는 화학반응’으로, 세포호흡을 ‘복잡한 생물분자를 산소를 이용해 분해’하는 과정으로 적어 (1)(4)(5)를 지지해요. 교과서 1장 p.7은 ‘물의 역할은 많은 생화학적 반응… 으로서 요구된다’고 적어 (3)과 반대예요.</p>
+    <p>기출 1강 합본 21번(PDF 2쪽)의 인쇄 답도 ③이에요.</p>
+  </div>
+</div>
+<div class="layer warn" data-explanation="pitfall">
+  <h4>이 문항에서 하기 쉬운 실수</h4>
+  <p>물질대사를 ‘분해’로만 생각해 (1) 고분자의 합성을 틀렸다고 고르기 쉬워요. 물질대사는 합성과 분해를 모두 포함해요.</p>
+  <p>(2) 노폐물 분비가 강의노트에 직접 없다고 바로 답으로 고르지 않아요. 교재에 없는 것과 틀린 것은 달라요. 확실히 사실과 반대인 (3)을 먼저 찾아요.</p>
+</div>
+<div class="layer formal" data-explanation="retry">
+  <h4>설명을 닫고 다시 해 봐요</h4>
+  <ul>
+    <li>물질대사의 두 방향(합성·분해)을 예 하나씩과 함께 말해 보기</li>
+    <li>세포의 화학반응에 물이 필요한 이유를 한 문장으로 써 보기</li>
+  </ul>
+</div>
+<div class="sum" hidden="">
+  <div class="summary-group"><h4>떠올릴 개념·공식</h4><p>물질대사 = 물속에서 분자를 조립·변경·분해하는 화학반응 전체.</p></div>
+  <div class="summary-group"><h4>첫 줄</h4><p>각 보기를 합성/분해/그 밖으로 분류해요.</p></div>
+  <div class="summary-group"><h4>핵심 판단</h4><p>세포 반응은 물이 있어야 일어나므로 ‘물 없이’가 틀렸어요.</p></div>
+  <div class="summary-group"><h4>검산</h4><p>교과서 p.3·p.7 대조, 기출 인쇄 답 ③. 답 (3).</p></div>
+</div>
+</article><article class="topic" id="p5"><h3>P5. 내부 환경을 유지하는 능력</h3><p class="panel-meta">기출 1강 39 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0901_Biomolecules_and_Cells.html#p5">원 문제 보기</a></p><div class="layer formal" data-source-problem="p5"><h4>주어진 조건</h4><div data-source-field="conditions"><p>환경변화를 탐지하여 조절 반응을 통해 내부 환경을 유지하는 생물의 능력을 무엇이라 하는가?</p>
+    <ul class="choices"><li>(1) 세포호흡</li><li>(2) 물질대사</li><li>(3) 항상성</li><li>(4) 세포외배출</li><li>(5) 광합성</li></ul></div></div><div class="layer formal" data-original-problem="p5"><h4>기출 원문</h4>기출 1강 합본 39번 (PDF 3쪽)</div><div class="layer eli5" data-explanation="understand">
+  <h4>문제를 내 말로 읽어요</h4>
+  <p>주어진 것: 어떤 능력의 설명이에요. ‘환경 변화를 탐지’ → ‘조절 반응’ → ‘내부 환경을 유지’라는 세 단계가 들어 있어요.</p>
+  <p>구할 것: 이 능력의 이름 하나를 골라요.</p>
+  <p>쉽게 말하면, 더우면 땀을 흘리고 추우면 몸을 떨어 체온을 비슷하게 지키는 그런 능력을 뭐라고 부르는지 묻는 문제예요.</p>
+</div>
+<div class="layer formal" data-explanation="recall">
+  <h4>이 문제를 봤을 때 떠올릴 개념과 공식</h4>
+  <p>‘내부 환경을 유지’라는 단서에서 항상성(homeostasis)을 떠올려요. homeo는 ‘비슷한’, stasis는 ‘머무름’이라는 뜻이라 ‘안쪽 상태를 비슷하게 머물게 함’으로 읽어요.</p>
+  <p>항상성은 <strong>감지 → 조절 → 유지</strong>의 고리로 설명해요. 바깥 환경이 바뀌는 것을 감지하고, 조절 반응을 일으켜, 몸 안의 온도·물·농도 같은 조건을 일정한 범위로 지켜요.</p>
+  <p>강의노트 1장 p1은 항상성을 물질대사와 별도의 생물 특성으로 적어요. 광합성·세포호흡은 ‘물질대사 활동’의 예예요. 그래서 이 문제는 ‘무엇을 하는 과정인가(분자를 만들고 쪼갬)’와 ‘무엇을 지키는 능력인가(내부 환경)’를 구별하는 것이 기준이에요.</p>
+  <p>관련 정리노트: <a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_0901_Biomolecules_and_Cells.html#s1-homeostasis">항상성</a></p>
+</div>
+<div class="layer formal" data-explanation="start">
+  <h4>종이에 쓸 첫 줄</h4>
+  <p>발문의 핵심어를 화살표로 옮겨 써요: <strong>환경 변화 탐지 → 조절 반응 → 내부 환경 유지</strong>.</p>
+  <p>그다음 보기마다 ‘이 이름이 위 화살표 전체를 뜻하는가?’를 예/아니요로 적어요.</p>
+</div>
+<div class="layer formal" data-explanation="solve">
+  <h4>왜 이렇게 푸는지 함께 따라가요</h4>
+  <div data-subpart="main">
+    <p>(1) 틀려요. 세포호흡은 산소를 이용해 생물분자를 분해하고 에너지를 꺼내는 과정이에요. 내부 환경을 감지·유지하는 능력의 이름이 아니에요.</p>
+    <p>(2) 틀려요. 물질대사는 분자를 합성하고 분해하는 화학반응 전체를 가리켜요.</p>
+    <p>(3) 맞아요. 환경 변화를 감지하고 조절해서 내부 환경을 일정하게 유지하는 능력이 항상성이에요.</p>
+    <p>(4) 틀려요. 세포외배출(exocytosis)은 세포가 물질을 소포에 담아 세포 밖으로 내보내는 방식이에요. 수송 방법 하나이지 능력 전체의 이름이 아니에요.</p>
+    <p>(5) 틀려요. 광합성은 빛에너지로 이산화탄소와 물에서 당을 만드는 물질대사예요.</p>
+    <p>따라서 답은 (3) 항상성이에요.</p>
+  </div>
+</div>
+<div class="layer formal" data-explanation="verify">
+  <h4>완성 답과 검산</h4>
+  <div data-subpart="main">
+    <p>답 (3) 항상성.</p>
+    <p>분류로 확인해요: 강의노트 1장 p1에서 (1) 세포호흡과 (5) 광합성은 ‘물질대사 활동’ 아래 예로 적혀 있고, (2) 물질대사는 그 묶음의 이름이에요. 세 보기는 모두 한 묶음이라 ‘내부 환경 유지’와 다른 항목이에요. 같은 쪽에 항상성은 별도 한 줄로 있어요.</p>
+    <p>기출 1강 합본 39번(PDF 3쪽)의 인쇄 답도 ③이에요. 교과서의 항상성 정의 쪽은 이 스캔본(1장 PDF)에 들어 있지 않아 쪽 대조는 하지 못했어요.</p>
+  </div>
+</div>
+<div class="layer warn" data-explanation="pitfall">
+  <h4>이 문항에서 하기 쉬운 실수</h4>
+  <p>‘조절 반응’이라는 말을 화학반응으로 읽어 물질대사(2)를 고르기 쉬워요. 물질대사는 분자를 만들고 쪼개는 활동이고, 항상성은 그 결과로 내부 상태를 <strong>지키는</strong> 능력이에요.</p>
+  <p>세포외배출(4)도 ‘내보내서 조절한다’는 느낌 때문에 끌리기 쉬워요. 수송 방식 하나의 이름일 뿐이에요.</p>
+</div>
+<div class="layer formal" data-explanation="retry">
+  <h4>설명을 닫고 다시 해 봐요</h4>
+  <ul>
+    <li>항상성의 세 단계(감지 → 조절 → 유지)를 체온 예로 말해 보기</li>
+    <li>광합성·세포호흡·물질대사·항상성의 관계를 한 줄 그림으로 그려 보기</li>
+  </ul>
+</div>
+<div class="sum" hidden="">
+  <div class="summary-group"><h4>떠올릴 개념·공식</h4><p>항상성 = 환경 변화 감지 → 조절 → 내부 환경 유지.</p></div>
+  <div class="summary-group"><h4>첫 줄</h4><p>발문 핵심어를 화살표 세 칸으로 옮겨 써요.</p></div>
+  <div class="summary-group"><h4>핵심 판단</h4><p>세포호흡·광합성은 물질대사의 예이고, 내부 환경을 지키는 능력은 항상성이에요.</p></div>
+  <div class="summary-group"><h4>검산</h4><p>강의노트 1장 p1 분류, 기출 인쇄 답 ③. 답 (3).</p></div>
+</div>
+</article><article class="topic" id="p6"><h3>P6. [변형] 연못 전체를 부르는 이름</h3><p class="panel-meta">생성 변형 s2-hierarchy · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0901_Biomolecules_and_Cells.html#p6">원 문제 보기</a></p><div class="layer formal" data-source-problem="p6"><h4>주어진 조건</h4><div data-source-field="conditions"><p>어느 연못에 사는 붕어, 검정말, 세균 등 모든 생물에 물, 햇빛, 바닥 흙까지 합쳐 부르는 생명의 계층구조 단계는?</p>
+    <ul class="choices"><li>(1) 개체군</li><li>(2) 군집</li><li>(3) 생태계</li><li>(4) 생물권</li></ul></div></div><div class="layer formal" data-original-problem="p6"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 개체군·군집·생태계의 경계(한 종인지 여러 종인지, 무생물이 들어가는지). 근거 토픽: 세포에서 생물권까지 — 계층구조</div><div class="layer eli5" data-explanation="understand">
+  <h4>문제를 내 말로 읽어요</h4>
+  <p>주어진 것: 한 연못에 사는 붕어·검정말·세균 등 <strong>모든 생물</strong>과, 물·햇빛·바닥 흙 같은 <strong>무생물</strong>을 함께 묶은 덩어리예요.</p>
+  <p>구할 것: 이 덩어리가 생명의 계층구조에서 어느 단계인지 하나를 골라요.</p>
+  <p>쉽게 말하면, 연못 속 생물만 모은 것이 아니라 연못 자체까지 합친 것을 뭐라고 부르는지 묻는 문제예요.</p>
+</div>
+<div class="layer formal" data-explanation="recall">
+  <h4>이 문제를 봤을 때 떠올릴 개념과 공식</h4>
+  <p>‘여러 생물 + 물·햇빛·흙’이라는 단서에서 계층구조의 <strong>개체군 → 군집 → 생태계 → 생물권</strong> 순서를 떠올려요. 한 단계 올라갈 때마다 무엇이 더해지는지가 구별 기준이에요.</p>
+  <p>개체군(population)은 같은 종 하나의 모임, 군집(community)은 같은 지역 여러 종 개체군의 모임이에요. 생태계(ecosystem)는 군집에 <strong>무생물 환경요인</strong>을 더한 것이고, 생물권(biosphere)은 지구 전체의 생태계를 모두 합친 것이에요.</p>
+  <p>이 문제에는 종이 여럿이고 무생물이 들어 있으며 범위는 연못 하나예요. 세 조건을 각 단계 정의에 대어 봐요.</p>
+  <p>관련 정리노트: <a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_0901_Biomolecules_and_Cells.html#s2-hierarchy">세포에서 생물권까지 — 계층구조</a></p>
+</div>
+<div class="layer formal" data-explanation="start">
+  <h4>종이에 쓸 첫 줄</h4>
+  <p>지문의 재료를 두 칸으로 나눠 써요: <strong>생물 칸 = 붕어, 검정말, 세균(여러 종) | 무생물 칸 = 물, 햇빛, 흙</strong>. 그 옆에 범위 ‘연못 하나’를 적어요.</p>
+</div>
+<div class="layer formal" data-explanation="solve">
+  <h4>왜 이렇게 푸는지 함께 따라가요</h4>
+  <div data-subpart="main">
+    <p>(1) 틀려요. 개체군은 같은 종 하나의 모임이에요. 붕어만 모았다면 개체군이지만 여기에는 여러 종과 무생물이 섞여 있어요.</p>
+    <p>(2) 틀려요. 군집은 여러 종의 개체군을 모은 것까지예요. 물·햇빛·흙 같은 무생물이 더해지면 군집을 넘어서요.</p>
+    <p>(3) 맞아요. 군집에 무생물 환경을 합친 단계가 생태계예요. 지문의 생물 칸과 무생물 칸이 모두 들어가요.</p>
+    <p>(4) 틀려요. 생물권은 연못 하나가 아니라 지구의 수계·지각·대기에 있는 모든 생태계를 합친 단계예요.</p>
+    <p>따라서 답은 (3) 생태계예요.</p>
+  </div>
+</div>
+<div class="layer formal" data-explanation="verify">
+  <h4>완성 답과 검산</h4>
+  <div data-subpart="main">
+    <p>답 (3) 생태계.</p>
+    <p>교과서 대조: 교과서 1장 p.3은 생태계가 ‘군집 그리고 군집과 서로 상호작용하는 무생물의 환경요인을 포함한다’고 하고, 예로 삼림생태계에 토양·공기·물·무기염·햇빛에너지가 들어간다고 적어요. 연못의 물·햇빛·흙이 같은 역할이에요. 같은 쪽에서 생물권은 ‘지구의 수계, 지각 그리고 대기의 모든 생태계’라서 연못 하나보다 커요.</p>
+    <p>팩 설계 기록(.pack/variants.md)의 의도한 정답도 (3)이에요.</p>
+  </div>
+</div>
+<div class="layer warn" data-explanation="pitfall">
+  <h4>이 문항에서 하기 쉬운 실수</h4>
+  <p>‘모든 생물’이라는 말만 보고 군집(2)을 고르기 쉬워요. 지문 뒷부분의 물·햇빛·흙(무생물)을 놓치지 않아요.</p>
+  <p>‘물, 햇빛’처럼 큰 자연 요소가 나오면 생물권(4)으로 넘어가기 쉬워요. 범위가 연못 하나인지 지구 전체인지로 나눠요.</p>
+</div>
+<div class="layer formal" data-explanation="retry">
+  <h4>설명을 닫고 다시 해 봐요</h4>
+  <ul>
+    <li>지문의 재료를 생물/무생물 두 칸으로 나눠 다시 써 보기</li>
+    <li>‘연못의 붕어만’, ‘연못의 모든 생물’, ‘지구의 모든 생태계’가 각각 어느 단계인지 말해 보기</li>
+  </ul>
+</div>
+<div class="sum" hidden="">
+  <div class="summary-group"><h4>떠올릴 개념·공식</h4><p>개체군(한 종) → 군집(여러 종) → 생태계(+무생물) → 생물권(지구 전체).</p></div>
+  <div class="summary-group"><h4>첫 줄</h4><p>생물 칸 | 무생물 칸 | 범위를 나눠 적어요.</p></div>
+  <div class="summary-group"><h4>핵심 판단</h4><p>여러 종 + 무생물 + 연못 하나 = 생태계예요.</p></div>
+  <div class="summary-group"><h4>검산</h4><p>교과서 p.3 생태계·생물권 정의와 variants.md 의도 정답 (3). 답 (3).</p></div>
+</div>
+</article><article class="topic" id="p7"><h3>P7. [변형] 영역과 계의 짝</h3><p class="panel-meta">생성 변형 s2-domains · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0901_Biomolecules_and_Cells.html#p7">원 문제 보기</a></p><div class="layer formal" data-source-problem="p7"><h4>주어진 조건</h4><div data-source-field="conditions"><p>생물 분류에 대한 설명 중 옳은 것은?</p>
+    <ul class="choices"><li>(1) 원핵생물은 세 영역 중 하나다.</li><li>(2) 원생생물계, 식물계, 균계, 동물계는 모두 진핵생물 영역에 속한다.</li><li>(3) 고세균은 진핵생물 영역에 속한 계다.</li><li>(4) 영역은 넷, 계는 셋이다.</li></ul></div></div><div class="layer formal" data-original-problem="p7"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 3영역과 4계의 수, 원핵생물은 영역 이름이 아니라는 점. 근거 토픽: 3영역과 4계</div><div class="layer eli5" data-explanation="understand">
+  <h4>문제를 내 말로 읽어요</h4>
+  <p>주어진 것: 생물 분류의 영역(domain)과 계(kingdom)에 대한 진술 네 개예요.</p>
+  <p>구할 것: 이 가운데 <strong>옳은 것</strong> 하나를 골라요.</p>
+  <p>쉽게 말하면, 생물을 넣는 큰 서랍(영역) 세 개와 그중 한 서랍 안의 작은 칸(계) 네 개가 어떻게 짝지어지는지 묻는 문제예요.</p>
+</div>
+<div class="layer formal" data-explanation="recall">
+  <h4>이 문제를 봤을 때 떠올릴 개념과 공식</h4>
+  <p>‘영역’, ‘계’, ‘원핵생물’이라는 단어에서 강의노트 1장 p1의 <strong>3영역과 계</strong> 분류표를 떠올려요.</p>
+  <p>영역은 가장 큰 단위로 진정세균(Bacteria), 고세균(Archaea), 진핵생물(Eukarya) 셋이에요. 원핵생물(prokaryote)은 영역 이름이 아니라 진정세균 영역과 고세균 영역을 함께 부르는 말이에요.</p>
+  <p>계는 영역보다 작은 단위예요. 이 수업에서는 진핵생물 영역을 원생생물계·식물계·균계·동물계 넷으로 나눠요.</p>
+  <p>그래서 판단 기준은 두 가지예요. 이름이 영역인지 계인지, 그리고 어느 영역 안에 들어가는지예요.</p>
+  <p>관련 정리노트: <a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_0901_Biomolecules_and_Cells.html#s2-domains">3영역과 4계</a></p>
+</div>
+<div class="layer formal" data-explanation="start">
+  <h4>종이에 쓸 첫 줄</h4>
+  <p>분류표 첫 행을 써요: <strong>원핵생물 = 진정세균 영역 + 고세균 영역 | 진핵생물 = 진핵생물 영역 → 원생생물계, 식물계, 균계, 동물계</strong>.</p>
+  <p>그 다음 각 보기의 이름을 이 표에서 찾아 짝이 맞는지 표시해요.</p>
+</div>
+<div class="layer formal" data-explanation="solve">
+  <h4>왜 이렇게 푸는지 함께 따라가요</h4>
+  <div data-subpart="main">
+    <p>(1) 틀려요. 원핵생물은 진정세균 영역과 고세균 영역 두 개를 함께 부르는 말이에요. 세 영역은 진정세균·고세균·진핵생물이에요.</p>
+    <p>(2) 맞아요. 원생생물계, 식물계, 균계, 동물계 네 계는 모두 진핵생물 영역 안에 있어요.</p>
+    <p>(3) 틀려요. 고세균은 계가 아니라 독립된 영역이고, 원핵생물 쪽에 속해요.</p>
+    <p>(4) 틀려요. 수가 뒤집혔어요. 영역이 셋, 계가 넷이에요.</p>
+    <p>따라서 답은 (2)예요.</p>
+  </div>
+</div>
+<div class="layer formal" data-explanation="verify">
+  <h4>완성 답과 검산</h4>
+  <div data-subpart="main">
+    <p>답 (2).</p>
+    <p>교과서 대조: 교과서 1장 p.16은 ‘원핵생물은 진정세균과 고세균의 두 영역’, ‘진핵생물은 진핵생물영역으로 구성’이라고 적어 (1)(3)을 걸러요. 교과서 1장 p.17은 ‘진핵생물의 영역은 네 가지의 그룹으로 나뉜다: 원생생물계, 균계, 동물계, 식물계’라고 적어 (2)와 일치해요.</p>
+    <p>수 세기로도 확인해요: 영역 이름은 진정세균·고세균·진핵생물로 3개, 계 이름은 4개라 (4)가 뒤집혔어요. 팩 설계 기록(.pack/variants.md)의 의도한 정답도 (2)예요.</p>
+  </div>
+</div>
+<div class="layer warn" data-explanation="pitfall">
+  <h4>이 문항에서 하기 쉬운 실수</h4>
+  <p>‘원핵생물·진핵생물’ 두 묶음과 ‘세 영역’을 섞어 원핵생물을 하나의 영역으로 세기 쉬워요. 원핵생물은 두 영역의 별명이에요.</p>
+  <p>네 계를 진핵생물과 나란한 영역으로 착각하지 않아요. 계는 진핵생물 영역 안의 작은 칸이에요.</p>
+</div>
+<div class="layer formal" data-explanation="retry">
+  <h4>설명을 닫고 다시 해 봐요</h4>
+  <ul>
+    <li>세 영역과 네 계를 보지 않고 표로 그려 보기</li>
+    <li>‘원핵생물’이 어떤 두 영역을 가리키는지 말해 보기</li>
+  </ul>
+</div>
+<div class="sum" hidden="">
+  <div class="summary-group"><h4>떠올릴 개념·공식</h4><p>영역 3(진정세균·고세균·진핵생물), 계 4(원생생물·식물·균·동물 — 모두 진핵생물 영역).</p></div>
+  <div class="summary-group"><h4>첫 줄</h4><p>원핵생물 = 두 영역 | 진핵생물 영역 → 네 계 표를 써요.</p></div>
+  <div class="summary-group"><h4>핵심 판단</h4><p>네 계가 모두 진핵생물 영역에 있다는 (2)만 표와 맞아요.</p></div>
+  <div class="summary-group"><h4>검산</h4><p>교과서 p.16·p.17 대조, 의도 정답 (2). 답 (2).</p></div>
+</div>
+</article><article class="topic" id="p8"><h3>P8. [변형] 세균 한 마리에게 없는 특징</h3><p class="panel-meta">생성 변형 s1-traits · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0901_Biomolecules_and_Cells.html#p8">원 문제 보기</a></p><div class="layer formal" data-source-problem="p8"><h4>주어진 조건</h4><div data-source-field="conditions"><p>단세포 세균 한 마리에는 해당하지 않는 생물의 특징은?</p>
+    <ul class="choices"><li>(1) 생식</li><li>(2) 유전</li><li>(3) 발생</li><li>(4) 물질대사</li></ul></div></div><div class="layer formal" data-original-problem="p8"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 생식·유전은 모든 생물의 특징이고 발생은 다세포 생물의 특징이라는 구분. 근거 토픽: 무엇이 생물인가 — 여덟 가지 특징</div><div class="layer eli5" data-explanation="understand">
+  <h4>문제를 내 말로 읽어요</h4>
+  <p>주어진 것: 단세포 세균 한 마리, 즉 세포 하나가 생물 하나인 경우예요. 보기는 생물의 특징 네 가지예요.</p>
+  <p>구할 것: 이 세균에는 <strong>해당하지 않는</strong> 특징 하나를 골라요. ‘해당하지 않는 것’을 묻는 부정형이라 ‘틀려요’로 판정된 보기가 답이에요.</p>
+  <p>쉽게 말하면, 세포 하나로 사는 세균이 할 수 없는 생물의 일을 찾는 문제예요.</p>
+</div>
+<div class="layer formal" data-explanation="recall">
+  <h4>이 문제를 봤을 때 떠올릴 개념과 공식</h4>
+  <p>‘단세포’와 ‘해당하지 않는 특징’이라는 단서에서 강의노트 1장 p1의 <strong>생식과 발생</strong> 항목을 떠올려요. 강의노트는 이 항목 아래를 둘로 나눠 적어요. 생식·유전(reproduction, inheritance)은 모든 생물, 발생(development)은 다세포 생물이에요.</p>
+  <p>발생은 수정란 하나가 여러 세포로 나뉘고 조직과 기관을 갖춘 몸으로 자라는 과정이에요. 세포가 여럿이어야 성립하므로 세포 하나로 사는 생물에는 해당하지 않아요.</p>
+  <p>그래서 이 문제는 각 특징이 ‘모든 생물’의 특징인지 ‘다세포 생물’의 특징인지를 기준으로 나눠요.</p>
+  <p>관련 정리노트: <a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_0901_Biomolecules_and_Cells.html#s1-traits">무엇이 생물인가 — 여덟 가지 특징</a></p>
+</div>
+<div class="layer formal" data-explanation="start">
+  <h4>종이에 쓸 첫 줄</h4>
+  <p>두 칸을 만들어 써요: <strong>모든 생물 | 다세포 생물만</strong>. 보기 네 개를 이 두 칸 중 하나에 넣고, ‘다세포 생물만’ 칸에 들어간 것을 표시해요.</p>
+</div>
+<div class="layer formal" data-explanation="solve">
+  <h4>왜 이렇게 푸는지 함께 따라가요</h4>
+  <div data-subpart="main">
+    <p>(1) 맞아요(세균에도 해당해요). 생식은 모든 생물의 특징이에요. 세균도 둘로 나뉘어 번식해요.</p>
+    <p>(2) 맞아요(세균에도 해당해요). 유전도 모든 생물의 특징이에요. 세균도 DNA를 자손에게 물려줘요.</p>
+    <p>(3) 틀려요(세균에는 해당하지 않아요). 강의노트는 발생을 다세포 생물의 특징으로 따로 적었어요. 여러 세포가 조직과 기관을 이루며 자라는 과정이라 세포 하나로 사는 세균에게는 없어요.</p>
+    <p>(4) 맞아요(세균에도 해당해요). 물질대사는 세포가 분자를 만들고 부수는 화학반응이라 세균을 포함한 모든 생물에 있어요.</p>
+    <p>질문이 ‘해당하지 않는 것’이므로 <strong>틀려요</strong>로 판정된 (3)이 답이에요.</p>
+  </div>
+</div>
+<div class="layer formal" data-explanation="verify">
+  <h4>완성 답과 검산</h4>
+  <div data-subpart="main">
+    <p>답 (3) 발생.</p>
+    <p>원문 대조: 강의노트 1장 p1의 ‘생식과 발생’ 아래에 ‘생식, 유전 – 모든 생물’, ‘발생 – 다세포 생물’이 나뉘어 있어요. ‘모든 생물’ 칸에 (1)(2)가 들어가고, 물질대사 (4)는 같은 쪽의 ‘물질대사 활동’ 항목이에요. ‘다세포 생물만’ 칸에 남는 것은 (3) 하나예요.</p>
+    <p>교과서 1장 p.2도 박테리아를 단세포 생물, 식물·동물을 서로 의존하는 세포로 된 다세포 생물로 구분해요. 팩 설계 기록(.pack/variants.md)의 의도한 정답도 (3)이에요.</p>
+  </div>
+</div>
+<div class="layer warn" data-explanation="pitfall">
+  <h4>이 문항에서 하기 쉬운 실수</h4>
+  <p>‘생식과 발생’을 한 묶음으로 외워 둘 다 모든 생물의 특징이라고 생각하기 쉬워요. 생식·유전은 모든 생물, 발생은 다세포 생물이에요.</p>
+  <p>보기는 질문 방향(‘해당하지 않는 것’)이 아니라 ‘세균에 해당한다’는 평서문으로 맞아요/틀려요를 판정해요. 그다음 틀려요로 판정된 보기를 답으로 골라요.</p>
+</div>
+<div class="layer formal" data-explanation="retry">
+  <h4>설명을 닫고 다시 해 봐요</h4>
+  <ul>
+    <li>강의노트의 ‘생식과 발생’ 아래 두 줄을 그대로 써 보기</li>
+    <li>사람과 세균에 모두 있는 특징 세 가지, 사람에게만 있는 특징 한 가지를 말해 보기</li>
+  </ul>
+</div>
+<div class="sum" hidden="">
+  <div class="summary-group"><h4>떠올릴 개념·공식</h4><p>생식·유전 = 모든 생물, 발생 = 다세포 생물(강의노트 1장 p1).</p></div>
+  <div class="summary-group"><h4>첫 줄</h4><p>모든 생물 | 다세포 생물만 두 칸에 보기를 나눠 넣어요.</p></div>
+  <div class="summary-group"><h4>핵심 판단</h4><p>발생은 여러 세포가 몸을 이루는 과정이라 단세포 세균에 없어요.</p></div>
+  <div class="summary-group"><h4>검산</h4><p>강의노트 p1 대조, 의도 정답 (3). 답 (3).</p></div>
+</div>
+</article><article class="topic" id="p9"><h3>P9. [변형] 되돌아와 다시 쓰이는 것</h3><p class="panel-meta">생성 변형 s1-metabolism · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0901_Biomolecules_and_Cells.html#p9">원 문제 보기</a></p><div class="layer formal" data-source-problem="p9"><h4>주어진 조건</h4><div data-source-field="conditions"><p>생태계에서 분해자를 거쳐 1차 생산자에게 되돌아가 다시 쓰이는 것은?</p>
+    <ul class="choices"><li>(1) 태양에너지</li><li>(2) 열로 손실된 에너지</li><li>(3) 분해로 생긴 단순한 원료물질</li><li>(4) 소비자가 먹이에서 얻은 에너지</li></ul></div></div><div class="layer formal" data-original-problem="p9"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 에너지는 한 방향으로 흐르고 물질은 순환한다는 구분. 근거 토픽: 물질대사와 에너지 흐름</div><div class="layer eli5" data-explanation="understand">
+  <h4>문제를 내 말로 읽어요</h4>
+  <p>주어진 것: 생태계 안에서 무언가가 분해자를 거쳐 1차 생산자에게 되돌아가 다시 쓰인다는 상황이에요.</p>
+  <p>구할 것: 이렇게 <strong>되돌아와 다시 쓰이는 것</strong> 하나를 골라요.</p>
+  <p>쉽게 말하면, 생태계에서 한 번 쓰면 사라지는 것과 돌고 돌아 재활용되는 것을 구별하는 문제예요.</p>
+</div>
+<div class="layer formal" data-explanation="recall">
+  <h4>이 문제를 봤을 때 떠올릴 개념과 공식</h4>
+  <p>‘분해자 → 1차 생산자로 되돌아감’이라는 단서에서 강의노트 1장 p1의 <strong>에너지의 이동과 물질 순환</strong>을 떠올려요. 강의노트는 이것을 ‘태양에너지 → 1차생산자 → 소비자, 분해자 → 분해를 통해 1차생산자로 재순환’으로 적어요.</p>
+  <p>핵심 규칙은 <strong>에너지는 한 방향으로 흐르고, 물질은 순환한다</strong>예요. 1차 생산자(primary producer)는 광합성으로 햇빛 에너지를 화학에너지로 바꾸고, 소비자(consumer)는 그것을 먹어요. 에너지는 생물에서 생물로 넘어갈 때마다 일부가 열로 빠져나가 다시 쓰이지 못해요.</p>
+  <p>분해자(decomposer)는 죽은 생물의 복잡한 분자를 단순한 원료물질로 분해하고, 이 원료물질을 생산자가 다시 흡수해요. 그래서 보기 하나하나가 에너지인지 물질인지를 먼저 가려요.</p>
+  <p>관련 정리노트: <a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_0901_Biomolecules_and_Cells.html#s1-metabolism">물질대사와 에너지 흐름</a></p>
+</div>
+<div class="layer formal" data-explanation="start">
+  <h4>종이에 쓸 첫 줄</h4>
+  <p>흐름도를 한 줄 그려요: <strong>태양 → 생산자 → 소비자 → (열로 손실)</strong>, 그리고 아래에 <strong>분해자 → 원료물질 → 생산자</strong>로 돌아가는 화살표를 그려요. 보기마다 ‘에너지/물질’을 적어요.</p>
+</div>
+<div class="layer formal" data-explanation="solve">
+  <h4>왜 이렇게 푸는지 함께 따라가요</h4>
+  <div data-subpart="main">
+    <p>(1) 틀려요. 태양에너지는 1차 생산자로 들어와 소비자 쪽으로 한 방향으로 흘러요. 분해자를 거쳐 되돌아오지 않아요.</p>
+    <p>(2) 틀려요. 생물에서 생물로 넘어갈 때 열로 손실된 에너지는 생산자가 다시 쓸 수 없어요.</p>
+    <p>(3) 맞아요. 분해자가 사체와 배설물을 분해해 만든 단순한 원료물질은 1차 생산자가 다시 흡수해 쓰는 재순환이 일어나요.</p>
+    <p>(4) 틀려요. 소비자가 먹이에서 얻은 에너지도 생명 활동에 쓰이고 일부는 열로 빠져나가며, 생산자에게 되돌아가지 않아요.</p>
+    <p>따라서 답은 (3)이에요.</p>
+  </div>
+</div>
+<div class="layer formal" data-explanation="verify">
+  <h4>완성 답과 검산</h4>
+  <div data-subpart="main">
+    <p>답 (3) 분해로 생긴 단순한 원료물질.</p>
+    <p>소거로 확인해요: (1)(2)(4)는 모두 ‘에너지’이고, 에너지는 되돌아오지 않으므로 한꺼번에 빠져요. ‘물질’인 보기는 (3) 하나예요.</p>
+    <p>교과서 대조: 교과서 1장 p.3은 분해자가 ‘복잡한 생물분자를 단순한 원료물질로 분해’하고 ‘이 단순한 원료물질은 생산자에 의해 다시 재순환된다’고 적고, 같은 쪽에서 에너지는 생물 사이를 전달될 때 ‘일부는 열로 손실된다’고 적어요. 팩 설계 기록(.pack/variants.md)의 의도한 정답도 (3)이에요.</p>
+  </div>
+</div>
+<div class="layer warn" data-explanation="pitfall">
+  <h4>이 문항에서 하기 쉬운 실수</h4>
+  <p>‘다시 쓰인다’는 말에 태양에너지(1)를 고르기 쉬워요. 햇빛은 매일 새로 들어오는 것이지 분해자를 거쳐 되돌아오는 것이 아니에요.</p>
+  <p>에너지와 물질을 같은 것처럼 ‘순환한다’고 묶지 않아요. 물질은 돌고, 에너지는 흐르다 열로 빠져요.</p>
+</div>
+<div class="layer formal" data-explanation="retry">
+  <h4>설명을 닫고 다시 해 봐요</h4>
+  <ul>
+    <li>에너지 흐름과 물질 순환을 한 그림에 화살표 두 종류로 그려 보기</li>
+    <li>분해자가 하는 일을 한 문장으로 써 보기</li>
+  </ul>
+</div>
+<div class="sum" hidden="">
+  <div class="summary-group"><h4>떠올릴 개념·공식</h4><p>에너지는 한 방향으로 흐르고(열 손실), 물질은 분해자를 거쳐 생산자로 순환해요.</p></div>
+  <div class="summary-group"><h4>첫 줄</h4><p>보기마다 ‘에너지/물질’을 적어요.</p></div>
+  <div class="summary-group"><h4>핵심 판단</h4><p>되돌아오는 것은 물질뿐이라 단순한 원료물질이에요.</p></div>
+  <div class="summary-group"><h4>검산</h4><p>에너지 보기 셋 소거, 교과서 p.3 대조, 의도 정답 (3). 답 (3).</p></div>
+</div>
+</article><article class="topic" id="p10"><h3>P10. [변형] 모든 생물의 공통점이 아닌 것</h3><p class="panel-meta">생성 변형 s1-evolution · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0901_Biomolecules_and_Cells.html#p10">원 문제 보기</a></p><div class="layer formal" data-source-problem="p10"><h4>주어진 조건</h4><div data-source-field="conditions"><p>생물들의 공통점과 공통조상에 대한 설명으로 옳지 않은 것은?</p>
+    <ul class="choices"><li>(1) 생물마다 DNA의 분자 배열이 달라 모양과 기능이 달라져도, DNA의 정보가 RNA로 복사되고 RNA가 단백질 제조를 명령하는 흐름은 같다.</li><li>(2) 세균과 사람처럼 겉모습이 크게 달라도 모두 DNA, RNA, 단백질로 된 화학적 지령 체계를 쓴다.</li><li>(3) DNA는 두 가닥으로 된 나선형 분자로, 생명체를 조립하기 위한 지령을 담고 있다.</li><li>(4) 모든 생물의 DNA는 핵막으로 둘러싸인 핵 속에 들어 있다.</li><li>(5) 모든 생물이 같은 유기 화학을 공유한다는 점은 모든 생물이 하나의 공통조상에서 생겨났다는 생각을 뒷받침한다.</li></ul></div></div><div class="layer formal" data-original-problem="p10"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 모든 생물의 공통점(DNA·RNA·단백질)과 일부 생물에만 해당하는 것(핵막으로 싸인 핵)을 구분하는 것. 근거 토픽: 진화와 공통조상</div><div class="layer eli5" data-explanation="understand">
+  <h4>문제를 내 말로 읽어요</h4>
+  <p>주어진 것: 생물들의 공통점과 공통조상에 대한 진술 다섯 개예요.</p>
+  <p>구할 것: 이 가운데 <strong>옳지 않은 것</strong> 하나를 골라요. 부정형이라 ‘틀려요’로 판정된 보기가 답이에요.</p>
+  <p>쉽게 말하면, ‘모든 생물이 다 그렇다’고 말하는 문장 중에서 사실은 일부 생물에만 맞는 문장을 찾는 문제예요.</p>
+</div>
+<div class="layer formal" data-explanation="recall">
+  <h4>이 문제를 봤을 때 떠올릴 개념과 공식</h4>
+  <p>‘공통점’, ‘공통조상’이라는 단서에서 강의노트 1장 p1의 두 항목을 떠올려요. 화학적 지령(chemical instruction)으로 모든 생물이 DNA·RNA·단백질을 가진다는 것, 그리고 생물학적 진화(biological evolution)로 현재 생물은 공통조상(common ancestor)의 후손이라는 것이에요.</p>
+  <p>DNA의 정보는 RNA로 복사되고, RNA는 단백질 제조를 명령해요. DNA 배열은 생물마다 달라도 이 흐름은 모든 생물이 같아요. 이렇게 모두가 같은 화학을 쓴다는 점이 하나의 공통조상에게서 물려받았다는 생각을 뒷받침해요.</p>
+  <p>판단 기준은 <strong>‘모든 생물’이라는 말이 정말 모든 생물에 맞는가</strong>예요. 강의노트 1장 p5는 원핵생물은 핵막이 없어 핵이 없고 DNA가 핵양체(nucleoid)로 있다고 적어요. 진핵생물(eukaryote)만 핵막으로 핵이 세포질과 분리돼 있어요.</p>
+  <p>관련 정리노트: <a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_0901_Biomolecules_and_Cells.html#s1-evolution">진화와 공통조상</a></p>
+</div>
+<div class="layer formal" data-explanation="start">
+  <h4>종이에 쓸 첫 줄</h4>
+  <p>질문 방향을 먼저 적어요: <strong>“옳지 않은 것 = 모든 생물에 맞지 않는 진술”</strong>. 그다음 보기마다 ‘세균에도 맞는가?’를 예/아니요로 적어요. 세균이 반례가 되는 보기를 찾으면 돼요.</p>
+</div>
+<div class="layer formal" data-explanation="solve">
+  <h4>왜 이렇게 푸는지 함께 따라가요</h4>
+  <div data-subpart="main">
+    <p>(1) 맞아요. DNA 배열은 생물마다 달라도 DNA → RNA → 단백질로 이어지는 방식은 모든 생물이 같아요.</p>
+    <p>(2) 맞아요. 세균과 사람처럼 겉모습과 사는 방식이 달라도 모든 생물은 DNA, RNA, 단백질이라는 같은 화학적 지령을 가져요.</p>
+    <p>(3) 맞아요. DNA는 두 가닥으로 된 나선형 분자이고 생명체를 조립하기 위한 지령을 담고 있어요. 수업에서 직접 다루지 않은 진술이지만 교재 내용이에요(수업 밖 보충).</p>
+    <p>(4) 틀려요. 핵막으로 둘러싸인 핵은 진핵생물에만 있어요. 원핵생물은 핵막이 없어 핵이 없고 DNA가 핵양체로 있으니 ‘모든 생물’의 공통점이 아니에요.</p>
+    <p>(5) 맞아요. 모든 생물이 같은 분자로 된 같은 지령 체계, 즉 공통적인 유기 화학을 공유한다는 점은 공통조상의 근거예요.</p>
+    <p>질문이 ‘옳지 않은 것’이므로 <strong>틀려요</strong>로 판정된 (4)가 답이에요.</p>
+  </div>
+</div>
+<div class="layer formal" data-explanation="verify">
+  <h4>완성 답과 검산</h4>
+  <div data-subpart="main">
+    <p>답 (4).</p>
+    <p>반례로 확인해요: 대장균은 생물인데 교과서 1장 p.16에 따르면 원핵세포의 중앙 부위는 핵양체이고 세포질로부터 분리시키는 별도의 막이 없어요. ‘모든 생물의 DNA는 핵막 속 핵에 있다’는 이 반례 하나로 깨져요.</p>
+    <p>교과서 대조: 교과서 1장 p.3은 DNA를 ‘거대한 2중 가닥으로 된 나선형 분자로 간단한 분자로부터 생명체를 조립하기 위한 지령을 포함’한다고 적어 (3)을 지지하고, ‘DNA는 모든 생명체에서 유사하게 작용한다. DNA의 정보는 다른 핵산인 RNA 분자에 복사된다’는 문장으로 (1)(2)를 지지해요. 팩 설계 기록(.pack/variants.md)의 의도한 정답도 (4)예요.</p>
+  </div>
+</div>
+<div class="layer warn" data-explanation="pitfall">
+  <h4>이 문항에서 하기 쉬운 실수</h4>
+  <p>낯선 진술 (3)을 ‘수업에서 못 봤으니 틀렸다’고 고르기 쉬워요. 처음 보는 것과 틀린 것은 달라요. 확실히 반례가 있는 보기를 먼저 찾아요.</p>
+  <p>‘DNA는 핵에 있다’는 진핵세포 그림에 익숙해 (4)를 맞다고 넘기기 쉬워요. ‘모든’이라는 말이 나오면 원핵생물로 반례를 꼭 시험해요.</p>
+</div>
+<div class="layer formal" data-explanation="retry">
+  <h4>설명을 닫고 다시 해 봐요</h4>
+  <ul>
+    <li>모든 생물의 공통점 두 가지와 진핵생물에만 있는 것 두 가지를 나눠 써 보기</li>
+    <li>원핵세포의 DNA가 어디에 어떤 형태로 있는지 한 문장으로 말해 보기</li>
+  </ul>
+</div>
+<div class="sum" hidden="">
+  <div class="summary-group"><h4>떠올릴 개념·공식</h4><p>모든 생물: DNA → RNA → 단백질 지령 공유(공통조상의 근거). 핵막 속 핵: 진핵생물만.</p></div>
+  <div class="summary-group"><h4>첫 줄</h4><p>“옳지 않은 것 = 모든 생물에 맞지 않는 진술”, 보기마다 세균 반례를 시험해요.</p></div>
+  <div class="summary-group"><h4>핵심 판단</h4><p>원핵생물은 핵막이 없고 DNA가 핵양체로 있어 (4)가 틀렸어요.</p></div>
+  <div class="summary-group"><h4>검산</h4><p>교과서 p.16 원핵세포 반례, p.3 DNA 서술 대조, 의도 정답 (4). 답 (4).</p></div>
+</div>
+</article></section>
+  </main>
+  <footer>원 문제·정리노트·PDF는 보존해요.</footer>
+    </div>
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="panel-right-title">
+      <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-right-title">페이지 요약</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-sub" id="sum-for">전체 흐름</p>
+        <p class="panel-empty" id="sum-empty">페이지를 넘기면 그 페이지의 핵심 식과 용어가 여기에 나옵니다.</p>
+        <div class="sums"></div>
+      </div>
+    </aside>
+  </div>
+  <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
+  <nav class="pager" aria-label="화면 이동">
+    <div class="pager-inner">
+      <button class="btn btn-ghost" id="pager-prev" type="button">이전</button>
+      <span class="pager-count" id="pager-count"></span>
+      <button class="btn btn-primary" id="pager-next" type="button">시작하기</button>
+    </div>
+  </nav>
+  <p class="sr-only" id="pager-status" aria-live="polite"></p>
+
+  <script id="theme-ui">
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const sysDark = matchMedia('(prefers-color-scheme: dark)');
+      const KEY = 'od-theme';
+      const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+      function label() {
+        const next = isDark() ? '라이트 모드로 전환' : '다크 모드로 전환';
+        btn.setAttribute('aria-label', next);
+        btn.title = next;
+      }
+      btn.addEventListener('click', () => {
+        const t = isDark() ? 'light' : 'dark';
+        // 시스템 설정과 같아지면 저장을 지워 다시 시스템을 따른다
+        if ((t === 'dark') === sysDark.matches) { delete root.dataset.theme; try { localStorage.removeItem(KEY); } catch (e) {} }
+        else { root.dataset.theme = t; try { localStorage.setItem(KEY, t); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+        label();
+      });
+      sysDark.addEventListener('change', label);
+      window.addEventListener('storage', (e) => {
+        if (e.key !== KEY) return;
+        if (e.newValue === 'light' || e.newValue === 'dark') root.dataset.theme = e.newValue; else delete root.dataset.theme;
+        label();
+      });
+      label();
+    })();
+  </script>
+  <script id="panels-ui">
+    (function () {
+      const body = document.body;
+      const layout = document.querySelector('.layout');
+      const kind = body.dataset.panels;
+      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const scrim = document.getElementById('panel-scrim');
+      const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
+      const wideMq = matchMedia('(min-width: 1024px)');
+      const roomyMq = matchMedia('(min-width: 1280px)');
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      const PREF = 'od-panels:' + kind;
+      // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
+      const RANGE = body.dataset.range || '';
+      const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+      const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+      let overlay = null;
+
+      // ---------- 열고 닫기 ----------
+      function docked() {
+        const pref = store.get(PREF, {});
+        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+      }
+      function sync() {
+        const wide = wideMq.matches;
+        const d = docked();
+        ['left', 'right'].forEach((side) => {
+          const open = wide ? d[side] : overlay === side;
+          const p = panels[side];
+          layout.dataset[side] = open ? 'open' : 'closed';
+          p.classList.toggle('is-open', !wide && open);
+          p.inert = !open;
+          if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
+          toggles[side].setAttribute('aria-expanded', String(open));
+        });
+        const drawer = !wide && overlay !== null;
+        scrim.classList.toggle('is-on', drawer);
+        body.classList.toggle('drawer-open', drawer);
+        blockers.forEach((el) => { el.inert = drawer; });
+      }
+      function openDrawer(side) {
+        overlay = side;
+        sync();
+        requestAnimationFrame(() => panels[side].querySelector('[data-panel-close]').focus());
+      }
+      function closeDrawer(refocus) {
+        if (overlay === null) return;
+        const side = overlay;
+        overlay = null;
+        sync();
+        if (refocus) toggles[side].focus();
+      }
+      function toggle(side) {
+        if (wideMq.matches) {
+          const d = docked();
+          d[side] = !d[side];
+          store.set(PREF, d);
+          sync();
+          if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+        } else if (overlay === side) closeDrawer(true);
+        else openDrawer(side);
+      }
+
+      toggles.left.addEventListener('click', () => toggle('left'));
+      toggles.right.addEventListener('click', () => toggle('right'));
+      scrim.addEventListener('click', () => closeDrawer(true));
+      document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
+      panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
+
+      // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      function applyWidths() {
+        const w = store.get(PREF + ':w', {});
+        ['left', 'right'].forEach((side) => {
+          if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
+          else layout.style.removeProperty(WIDTH[side].prop);
+        });
+      }
+      function maxFor(side) {
+        const other = side === 'left' ? panels.right : panels.left;
+        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
+      }
+      function setWidth(side, px, save) {
+        const v = Math.round(Math.min(Math.max(px, WIDTH[side].min), maxFor(side)));
+        layout.style.setProperty(WIDTH[side].prop, v + 'px');
+        panels[side].querySelector('.panel-resize').setAttribute('aria-valuenow', String(v));
+        if (save) { const w = store.get(PREF + ':w', {}); w[side] = v; store.set(PREF + ':w', w); }
+      }
+      function resetWidth(side) {
+        const w = store.get(PREF + ':w', {});
+        delete w[side];
+        store.set(PREF + ':w', w);
+        layout.style.removeProperty(WIDTH[side].prop);
+      }
+      document.querySelectorAll('.panel-resize').forEach((handle) => {
+        const side = handle.dataset.side;
+        const dir = side === 'left' ? 1 : -1;
+        handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
+        handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
+        handle.addEventListener('pointerdown', (e) => {
+          if (!wideMq.matches || e.button !== 0) return;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startW = panels[side].getBoundingClientRect().width;
+          handle.setPointerCapture(e.pointerId);
+          body.classList.add('is-resizing');
+          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const up = () => {
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', up);
+            handle.removeEventListener('pointercancel', up);
+            body.classList.remove('is-resizing');
+            setWidth(side, panels[side].getBoundingClientRect().width, true);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', up);
+          handle.addEventListener('pointercancel', up);
+        });
+        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('keydown', (e) => {
+          const step = e.shiftKey ? 64 : 16;
+          const cur = panels[side].getBoundingClientRect().width;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+        });
+      });
+      applyWidths();
+      const onMq = () => { overlay = null; sync(); };
+      wideMq.addEventListener('change', onMq);
+      roomyMq.addEventListener('change', onMq);
+
+      // ---------- 목차의 진행 표시 ----------
+      const progressN = document.getElementById('progress-n');
+      const progressBar = document.getElementById('progress-bar');
+      const progressTotal = document.getElementById('progress-total');
+      function markToc(done, total, doneLabel) {
+        panels.left.querySelectorAll('.toc-list a').forEach((a) => {
+          const id = decodeURIComponent(a.getAttribute('href').slice(1));
+          let mark = a.querySelector('.toc-mark');
+          if (!mark) {
+            mark = document.createElement('span');
+            mark.className = 'toc-mark';
+            mark.setAttribute('aria-hidden', 'true');
+            const state = document.createElement('span');
+            state.className = 'sr-only toc-state';
+            a.append(mark, state);
+          }
+          const isDone = done.has(id);
+          mark.classList.toggle('is-done', isDone);
+          mark.innerHTML = isDone ? ICON_DONE : ICON_TODO;
+          a.querySelector('.toc-state').textContent = isDone ? ' (' + doneLabel + ')' : '';
+        });
+        progressN.textContent = String(done.size);
+        progressTotal.textContent = String(total);
+        progressBar.style.transform = 'scaleX(' + (total ? done.size / total : 0) + ')';
+      }
+      function revealCurrent() {
+        const link = panels.left.querySelector('.toc-list a[aria-current="true"]');
+        if (link && layout.dataset.left === 'open') link.scrollIntoView({ block: 'nearest' });
+      }
+
+      // ---------- 복습문제: 오른쪽 = 원문 · 힌트 · 풀이 ----------
+      function setupReview() {
+        const KEY = 'od-review-solved:' + RANGE;
+        const cards = Array.from(document.querySelectorAll('main article.card'));
+        const aids = panels.right.querySelector('.aids');
+        const sub = document.getElementById('aid-for');
+        const empty = panels.right.querySelector('.panel-empty');
+        const btn = document.getElementById('solved-btn');
+        const groups = {};
+        const solved = new Set(store.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        cards.forEach((card) => {
+          const g = document.createElement('div');
+          g.className = 'aid';
+          g.hidden = true;
+          card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
+          aids.appendChild(g);
+          groups[card.id] = g;
+        });
+        let curId = null;
+        function paintBtn() {
+          const on = solved.has(curId);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.innerHTML = (on ? ICON_DONE : ICON_TODO) + '<span>' + (on ? '푼 문제 · 표시 해제' : '푼 문제로 표시') + '</span>';
+        }
+        btn.addEventListener('click', () => {
+          if (!curId) return;
+          if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
+          store.set(KEY, Array.from(solved));
+          paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          curId = s.matches('article.card') ? s.id : null;
+          Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
+          empty.hidden = Boolean(curId);
+          btn.hidden = !curId;
+          sub.textContent = curId ? ((s.querySelector('h3') || {}).textContent || '').trim() : '';
+          sub.hidden = !curId;
+          if (curId) paintBtn();
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(solved, cards.length, '푼 문제');
+          revealCurrent();
+        });
+      }
+
+      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
+      function setupNote() {
+        const KEY = 'od-note-read:' + RANGE;
+        const topics = Array.from(document.querySelectorAll('main article.topic'));
+        const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
+        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
+        const box = panels.right.querySelector('.sums');
+        const sums = {};
+        topics.forEach((t) => {
+          const el = t.querySelector(':scope > .sum');
+          if (!el) return;
+          el.hidden = true;
+          box.appendChild(el);
+          sums[t.id] = el;
+        });
+        const sub = document.getElementById('sum-for');
+        const empty = document.getElementById('sum-empty');
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          const key = s.matches('article.topic') ? s.id : 'intro';
+          Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
+          empty.hidden = Boolean(sums[key]);
+          sub.textContent = key === 'intro' ? '전체 흐름' : ((s.querySelector('h3') || {}).textContent || '').trim();
+          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(read, topics.length, '읽음');
+          revealCurrent();
+        });
+      }
+
+      if (kind === 'review') setupReview();
+      if (kind === 'note') setupNote();
+      sync();
+    })();
+  </script>
+  <script id="pager-ui">
+    (function () {
+      const root = document.documentElement;
+      const main = document.querySelector('main');
+      const hero = main.querySelector('.hero');
+      const screens = [hero].concat(Array.from(main.querySelectorAll(document.body.dataset.screens)));
+      if (screens.length < 2) { root.classList.remove('js'); return; }
+      screens.forEach((s) => s.classList.add('screen'));
+
+      const last = screens.length - 1;
+      const prevBtn = document.getElementById('pager-prev');
+      const nextBtn = document.getElementById('pager-next');
+      const count = document.getElementById('pager-count');
+      const bar = document.getElementById('pager-bar');
+      const status = document.getElementById('pager-status');
+      const toc = document.querySelector('#panel-left .toc');
+      const scroller = document.querySelector('.content');
+      const titleOf = (s) => ((s.querySelector('h3') || s.querySelector('h1') || {}).textContent || '').trim();
+      let cur = -1;
+
+      // 목차: 섹션 링크 아래에 화면(토픽·카드) 목록을 붙인다
+      const tocLinks = [];
+      Array.from(toc.querySelectorAll(':scope > a')).forEach((a) => {
+        const sec = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+        const group = document.createElement('div');
+        group.className = 'toc-group';
+        a.replaceWith(group);
+        group.appendChild(a);
+        if (!sec) return;
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        screens.forEach((s, i) => {
+          if (!sec.contains(s)) return;
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#' + s.id;
+          link.innerHTML = '<span class="toc-title"></span>';
+          link.firstChild.textContent = titleOf(s);
+          li.appendChild(link);
+          list.appendChild(li);
+          tocLinks[i] = link;
+        });
+        group.appendChild(list);
+      });
+
+      function indexFor(hash) {
+        const id = decodeURIComponent((hash || '').replace(/^#/, ''));
+        const el = id && document.getElementById(id);
+        if (!el || !main.contains(el)) return { i: 0 };
+        const i = screens.findIndex((s) => s.contains(el) || el.contains(s));
+        return { i: Math.max(i, 0), target: i >= 0 && screens[i].contains(el) && screens[i] !== el ? el : null };
+      }
+
+      function render(i, target) {
+        const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
+        if (i !== cur) {
+          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
+          main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
+          const s = screens[i];
+          const sec = s.closest('section');
+          if (sec) sec.classList.add('is-on');
+          s.classList.add('is-current');
+          if (dir) { s.classList.remove('enter-next', 'enter-prev'); void s.offsetWidth; s.classList.add(dir); }
+          cur = i;
+          document.body.classList.toggle('at-end', i === last);
+          prevBtn.disabled = i === 0;
+          nextBtn.textContent = i === 0 ? '시작하기' : i === last ? '처음으로' : '다음';
+          count.textContent = i === 0 ? '' : i + ' / ' + last;
+          bar.style.transform = 'scaleX(' + (i / last) + ')';
+          status.textContent = i === 0 ? titleOf(s) : i + ' / ' + last + ', ' + titleOf(s);
+          tocLinks.forEach((link, k) => link && link.setAttribute('aria-current', String(k === i)));
+          document.dispatchEvent(new CustomEvent('od:screen', { detail: { index: i, screen: s } }));
+        }
+        if (target) target.scrollIntoView({ block: 'start' });
+        else scroller.scrollTo(0, 0);
+      }
+
+      function go(i) {
+        i = Math.min(Math.max(i, 0), last);
+        if (i === cur) return;
+        const url = i === 0 ? location.pathname + location.search : '#' + screens[i].id;
+        history.pushState(null, '', url);
+        render(i);
+      }
+
+      prevBtn.addEventListener('click', () => go(cur - 1));
+      nextBtn.addEventListener('click', () => go(cur === last ? 0 : cur + 1));
+      const fromUrl = () => { const r = indexFor(location.hash); render(r.i, r.target); };
+      window.addEventListener('hashchange', fromUrl);
+      window.addEventListener('popstate', fromUrl);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.target.closest('input, select, textarea, [contenteditable="true"], .math-row')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+
+      // 좌우로 밀어서 넘기기 (가로로 스크롤되는 영역은 제외)
+      let sx = 0, sy = 0, skip = true;
+      main.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .math-row, .table-wrap, svg, input, details'));
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (skip) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 64 && Math.abs(dx) > 2 * Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      fromUrl();
+    })();
+  </script>
+  <script id="math-layout">
+    (function () {
+      let queued = false;
+      function markOverflow(row) {
+        row.classList.remove('math-pan');
+        row.removeAttribute('tabindex'); row.removeAttribute('aria-label');
+        if (row.nextElementSibling?.classList.contains('math-pan-hint')) row.nextElementSibling.remove();
+        if (row.scrollWidth > row.clientWidth + 2) {
+          row.classList.add('math-pan'); row.tabIndex = 0;
+          row.setAttribute('aria-label', '긴 수식. 좌우 화살표 또는 가로 밀기로 전체를 읽을 수 있어요.');
+          const hint = document.createElement('span'); hint.className = 'math-pan-hint';
+          hint.textContent = '가로로 밀어 전체 수식 읽기'; row.after(hint);
+        }
+      }
+      function layout() {
+        queued = false;
+        document.querySelectorAll('main .katex, .sums .katex').forEach((math) => {
+          if (!math.getClientRects().length) return;
+          const tex = math.querySelector('annotation')?.textContent || '';
+          const display = math.parentElement.classList.contains('katex-display');
+          let row = math.closest('.math-row');
+          const container = math.closest('p, li, .part, [data-source-field], [data-subpart], .layer, .sum');
+          const width = container?.clientWidth || 0;
+          // Each matrix receives its own line; long inline equations become blocks.
+          if (!row && (display || /\\begin\{(?:bmatrix|pmatrix|matrix|aligned|array)\}/.test(tex) || (width > 0 && math.getBoundingClientRect().width > width - 8))) {
+            row = document.createElement('span');
+            row.className = 'math-row';
+            const autoWrapper = math.parentElement.tagName === 'SPAN' && math.parentElement.childNodes.length === 1;
+            const target = display || autoWrapper ? math.parentElement : math;
+            target.before(row); row.appendChild(target);
+            if (!display) math.classList.add('math-block');
+            // Keep sentence punctuation beside the last formula instead of orphaning it.
+            const tail = row.nextSibling;
+            if (tail?.nodeType === Node.TEXT_NODE) {
+              const match = tail.textContent.match(/^([.,;:]+["”]?)/);
+              if (match) {
+                const punctuation = document.createElement('span'); punctuation.className = 'math-punctuation';
+                punctuation.textContent = match[1]; math.appendChild(punctuation);
+                tail.textContent = tail.textContent.slice(match[1].length);
+              }
+            }
+          }
+          if (!row) return;
+          math.style.fontSize = '';
+          row.classList.remove('math-pan');
+          row.removeAttribute('tabindex'); row.removeAttribute('aria-label');
+          if (row.nextElementSibling?.classList.contains('math-pan-hint')) row.nextElementSibling.remove();
+          const available = row.clientWidth - 8;
+          if (available <= 0) return;
+          const bases = Array.from(math.querySelectorAll('.katex-html > .base'));
+          const widest = Math.max(0, ...bases.map((el) => el.getBoundingClientRect().width));
+          // Relations already split KaTeX's base groups, allowing natural line breaks.
+          // Reduce only unbreakable content, by at most 15%; retain readable body size.
+          if (widest > available) math.style.fontSize = (1.21 * Math.max(.85, available / widest)) + 'em';
+          markOverflow(row);
+        });
+        // Font-size changes and wrapping need one completed frame before final ink bounds.
+        requestAnimationFrame(() => document.querySelectorAll('.math-row').forEach((row) => {
+          if (row.getClientRects().length) markOverflow(row);
+        }));
+      }
+      function schedule() { if (!queued) { queued = true; requestAnimationFrame(layout); } }
+      window.mlLayoutMath = schedule;
+      document.addEventListener('od:screen', schedule);
+      new ResizeObserver(schedule).observe(document.querySelector('.content'));
+      new ResizeObserver(schedule).observe(document.querySelector('#panel-right .panel-inner'));
+      new MutationObserver(schedule).observe(document.querySelector('.sums'), {subtree:true, attributes:true, attributeFilter:['hidden']});
+      document.fonts.ready.then(schedule);
+      schedule();
+    })();
+  </script>
+</body>
+</html>
