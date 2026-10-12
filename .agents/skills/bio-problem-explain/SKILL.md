@@ -17,7 +17,7 @@ description: 생명과학 복습노트의 기존 복습문제 HTML로 문제 단
 - `REPO` = 저장소 루트
 - `RUN` = `<scratchpad>/bio-problem-explain/<range>/` (scratchpad가 없으면 `/tmp/bio-problem-explain/<range>/`). extract는 비어 있는 RUN만 받으므로 같은 range를 다시 돌릴 때는 `<range>-2/`처럼 새 폴더를 쓴다.
 - 셸 상태는 Bash 호출 사이에 이어지지 않는다. 아래 셸 명령의 `$SKILL`, `$RUN`, `$REPO`는 실행할 때마다 실제 절대 경로로 바꿔 쓰거나, 같은 Bash 호출 맨 앞에 세미콜론으로 먼저 설정한다(`SKILL=…; RUN=…; REPO=…; python3 "$SKILL/scripts/…" …`). `RUN=… python3 …`처럼 같은 명령 앞에 붙이는 형식은 쓰지 않는다. 셸이 인자의 `"$RUN"`을 그 설정보다 먼저 펼쳐 빈 경로가 되기 때문이다. `cd`는 쓰지 않고 파일도 절대 경로로 넘긴다.
-- 장 번호 `N`은 `강의노트/N장 *.pdf`, `23, 24 소스/N강 합본.pdf`(파일명에 `+`가 섞여 있다), `교과서/생명과학_기초와_응용_2판/0N장_*.pdf`(두 자리), `웹과제/N장/`에서 같은 수를 쓴다.
+- 장 번호 `N`은 `강의노트/N장*.pdf`, `23, 24 소스/N강 합본.pdf`(파일명에 `+`가 섞여 있다), `교과서/생명과학_기초와_응용_2판/0N장_*.pdf`(두 자리), `웹과제/N장/`에서 같은 수를 쓴다.
 
 ## 대상과 보존
 
@@ -39,13 +39,13 @@ description: 생명과학 복습노트의 기존 복습문제 HTML로 문제 단
 - 기출 합본: `23, 24 소스/N강 합본.pdf` (카드의 `data-source="기출 N강 k"`가 가리키는 쪽)
 - 웹과제: `웹과제/N장/questions.json` (응시한 장만 있다)
 - 정리노트: `복습노트/<range>/정리노트_<range>_<slug>.html`
-- 팩 검토 기록: `복습노트/<range>/.pack/key-check.md`(정답 대조), `복습노트/<range>/.pack/question-audit.md`(문항 감사)
+- 팩 검토 기록: `복습노트/<range>/.pack/key-check.md`(정답 대조), `복습노트/<range>/.pack/question-audit.md`(문항 감사), `복습노트/<range>/.pack/variants.md`(생성 변형 설계). key-check.md·question-audit.md는 일부 팩(0929·1006·1008)에만 있다. 없으면 카드 정답과 variants.md의 `의도한 정답과 이유` 열로 대조하고 evidence에 "key-check 없음"을 적는다. 파일이 없다는 것만으로는 disputed가 아니다.
 - STT(`STT/MMDD 생명.md`)는 필요한 경우 보조로만 쓴다. 수업 밖 보충은 표시한다.
 
 ## 저작과 독립 검산 분담
 
 - 저작: 문항 10개당 에이전트 1명을 **한 메시지에서 병렬로** 띄운다. 모델은 opus, `lite`이면 sonnet이다. 각 에이전트에게 자기 문항 ID, `source.json` 경로, [저작 규칙](references/authoring.md), 위 참조 자료를 준다. 서브에이전트가 없으면 같은 묶음을 차례로 직접 쓴다.
-- 독립 검산: 저작 에이전트와 **별도인** 에이전트 1명이 맡는다. 이 에이전트에게는 카드의 정답·풀이·설명 조각을 주지 않고 문항(지문·보기·그림)과 정리노트·교과서·강의노트만 준다. 다시 푼 답을 컨트롤러가 카드 정답과 `.pack/key-check.md`에 대조한다. 기준은 [검토 기록](references/verification.md)의 independent 항목이다.
+- 독립 검산: 저작 에이전트와 **별도인** 에이전트 1명이 맡는다. 이 에이전트에게는 카드의 정답·풀이·설명 조각을 주지 않고 문항(지문·보기·그림)과 정리노트·교과서·강의노트만 준다. 다시 푼 답을 컨트롤러가 카드 정답과 `.pack/key-check.md`(없으면 `.pack/variants.md`의 `의도한 정답과 이유` 열)에 대조한다. 기준은 [검토 기록](references/verification.md)의 independent 항목이다.
 
 ## 실행
 
@@ -57,7 +57,7 @@ description: 생명과학 복습노트의 기존 복습문제 HTML로 문제 단
    SKILL=…; REPO=…; RUN=…; python3 "$SKILL/scripts/mpe_cli.py" extract --repo "$REPO" --target 1008 --run "$RUN"
    ```
 
-2. 대상 디렉터리의 `source.json`을 읽는다. 문항 ID·전체 문제·소문항·보기·원문·그림·참고 풀이를 확인한다. 카드의 출처(기출 합본 쪽, 웹과제 questions.json 항목), 교과서·강의노트의 해당 장, 관련 정리노트를 필요한 범위에서 실제로 읽고 원 페이지와 대조한다. `.pack/key-check.md`와 `.pack/question-audit.md`에서 그 문항의 정답 대조·보류 기록을 확인한다. STT는 필요한 경우 보조로 사용한다. 수업 밖 보충은 표시한다. `source.json`을 수동 수정하면 재추출 검사가 거부한다.
+2. 대상 디렉터리의 `source.json`을 읽는다. 문항 ID·전체 문제·소문항·보기·원문·그림·참고 풀이를 확인한다. 카드의 출처(기출 합본 쪽, 웹과제 questions.json 항목), 교과서·강의노트의 해당 장, 관련 정리노트를 필요한 범위에서 실제로 읽고 원 페이지와 대조한다. `.pack/key-check.md`와 `.pack/question-audit.md`에서 그 문항의 정답 대조·보류 기록을 확인한다(없는 팩이면 건너뛴다). `data-source="생성 변형 …"` 카드는 `.pack/variants.md`에서 같은 id 행(근거 토픽, 형태 열의 교재 쪽, 의도한 정답과 이유)을 읽는다. STT는 필요한 경우 보조로 사용한다. 수업 밖 보충은 표시한다. `source.json`을 수동 수정하면 재추출 검사가 거부한다.
 3. [저작 규칙](references/authoring.md)을 읽고 `explanations/pN.html`을 작성한다(위 분담대로 병렬 저작). 일곱 직계 구역 `understand → recall → start → solve → verify → pitfall → retry`, 모든 소문항의 solve/verify 표지, 펼친 답과 우측 요약이 필요하다. recall은 문제의 어떤 단서에서 개념을 떠올렸는지, 정의·원리·조건·선택 이유를 연결한다. solve는 보기마다 판정과 근거 개념을 쓴다. CLI는 설명을 자동 저작하지 않는다.
 4. 정답을 보지 않은 별도 에이전트의 재풀이, 교과서 쪽 대조, 교배표 재계산 등으로 답을 확인하고 `evidence/`에 근거를 보관한다. 원문 오타·복수 정답·답안지와 기출 합본·웹과제·`.pack/key-check.md`의 충돌은 몰래 수정하거나 정상 답으로 승인하지 않고 disputed로 남긴다.
 5. 조립과 기계 검사를 실행한다. build는 새 stage를 만들고 검토 상태를 모두 `not_run`으로 초기화한다.
