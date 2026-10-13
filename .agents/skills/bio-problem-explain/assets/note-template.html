@@ -316,17 +316,71 @@
     }
     .review-choice:hover { border-color:var(--accent); }
     .review-choice:focus-visible, .review-reset:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+    /* bio-review-pack review-interaction.css에서 복사 — test_choice_feedback_copied_from_review_pack이 어긋남을 잡는다 */
     .review-choice[data-result="correct"], .review-choice[data-result="intended"] { border:3px solid var(--accent); }
-    .review-choice[data-result="incorrect"] { border:3px solid var(--danger); }
-    .review-choice[aria-pressed="true"][data-result=""] { border:3px solid var(--ink-2); }
-    .review-badge { display:block; margin-top:6px; font-size:var(--fs-small); font-weight:700; color:var(--ink); }
-    .review-badge[hidden], .review-reset[hidden] { display:none; }
+    .review-choice[data-result="selected"] { border:3px solid var(--danger); }
+    .review-choice[data-result="uncertain"] { border:3px solid var(--ink-2); }
+    .review-choice-label { display:block; margin-top:6px; font-size:var(--fs-small); font-weight:700; color:var(--ink); }
+    .review-choice-label[hidden], .review-reset[hidden] { display:none; }
     .review-status { margin:var(--s3) 0; font-weight:650; }
     .review-status:empty { display:none; }
     .review-reset { min-height:44px; margin:var(--s2) 0 var(--s4); }
     .review-choice-content { padding:var(--s2) 0; }
     .review-choice-content > :first-child { margin-top:0; }
     .review-choice-content > :last-child { margin-bottom:0; }
+    /* 보기 판정 알림: bio-review-pack review-interaction.css에서 복사 */
+    .review-feedback {
+      position:fixed; top:calc(env(safe-area-inset-top) + 72px); left:50%; z-index:100;
+      transform:translateX(-50%); width:max-content; max-width:calc(100vw - 32px);
+      display:flex; align-items:center; gap:12px; padding:10px 16px;
+      border:2px solid var(--line); border-radius:12px; background:var(--bg);
+      color:var(--ink); font-weight:700; pointer-events:none;
+      animation:review-feedback-in 180ms ease-out both;
+    }
+    .review-feedback[data-result="correct"] { border-color:var(--accent); }
+    .review-feedback[data-result="incorrect"] { border-color:var(--danger); }
+    .review-feedback-icon { position:relative; flex:none; width:20px; height:20px; }
+    .review-feedback[data-result="correct"] .review-feedback-icon {
+      border-radius:50%; background:var(--accent); transform:scale(.45);
+      animation:review-pop 350ms ease-out both;
+    }
+    .review-feedback[data-result="correct"] .review-feedback-icon::before,
+    .review-feedback[data-result="correct"] .review-feedback-icon::after {
+      content:""; position:absolute; left:8px; top:8px; width:4px; height:4px;
+      border-radius:50%; background:var(--accent);
+      box-shadow:0 -16px var(--accent), 16px 0 var(--accent), 0 16px var(--accent), -16px 0 var(--accent);
+      animation:review-burst 650ms ease-out both;
+    }
+    .review-feedback[data-result="correct"] .review-feedback-icon::after {
+      rotate:45deg; animation-delay:80ms;
+    }
+    .review-feedback[data-result="incorrect"] .review-feedback-icon {
+      animation:review-shake 320ms ease-in-out;
+    }
+    .review-feedback[data-result="incorrect"] .review-feedback-icon::before,
+    .review-feedback[data-result="incorrect"] .review-feedback-icon::after {
+      content:""; position:absolute; left:9px; top:0; width:3px; height:20px;
+      border-radius:2px; background:var(--danger); rotate:45deg;
+    }
+    .review-feedback[data-result="incorrect"] .review-feedback-icon::after { rotate:-45deg; }
+    @keyframes review-feedback-in {
+      from { opacity:0; translate:0 -8px; } to { opacity:1; translate:0 0; }
+    }
+    @keyframes review-pop {
+      from { transform:scale(.35); opacity:.5; } to { transform:scale(.65); opacity:1; }
+    }
+    @keyframes review-shake {
+      0%,100% { translate:0; } 25%,75% { translate:-5px; } 50% { translate:5px; }
+    }
+    @keyframes review-burst {
+      from { opacity:1; scale:.45; } to { opacity:0; scale:1.5; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .review-feedback, .review-feedback-icon, .review-feedback-icon::before,
+      .review-feedback-icon::after { animation:none !important; }
+      .review-feedback[data-result="correct"] .review-feedback-icon::before,
+      .review-feedback[data-result="correct"] .review-feedback-icon::after { display:none; }
+    }
 
     /* 넓은 화면: 본문 옆에 붙는 패널 */
     @media (min-width: 1024px) {
@@ -796,7 +850,7 @@
           probEmpty.hidden = Boolean(curId && panes[curId]);
           showTab(wide ? tab : 'summary', false);
         }
-        // ---------- 보기 클릭: 판정 표시와 해설 판정 문단으로 이동 (선택은 메모리에만) ----------
+        // ---------- 보기 클릭: 복습노트와 같은 판정·알림·스크롤, 넓은 화면은 해설 판정 문단으로 이동 (선택은 메모리에만) ----------
         let model = {};
         try { model = JSON.parse((document.getElementById('explain-choice-model') || {}).textContent || '{}') || {}; } catch (e) { model = {}; }
         const scroller = document.querySelector('.content');
@@ -804,26 +858,80 @@
         const ui = {};
         let targetTimer = 0;
         const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        // 판정 알림과 보기 스크롤: bio-review-pack review-interaction.js에서 복사 (root→document, win→window)
+        function scrollAnswerIntoView(scroller, selectedLi, answerLi, selectedButton, answerButton) {
+            if (!scroller || !selectedLi.getClientRects().length) return;
+            const viewport = scroller.getBoundingClientRect();
+            const height = scroller.clientHeight;
+            const margin = 16;
+            const span = (a, b) => {
+              const x = a.getBoundingClientRect(), y = b.getBoundingClientRect();
+              return {top:Math.min(x.top, y.top), bottom:Math.max(x.bottom, y.bottom)};
+            };
+            let target = span(selectedLi, answerLi);
+            if (target.bottom - target.top > height - 2 * margin)
+              target = span(selectedButton, answerButton);
+            if (target.bottom - target.top > height - 2 * margin)
+              target = span(selectedButton, selectedButton);
+            scroller.scrollTop += (target.top + target.bottom - viewport.top - viewport.bottom) / 2;
+          }
+  
+        let feedback = null;
+        let feedbackTimer = null;
+        let feedbackOwner = null;
+        function clearFeedback(owner = null) {
+          if (owner !== null && owner !== feedbackOwner) return;
+          if (feedbackTimer !== null) window.clearTimeout(feedbackTimer);
+          feedbackTimer = null;
+          if (feedback) feedback.remove();
+          feedback = null;
+          feedbackOwner = null;
+        }
+        function showFeedback(result, id) {
+          clearFeedback();
+          if (result !== 'correct' && result !== 'incorrect') return;
+          feedback = document.createElement('div');
+          feedback.className = 'review-feedback';
+          feedback.dataset.reviewFeedback = '';
+          feedback.dataset.result = result;
+          feedback.setAttribute('aria-hidden', 'true');
+          const icon = document.createElement('span');
+          icon.className = 'review-feedback-icon';
+          const text = document.createElement('span');
+          text.className = 'review-feedback-text';
+          text.textContent = result === 'correct' ? '정답이에요' : '다시 확인해요';
+          feedback.append(icon, text);
+          document.body.append(feedback);
+          feedbackOwner = id;
+          feedbackTimer = window.setTimeout(clearFeedback, 1100);
+        }
+        const grade = (m, pick) => (m.mode === 'ambiguous' ? 'ambiguous' : pick === m.answer ? 'correct' : 'incorrect');
         function paint(id) {
+          // 문구와 data-result 규칙은 review-interaction.js paint()와 같다
           const { m, status, reset } = ui[id];
           const pick = picks.get(id);
-          const ambiguous = m.mode === 'ambiguous';
+          const answered = pick !== undefined;
+          const result = answered ? grade(m, pick) : '';
+          reset.hidden = !answered;
+          status.textContent = !answered ? '' : result === 'ambiguous'
+            ? '단일 정답 판정 주의'
+            : result === 'correct' ? '정답이에요.' : '정답이 아니에요. 보기별 이유를 확인해 보세요.';
+          status.dataset.result = result;
           panes[id].querySelectorAll('.review-choice').forEach((b) => {
             const cid = b.dataset.choiceId;
-            const mine = pick === cid;
-            const answer = pick !== undefined && cid === m.answer;
-            b.dataset.result = answer ? (ambiguous ? 'intended' : 'correct') : mine && !ambiguous ? 'incorrect' : '';
-            b.setAttribute('aria-pressed', String(mine));
-            const labels = [];
-            if (mine) labels.push('내 선택');
-            if (answer) labels.push(ambiguous ? '출제 의도상 답' : '정답');
-            const badge = b.querySelector('.review-badge');
-            badge.textContent = labels.join(' · ');
-            badge.hidden = !labels.length;
+            if (answered) b.removeAttribute('aria-pressed');
+            else b.setAttribute('aria-pressed', 'false');
+            b.dataset.result = !answered ? '' : cid === m.answer
+              ? (m.mode === 'ambiguous' ? 'intended' : 'correct')
+              : cid === pick ? (m.mode === 'ambiguous' ? 'uncertain' : 'selected') : '';
+            const badge = b.querySelector('.review-choice-label');
+            badge.hidden = !answered;
+            badge.textContent = !answered ? '' : [
+              cid === pick ? '내 선택' : '',
+              cid === m.answer ? (m.mode === 'ambiguous' ? '출제 의도상 답' : '정답')
+                : m.mode === 'single' ? '정답 아님' : ''
+            ].filter(Boolean).join(' · ');
           });
-          status.textContent = pick === undefined ? '' : ambiguous ? '출제 의도상 답을 표시했어요.'
-            : pick === m.answer ? '정답이에요.' : '정답이 아니에요. 해설에서 판정 이유를 확인해요.';
-          reset.hidden = pick === undefined;
         }
         function jump(id, cid) {
           const solve = document.getElementById(id).querySelector('[data-explanation="solve"]');
@@ -856,22 +964,44 @@
             content.className = 'review-choice-content';
             while (li.firstChild) content.appendChild(li.firstChild);
             const badge = document.createElement('span');
-            badge.className = 'review-badge';
+            badge.className = 'review-choice-label';
             badge.hidden = true;
             btn.append(content, badge);
             li.appendChild(btn);
-            btn.addEventListener('click', () => { picks.set(id, m.options[i]); paint(id); jump(id, m.options[i]); });
+            btn.addEventListener('click', () => {
+              // 첫 선택에서 잠그고, 다시 고르려면 "다시 풀기"
+              if (picks.has(id)) return;
+              const cid = m.options[i];
+              picks.set(id, cid);
+              paint(id);
+              showFeedback(grade(m, cid), id);
+              const at = m.options.indexOf(m.answer);
+              requestAnimationFrame(() => {
+                if (!panes[id].getClientRects().length) return;
+                scrollAnswerIntoView(panes[id].closest('.panel-inner') || scroller,
+                  items[i], items[at], btn, items[at].querySelector('.review-choice'));
+                if (wideMq.matches) jump(id, cid);
+              });
+            });
           });
           const status = document.createElement('p');
           status.className = 'review-status';
+          status.setAttribute('role', 'status');
           status.setAttribute('aria-live', 'polite');
+          status.dataset.result = '';
           const reset = document.createElement('button');
           reset.type = 'button';
           reset.className = 'review-reset text-btn';
-          reset.textContent = '다시 고르기';
+          reset.textContent = '다시 풀기';
           reset.hidden = true;
-          reset.addEventListener('click', () => { picks.delete(id); paint(id); });
-          list.after(status, reset);
+          reset.addEventListener('click', () => {
+            clearFeedback(id);
+            picks.delete(id);
+            paint(id);
+            items[0].querySelector('.review-choice').focus();
+          });
+          list.before(status);
+          list.after(reset);
           ui[id] = { m, status, reset };
         });
 

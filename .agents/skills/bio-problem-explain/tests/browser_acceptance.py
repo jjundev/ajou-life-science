@@ -69,29 +69,53 @@ with sync_playwright() as pw:
    assert page.locator('#p3 [data-explanation="understand"]').is_visible()
    pane=page.locator('[data-problem-for="p3"]')
    assert pane.locator('.review-choice').count()==5
-   assert pane.locator('.review-badge:visible').count()==0
+   assert pane.locator('.review-choice-label:visible').count()==0
+   pane.evaluate("e=>{const l=e.querySelector('.choices');for(const w of ['before','after']){const d=document.createElement('div');d.className='test-spacer';d.style.height='1400px';l[w](d)}}")
    pane.locator('.review-choice[data-choice-id="5"]').click();page.wait_for_timeout(100)
-   assert pane.locator('[data-choice-id="5"]').get_attribute('data-result')=='incorrect'
+   fb=page.locator('.review-feedback[data-result="incorrect"]')
+   assert fb.is_visible() and fb.inner_text()=='다시 확인해요'
+   assert pane.locator('[data-choice-id="5"]').get_attribute('data-result')=='selected'
    assert pane.locator('[data-choice-id="3"]').get_attribute('data-result')=='correct'
-   assert '정답' in pane.locator('[data-choice-id="3"] .review-badge').inner_text()
-   assert '내 선택' in pane.locator('[data-choice-id="5"] .review-badge').inner_text()
-   assert pane.locator('.review-status').inner_text()=='정답이 아니에요. 해설에서 판정 이유를 확인해요.'
+   assert pane.locator('[data-choice-id="3"] .review-choice-label').inner_text()=='정답'
+   assert pane.locator('[data-choice-id="1"] .review-choice-label').inner_text()=='정답 아님'
+   assert pane.locator('[data-choice-id="5"] .review-choice-label').inner_text()=='내 선택 · 정답 아님'
+   assert pane.locator('.review-status').inner_text()=='정답이 아니에요. 보기별 이유를 확인해 보세요.'
+   assert pane.locator('.review-status ~ .choices').count()==1
+   centered=pane.evaluate("""e=>{const s=e.closest('.panel-inner')||document.querySelector('.content');
+     const a=e.querySelector('[data-choice-id="5"]').closest('li').getBoundingClientRect(),b=e.querySelector('[data-choice-id="3"]').closest('li').getBoundingClientRect(),v=s.getBoundingClientRect();
+     return Math.abs((Math.min(a.top,b.top)+Math.max(a.bottom,b.bottom))/2-(v.top+v.bottom)/2)<24}""")
+   assert centered
+   pane.locator('.review-choice[data-choice-id="4"]').click();page.wait_for_timeout(50)
+   assert pane.locator('[data-choice-id="4"]').get_attribute('data-result')=='' and pane.locator('[data-choice-id="5"]').get_attribute('data-result')=='selected'
    target=page.locator('#p3 [data-explanation="solve"] p.is-target')
-   assert target.count()==1 and target.inner_text().startswith('(5)')
-   assert target.evaluate('e=>{const r=e.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight}')
-   page.wait_for_timeout(1700);assert target.count()==0
+   if width>=1024:
+    assert target.count()==1 and target.inner_text().startswith('(5)')
+    assert target.evaluate('e=>{const r=e.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight}')
+   else: assert target.count()==0
+   page.wait_for_timeout(1700);assert target.count()==0 and fb.count()==0
    page.set_viewport_size({'width':900 if width>=1024 else 1280,'height':height});page.wait_for_timeout(150)
-   assert page.locator('[data-problem-for="p3"] [data-choice-id="5"]').get_attribute('data-result')=='incorrect'
+   assert page.locator('[data-problem-for="p3"] [data-choice-id="5"]').get_attribute('data-result')=='selected'
    page.set_viewport_size({'width':width,'height':height});page.wait_for_timeout(150)
    page.locator('[data-problem-for="p3"] .review-reset').click()
    assert page.locator('[data-problem-for="p3"] [data-result="correct"]').count()==0
+   page.locator('[data-problem-for="p3"] .review-choice[data-choice-id="5"]').click()
+   assert page.locator('[data-problem-for="p3"] .review-reset').inner_text()=='다시 풀기'
+   page.locator('[data-problem-for="p3"] .review-reset').click()
+   assert page.locator('.review-feedback').count()==0
+   page.locator('[data-problem-for="p3"] .review-choice[data-choice-id="3"]').click();page.wait_for_timeout(50)
+   assert page.locator('.review-feedback[data-result="correct"]').inner_text()=='정답이에요'
+   assert page.locator('[data-problem-for="p3"] .review-status').inner_text()=='정답이에요.'
+   page.locator('[data-problem-for="p3"] .review-reset').click()
+   page.evaluate("document.querySelectorAll('.test-spacer').forEach(n=>n.remove())")
    page.goto(url+'#p4');page.wait_for_timeout(100)
    if width<1024:page.locator('#p4 .problem-toggle').click()
    p4=page.locator('[data-problem-for="p4"]');p4.locator('[data-choice-id="1"]').click();page.wait_for_timeout(100)
-   assert '출제 의도상 답' in p4.locator('[data-choice-id="2"] .review-badge').inner_text()
+   assert p4.locator('[data-choice-id="2"] .review-choice-label').inner_text()=='출제 의도상 답'
    assert p4.locator('[data-choice-id="2"]').get_attribute('data-result')=='intended'
-   assert p4.locator('.review-status').inner_text()=='출제 의도상 답을 표시했어요.'
-   assert page.locator('#p4 [data-explanation="solve"] h4.is-target').count()==1
+   assert p4.locator('[data-choice-id="1"]').get_attribute('data-result')=='uncertain'
+   assert p4.locator('.review-status').inner_text()=='단일 정답 판정 주의'
+   assert page.locator('.review-feedback').count()==0
+   assert page.locator('#p4 [data-explanation="solve"] h4.is-target').count()==(1 if width>=1024 else 0)
    page.goto(url+'#p1');page.wait_for_timeout(100)
    assert page.locator('[data-problem-for="p1"] .review-choice').count()==0
    if width>=1024:
