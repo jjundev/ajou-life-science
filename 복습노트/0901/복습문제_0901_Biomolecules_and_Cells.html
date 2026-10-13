@@ -1187,18 +1187,20 @@ body:not(.at-end) .review-export-bar { display:none; }
       try { return await dir.getDirectoryHandle(name, create ? {create:true} : undefined); }
       catch (error) { if (error && error.name === 'NotFoundError') return null; throw error; }
     };
+    const inAssets = async dir => child(await child(dir, '.assets', true), '풀이기록', true);
     if (root.name === '풀이기록') return root;
+    if (root.name === '.assets') return child(root, '풀이기록', true);
     if (root.name === '복습노트') {
       const day = range ? await child(root, range, false) : null;
-      return day ? child(day, '풀이기록', true) : null;
+      return day ? inAssets(day) : null;
     }
     try { await root.getFileHandle(documentId); }
     catch (error) { if (error && error.name === 'NotFoundError') return null; throw error; }
-    return child(root, '풀이기록', true);
+    return inAssets(root);
   }
   const isCancel = error => !!error && (error.name === 'AbortError' || error.name === 'NotAllowedError');
   // The first export asks for the folder once and remembers it (IndexedDB), so
-  // later exports write straight into <날짜>/풀이기록 without a picker.
+  // later exports write straight into <날짜>/.assets/풀이기록 without a picker.
   async function saveExport(win, text, filename, meta) {
     meta = meta || {};
     if (typeof win.showDirectoryPicker === 'function') {
