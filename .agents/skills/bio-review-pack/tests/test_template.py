@@ -26,5 +26,18 @@ class TestNoteTemplate(unittest.TestCase):
                 self.assertIn(sel, self.text)
 
 
+class TestScrollbar(unittest.TestCase):
+    def test_themed_scrollbar(self):
+        for name in ("note-template.html", "review-template.html"):
+            text = (SKILL / "assets" / name).read_text(encoding="utf-8")
+            with self.subTest(template=name):
+                self.assertEqual(len(re.findall(r"--scroll: #[0-9a-f]{6}; --scroll-hover: #[0-9a-f]{6};", text)), 3)
+                for s in ("--scroll: #c9d0db; --scroll-hover: #9aa3b2;", "--scroll: #3f414b; --scroll-hover: #5b5e6a;",
+                          ".panel-inner::-webkit-scrollbar-thumb { background: var(--scroll);",
+                          ".panel-inner::-webkit-scrollbar-thumb:hover { background: var(--scroll-hover); }",
+                          ".content, .panel-inner { scrollbar-width: thin; scrollbar-color: var(--scroll) transparent; }"):
+                    self.assertIn(s, text)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -29,11 +29,21 @@ def test_legacy_statement_rendered_once(tmp_path):
     assert not list(parse(text).find_all(lambda n:n.tag=='details'))
     assert 'https://cdn.' not in text
 
-def test_template_bytes_match_pinned_source():
+def test_template_bytes_match_provenance():
     template=Path(__file__).resolve().parents[1]/'assets/note-template.html'
     provenance=json.loads((template.parent/'port-provenance.json').read_text())
     entry=next(e for e in provenance['files'] if e['destination']=='assets/note-template.html')
-    assert hashlib.sha256(template.read_bytes()).hexdigest()==entry['source_sha256']==entry['destination_sha256']
+    assert hashlib.sha256(template.read_bytes()).hexdigest()==entry['destination_sha256']
+    assert entry['source_path']=='assets/note-template.html' and entry['change_reason']=='biology course adaptation'
+
+def test_template_scrollbar_uses_theme_tokens():
+    text=(Path(__file__).resolve().parents[1]/'assets/note-template.html').read_text()
+    assert len(re.findall(r'--scroll: #[0-9a-f]{6}; --scroll-hover: #[0-9a-f]{6};',text))==3
+    for s in ('--scroll: #c9d0db; --scroll-hover: #9aa3b2;','--scroll: #3f414b; --scroll-hover: #5b5e6a;',
+              '.panel-inner::-webkit-scrollbar-thumb { background: var(--scroll);',
+              '.panel-inner::-webkit-scrollbar-thumb:hover { background: var(--scroll-hover); }',
+              '.content, .panel-inner { scrollbar-width: thin; scrollbar-color: var(--scroll) transparent; }'):
+        assert s in text,s
 
 def test_repeated_svg_ids_scoped(tmp_path):
     pack,fragments=make(tmp_path)
