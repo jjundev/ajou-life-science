@@ -206,6 +206,68 @@ with sync_playwright() as pw:
     page.goto(url+'#p3');page.reload();page.wait_for_timeout(150)
     assert page.locator('#panel-right').is_hidden() and page.locator('#panel-prob').is_visible()
     assert page.locator('#tab-problem').get_attribute('aria-selected')=='true'
+    box=lambda s:page.locator(s).bounding_box()
+    def drag(a,b,steps=8):page.mouse.move(*a);page.mouse.down();page.mouse.move(*b,steps=steps);page.mouse.up();page.wait_for_timeout(150)
+    def headgap():T,G=box('#panel-prob .panel-tabs'),box('#panel-prob .prob-dock');return ((T['x']+T['width']+G['x'])/2,T['y']+T['height']/2)
+    page.evaluate('localStorage.clear()');page.goto(url+'#p3');page.reload();page.wait_for_timeout(150)
+    assert page.locator('#panel-prob [data-dock="left"]').get_attribute('aria-pressed')=='true'
+    # tab-no-drag: clicking a tab in the docked head does not undock
+    page.locator('#tab-original').click();assert page.locator('.layout').get_attribute('data-prob-dock')=='left';page.locator('#tab-problem').click()
+    # right: content | prob | summary, toggle sits before 요약, both open independently
+    page.locator('#panel-prob [data-dock="right"]').click();page.wait_for_timeout(150)
+    assert page.locator('.layout').get_attribute('data-prob-dock')=='right' and page.locator('#panel-prob [data-dock="right"]').get_attribute('aria-pressed')=='true'
+    assert box('#panel-prob')['x']>=box('.content')['x']+box('.content')['width']-1
+    assert abs(box('#panel-prob')['y']-box('.content')['y'])<=1 and page.evaluate('document.querySelector(".layout").scrollHeight<=document.querySelector(".layout").clientHeight+1')  # one row
+    assert page.evaluate("document.getElementById('toggle-prob').nextElementSibling.id")=='toggle-right'
+    w0=box('#panel-prob')['width'];h=page.locator('#panel-prob .panel-resize');h.focus();h.press('ArrowLeft');assert box('#panel-prob')['width']>w0;h.press('Home')  # right-docked handle sits on the left edge: ArrowLeft widens
+    page.locator('#toggle-right').click();page.wait_for_timeout(250)
+    assert box('#panel-prob')['x']+box('#panel-prob')['width']<=box('#panel-right')['x']+1
+    page.locator('#toggle-prob').click();assert page.locator('#panel-prob').is_hidden() and page.locator('#panel-right').is_visible()
+    page.locator('#toggle-prob').click();page.wait_for_timeout(150);assert page.locator('.layout').get_attribute('data-prob-dock')=='right'
+    # right-crowded: at 1024 the TOC steps aside first
+    page.set_viewport_size({'width':1024,'height':768});page.wait_for_timeout(250)
+    assert page.locator('#panel-prob').is_visible() and page.locator('#panel-right').is_visible() and page.locator('#panel-left').is_hidden()
+    assert page.evaluate('document.querySelector(".layout").scrollWidth<=innerWidth') and box('.content')['width']>=320
+    page.set_viewport_size({'width':1280,'height':height});page.wait_for_timeout(250);page.locator('#toggle-right').click();page.wait_for_timeout(250)
+    # float: fixed card, content grows, default geometry under the top bar
+    cw=box('.content')['width'];page.locator('#panel-prob [data-dock="float"]').click();page.wait_for_timeout(150)
+    assert page.locator('#panel-prob').evaluate('e=>getComputedStyle(e).position')=='fixed' and box('.content')['width']>cw
+    F=box('#panel-prob');top=box('.topbar');assert abs(F['width']-420)<=1 and F['y']>=top['y']+top['height']
+    assert page.evaluate("document.getElementById('toggle-prob').previousElementSibling.id")=='toggle-left'
+    # move by the grip, resize by the corner, both clamp
+    M=box('#panel-prob .float-move');drag((M['x']+M['width']/2,M['y']+M['height']/2),(M['x']+M['width']/2-200,M['y']+M['height']/2+100))
+    F2=box('#panel-prob');assert abs(F2['x']-(F['x']-200))<=1 and abs(F2['y']-(F['y']+100))<=1
+    R=box('#panel-prob .float-resize');drag((R['x']+R['width']/2,R['y']+R['height']/2),(R['x']-600,R['y']-600))
+    F3=box('#panel-prob');assert abs(F3['width']-280)<=1 and abs(F3['height']-200)<=1
+    page.locator('#panel-prob .float-move').focus();page.keyboard.press('ArrowRight');assert abs(box('#panel-prob')['x']-(F3['x']+16))<=1
+    # choice click still marks inside the floating panel
+    page.locator('[data-problem-for="p3"] .review-choice[data-choice-id="5"]').click();page.wait_for_timeout(100)
+    assert page.locator('[data-problem-for="p3"] [data-choice-id="5"]').get_attribute('data-result')
+    # reload keeps float + geometry
+    F4=box('#panel-prob');page.reload();page.wait_for_timeout(150)
+    assert page.locator('.layout').get_attribute('data-prob-dock')=='float' and abs(box('#panel-prob')['x']-F4['x'])<=1
+    # float-cross: narrow screen hides it, coming back restores it
+    page.set_viewport_size({'width':900,'height':height});page.wait_for_timeout(150)
+    assert page.locator('#panel-prob').is_hidden() and page.locator('#p3 .problem-toggle').count()==1
+    page.set_viewport_size({'width':1280,'height':height});page.wait_for_timeout(150)
+    assert page.locator('#panel-prob').is_visible() and abs(box('#panel-prob')['x']-F4['x'])<=1
+    # snap: dragging to the right edge shows the preview, dropping docks right
+    M=box('#panel-prob .float-move');page.mouse.move(M['x']+5,M['y']+5);page.mouse.down();page.mouse.move(1270,M['y']+5,steps=8)
+    assert page.locator('.dock-preview').is_visible();page.mouse.up();page.wait_for_timeout(150)
+    assert page.locator('.layout').get_attribute('data-prob-dock')=='right' and page.locator('.dock-preview').is_hidden()
+    # undock: dragging the docked head's empty gap 24px+ makes it float under the pointer
+    g=headgap();drag(g,(640,400))
+    assert page.locator('.layout').get_attribute('data-prob-dock')=='float';F5=box('#panel-prob')
+    assert F5['x']<=640<=F5['x']+F5['width'] and F5['y']<=400<=F5['y']+F5['height']
+    # float-clamp: a saved position from a bigger screen comes back inside
+    page.evaluate("localStorage.setItem('od-panels:explain:v2:prob',JSON.stringify({dock:'float',x:1500,y:-50,w:420,h:500}))")
+    page.set_viewport_size({'width':1100,'height':height});page.reload();page.wait_for_timeout(150)
+    F6=box('#panel-prob');top=box('.topbar');assert F6['x']>=0 and F6['x']+F6['width']<=1100 and F6['y']>=top['y']+top['height']
+    # bad-pref: unknown dock or broken JSON falls back to left
+    for v in ['{"dock":"top"}','{broken']:
+     page.evaluate(f"localStorage.setItem('od-panels:explain:v2:prob',{json.dumps(v)})");page.reload();page.wait_for_timeout(150)
+     assert page.locator('.layout').get_attribute('data-prob-dock')=='left'
+    page.set_viewport_size({'width':1280,'height':height});page.wait_for_timeout(150)
     assert not logs,logs
    results.append({'viewport':[width,height],'theme':theme,'console_errors':logs,'failed_resources':failed,'external_requests':external,'overflow':False,'interaction':'TOC, next/prev, summary, close, resize, theme pass'})
    page.close()
