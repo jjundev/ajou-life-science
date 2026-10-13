@@ -7,7 +7,19 @@
 3. 스크립트 맨 위 주제 훅 네 개: `topic()`, `buildScene()`, `extraState()`, `extraVals()`
 4. 그 밖의 셸(상단 바, 패널, 캔버스, 재생 바, 「꼭 기억해요」, 공통 메서드)은 고치지 않아요. 고쳐야 하면 템플릿을 고치고 테스트를 돌려요.
 
-다 쓰면 `node scripts/check.cjs <Main.dc.html>`이 `ok`를 내야 해요.
+다 쓰면 `node scripts/check.cjs <Main.dc.html>`이 `ok`를 내야 해요. 오류 줄은 `코드:대상 — 예외 문장` 모양이에요.
+
+| 코드 | 뜻 |
+|---|---|
+| `SHELL_MISSING` | 셸 마크업 조각이 없어졌어요 |
+| `HOLE_SYNTAX` | 런타임이 못 읽는 구멍(`{{!x}}`, `{{a ? b : c}}`, `onClick="x{{f}}"`) |
+| `HOLE_UNKNOWN` | 없는 값(`{{is.cycle}}`처럼 모드 이름을 바꾼 뒤 남은 것, `{{s.titel}}` 같은 오타) |
+| `EVENT_UNSUPPORTED` / `HEX_IN_MARKUP` | 아래 마크업 규칙 위반 |
+| `TOPIC_INVALID` | `topic()` 데이터 누락·불일치: 모드 필드(`cam`, `fit`, `D`, `canvasLabel`), `STEPS[n].mode`가 없는 모드, `STEPS[n].f`가 재생 범위 밖, 모드별 `MISTAKES`, `PAL.light`/`PAL.dark` (단계 번호는 화면처럼 1부터) |
+| `RENDER_THROWS` | `renderVals()`가 예외 |
+| `DRAW_THROWS` | 장면 그리기 예외(모드별 `:a`, 단계 누른 뒤 `:step2`) |
+| `SCENE_EMPTY` / `SCENE_NAN` | 그린 것이 없음 / 좌표가 숫자가 아님(예: `cam.zoom` 빠짐) |
+| `TEMPLATE_LEFT` | `__TITLE__`, `__SOURCE__`, `DEMO`가 남음 |
 
 ## `topic()`
 

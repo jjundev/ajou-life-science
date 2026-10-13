@@ -731,7 +731,7 @@ class Component extends DCLogic {
       toggleTheme: () => this.setTheme(isDark ? 'light' : 'dark'),
       canvasRef: this._canvasRef, canvasCls: m.rotatable ? '' : 'is-fixed',
       hasModes: T.MODES.length > 1, is: is,
-      modes: T.MODES.map((d) => ({ label: d.label, pressed: d.key === st.mode ? 'true' : 'false', pick: () => this.setMode(d.key) })),
+      modes: T.MODES.map((d) => ({ label: d.label, pressed: d.key === st.mode ? 'true' : 'false', pick: () => { if (d.key !== this.state.mode) this.setMode(d.key); } })),
       leftCls: leftOn ? 'is-open' : '', rightCls: rightOn ? 'is-open' : '',
       leftExpanded: leftOn ? 'true' : 'false', rightExpanded: rightOn ? 'true' : 'false',
       scrimCls: (st.narrow && st.drawer) ? 'is-on' : '',

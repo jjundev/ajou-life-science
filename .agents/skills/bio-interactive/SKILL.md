@@ -68,7 +68,7 @@ SKILL=…; RUN=…; for n in 1 2; do mkdir -p "$RUN/$n" && cp "$SKILL/assets/tem
 ```bash
 SKILL=…; RUN=…; for n in 1 2; do echo "== $n"; node "$SKILL/scripts/check.cjs" "$RUN/$n/Main.dc.html"; done
 ```
-모두 `ok`여야 한다. 오류(`SHELL_MISSING`, `HOLE_UNKNOWN`, `HOLE_SYNTAX`, `EVENT_UNSUPPORTED`, `HEX_IN_MARKUP`, `RENDER_THROWS`, `DRAW_THROWS`, `SCENE_EMPTY`, `TEMPLATE_LEFT`)는 그 작성자에게 한 번 돌려보내 고친다. 그래도 남으면 그 주제는 「보류」.
+모두 `ok`여야 한다. 오류(`SHELL_MISSING`, `HOLE_UNKNOWN`, `HOLE_SYNTAX`, `EVENT_UNSUPPORTED`, `HEX_IN_MARKUP`, `TOPIC_INVALID`, `RENDER_THROWS`, `DRAW_THROWS`, `SCENE_EMPTY`, `SCENE_NAN`, `TEMPLATE_LEFT`)는 출력 줄 그대로(예외 문장이 `—` 뒤에 붙어 있다) 그 작성자에게 한 번 돌려보내 고친다. 그래도 남으면 그 주제는 「보류」.
 
 ### 5. 내용 검토 (별도 opus 에이전트, 주제마다 1명, 병렬)
 작성자가 아닌 새 에이전트에게 `Main.dc.html`, 브리프, 근거 자료를 주고 다음을 대조하게 한다.

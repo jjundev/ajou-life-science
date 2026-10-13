@@ -148,3 +148,14 @@ test('a scene error is logged once, not swallowed', (t) => {
   for (let k = 1; k <= 3; k++) c.tick(16 * k);
   assert.equal(err.mock.callCount(), 1);
 });
+
+test('picking the active mode keeps progress', () => {
+  const { c } = loadComponent(T);
+  c.setMode('b');
+  c.renderVals().onScrub({ target: { value: '50' } });
+  c.renderVals().modes[1].pick();
+  assert.equal(c.state.f, 5);
+  c.renderVals().modes[0].pick();
+  assert.equal(c.state.mode, 'a');
+  assert.equal(c.state.f, 0);
+});

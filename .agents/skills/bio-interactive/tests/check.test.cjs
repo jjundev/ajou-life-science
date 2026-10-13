@@ -21,7 +21,11 @@ function mutate(fn) {
   return p;
 }
 
-test('template passes with allowTemplate', () => assert.deepEqual(check(T, A), { ok: true, errors: [] }));
+test('template passes with allowTemplate', () => {
+  const r = check(T, A);
+  assert.deepEqual(r.errors, []);
+  assert.equal(r.ok, true);
+});
 
 test('template left as-is is rejected', () => {
   const r = check(T);
@@ -76,4 +80,44 @@ test('hole syntax the runtime cannot parse', () => {
   assert.ok(r2.errors.includes('HOLE_SYNTAX:isPlaying ? 1 : 2'), r2.errors.join());
   const r3 = check(mutate((s) => s.replace('onClick="{{zoomIn}}"', 'onClick="x{{zoomIn}}"')), A);
   assert.ok(r3.errors.includes('HOLE_SYNTAX:onClick'), r3.errors.join());
+});
+
+test('errors carry the exception message', () => {
+  const f = mutate((s) => s.replace(/buildScene\(mode, I, O\) \{/, '$& if (mode === "b") throw new Error("boom here");'));
+  const r = check(f, A);
+  assert.ok(r.errors.includes('DRAW_THROWS:b'));
+  assert.ok(r.details.some((d) => d.startsWith('DRAW_THROWS:b') && d.includes('boom here')), r.details.join());
+  const out = spawnSync('node', [path.join(SKILL, 'scripts', 'check.cjs'), f, '--allow-template'], { encoding: 'utf8' });
+  assert.match(out.stdout, /DRAW_THROWS:b .*boom here/);
+});
+
+test('a hole whose full path is undefined in every mode', () => {
+  const r = check(mutate((s) => s.replace('<sc-if value="{{is.b}}"', '<sc-if value="{{is.cycle}}"')), A);
+  assert.ok(r.errors.includes('HOLE_UNKNOWN:is.cycle'), r.errors.join());
+  const r2 = check(mutate((s) => s.replace('{{s.title}}', '{{s.titel}}')), A);
+  assert.ok(r2.errors.includes('HOLE_UNKNOWN:s.titel'), r2.errors.join());
+});
+
+test('step pointing at a missing mode or past fmax', () => {
+  const r = check(mutate((s) => s.replace("{ mode: 'b', f: 6,", "{ mode: 'c', f: 6,")), A);
+  assert.ok(r.errors.includes('TOPIC_INVALID:STEPS[2].mode'), r.errors.join());
+  const r2 = check(mutate((s) => s.replace("{ mode: 'b', f: 6,", "{ mode: 'b', f: 60,")), A);
+  assert.ok(r2.errors.includes('TOPIC_INVALID:STEPS[2].f'), r2.errors.join());
+});
+
+test('missing mistakes or light palette', () => {
+  const r = check(mutate((s) => s.replace("b: [{ title: '예시 문구'", "x: [{ title: '예시 문구'")), A);
+  assert.ok(r.errors.includes('TOPIC_INVALID:MISTAKES.b'), r.errors.join());
+  const r2 = check(mutate((s) => s.replace("light: { bg: '#ffffff', labelBg", "lite: { bg: '#ffffff', labelBg")), A);
+  assert.ok(r2.errors.includes('TOPIC_INVALID:PAL.light'), r2.errors.join());
+});
+
+test('a step that breaks the scene when picked', () => {
+  const r = check(mutate((s) => s.replace(/buildScene\(mode, I, O\) \{/, '$& if (this.state.step === 0) throw new Error("x");')), A);
+  assert.ok(r.errors.includes('DRAW_THROWS:step1'), r.errors.join());
+});
+
+test('NaN geometry is a blank scene', () => {
+  const r = check(mutate((s) => s.replace("cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [12.5, 5]", "cam: { yaw: 0, pitch: 0 }, fit: [12.5, 5]")), A);
+  assert.ok(r.errors.includes('SCENE_NAN:b'), r.errors.join());
 });
