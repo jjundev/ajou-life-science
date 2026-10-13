@@ -1741,10 +1741,18 @@
         if (kind === 'explain') return { left: pref.left ?? roomyMq.matches, prob: pref.prob ?? true, right: pref.right ?? false };
         return { left: pref.left ?? true, prob: false, right: pref.right ?? roomyMq.matches };
       }
-      // 본문이 최소 폭(320px)보다 좁아지면 목차 → 요약 → 문제 순으로 숨긴다. 방금 연 패널은 마지막까지 남긴다
+      // 본문이 최소 폭(320px)보다 좁아지면 먼저 직접 넓힌 패널(문제 → 요약)을 이번 화면에서만 줄이고,
+      // 그래도 모자라면 목차 → 요약 → 문제 순으로 숨긴다. 방금 연 패널은 마지막까지 남긴다
       function fit() {
         const order = ['left', 'right', 'prob'].filter((s) => s !== last).concat(last ? [last] : []);
         const room = () => document.documentElement.clientWidth - SIDES.reduce((w, s) => w + (layout.dataset[s] === 'open' ? panels[s].getBoundingClientRect().width : 0), 0);
+        applyWidths();
+        ['prob', 'right'].forEach((side) => {
+          const short = 320 - room();
+          if (short <= 0 || layout.dataset[side] !== 'open' || !layout.style.getPropertyValue(WIDTH[side].prop)) return;
+          const w = panels[side].getBoundingClientRect().width;
+          layout.style.setProperty(WIDTH[side].prop, Math.max(WIDTH[side].min, Math.round(w - short)) + 'px');
+        });
         for (const side of order) {
           if (room() >= 320) break;
           if (layout.dataset[side] === 'open' && SIDES.filter((s) => layout.dataset[s] === 'open').length > 1) layout.dataset[side] = 'closed';
