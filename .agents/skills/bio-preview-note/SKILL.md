@@ -67,7 +67,7 @@ description: 생명과학 다음 수업의 강의노트 범위(직전 복습노�
    EOF
    ```
    추출에 실패하면 PDF를 Read 도구로 직접 읽고 보고서에 적는다.
-2. 가장 최근 정리노트 MD에서 끊긴 지점을 읽는다(`pick`이 고른 정리노트와 같은 폴더의 `.md`).
+2. 가장 최근 정리노트 MD에서 끊긴 지점을 읽는다(`pick`이 고른 정리노트가 있는 폴더의 `.assets/` 안 `.md`; `.assets/`는 숨김 폴더라 Glob·Grep 도구가 건너뛰므로 Bash의 `ls`·`find`나 Python `pathlib`로 찾는다).
    ```bash
    grep -n "끊긴 지점" "<REPO>/복습노트/<폴더>/.assets/정리노트_<range>_<slug>.md"
    ```
