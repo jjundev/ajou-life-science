@@ -153,3 +153,8 @@ test('blank phase is missing', () => {
   const r = check(mutate((s) => s.replace("phase: '진행'", "phase: ' '")), A);
   assert.ok(r.errors.includes('TOPIC_INVALID:STEPS[2].phase'), r.details.join('\n'));
 });
+
+test('phase may be any named part of a nested label', () => {
+  const r = check(mutate((s) => s.replace("label: (f) => '진행 · '", "label: (f) => '첫 구간 · 진행 · '")), A);
+  assert.ok(!r.errors.some((e) => e.startsWith('STEP_OFF_PHASE')), r.details.join('\n'));
+});
