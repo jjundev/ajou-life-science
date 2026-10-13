@@ -73,11 +73,31 @@ def acceptance_pack(repo):
        '<pre><code>'+html.escape(code)+'</code></pre><ol><li>(a) 상태를 구하라</li><li>(b) 복잡도를 설명하라</li></ol>')
     card=text[text.index('<article'):text.index('</article>')+10]
     text=text.replace('</section>',card.replace('id="p1"','id="p2"').replace('1001 기출','1002 기출')+'</section>')
+    text=text.replace('</section>',choice_card('p3',3,5)+choice_card('p4',4,3)+'</section>')
+    model={'cards':{'p3':{'answer':'3','mode':'single','options':[{'id':str(i),'index':i-1} for i in range(1,6)]},
+                    'p4':{'answer':'2','mode':'ambiguous','options':[{'id':str(i),'index':i-1} for i in range(1,4)]}},
+           'skipped':['p1','p2']}
+    text+='<script id="review-interaction-model" type="application/json">'+json.dumps(model)+'</script>'
     path.write_text(text)
     (path.parent/'그림.png').write_bytes(base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jJ1sAAAAASUVORK5CYII='))
     pack=load_source(path,repo)
     extra=('<table><tr><th>연산</th><th>상태</th></tr><tr><td>push(1)</td><td>[1]</td></tr><tr><td>pop()</td><td>[]</td></tr></table>'
            '<svg viewBox="0 0 100 30" role="img" aria-label="상태 그림"><defs><clipPath id="state"><rect width="100" height="30"/></clipPath></defs><rect width="100" height="30" clip-path="url(#state)"/></svg>'
            '<figure><img src="그림.png" alt="검증용 픽셀"><figcaption>로컬 그림 자원 검증</figcaption></figure>')
-    fragments={p.id:fragment(p).replace('<div class="sum" hidden>', '<div class="sum" hidden><div class="summary-group"><h4>핵심 규칙</h4><p>$A^2=A\\cdot A$</p></div>')+extra for p in pack.problems}
+    fragments={p.id:fragment(p).replace('<div class="sum" hidden>', '<div class="sum" hidden><div class="summary-group"><h4>핵심 규칙</h4><p>$A^2=A\\cdot A$</p></div>')+extra for p in pack.problems[:2]}
+    long=''.join(f'<p>보기를 읽기 전에 문제에서 묻는 대상을 먼저 정리해요. 문단 {i}은 화면을 길게 만들어 이동을 확인하는 합성 설명이에요. 같은 이유를 여러 번 반복해 읽어도 결론은 바뀌지 않아요.</p>' for i in range(8))
+    verdicts={'p3':''.join(f'<p>({i}) 틀려요. 보기 {i}의 근거를 확인해요.</p>' if i!=3 else '<p>(3) 맞아요. 보기 3이 조건과 맞아요.</p>' for i in range(1,6))+'<p>따라서 답은 (3)이에요.</p>',
+              'p4':'<p>a 맞아요. 첫 보기는 출제 의도와 달라요.</p><p>b 틀려요. 둘째 근거예요.</p><p>c 틀려요. 셋째 근거예요.</p>'}
+    for p in pack.problems[2:]:
+        base=fragment(p).replace('<p>구할 것을 읽어요.</p>','<p>구할 것을 읽어요.</p>'+(long if p.id=='p3' else ''))
+        base=base.replace('<div class="sum" hidden>','<div class="sum" hidden><div class="summary-group"><h4>판정 순서</h4><p>보기마다 근거를 확인해요.</p></div>')
+        start=base.index('<div class="layer formal" data-explanation="solve">');end=base.index('<div class="layer formal" data-explanation="verify">')
+        fragments[p.id]=base[:start]+'<div class="layer formal" data-explanation="solve"><h4>보기 판정</h4><div data-subpart="main">'+verdicts[p.id]+'</div></div>'+base[end:]
     return pack,fragments
+
+def choice_card(id_, number, count):
+    items=''.join(f'<li>({i}) 합성 보기 {i}</li>' for i in range(1,count+1))
+    return (f'<article class="card" id="{id_}" data-source="합성 기출"><h3>{number}. 보기 문제 {number}</h3><div class="problem">'
+            f'<p>옳은 설명은 무엇인가요?</p><ul class="choices">{items}</ul></div>'
+            f'<details class="original"><summary>원문</summary><blockquote>합성 원문 {number}</blockquote></details><details class="hint"><summary>힌트</summary><p>보기를 하나씩 확인해요.</p></details>'
+            '<details class="solution"><summary>풀이</summary><ol class="steps"><li>보기를 확인해요.</li></ol><p class="answer">(1)</p></details></article>')

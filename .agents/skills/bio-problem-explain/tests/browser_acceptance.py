@@ -21,7 +21,7 @@ url=f'http://127.0.0.1:{port}/stage/{art.html.name}'
 results=[]
 with sync_playwright() as pw:
  browser=pw.chromium.launch()
- for width,height in [(1280,900),(375,812)]:
+ for width,height in [(1280,900),(1024,768),(375,812)]:
   for theme in ['light','dark']:
    page=browser.new_page(viewport={'width':width,'height':height},color_scheme=theme)
    logs=[];failed=[];external=[]
@@ -30,11 +30,24 @@ with sync_playwright() as pw:
    page.on('requestfailed',lambda r:failed.append(r.url))
    page.on('response',lambda r:failed.append(str(r.status)+' '+r.url) if r.status>=400 else None)
    page.on('request',lambda r:external.append(r.url) if not r.url.startswith(f'http://127.0.0.1:{port}/') else None)
+   page.goto(url+'#p3',wait_until='networkidle');page.wait_for_timeout(100)
+   if width>=1024:
+    assert page.locator('#panel-right .probs [data-problem-for="p3"]').is_visible()
+    assert page.locator('#p3 > [data-problem-for]').count()==0
+    assert page.locator('#panel-right [role=tab][data-tab="problem"]').get_attribute('aria-selected')=='true'
+    page.locator('#panel-right [data-tab="summary"]').click()
+    assert page.locator('#panel-right .sums .summary-group:visible').count()==1
+    page.locator('#panel-right [data-tab="problem"]').click()
+   else:
+    toggle=page.locator('#p3 .problem-toggle')
+    assert toggle.get_attribute('aria-expanded')=='false' and not page.locator('#p3 [data-problem-for="p3"]').is_visible()
+    toggle.click();assert page.locator('#p3 [data-problem-for="p3"]').is_visible() and toggle.inner_text()=='문제 접기'
+   assert page.locator('#p3 [data-explanation="understand"]').is_visible()
    page.goto(url,wait_until='networkidle')
    page.locator('#pager-next').click();page.wait_for_timeout(100)
    assert page.locator('#p1').is_visible()
    for token in ['pre code','table','svg[aria-label="상태 그림"]','img']:
-    assert page.locator('#p1 '+token).count()>0,token
+    assert page.locator(f'#p1 {token}, [data-problem-for="p1"] {token}').count()>0,token
    assert page.locator('#p1 .katex').count()>0
    assert page.locator('#p1 [data-explanation="start"] .katex').first.evaluate('(e)=>getComputedStyle(e).overflowX')=='visible'
    if width<800 or not page.locator('#panel-right').is_visible(): page.locator('#toggle-right').click()
@@ -48,7 +61,7 @@ with sync_playwright() as pw:
    page.locator('#pager-next').click();assert page.locator('#p2').is_visible()
    page.locator('#pager-prev').click();assert page.locator('#p1').is_visible()
    page.locator('#toggle-left').click();page.wait_for_timeout(250)
-   if width>=800:page.locator('#toggle-left').click()
+   if width>=1024 and page.locator('#toggle-left').get_attribute('aria-expanded')=='false':page.locator('#toggle-left').click()
    page.locator('#panel-left a[href="#p2"]').click();page.wait_for_timeout(150)
    assert page.locator('#p2').is_visible()
    page.locator('#theme-toggle').click();page.wait_for_timeout(100)

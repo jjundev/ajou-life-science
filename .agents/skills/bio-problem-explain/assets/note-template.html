@@ -212,7 +212,7 @@
     }
 
     /* ---------- 좌우 패널 (drawer) ---------- */
-    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 360px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
     body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
     .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
     .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
@@ -284,6 +284,22 @@
 
     @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
 
+    /* 문제해설: 오른쪽 문제 · 요약 탭, 좁은 화면은 해설 위 접힘 */
+    .panel-tabs { flex: 1 1 0; min-width: 0; display: flex; gap: var(--s1); border-bottom: 1px solid var(--line); }
+    .panel-tabs [role="tab"] { min-height: var(--tap); padding: 0 var(--s3); margin-bottom: -1px; border: 0; border-bottom: 2px solid transparent;
+      background: transparent; color: var(--ink-2); font: 700 var(--fs-panel)/1 var(--font); cursor: pointer; }
+    .panel-tabs [role="tab"][aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+    .probs, .sum-tab { padding-top: var(--s2); }
+    .problem-pane > .layer:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+    .problem-pane details.original { margin-top: var(--s4); padding-top: var(--s2); border-top: 1px solid var(--line); }
+    .problem-pane details.original > summary { display: flex; align-items: center; min-height: 44px; cursor: pointer; font-weight: 600; color: var(--ink-2); }
+    .problem-pane img { max-width: 100%; height: auto; }
+    .topic > .problem-pane { margin-top: var(--s3); padding: var(--s4); border: 1px solid var(--line); border-radius: var(--radius); }
+    .problem-toggle { display: flex; align-items: center; justify-content: center; width: 100%; min-height: var(--tap); margin-top: var(--s3); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .problem-toggle[aria-expanded="true"] { border-color: var(--accent); color: var(--accent-ink); }
+    @media (hover: hover) { .problem-toggle:hover, .panel-tabs [role="tab"]:hover { background: var(--surface); } }
+
     /* 넓은 화면: 본문 옆에 붙는 패널 */
     @media (min-width: 1024px) {
       .layout { --l: var(--panel-l-user, var(--panel-l)); }
@@ -350,13 +366,13 @@
     img, svg { max-width:100%; height:auto; }
   </style>
 </head>
-<body data-screens="article.topic" data-panels="note" data-range="{{RANGE}}">
+<body data-screens="article.topic" data-panels="explain" data-range="{{RANGE}}">
   <header class="topbar">
     <div class="topbar-inner">
       <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
       <strong class="brand">{{BRAND}}</strong>
       <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
-      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>요약</span></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>문제</span></button>
     </div>
     <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
   </header>
@@ -387,12 +403,21 @@
       <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
       <div class="panel-inner">
         <div class="panel-head">
-          <h2 id="panel-right-title">페이지 요약</h2>
+          <h2 id="panel-right-title" class="sr-only">문제와 요약</h2>
+          <div class="panel-tabs" role="tablist" aria-labelledby="panel-right-title">
+            <button type="button" role="tab" id="tab-problem" data-tab="problem" aria-controls="tabpanel-problem" aria-selected="true">문제</button>
+            <button type="button" role="tab" id="tab-summary" data-tab="summary" aria-controls="tabpanel-summary" aria-selected="false" tabindex="-1">요약</button>
+          </div>
           <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
         </div>
-        <p class="panel-sub" id="sum-for">전체 흐름</p>
-        <p class="panel-empty" id="sum-empty">페이지를 넘기면 그 페이지의 핵심 식과 용어가 여기에 나옵니다.</p>
-        <div class="sums"></div>
+        <div class="probs" role="tabpanel" id="tabpanel-problem" aria-labelledby="tab-problem">
+          <p class="panel-empty" id="prob-empty">문항을 고르면 여기에 문제가 나와요.</p>
+        </div>
+        <div class="sum-tab" role="tabpanel" id="tabpanel-summary" aria-labelledby="tab-summary" hidden>
+          <p class="panel-sub" id="sum-for">전체 흐름</p>
+          <p class="panel-empty" id="sum-empty">페이지를 넘기면 그 페이지의 핵심 식과 용어가 여기에 나옵니다.</p>
+          <div class="sums"></div>
+        </div>
       </div>
     </aside>
   </div>
@@ -459,6 +484,8 @@
       // ---------- 열고 닫기 ----------
       function docked() {
         const pref = store.get(PREF, {});
+        // 문제해설은 문제가 오른쪽에 있으므로 오른쪽을 기본으로 연다
+        if (kind === 'explain') return { left: pref.left ?? roomyMq.matches, right: pref.right ?? true };
         return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
       }
       function sync() {
@@ -651,38 +678,107 @@
         });
       }
 
-      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
-      function setupNote() {
+      // ---------- 문제해설: 오른쪽 = [문제 | 요약] 탭, 좁은 화면은 해설 위 접힘 ----------
+      function setupExplain() {
         const KEY = 'od-note-read:' + RANGE;
+        const TAB = 'bio-problem-explain-tab';
         const topics = Array.from(document.querySelectorAll('main article.topic'));
         const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
-        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
         const box = panels.right.querySelector('.sums');
-        const sums = {};
-        topics.forEach((t) => {
-          const el = t.querySelector(':scope > .sum');
-          if (!el) return;
-          el.hidden = true;
-          box.appendChild(el);
-          sums[t.id] = el;
-        });
+        const probs = panels.right.querySelector('.probs');
+        const sumTab = panels.right.querySelector('.sum-tab');
+        const tabList = panels.right.querySelector('.panel-tabs');
+        const tabs = Array.from(tabList.querySelectorAll('[role="tab"]'));
+        const title = document.getElementById('panel-right-title');
+        const label = toggles.right.querySelector('span');
         const sub = document.getElementById('sum-for');
         const empty = document.getElementById('sum-empty');
+        const probEmpty = document.getElementById('prob-empty');
+        const sums = {};
+        const panes = {};
+        const opens = {};
+        const expanded = new Set();
+        let curId = null;
+        let tab = store.get(TAB, 'problem') === 'summary' ? 'summary' : 'problem';
+        topics.forEach((t) => {
+          // 조각의 <div class="sum" hidden> 을 요약 탭으로 옮긴다. 없으면 안내 문구만 보인다.
+          const el = t.querySelector(':scope > .sum');
+          if (el) { el.hidden = true; box.appendChild(el); sums[t.id] = el; }
+          const pane = t.querySelector(':scope > .problem-pane');
+          if (!pane) return;
+          pane.id = 'problem-' + t.id;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'problem-toggle';
+          btn.setAttribute('aria-controls', pane.id);
+          btn.addEventListener('click', () => {
+            if (expanded.has(t.id)) expanded.delete(t.id); else expanded.add(t.id);
+            paintToggle(t.id);
+            window.mlLayoutMath?.();
+          });
+          panes[t.id] = pane;
+          opens[t.id] = btn;
+        });
+        function paintToggle(id) {
+          const on = expanded.has(id);
+          opens[id].setAttribute('aria-expanded', String(on));
+          opens[id].textContent = on ? '문제 접기' : '문제 보기';
+          panes[id].hidden = !on;
+        }
+        function showTab(name, save) {
+          tabs.forEach((b) => { const on = b.dataset.tab === name; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; });
+          probs.hidden = name !== 'problem';
+          sumTab.hidden = name !== 'summary';
+          if (save) { tab = name; store.set(TAB, name); }
+          window.mlLayoutMath?.();
+        }
+        // 넓은 화면은 오른쪽 문제 탭, 좁은 화면은 각 문항 메타 줄 뒤 "문제 보기" 아래로 옮긴다
+        function mountPanes() {
+          const wide = wideMq.matches;
+          Object.keys(panes).forEach((id) => {
+            if (wide) { opens[id].remove(); probs.appendChild(panes[id]); panes[id].hidden = id !== curId; }
+            else {
+              const topic = document.getElementById(id);
+              (topic.querySelector(':scope > .panel-meta') || topic.querySelector('h3')).after(opens[id], panes[id]);
+              paintToggle(id);
+            }
+          });
+          tabList.hidden = !wide;
+          title.classList.toggle('sr-only', wide);
+          title.textContent = wide ? '문제와 요약' : '페이지 요약';
+          label.textContent = wide ? '문제' : '요약';
+          probEmpty.hidden = Boolean(curId && panes[curId]);
+          showTab(wide ? tab : 'summary', false);
+        }
+        tabs.forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab, true)));
+        tabList.addEventListener('keydown', (e) => {
+          if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+          e.preventDefault();
+          e.stopPropagation();
+          const next = tab === 'problem' ? 'summary' : 'problem';
+          showTab(next, true);
+          tabs.find((b) => b.dataset.tab === next).focus();
+        });
         document.addEventListener('od:screen', (e) => {
           const s = e.detail.screen;
           const key = s.matches('article.topic') ? s.id : 'intro';
+          curId = key === 'intro' ? null : key;
           Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
           empty.hidden = Boolean(sums[key]);
           sub.textContent = key === 'intro' ? '전체 흐름' : ((s.querySelector('h3') || {}).textContent || '').trim();
-          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          if (wideMq.matches) Object.keys(panes).forEach((id) => { panes[id].hidden = id !== curId; });
+          probEmpty.hidden = Boolean(curId && panes[curId]);
+          if (curId && !read.has(curId)) { read.add(curId); store.set(KEY, Array.from(read)); }
           panels.right.querySelector('.panel-inner').scrollTop = 0;
           markToc(read, topics.length, '읽음');
           revealCurrent();
         });
+        wideMq.addEventListener('change', mountPanes);
+        mountPanes();
       }
 
       if (kind === 'review') setupReview();
-      if (kind === 'note') setupNote();
+      if (kind === 'explain') setupExplain();
       sync();
     })();
   </script>
@@ -817,7 +913,7 @@
       }
       function layout() {
         queued = false;
-        document.querySelectorAll('main .katex, .sums .katex').forEach((math) => {
+        document.querySelectorAll('main .katex, .sums .katex, .probs .katex').forEach((math) => {
           if (!math.getClientRects().length) return;
           const tex = math.querySelector('annotation')?.textContent || '';
           const display = math.parentElement.classList.contains('katex-display');
@@ -868,6 +964,7 @@
       new ResizeObserver(schedule).observe(document.querySelector('.content'));
       new ResizeObserver(schedule).observe(document.querySelector('#panel-right .panel-inner'));
       new MutationObserver(schedule).observe(document.querySelector('.sums'), {subtree:true, attributes:true, attributeFilter:['hidden']});
+      new MutationObserver(schedule).observe(document.querySelector('.probs'), {subtree:true, attributes:true, attributeFilter:['hidden']});
       document.fonts.ready.then(schedule);
       schedule();
     })();
