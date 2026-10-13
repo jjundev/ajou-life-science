@@ -284,12 +284,14 @@
 
     @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
 
-    /* 문제해설: 오른쪽 문제 · 요약 탭, 좁은 화면은 해설 위 접힘 */
+    /* 문제해설: 오른쪽 문제 · 원문 · 요약 탭, 좁은 화면은 해설 위 접힘 */
     .panel-tabs { flex: 1 1 0; min-width: 0; display: flex; gap: var(--s1); border-bottom: 1px solid var(--line); }
     .panel-tabs [role="tab"] { min-height: var(--tap); padding: 0 var(--s3); margin-bottom: -1px; border: 0; border-bottom: 2px solid transparent;
       background: transparent; color: var(--ink-2); font: 700 var(--fs-panel)/1 var(--font); cursor: pointer; }
     .panel-tabs [role="tab"][aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
-    .probs, .sum-tab { padding-top: var(--s2); }
+    .probs, .orig-tab, .sum-tab { padding-top: var(--s2); }
+    .orig-tab details.original { margin-top: 0; padding-top: 0; border-top: 0; }
+    .orig-tab details.original > summary { display: none; }
     .problem-pane > .layer:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
     .problem-pane details.original { margin-top: var(--s4); padding-top: var(--s2); border-top: 1px solid var(--line); }
     .problem-pane details.original > summary { display: flex; align-items: center; min-height: 44px; cursor: pointer; font-weight: 600; color: var(--ink-2); }
@@ -429,9 +431,10 @@
       <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
       <div class="panel-inner">
         <div class="panel-head">
-          <h2 id="panel-right-title" class="sr-only">문제와 요약</h2>
+          <h2 id="panel-right-title" class="sr-only">문제, 원문, 요약</h2>
           <div class="panel-tabs" role="tablist" aria-labelledby="panel-right-title">
             <button type="button" role="tab" id="tab-problem" data-tab="problem" aria-controls="tabpanel-problem" aria-selected="true">문제</button>
+            <button type="button" role="tab" id="tab-original" data-tab="original" aria-controls="tabpanel-original" aria-selected="false" tabindex="-1" hidden>원문</button>
             <button type="button" role="tab" id="tab-summary" data-tab="summary" aria-controls="tabpanel-summary" aria-selected="false" tabindex="-1">요약</button>
           </div>
           <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
@@ -439,6 +442,7 @@
         <div class="probs" role="tabpanel" id="tabpanel-problem" aria-labelledby="tab-problem">
           <p class="panel-empty" id="prob-empty">문항을 고르면 여기에 문제가 나와요.</p>
         </div>
+        <div class="orig-tab" role="tabpanel" id="tabpanel-original" aria-labelledby="tab-original" hidden></div>
         <div class="sum-tab" role="tabpanel" id="tabpanel-summary" aria-labelledby="tab-summary" hidden>
           <p class="panel-sub" id="sum-for">전체 흐름</p>
           <p class="panel-empty" id="sum-empty">페이지를 넘기면 그 페이지의 핵심 식과 용어가 여기에 나옵니다.</p>
@@ -704,7 +708,7 @@
         });
       }
 
-      // ---------- 문제해설: 오른쪽 = [문제 | 요약] 탭, 좁은 화면은 해설 위 접힘 ----------
+      // ---------- 문제해설: 오른쪽 = [문제 | 원문 | 요약] 탭, 좁은 화면은 해설 위 접힘 ----------
       function setupExplain() {
         const KEY = 'od-note-read:' + RANGE;
         const TAB = 'bio-problem-explain-tab';
@@ -712,6 +716,8 @@
         const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
         const box = panels.right.querySelector('.sums');
         const probs = panels.right.querySelector('.probs');
+        const origTab = panels.right.querySelector('.orig-tab');
+        const origBtn = document.getElementById('tab-original');
         const sumTab = panels.right.querySelector('.sum-tab');
         const tabList = panels.right.querySelector('.panel-tabs');
         const tabs = Array.from(tabList.querySelectorAll('[role="tab"]'));
@@ -723,9 +729,11 @@
         const sums = {};
         const panes = {};
         const opens = {};
+        const origs = {};
         const expanded = new Set();
         let curId = null;
-        let tab = store.get(TAB, 'problem') === 'summary' ? 'summary' : 'problem';
+        const saved = store.get(TAB, 'problem');
+        let tab = ['problem', 'original', 'summary'].includes(saved) ? saved : 'problem';
         topics.forEach((t) => {
           // 조각의 <div class="sum" hidden> 을 요약 탭으로 옮긴다. 없으면 안내 문구만 보인다.
           const el = t.querySelector(':scope > .sum');
@@ -733,6 +741,8 @@
           const pane = t.querySelector(':scope > .problem-pane');
           if (!pane) return;
           pane.id = 'problem-' + t.id;
+          const orig = pane.querySelector(':scope > details.original');
+          if (orig) origs[t.id] = orig;
           const btn = document.createElement('button');
           btn.type = 'button';
           btn.className = 'problem-toggle';
@@ -751,16 +761,26 @@
           opens[id].textContent = on ? '문제 접기' : '문제 보기';
           panes[id].hidden = !on;
         }
+        // 저장된 탭이 원문인데 지금 문항에 원문이 없으면 문제 탭을 보이되 선호는 그대로 둔다
+        const effective = (name) => (name === 'original' && !origs[curId] ? 'problem' : name);
         function showTab(name, save) {
-          tabs.forEach((b) => { const on = b.dataset.tab === name; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; });
-          probs.hidden = name !== 'problem';
-          sumTab.hidden = name !== 'summary';
+          const shown = effective(name);
+          origBtn.hidden = !origs[curId];
+          tabs.forEach((b) => { const on = b.dataset.tab === shown; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; });
+          probs.hidden = shown !== 'problem';
+          origTab.hidden = shown !== 'original';
+          sumTab.hidden = shown !== 'summary';
           if (save) { tab = name; store.set(TAB, name); }
           window.mlLayoutMath?.();
         }
-        // 넓은 화면은 오른쪽 문제 탭, 좁은 화면은 각 문항 메타 줄 뒤 "문제 보기" 아래로 옮긴다
+        // 넓은 화면은 오른쪽 문제 탭(원문은 원문 탭), 좁은 화면은 각 문항 메타 줄 뒤 "문제 보기" 아래로 옮긴다
         function mountPanes() {
           const wide = wideMq.matches;
+          Object.keys(origs).forEach((id) => {
+            const orig = origs[id];
+            if (wide) { orig.open = true; origTab.appendChild(orig); orig.hidden = id !== curId; }
+            else { orig.open = false; orig.hidden = false; panes[id].appendChild(orig); }
+          });
           Object.keys(panes).forEach((id) => {
             if (wide) { opens[id].remove(); probs.appendChild(panes[id]); panes[id].hidden = id !== curId; }
             else {
@@ -771,7 +791,7 @@
           });
           tabList.hidden = !wide;
           title.classList.toggle('sr-only', wide);
-          title.textContent = wide ? '문제와 요약' : '페이지 요약';
+          title.textContent = wide ? '문제, 원문, 요약' : '페이지 요약';
           label.textContent = wide ? '문제' : '요약';
           probEmpty.hidden = Boolean(curId && panes[curId]);
           showTab(wide ? tab : 'summary', false);
@@ -909,6 +929,7 @@
             opens[id].remove();
             (topic.querySelector(':scope > .panel-meta') || topic.querySelector('h3')).after(panes[id]);
             panes[id].hidden = false;
+            if (origs[id]) { panes[id].appendChild(origs[id]); origs[id].open = true; origs[id].hidden = false; }
           });
         }
         const printMq = matchMedia('print');
@@ -921,7 +942,9 @@
           if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
           e.preventDefault();
           e.stopPropagation();
-          const next = tab === 'problem' ? 'summary' : 'problem';
+          const order = ['problem'].concat(origs[curId] ? ['original'] : [], ['summary']);
+          const at = order.indexOf(effective(tab));
+          const next = order[(at + (e.key === 'ArrowRight' ? 1 : order.length - 1)) % order.length];
           showTab(next, true);
           tabs.find((b) => b.dataset.tab === next).focus();
         });
@@ -932,7 +955,11 @@
           Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
           empty.hidden = Boolean(sums[key]);
           sub.textContent = key === 'intro' ? '전체 흐름' : ((s.querySelector('h3') || {}).textContent || '').trim();
-          if (wideMq.matches) Object.keys(panes).forEach((id) => { panes[id].hidden = id !== curId; });
+          if (wideMq.matches) {
+            Object.keys(panes).forEach((id) => { panes[id].hidden = id !== curId; });
+            Object.keys(origs).forEach((id) => { origs[id].hidden = id !== curId; });
+            showTab(tab, false);
+          }
           probEmpty.hidden = Boolean(curId && panes[curId]);
           if (curId && !read.has(curId)) { read.add(curId); store.set(KEY, Array.from(read)); }
           panels.right.querySelector('.panel-inner').scrollTop = 0;

@@ -13,6 +13,9 @@ import shutil
 shutil.rmtree(root/'stage',ignore_errors=True)
 art=build_explanation(pack,fragments,root/'stage',root/'repo')
 assert check_artifacts(pack,art)==[]
+# p4 stands in for a forecast problem without an original (review sources always carry one)
+import re
+art.html.write_text(re.sub(r'<details class="original" data-original-problem="p4">.*?</details>','',art.html.read_text(),count=1,flags=re.S))
 class Handler(http.server.SimpleHTTPRequestHandler):
  def log_message(self,*args):pass
 server=http.server.ThreadingHTTPServer(('127.0.0.1',0),functools.partial(Handler,directory=str(root)))
@@ -38,10 +41,31 @@ with sync_playwright() as pw:
     page.locator('#panel-right [data-tab="summary"]').click()
     assert page.locator('#panel-right .sums .summary-group:visible').count()==1
     page.locator('#panel-right [data-tab="problem"]').click()
+    assert page.locator('#tab-original').is_visible()
+    page.locator('#tab-original').click()
+    orig=page.locator('#tabpanel-original details.original[data-original-problem="p3"][open]')
+    assert orig.is_visible() and '합성 원문 3' in orig.inner_text()
+    assert orig.locator('summary').is_hidden() and page.locator('#tabpanel-problem').is_hidden()
+    assert page.locator('[data-problem-for="p3"] details.original').count()==0
+    page.set_viewport_size({'width':900,'height':height});page.wait_for_timeout(150)
+    assert page.locator('#p3 [data-problem-for="p3"] details.original:not([open])').count()==1
+    page.set_viewport_size({'width':width,'height':height});page.wait_for_timeout(150)
+    assert page.locator('details.original[data-original-problem="p3"]').count()==1 and orig.is_visible()
+    page.goto(url+'#p4');page.wait_for_timeout(100)
+    assert page.locator('#tab-original').is_hidden()
+    assert page.locator('#tab-problem').get_attribute('aria-selected')=='true' and page.locator('[data-problem-for="p4"]').is_visible()
+    page.goto(url+'#p3');page.wait_for_timeout(100)
+    assert page.locator('#tab-original').get_attribute('aria-selected')=='true'
+    page.locator('#tab-original').focus();page.keyboard.press('ArrowRight')
+    assert page.locator('#tab-summary').get_attribute('aria-selected')=='true'
+    page.keyboard.press('ArrowRight')
+    assert page.locator('#tab-problem').get_attribute('aria-selected')=='true'
    else:
     toggle=page.locator('#p3 .problem-toggle')
     assert toggle.get_attribute('aria-expanded')=='false' and not page.locator('#p3 [data-problem-for="p3"]').is_visible()
     toggle.click();assert page.locator('#p3 [data-problem-for="p3"]').is_visible() and toggle.inner_text()=='문제 접기'
+    assert page.locator('#p3 [data-problem-for="p3"] details.original:not([open])').count()==1
+    assert page.locator('#tab-original').is_hidden()
    assert page.locator('#p3 [data-explanation="understand"]').is_visible()
    pane=page.locator('[data-problem-for="p3"]')
    assert pane.locator('.review-choice').count()==5
@@ -84,6 +108,7 @@ with sync_playwright() as pw:
    page.emulate_media(media='print');page.wait_for_timeout(150)
    assert page.locator('#p3 > [data-problem-for="p3"] [data-source-problem="p3"]').is_visible()
    assert page.locator('#p1 > [data-problem-for="p1"]').is_visible() and page.locator('.problem-toggle:visible').count()==0
+   assert page.locator('#p3 > [data-problem-for="p3"] details.original[open]').is_visible()
    page.emulate_media(media='screen');page.wait_for_timeout(150)
    if width>=1024:assert page.locator('#panel-right .probs [data-problem-for="p3"]').is_visible()
    else:assert page.locator('#p3 .problem-toggle').is_visible()
