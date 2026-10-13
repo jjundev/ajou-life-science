@@ -3,7 +3,7 @@ import subprocess
 import sys
 from pathlib import Path
 import pytest
-from helpers import fragment, approved
+from helpers import fragment, approved, choice_source_file
 from mpe_source import load_source
 from mpe_cli import load_run
 
@@ -119,3 +119,11 @@ def test_port_provenance_requires_git_repo(tmp_path):
     script = Path(__file__).resolve().parents[1] / 'scripts/port_provenance.py'
     r = subprocess.run([sys.executable, str(script), '--source', str(tmp_path)], capture_output=True, text=True)
     assert r.returncode != 0 and 'git' in r.stderr
+
+
+def test_extract_warns_static_choices(tmp_path):
+    repo = tmp_path / 'repo'
+    source = choice_source_file(repo)
+    result = call('extract', '--repo', repo, '--target', source, '--run', tmp_path / 'run')
+    assert result.returncode == 0, result.stderr
+    assert 'p1: 보기 모델 없음/불일치 — 정적 표시' in result.stderr

@@ -2,6 +2,7 @@
 import argparse
 from dataclasses import asdict
 import json
+import re
 from pathlib import Path
 import shutil
 import sys
@@ -39,6 +40,9 @@ def extract(repo, target, run):
             (folder / 'explanations').mkdir()
             (folder / 'evidence').mkdir()
             dump(folder / 'source.json', serialized(pack))
+            for p in pack.problems:
+                if p.choice is None and re.search(r'class="[^"]*\bchoices\b', p.conditions_html):
+                    print(f'{p.id}: 보기 모델 없음/불일치 — 정적 표시', file=sys.stderr)
             buckets.append(name)
             print('extract:', folder / 'source.json')
         except ExplainError as exc:

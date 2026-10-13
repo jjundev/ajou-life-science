@@ -3,7 +3,7 @@ import json
 import re
 from pathlib import Path
 from mpe_shared import Node, parse, inner, compact, math_delimiter_errors, prose_text
-from mpe_source import inside, existing_path, nfc, sha256, subparts
+from mpe_source import inside, existing_path, nfc, sha256, subparts, with_choices
 from mpe_types import ExplainError, Problem, SourcePack
 
 FILENAME_RE = r'복습문제_([1-9]\d*장)_(웹과제예상_v[1-9]\d*)\.html'
@@ -81,7 +81,7 @@ def load_forecast_source(path: Path, repo: Path) -> SourcePack:
                                     original_html, statement, '', (), steps, inner(answer).strip(),
                                     subparts(statement, original_html)))
         hashes = tuple(sorted((str(p), sha256(p)) for p in contexts))
-        return SourcePack('forecast', match[1], match[2], path, sha256(path), tuple(problems), hashes)
+        return SourcePack('forecast', match[1], match[2], path, sha256(path), with_choices(path, problems), hashes)
     except (OSError, ValueError, KeyError, TypeError) as exc:
         if isinstance(exc, ExplainError):
             raise

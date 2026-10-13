@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from mpe_types import Problem, SourcePack
 
@@ -50,7 +51,7 @@ def source_file(repo, date='0917', slug='Recursion', empty=False):
     path.write_text('<section id="questions">'+card+'</section>',encoding='utf-8')
     return path
 
-def choice_source_file(repo, date='0915', slug='Cellular_Respiration', choices=('(1) 전자가 흐른다.', '(5) 이 현상을 설명하는 이론은 화학삼투설이다.')):
+def choice_source_file(repo, date='0915', slug='Cellular_Respiration', choices=('(1) 전자가 흐른다.', '(5) 이 현상을 설명하는 이론은 화학삼투설이다.'), model=None):
     path=repo / '복습노트' / date / f'복습문제_{date}_{slug}.html'
     path.parent.mkdir(parents=True,exist_ok=True)
     items=''.join(f'<li>{c}</li>' for c in choices)
@@ -59,7 +60,8 @@ def choice_source_file(repo, date='0915', slug='Cellular_Respiration', choices=(
           '<details class="original"><summary>원문</summary><blockquote>원래 질문</blockquote></details>'
           '<details class="hint"><summary>힌트</summary><p>전자전달계를 떠올려요.</p></details>'
           '<details class="solution"><summary>풀이</summary><ol class="steps"><li>보기를 확인해요.</li></ol><p class="answer">(1)</p></details></article>')
-    path.write_text('<section id="questions">'+card+'</section>',encoding='utf-8')
+    script='' if model is None else '<script id="review-interaction-model" type="application/json">'+json.dumps(model)+'</script>'
+    path.write_text('<section id="questions">'+card+'</section>'+script,encoding='utf-8')
     return path
 
 def acceptance_pack(repo):
