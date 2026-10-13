@@ -1,7 +1,7 @@
 # 복제 장면 입체화 — 딸 DNA 나선 감기 · 효소 음영 · 3D 토글
 
 날짜: 2026-10-13
-파일: `canvas/Main.dc.html` (생성물: `../3D모형_1001_DNA_Structure_and_Replication.html`)
+파일: `canvas/Main.dc.html` (생성물: `../인터렉티브_03_DNA_구조와_복제_3D.html`)
 캔버스: https://claude.ai/artifact/592nYy4Lwta2FDT8MMGDFZ
 
 ## Intent

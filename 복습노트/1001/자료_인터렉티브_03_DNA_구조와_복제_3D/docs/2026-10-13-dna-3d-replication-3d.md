@@ -12,13 +12,13 @@
 
 ## Global Constraints
 
-- 작업 위치: `복습노트/1001/자료_3D모형_1001_DNA_Structure_and_Replication/` (이하 상대 경로 기준). 고칠 소스는 `canvas/Main.dc.html` 하나.
+- 작업 위치: `복습노트/1001/자료_인터렉티브_03_DNA_구조와_복제_3D/` (이하 상대 경로 기준). 고칠 소스는 `canvas/Main.dc.html` 하나.
 - **커밋·푸시하지 않는다**(사용자가 따로 요청할 때까지). 각 Task의 체크포인트는 전체 테스트 통과로 대신한다.
 - 테스트 명령: `node --test --test-reporter=tap tests/*.test.cjs` (현재 41/41 통과).
 - 바꾸면 안 되는 것: `lagState`, `lagBond`, `isNick`, `K.STEPS[].f`, `events`, `stats`, `K.AR = 0.62`, `buildStructure`, 효소·라벨 위치(평면 `arm` 좌표).
 - 3D 토글: 상태 `view3d` 기본 `true`, 저장하지 않음. 버튼은 `.view-btns` 맨 앞, 복제 모드에서만 보임, 보이는 글자 `3D`, `aria-label="입체로 보기"`, `aria-pressed`.
 - 전환 속도: `sim.tw`가 초당 2.5씩(0.4초) 목표값으로 이동. 동작 줄이기(`prefers-reduced-motion: reduce`)면 즉시.
-- 소스를 고친 뒤에는 `node standalone/build.cjs`로 `../3D모형_1001_DNA_Structure_and_Replication.html`을 다시 만든다(`tests/standalone.test.cjs`가 확인).
+- 소스를 고친 뒤에는 `node standalone/build.cjs`로 `../인터렉티브_03_DNA_구조와_복제_3D.html`을 다시 만든다(`tests/standalone.test.cjs`가 확인).
 - dc-runtime은 click/keydown/mouseenter/mouseleave/input만 매핑한다. 새 버튼은 `onClick`만 쓴다.
 
 ## Review Focus
@@ -289,7 +289,7 @@ Expected: `# pass 54`, `# fail 0`.
 **Files:**
 - Modify: `canvas/Main.dc.html:915-` (`draw`의 `it.k === 5` 분기)
 - Test: `tests/replication3d.test.cjs`에 추가
-- Regenerate: `../3D모형_1001_DNA_Structure_and_Replication.html`
+- Regenerate: `../인터렉티브_03_DNA_구조와_복제_3D.html`
 
 **Interfaces:**
 - Consumes: Task 1의 `this.sim.tw`, Task 2의 `toggle3d`.
@@ -340,7 +340,7 @@ Expected: `# pass 55`, `# fail 0`.
 
 - [ ] **Step 5: 브라우저 확인**
 
-인앱 브라우저로 `../3D모형_1001_DNA_Structure_and_Replication.html`을 열고(`data:` URL이라 localStorage는 꺼져 있음) 다음을 확인한다.
+인앱 브라우저로 `../인터렉티브_03_DNA_구조와_복제_3D.html`을 열고(`data:` URL이라 localStorage는 꺼져 있음) 다음을 확인한다.
 
 1440px:
 - ② 복제를 누르면 오른쪽 위에 `3D | + | − | ↺`가 보이고, ① 구조에서는 `3D`가 사라진다.

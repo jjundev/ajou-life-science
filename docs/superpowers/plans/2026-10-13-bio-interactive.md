@@ -14,7 +14,7 @@
 
 - 작업 위치: `main`에서 새 브랜치 `feat/bio-interactive`를 딴 워크트리. 현재 `feat/bio-problem-explain`의 미추적 파일은 건드리지 않는다.
 - 스킬 원본 경로: `.agents/skills/bio-interactive/` (아래 `SKILL`). `.claude/skills/bio-interactive` → `../../.agents/skills/bio-interactive` 심볼릭 링크.
-- 기준 결과물(읽기 전용): `복습노트/1001/자료_3D모형_1001_DNA_Structure_and_Replication/` — 수정·이동·이름 변경 금지.
+- 기준 결과물(읽기 전용): `복습노트/1001/자료_인터렉티브_03_DNA_구조와_복제_3D/` — 수정·이동·이름 변경 금지.
 - 의존성 추가 금지. 스크립트는 CommonJS `.cjs`, 테스트는 `SKILL/tests/*.test.cjs`, 실행: `node --test --test-reporter=tap .agents/skills/bio-interactive/tests/*.test.cjs`
 - 파일 이름 표기는 사용자 지정 그대로 「인터렉티브」: `인터렉티브_NN.html`, `자료_인터렉티브_NN/`. NN은 두 자리.
 - 글꼴 CDN: `https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css`

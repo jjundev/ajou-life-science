@@ -6,7 +6,7 @@ const path = require('node:path');
 const ROOT = path.join(__dirname, '..');
 const MAIN_PATH = path.join(ROOT, 'canvas', 'Main.dc.html');
 const RUNTIME_PATH = path.join(__dirname, 'dc-runtime.js');
-const OUT_PATH = path.join(ROOT, '..', '3D모형_1001_DNA_Structure_and_Replication.html');
+const OUT_PATH = path.join(ROOT, '..', '인터렉티브_03_DNA_구조와_복제_3D.html');
 const FONT_CSS = 'https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css';
 
 function build() {
@@ -23,7 +23,7 @@ function build() {
     '<meta charset="utf-8">',
     '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">',
     '<title>DNA 구조와 복제 3D</title>',
-    '<!-- 생성 파일: 자료_3D모형_1001_DNA_Structure_and_Replication/canvas/Main.dc.html을 고친 뒤 standalone/build.cjs로 다시 만드세요. -->',
+    '<!-- 생성 파일: 자료_인터렉티브_03_DNA_구조와_복제_3D/canvas/Main.dc.html을 고친 뒤 standalone/build.cjs로 다시 만드세요. -->',
     `<link rel="stylesheet" href="${FONT_CSS}">`,
     helmet,
     '</head>',
