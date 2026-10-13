@@ -1,0 +1,52 @@
+<div class="layer eli5" data-explanation="understand">
+  <h4>문제를 내 말로 읽어요</h4>
+  <p>실제 유전암호는 염기 세 개가 아미노산 하나를 정하지만, 이 문제는 <strong>두 개</strong>로 정한다고 가정해요.</p>
+  <p>구할 것은 염기 두 칸짜리 신호로 서로 다른 아미노산을 최대 몇 개까지 지정할 수 있는지, 곧 만들 수 있는 서로 다른 신호의 수예요.</p>
+</div>
+<div class="layer formal" data-explanation="recall">
+  <h4>이 문제를 봤을 때 떠올릴 개념과 공식</h4>
+  <p>‘뉴클레오타이드 몇 개가 아미노산 하나를 결정’이라는 단서에서 코돈(codon)의 경우의 수를 떠올려요. 핵산의 염기는 네 종류(mRNA에서는 A, U, G, C)이고, 신호의 각 칸에 네 염기 중 하나를 독립적으로 고를 수 있어요.</p>
+  <p>각 칸의 선택을 곱하는 곱의 법칙에 따라 염기가 $k$종, 신호가 $n$칸이면 서로 다른 신호의 최대 수는 $k^n$이에요. 실제 세 칸 코돈은 $4^3=64$가지예요.</p>
+  <p>이 문제는 순서가 있는 배열을 세는 것이라 AU와 UA를 다른 신호로 세요. 그래서 덧셈이 아니라 곱셈을 쓰고, $n=2$를 넣어요. 개념 정리는 <a href="정리노트_1006_Transcription_Translation_and_Lac_Operon.html#s2-code">네 글자로 만드는 세 글자 암호</a>에 있어요.</p>
+</div>
+<div class="layer formal" data-explanation="start">
+  <h4>종이에 쓸 첫 줄</h4>
+  <p>첫 줄: “염기 종류 $k=4$, 칸 수 $n=2$ → 신호 수 $=4^2$.”</p>
+  <p>바로 아래에 첫째 칸 4가지 × 둘째 칸 4가지라고 칸별 선택 수를 적어요.</p>
+</div>
+<div class="layer formal" data-explanation="solve">
+  <h4>왜 이렇게 푸는지 함께 따라가요</h4>
+  <div data-subpart="main">
+    <p>계산: 첫째 칸 4가지, 둘째 칸 4가지이므로 $4 \times 4 = 16$가지 신호를 만들 수 있어요.</p>
+    <p>(1) 틀려요. 64는 세 칸 신호의 경우의 수 $4^3$이에요.</p>
+    <p>(2) 틀려요. 8은 칸별 선택 수를 $4+4$로 더한 값이에요. 칸마다 독립적으로 고르므로 곱해야 해요.</p>
+    <p>(3) 틀려요. 32는 $4^2$도 $4^3$도 아니어서 두 칸 신호 수가 될 수 없어요.</p>
+    <p>(4) 틀려요. 4는 한 칸 신호의 경우의 수 $4^1$이에요.</p>
+    <p>(5) 맞아요. 두 칸 신호는 $4^2=16$가지예요.</p>
+    <p>따라서 답은 (5)예요.</p>
+  </div>
+</div>
+<div class="layer formal" data-explanation="verify">
+  <h4>완성 답과 검산</h4>
+  <div data-subpart="main">
+    <p>답 (5). 다른 방법으로 직접 세어요. 첫 염기를 A로 두면 AA, AU, AG, AC의 4개이고, 첫 염기가 U, G, C인 경우도 각각 4개라서 $4+4+4+4=16$개예요. 교과서 5장 102쪽도 두 글자로는 16가지($4^2$)의 아미노산만 지정할 수 있어 20가지 아미노산에 부족하므로 배제되었다고 설명해요.</p>
+  </div>
+</div>
+<div class="layer warn" data-explanation="pitfall">
+  <h4>이런 실수를 조심해요</h4>
+  <p>‘두 개’라는 말에 $4 \times 2 = 8$이나 $4+4=8$로 계산하기 쉬워요. 칸 수는 지수, 염기 종류는 밑이에요.</p>
+  <p>실제 유전암호 64를 외운 대로 고르지 않아요. 문제의 가정(두 칸)에 맞춰 다시 계산해요.</p>
+</div>
+<div class="layer eli5" data-explanation="retry">
+  <h4>설명을 닫고 다시 해 봐요</h4>
+  <ul>
+    <li>한 칸, 두 칸, 세 칸 신호의 수를 각각 거듭제곱으로 써 봐요.</li>
+    <li>두 칸 암호가 실제 생물에서 쓰일 수 없는 이유를 20종 아미노산과 비교해 말해 봐요.</li>
+  </ul>
+</div>
+<div class="sum" hidden>
+  <div class="summary-group"><h4>떠올릴 개념·공식</h4><p>신호 수 $=k^n$ (염기 종류 $k$, 칸 수 $n$).</p></div>
+  <div class="summary-group"><h4>첫 줄</h4><p>$k=4$, $n=2$ → $4^2$.</p></div>
+  <div class="summary-group"><h4>핵심 판단</h4><p>$4 \times 4 = 16$ → (5).</p></div>
+  <div class="summary-group"><h4>검산</h4><p>첫 염기별로 4개씩 세어 16개, 교과서 5장 102쪽과 일치.</p></div>
+</div>
