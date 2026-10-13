@@ -2,7 +2,7 @@
 
 Layout-only rerender. Problem tuples are byte-identical to the published input (rerender transplant rule). Checked each of 41 problems in the problem panel (left-docked default) at 1280×900 against the source review card: pane visible, clickable choice count and order = review-interaction-model (40 modeled, others static with no choice buttons), img/outer-SVG counts equal the source card, all images loaded, original in the 원문 tab (open, visible on click) when present and 원문 tab hidden otherwise, no panel overflow. Side-by-side samples (source left, new panel right): rerender5-0903-compare-p4.png, rerender5-0903-compare-p1.png.
 
-Reviewed HTML SHA-256: f20413d6ea3f26bbc517d7a3728ab530fc267fdfec5268e21091a3aaacaf6594
+Reviewed HTML SHA-256: 5650f07608720911d1b23d2a169ecfb7ae87eccac2a6e270ee84085353206591
 
 | id | choices src/buttons | img src/pane | svg src/pane | ok |
 |---|---|---|---|---|
