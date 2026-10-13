@@ -202,3 +202,8 @@ def test_choice_feedback_copied_from_review_pack():
             css[css.index('.review-choice[data-result="correct"]'):css.index('.review-choice-label[hidden]')],
             js[js.index('function scrollAnswerIntoView('):js.index('function grade(')]]
     for s in slices: assert squash(s) in template,'복습노트 상호작용과 어긋났어요: '+s.strip()[:40]
+
+
+def test_choice_verdicts_render_as_cards():
+    template=(Path(__file__).resolve().parents[1]/'assets/note-template.html').read_text()
+    assert '.verdict-card {' in template and "classList.add('verdict-card')" in template

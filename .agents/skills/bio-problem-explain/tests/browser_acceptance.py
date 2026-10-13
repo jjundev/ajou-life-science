@@ -67,6 +67,12 @@ with sync_playwright() as pw:
     assert page.locator('#p3 [data-problem-for="p3"] details.original:not([open])').count()==1
     assert page.locator('#tab-original').is_hidden()
    assert page.locator('#p3 [data-explanation="understand"]').is_visible()
+   cards=page.locator('#p3 [data-explanation="solve"] p.verdict-card')
+   assert cards.count()==5 and cards.first.inner_text().startswith('(1)')
+   assert page.locator('#p3 [data-explanation="solve"] p:not(.verdict-card)').inner_text().startswith('따라서')
+   assert page.locator('#p4 [data-explanation="solve"] p.verdict-card').count()==3
+   assert page.locator('#p1 .verdict-card, #p2 .verdict-card').count()==0
+   assert cards.first.evaluate("e=>{const s=getComputedStyle(e),b=getComputedStyle(document.body);return s.backgroundColor!==b.backgroundColor&&s.borderTopStyle==='solid'&&parseFloat(s.paddingLeft)>=12}")
    pane=page.locator('[data-problem-for="p3"]')
    assert pane.locator('.review-choice').count()==5
    assert pane.locator('.review-choice-label:visible').count()==0
@@ -90,6 +96,7 @@ with sync_playwright() as pw:
    target=page.locator('#p3 [data-explanation="solve"] p.is-target')
    if width>=1024:
     assert target.count()==1 and target.inner_text().startswith('(5)')
+    assert target.evaluate("e=>e.classList.contains('verdict-card')")
     assert target.evaluate('e=>{const r=e.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight}')
    else: assert target.count()==0
    page.wait_for_timeout(1700);assert target.count()==0 and fb.count()==0
