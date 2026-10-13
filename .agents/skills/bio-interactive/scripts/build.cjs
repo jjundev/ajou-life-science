@@ -1,5 +1,5 @@
 // Builds a standalone page (opens directly in a browser) from a .dc.html source.
-// Usage: node build.cjs <자료_인터렉티브_NN/Main.dc.html> <인터렉티브_NN.html>
+// Usage: node build.cjs <자료_인터렉티브_NN_<이름>/Main.dc.html> <인터렉티브_NN_<이름>.html>
 const fs = require('node:fs');
 const path = require('node:path');
 

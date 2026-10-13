@@ -120,6 +120,11 @@ test('next number skips past every existing NN', () => {
   assert.equal(resolve({ repo, arg: '1001' }).next, '05');
 });
 
+test('next number counts names with a content suffix', () => {
+  const repo = fixture({ '복습노트/1001/인터렉티브_02_DNA_Replication.html': '<title>a</title>', '복습노트/1001/자료_인터렉티브_03_Mitosis': null });
+  assert.equal(resolve({ repo, arg: '1001' }).next, '04');
+});
+
 test('cli prints json, or an error code with exit 1', () => {
   const repo = fixture({ '복습노트/1006/정리노트_1006_X.md': '' });
   const cli = path.join(__dirname, '..', 'scripts', 'resolve.cjs');

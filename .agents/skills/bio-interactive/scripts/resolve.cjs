@@ -49,7 +49,7 @@ function existingIn(folder) {
 function nextNumber(folder) {
   let max = 0;
   for (const d of list(folder)) {
-    const m = nfc(d.name).match(/^(?:인터렉티브_(\d{2,})\.html|자료_인터렉티브_(\d{2,}))$/);
+    const m = nfc(d.name).match(/^(?:인터렉티브_(\d{2,})(?:_[^/]*)?\.html|자료_인터렉티브_(\d{2,})(?:_[^/]*)?)$/);
     if (m) max = Math.max(max, Number(m[1] || m[2]));
   }
   return String(max + 1).padStart(2, '0');

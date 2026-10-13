@@ -25,7 +25,7 @@ test('every referenced skill file exists', () => {
 
 test('rules from the spec are stated', () => {
   const md = read('SKILL.md');
-  for (const s of ['2–4', '인터렉티브_NN.html', '자료_인터렉티브_NN/', '복습노트/주제별/', 'check.cjs', 'build.cjs', 'resolve.cjs', '1440×900', '375×812'])
+  for (const s of ['2–4', '인터렉티브_NN_<이름>.html', '자료_인터렉티브_NN_<이름>/', '복습노트/주제별/', 'check.cjs', 'build.cjs', 'resolve.cjs', '1440×900', '375×812'])
     assert.ok(md.includes(s), s);
 });
 
@@ -45,4 +45,6 @@ test('follow-up rules are stated', () => {
   const md = read('SKILL.md');
   for (const s of ['scripts/steps.cjs', 'scripts/save.cjs', 'STEP_OFF_PHASE', 'phase']) assert.ok(md.includes(s), s);
   assert.ok(!/mkdir "\$DEST\/자료_인터렉티브/.test(md), 'old manual save snippet removed');
+  assert.ok(md.includes('save.cjs" "$RUN/<n>/Main.dc.html" "$DEST" "<이름>"'), 'save takes the name');
+  assert.ok(!/인터렉티브_NN\.html|자료_인터렉티브_NN[/"]/.test(md), 'no unnamed file pattern left');
 });
