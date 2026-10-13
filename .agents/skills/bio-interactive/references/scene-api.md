@@ -15,7 +15,8 @@
 | `HOLE_SYNTAX` | 런타임이 못 읽는 구멍(`{{!x}}`, `{{a ? b : c}}`, `onClick="x{{f}}"`) |
 | `HOLE_UNKNOWN` | 없는 값(`{{is.cycle}}`처럼 모드 이름을 바꾼 뒤 남은 것, `{{s.titel}}` 같은 오타) |
 | `EVENT_UNSUPPORTED` / `HEX_IN_MARKUP` | 아래 마크업 규칙 위반 |
-| `TOPIC_INVALID` | `topic()` 데이터 누락·불일치: 모드 필드(`cam`, `fit`, `D`, `canvasLabel`), `STEPS[n].mode`가 없는 모드, `STEPS[n].f`가 재생 범위 밖, 모드별 `MISTAKES`, `PAL.light`/`PAL.dark` (단계 번호는 화면처럼 1부터) |
+| `TOPIC_INVALID` | `topic()` 데이터 누락·불일치: 모드 필드(`cam`, `fit`, `D`, `canvasLabel`), `STEPS[n].mode`가 없는 모드, `STEPS[n].f`가 재생 범위 밖, `f`가 있는 `STEPS[n].phase` 빠짐, 모드별 `MISTAKES`, `PAL.light`/`PAL.dark` (단계 번호는 화면처럼 1부터) |
+| `STEP_OFF_PHASE` | 단계의 `f`에서 재생 바 글자(`playback.label(f)`)에 `phase`가 없음(다음 과정에 들어가 있음), 또는 `label`이 예외 |
 | `RENDER_THROWS` | `renderVals()`가 예외 |
 | `DRAW_THROWS` | 장면 그리기 예외(모드별 `:a`, 단계 누른 뒤 `:step2`) |
 | `SCENE_EMPTY` / `SCENE_NAN` | 그린 것이 없음 / 좌표가 숫자가 아님(예: `cam.zoom` 빠짐) |
@@ -49,12 +50,14 @@ topic() {
 | `D` | 원근 거리. 작을수록 원근이 세요(구조 30, 넓은 과정 60 정도) |
 | `autoSpin` | 처음에 천천히 돌지(동작 줄이기 설정이면 꺼져요) |
 | `rotatable` | 끌어서 돌릴 수 있는지. 평면 도식은 `false` |
-| `playback` | `null` 또는 `{ fmax, rate, label(f) }`. 재생 바가 생기고 `f`가 0→`fmax`로 초당 `rate × 속도`만큼 늘어요. `label(f)`는 스크럽 위 글자 |
+| `playback` | `null` 또는 `{ fmax, rate, label(f) }`. 재생 바가 생기고 `f`가 0→`fmax`로 초당 `rate × 속도`만큼 늘어요. `label(f)`는 스크럽 위 글자로, `'<과정 이름> · ' + f.toFixed(1) + ' / ' + fmax` 모양으로 써요 |
 | `canvasLabel(f)` | 캔버스의 `aria-label`. 지금 화면을 한 문장으로 |
 
 ### Step
 
-`{ mode, f?, c, title, who, text }` — 누르면 그 `mode`로 바꾸고, `f`가 있으면 그 진행값으로 옮기고 재생을 멈춰요. `c`는 번호 테두리 색, `who`는 행위자(효소 이름 등), `text`는 아래 상세 칸 문장.
+`{ mode, f?, phase?, c, title, who, text }` — 누르면 그 `mode`로 바꾸고, `f`가 있으면 그 진행값으로 옮기고 재생을 멈춰요. `c`는 번호 테두리 색, `who`는 행위자(효소 이름 등), `text`는 아래 상세 칸 문장.
+
+`f`가 있으면 `phase`도 써요. 그 `f`에서 재생 바 글자(`playback.label(f)`)에 들어 있는 과정 이름이에요. 단계는 그 과정이 화면에 다 보이는 지점에 둬요(다음 과정의 시작점에 두지 않아요).
 
 ### PAL
 

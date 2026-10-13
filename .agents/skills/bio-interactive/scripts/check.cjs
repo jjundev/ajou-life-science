@@ -61,19 +61,32 @@ function unknownHoles(markup, vals) {
 }
 
 // Topic data the shell relies on. Steps are numbered from 1 like on screen.
+// A step with f names its phase: the process name the playback label shows at that f.
 function topicChecks(topic, add) {
   const modes = topic.MODES || [];
   for (const m of modes) for (const k of ['cam', 'fit', 'D', 'canvasLabel']) if (m[k] == null) add('TOPIC_INVALID:MODES.' + m.key + '.' + k);
   (topic.STEPS || []).forEach((s, i) => {
-    const m = modes.find((d) => d.key === s.mode);
-    if (!m) add('TOPIC_INVALID:STEPS[' + (i + 1) + '].mode');
-    else if (s.f != null && (!m.playback || !(s.f >= 0 && s.f <= m.playback.fmax))) add('TOPIC_INVALID:STEPS[' + (i + 1) + '].f');
+    const n = i + 1, m = modes.find((d) => d.key === s.mode);
+    if (!m) add('TOPIC_INVALID:STEPS[' + n + '].mode');
+    else if (s.f != null && (!m.playback || !(s.f >= 0 && s.f <= m.playback.fmax))) add('TOPIC_INVALID:STEPS[' + n + '].f');
+    else if (s.f != null) phaseCheck(s, n, m.playback, add);
   });
   for (const m of modes) {
     const list = topic.MISTAKES && topic.MISTAKES[m.key];
     if (!Array.isArray(list) || !list.length) add('TOPIC_INVALID:MISTAKES.' + m.key);
   }
   for (const t of ['light', 'dark']) if (!topic.PAL || !topic.PAL[t]) add('TOPIC_INVALID:PAL.' + t);
+}
+
+function phaseCheck(s, n, playback, add) {
+  if (typeof s.phase !== 'string' || !s.phase) return add('TOPIC_INVALID:STEPS[' + n + '].phase');
+  let label;
+  try {
+    label = String(playback.label(s.f));
+  } catch (e) {
+    return add('STEP_OFF_PHASE:' + n, e);
+  }
+  if (!label.includes(s.phase)) add('STEP_OFF_PHASE:' + n, "기대 '" + s.phase + "', 실제 '" + label + "'");
 }
 
 function renderChecks(file, modes, add) {

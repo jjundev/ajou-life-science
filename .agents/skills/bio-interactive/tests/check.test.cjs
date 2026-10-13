@@ -121,3 +121,25 @@ test('NaN geometry is a blank scene', () => {
   const r = check(mutate((s) => s.replace("cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [12.5, 5]", "cam: { yaw: 0, pitch: 0 }, fit: [12.5, 5]")), A);
   assert.ok(r.errors.includes('SCENE_NAN:b'), r.errors.join());
 });
+
+test('step with f but no phase', () => {
+  const r = check(mutate((s) => s.replace(", phase: '진행'", '')), A);
+  assert.ok(r.errors.includes('TOPIC_INVALID:STEPS[2].phase'), r.details.join('\n'));
+});
+
+test('step whose phase is not in the playback label', () => {
+  const r = check(mutate((s) => s.replace("phase: '진행'", "phase: '연장'")), A);
+  assert.ok(r.errors.includes('STEP_OFF_PHASE:2'), r.details.join('\n'));
+  assert.ok(r.details.some((d) => d.startsWith('STEP_OFF_PHASE:2 — ') && d.includes("'연장'") && d.includes('진행 · 6.0 / 10')), r.details.join('\n'));
+});
+
+test('label that throws is reported as STEP_OFF_PHASE', () => {
+  const r = check(mutate((s) => s.replace("label: (f) => '진행 · '", "label: (f) => f > 5 ? null.x : '진행 · '")), A);
+  assert.ok(r.details.some((d) => d.startsWith('STEP_OFF_PHASE:2 — ')), r.details.join('\n'));
+});
+
+test('phase check skips a step whose f is already invalid', () => {
+  const r = check(mutate((s) => s.replace('f: 6,', 'f: 60,')), A);
+  assert.ok(r.errors.includes('TOPIC_INVALID:STEPS[2].f'), r.details.join('\n'));
+  assert.ok(!r.errors.some((e) => e.startsWith('STEP_OFF_PHASE')), r.details.join('\n'));
+});
