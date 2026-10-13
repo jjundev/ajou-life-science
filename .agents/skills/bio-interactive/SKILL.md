@@ -5,7 +5,7 @@ description: '생명과학 복습노트 날짜(MMDD)나 주제로 DNA 3D 모형�
 
 # 생명과학 인터렉티브 자료
 
-날짜나 주제 하나로 「DNA 구조와 복제 3D」(`복습노트/1001/3D모형_1001_DNA_Structure_and_Replication.html`)와 같은 화면의 인터렉티브 자료를 만든다. 공통 셸 템플릿에 주제별 장면과 문구만 채우고, 검사·내용 검토·브라우저 확인을 통과한 것만 저장한다. 중간에 사용자에게 묻지 않고 끝에 한 번 보고한다. 커밋은 제안만 한다.
+날짜나 주제 하나로 「DNA 구조와 복제 3D」(`references/example-dna.dc.html`)와 같은 화면의 인터렉티브 자료를 만든다. 공통 셸 템플릿에 주제별 장면과 문구만 채우고, 검사·내용 검토·브라우저 확인을 통과한 것만 저장한다. 중간에 사용자에게 묻지 않고 끝에 한 번 보고한다. 커밋은 제안만 한다.
 
 **인자**: `[MMDD | 주제]`
 - 날짜: 그날 수업에서 인터렉티브로 만들 주제를 스스로 골라 **2–4개** 만든다.
@@ -20,14 +20,14 @@ description: '생명과학 복습노트 날짜(MMDD)나 주제로 DNA 3D 모형�
 **서브에이전트가 없는 환경(Codex 등)**: 병렬 에이전트 대신 같은 브리프로 주제를 차례로 직접 쓰고, 5단계 내용 검토는 새 세션에서 한다. 모델 지정은 Claude에서는 그대로, 다른 모델 환경에서는 opus→sol로 바꿔 읽는다.
 
 **경로 약속**
-- `SKILL` = 이 파일이 있는 폴더(`.agents/skills/bio-interactive`)의 절대 경로. `.claude/skills/bio-interactive`는 이 폴더를 가리키는 심볼릭 링크다. 링크 경로가 아니라 원본 경로로 푼다.
+- `SKILL` = 이 파일이 있는 폴더의 실제 절대 경로. 심볼릭 링크(예: `.claude/skills/bio-interactive`)로 불렸으면 링크를 푼 원본 경로를 쓴다.
 - `REPO` = 저장소 루트
 - `RUN` = `<scratchpad>/bio-interactive/<인자>/` (scratchpad가 없으면 `/tmp/bio-interactive/<인자>/`). 주제마다 `RUN/<n>/`(n = 1, 2, …).
 - `DEST` = 1단계 `resolve.cjs` 출력의 `folder`
 - 셸 상태는 Bash 호출 사이에 이어지지 않는다. `$SKILL`, `$RUN`, `$REPO`, `$DEST`는 실행할 때마다 실제 절대 경로로 바꿔 쓰거나 같은 Bash 호출 맨 앞에 세미콜론으로 먼저 설정한다(`SKILL=…; RUN=…; node "$SKILL/scripts/check.cjs" …`). `cd`는 쓰지 않고 파일도 절대 경로로 넘긴다.
 - 파일명은 macOS에서 NFD로 저장된다. 경로를 손으로 짓지 말고 `resolve.cjs`가 돌려준 경로를 쓴다.
 
-**하지 않는 것**: 기준 결과물(`복습노트/1001/자료_3D모형_1001_DNA_Structure_and_Replication/`)과 정리노트·복습문제 수정, 기존 `인터렉티브_*`·`3D모형_*` 덮어쓰기, Design 캔버스 게시, 커밋.
+**하지 않는 것**: 정리노트·복습문제 수정, 기존 `인터렉티브_*`·`3D모형_*` 덮어쓰기, Design 캔버스 게시, 커밋.
 
 ## 절차
 
@@ -123,6 +123,6 @@ SKILL=…; RUN=…; DEST=…; node "$SKILL/scripts/save.cjs" "$RUN/<n>/Main.dc.h
 ## 템플릿 고치기
 셸(패널·테마·재생 바·그리기)을 바꿔야 하면 `assets/template.dc.html`을 고치고 `references/scene-api.md`를 맞춘 뒤 테스트를 돌린다.
 ```bash
-node --test .agents/skills/bio-interactive/tests/*.test.cjs
+SKILL=…; node --test "$SKILL"/tests/*.test.cjs
 ```
 템플릿 자체를 미리 보려면 `RUN`에 빌드한다(`build.cjs`는 원본 폴더에 `canvas.json`이 없으면 만들므로 `assets`에 생기면 지운다).

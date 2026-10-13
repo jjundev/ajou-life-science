@@ -34,11 +34,22 @@ test('topic selection states the scoring', () => {
   for (const s of ['+2', '+1', '3점', '후보 없음']) assert.ok(sel.includes(s), s);
 });
 
-test('.claude link resolves to the skill', () => {
+test('.claude link resolves to the skill', (t) => {
   const link = path.join(REPO, '.claude', 'skills', 'bio-interactive');
+  let installed = true;
+  try { fs.lstatSync(link); } catch { installed = false; }
+  if (!installed) return t.skip('no install link (standalone copy)');
   assert.ok(fs.lstatSync(link).isSymbolicLink());
   assert.equal(fs.readlinkSync(link), '../../.agents/skills/bio-interactive');
   assert.equal(fs.realpathSync(link), fs.realpathSync(SKILL));
+});
+
+test('docs do not point outside the skill folder', () => {
+  const docs = ['SKILL.md', ...fs.readdirSync(path.join(SKILL, 'references')).filter((f) => f.endsWith('.md')).map((f) => 'references/' + f)];
+  for (const rel of docs) {
+    const md = read(rel).normalize('NFC');
+    for (const s of ['복습노트/1001', '.agents/skills/bio-interactive/']) assert.ok(!md.includes(s), `${rel}: ${s}`);
+  }
 });
 
 test('follow-up rules are stated', () => {
