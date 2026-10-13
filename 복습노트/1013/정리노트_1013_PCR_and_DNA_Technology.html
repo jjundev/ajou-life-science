@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>생명과학 정리노트 1013</title>
+  <meta name="description" content="이영만 교수님 생명과학 · 1013 수업 (6장 DNA 기술과 유전체학)">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('od-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']})"></script>
+  <style>
+    /* ---------- 토큰 ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #b54708; --prof: #6941c6; --supp: #067647; --danger: #d92d20;
+      --scroll: #c9d0db; --scroll-hover: #9aa3b2;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --fs-title: clamp(28px, 6vw, 36px); --fs-h3: clamp(26px, 5.4vw, 32px); --fs-layer: 19px; --fs-lead: 22px; --fs-body: 17px; --fs-sub: 15px; --fs-small: 14px; --fs-label: 13px; --fs-fig: 12px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+      --radius: 8px; --measure: 680px; --tap: 48px; --btn-min: 160px;
+      --dur: 220ms; --dur-exit: 150ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+      /* 예전 조각이 참조할 수 있는 이름 */
+      --surface-2: var(--surface); --accent-soft: var(--surface); --warn-soft: var(--surface);
+      --prof-soft: var(--surface); --supp-soft: var(--surface); --eli5: var(--accent-ink); --eli5-soft: var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+        --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+        --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+        --scroll: #3f414b; --scroll-hover: #5b5e6a;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+      --scroll: #3f414b; --scroll-hover: #5b5e6a;
+    }
+
+    /* ---------- 기본 ---------- */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent-ink); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+
+    /* ---------- 상단 바 ---------- */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s2) var(--s4); display: flex; align-items: center; gap: var(--s3); min-height: 56px; }
+    .brand { flex: 1 1 auto; min-width: 0; font-size: var(--fs-body); font-weight: 700; white-space: nowrap; }
+    .text-btn { flex: none; min-height: 44px; min-width: 44px; padding: 0 var(--s3); border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); font: 600 var(--fs-small)/1 var(--font); cursor: pointer; }
+    .bar { height: 2px; background: var(--line); overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+
+    /* ---------- 본문 ---------- */
+    main { flex: 1 0 auto; width: 100%; max-width: var(--measure); margin: 0 auto; padding: var(--s6) var(--s5) var(--s7); }
+    .hero h1 { font-size: var(--fs-title); line-height: 1.3; margin: 0 0 var(--s3); letter-spacing: -0.02em; }
+    .hero p { color: var(--ink-2); margin: 0; }
+    section { margin-top: var(--s7); }
+    section > h2 { font-size: 22px; line-height: 1.4; margin: 0 0 var(--s4); }
+    .topic { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .topic h3 { margin: 0 0 var(--s2); font-size: var(--fs-h3); font-weight: 800; line-height: 1.3; letter-spacing: -0.02em; }
+    .tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+    .tag { font-size: var(--fs-label); line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+
+    /* 레이어: 배경 없이 라벨과 구분선으로 나눈다 */
+    .layer { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .layer.eli5 { margin-top: 0; padding-top: 0; border-top: 0; }
+    .layer > :first-child { margin-top: 0; }
+    .layer > :last-child { margin-bottom: 0; }
+    .layer-title { display: block; font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; color: var(--ink); margin-bottom: var(--s3); }
+    .layer.eli5 .layer-title { color: var(--accent-ink); }
+    .layer.eli5 .lead { font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; letter-spacing: -0.01em; margin: 0 0 var(--s4); }
+    /* 정확히 말하면: 본문 크기 그대로, 굵은 첫머리만 진하게 */
+    .layer.formal b { font-weight: 700; color: var(--ink); }
+    /* 교수님 말씀 · 주의: 보조 정보는 한 단계 작게 */
+    .layer.prof, .layer.warn, .layer.listen { font-size: var(--fs-sub); line-height: 1.7; }
+    .layer.prof blockquote { font-size: var(--fs-sub); }
+    .layer.prof .layer-title { color: var(--prof); }
+    .layer.warn, .layer.listen { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn .layer-title { color: var(--warn); font-size: var(--fs-body); }
+    .layer.listen .layer-title { color: var(--accent-ink); font-size: var(--fs-body); }
+    .layer.supp .badge.supp { margin-bottom: var(--s2); }
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
+    .badge.supp { color: var(--supp); }
+    .badge.exam { color: var(--warn); margin-right: var(--s1); }
+    blockquote { margin: var(--s3) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
+    ol.steps { padding-left: 1.4em; }
+    ol.steps li { margin: var(--s2) 0; }
+
+    /* 그림 · 수식 · 표 */
+    .figure { margin: var(--s4) 0; text-align: center; }
+    .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
+    .figure img { max-width: 100%; height: auto; }
+    .figure figcaption { font-size: var(--fs-small); color: var(--ink-2); margin-top: var(--s1); }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: var(--s1) 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+    th, td { border-bottom: 1px solid var(--line); padding: var(--s2); text-align: left; vertical-align: top; }
+    th { color: var(--ink-2); font-weight: 600; }
+    td:first-child, th:first-child { min-width: 6em; }
+
+    /* 위젯 */
+    .widget { background: var(--surface); border-radius: var(--radius); padding: var(--s4); margin: var(--s5) 0; }
+    .widget h4 { margin: 0 0 var(--s1); font-size: var(--fs-layer); line-height: 1.4; }
+    .widget-help { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s3); }
+    .controls { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--s2); font-size: var(--fs-small); }
+    .controls label { display: flex; align-items: center; gap: var(--s2); min-height: 44px; }
+    .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .widget svg { width: 100%; height: auto; background: var(--bg); border-radius: var(--radius); }
+    .readout { font-size: var(--fs-small); margin-top: var(--s2); }
+    .legend { font-size: var(--fs-label); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .sw { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: var(--s1); border-radius: 2px; }
+    .sw.truth { background: var(--ink-2); } .sw.fit { background: var(--accent); } .sw.train { background: var(--accent); height: 10px; width: 10px; border-radius: 50%; }
+    .sw.test { background: var(--warn); height: 10px; width: 10px; border-radius: 50%; } .sw.like { background: var(--accent); } .sw.prior { background: var(--prof); } .sw.post { background: var(--supp); }
+    .axis { stroke: var(--line); stroke-width: 1.5; }
+    .tick { fill: var(--ink-2); font-size: 11px; }
+    .plot-truth { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .plot-fit { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+    .pt-train { fill: var(--accent); }
+    .pt-test { fill: var(--warn); }
+    .plot-like { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .plot-prior { fill: none; stroke: var(--prof); stroke-width: 2; stroke-dasharray: 6 4; }
+    .plot-post { fill: none; stroke: var(--supp); stroke-width: 3; }
+    .mark-ml { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .mark-map { stroke: var(--supp); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 2; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 2.5; }
+    .fig-danger { stroke: var(--danger); fill: none; stroke-width: 2.5; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: 13px; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-fig); font-family: inherit; }
+
+    footer { width: 100%; max-width: var(--measure); margin: 0 auto; padding: 0 var(--s5) var(--s6); color: var(--ink-2); font-size: var(--fs-small); }
+
+    /* ---------- 하단 이동 바 ---------- */
+    .pager { position: sticky; bottom: 0; z-index: 10; background: var(--bg); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .pager-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s3) var(--s4); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); }
+    .pager-count { font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; min-width: 4em; }
+    .btn { min-height: var(--tap); min-width: var(--btn-min); padding: 0 var(--s6); border-radius: var(--radius); border: 0; font: 700 var(--fs-body)/1 var(--font); cursor: pointer; white-space: nowrap;
+      transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+    .btn-ghost { justify-self: start; background: var(--surface); color: var(--ink); }
+    .btn-primary { justify-self: end; background: var(--btn-bg); color: var(--on-btn); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    @media (hover: hover) {
+      .text-btn:hover, .btn-ghost:not(:disabled):hover { background: var(--line); }
+      .btn-primary:not(:disabled):hover { box-shadow: inset 0 0 0 100px rgba(0, 0, 0, .14); }
+    }
+
+    /* ---------- 목차 시트 ---------- */
+    .sheet { width: min(100%, var(--measure)); max-width: 100%; max-height: 80dvh; margin: auto auto 0; padding: 0; border: 0;
+      border-radius: 16px 16px 0 0; background: var(--bg); color: var(--ink); }
+    .sheet::backdrop { background: rgba(0, 0, 0, .4); }
+    .sheet-inner { padding: var(--s4) var(--s5) calc(var(--s5) + env(safe-area-inset-bottom)); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s2); }
+    .sheet-head h2 { margin: 0; font-size: var(--fs-lead); }
+    .toc { display: flex; flex-direction: column; }
+    .toc > a, .toc-group > a { display: block; padding: var(--s3) 0 var(--s1); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); text-decoration: none; }
+    .toc-list { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+    .toc-list a { display: flex; align-items: center; gap: var(--s3); min-height: var(--tap); padding: var(--s2) var(--s3); margin: 0 calc(-1 * var(--s3));
+      border-radius: var(--radius); color: var(--ink); text-decoration: none; line-height: 1.4; }
+    .toc-list a[aria-current="true"] { background: var(--surface); font-weight: 700; color: var(--accent-ink); }
+    .toc-list .toc-title { flex: 1 1 0; min-width: 0; }
+    @media (hover: hover) { .toc-list a:hover { background: var(--surface); } }
+
+    /* ---------- 한 화면에 하나씩 (JS가 켤 때만) ---------- */
+    html:not(.js) .pager, html:not(.js) #toc-open { display: none; }
+    html:not(.js) .sheet { display: block; position: static; width: 100%; max-height: none; margin: 0 auto; border-radius: 0; border-bottom: 1px solid var(--line); }
+    html:not(.js) .sheet-close { display: none; }
+    .js main > .hero:not(.is-current), .js main > section:not(.is-on), .js .screen:not(.is-current) { display: none; }
+    .js main > section { margin-top: 0; }
+    .js main > section > h2 { font-size: var(--fs-small); font-weight: 600; color: var(--accent-ink); margin: 0 0 var(--s2); }
+    .js .topic { padding: 0; border-top: 0; }
+    .js .hero { padding-top: 12vh; }
+    .js footer { display: none; }
+    .js body.at-end footer { display: block; }
+    .screen.enter-next { animation: enter-next var(--dur) var(--ease-out); }
+    .screen.enter-prev { animation: enter-prev var(--dur) var(--ease-out); }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .screen.enter-next, .screen.enter-prev { animation: none; }
+      .bar > span, .btn { transition: none; }
+    }
+    @media (max-width: 480px) {
+      main { padding: var(--s5) var(--s4) var(--s6); }
+      footer { padding: 0 var(--s4) var(--s5); }
+      .btn { min-width: 120px; padding: 0 var(--s5); }
+    }
+    @media print {
+      .topbar, .pager, .sheet { display: none !important; }
+      .js main > .hero, .js main > section, .js .screen, .js footer { display: block !important; }
+    }
+
+    /* ---------- 좌우 패널 (drawer) ---------- */
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
+    .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
+    .panel-toggle svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-toggle .strip { fill: transparent; stroke: none; transition: fill 150ms ease-out; }
+    .panel-toggle[aria-expanded="true"] { color: var(--accent-ink); }
+    .panel-toggle[aria-expanded="true"] .strip { fill: currentColor; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .i-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .theme-toggle .i-sun { display: block; }
+      :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
+    }
+
+    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
+    .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
+    .content { grid-column: 2; }
+    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
+    .content::-webkit-scrollbar, .panel-inner::-webkit-scrollbar { width: 8px; }
+    .content::-webkit-scrollbar-track, .panel-inner::-webkit-scrollbar-track { background: transparent; }
+    .content::-webkit-scrollbar-thumb, .panel-inner::-webkit-scrollbar-thumb { background: var(--scroll); border-radius: 8px; border: 2px solid var(--bg); }
+    .content::-webkit-scrollbar-thumb:hover, .panel-inner::-webkit-scrollbar-thumb:hover { background: var(--scroll-hover); }
+    @supports (scrollbar-color: auto) { .content, .panel-inner { scrollbar-width: thin; scrollbar-color: var(--scroll) transparent; } }
+    .panel-resize { display: none; }
+    .panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 44px; margin-bottom: var(--s2); }
+    .panel-head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-lead); line-height: 1.4; }
+    .panel-sub { margin: 0 0 var(--s4); font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; }
+    .panel-empty { margin: 0; color: var(--ink-2); }
+    .panel-label { display: block; margin: var(--s5) 0 var(--s2); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+
+    /* 진행 상태 */
+    .panel-meta { margin: 0 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .panel-meta b { color: var(--ink); }
+    .progress { height: 4px; margin-bottom: var(--s3); border-radius: 2px; background: var(--line); overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+    .panel .toc-list a { margin: 0 calc(-1 * var(--s2)); padding: var(--s2); font-size: var(--fs-panel); }
+    .toc-mark { flex: none; display: block; width: 20px; height: 20px; color: var(--ink-2); }
+    .toc-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .toc-mark.is-done { color: var(--accent-ink); }
+
+    /* 복습문제: 원문 · 힌트 · 풀이 */
+    .aid details:last-of-type { border-bottom: 1px solid var(--line); }
+    .aid details.original > summary { font-size: var(--fs-panel); }
+    .solved-btn { display: flex; align-items: center; justify-content: center; gap: var(--s2); width: 100%; min-height: var(--tap); margin-top: var(--s5); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .solved-btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
+
+    /* 정리노트: 페이지 요약 */
+    .sum-lead { margin: 0; font-size: var(--fs-body); font-weight: 700; line-height: 1.6; }
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+    .eq-list li:first-child { padding-top: 0; }
+    .eq-name { display: block; font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+    .eq-list .katex-display { margin: var(--s1) 0 0; text-align: left; }
+    .eq-list .katex-display > .katex { text-align: left; }
+    .terms { margin: 0; }
+    .terms dt { font-size: var(--fs-panel); font-weight: 700; margin-top: var(--s4); }
+    .terms dt:first-child { margin-top: 0; }
+    .terms dd { margin: var(--s1) 0 0; font-size: var(--fs-sub); line-height: 1.6; color: var(--ink-2); }
+    .flow { margin: 0; padding-left: 1.4em; font-size: var(--fs-sub); }
+    .flow li { margin: var(--s2) 0; }
+
+    @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
+
+    /* 넓은 화면: 본문 옆에 붙는 패널 */
+    @media (min-width: 1024px) {
+      .layout { --l: var(--panel-l-user, var(--panel-l)); }
+      .layout[data-left="closed"] { --l: 0px; }
+      .panel-left { width: var(--l); }
+      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
+      .panel-left .panel-resize { right: 0; }
+      .panel-right .panel-resize { left: 0; }
+      .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
+      .panel-left .panel-resize::after { right: 0; }
+      .panel-right .panel-resize::after { left: 0; }
+      .panel-resize:focus-visible { outline: none; }
+      .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
+      @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
+      body.is-resizing { cursor: col-resize; user-select: none; }
+      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
+      .scrim, .panel-close { display: none; }
+    }
+    @keyframes panel-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 좁은 화면: 가장자리에서 밀려 나오는 drawer */
+    @media (max-width: 1023.98px) {
+      .panel { position: fixed; top: 0; bottom: 0; z-index: 40; visibility: hidden;
+        transition: transform var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .panel-left { left: 0; width: min(var(--drawer-l), 88vw); transform: translateX(-100%); }
+      .panel-right { right: 0; width: min(var(--drawer-r), 88vw); transform: translateX(100%); }
+      .panel.is-open { visibility: visible; transform: none; transition: transform var(--dur) var(--ease-out); }
+      .panel-inner { padding-top: calc(var(--s3) + env(safe-area-inset-top)); padding-bottom: calc(var(--s6) + env(safe-area-inset-bottom)); }
+      .scrim { position: fixed; inset: 0; z-index: 35; background: var(--scrim); opacity: 0; visibility: hidden;
+        transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
+      html:not(.js) .panel-left { display: none; }
+    }
+    @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
+      .panel.is-shown { animation: none; }
+      .panel-resize::after { transition: none; }
+    }
+    @media print {
+      body { display: block; height: auto; overflow: visible; }
+      .layout { display: block; }
+      .content { overflow: visible; }
+      .panel, .scrim { display: none !important; }
+    }
+  </style>
+</head>
+<body data-screens="article.topic" data-panels="note" data-range="1013">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <strong class="brand">정리노트</strong>
+      <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>요약</span></button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
+  </header>
+  <div class="layout" data-left="open" data-right="closed">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
+      <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-left-title">목차</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-meta">읽은 토픽 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <nav class="toc" aria-label="목차"><a href="#s0">0 PCR</a><a href="#s1">1 전기영동</a><a href="#s2">2 STR</a><a href="#s3">3 유전공학</a><a href="#s4">4 동물 복제</a><a href="#s5">5 식물·GMO</a><a href="#s6">6 요약·예고</a></nav>
+      </div>
+    </aside>
+    <div class="content">
+  <main>
+    <div class="hero">
+      <h1>PCR과 DNA 기술의 응용 — 5살도 이해하는 정리노트</h1>
+      <p>이영만 교수님 생명과학 · 1013 수업 (6장 DNA 기술과 유전체학)</p>
+    </div>
+    <section id="s0"><h2>0. DNA 클로닝 복습과 PCR</h2>
+<article class="topic" id="s0-recap"><h3>지난 수업: DNA 클로닝</h3><div class="tags"><span class="tag date">1013 수업</span><span class="tag slide">6장 p1–5</span></div>
+<div class="layer formal"><span class="layer-title">정확히 말하면</span><ul><li>제한효소로 원하는 DNA와 플라스미드를 같은 방식으로 잘라 상보적인 점착성 말단을 만들어요.</li><li>연결효소로 조각을 이어 재조합 DNA를 만들어요.</li><li>대장균에 넣고 배양한 뒤 플라스미드를 분리하면 원하는 DNA 사본을 많이 얻어요.</li><li>항생제 내성은 플라스미드를 가진 세균을 고르는 데 쓰여요. 원하는 조각이 들어갔는지는 추가로 확인해야 해요.</li></ul><p><a href="../1008/정리노트_1008_Gene_Regulation_and_DNA_Cloning.html#s5-cloning">지난 수업의 DNA 클로닝</a></p></div>
+
+<div class="sum" hidden><p class="sum-lead">같은 조각을 잘라 잇고 세균을 길러 DNA 사본을 확보해요.</p>
+<p class="panel-label">용어</p><dl class="terms"><dt>DNA 클로닝</dt><dd>특정 DNA의 사본을 많이 만드는 과정</dd></dl>
+</div></article>
+<article class="topic" id="s0-pcr-components"><h3>PCR: 시험관 속 복사 준비</h3><div class="tags"><span class="tag date">1013 수업</span><span class="tag slide">6장 p1–5</span></div>
+<div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p>필요한 구간 양쪽에 시작 표시를 붙이고 글자 재료와 복사기를 준비해요.</p><figure class="figure"><svg id="fig-pcr-materials" viewBox="0 0 540 200" role="img" aria-label="복사할 글과 시작 표시, 재료, 복사기가 함께 필요해요."><rect class="fig-ink" x="14" y="50" width="145" height="70" rx="8"/><text class="fig-text" x="86.5" y="90.0" text-anchor="middle" font-size="14">복사할 글</text><rect class="fig-ink" x="196" y="50" width="145" height="70" rx="8"/><text class="fig-text" x="268.5" y="90.0" text-anchor="middle" font-size="14">시작 표시 두 개</text><rect class="fig-ink" x="379" y="50" width="145" height="70" rx="8"/><text class="fig-text" x="451.5" y="90.0" text-anchor="middle" font-size="14">글자 재료 + 복사기</text><line class="fig-ink" x1="159" y1="85" x2="196" y2="85"/><line class="fig-ink" x1="341" y1="85" x2="379" y2="85"/></svg><figcaption>복사할 글과 시작 표시, 재료, 복사기가 함께 필요해요.</figcaption></figure></div>
+<div class="layer formal"><span class="layer-title">정확히 말하면</span><p>PCR(중합효소 연쇄반응, Polymerase Chain Reaction)은 시험관에서 특정 DNA를 증폭하는 방법이에요. 세균을 배양하는 DNA 클로닝과 달리 세포 밖에서 반응해요.</p><ul><li><strong>주형 DNA:</strong> 원하는 표적 서열을 포함한 DNA예요.</li><li><strong>두 프라이머(primer):</strong> 서로 다른 주형 가닥에 붙어 원하는 구간의 양 끝을 정해요. 프라이머가 붙을 양 끝 서열 정보가 필요해요.</li><li><strong>내열성 DNA 중합효소:</strong> 프라이머 끝에서 새 DNA를 5′에서 3′ 방향으로 늘려요. 대표 효소는 Taq 중합효소예요.</li><li><strong>dNTP:</strong> DNA를 만들 네 종류의 재료인 dATP·dGTP·dCTP·dTTP예요. 디옥시리보뉴클레오시드 삼인산을 뜻해요.</li></ul></div>
+<div class="layer prof"><span class="layer-title">교수님 말씀</span><blockquote>“DNA 복제는 무조건 프라이머가 필요합니다.”</blockquote><p>교수님은 기존 글을 보며 글자를 하나씩 덧붙이는 복사를, 가득 찬 차선 옆에 차가 차례로 들어오는 모습에 비유했어요.</p></div>
+<div class="layer warn"><span class="layer-title">꼭 기억해요</span><ul><li>세포 안에서는 헬리케이스가 두 가닥을 분리하고 프라이메이스가 RNA 프라이머를 만들어요. PCR에서는 열로 분리하고 합성한 DNA 프라이머를 공급해요.</li><li>표적 내부 서열 전체를 이미 알아야 하는 것은 아니에요. 프라이머를 설계할 양 끝 정보를 알아야 해요.</li><li>dNTP는 재료이고 중합효소는 재료를 연결하는 효소예요. DNA 연결효소와 같은 역할로 혼동하지 마세요.</li><li>PCR에 플라스미드·헬리케이스·프라이메이스를 필수 재료로 넣지 않아요. 일반적인 PCR에서는 열과 미리 만든 프라이머가 그 일을 대신해요.</li></ul></div>
+<div class="layer supp"><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p>Taq는 호열성 <strong>세균</strong> 유래 중합효소예요. 수업 중 고세균이라고 말한 부분은 강의노트의 분류에 맞게 바로잡아요. 교재도 고온 지역 미생물의 내열성 효소를 쓴다고 설명해요.</p><p>출처: 강의노트 6장 p2, 교재 6장 p122</p></div>
+
+<div class="sum" hidden><p class="sum-lead">주형, 두 프라이머, 내열성 중합효소, dNTP를 준비해요.</p>
+<p class="panel-label">용어</p><dl class="terms"><dt>프라이머(primer)</dt><dd>새 가닥이 자라기 시작하는 짧은 DNA</dd><dt>Taq 중합효소</dt><dd>반복 가열에 견디는 DNA 합성 효소</dd></dl>
+</div></article>
+<article class="topic" id="s0-pcr-cycle"><h3>PCR 세 단계와 증폭량</h3><div class="tags"><span class="tag date">1013 수업</span><span class="tag slide">6장 p1–5</span></div>
+<div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p>두 줄을 벌리고 시작 표시를 붙인 다음 새 줄을 늘리는 일을 반복해요.</p><figure class="figure"><svg id="fig-pcr-cycle" viewBox="0 0 540 200" role="img" aria-label="세 일을 한 바퀴로 반복하면 복사본이 늘어요."><rect class="fig-ink" x="12" y="55" width="152" height="62" rx="8"/><text class="fig-text" x="88.0" y="91.0" text-anchor="middle" font-size="14">뜨겁게 벌리기</text><rect class="fig-ink" x="194" y="55" width="152" height="62" rx="8"/><text class="fig-text" x="270.0" y="91.0" text-anchor="middle" font-size="14">식혀서 표시 붙이기</text><rect class="fig-ink" x="376" y="55" width="152" height="62" rx="8"/><text class="fig-text" x="452.0" y="91.0" text-anchor="middle" font-size="14">새 글 늘리기</text><line class="fig-ink" x1="164" y1="86" x2="194" y2="86"/><line class="fig-ink" x1="346" y1="86" x2="376" y2="86"/><text class="fig-text" x="36" y="153" font-size="14">한 바퀴마다 사본이 두 배가 되는 이상적인 경우</text></svg><figcaption>세 일을 한 바퀴로 반복하면 복사본이 늘어요.</figcaption></figure></div>
+<div class="layer formal"><span class="layer-title">정확히 말하면</span><ol class="steps"><li><strong>변성:</strong> 약 95℃로 가열해 두 DNA 가닥 사이 수소결합을 깨고 가닥을 분리해요.</li><li><strong>결합:</strong> 약 55℃로 낮추면 두 프라이머가 각 주형의 상보적인 자리에 붙어요.</li><li><strong>신장:</strong> 약 72℃에서 Taq 중합효소가 dNTP를 이어 새 DNA를 합성해요.</li></ol><p>이 세 단계를 한 주기(cycle)라고 해요. 이상적으로 매 주기 모든 분자가 복제되면 초기 N₀개의 전체 분자는 n주기 뒤 N₀×2^n개가 돼요. 처음 1개라면 1주기 2개, 2주기 4개, 3주기 8개예요. 수업에서는 보통 30–35주기를 반복한다고 설명했어요.</p></div>
+<div class="layer prof"><span class="layer-title">교수님 말씀</span><blockquote>“n 사이클 돌리면 몇 배가 된다? 2의 n승 배가 됩니다.”</blockquote></div>
+<div class="layer warn"><span class="layer-title">꼭 기억해요</span><ul><li>변성은 DNA 두 가닥을 분리하는 단계예요. 내열성 효소를 쓰는 이유는 이런 가열을 반복해도 DNA를 합성할 기능이 필요하기 때문이에요.</li><li>계속 뜨겁게 두면 프라이머가 붙기 어려워요. 결합 단계에서는 온도를 낮춰야 해요.</li><li>55℃는 수업의 대표값이에요. 실제 결합 온도는 프라이머의 서열·조건에 따라 달라요.</li><li>2^n은 이상적인 <strong>전체 DNA 분자 수</strong> 증가예요. 초기 주기에는 양 끝 길이가 정확히 표적과 일치하지 않는 산물도 있어요. 3주기 전체 8개를 모두 정확한 길이의 표적 8개라고 말하면 안 돼요.</li><li>실제 반응에서는 효율이 낮아지거나 재료가 소모되어 계속 정확히 두 배가 되지는 않아요.</li></ul></div>
+<div class="widget" id="widget-pcr"><h4>직접 해 보기: 전체 분자 수</h4><p class="widget-help">처음 분자 수와 주기를 바꾸면 매 주기 두 배가 되는 이상적인 전체 분자 수를 보여 줘요.</p><div class="controls"><label>처음 분자 수 <input type="range" id="pcr-initial" min="1" max="5" step="1" value="1"> <b id="pcr-initial-val">1</b></label><label>주기 수 <input type="range" id="pcr-cycles" min="0" max="10" step="1" value="3"> <b id="pcr-cycles-val">3</b></label></div><svg id="pcr-plot" viewBox="0 0 540 240" role="img" aria-label="주기별 전체 DNA 분자 수, 세로 한 단계가 두 배 증가"></svg><p class="readout">이상적 전체 분자 수 <b id="pcr-out">8</b>개</p><p class="legend">가로축은 주기, 세로 한 단계는 두 배 증가예요. 정확한 길이의 표적 산물 수를 보여 주는 그래프가 아니에요.</p><div class="widget-static" hidden><figure class="figure"><svg id="widget-pcr-static-1" viewBox="0 0 540 240" role="img" aria-label="초기 1개 3주기 전체 8개"><line class="axis" x1="44" y1="180" x2="500" y2="180"/><path class="fig-accent" d="M44,180 L87,166 L130,152 L173,138"/><text class="fig-text" x="20" y="220" font-size="14">초기 1개 · 3주기 · 전체 8개</text></svg></figure><figure class="figure"><svg id="widget-pcr-static-2" viewBox="0 0 540 240" role="img" aria-label="초기 2개 5주기 전체 64개"><line class="axis" x1="44" y1="180" x2="500" y2="180"/><path class="fig-accent" d="M44,180 L87,166 L130,152 L173,138 L216,124 L259,110"/><text class="fig-text" x="20" y="220" font-size="14">초기 2개 · 5주기 · 전체 64개</text></svg></figure><figure class="figure"><svg id="widget-pcr-static-3" viewBox="0 0 540 240" role="img" aria-label="초기 5개 10주기 전체 5120개"><line class="axis" x1="44" y1="180" x2="500" y2="180"/><path class="fig-accent" d="M44,180 L87,166 L130,152 L173,138 L216,124 L259,110 L302,96 L345,82 L388,68 L431,54 L474,40"/><text class="fig-text" x="20" y="220" font-size="14">초기 5개 · 10주기 · 전체 5120개</text></svg></figure><div class="table-wrap"><table><tr><th>초기 분자</th><th>주기</th><th>전체 분자</th></tr><tr><td>1</td><td>3</td><td>8</td></tr><tr><td>2</td><td>5</td><td>64</td></tr><tr><td>5</td><td>10</td><td>5120</td></tr></table></div></div></div>
+<div class="sum" hidden><p class="sum-lead">변성·결합·신장을 반복하면 이상적 전체 분자 수는 매 주기 두 배가 돼요.</p>
+<p class="panel-label">용어</p><dl class="terms"><dt>변성</dt><dd>열로 DNA 두 가닥을 분리함</dd><dt>결합</dt><dd>프라이머가 주형에 붙음</dd><dt>신장</dt><dd>새 가닥을 늘림</dd></dl>
+</div></article>
+<article class="topic" id="s0-pcr-uses"><h3>적은 시료를 읽기: 역전사와 오염</h3><div class="tags"><span class="tag date">1013 수업</span><span class="tag slide">6장 p1–5</span></div>
+<div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p>너무 적어서 읽기 힘든 글을 많이 복사하면 비교할 수 있어요.</p><figure class="figure"><svg id="fig-pcr-use" viewBox="0 0 540 200" role="img" aria-label="원본을 복사하되 남의 글이 섞이지 않게 조심해요."><rect class="fig-ink" x="18" y="48" width="128" height="65" rx="8"/><text class="fig-text" x="82.0" y="85.5" text-anchor="middle" font-size="14">읽을 원본</text><rect class="fig-ink" x="201" y="48" width="138" height="65" rx="8"/><text class="fig-text" x="270.0" y="85.5" text-anchor="middle" font-size="14">복사 가능한 글</text><rect class="fig-ink" x="388" y="48" width="135" height="65" rx="8"/><text class="fig-text" x="455.5" y="85.5" text-anchor="middle" font-size="14">많아진 글</text><line class="fig-ink" x1="146" y1="80" x2="201" y2="80"/><line class="fig-ink" x1="339" y1="80" x2="388" y2="80"/><text class="fig-text" x="34" y="155" font-size="14">남의 글이 섞이면 그것도 복사될 수 있어요</text></svg><figcaption>원본을 복사하되 남의 글이 섞이지 않게 조심해요.</figcaption></figure></div>
+<div class="layer formal"><span class="layer-title">정확히 말하면</span><p>범죄 현장의 모근세포나 고대 유골에서 얻은 미량 DNA도 PCR로 증폭한 뒤 분석할 수 있어요. 네안데르탈인 DNA 연구는 고대 DNA 분석 사례로 소개됐어요.</p><p>RNA 바이러스 검출에는 먼저 역전사효소로 RNA를 DNA로 바꿔요. 그 DNA에 바이러스 서열에 맞는 프라이머를 붙여 PCR해요. 역전사와 PCR은 서로 다른 단계예요.</p><p>손이나 주변 환경에서 나온 DNA가 시료에 섞이는 <strong>오염</strong>은 엉뚱한 결과를 만들 수 있어요. 프라이머의 비특이적 결합이나 표적 검출 실패도 주의해야 해요.</p></div>
+<div class="layer prof"><span class="layer-title">교수님 말씀</span><blockquote>“PCR은 DNA를 증폭하는 기술입니다. 어떻게 할까요?”</blockquote><p>교수님은 미라와 네안데르탈인 연구 이야기를 통해 미량 시료에서는 오염 관리가 특히 중요하다고 설명했어요.</p></div>
+<div class="layer warn"><span class="layer-title">꼭 기억해요</span><ul><li>역전사효소가 RNA를 DNA로 바꿔요. PCR 중합효소가 RNA를 직접 DNA로 바꾼다고 혼동하지 마세요.</li><li>표적 서열에 맞는 프라이머가 검출할 대상을 정해요. 증폭 결과가 있다고 어떤 시료든 같은 바이러스라는 뜻은 아니에요.</li><li>잘못된 양성·음성은 프라이머 하나의 문제만으로 설명할 수 없어요. 시료 상태·오염·반응 조건도 결과에 영향을 줘요.</li><li>PCR은 남아 있는 DNA를 증폭해요. 오랜 시간 부서져 사라진 DNA를 되살리는 기술은 아니에요.</li><li>네안데르탈인 유래 유전자의 비중을 전체 DNA 서열 유사도와 같은 값으로 읽으면 안 돼요. 이 수업의 핵심은 고대 DNA를 분석할 때 오염을 조심하는 것이에요.</li></ul></div>
+
+<div class="sum" hidden><p class="sum-lead">RNA는 먼저 DNA로 바꾸고, 적은 DNA를 증폭할 때는 오염을 조심해요.</p>
+<p class="panel-label">용어</p><dl class="terms"><dt>역전사효소</dt><dd>RNA를 주형으로 DNA를 합성하는 효소</dd><dt>오염</dt><dd>분석하려던 시료에 다른 물질이나 DNA가 섞임</dd></dl>
+</div></article>
+    </section>
+    <section id="s1"><h2>1. 겔 전기영동: DNA 크기 읽기</h2>
+<article class="topic" id="s1-gel"><h3>전기영동의 방향과 거리</h3><div class="tags"><span class="tag date">1013 수업</span><span class="tag slide">6장 p1–5</span></div>
+<div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p>작은 조각은 틈을 빨리 지나 멀리 가고 큰 조각은 뒤에 남아요.</p><figure class="figure"><svg id="fig-gel-size" viewBox="0 0 540 245" role="img" aria-label="두 조각을 같은 시간 동안 움직이면 작은 조각이 더 멀리 가요."><rect class="fig-ink" x="30" y="40" width="245" height="150" rx="8"/><text class="fig-text" x="152.5" y="120.0" text-anchor="middle" font-size="14"></text><text class="fig-text" x="48" y="29" font-size="14">음극 (−) · 시료 넣는 곳</text><text class="fig-text" x="80" y="218" font-size="14">양극 (+) 쪽</text><rect class="fig-ink" x="75" y="55" width="55" height="14" rx="8"/><text class="fig-text" x="102.5" y="67.0" text-anchor="middle" font-size="14"></text><rect class="fig-ink" x="175" y="55" width="55" height="14" rx="8"/><text class="fig-text" x="202.5" y="67.0" text-anchor="middle" font-size="14"></text><line class="fig-accent" x1="72" y1="92" x2="135" y2="92"/><line class="fig-accent" x1="172" y1="161" x2="235" y2="161"/><text class="fig-text" x="318" y="98" font-size="14">긴 조각: 가까이</text><text class="fig-text" x="318" y="166" font-size="14">짧은 조각: 멀리</text></svg><figcaption>두 조각을 같은 시간 동안 움직이면 작은 조각이 더 멀리 가요.</figcaption></figure></div>
+<div class="layer formal"><span class="layer-title">정확히 말하면</span><p>아가로오스(아가로스) 겔 전기영동은 전기장을 걸어 DNA 절편을 분리하는 방법이에요. 시료를 넣는 홈(well)에 DNA를 넣고 전압을 걸어요.</p><p>DNA의 <strong>인산기</strong> 때문에 DNA는 <strong>음전하</strong>를 띠어요. 따라서 음극(−)에서 <strong>양극(+)</strong> 쪽으로 이동해요.</p><p>같은 겔·시간·조건에서 비교하는 DNA 절편은 짧을수록 빠르고 멀리 이동해요. 500 염기쌍(bp)의 절편은 5000 염기쌍 절편보다 멀리 가요. 같은 길이의 분자들이 모이면 같은 위치의 띠, 밴드로 관찰돼요.</p><p>DNA는 맨눈으로 바로 보이지 않아요. 수업에서는 DNA에 결합하는 염료를 쓰고 자외선을 비추어 <strong>형광</strong>을 내게 하는 검출법을 설명했어요.</p></div>
+<div class="layer prof"><span class="layer-title">교수님 말씀</span><p>교수님은 겔의 작은 구멍을 통과할 때 큰 조각이 빠져나오기 힘들고 작은 조각은 빨리 지나간다고 설명했어요.</p></div>
+<div class="layer warn"><span class="layer-title">꼭 기억해요</span><ul><li>양극 쪽으로 가는 이유는 DNA가 음전하이기 때문이에요. 음극에 끌려가는 것이 아니에요.</li><li>멀리 간 밴드는 작은 DNA예요. 웰 가까이에 남은 밴드를 작은 조각으로 읽지 마세요.</li><li>단백질도 적절한 전기영동으로 분리할 수 있어요. 모든 단백질이 어떤 조건에서도 DNA와 같은 방향·크기 규칙으로 이동한다고 일반화하면 안 돼요.</li><li>수업의 자외선·형광 염료 조건에서는 형광으로 DNA를 확인해요. 염료나 검출법이 명시되지 않은 문제에서는 가시광선으로 보이는 염색법도 있을 수 있어요. “가시광선으로 DNA를 확인”을 조건 없이 항상 불가능하다고 판정하면 모호해요.</li></ul></div>
+<div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p>길이를 아는 표지 DNA인 <strong>ladder</strong>를 함께 흘려 보내면 시료 밴드의 위치와 비교하여 길이를 추정할 수 있어요. 겔의 종류와 조건은 분자에 맞게 골라야 해요. 단백질의 이동은 전하와 분리 조건에도 영향을 받아요.</p><p>출처: 교재 6장 pp122–123</p></div>
+
+<div class="sum" hidden><p class="sum-lead">DNA는 양극으로 가고, 같은 조건에서 짧은 절편이 더 멀리 이동해요.</p>
+<p class="panel-label">용어</p><dl class="terms"><dt>염기쌍(bp)</dt><dd>DNA 절편 길이를 나타내는 단위</dd><dt>밴드(band)</dt><dd>같은 위치에 모여 관찰되는 DNA 띠</dd></dl>
+</div></article>
+    </section>
+    <section id="s2"><h2>2. DNA 지문감식과 STR</h2>
+<article class="topic" id="s2-str"><h3>STR 반복 횟수가 밴드가 되기까지</h3><div class="tags"><span class="tag date">1013 수업</span><span class="tag slide">6장 p1–5</span></div>
+<div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p>같은 짧은 말을 몇 번 적었는지가 다르면 글 전체의 길이도 달라져요.</p><figure class="figure"><svg id="fig-str-abc" viewBox="0 0 540 275" role="img" aria-label="같은 길이 두 개는 한 자리에 겹치고 다른 길이는 따로 보여요."><rect class="fig-ink" x="20" y="35" width="280" height="180" rx="8"/><text class="fig-text" x="160.0" y="130.0" text-anchor="middle" font-size="14"></text><text class="fig-text" x="85" y="24" font-size="14">A</text><text class="fig-text" x="170" y="24" font-size="14">B</text><text class="fig-text" x="250" y="24" font-size="14">C</text><text class="fig-text" x="330" y="94" font-size="14">15번: 느림</text><text class="fig-text" x="330" y="142" font-size="14">11번</text><text class="fig-text" x="330" y="189" font-size="14">9번: 빠름</text><rect class="fig-ink" x="72" y="43" width="30" height="10" rx="8"/><text class="fig-text" x="87.0" y="53.0" text-anchor="middle" font-size="14"></text><rect class="fig-ink" x="157" y="43" width="30" height="10" rx="8"/><text class="fig-text" x="172.0" y="53.0" text-anchor="middle" font-size="14"></text><rect class="fig-ink" x="237" y="43" width="30" height="10" rx="8"/><text class="fig-text" x="252.0" y="53.0" text-anchor="middle" font-size="14"></text><line class="fig-accent" x1="72" y1="135" x2="107" y2="135"/><line class="fig-accent" x1="157" y1="88" x2="192" y2="88"/><line class="fig-accent" x1="157" y1="182" x2="192" y2="182"/><line class="fig-accent" x1="237" y1="135" x2="272" y2="135"/><line class="fig-accent" x1="237" y1="182" x2="272" y2="182"/><text class="fig-text" x="51" y="244" font-size="14">11 / 11</text><text class="fig-text" x="147" y="244" font-size="14">9 / 15</text><text class="fig-text" x="228" y="244" font-size="14">9 / 11</text></svg><figcaption>같은 길이 두 개는 한 자리에 겹치고 다른 길이는 따로 보여요.</figcaption></figure></div>
+<div class="layer formal"><span class="layer-title">정확히 말하면</span><p>DNA 지문감식(DNA fingerprinting), 또는 DNA 프로파일링은 DNA 서열 차이로 개인을 구별하는 방법이에요.</p><p>STR(Short Tandem Repeat)은 짧은 염기서열이 나란히 이어지는 짧은 직렬 반복 서열이에요. 수업과 교재에서는 약 3–5개 염기의 반복단위를 설명했어요. 예를 들어 GTA가 여러 번 반복되고, 같은 좌위에서도 사람마다 반복 횟수가 달라요.</p><p>같은 STR 좌위에서는 반복단위 서열이 같아도 반복 <strong>횟수</strong>가 달라질 수 있어요. 사람마다 DNA 세트 수가 달라서 생기는 차이가 아니에요.</p><p>STR 좌위 양 끝에 프라이머를 붙여 PCR하면 반복부를 포함한 절편이 만들어져요. 양 끝 길이가 같다는 조건에서 반복이 많으면 절편이 길고, 적으면 짧아요. 겔 전기영동으로 그 길이 차이를 읽어요.</p><ul><li>A=(11,11): 동형접합이라 두 대립유전자의 길이가 같아 한 위치의 밴드가 나와요.</li><li>B=(9,15): 이형접합이라 짧은 9와 긴 15의 밴드가 따로 나와요.</li><li>C=(9,11): 이형접합이라 9와 11의 밴드가 따로 나와요.</li><li>SNP(단일염기다형성)는 특정 위치의 염기 하나가 개인 사이에서 다른 변이예요.</li><li>CNV(복제수변이)는 DNA 구간의 복제 수가 개인 사이에서 다른 변이예요. 수업에서는 두 변이도 소개했지만 STR을 중심으로 공부하라고 했어요.</li></ul></div>
+<div class="layer prof"><span class="layer-title">교수님 말씀</span><blockquote>“일단 STR만 알면 돼요.”</blockquote><p>교수님은 “상무, 상무, 상무”처럼 같은 말이 이어지는 모습을 STR에 비유했어요. 반복 횟수가 달라지면 길이가 달라진다는 뜻이에요.</p></div>
+<div class="layer warn"><span class="layer-title">꼭 기억해요</span><ul><li>반복단위의 염기 수와 반복 횟수는 달라요. 3개짜리 단위를 9번 반복하면 반복부는 27개 염기예요. PCR 절편에는 양쪽 구간도 포함될 수 있어요. 고정 구간이 80 bp이고 반복단위가 4 bp라면, 길이는 80+4×반복 횟수예요. 9회는 116 bp, 11회는 124 bp, 15회는 140 bp예요.</li><li>한 밴드는 DNA가 한 개 또는 대립유전자가 하나라는 뜻이 아니에요. 같은 길이인 두 대립유전자 산물이 겹칠 수 있어요.</li><li>단일 좌위에서 서로 다른 길이를 가진 이형접합자라면 두 위치가 나와요. 여러 좌위를 함께 분석한 전체 밴드 수에 이 규칙을 그대로 적용하지 마세요.</li><li>반복이 적은 9번은 15번보다 짧아서 더 멀리 이동해요. 위 그림은 음극의 웰이 위, 양극 방향이 아래예요.</li></ul></div>
+<div class="layer supp"><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p>STR 감식에서는 대개 비암호화 영역의 여러 좌위를 비교해요. 먼저 PCR로 증폭한 뒤 겔에서 길이를 나누어요. 실제 손가락의 지문 무늬를 분석하는 기술은 아니에요.</p><p>교재는 일반적인 DNA 지문으로 사람을 구별할 때 <strong>일란성쌍둥이</strong>를 예외로 들어요. “모든 사람의 DNA 지문은 반드시 다르다”는 주장에는 이 예외를 고려해야 해요.</p><p>출처: 강의노트 6장 p2, 교재 6장 p124</p></div>
+
+<div class="sum" hidden><p class="sum-lead">STR 반복 수를 PCR 절편의 길이로 바꿔 읽고 동형접합에서는 같은 길이가 겹쳐요.</p>
+<p class="panel-label">용어</p><dl class="terms"><dt>동형접합</dt><dd>한 좌위의 두 대립유전자가 같은 상태</dd><dt>이형접합</dt><dd>한 좌위의 두 대립유전자가 다른 상태</dd></dl>
+</div></article>
+<article class="topic" id="s2-parentage"><h3>친자 판별: 부모에게서 하나씩</h3><div class="tags"><span class="tag date">1013 수업</span><span class="tag slide">6장 p1–5</span></div>
+<div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p>아이는 엄마에게 하나, 아빠에게 하나씩 받아요.</p><figure class="figure"><svg id="fig-parent-alleles" viewBox="0 0 540 200" role="img" aria-label="각 자리에서 부모에게 하나씩 받은 글을 비교해요."><rect class="fig-ink" x="15" y="30" width="165" height="55" rx="8"/><text class="fig-text" x="97.5" y="62.5" text-anchor="middle" font-size="14">엄마: 9 / 15</text><rect class="fig-ink" x="355" y="30" width="165" height="55" rx="8"/><text class="fig-text" x="437.5" y="62.5" text-anchor="middle" font-size="14">아빠: 9 / 11</text><rect class="fig-ink" x="175" y="135" width="190" height="55" rx="8"/><text class="fig-text" x="270.0" y="167.5" text-anchor="middle" font-size="14">아이: 15 / 11</text><line class="fig-accent" x1="112" y1="85" x2="223" y2="135"/><line class="fig-accent" x1="428" y1="85" x2="319" y2="135"/><text class="fig-text" x="16" y="119" font-size="14">엄마에게 15</text><text class="fig-text" x="380" y="119" font-size="14">아빠에게 11</text></svg><figcaption>각 자리에서 부모에게 하나씩 받은 글을 비교해요.</figcaption></figure></div>
+<div class="layer formal"><span class="layer-title">정확히 말하면</span><p>자녀는 한 STR 유전자좌에서 엄마에게 대립유전자 하나, 아빠에게 하나를 물려받아요. 따라서 부모에게서 제공할 수 있는 대립유전자와 아이의 두 대립유전자가 맞는지 비교해요.</p><p>엄마 B=(9,15), 아빠 C=(9,11)에서 자녀 (15,11)은 엄마의 15와 아빠의 11을 받아 생길 수 있어요. 자녀 (15,20)은 이 단순 모형에서 부모에게 없는 20이 있어서 양립하지 않아요. 실제 친자 검사는 돌연변이·검사 오류 등도 고려해 해석해요.</p><p>한 좌위가 맞아도 <strong>우연</strong>히 같은 반복 수를 가진 사람일 수 있어요. <strong>여러</strong> 좌위를 비교해야 친자 관계나 개인 식별의 근거가 강해져요. 수업의 영상은 15개 좌위를 검사한 예이지, 모든 검사에 고정된 수는 아니에요.</p><p>범죄 현장 시료와 용의자의 DNA를 비교하거나, 유골을 친척의 DNA와 비교해 신원을 확인하는 데도 활용해요. 러시아 황실과 아나스타샤 주장의 신원 확인 이야기도 이런 활용 예로 소개됐어요.</p></div>
+<div class="layer prof"><span class="layer-title">교수님 말씀</span><p>교수님은 “하나는 엄마가 준 거, 하나는 아빠가 준 거”라고 친자 판별의 기준을 설명했어요. 한 위치의 우연 일치만으로 결론내리지 않도록 여러 위치를 검사한다고 덧붙였어요.</p></div>
+<div class="layer warn"><span class="layer-title">꼭 기억해요</span><ul><li>자녀의 모든 밴드가 엄마와 같거나 아빠와 같아야 하는 것은 아니에요. 각 좌위에서 부모 각각의 대립유전자 하나씩을 확인해요.</li><li>“아이는 엄마 밴드 절반과 아빠 밴드 절반”이라는 말은 상속 원리를 거칠게 줄인 표현이에요. 공유하는 대립유전자와 동형접합의 겹침 때문에 눈에 보이는 <strong>밴드 수의 절반</strong>이 항상 보장되지는 않아요.</li><li>예의 15는 엄마 B에게서 온 값이에요. 수업에서 이 값을 아빠 것으로 말한 부분은 부모의 실제 구성과 맞춰 고쳤어요.</li><li>한 좌위가 맞으면 그 좌위와 양립한다는 뜻이에요. 친부 확정으로 과장하지 마세요. 여러 좌위가 필요해요.</li><li>길이가 맞는다는 것은 같은 대립유전자로 분류할 단서예요. 한 밴드 위치가 같다고 두 사람의 DNA 전체가 같다는 뜻은 아니에요.</li></ul></div>
+
+<div class="layer supp"><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p>DNA 지문 분석은 사람뿐 아니라 동식물·미생물의 유전적 차이와 신원·종 확인에도 활용돼요. 교재는 병원성 대장균 검사와 밀렵 수사 등의 예를 들어요. 강의노트는 충분한 수의 좌위를 조사하면 법정 증거로 채택될 수 있다고 설명해요. 이는 수업 자료에 실린 활용 설명이며, 개별 사건의 법적 효력을 자동 보장하는 뜻은 아니에요.</p><p>출처: 강의노트 6장 pp2–3, 교재 6장 p125</p></div><div class="sum" hidden><p class="sum-lead">친자 비교는 각 좌위에서 부모 각각에게 하나씩 받을 수 있는지 확인해요.</p>
+<p class="panel-label">용어</p><dl class="terms"><dt>대립유전자(allele)</dt><dd>같은 좌위에 있는 유전자 또는 DNA 서열의 서로 다른 형태</dd><dt>친자 판별</dt><dd>부모에게서 받은 대립유전자들의 관계를 여러 좌위에서 비교함</dd></dl>
+</div></article>
+    </section>
+    <section id="s3"><h2>3. 단백질 생산과 유전자 치료</h2>
+<article class="topic" id="s3-protein"><h3>생물을 단백질 생산 공장으로</h3><div class="tags"><span class="tag date">1013 수업</span><span class="tag slide">6장 p3–4</span></div><div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">필요한 물건의 만드는 법을 작은 공장에 보내면 많이 만들 수 있어요.</p><figure class="figure"><svg id="fig-s3-protein" viewBox="0 0 600 106" role="img" aria-label="공장 역할을 하는 생물에서 만든 물질을 골라내요."><rect class="fig-accent" x="20" y="22" width="170" height="62" rx="8"/><text class="fig-text" x="105.0" y="58" text-anchor="middle" font-size="13">사람의 만드는 법</text><path class="fig-ink" d="M190 53 H215"/><rect class="fig-accent" x="215" y="22" width="170" height="62" rx="8"/><text class="fig-text" x="300.0" y="58" text-anchor="middle" font-size="13">작은 생물 공장</text><path class="fig-ink" d="M385 53 H410"/><rect class="fig-accent" x="410" y="22" width="170" height="62" rx="8"/><text class="fig-text" x="495.0" y="58" text-anchor="middle" font-size="13">필요한 약을 정제</text></svg><figcaption>공장 역할을 하는 생물에서 만든 물질을 골라내요.</figcaption></figure></div><div class="layer formal"><span class="layer-title">정확히 말하면</span><p>유전공학(genetic engineering)은 DNA 기술로 세포나 생명체의 유전자를 목적에 맞게 변형하는 일이에요. 외부 유전정보가 도입된 생명체를 형질전환(transgenic) 생명체라고 해요.</p><ol class="steps"><li>원하는 단백질을 암호화하는 유전자를 발현벡터(expression vector)에 넣어요.</li><li>벡터를 대장균 등에 도입해 배양해요. 프로모터(promoter)는 유전자의 전사가 시작되도록 하는 조절 부위예요.</li><li>생산된 단백질을 세포나 배양액에서 추출하고 정제해요.</li></ol><p>사람 인슐린(insulin) 유전자를 대장균에서 발현시켜 얻는 단백질 의약품의 예가 Humulin(휴뮬린)이에요. 인간성장호르몬, 혈전 치료용 단백질, 백신 성분도 생산 대상이 될 수 있어요.</p><p>대장균에서 원하는 기능을 갖추기 어려운 단백질은 효모(yeast) 같은 진핵생물이나 동물을 생산자로 사용할 수 있어요. 암양의 젖에서 발현하는 단백질 유전자의 프로모터에 원하는 유전자를 연결하면, 젖에서 약용 단백질을 생산하고 정제하는 데 이용할 수 있어요.</p></div><div class="layer prof"><span class="layer-title">교수님 말씀</span><p>교수님은 인슐린 유전자를 대장균에 넣고 대장균을 싸게 대량 배양하는 방식을 생산 공장으로 설명했어요. 인슐린 개발의 사업화 이야기는 아이디어를 실제 단백질 생산에 연결한 사례로 소개했어요.</p><blockquote>그때는 효모를 사용하든지, 아니면 다른 동물을 사용해야 돼요.</blockquote></div><div class="layer warn"><span class="layer-title">꼭 기억해요</span><p>생산자가 대장균이라고 해서 생산된 의약품이 세균 단백질이라는 뜻은 아니에요. 도입한 사람 유전자에 따라 사람 단백질을 만드는 것이 목적이에요.</p><p>유전자를 넣는 것과 원하는 단백질이 충분히 발현되는 것은 달라요. 적절한 프로모터와 생산 조건이 필요해요. 모든 사람 단백질을 대장균에서 같은 방식으로 만들 수 있다고 일반화하지 않아요.</p><p>이 단백질 의약품을 환자에게 투여하는 것만으로 환자의 유전자가 바뀌지는 않아요. <a href="#s3-therapy">유전자 치료</a>와 구별해요.</p></div><div class="sum" hidden><p class="sum-lead">필요한 물건의 만드는 법을 작은 공장에 보내면 많이 만들 수 있어요.</p><p class="panel-label">용어</p><dl class="terms"><dt>프로모터(promoter)</dt><dd>유전자의 전사 시작을 조절하는 DNA 부위예요.</dd><dt>Humulin</dt><dd>유전공학으로 생산한 사람 인슐린 의약품의 예예요.</dd><dt>발현벡터(expression vector)</dt><dd>도입한 유전자의 발현을 가능하게 하는 벡터예요.</dd></dl></div></article>
+<article class="topic" id="s3-therapy"><h3>유전자 치료와 세대 전달</h3><div class="tags"><span class="tag date">1013 수업</span><span class="tag slide">6장 p3–4</span></div><div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">고장 난 만드는 법을 세포 안에서 고쳐 주는 치료예요.</p><figure class="figure"><svg id="fig-s3-therapy" viewBox="0 0 600 106" role="img" aria-label="만들어진 약을 먹는 것과 세포의 만드는 법을 바꾸는 것은 달라요."><rect class="fig-accent" x="20" y="22" width="170" height="62" rx="8"/><text class="fig-text" x="105.0" y="58" text-anchor="middle" font-size="13">환자의 세포</text><path class="fig-ink" d="M190 53 H215"/><rect class="fig-accent" x="215" y="22" width="170" height="62" rx="8"/><text class="fig-text" x="300.0" y="58" text-anchor="middle" font-size="13">정상 만드는 법 도입</text><path class="fig-ink" d="M385 53 H410"/><rect class="fig-accent" x="410" y="22" width="170" height="62" rx="8"/><text class="fig-text" x="495.0" y="58" text-anchor="middle" font-size="13">몸에 다시 넣기</text></svg><figcaption>만들어진 약을 먹는 것과 세포의 만드는 법을 바꾸는 것은 달라요.</figcaption></figure></div><div class="layer formal"><span class="layer-title">정확히 말하면</span><p>유전자 치료(gene therapy)는 환자의 세포에 정상 유전자를 도입하거나 질병을 일으키는 유전자의 기능을 조절하여 치료하는 방법이에요. 정상 유전자가 만드는 효소의 기능을 잃은 질환은, 결핍된 기능을 유전자로 보완한다는 목적이 분명한 예예요.</p><div class="table-wrap"><table><thead><tr><th>조작 대상</th><th>영향과 전달</th></tr></thead><tbody><tr><td>생식세포(germ-line cell)·초기 수정란 단계</td><td>생식계열까지 변형되면 다음 세대에 전달될 수 있어요.</td></tr><tr><td>체세포(somatic cell)</td><td>해당 세포 계열에 영향을 주며 생식세포를 바꾸지 않으므로 다음 세대에 전달되지 않아요.</td></tr></tbody></table></div><p>수업은 인간의 생식세포 유전자 치료에 큰 윤리적 제한이 있고, 체세포 유전자 치료가 이용된다고 설명했어요. 다음 세대에 영향을 주는 변화는 치료받는 사람 밖으로 영향이 이어질 수 있기 때문이에요.</p><p>ADA는 아데노신 탈아미노효소(adenosine deaminase)예요. ADA 결핍은 면역세포 기능에 해를 주어 중증복합면역결핍증(SCID, severe combined immunodeficiency)의 한 원인이 될 수 있어요. 환자의 백혈구에 정상 ADA 유전자를 전달하고 다시 환자에게 넣어 결핍 기능을 보완하는 치료 사례를 배웠어요.</p></div><div class="layer prof"><span class="layer-title">교수님 말씀</span><blockquote>반드시 그 개체의 유전자를 조작을 해서 치료하는 게 유전자 치료인 겁니다.</blockquote><p>교수님은 피부세포를 바꾸면 그 세포 계열에 영향을 주지만 자손에게 전달되는 것은 아니라는 예를 들었어요. 무균 환경이 필요한 면역결핍 환자 이야기는 면역 기능 회복이 치료의 목적임을 보여 줘요.</p></div><div class="layer warn"><span class="layer-title">꼭 기억해요</span><p>유전공학으로 만든 인슐린이나 응고인자를 주사하는 단백질 치료, 유전자 조작 식품을 먹는 것, 장기를 이식하는 것만으로는 환자 세포의 유전자를 바꾸는 유전자 치료가 아니에요.</p><p>ADA를 DNA 중합효소처럼 DNA를 직접 복제하는 효소라고 외우지 않아요. 수업의 복제 설명을 그대로 기능 정의로 쓰는 대신, ADA 결핍이 면역세포에 해롭고 정상 유전자 도입으로 그 기능을 보완한다는 관계를 기억해요.</p><p>SCID는 하나의 원인만 있는 질환을 뜻하지 않아요. ADA 결핍은 원인의 한 예예요. 수업의 허용·금지 논의는 윤리적 구분으로 읽고 모든 나라의 현재 법률을 단정하지 않아요.</p></div><div class="layer supp"><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p>1990년 사례에서는 환자의 성숙 백혈구에 정상 ADA 유전자를 넣고 배양한 뒤 환자에게 주사했어요. 이 백혈구는 이미 분화하여 수명이 제한되므로, 정상 기능을 지속하려면 수개월마다 치료를 반복해야 했어요. 유전자 도입 세포의 수명도 치료 지속성을 결정해요.</p><p>출처: 강의노트 6장 p4, 교재 6장 p126(PDF 9쪽)</p></div><div class="sum" hidden><p class="sum-lead">고장 난 만드는 법을 세포 안에서 고쳐 주는 치료예요.</p><p class="panel-label">용어</p><dl class="terms"><dt>유전자 치료(gene therapy)</dt><dd>환자 세포의 유전자 기능을 바꾸어 치료해요.</dd><dt>체세포(somatic cell)</dt><dd>생식계열 밖의 세포이며 그 변화는 자손에게 전달되지 않아요.</dd><dt>ADA</dt><dd>결핍 시 면역 기능 장애를 일으킬 수 있는 효소예요.</dd></dl></div></article>
+    </section>
+    <section id="s4"><h2>4. 동물 복제: 핵은 누구에게서 왔을까</h2>
+<article class="topic" id="s4-clone"><h3>핵치환과 복제양 돌리</h3><div class="tags"><span class="tag date">1013 수업</span><span class="tag slide">6장 p4</span></div><div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">빈 알에 다른 양의 설계도를 넣어 새끼를 만드는 방법이에요.</p><figure class="figure"><svg id="fig-s4-clone" viewBox="0 0 600 106" role="img" aria-label="설계도를 주는 양, 알을 주는 양, 새끼를 품는 양은 역할이 달라요."><rect class="fig-accent" x="20" y="22" width="170" height="62" rx="8"/><text class="fig-text" x="105.0" y="58" text-anchor="middle" font-size="13">어른 양의 설계도</text><path class="fig-ink" d="M190 53 H215"/><rect class="fig-accent" x="215" y="22" width="170" height="62" rx="8"/><text class="fig-text" x="300.0" y="58" text-anchor="middle" font-size="13">설계도를 뺀 알</text><path class="fig-ink" d="M385 53 H410"/><rect class="fig-accent" x="410" y="22" width="170" height="62" rx="8"/><text class="fig-text" x="495.0" y="58" text-anchor="middle" font-size="13">키워서 낳을 엄마</text></svg><figcaption>설계도를 주는 양, 알을 주는 양, 새끼를 품는 양은 역할이 달라요.</figcaption></figure></div><div class="layer formal"><span class="layer-title">정확히 말하면</span><p>핵치환(nuclear transfer)은 난자의 핵을 제거한 뒤 다른 세포의 핵을 넣는 방법이에요. 돌리(Dolly)는 성체 양의 젖샘(mammary gland)에서 얻은 분화된 2배체 체세포를 사용했어요.</p><ol class="steps"><li>미수정 난자에서 핵을 제거해요. 난자의 세포질은 남아요.</li><li>성체 젖샘 체세포의 핵을 넣거나, 핵 제거 난자와 그 체세포를 융합해요.</li><li>전기 자극으로 분열을 유도하고 복제 배아로 배양해요.</li><li>배아를 대리모 자궁에 착상시켜 새끼가 발달하도록 해요.</li></ol><div class="table-wrap"><table><thead><tr><th>제공자</th><th>제공하는 것</th></tr></thead><tbody><tr><td>젖샘 체세포 제공자</td><td>핵 DNA(nuclear DNA)의 주된 유전적 조성이에요.</td></tr><tr><td>난자 제공자</td><td>난자 세포질과 미토콘드리아 DNA(mitochondrial DNA)를 제공해요.</td></tr><tr><td>대리모</td><td>배아가 착상하고 발달할 자궁 환경을 제공해요.</td></tr></tbody></table></div><p>따라서 수업의 핵치환 모형에서 복제양의 핵 DNA는 핵 제공자와, 미토콘드리아 DNA는 난자 제공자와 대응해요. 유전적으로 거의 같은 개체를 만드는 것이지 정자와 난자를 수정하여 두 부모의 핵 유전자를 섞는 과정이 아니에요.</p></div><div class="layer prof"><span class="layer-title">교수님 말씀</span><p>교수님은 핵을 준 양과 난자를 준 양을 구별하고, 미토콘드리아에도 DNA가 있다는 점을 확인했어요. 돌리의 핵 제공 세포가 젖샘 세포였음을 이름에 관한 일화와 함께 설명했어요.</p><blockquote>핵 DNA는 핵 제공자하고 일치하게 됩니다.</blockquote><p>우수한 가축을 얻거나 반려동물을 복제하려는 목적이 소개됐어요. 많은 시도가 실패할 수 있고, 태어난 복제동물에도 발달·건강 문제가 생길 수 있어요.</p></div><div class="layer warn"><span class="layer-title">꼭 기억해요</span><p>돌리는 생식세포 클로닝이라고 부르기보다 <strong>체세포 핵치환 복제</strong>라고 구분해요. 난자를 사용하더라도 넣는 핵이 분화한 젖샘 체세포에서 왔기 때문이에요.</p><p>대리모가 새끼를 낳았다는 이유로 핵 DNA까지 대리모 것이 되는 것은 아니에요. 핵·세포질·임신 환경의 제공자를 각각 확인해요.</p><p>핵 DNA가 거의 같아도 미토콘드리아 DNA의 출처와 발달 환경이 다를 수 있어요. 모든 DNA·외모·건강·성격이 완전히 같다고 확대하지 않아요.</p></div><div class="layer supp"><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p>돌리의 핵심은 분화된 성체 체세포로 만든 최초의 복제 포유류라는 점이에요. 수업·교재의 “최초 포유동물 클론”이라는 넓은 표현은 이 조건을 붙여 기억해요. 교재의 실험 설명은 어른 양의 젖샘에서 채취한 2배체 세포와 핵이 제거된 미수정란의 융합을 명시해요.</p><p>출처: 1013 수업, 강의노트 6장 p4, 교재 6장 p127(PDF 10쪽)</p></div><div class="sum" hidden><p class="sum-lead">빈 알에 다른 양의 설계도를 넣어 새끼를 만드는 방법이에요.</p><p class="panel-label">용어</p><dl class="terms"><dt>핵치환(nuclear transfer)</dt><dd>핵을 제거한 난자에 다른 세포의 핵을 넣어요.</dd><dt>핵 DNA</dt><dd>핵 제공자의 주된 유전적 조성을 물려받아요.</dd><dt>미토콘드리아 DNA</dt><dd>수업의 복제 모형에서는 난자 제공자에서 와요.</dd></dl></div></article>
+    </section>
+    <section id="s5"><h2>5. 식물 유전공학과 GMO</h2>
+<article class="topic" id="s5-plant"><h3>작물에 필요한 성질 더하기</h3><div class="tags"><span class="tag date">1013 수업</span><span class="tag slide">6장 p4–5</span></div><div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">작물에 원하는 능력을 더해 잘 자라거나 영양을 더 담게 해요.</p><figure class="figure"><svg id="fig-s5-plant" viewBox="0 0 600 106" role="img" aria-label="원하는 능력을 더하는 목적과 주변으로 퍼지는 위험은 구별해요."><rect class="fig-accent" x="20" y="22" width="170" height="62" rx="8"/><text class="fig-text" x="105.0" y="58" text-anchor="middle" font-size="13">벌레로부터 보호</text><path class="fig-ink" d="M190 53 H215"/><rect class="fig-accent" x="215" y="22" width="170" height="62" rx="8"/><text class="fig-text" x="300.0" y="58" text-anchor="middle" font-size="13">풀 죽이는 약 견디기</text><path class="fig-ink" d="M385 53 H410"/><rect class="fig-accent" x="410" y="22" width="170" height="62" rx="8"/><text class="fig-text" x="495.0" y="58" text-anchor="middle" font-size="13">먹거리 영양 늘리기</text></svg><figcaption>원하는 능력을 더하는 목적과 주변으로 퍼지는 위험은 구별해요.</figcaption></figure></div><div class="layer formal"><span class="layer-title">정확히 말하면</span><p>식물 유전공학의 목적은 해충·질병 저항성, 더위·가뭄·염분에 대한 내성, 생산성·생장 개선, 제초제 내성, 영양 개선, 의약품 생산이에요. 질병 저항성에는 바이러스 감염에 대한 저항성을 높이는 경우도 포함돼요.</p><p>작물이 해충을 죽이는 물질을 만들게 하면 해충 피해를 줄일 수 있어요. 제초제는 풀을 죽이는 약이에요. 작물에 제초제 내성을 부여하면 내성 없는 주변 잡초를 약으로 제거하면서 작물은 보호하는 방식으로 사용할 수 있어요.</p><p>황금쌀(golden rice)은 종자에 β-카로틴(베타카로틴, β-carotene)을 축적하도록 만든 영양 개선의 예예요. β-카로틴은 비타민 A(vitamin A)의 전구체이며, 황금색을 띠는 이유가 돼요. β-카로틴과 비타민 A 자체는 같은 물질이 아니에요.</p><p>반딧불의 루시퍼레이스(luciferase)는 빛을 만드는 발광효소예요. 이 효소의 유전자를 담배에 넣고 발현되게 하면 기질과 필요한 조건이 갖춰졌을 때 빛을 낼 수 있어요. 이런 눈에 띄는 신호를 유전자 도입·발현 실험의 지표로 사용하는 유전자를 리포터 유전자(reporter gene)라고 해요.</p></div><div class="layer prof"><span class="layer-title">교수님 말씀</span><p>교수님은 텃밭에서 작물과 잡초가 같이 자라는 상황으로 제초제 내성의 목적을 설명했어요. 황금쌀은 밥을 통해 β-카로틴을 공급하려는 영양 개선의 취지로 소개했어요.</p><p>리포터는 시험 점수를 빨리 확인하는 것처럼 실험 결과를 눈에 보이게 해 주는 예였어요. 발광 가로수 아이디어는 가능성에 관한 이야기이며, 보급 상태나 성공이 확인된 사례로 외우지 않아요.</p></div><div class="layer warn"><span class="layer-title">꼭 기억해요</span><p>해충 저항성은 작물이 해충의 피해를 견디는 성질이고, 제초제 내성은 작물이 약의 작용을 견디는 성질이에요. 약으로 잡초만 죽이려는 목적과 작물의 독소로 해충을 죽이려는 목적을 구분해요.</p><p>수업과 교재 일부 문장의 “형광” 표현은 루시퍼레이스의 발광과 혼용됐어요. 이 사례는 <strong>생물발광</strong>으로 적어요. 유전자 하나를 넣었다는 사실만으로 항상 빛이 난다고 단정하지 않아요.</p><p>황금쌀을 현재 어디에서 얼마나 사용하는지는 수업에서도 불명이라고 했어요. 이번 노트는 이용 현황이 아니라 영양 개선의 원리를 다뤄요.</p></div><div class="layer supp"><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p>Bt는 간균 Bacillus thuringiensis에서 유래한 살충성 독소예요. Bt 독소 유전자를 작물에 도입하면 작물이 독소를 만들고, 이를 먹는 해충이 피해를 받아 해충 저항성이 생겨요.</p><p>교재의 글리포세이트(glyphosate) 내성 예에서는 제초제가 억제하는 엽록체의 특정 효소를 세균 유래 효소로 대체해 작물의 기능을 유지해요. 강의노트의 “글리포세이트를 분해하는 효소” 설명과 달라서, 여기서는 교재에 나온 <strong>억제 표적 효소의 대체</strong> 원리로 구분해요. 독소를 만드는 Bt 해충 저항성과 같은 원리가 아니에요.</p><p>출처: 강의노트 6장 p5, 교재 6장 p128(PDF 11쪽)</p></div><div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p>영양 개선에는 아미노산 조성의 개선도 있어요. 교재는 콩·완두콩·편두·대두·땅콩 같은 콩과 식물 종자에서 메싸이오닌(methionine) 또는 시스테인(cysteine)이 부족하다고 설명해요. 부족한 아미노산 함량을 늘리는 것은 영양 개선의 목적에 해당해요.</p><p>작물에 필요한 성질을 넣는 것과 도입 유전자가 다른 잡초종에 퍼지는 것은 달라요. 후자는 작물을 개선하려는 목표가 아니라 관리해야 할 환경 우려예요.</p><p>출처: 교재 6장 p127–129(PDF 10–12쪽), 기출 6강 문항 26</p></div><div class="sum" hidden><p class="sum-lead">작물에 원하는 능력을 더해 잘 자라거나 영양을 더 담게 해요.</p><p class="panel-label">용어</p><dl class="terms"><dt>β-카로틴(β-carotene)</dt><dd>비타민 A의 전구체이며 황금쌀 색의 원인이에요.</dd><dt>리포터 유전자(reporter gene)</dt><dd>눈에 띄는 신호로 유전자 발현을 확인하는 데 사용해요.</dd><dt>제초제 내성</dt><dd>작물이 제초제의 해로운 작용을 견디는 성질이에요.</dd></dl></div></article>
+<article class="topic" id="s5-gmo"><h3>GMO와 내성의 문제</h3><div class="tags"><span class="tag date">1013 수업</span><span class="tag slide">6장 p5</span></div><div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">원하는 능력을 더한 뒤에도 주변 생물과 약의 사용량을 살펴야 해요.</p><figure class="figure"><svg id="fig-s5-gmo" viewBox="0 0 600 106" role="img" aria-label="살아남은 풀들이 늘면 같은 약으로 관리하기 어려울 수 있어요."><rect class="fig-accent" x="20" y="22" width="170" height="62" rx="8"/><text class="fig-text" x="105.0" y="58" text-anchor="middle" font-size="13">약을 견디는 풀</text><path class="fig-ink" d="M190 53 H215"/><rect class="fig-accent" x="215" y="22" width="170" height="62" rx="8"/><text class="fig-text" x="300.0" y="58" text-anchor="middle" font-size="13">살아남아 늘어남</text><path class="fig-ink" d="M385 53 H410"/><rect class="fig-accent" x="410" y="22" width="170" height="62" rx="8"/><text class="fig-text" x="495.0" y="58" text-anchor="middle" font-size="13">약 사용량 증가 우려</text></svg><figcaption>살아남은 풀들이 늘면 같은 약으로 관리하기 어려울 수 있어요.</figcaption></figure></div><div class="layer formal"><span class="layer-title">정확히 말하면</span><p>GMO는 Genetically Modified Organism, 유전자변형생물이에요. 이를 원료로 가공한 식품과 생물 자체는 구별해요.</p><p>자발적 돌연변이(mutation)로 독소나 제초제를 견디는 개체가 나타날 수 있어요. 독소에 저항성이 있는 해충이나 제초제 저항성 잡초가 처리 뒤 살아남아 번식하면 그 비중이 늘어날 수 있어요. 목적에 맞춰 필요한 돌연변이가 생기는 것이 아니라, 변이와 선택으로 나타나는 변화예요.</p><p>처음에는 제초제로 잡초를 제거할 수 있어도 저항성 잡초가 늘면 관리 효과가 줄고 제초제 사용량을 늘리려는 문제가 생길 수 있어요. 작물의 해충 저항성과 해충의 독소 저항성은 서로 반대 입장에서 사용하는 표현이에요.</p><p>카르타헤나 의정서(Cartagena Protocol on Biosafety)는 유전자변형생물의 안전한 국가 간 수송·취급·이용과 생물안전성을 다루는 국제협약이에요. 수업에서는 환경·생태 위험을 관리해야 한다는 윤리적 논점과 함께 소개했어요.</p></div><div class="layer prof"><span class="layer-title">교수님 말씀</span><blockquote>유전자 조작 식품이라고 해서 뭐 독성 물질이 생길 거고 … 그렇게 생각하면 안 되죠.</blockquote><p>교수님은 아르헨티나 사례 영상을 통해 저항성 잡초와 제초제 사용 증가의 악순환을 생각하게 했어요. 수업 영상의 특정 피해에 관한 이야기는 농약 사용·노출과 생태 관리를 돌아보는 사례로 읽어요.</p></div><div class="layer warn"><span class="layer-title">꼭 기억해요</span><p>GMO라는 이름만으로 언제나 독성이 있거나 언제나 안전하다고 판정하지 않아요. 도입한 기능, 실제 노출, 환경 영향을 구체적으로 살펴야 해요.</p><p>작물 자체의 섭취 위험과 재배 중 제초제에 과다 노출되는 위험은 달라요. 영상의 특정 질환을 GMO 식품 자체가 일으켰다는 확정된 인과로 바꾸지 않아요.</p><p>저항성은 필요해서 생기는 목표 변이가 아니에요. 우연한 변이와 처리 환경에서의 선택을 구별해요. 의정서의 현재 회원국 수나 각국 법률 상태도 수업의 불확실한 언급으로 단정하지 않아요.</p></div><div class="layer supp"><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p>환경 우려에는 도입 유전자가 교배 가능한 야생종·잡초로 전달되는 경우, 작물의 독소가 먹이망의 비표적 생물종에 영향을 줄 가능성, 재조합 세균이 실험실에서 유출되는 경우가 있어요. 가능성과 조건을 평가해야 한다는 뜻이며 모든 작물에서 반드시 일어나는 결과는 아니에요.</p><p>세균을 배양하는 실험실에서는 생물학적 안전 지침을 지켜 유출과 노출을 줄여야 해요. 실험실 조건 밖에서 생존하기 어렵도록 만든 숙주를 사용하는 것도 교재의 안전 관리 예예요.</p><p>출처: 강의노트 6장 p5, 교재 6장 p125·129(PDF 8·12쪽)</p></div><div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p>작물의 유전적 다양성 감소도 기출이 제시하는 환경 우려예요. 소수의 품종에 집중하여 재배하면 기존에 재배하던 다양한 품종의 비중이 줄 수 있다는 조건으로 읽어요. 유전자를 하나 변형했다는 사실 자체가 곧 모든 작물의 다양성 감소를 뜻하는 것은 아니에요.</p><p>출처: 기출 6강 문항 3(환경 우려 항목), 조건부 해석</p></div><div class="sum" hidden><p class="sum-lead">원하는 능력을 더한 뒤에도 주변 생물과 약의 사용량을 살펴야 해요.</p><p class="panel-label">용어</p><dl class="terms"><dt>GMO</dt><dd>유전자를 변형한 생물이며 그 원료로 만든 식품과 구별해요.</dd><dt>저항성의 선택</dt><dd>처리 환경에서 견디는 개체가 살아남아 비중이 늘 수 있어요.</dd><dt>카르타헤나 의정서</dt><dd>국가 간 수송·취급·이용의 생물안전성을 다뤄요.</dd></dl></div></article>
+    </section>
+    <section id="s6"><h2>6. 요약 · 예고</h2>
+<article class="topic" id="s6-cheatsheet"><h3>시험 직전 한 줄</h3><div class="table-wrap"><table><thead><tr><th>주제</th><th>시험 직전 한 줄</th></tr></thead><tbody>
+<tr><td>PCR 준비물</td><td>주형 DNA·두 프라이머·dNTP·내열성 Taq 중합효소를 넣어 시험관에서 DNA를 증폭해요.</td></tr>
+<tr><td>주기</td><td>가열로 가닥 분리, 냉각으로 프라이머 결합, 적절한 온도에서 새 가닥 신장을 반복해요.</td></tr>
+<tr><td>증폭량</td><td>매 주기 정확히 두 배가 되는 이상적 조건에서 전체 분자 수는 초기량 곱하기 $2^n$이며 초기 주기의 정확 길이 표적 산물 수와 구별해요.</td></tr>
+<tr><td>RNA 검사</td><td>RNA를 역전사효소로 DNA로 바꾼 뒤 표적에 맞는 프라이머로 PCR을 해요.</td></tr>
+<tr><td>전기영동</td><td>DNA는 음전하라 양극으로 이동하며, 같은 조건의 선형 절편은 짧을수록 더 멀리 가요.</td></tr>
+<tr><td>STR</td><td>같은 좌위의 반복 횟수가 달라 산물 길이가 달라지며 동형접합이면 두 같은 길이 밴드가 겹쳐 하나로 보여요.</td></tr>
+<tr><td>친자</td><td>한 좌위의 대립유전자는 부모에게서 하나씩 오며, 한 좌위 일치는 친자 확정이 아니어서 여러 좌위를 대조해요.</td></tr>
+<tr><td>단백질 생산</td><td>생산 생물의 유전자를 조작해 얻은 의약품을 투여하는 일과 환자의 유전자를 조작하는 치료를 구별해요.</td></tr>
+<tr><td>유전자 치료</td><td>환자의 유전 기능을 바꿔 치료하며 체세포 조작은 일반적으로 다음 세대에 전달되지 않아요.</td></tr>
+<tr><td>동물 복제</td><td>체세포 핵치환에서는 핵 DNA는 주로 핵 제공자, 미토콘드리아 DNA는 주로 난자 제공자와 일치해요.</td></tr>
+<tr><td>작물 개량</td><td>해충 저항성·제초제 내성·영양 개선은 목적이며 잡초로의 원치 않는 유전자 유출은 생태적 우려예요.</td></tr>
+<tr><td>GMO</td><td>유전자변형 자체만으로 독성을 단정하지 않으며 재배 중 내성 선택과 농약 과사용 위험을 따로 살펴요.</td></tr>
+</tbody></table></div></article>
+<article class="topic" id="s6-next"><h3>끊긴 지점과 남은 범위</h3><p>GMO와 카르타헤나 의정서 논의를 마치고 교수님은 다음 장으로 넘어가겠다고 했어요.</p><blockquote>자, 이 정도로 하고 다음 장으로 넘어가 봅시다.</blockquote><ul><li>강의노트 6장 p5의 6.3 유전체학·유전체 프로젝트: 이번 전사본에서는 다루지 않았어요.</li><li>강의노트 6장 p6의 CRISPR·Cas9·guide RNA·PERV: 이번 전사본에서는 다루지 않았어요.</li><li>위 내용은 강의노트에 남아 있는 항목이에요. 다음 시간에 반드시 배운다는 예고나 시험 제외를 뜻하지 않아요.</li><li>다음 장 본론은 이 전사본에 없어요. 미다룬 내용의 시험 범위는 아직 불명이에요.</li></ul></article>
+<article class="topic" id="s6-links"><h3>함께 보면 좋은 자료</h3><ul><li><a href="복습문제_1013_PCR_and_DNA_Technology.html">1013 복습문제</a></li><li><a href="../1008/정리노트_1008_Gene_Regulation_and_DNA_Cloning.html#s5-cloning">지난 1008 수업: DNA 클로닝</a></li></ul></article>
+    </section>
+  </main>
+  <footer>출처: 이영만 교수님 강의노트(6장) · 수업 녹음 전사(1013 생명) · 『생명과학: 기초와 응용』 2판 6장.</footer>
+    </div>
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="panel-right-title">
+      <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-right-title">페이지 요약</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-sub" id="sum-for">전체 흐름</p>
+        <p class="panel-empty" id="sum-empty">페이지를 넘기면 그 페이지의 핵심 식과 용어가 여기에 나옵니다.</p>
+        <div class="sums"></div>
+      </div>
+    </aside>
+  </div>
+  <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
+  <nav class="pager" aria-label="화면 이동">
+    <div class="pager-inner">
+      <button class="btn btn-ghost" id="pager-prev" type="button">이전</button>
+      <span class="pager-count" id="pager-count"></span>
+      <button class="btn btn-primary" id="pager-next" type="button">시작하기</button>
+    </div>
+  </nav>
+  <p class="sr-only" id="pager-status" aria-live="polite"></p>
+  <script id="widget-pcr-ui">(function(){function pcrState(initial, cycles) {
+  const total = initial * 2 ** cycles;
+  const points = Array.from({length: cycles + 1}, (_, i) => ({x: 44 + 43 * i, y: 180 - 14 * i, value: initial * 2 ** i}));
+  return {initial, cycles, total, points, path: points.map((p,i) => `${i ? 'L' : 'M'}${p.x},${p.y}`).join(' ')};
+}
+const a=document.getElementById('pcr-initial'),n=document.getElementById('pcr-cycles');if(!a||!n)return;function update(){const s=pcrState(Number(a.value),Number(n.value));document.getElementById('pcr-initial-val').textContent=s.initial;document.getElementById('pcr-cycles-val').textContent=s.cycles;document.getElementById('pcr-out').textContent=s.total;document.getElementById('pcr-plot').innerHTML='<line class="axis" x1="44" y1="180" x2="500" y2="180"/><line class="axis" x1="44" y1="30" x2="44" y2="180"/><path class="fig-accent" d="'+s.path+'"/>'+s.points.map(p=>'<circle class="fig-dot" cx="'+p.x+'" cy="'+p.y+'" r="3"/>').join('')+'<text class="fig-text" x="20" y="220" font-size="14">0주기</text><text class="fig-text" x="440" y="220" font-size="14">10주기</text><text class="fig-text" x="70" y="28" font-size="14">세로 한 단계마다 두 배</text>';}a.addEventListener('input',update);n.addEventListener('input',update);update();})();</script>
+  <script id="theme-ui">
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const sysDark = matchMedia('(prefers-color-scheme: dark)');
+      const KEY = 'od-theme';
+      const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+      function label() {
+        const next = isDark() ? '라이트 모드로 전환' : '다크 모드로 전환';
+        btn.setAttribute('aria-label', next);
+        btn.title = next;
+      }
+      btn.addEventListener('click', () => {
+        const t = isDark() ? 'light' : 'dark';
+        // 시스템 설정과 같아지면 저장을 지워 다시 시스템을 따른다
+        if ((t === 'dark') === sysDark.matches) { delete root.dataset.theme; try { localStorage.removeItem(KEY); } catch (e) {} }
+        else { root.dataset.theme = t; try { localStorage.setItem(KEY, t); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+        label();
+      });
+      sysDark.addEventListener('change', label);
+      window.addEventListener('storage', (e) => {
+        if (e.key !== KEY) return;
+        if (e.newValue === 'light' || e.newValue === 'dark') root.dataset.theme = e.newValue; else delete root.dataset.theme;
+        label();
+      });
+      label();
+    })();
+  </script>
+  <script id="panels-ui">
+    (function () {
+      const body = document.body;
+      const layout = document.querySelector('.layout');
+      const kind = body.dataset.panels;
+      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const scrim = document.getElementById('panel-scrim');
+      const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
+      const wideMq = matchMedia('(min-width: 1024px)');
+      const roomyMq = matchMedia('(min-width: 1280px)');
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      // 푼 기록은 탭(세션) 단위로만 유지: 뒤로가기·새로고침엔 남고, 창을 닫고 다시 열면 초기화
+      const tabStore = {
+        get(k, d) { try { const v = sessionStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      const PREF = 'od-panels:' + kind;
+      // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
+      const RANGE = body.dataset.range || '';
+      const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+      const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+      let overlay = null;
+
+      // ---------- 열고 닫기 ----------
+      function docked() {
+        const pref = store.get(PREF, {});
+        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+      }
+      function sync() {
+        const wide = wideMq.matches;
+        const d = docked();
+        ['left', 'right'].forEach((side) => {
+          const open = wide ? d[side] : overlay === side;
+          const p = panels[side];
+          layout.dataset[side] = open ? 'open' : 'closed';
+          p.classList.toggle('is-open', !wide && open);
+          p.inert = !open;
+          if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
+          toggles[side].setAttribute('aria-expanded', String(open));
+        });
+        const drawer = !wide && overlay !== null;
+        scrim.classList.toggle('is-on', drawer);
+        body.classList.toggle('drawer-open', drawer);
+        blockers.forEach((el) => { el.inert = drawer; });
+      }
+      function openDrawer(side) {
+        overlay = side;
+        sync();
+        requestAnimationFrame(() => panels[side].querySelector('[data-panel-close]').focus());
+      }
+      function closeDrawer(refocus) {
+        if (overlay === null) return;
+        const side = overlay;
+        overlay = null;
+        sync();
+        if (refocus) toggles[side].focus();
+      }
+      function toggle(side) {
+        if (wideMq.matches) {
+          const d = docked();
+          d[side] = !d[side];
+          store.set(PREF, d);
+          sync();
+          if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+        } else if (overlay === side) closeDrawer(true);
+        else openDrawer(side);
+      }
+
+      toggles.left.addEventListener('click', () => toggle('left'));
+      toggles.right.addEventListener('click', () => toggle('right'));
+      scrim.addEventListener('click', () => closeDrawer(true));
+      document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
+      panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
+
+      // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      function applyWidths() {
+        const w = store.get(PREF + ':w', {});
+        ['left', 'right'].forEach((side) => {
+          if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
+          else layout.style.removeProperty(WIDTH[side].prop);
+        });
+      }
+      function maxFor(side) {
+        const other = side === 'left' ? panels.right : panels.left;
+        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
+      }
+      function setWidth(side, px, save) {
+        const v = Math.round(Math.min(Math.max(px, WIDTH[side].min), maxFor(side)));
+        layout.style.setProperty(WIDTH[side].prop, v + 'px');
+        panels[side].querySelector('.panel-resize').setAttribute('aria-valuenow', String(v));
+        if (save) { const w = store.get(PREF + ':w', {}); w[side] = v; store.set(PREF + ':w', w); }
+      }
+      function resetWidth(side) {
+        const w = store.get(PREF + ':w', {});
+        delete w[side];
+        store.set(PREF + ':w', w);
+        layout.style.removeProperty(WIDTH[side].prop);
+      }
+      document.querySelectorAll('.panel-resize').forEach((handle) => {
+        const side = handle.dataset.side;
+        const dir = side === 'left' ? 1 : -1;
+        handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
+        handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
+        handle.addEventListener('pointerdown', (e) => {
+          if (!wideMq.matches || e.button !== 0) return;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startW = panels[side].getBoundingClientRect().width;
+          handle.setPointerCapture(e.pointerId);
+          body.classList.add('is-resizing');
+          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const up = () => {
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', up);
+            handle.removeEventListener('pointercancel', up);
+            body.classList.remove('is-resizing');
+            setWidth(side, panels[side].getBoundingClientRect().width, true);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', up);
+          handle.addEventListener('pointercancel', up);
+        });
+        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('keydown', (e) => {
+          const step = e.shiftKey ? 64 : 16;
+          const cur = panels[side].getBoundingClientRect().width;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+        });
+      });
+      applyWidths();
+      const onMq = () => { overlay = null; sync(); };
+      wideMq.addEventListener('change', onMq);
+      roomyMq.addEventListener('change', onMq);
+
+      // ---------- 목차의 진행 표시 ----------
+      const progressN = document.getElementById('progress-n');
+      const progressBar = document.getElementById('progress-bar');
+      const progressTotal = document.getElementById('progress-total');
+      function markToc(done, total, doneLabel) {
+        panels.left.querySelectorAll('.toc-list a').forEach((a) => {
+          const id = decodeURIComponent(a.getAttribute('href').slice(1));
+          let mark = a.querySelector('.toc-mark');
+          if (!mark) {
+            mark = document.createElement('span');
+            mark.className = 'toc-mark';
+            mark.setAttribute('aria-hidden', 'true');
+            const state = document.createElement('span');
+            state.className = 'sr-only toc-state';
+            a.append(mark, state);
+          }
+          const isDone = done.has(id);
+          mark.classList.toggle('is-done', isDone);
+          mark.innerHTML = isDone ? ICON_DONE : ICON_TODO;
+          a.querySelector('.toc-state').textContent = isDone ? ' (' + doneLabel + ')' : '';
+        });
+        progressN.textContent = String(done.size);
+        progressTotal.textContent = String(total);
+        progressBar.style.transform = 'scaleX(' + (total ? done.size / total : 0) + ')';
+      }
+      function revealCurrent() {
+        const link = panels.left.querySelector('.toc-list a[aria-current="true"]');
+        if (link && layout.dataset.left === 'open') link.scrollIntoView({ block: 'nearest' });
+      }
+
+      // ---------- 복습문제: 오른쪽 = 원문 · 힌트 · 풀이 ----------
+      function setupReview() {
+        const KEY = 'od-review-solved:' + RANGE;
+        const cards = Array.from(document.querySelectorAll('main article.card'));
+        const aids = panels.right.querySelector('.aids');
+        const sub = document.getElementById('aid-for');
+        const empty = panels.right.querySelector('.panel-empty');
+        const btn = document.getElementById('solved-btn');
+        const groups = {};
+        const solved = new Set(tabStore.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        cards.forEach((card) => {
+          const g = document.createElement('div');
+          g.className = 'aid';
+          g.hidden = true;
+          card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
+          aids.appendChild(g);
+          groups[card.id] = g;
+        });
+        let curId = null;
+        function paintBtn() {
+          const on = solved.has(curId);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.innerHTML = (on ? ICON_DONE : ICON_TODO) + '<span>' + (on ? '푼 문제 · 표시 해제' : '푼 문제로 표시') + '</span>';
+        }
+        btn.addEventListener('click', () => {
+          if (!curId) return;
+          if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
+          tabStore.set(KEY, Array.from(solved));
+          paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          curId = s.matches('article.card') ? s.id : null;
+          Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
+          empty.hidden = Boolean(curId);
+          btn.hidden = !curId;
+          sub.textContent = curId ? ((s.querySelector('h3') || {}).textContent || '').trim() : '';
+          sub.hidden = !curId;
+          if (curId) paintBtn();
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(solved, cards.length, '푼 문제');
+          revealCurrent();
+        });
+      }
+
+      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
+      function setupNote() {
+        const KEY = 'od-note-read:' + RANGE;
+        const topics = Array.from(document.querySelectorAll('main article.topic'));
+        const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
+        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
+        const box = panels.right.querySelector('.sums');
+        const sums = {};
+        topics.forEach((t) => {
+          const el = t.querySelector(':scope > .sum');
+          if (!el) return;
+          el.hidden = true;
+          box.appendChild(el);
+          sums[t.id] = el;
+        });
+        const sub = document.getElementById('sum-for');
+        const empty = document.getElementById('sum-empty');
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          const key = s.matches('article.topic') ? s.id : 'intro';
+          Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
+          empty.hidden = Boolean(sums[key]);
+          sub.textContent = key === 'intro' ? '전체 흐름' : ((s.querySelector('h3') || {}).textContent || '').trim();
+          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(read, topics.length, '읽음');
+          revealCurrent();
+        });
+      }
+
+      if (kind === 'review') setupReview();
+      if (kind === 'note') setupNote();
+      sync();
+    })();
+  </script>
+  <script id="pager-ui">
+    (function () {
+      const root = document.documentElement;
+      const main = document.querySelector('main');
+      const hero = main.querySelector('.hero');
+      const screens = [hero].concat(Array.from(main.querySelectorAll(document.body.dataset.screens)));
+      if (screens.length < 2) { root.classList.remove('js'); return; }
+      screens.forEach((s) => s.classList.add('screen'));
+
+      const last = screens.length - 1;
+      const prevBtn = document.getElementById('pager-prev');
+      const nextBtn = document.getElementById('pager-next');
+      const count = document.getElementById('pager-count');
+      const bar = document.getElementById('pager-bar');
+      const status = document.getElementById('pager-status');
+      const toc = document.querySelector('#panel-left .toc');
+      const scroller = document.querySelector('.content');
+      const titleOf = (s) => ((s.querySelector('h3') || s.querySelector('h1') || {}).textContent || '').trim();
+      let cur = -1;
+
+      // 목차: 섹션 링크 아래에 화면(토픽·카드) 목록을 붙인다
+      const tocLinks = [];
+      Array.from(toc.querySelectorAll(':scope > a')).forEach((a) => {
+        const sec = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+        const group = document.createElement('div');
+        group.className = 'toc-group';
+        a.replaceWith(group);
+        group.appendChild(a);
+        if (!sec) return;
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        screens.forEach((s, i) => {
+          if (!sec.contains(s)) return;
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#' + s.id;
+          link.innerHTML = '<span class="toc-title"></span>';
+          link.firstChild.textContent = titleOf(s);
+          li.appendChild(link);
+          list.appendChild(li);
+          tocLinks[i] = link;
+        });
+        group.appendChild(list);
+      });
+
+      function indexFor(hash) {
+        const id = decodeURIComponent((hash || '').replace(/^#/, ''));
+        const el = id && document.getElementById(id);
+        if (!el || !main.contains(el)) return { i: 0 };
+        const i = screens.findIndex((s) => s.contains(el) || el.contains(s));
+        return { i: Math.max(i, 0), target: i >= 0 && screens[i].contains(el) && screens[i] !== el ? el : null };
+      }
+
+      function render(i, target) {
+        const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
+        if (i !== cur) {
+          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
+          main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
+          const s = screens[i];
+          const sec = s.closest('section');
+          if (sec) sec.classList.add('is-on');
+          s.classList.add('is-current');
+          if (dir) { s.classList.remove('enter-next', 'enter-prev'); void s.offsetWidth; s.classList.add(dir); }
+          cur = i;
+          document.body.classList.toggle('at-end', i === last);
+          prevBtn.disabled = i === 0;
+          nextBtn.textContent = i === 0 ? '시작하기' : i === last ? '처음으로' : '다음';
+          count.textContent = i === 0 ? '' : i + ' / ' + last;
+          bar.style.transform = 'scaleX(' + (i / last) + ')';
+          status.textContent = i === 0 ? titleOf(s) : i + ' / ' + last + ', ' + titleOf(s);
+          tocLinks.forEach((link, k) => link && link.setAttribute('aria-current', String(k === i)));
+          document.dispatchEvent(new CustomEvent('od:screen', { detail: { index: i, screen: s } }));
+        }
+        if (target) target.scrollIntoView({ block: 'start' });
+        else scroller.scrollTo(0, 0);
+      }
+
+      function go(i) {
+        i = Math.min(Math.max(i, 0), last);
+        if (i === cur) return;
+        const url = i === 0 ? location.pathname + location.search : '#' + screens[i].id;
+        history.pushState(null, '', url);
+        render(i);
+      }
+
+      prevBtn.addEventListener('click', () => go(cur - 1));
+      nextBtn.addEventListener('click', () => go(cur === last ? 0 : cur + 1));
+      const fromUrl = () => { const r = indexFor(location.hash); render(r.i, r.target); };
+      window.addEventListener('hashchange', fromUrl);
+      window.addEventListener('popstate', fromUrl);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+
+      // 좌우로 밀어서 넘기기 (가로로 스크롤되는 영역은 제외)
+      let sx = 0, sy = 0, skip = true;
+      main.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (skip) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 64 && Math.abs(dx) > 2 * Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      fromUrl();
+    })();
+  </script>
+</body>
+</html>

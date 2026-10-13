@@ -1,0 +1,2012 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>생명과학 복습문제 1013</title>
+  <meta name="description" content="복습문제 37선 — 1013 수업 범위">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('od-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']})"></script>
+  <style>
+    /* ---------- 토큰 ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #b54708; --prof: #6941c6; --supp: #067647; --danger: #d92d20;
+      --scroll: #c9d0db; --scroll-hover: #9aa3b2;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --fs-body: 17px; --fs-lead: 20px; --fs-small: 14px; --fs-label: 13px; --fs-fig: 12px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+      --radius: 8px; --measure: 680px; --tap: 48px; --btn-min: 160px;
+      --dur: 220ms; --dur-exit: 150ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+      /* 예전 조각이 참조할 수 있는 이름 */
+      --surface-2: var(--surface); --accent-soft: var(--surface); --warn-soft: var(--surface);
+      --prof-soft: var(--surface); --supp-soft: var(--surface); --eli5: var(--accent-ink); --eli5-soft: var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+        --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+        --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+        --scroll: #3f414b; --scroll-hover: #5b5e6a;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+      --scroll: #3f414b; --scroll-hover: #5b5e6a;
+    }
+
+    /* ---------- 기본 ---------- */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent-ink); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+
+    /* ---------- 상단 바 ---------- */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s2) var(--s4); display: flex; align-items: center; gap: var(--s3); min-height: 56px; }
+    .brand { flex: 1 1 auto; min-width: 0; font-size: var(--fs-body); font-weight: 700; white-space: nowrap; }
+    .text-btn { flex: none; min-height: 44px; min-width: 44px; padding: 0 var(--s3); border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); font: 600 var(--fs-small)/1 var(--font); cursor: pointer; }
+    .bar { height: 2px; background: var(--line); overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+
+    /* ---------- 본문 ---------- */
+    main { flex: 1 0 auto; width: 100%; max-width: var(--measure); margin: 0 auto; padding: var(--s6) var(--s5) var(--s7); }
+    .hero h1 { font-size: clamp(28px, 6vw, 36px); line-height: 1.3; margin: 0 0 var(--s3); letter-spacing: -0.02em; }
+    .hero p { color: var(--ink-2); margin: 0; }
+    section { margin-top: var(--s7); }
+    section > h2 { font-size: 22px; line-height: 1.4; margin: 0 0 var(--s4); }
+    .topic { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .topic h3 { margin: 0 0 var(--s2); font-size: clamp(24px, 5vw, 28px); line-height: 1.35; letter-spacing: -0.01em; }
+    .tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+    .tag { font-size: var(--fs-label); line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+
+    /* 레이어: 배경 없이 라벨과 구분선으로 나눈다 */
+    .layer { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .layer.eli5 { margin-top: 0; padding-top: 0; border-top: 0; }
+    .layer > :first-child { margin-top: 0; }
+    .layer > :last-child { margin-bottom: 0; }
+    .layer-title { display: block; font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); margin-bottom: var(--s2); }
+    .layer.eli5 .layer-title { color: var(--accent-ink); }
+    .layer.eli5 .lead { font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; margin: 0 0 var(--s3); }
+    .layer.prof .layer-title { color: var(--prof); }
+    .layer.warn { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn .layer-title { color: var(--warn); }
+    .layer.supp .badge.supp { margin-bottom: var(--s2); }
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
+    .badge.supp { color: var(--supp); }
+    blockquote { margin: var(--s2) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
+    ol.steps { padding-left: 1.4em; }
+    ol.steps li { margin: var(--s2) 0; }
+
+    /* 그림 · 수식 · 표 */
+    .figure { margin: var(--s4) 0; text-align: center; }
+    .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
+    .figure img { max-width: 100%; height: auto; }
+    .figure figcaption { font-size: var(--fs-small); color: var(--ink-2); margin-top: var(--s1); }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: var(--s1) 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+    th, td { border-bottom: 1px solid var(--line); padding: var(--s2); text-align: left; vertical-align: top; }
+    th { color: var(--ink-2); font-weight: 600; }
+    td:first-child, th:first-child { min-width: 6em; }
+
+    /* 위젯 */
+    .widget { background: var(--surface); border-radius: var(--radius); padding: var(--s4); margin: var(--s5) 0; }
+    .widget h4 { margin: 0 0 var(--s1); font-size: var(--fs-body); }
+    .widget-help { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s3); }
+    .controls { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--s2); font-size: var(--fs-small); }
+    .controls label { display: flex; align-items: center; gap: var(--s2); min-height: 44px; }
+    .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .widget svg { width: 100%; height: auto; background: var(--bg); border-radius: var(--radius); }
+    .readout { font-size: var(--fs-small); margin-top: var(--s2); }
+    .legend { font-size: var(--fs-label); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .sw { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: var(--s1); border-radius: 2px; }
+    .sw.truth { background: var(--ink-2); } .sw.fit { background: var(--accent); } .sw.train { background: var(--accent); height: 10px; width: 10px; border-radius: 50%; }
+    .sw.test { background: var(--warn); height: 10px; width: 10px; border-radius: 50%; } .sw.like { background: var(--accent); } .sw.prior { background: var(--prof); } .sw.post { background: var(--supp); }
+    .axis { stroke: var(--line); stroke-width: 1.5; }
+    .tick { fill: var(--ink-2); font-size: 11px; }
+    .plot-truth { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .plot-fit { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+    .pt-train { fill: var(--accent); }
+    .pt-test { fill: var(--warn); }
+    .plot-like { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .plot-prior { fill: none; stroke: var(--prof); stroke-width: 2; stroke-dasharray: 6 4; }
+    .plot-post { fill: none; stroke: var(--supp); stroke-width: 3; }
+    .mark-ml { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .mark-map { stroke: var(--supp); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 2; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 2.5; }
+    .fig-danger { stroke: var(--danger); fill: none; stroke-width: 2.5; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: 13px; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-fig); font-family: inherit; }
+
+    footer { width: 100%; max-width: var(--measure); margin: 0 auto; padding: 0 var(--s5) var(--s6); color: var(--ink-2); font-size: var(--fs-small); }
+
+    /* ---------- 문제 카드 ---------- */
+    .card { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .card h3 { margin: 0 0 var(--s4); font-size: clamp(22px, 5vw, 26px); line-height: 1.4; letter-spacing: -0.01em; }
+    .problem { margin: 0 0 var(--s5); }
+    .problem ol { padding-left: 1.4em; }
+    details { border-top: 1px solid var(--line); }
+    .card details:last-of-type { border-bottom: 1px solid var(--line); }
+    details[open] { padding-bottom: var(--s4); }
+    details > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: var(--s3);
+      min-height: var(--tap); cursor: pointer; font-weight: 600; }
+    details > summary::-webkit-details-marker { display: none; }
+    details > summary::after { content: ""; flex: none; width: 8px; height: 8px; margin-right: var(--s1);
+      border-right: 2px solid var(--ink-2); border-bottom: 2px solid var(--ink-2); transform: rotate(45deg); transition: transform 150ms ease-out; }
+    details[open] > summary::after { transform: rotate(-135deg); }
+    details.original { color: var(--ink-2); font-size: var(--fs-small); }
+    details.original > summary { color: var(--ink); font-size: var(--fs-body); }
+    .answer { font-weight: 700; background: var(--surface); border-radius: var(--radius); padding: var(--s3) var(--s4); }
+    .link-back { font-size: var(--fs-small); color: var(--ink-2); margin: var(--s5) 0 var(--s4); }
+    .top-link { flex: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--s2);
+      font-size: var(--fs-small); font-weight: 600; text-decoration: none; }
+    .js .card { padding: 0; border-top: 0; }
+    @media (prefers-reduced-motion: reduce) { details > summary::after { transition: none; } }
+
+    /* ---------- 하단 이동 바 ---------- */
+    .pager { position: sticky; bottom: 0; z-index: 10; background: var(--bg); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .pager-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s3) var(--s4); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); }
+    .pager-count { font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; min-width: 4em; }
+    .btn { min-height: var(--tap); min-width: var(--btn-min); padding: 0 var(--s6); border-radius: var(--radius); border: 0; font: 700 var(--fs-body)/1 var(--font); cursor: pointer; white-space: nowrap;
+      transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+    .btn-ghost { justify-self: start; background: var(--surface); color: var(--ink); }
+    .btn-primary { justify-self: end; background: var(--btn-bg); color: var(--on-btn); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    @media (hover: hover) {
+      .text-btn:hover, .btn-ghost:not(:disabled):hover { background: var(--line); }
+      .btn-primary:not(:disabled):hover { box-shadow: inset 0 0 0 100px rgba(0, 0, 0, .14); }
+    }
+
+    /* ---------- 목차 시트 ---------- */
+    .sheet { width: min(100%, var(--measure)); max-width: 100%; max-height: 80dvh; margin: auto auto 0; padding: 0; border: 0;
+      border-radius: 16px 16px 0 0; background: var(--bg); color: var(--ink); }
+    .sheet::backdrop { background: rgba(0, 0, 0, .4); }
+    .sheet-inner { padding: var(--s4) var(--s5) calc(var(--s5) + env(safe-area-inset-bottom)); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s2); }
+    .sheet-head h2 { margin: 0; font-size: var(--fs-lead); }
+    .toc { display: flex; flex-direction: column; }
+    .toc > a, .toc-group > a { display: block; padding: var(--s3) 0 var(--s1); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); text-decoration: none; }
+    .toc-list { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+    .toc-list a { display: flex; align-items: center; gap: var(--s3); min-height: var(--tap); padding: var(--s2) var(--s3); margin: 0 calc(-1 * var(--s3));
+      border-radius: var(--radius); color: var(--ink); text-decoration: none; line-height: 1.4; }
+    .toc-list a[aria-current="true"] { background: var(--surface); font-weight: 700; color: var(--accent-ink); }
+    .toc-list .toc-title { flex: 1 1 0; min-width: 0; }
+    @media (hover: hover) { .toc-list a:hover { background: var(--surface); } }
+
+    /* ---------- 한 화면에 하나씩 (JS가 켤 때만) ---------- */
+    html:not(.js) .pager, html:not(.js) #toc-open { display: none; }
+    html:not(.js) .sheet { display: block; position: static; width: 100%; max-height: none; margin: 0 auto; border-radius: 0; border-bottom: 1px solid var(--line); }
+    html:not(.js) .sheet-close { display: none; }
+    .js main > .hero:not(.is-current), .js main > section:not(.is-on), .js .screen:not(.is-current) { display: none; }
+    .js main > section { margin-top: 0; }
+    .js main > section > h2 { font-size: var(--fs-label); font-weight: 600; color: var(--accent-ink); margin: 0 0 var(--s2); }
+    .js .topic { padding: 0; border-top: 0; }
+    .js .hero { padding-top: 12vh; }
+    .js footer { display: none; }
+    .js body.at-end footer { display: block; }
+    .screen.enter-next { animation: enter-next var(--dur) var(--ease-out); }
+    .screen.enter-prev { animation: enter-prev var(--dur) var(--ease-out); }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .screen.enter-next, .screen.enter-prev { animation: none; }
+      .bar > span, .btn { transition: none; }
+    }
+    @media (max-width: 480px) {
+      main { padding: var(--s5) var(--s4) var(--s6); }
+      footer { padding: 0 var(--s4) var(--s5); }
+      .btn { min-width: 120px; padding: 0 var(--s5); }
+    }
+    @media print {
+      .topbar, .pager, .sheet { display: none !important; }
+      .js main > .hero, .js main > section, .js .screen, .js footer { display: block !important; }
+    }
+
+    /* ---------- 좌우 패널 (drawer) ---------- */
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
+    .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
+    .panel-toggle svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-toggle .strip { fill: transparent; stroke: none; transition: fill 150ms ease-out; }
+    .panel-toggle[aria-expanded="true"] { color: var(--accent-ink); }
+    .panel-toggle[aria-expanded="true"] .strip { fill: currentColor; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .i-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .theme-toggle .i-sun { display: block; }
+      :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
+    }
+
+    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
+    .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
+    .content { grid-column: 2; }
+    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
+    .content::-webkit-scrollbar, .panel-inner::-webkit-scrollbar { width: 8px; }
+    .content::-webkit-scrollbar-track, .panel-inner::-webkit-scrollbar-track { background: transparent; }
+    .content::-webkit-scrollbar-thumb, .panel-inner::-webkit-scrollbar-thumb { background: var(--scroll); border-radius: 8px; border: 2px solid var(--bg); }
+    .content::-webkit-scrollbar-thumb:hover, .panel-inner::-webkit-scrollbar-thumb:hover { background: var(--scroll-hover); }
+    @supports (scrollbar-color: auto) { .content, .panel-inner { scrollbar-width: thin; scrollbar-color: var(--scroll) transparent; } }
+    .panel-resize { display: none; }
+    .panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 44px; margin-bottom: var(--s2); }
+    .panel-head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-lead); line-height: 1.4; }
+    .panel-sub { margin: 0 0 var(--s4); font-weight: 700; line-height: 1.45; }
+    .panel-empty { margin: 0; color: var(--ink-2); }
+    .panel-label { display: block; margin: var(--s5) 0 var(--s2); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+
+    /* 진행 상태 */
+    .panel-meta { margin: 0 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .panel-meta b { color: var(--ink); }
+    .progress { height: 4px; margin-bottom: var(--s3); border-radius: 2px; background: var(--line); overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+    .panel .toc-list a { margin: 0 calc(-1 * var(--s2)); padding: var(--s2); font-size: var(--fs-panel); }
+    .toc-mark { flex: none; display: block; width: 20px; height: 20px; color: var(--ink-2); }
+    .toc-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .toc-mark.is-done { color: var(--accent-ink); }
+
+    /* 복습문제: 원문 · 힌트 · 풀이 */
+    .aid details:last-of-type { border-bottom: 1px solid var(--line); }
+    .aid details.original > summary { font-size: var(--fs-panel); }
+    .solved-btn { display: flex; align-items: center; justify-content: center; gap: var(--s2); width: 100%; min-height: var(--tap); margin-top: var(--s5); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .solved-btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
+
+    /* 정리노트: 섹션 요약 */
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+    .eq-list li:first-child { padding-top: 0; }
+    .eq-name { display: block; font-size: var(--fs-small); font-weight: 600; color: var(--ink-2); }
+    .eq-list .katex-display { margin: var(--s1) 0 0; text-align: left; }
+    .eq-list .katex-display > .katex { text-align: left; }
+    .terms { margin: 0; }
+    .terms dt { font-weight: 700; margin-top: var(--s3); }
+    .terms dt:first-child { margin-top: 0; }
+    .terms dd { margin: var(--s1) 0 0; }
+    .flow { margin: 0; padding-left: 1.4em; }
+    .flow li { margin: var(--s2) 0; }
+
+    @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
+
+    /* 넓은 화면: 본문 옆에 붙는 패널 */
+    @media (min-width: 1024px) {
+      .layout { --l: var(--panel-l-user, var(--panel-l)); }
+      .layout[data-left="closed"] { --l: 0px; }
+      .panel-left { width: var(--l); }
+      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
+      .panel-left .panel-resize { right: 0; }
+      .panel-right .panel-resize { left: 0; }
+      .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
+      .panel-left .panel-resize::after { right: 0; }
+      .panel-right .panel-resize::after { left: 0; }
+      .panel-resize:focus-visible { outline: none; }
+      .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
+      @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
+      body.is-resizing { cursor: col-resize; user-select: none; }
+      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
+      .scrim, .panel-close { display: none; }
+    }
+    @keyframes panel-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 좁은 화면: 가장자리에서 밀려 나오는 drawer */
+    @media (max-width: 1023.98px) {
+      .panel { position: fixed; top: 0; bottom: 0; z-index: 40; visibility: hidden;
+        transition: transform var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .panel-left { left: 0; width: min(var(--drawer-l), 88vw); transform: translateX(-100%); }
+      .panel-right { right: 0; width: min(var(--drawer-r), 88vw); transform: translateX(100%); }
+      .panel.is-open { visibility: visible; transform: none; transition: transform var(--dur) var(--ease-out); }
+      .panel-inner { padding-top: calc(var(--s3) + env(safe-area-inset-top)); padding-bottom: calc(var(--s6) + env(safe-area-inset-bottom)); }
+      .scrim { position: fixed; inset: 0; z-index: 35; background: var(--scrim); opacity: 0; visibility: hidden;
+        transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
+      html:not(.js) .panel-left { display: none; }
+    }
+    @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
+      .panel.is-shown { animation: none; }
+      .panel-resize::after { transition: none; }
+    }
+    @media print {
+      body { display: block; height: auto; overflow: visible; }
+      .layout { display: block; }
+      .content { overflow: visible; }
+      .panel, .scrim { display: none !important; }
+    }
+  </style>
+</head>
+<body data-screens="article.card" data-panels="review" data-range="1013">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <strong class="brand">복습문제</strong>
+      <a class="top-link" href="정리노트_1013_PCR_and_DNA_Technology.html">정리노트</a>
+      <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>풀이</span></button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
+  </header>
+  <div class="layout" data-left="open" data-right="closed">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
+      <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-left-title">문제 목록</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-meta">푼 문제 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <nav class="toc" aria-label="목차"><a href="#partB">B 기출</a><a href="#partC">C 변형</a></nav>
+      </div>
+    </aside>
+    <div class="content">
+  <main>
+    <div class="hero">
+      <h1>복습문제 37선 — 1013 수업 범위</h1>
+      <p>기출 25개와 생성 변형 12개예요. 변형은 기본 9개·심화 3개로 구성했어요. 먼저 풀어 보고, 막히면 힌트를 열어 보세요. 원문 표현이나 인쇄 답이 모호한 문항은 풀이에 밝혔어요.</p>
+    </div>
+    <section id="partB"><h2>B. 기출</h2>
+<article class="card" id="p1" data-source="기출 6강 3">
+<h3>P1. GMO의 환경 영향</h3>
+<div class="problem"><p>유전자변형생물(GMO) 식품의 유해한 환경 효과로 올바른 것은?</p><ul class="choices">
+<li data-choice="1">(1) 유전학적으로 변형된 유전자가 다른 잡초로 퍼져 나간다</li>
+<li data-choice="2">(2) 모두 옳다</li>
+<li data-choice="3">(3) GMO 작물의 유전적 다양성이 감소한다</li>
+<li data-choice="4">(4) GMO 작물이 제초제 저항성을 보이면 제초제의 사용이 증가한다</li>
+<li data-choice="5">(5) 그 작물을 먹이로 하는 다른 생물종에게 역효과를 줄 수 있다</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 3번 (PDF 1쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>기술의 목표와 환경에서 일어날 수 있는 위험을 나눠 봐요. 내성 개체가 살아남아 늘어나는 상황을 떠올려요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 맞아요. 도입 유전자가 교배 가능한 야생종으로 퍼질 수 있어요.</li>
+<li data-explains="2">(2) 맞아요. 나머지 보기는 잠재적 환경 우려를 제시하므로 출제 의도에서 모두 옳아요.</li>
+<li data-explains="3">(3) 맞아요. 소수 품종 집중 재배는 작물 다양성을 줄일 수 있어요.</li>
+<li data-explains="4">(4) 맞아요. 내성 잡초의 선택으로 제초제 사용량이 늘 수 있어요.</li>
+<li data-explains="5">(5) 맞아요. 비표적 생물에 영향을 줄 가능성이 있어요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s5-gmo">GMO와 내성의 문제</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (2)</p>
+<p>이 문항은 가능한 환경 위험을 묻는 것으로 읽어요. 유전자 유출·다양성 감소·제초제 증가·비표적종 영향이 모든 GMO에서 반드시 생긴다는 뜻은 아니에요. 실제 영향은 도입 형질·재배 방식·환경 조건에 따라 달라요.</p>
+</details></article>
+<article class="card" id="p2" data-source="기출 6강 5">
+<h3>P2. STR 반복수와 개인 차이</h3>
+<div class="problem"><p>사람들마다 DNA 지문이 다른 이유는 무엇인가?</p><ul class="choices">
+<li data-choice="1">(1) 사람마다 다른 개수의 DNA 세트를 갖고 있기 때문에</li>
+<li data-choice="2">(2) 같은 유전자 좌위에서 개체들마다 STR 의 반복수가 서로 다르기 때문에</li>
+<li data-choice="3">(3) PCR 이 다른 염기서열보다 특정 염기서열을 더 많이 증폭시키기 때문에</li>
+<li data-choice="4">(4) 특정 염기서열과 가까우면, STR을 제한효소가 자르지 못하기 때문에</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 5번 (PDF 1쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>같은 좌위의 반복 단위, 반복 횟수, 증폭된 조각의 길이를 구별해요. 손가락 무늬와 DNA 지문도 달라요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 틀려요. 일반적으로 사람 체세포의 DNA 세트 수는 같아요.</li>
+<li data-explains="2">(2) 맞아요. 같은 좌위의 STR 반복수가 개인마다 달라요.</li>
+<li data-explains="3">(3) 틀려요. 증폭량보다 STR 길이 차이가 지문 차이의 근거예요.</li>
+<li data-explains="4">(4) 틀려요. STR 반복수 차이를 설명하지 못해요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s2-str">STR 반복 횟수가 밴드가 되기까지</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (2)</p>
+</details></article>
+<article class="card" id="p3" data-source="기출 6강 6">
+<h3>P3. DNA 지문감식의 활용</h3>
+<div class="problem"><p>DNA 지문감식에 대한 설명으로 잘못된 것은?</p><ul class="choices">
+<li data-choice="1">(1) 짧은연속반복서열(STR)의 분석을 통해 개개인을 구별할 수 있다</li>
+<li data-choice="2">(2) DNA 지문감식은 사람 뿐만 아니라 동식물, 미생물에도 사용할 수 있다</li>
+<li data-choice="3">(3) DNA 지문감식으로 일란성 쌍둥이는 구분하기 어렵다</li>
+<li data-choice="4">(4) 법의학적으로 DNA 지문감식은 아직 법적 증거로서의 효력이 없다</li>
+<li data-choice="5">(5) DNA 지문감식은 친자확인에 사용할 수 있다</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 6번 (PDF 1쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>같은 좌위의 반복 단위, 반복 횟수, 증폭된 조각의 길이를 구별해요. 손가락 무늬와 DNA 지문도 달라요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 맞아요. STR 여러 좌위로 개인을 식별할 수 있어요.</li>
+<li data-explains="2">(2) 맞아요. 사람 이외 종에서도 유전적 차이를 분석할 수 있어요.</li>
+<li data-explains="3">(3) 맞아요. 일란성 쌍둥이는 표준 STR 지문이 대체로 같아요.</li>
+<li data-explains="4">(4) 틀려요. 충분한 좌위와 적절한 절차를 갖춘 DNA 분석은 법적 증거로 사용돼요.</li>
+<li data-explains="5">(5) 맞아요. 부모와 자식의 대립유전자 공유를 비교할 수 있어요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s2-str">STR 반복 횟수가 밴드가 되기까지</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (4)</p>
+</details></article>
+<article class="card" id="p4" data-source="기출 6강 7">
+<h3>P4. PCR의 주된 용도</h3>
+<div class="problem"><p>중합효소연쇄반응(PCR)은 주로 언제 사용되는가?</p><ul class="choices">
+<li data-choice="1">(1) DNA를 작은 조각으로 자를 때</li>
+<li data-choice="2">(2) 재조합 DNA를 삽입할 때</li>
+<li data-choice="3">(3) 특정 염기서열이 있는 DNA를 자르는 제한효소를 이용해야 할 때</li>
+<li data-choice="4">(4) 적은 양의 DNA를 많이 증폭시킬 때</li>
+<li data-choice="5">(5) 사람 손의 지문을 분석할 때</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 7번 (PDF 1쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>PCR은 준비한 주형 DNA의 특정 구간을 시험관에서 늘려요. 추출·절단·삽입·분리와 구별해요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 틀려요. DNA 절단은 제한효소 기능이에요.</li>
+<li data-explains="2">(2) 틀려요. DNA 삽입은 재조합·벡터 도입 단계예요.</li>
+<li data-explains="3">(3) 틀려요. PCR은 제한효소 절단 기술이 아니에요.</li>
+<li data-explains="4">(4) 맞아요. PCR은 소량의 특정 DNA를 증폭해요.</li>
+<li data-explains="5">(5) 틀려요. 손가락 무늬와 DNA 지문은 달라요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s0-pcr-uses">적은 시료를 읽기: 역전사와 오염</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (4)</p>
+</details></article>
+<article class="card" id="p5" data-source="기출 6강 8">
+<h3>P5. 식물의 성질 개선</h3>
+<div class="problem"><p>유전적으로 조작된 식품에 대한 설명으로 옳은 것은?</p><ul class="choices">
+<li data-choice="1">(1) 모두 맞다</li>
+<li data-choice="2">(2) 의학적으로 유용한 물질을 생산하는 식물을 만들 수 있다</li>
+<li data-choice="3">(3) 식물에 제초제 저항성을 증가시킬 수 있다</li>
+<li data-choice="4">(4) 농작물의 특정 영양분을 향상시킬 수 있다</li>
+<li data-choice="5">(5) 바이러스 내성을 가진 농작물을 만들 수 있다</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 8번 (PDF 1쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>해충 저항성, 제초제 내성, 영양 개선은 작물에 더하려는 성질이에요. 원하지 않는 유전자 전파와 구별해요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 맞아요. 나머지 모두 식물 유전공학의 가능한 목표예요.</li>
+<li data-explains="2">(2) 맞아요. 식물이 의약품 단백질을 생산하도록 할 수 있어요.</li>
+<li data-explains="3">(3) 맞아요. 제초제 내성 유전자를 도입할 수 있어요.</li>
+<li data-explains="4">(4) 맞아요. 황금쌀처럼 영양 성분을 개선할 수 있어요.</li>
+<li data-explains="5">(5) 맞아요. 질병·바이러스 저항성을 높이도록 만들 수 있어요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s5-plant">작물에 필요한 성질 더하기</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (1)</p>
+</details></article>
+<article class="card" id="p6" data-source="기출 6강 9">
+<h3>P6. PCR 30주기 계산</h3>
+<div class="problem"><p>정상적인 중합효소연쇄 반응을 30회 수행하면 몇 배로 증폭된 DNA 분자 수를 얻을 수 있는가?</p><ul class="choices">
+<li data-choice="1">(1) 2배</li>
+<li data-choice="2">(2) 3<sup>20</sup>배</li>
+<li data-choice="3">(3) 60배</li>
+<li data-choice="4">(4) 2<sup>30</sup>배</li>
+<li data-choice="5">(5) 30배</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 9번 (PDF 2쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>이상적으로 한 주기마다 사본 수가 두 배가 돼요. 주기 수를 곱하는 계산과 구별해요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 틀려요. 2배는 1주기의 결과예요.</li>
+<li data-explains="2">(2) 틀려요. PCR은 3배씩 증가하지 않아요.</li>
+<li data-explains="3">(3) 틀려요. 증폭은 2×30의 선형 증가가 아니에요.</li>
+<li data-explains="4">(4) 맞아요. 이상적인 PCR은 매 주기 두 배여서 30주기 후 2^30배예요.</li>
+<li data-explains="5">(5) 틀려요. 30배가 아니라 2^30배예요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s0-pcr-cycle">PCR 세 단계와 증폭량</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (4)</p>
+<p>초기 분자 수를 N으로 두면 30주기 후 N × 2<sup>30</sup>개예요. 증폭 비율은 2<sup>30</sup>배예요.</p>
+</details></article>
+<article class="card" id="p7" data-source="기출 6강 12">
+<h3>P7. DNA 클로닝의 도구</h3>
+<div class="problem"><p>제한효소, 연결효소, 플라스미드, 바이러스 벡터, 효모 벡터, 전기영동 젤, 항생제 내성 유전자 등은 다음 중 어떤 실험에 필요한가?</p><ul class="choices">
+<li data-choice="1">(1) DNA 클로닝</li>
+<li data-choice="2">(2) 2디옥시리보뉴클레오타이드 분석</li>
+<li data-choice="3">(3) DNA 염기서열결정</li>
+<li data-choice="4">(4) PCR</li>
+<li data-choice="5">(5) DNA 지문감식</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 12번 (PDF 2쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>DNA가 띠는 전하와 작은 조각의 이동을 먼저 생각해요. 분리한 DNA를 보는 데에는 검출 과정도 필요해요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 맞아요. DNA 클로닝은 DNA 절단·연결·벡터 도입·선별과 절편 확인을 이용해요.</li>
+<li data-explains="2">(2) 틀려요. 제시된 도구 전체가 이 분석을 특정하지 않아요.</li>
+<li data-explains="3">(3) 틀려요. 염기서열 결정과 클로닝을 구별해요.</li>
+<li data-explains="4">(4) 틀려요. PCR은 벡터·항생제 선별 없이 시험관에서 수행해요.</li>
+<li data-explains="5">(5) 틀려요. STR 감식은 세균 클로닝을 요구하지 않아요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s1-gel">전기영동의 방향과 거리</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (1)</p>
+</details></article>
+<article class="card" id="p8" data-source="기출 6강 13">
+<h3>P8. 돌리의 핵치환</h3>
+<div class="problem"><p>복제양 돌리는 생식세포 클로닝의 한 예이다. 다음 중 이 실험을 수행하는 데 필요한 것은?</p><ul class="choices">
+<li data-choice="1">(1) 젖샘세포의 2배체 세포를 핵이 제거된 미수정란과 융합</li>
+<li data-choice="2">(2) 자궁세포를 젖샘에 이식</li>
+<li data-choice="3">(3) 한 종의 미수정란을 다른 종의 미수정란과 융합</li>
+<li data-choice="4">(4) 2배체 배아세포를 반수체 성체세포와 융합</li>
+<li data-choice="5">(5) 다른 종으로부터 유래된 두 젖샘세포의 융합</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 13번 (PDF 2쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>돌리를 만드는 데 쓰인 난자와 체세포의 역할을 구별해요. 핵을 제공한 세포가 무엇인지 확인해요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 맞아요. 돌리는 젖샘 체세포의 핵을 핵 제거 난자에 넣어 만들었어요.</li>
+<li data-explains="2">(2) 틀려요. 자궁세포의 젖샘 이식은 핵치환이 아니에요.</li>
+<li data-explains="3">(3) 틀려요. 다른 종 난자의 융합은 돌리 과정이 아니에요.</li>
+<li data-explains="4">(4) 틀려요. 성체 체세포는 일반적으로 2배체이고 이 과정도 달라요.</li>
+<li data-explains="5">(5) 틀려요. 두 젖샘세포 융합은 핵 제거 난자를 사용하지 않아요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s4-clone">핵치환과 복제양 돌리</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (1)</p>
+<p>원문 발문은 돌리를 “생식세포 클로닝”이라고 부르지만 용어가 잘못됐어요. 돌리는 젖샘 체세포의 핵을 핵 제거 난자에 넣어 만든 체세포 핵치환 복제예요. 원문은 보존하고 정확한 방법으로 판단했어요.</p>
+</details></article>
+<article class="card" id="p9" data-source="기출 6강 14">
+<h3>P9. PCR에서 필요하지 않은 효소</h3>
+<div class="problem"><p>중합효소연쇄반응(PCR)의 혼합물에 필요한 주요 요소가 아닌 것은?</p><ul class="choices">
+<li data-choice="1">(1) DNA를 분리시키기 위한 헬리케이스</li>
+<li data-choice="2">(2) 고온내성의 DNA 중합효소(Taq 중합효소)</li>
+<li data-choice="3">(3) 증폭시킬 표적서열이 포함된 DNA</li>
+<li data-choice="4">(4) 4종의 뉴클레오사이드 3인산 전구체</li>
+<li data-choice="5">(5) 표적서열의 양 끝단에 각각 상보적인 프라이머</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 14번 (PDF 2쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>가열이 세포 안의 어떤 효소 역할을 대신하는지 생각해요. 주형·프라이머·합성 재료·중합효소는 별개예요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 틀려요. PCR은 가열로 가닥을 분리하여 헬리케이스가 필요하지 않아요.</li>
+<li data-explains="2">(2) 맞아요. 고온 변성을 견디는 Taq가 필요해요.</li>
+<li data-explains="3">(3) 맞아요. 복제할 표적을 포함한 주형 DNA가 필요해요.</li>
+<li data-explains="4">(4) 맞아요. DNA 합성 재료인 네 종류 dNTP가 필요해요.</li>
+<li data-explains="5">(5) 맞아요. 표적 양끝을 정하는 상보적인 프라이머가 필요해요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s0-pcr-components">PCR: 시험관 속 복사 준비</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (1)</p>
+</details></article>
+<article class="card" id="p10" data-source="기출 6강 15">
+<h3>P10. 내성 잡초와 제초제</h3>
+<div class="problem"><p>제초제에 저항성이 있도록 변형된 식물을 키우던 중 제초제 사용량이 더 많아졌다면 이 원인으로 가장 적절한 것은?</p><ul class="choices">
+<li data-choice="1">(1) 제초제 내성 유전자를 세균으로부터 얻었기 때문에</li>
+<li data-choice="2">(2) 변형된 식물이 비슷한 종의 야생 식물과는 교배가 일어날 수 없기 때문에</li>
+<li data-choice="3">(3) 변형된 식물의 수명이 짧아져서</li>
+<li data-choice="4">(4) 제초제가 있어야만 변형된 식물이 살 수 있기 때문에</li>
+<li data-choice="5">(5) 제초제에 내성을 지닌 돌연변이 잡초가 자연선택 되어 주위에 자라나기 때문에</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 15번 (PDF 2쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>기술의 목표와 환경에서 일어날 수 있는 위험을 나눠 봐요. 내성 개체가 살아남아 늘어나는 상황을 떠올려요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 틀려요. 유전자 출처 자체가 사용량 증가 원인은 아니에요.</li>
+<li data-explains="2">(2) 틀려요. 교배 불가능성은 내성 잡초 선택을 설명하지 않아요.</li>
+<li data-explains="3">(3) 틀려요. 작물 수명과 직접 관련되지 않아요.</li>
+<li data-explains="4">(4) 틀려요. 내성은 제초제가 있어야 살 수 있다는 뜻이 아니에요.</li>
+<li data-explains="5">(5) 맞아요. 내성 잡초가 살아남아 늘면 같은 살포량의 효과가 감소해요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s5-gmo">GMO와 내성의 문제</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (5)</p>
+</details></article>
+<article class="card" id="p11" data-source="기출 6강 16">
+<h3>P11. DNA 지문의 비교 기준</h3>
+<div class="problem"><p>DNA 지문감식은 _______________.</p><ul class="choices">
+<li data-choice="1">(1) 같은 DNA의 한쪽 가닥을 사람들 간에 비교한다</li>
+<li data-choice="2">(2) 여러 곳에서 반복적으로 나타나는 비암호화 DNA의 길이가 서로 다른 점을 이용하여 사람들 간에 비교한다</li>
+<li data-choice="3">(3) 젤 상에서 제일 먼 곳까지 이동시키려면 길이가 가장 긴 DNA가 필요하다</li>
+<li data-choice="4">(4) 일란성 쌍둥이 간의 DNA 차이도 쉽게 구분할 수 있다</li>
+<li data-choice="5">(5) 젤에서 분리한 후 증폭과정이 필요하다</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 16번 (PDF 2쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>같은 좌위의 반복 단위, 반복 횟수, 증폭된 조각의 길이를 구별해요. 손가락 무늬와 DNA 지문도 달라요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 틀려요. 단일가닥 자체보다 STR 좌위의 길이 패턴을 비교해요.</li>
+<li data-explains="2">(2) 맞아요. 여러 비암호화 STR 부위의 길이 차이를 비교해요.</li>
+<li data-explains="3">(3) 틀려요. 짧은 DNA가 더 멀리 이동해요.</li>
+<li data-explains="4">(4) 틀려요. 일란성 쌍둥이는 표준 STR로 구별하기 어려워요.</li>
+<li data-explains="5">(5) 틀려요. 수업의 과정은 PCR 증폭 후 겔 분리예요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s2-str">STR 반복 횟수가 밴드가 되기까지</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (2)</p>
+</details></article>
+<article class="card" id="p12" data-source="기출 6강 18">
+<h3>P12. 유전자 치료의 경계</h3>
+<div class="problem"><p>다음의 설명 중 옳지 않은 것은?</p><ul class="choices">
+<li data-choice="1">(1) 동, 식물 유전공학 모두 사회적 우려 속에서 진행되고 있다</li>
+<li data-choice="2">(2) 형질전환 생명체란 유전적으로 조작되어 외부로부터 온 유전정보를 함유하고 있음을 의미한다</li>
+<li data-choice="3">(3) 유전자의 많은 사본을 생산하는 것을 DNA 클로닝(cloning)이라고 한다</li>
+<li data-choice="4">(4) 유전자 조작 식품을 섭취하여 질병을 치료하는 것은 유전자 치료의 예이다</li>
+<li data-choice="5">(5) 중합효소연쇄반응(PCR)을 이용하면 충분한 양의 DNA를 단시간 내에 얻을 수 있다</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 18번 (PDF 3쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>환자 자신의 유전자가 바뀌는지 확인해요. 생식세포와 체세포는 다음 세대로 전달되는지 달라요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 맞아요. 유전공학에는 안전·윤리·환경 우려가 있어요.</li>
+<li data-explains="2">(2) 맞아요. 형질전환 생명체는 도입된 외부 유전정보를 가질 수 있어요.</li>
+<li data-explains="3">(3) 맞아요. DNA 클로닝은 특정 DNA의 많은 사본 생산이에요.</li>
+<li data-explains="4">(4) 틀려요. 유전자 치료는 환자의 유전자를 직접 조작해야 하며 식품 섭취와 달라요.</li>
+<li data-explains="5">(5) 맞아요. PCR은 DNA를 빠르게 증폭할 수 있어요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s3-therapy">유전자 치료와 세대 전달</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (4)</p>
+</details></article>
+<article class="card" id="p13" data-source="기출 6강 20">
+<h3>P13. STR 감식에 필요 없는 과정</h3>
+<div class="problem"><p>다음 중 DNA 지문감식에서 사용되는 과정이 아닌 것은 무엇인가?</p><ul class="choices">
+<li data-choice="1">(1) DNA 조각을 분리하기 위해 전류가 사용된다</li>
+<li data-choice="2">(2) DNA를 크기에 따라 여러 가지 조각들로 분리하기 위해 젤 위에 놓는다</li>
+<li data-choice="3">(3) 피, 정액, 모근으로부터 채취한 DNA가 분석에 사용된다</li>
+<li data-choice="4">(4) 지문을 나타내는 부위의 유전자를 세균에 클로닝한다</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 20번 (PDF 3쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>같은 좌위의 반복 단위, 반복 횟수, 증폭된 조각의 길이를 구별해요. 손가락 무늬와 DNA 지문도 달라요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 맞아요. 전류로 DNA를 이동시켜요.</li>
+<li data-explains="2">(2) 맞아요. 겔은 크기별 이동 차이를 만들어요.</li>
+<li data-explains="3">(3) 맞아요. 세포를 포함한 혈액·정액·모근에서 DNA를 얻을 수 있어요.</li>
+<li data-explains="4">(4) 틀려요. STR 감식은 PCR을 이용하며 세균 클로닝이 필요하지 않아요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s2-str">STR 반복 횟수가 밴드가 되기까지</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (4)</p>
+</details></article>
+<article class="card" id="p14" data-source="기출 6강 23">
+<h3>P14. DNA 이동의 원인</h3>
+<div class="problem"><p>DNA가 전기장이 걸린 젤에서 (+)극으로 이동하는 이유는?</p><ul class="choices">
+<li data-choice="1">(1) 아가로오스 젤이 음전하를 띠기 때문</li>
+<li data-choice="2">(2) DNA의 무게에 따라 중력에 의해 아래로 이동하므로</li>
+<li data-choice="3">(3) 다른 염색체들은 서로 다른 전하를 띠기 때문</li>
+<li data-choice="4">(4) 제한효소에 의해 잘리기 때문</li>
+<li data-choice="5">(5) DNA는 음전하를 띠기 때문</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 23번 (PDF 3쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>DNA가 띠는 전하와 작은 조각의 이동을 먼저 생각해요. 분리한 DNA를 보는 데에는 검출 과정도 필요해요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 틀려요. 겔의 전하가 아니라 DNA 자체의 전하 때문이에요.</li>
+<li data-explains="2">(2) 틀려요. 중력이 아니라 전기장에 의해 이동해요.</li>
+<li data-explains="3">(3) 틀려요. DNA들은 인산기로 음전하를 띠어요.</li>
+<li data-explains="4">(4) 틀려요. 절단 여부와 무관하게 DNA는 음전하를 띠어요.</li>
+<li data-explains="5">(5) 맞아요. 음전하 DNA가 양극으로 이동해요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s1-gel">전기영동의 방향과 거리</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (5)</p>
+</details></article>
+<article class="card" id="p15" data-source="기출 6강 24">
+<h3>P15. 절편을 분리하는 방법</h3>
+<div class="problem"><p>DNA 클로닝 과정 중, DNA 조각들을 크기나 전하 등에 따라 서로 분리시키는 방법은 무엇인가?</p><ul class="choices">
+<li data-choice="1">(1) 크로마토크래피</li>
+<li data-choice="2">(2) 교차</li>
+<li data-choice="3">(3) 여과</li>
+<li data-choice="4">(4) 전기영동</li>
+<li data-choice="5">(5) PCR(중합효소연쇄반응)</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 24번 (PDF 3쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>DNA가 띠는 전하와 작은 조각의 이동을 먼저 생각해요. 분리한 DNA를 보는 데에는 검출 과정도 필요해요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 틀려요. 출제 의도의 겔을 이용한 DNA 분리와 다른 기술이에요.</li>
+<li data-explains="2">(2) 틀려요. 교차는 감수분열의 유전물질 교환이에요.</li>
+<li data-explains="3">(3) 틀려요. 단순 여과가 아니라 전기장을 이용해요.</li>
+<li data-explains="4">(4) 맞아요. 전기영동은 전하·크기에 따른 이동 차이로 분리해요.</li>
+<li data-explains="5">(5) 틀려요. PCR은 분리가 아니라 증폭이에요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s1-gel">전기영동의 방향과 거리</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (4)</p>
+</details></article>
+<article class="card" id="p16" data-source="기출 6강 25" data-grade-mode="ambiguous" data-grade-notice="인쇄 정답이 없고 절반 표현에 모호성이 있어요. 상속 규칙에 따라 (1)로 판단했어요.">
+<h3>P16. 친자확인과 대립유전자 상속</h3>
+<div class="problem"><p>친자확인에서 부모의 DNA 지문을 자식의 지문과 비교할 때, 어떤 한 쪽 부모의 지문은 항상 _____.</p><ul class="choices">
+<li data-choice="1">(1) 자식 DNA 지문과 일치하는 DNA 지문을 가져가야 하며 일치하지 않은 것은 다른 양친이 가져야 한다.</li>
+<li data-choice="2">(2) 자식에게만 나타나는 DNA 지문과 어느정도 유사한 지문을 가져야 한다.</li>
+<li data-choice="3">(3) 자식 DNA 지문의 절반을 가져야 한다.</li>
+<li data-choice="4">(4) 자식의 DNA 지문과 아무 관련이 없다</li>
+<li data-choice="5">(5) 자식의 모든 DNA 지문을 가져야 한다.</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 25번 (PDF 3쪽–4쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>자식은 각 좌위에서 부모에게 대립유전자를 하나씩 받아요. 대립유전자의 유래와 화면에 보이는 밴드 개수는 달라요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 맞아요. 자식의 대립유전자는 각 부모에게서 하나씩 물려받아 부모 중 한쪽과 맞지 않는 것은 다른 쪽에서 설명돼야 해요.</li>
+<li data-explains="2">(2) 틀려요. 막연한 유사성만으로는 부모-자식의 대립유전자 상속을 설명하지 못해요.</li>
+<li data-explains="3">(3) 출제 의도로는 답이 아니지만 유래의 절반을 말하려는 표현일 수 있어요. 각 좌위의 유래는 절반씩이지만 겔 밴드 개수가 항상 정확히 절반이라는 보장은 없어요.</li>
+<li data-explains="4">(4) 틀려요. 부모와 자식은 대립유전자를 공유해요.</li>
+<li data-explains="5">(5) 틀려요. 한쪽 부모가 자식의 모든 밴드를 공유할 필요는 없어요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s2-parentage">친자 판별: 부모에게서 하나씩</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (1)</p>
+<p>인쇄 원문에는 정답 표시가 없어요. 상속 규칙에 가장 정확한 (1)로 판단했어요. 각 좌위 대립유전자의 유래는 양쪽 부모에게서 하나씩이지만, 동형접합이나 부모가 공유하는 대립유전자 때문에 화면의 밴드 개수가 항상 정확히 절반이 되는 것은 아니에요. (3)을 단순화된 출제 의도로 삼았을 가능성은 있지만 단일 정답을 확신하기 어려워요.</p>
+</details></article>
+<article class="card" id="p17" data-source="기출 6강 26">
+<h3>P17. 식물 유전공학의 목표와 위험</h3>
+<div class="problem"><p>다음은 식물을 이용한 유전공학 응용의 예로 적절치 않은 것은?</p><ul class="choices">
+<li data-choice="1">(1) 작물에 간균이 갖고 있는 Bt 독소의 유전자를 도입</li>
+<li data-choice="2">(2) 옥수수 및 목화를 글리포세이트 내성으로 만들어 생산량을 증가시킴</li>
+<li data-choice="3">(3) 제초제 내성을 위해 도입된 유전자를 중간 수분에 의해 다른 잡초종에게 전파</li>
+<li data-choice="4">(4) 베타-카로틴이 풍부하게 조작된 황금 쌀을 만들어 영양 개선에 기여</li>
+<li data-choice="5">(5) 콩과 식물에 부족한 필수아미노산인 메싸이오닌과 시스테인의 증량</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 26번 (PDF 4쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>해충 저항성, 제초제 내성, 영양 개선은 작물에 더하려는 성질이에요. 원하지 않는 유전자 전파와 구별해요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 맞아요. Bt 독소 유전자는 해충 저항성 목적이에요.</li>
+<li data-explains="2">(2) 맞아요. 제초제 내성은 작물을 보호하는 목적이에요.</li>
+<li data-explains="3">(3) 틀려요. 잡초로 내성 유전자가 퍼지는 것은 바람직한 목표가 아니라 환경 위험이에요.</li>
+<li data-explains="4">(4) 맞아요. 베타카로틴은 비타민 A 전구체로 영양 개선 목표예요.</li>
+<li data-explains="5">(5) 맞아요. 제한 아미노산 함량 증가는 영양 개선 목표예요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s5-plant">작물에 필요한 성질 더하기</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (3)</p>
+</details></article>
+<article class="card" id="p18" data-source="기출 6강 27" data-grade-mode="ambiguous" data-grade-notice="인쇄 (3)은 오류로 판단해요. 수업 맥락 답은 (5)이지만 염료와 광원 조건이 빠져 있어요.">
+<h3>P18. 겔의 분리와 검출</h3>
+<div class="problem"><p>다음 아가로오스 젤 전기염동에 관한 설명 중 잘못된 것은?</p><ul class="choices">
+<li data-choice="1">(1) DNA 절편의 길이는 표지 DNA와 이동거리를 비교하여 알 수 있다</li>
+<li data-choice="2">(2) 전류를 흘려주면 음전하를 띤 DNA는 양극으로 이동한다</li>
+<li data-choice="3">(3) 일반적으로 아가로오스 젤은 비교적 큰 사이즈인 DNA 분리에 적합하다.</li>
+<li data-choice="4">(4) 젤 전기영동은 DNA 뿐만 아니라 RNA, 단백질도 분리할 수 있다</li>
+<li data-choice="5">(5) DNA와 결합하는 염료로 젤을 염색을 하면 가시광선 파장에서 눈으로 확인할 수 있다</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 27번 (PDF 4쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>DNA가 띠는 전하와 작은 조각의 이동을 먼저 생각해요. 분리한 DNA를 보는 데에는 검출 과정도 필요해요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 맞아요. 표지 DNA와 비교하여 절편 길이를 추정해요.</li>
+<li data-explains="2">(2) 맞아요. 음전하 DNA는 양극으로 이동해요.</li>
+<li data-explains="3">(3) 맞아요. 인쇄 정답과 다른 판단이에요. 아가로오스는 폴리아크릴아마이드보다 비교적 큰 DNA 분리에 적합하여 인쇄 정답은 오류예요.</li>
+<li data-explains="4">(4) 맞아요. 일반적인 겔 전기영동은 DNA·RNA·단백질을 분리할 수 있어요.</li>
+<li data-explains="5">(5) 수업의 검출 조건에서는 틀려요. 수업의 형광 염료는 UV 조사로 확인하므로 수업 맥락에서 틀려요. 다만 가시광으로 보는 염료도 존재하여 이 문장 전체를 보편적으로 거짓이라 할 수는 없어요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s1-gel">전기영동의 방향과 거리</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (5)</p>
+<p>인쇄된 답안지는 (3)을 표시하지만 아가로오스는 비교적 큰 DNA를 분리하는 데 적합하므로 오류로 판단해요. 수업의 UV 형광 검출 맥락에서는 (5)를 답으로 삼아요. 다만 가시광으로 검출하는 염료도 있으므로 염료와 광원 조건이 생략된 원문은 엄밀히 모호해요. (5)가 모든 검출법에서 거짓이라는 뜻은 아니에요. 원문의 “전기염동”은 “전기영동”의 오타예요.</p>
+</details></article>
+<article class="card" id="p19" data-source="기출 6강 30">
+<h3>P19. 체세포와 세대 전달</h3>
+<div class="problem"><p>다음은 유전공학의 응용에 대한 설명이다. 틀린 설명은?</p><ul class="choices">
+<li data-choice="1">(1) 실험실에서 세균을 배양할 경우 생물학적 안정성 지침을 준수하여야 한다</li>
+<li data-choice="2">(2) 생식세포 유전자 치료는 인간에게는 허용되지 않는다</li>
+<li data-choice="3">(3) 동물세포의 경우 유전자를 체세포에 도입하면 다음 세대에 전달된다</li>
+<li data-choice="4">(4) 동물의 유전자를 조작하여 필요한 단백질을 생산, 정제하면 사람의 질병을 치료할 수 있다</li>
+<li data-choice="5">(5) 대장균을 유전적으로 조작하여 사람 호르몬을 생산할 수 있다</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 30번 (PDF 4쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>환자 자신의 유전자가 바뀌는지 확인해요. 생식세포와 체세포는 다음 세대로 전달되는지 달라요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 맞아요. 생물학적 안전 지침을 지켜야 해요.</li>
+<li data-explains="2">(2) 맞아요. 수업에서 인간 생식세포 유전자 치료는 허용하지 않는다고 다뤘어요.</li>
+<li data-explains="3">(3) 틀려요. 체세포 도입은 다음 세대에 전달되지 않아요.</li>
+<li data-explains="4">(4) 맞아요. 형질전환 동물에서 생산·정제한 단백질을 의약품으로 쓸 수 있어요.</li>
+<li data-explains="5">(5) 맞아요. 대장균에서 사람 인슐린 등을 만들 수 있어요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s3-therapy">유전자 치료와 세대 전달</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (3)</p>
+</details></article>
+<article class="card" id="p20" data-source="기출 6강 31">
+<h3>P20. PCR로 고대 DNA 읽기</h3>
+<div class="problem"><p>중합효소연쇄반응(PCR)에 대한 설명 중 옳은 것은?</p><ul class="choices">
+<li data-choice="1">(1) PCR은 고대 유골의 DNA 시료에서도 DNA를 추출하여 증폭시킬 수 있다</li>
+<li data-choice="2">(2) PCR에 사용되는 제작된 특정 프라이머는 시료의 모든 서열에 결합할 수 있다</li>
+<li data-choice="3">(3) DNA의 복제에 사용되는 DNA 중합효소는 프라이머가 필요하지 않다</li>
+<li data-choice="4">(4) PCR의 결과물은 별다른 추가 확인과정 없이 눈으로 바로 확인할 수 있다</li>
+<li data-choice="5">(5) PCR은 특정 DNA 서열을 숙주에 클로닝하여 대량으로 생산할 수 있다</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 31번 (PDF 4쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>PCR은 준비한 주형 DNA의 특정 구간을 시험관에서 늘려요. 추출·절단·삽입·분리와 구별해요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 맞아요. 고대 시료에 남은 DNA도 적합한 표적·오염 관리 조건에서 증폭할 수 있어요.</li>
+<li data-explains="2">(2) 틀려요. 프라이머는 상보적인 특정 부위에 결합해요.</li>
+<li data-explains="3">(3) 틀려요. 중합효소는 프라이머의 끝을 연장해요.</li>
+<li data-explains="4">(4) 틀려요. 겔 전기영동과 염색 등 확인 과정이 필요해요.</li>
+<li data-explains="5">(5) 틀려요. 숙주 클로닝 대신 시험관에서 합성해요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s0-pcr-uses">적은 시료를 읽기: 역전사와 오염</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (1)</p>
+<p>원문 (1)의 “추출하여 증폭”은 시료에서 DNA를 따로 추출한 뒤 PCR로 늘리는 전체 절차를 표현한 거예요. DNA 추출 자체가 PCR의 역할은 아니에요.</p>
+</details></article>
+<article class="card" id="p21" data-source="기출 6강 32">
+<h3>P21. PCR의 효소 조건</h3>
+<div class="problem"><p>PCR 기술은 다음 중 어떤 것을 어떤 것을 사용한다는 점에서 다른 기술들과 구분되는가?</p><ul class="choices">
+<li data-choice="1">(1) DNA</li>
+<li data-choice="2">(2) RNA</li>
+<li data-choice="3">(3) 고온내성의 DNA 중합효소</li>
+<li data-choice="4">(4) 프라이머</li>
+<li data-choice="5">(5) 네 가지 뉴클레오사이드 3인산</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 32번 (PDF 4쪽–5쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>가열이 세포 안의 어떤 효소 역할을 대신하는지 생각해요. 주형·프라이머·합성 재료·중합효소는 별개예요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 틀려요. DNA는 여러 다른 기술도 이용해요.</li>
+<li data-explains="2">(2) 틀려요. PCR 자체의 주형은 DNA예요.</li>
+<li data-explains="3">(3) 맞아요. 반복되는 고온에도 활성을 유지하는 중합효소가 특징이에요.</li>
+<li data-explains="4">(4) 틀려요. 프라이머는 세포 내 복제에도 필요해요.</li>
+<li data-explains="5">(5) 틀려요. dNTP는 다른 DNA 합성에도 쓰여요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s0-pcr-components">PCR: 시험관 속 복사 준비</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (3)</p>
+</details></article>
+<article class="card" id="p22" data-source="기출 6강 33">
+<h3>P22. DNA 지문의 표지</h3>
+<div class="problem"><p>다음 중 사람의 DNA 지문을 감식하는데 이용되는 것은 무엇인가?</p><ul class="choices">
+<li data-choice="1">(1) 손가락에서 특정 지문을 만드는데 원인이 되는 유전자</li>
+<li data-choice="2">(2) STR (짧은연속반복서열)</li>
+<li data-choice="3">(3) 형질전환</li>
+<li data-choice="4">(4) 플라스미드</li>
+<li data-choice="5">(5) 염색체에서 인트론의 수</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 33번 (PDF 5쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>같은 좌위의 반복 단위, 반복 횟수, 증폭된 조각의 길이를 구별해요. 손가락 무늬와 DNA 지문도 달라요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 틀려요. 손가락의 무늬와 DNA 지문을 구별해요.</li>
+<li data-explains="2">(2) 맞아요. 개인마다 다른 STR 반복수를 이용해요.</li>
+<li data-explains="3">(3) 틀려요. 형질전환은 외부 DNA 도입이에요.</li>
+<li data-explains="4">(4) 틀려요. 플라스미드는 클로닝 벡터예요.</li>
+<li data-explains="5">(5) 틀려요. 인트론 개수를 세는 방식이 아니에요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s2-str">STR 반복 횟수가 밴드가 되기까지</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (2)</p>
+</details></article>
+<article class="card" id="p23" data-source="기출 6강 35">
+<h3>P23. STR 서열과 반복수</h3>
+<div class="problem"><p>다음 중 DNA 지문을 만드는 과정이 아닌 것은?</p><ul class="choices">
+<li data-choice="1">(1) 짧은연속반복서열(STR)은 사람에 따라 서로 다른 염기서열을 가진다</li>
+<li data-choice="2">(2) DNA 조각은 아가로오스 젤을 통과시킴으로써 크기 순서로 분리할 수 있다</li>
+<li data-choice="3">(3) 자식의 DNA 지문에 해당하는 조각을 부모 중의 한 명은 반드시 가져야 한다</li>
+<li data-choice="4">(4) 피부, 뼈, 혈액, 정액, 모근 등으로부터 채취한 DNA가 분석에 사용될 수 있다</li>
+<li data-choice="5">(5) 짧은연속반복서열(STR)의 반복 수는 사람마다 다르다</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 35번 (PDF 5쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>같은 좌위의 반복 단위, 반복 횟수, 증폭된 조각의 길이를 구별해요. 손가락 무늬와 DNA 지문도 달라요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 틀려요. 같은 STR 좌위에서는 반복 단위보다 반복 수 차이가 출제 의도의 구별 근거예요.</li>
+<li data-explains="2">(2) 맞아요. 겔에서 길이에 따라 분리해요.</li>
+<li data-explains="3">(3) 맞아요. 통상적 상속 모델에서 자식 대립유전자는 부모 중 한쪽에 있어요.</li>
+<li data-explains="4">(4) 맞아요. DNA를 포함한 다양한 생물학적 시료를 사용할 수 있어요.</li>
+<li data-explains="5">(5) 맞아요. STR 반복수 차이를 비교해요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s2-str">STR 반복 횟수가 밴드가 되기까지</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (1)</p>
+<p>같은 STR 좌위의 통상적 분석에서는 반복 단위의 종류보다 반복 횟수 차이를 비교해요. 이 문항의 (1)은 그 기준에 어긋나요. 모든 사람의 모든 STR 염기서열이 완전히 동일하다는 일반화는 하지 않아요.</p>
+</details></article>
+<article class="card" id="p24" data-source="기출 6강 36">
+<h3>P24. ADA 유전자 치료</h3>
+<div class="problem"><p>다음 중 가장 적절한 유전자 치료의 예는?</p><ul class="choices">
+<li data-choice="1">(1) ADA 환자에게 정상적인 유전자를 환자 본인의 백혈구를 이용하여 도입하는 것</li>
+<li data-choice="2">(2) 유전적으로 맞는 기증자의 심장을 이식하는 것</li>
+<li data-choice="3">(3) 모두 옳다</li>
+<li data-choice="4">(4) 박테리아가 만든 사람 혈액 응고인자를 직접 혈우병 환자에게 주사하는 것</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 36번 (PDF 5쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>환자 자신의 유전자가 바뀌는지 확인해요. 생식세포와 체세포는 다음 세대로 전달되는지 달라요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 맞아요. 환자 세포에 정상 ADA 유전자를 도입하므로 유전자 치료예요.</li>
+<li data-explains="2">(2) 틀려요. 장기 이식은 환자 유전자 조작과 달라요.</li>
+<li data-explains="3">(3) 틀려요. 유전자 치료는 (1)만 해당해요.</li>
+<li data-explains="4">(4) 틀려요. 단백질 의약품 주사는 유전자 자체를 조작하지 않아요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s3-therapy">유전자 치료와 세대 전달</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (1)</p>
+</details></article>
+<article class="card" id="p25" data-source="기출 6강 37">
+<h3>P25. 정상 유전자 기능의 보완</h3>
+<div class="problem"><p>다음 유전자 치료를 이용하여 가장 효과적으로 치료할 수 있는 질병은 무엇인가?</p><ul class="choices">
+<li data-choice="1">(1) 세균 감염에 의한 질병</li>
+<li data-choice="2">(2) 지방 과다 섭취로 인한 질병</li>
+<li data-choice="3">(3) 기능이 결핍된 효소에 의해 일어난 질병</li>
+<li data-choice="4">(4) 조절되지 않는 세포분열에 의한 질병</li>
+</ul></div>
+<details class="original"><summary>원문 정보 보기</summary><p>기출 6강 합본 37번 (PDF 5쪽)</p></details>
+<details class="hint"><summary>힌트 보기</summary><p>환자 자신의 유전자가 바뀌는지 확인해요. 생식세포와 체세포는 다음 세대로 전달되는지 달라요.</p></details>
+<details class="solution"><summary>풀이 보기</summary><ol class="steps">
+<li data-explains="1">(1) 틀려요. 세균 감염보다 단일 유전자 결함이 출제 의도의 표적이에요.</li>
+<li data-explains="2">(2) 틀려요. 생활습관성 원인을 정상 효소 유전자 도입만으로 해결할 수 없어요.</li>
+<li data-explains="3">(3) 맞아요. 결핍 효소의 정상 유전자를 도입하여 기능을 보완할 수 있어요.</li>
+<li data-explains="4">(4) 틀려요. 암은 여러 변화가 관여할 수 있어 단일 효소 결핍보다 단순한 표적이 아니에요.</li>
+<li>수업과의 연결: 1013 수업의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s3-therapy">유전자 치료와 세대 전달</a>에서 판단 기준을 확인해요.</li></ol>
+<p class="answer">정답: (3)</p>
+<p>유전자 치료는 암에도 적용할 수 있지만 이 문항은 단일 효소의 기능 결핍을 정상 유전자로 보완하는 가장 직접적인 사례를 묻고 있어요.</p>
+</details></article>
+    </section>
+    <section id="partC"><h2>C. 변형 연습</h2>
+<article class="card" id="p26" data-source="생성 변형 s0-pcr-components"><h3>P26. [변형] PCR 준비물 판별</h3><div class="problem"><p>중합효소연쇄반응(PCR)에 대한 설명 중 옳은 것은?</p><ul class="choices"><li data-choice="1">(1) 첫 가열을 대신하려면 프라이메이스만 첨가하면 된다.</li><li data-choice="2">(2) 합성된 두 프라이머가 표적 양쪽에서 새 가닥의 합성 시작점을 제공한다.</li><li data-choice="3">(3) 새 가닥을 만들 때 리보뉴클레오티드만 재료로 사용한다.</li><li data-choice="4">(4) 일반적인 사람의 DNA 중합효소는 반복되는 95℃ 가열에 안정하다.</li><li data-choice="5">(5) 프라이머 서열을 정할 때 표적 주변의 염기서열 정보가 필요 없다.</li></ul></div><details class="original"><summary>원문 정보 보기</summary><p>기출 6강 31번 발문에 정답을 바꾼 생성 변형이에요. 다루는 혼동: PCR 준비물 판별. 근거 토픽: s0-pcr-components.</p></details><details class="hint"><summary>힌트 보기</summary><p>준비물 기능을 각각 대조.</p></details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 틀려요. 헬리케이스 대신 열로 가닥을 분리하며 프라이메이스는 가닥을 여는 효소가 아니에요.</li><li data-explains="2">(2) 맞아요. 양쪽의 합성 DNA 프라이머를 5′에서 3′으로 연장해요.</li><li data-explains="3">(3) 틀려요. PCR은 DNA를 만드므로 dNTP를 재료로 사용해요.</li><li data-explains="4">(4) 틀려요. 일반 효소는 고온에서 활성을 잃을 수 있어 내열성 중합효소가 필요해요.</li><li data-explains="5">(5) 틀려요. 프라이머를 설계하려면 결합 부위의 서열 정보가 필요해요.</li><li>원문 정답과 달라진 점: 합성 DNA 프라이머가 시작점을 제공해요.</li><li>수업과의 연결: 1013의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s0-pcr-components">PCR 준비물 판별 관련 개념</a>으로 판단해요.</li></ol><p class="answer">정답: (2)</p></details></article>
+<article class="card" id="p27" data-source="생성 변형 s0-pcr-cycle"><h3>P27. [변형] 증폭량 역산</h3><div class="problem"><p>DNA 3분자로 시작해 모든 주기에서 정확히 두 배가 되었다. 5주기 후 분자 수는?</p><ul class="choices"><li data-choice="1">(1) 15분자</li><li data-choice="2">(2) 30분자</li><li data-choice="3">(3) 48분자</li><li data-choice="4">(4) 96분자</li><li data-choice="5">(5) 243분자</li></ul></div><details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 증폭량 역산. 근거 토픽: s0-pcr-cycle.</p></details><details class="hint"><summary>힌트 보기</summary><p>초기량에 2의 주기 수 제곱을 곱하기.</p></details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 틀려요. 주기 수를 초기량에 단순히 곱하지 않아요.</li><li data-explains="2">(2) 틀려요. 5주기의 증폭 배수는 10이 아니라 32예요.</li><li data-explains="3">(3) 틀려요. 48은 4주기를 수행한 결과예요.</li><li data-explains="4">(4) 맞아요. 초기 3분자에 2⁵=32를 곱하면 96분자예요.</li><li data-explains="5">(5) 틀려요. 각 주기의 배수는 초기 3이 아니라 2예요.</li><li>수업과의 연결: 1013의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s0-pcr-cycle">증폭량 역산 관련 개념</a>으로 판단해요.</li></ol><p class="answer">정답: (4)</p></details></article>
+<article class="card" id="p28" data-source="생성 변형 s0-pcr-uses"><h3>P28. [변형] RNA 검출과 대조군</h3><div class="problem"><p>RNA 표적을 검사하는 실험에서 A는 역전사 후 PCR, B는 역전사를 생략한 PCR이다. 두 실험에는 같은 표적 특이 DNA 프라이머를 넣었고, 원시료에는 표적 RNA만 있으며 DNA 오염은 없다. A에서만 표적이 증폭되는 이유는?</p><ul class="choices"><li data-choice="1">(1) PCR이 RNA를 주형으로 직접 복제하기 때문이다.</li><li data-choice="2">(2) 역전사효소가 표적 RNA를 DNA로 바꾸어 PCR 주형을 제공하기 때문이다.</li><li data-choice="3">(3) B의 프라이머는 반드시 열에 불안정하기 때문이다.</li><li data-choice="4">(4) A에서는 리보솜이 표적 DNA를 합성하기 때문이다.</li><li data-choice="5">(5) 역전사하면 양쪽 프라이머가 필요 없어지기 때문이다.</li></ul></div><details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: RNA 검출과 대조군. 근거 토픽: s0-pcr-uses.</p></details><details class="hint"><summary>힌트 보기</summary><p>RNA 주형과 DNA 주형 구별 후 역전사의 출력 확인.</p></details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 틀려요. 보통의 PCR은 DNA를 주형으로 증폭해요.</li><li data-explains="2">(2) 맞아요. 역전사효소가 RNA에서 상보적 DNA를 합성해요.</li><li data-explains="3">(3) 틀려요. 차이는 역전사 유무이고 프라이머 불안정이라는 조건은 주어지지 않았어요.</li><li data-explains="4">(4) 틀려요. 리보솜은 단백질 합성에 참여해요.</li><li data-explains="5">(5) 틀려요. 역전사 이후에도 표적 양쪽의 PCR 프라이머가 필요해요.</li><li>수업과의 연결: 1013의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s0-pcr-uses">RNA 검출과 대조군 관련 개념</a>으로 판단해요. <a href="../1006/정리노트_1006_Transcription_Translation_and_Lac_Operon.html#s0-recap">1006의 DNA와 RNA 구별</a>도 함께 확인해요.</li></ol><p class="answer">정답: (2)</p></details></article>
+<article class="card" id="p29" data-source="생성 변형 s1-gel"><h3>P29. [변형] 밴드 거리 읽기</h3><div class="problem"><p>같은 조건에서 선형 DNA 절편 A·B·C를 함께 분리한 그림이다. 방향과 길이에 대한 설명 중 옳지 않은 것은?</p><figure class="figure"><svg id="p29-gel" viewBox="0 0 400 260" role="img" aria-label="위 음극 홈에서 아래 양극으로 이동한 밴드 A B C"><rect class="fig-ink" x="90" y="35" width="210" height="190"/><rect class="fig-ink" x="165" y="45" width="60" height="12"/><text class="fig-text" x="30" y="50">음극 (−)</text><text class="fig-text" x="30" y="223">양극 (+)</text><path class="fig-accent" d="M165 90h60 M165 140h60 M165 195h60"/><text class="fig-text" x="235" y="95">A</text><text class="fig-text" x="235" y="145">B</text><text class="fig-text" x="235" y="200">C</text></svg><figcaption>같은 시간 동안 분리한 세 절편이에요.</figcaption></figure><ul class="choices"><li data-choice="1">(1) 시료를 넣은 구멍 쪽은 음극이다.</li><li data-choice="2">(2) 세 절편은 양극 쪽으로 이동했다.</li><li data-choice="3">(3) A가 가장 긴 DNA 절편이다.</li><li data-choice="4">(4) C가 가장 짧은 DNA 절편이다.</li><li data-choice="5">(5) A가 C보다 빨리 이동한 절편이다.</li></ul></div><details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 밴드 거리 읽기. 근거 토픽: s1-gel.</p></details><details class="hint"><summary>힌트 보기</summary><p>음극 위치 확인 후 거리와 크기를 역으로 대조.</p></details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 맞아요. 음전하 DNA가 양극 쪽으로 나가도록 홈을 음극 쪽에 두었어요.</li><li data-explains="2">(2) 맞아요. 아래쪽으로 이동한 방향이 양극이에요.</li><li data-explains="3">(3) 맞아요. A가 구멍에서 가장 가까워 가장 길고 느린 절편이에요.</li><li data-explains="4">(4) 맞아요. C가 가장 멀리 갔으므로 가장 짧은 절편이에요.</li><li data-explains="5">(5) 틀려요. 같은 시간에 더 짧은 거리를 간 A는 C보다 느려요.</li><li>수업과의 연결: 1013의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s1-gel">밴드 거리 읽기 관련 개념</a>으로 판단해요.</li></ol><p class="answer">정답: (5)</p></details></article>
+<article class="card" id="p30" data-source="생성 변형 s2-str"><h3>P30. [변형] 반복 횟수에서 분리 순서까지</h3><div class="problem"><p>같은 STR 좌위를 두 프라이머로 증폭했다. 반복 단위는 4 bp이고, 두 프라이머 사이의 반복 이외 구간은 모두 80 bp이다. 표의 길이를 바르게 해석한 것은?</p><div class="table-wrap"><table><tr><th>시료</th><th>반복 수</th></tr><tr><td>A</td><td>9</td></tr><tr><td>B</td><td>11</td></tr><tr><td>C</td><td>15</td></tr></table></div><ul class="choices"><li data-choice="1">(1) 9회 반복 산물은 36 bp이다.</li><li data-choice="2">(2) 11회 반복 산물은 124 bp이며 9회 반복 산물보다 느리게 이동한다.</li><li data-choice="3">(3) 15회 반복 산물은 80 bp이다.</li><li data-choice="4">(4) 반복 횟수가 많을수록 같은 겔에서 더 멀리 이동한다.</li><li data-choice="5">(5) 각 산물의 길이는 반복 횟수와 무관하게 같다.</li></ul></div><details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 반복 횟수에서 분리 순서까지. 근거 토픽: s2-str.</p></details><details class="hint"><summary>힌트 보기</summary><p>고정 구간과 반복 길이 합산 후 겔 원리 연결.</p></details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 틀려요. 반복 이외 80 bp를 더하면 9회는 116 bp예요.</li><li data-explains="2">(2) 맞아요. 80+4×11=124 bp이며 9회 116 bp보다 길어 느려요.</li><li data-explains="3">(3) 틀려요. 15회는 80+4×15=140 bp예요.</li><li data-explains="4">(4) 틀려요. 같은 조건에서 반복이 많아 긴 절편이 되면 덜 멀리 가요.</li><li data-explains="5">(5) 틀려요. 고정 구간은 같아도 반복 구간의 길이가 달라요.</li><li>수업과의 연결: 1013의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s2-str">반복 횟수에서 분리 순서까지 관련 개념</a>으로 판단해요.</li></ol><p class="answer">정답: (2)</p></details></article>
+<article class="card" id="p31" data-source="생성 변형 s2-parentage"><h3>P31. [변형] 한 좌위의 한계</h3><div class="problem"><p>STR 좌위 L에서 어머니는 8/12, 아버지 후보는 10/14, 아이는 12/14이다. 이 결과만으로 할 수 있는 판단은?</p><ul class="choices"><li data-choice="1">(1) 친자 관계가 확정된다.</li><li data-choice="2">(2) 친자 관계가 반드시 배제된다.</li><li data-choice="3">(3) 이 좌위의 상속 조건과는 맞지만 여러 좌위 대조가 더 필요하다.</li><li data-choice="4">(4) 아이의 12와 14는 모두 어머니에게서 왔다.</li><li data-choice="5">(5) 아이의 밴드는 언제나 어머니 밴드 수의 절반이다.</li></ul></div><details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 한 좌위의 한계. 근거 토픽: s2-parentage.</p></details><details class="hint"><summary>힌트 보기</summary><p>부모별 대립유전자 하나씩 확인 후 단일 좌위의 한계 적용.</p></details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 틀려요. 한 좌위가 맞는 후보는 우연히 맞을 가능성도 있어요.</li><li data-explains="2">(2) 틀려요. 12는 어머니, 14는 아버지 후보가 줄 수 있어 이 좌위에서는 배제되지 않아요.</li><li data-explains="3">(3) 맞아요. 상속 조건과 양립하지만 친자 확인에는 여러 좌위 비교가 필요해요.</li><li data-explains="4">(4) 틀려요. 어머니에게는 14가 없어요.</li><li data-explains="5">(5) 틀려요. 한 좌위의 대립유전자는 부모에게서 하나씩 오지만 밴드 수 절반이 보장되는 것은 아니에요.</li><li>수업과의 연결: 1013의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s2-parentage">한 좌위의 한계 관련 개념</a>으로 판단해요.</li></ol><p class="answer">정답: (3)</p></details></article>
+<article class="card" id="p32" data-source="생성 변형 s3-protein"><h3>P32. [변형] 생산과 치료 구별</h3><div class="problem"><p>질병 치료용 단백질을 효모에서 생산하고 정제해 환자에게 투여했다. 환자의 세포에는 유전자를 넣거나 바꾸지 않았다. 이 실험의 해석으로 옳지 않은 것은?</p><ul class="choices"><li data-choice="1">(1) 효모를 생산 공장으로 이용한 유전공학 응용이다.</li><li data-choice="2">(2) 투여된 물질은 단백질 의약품일 수 있다.</li><li data-choice="3">(3) 유전공학으로 생산한 약이라는 사실만으로 환자의 유전자 치료라고 부를 수 있다.</li><li data-choice="4">(4) 생산 숙주의 발현 조건이 중요하다.</li><li data-choice="5">(5) 단백질 생산과 환자의 유전자 조작은 구별해야 한다.</li></ul></div><details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 생산과 치료 구별. 근거 토픽: s3-protein.</p></details><details class="hint"><summary>힌트 보기</summary><p>환자 유전자 조작 유무 확인 후 분류.</p></details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 맞아요. 효모의 유전자를 조작해 단백질을 생산하므로 유전공학 응용이에요.</li><li data-explains="2">(2) 맞아요. 정제한 단백질을 의약품으로 사용할 수 있어요.</li><li data-explains="3">(3) 틀려요. 생산 생물 조작과 환자의 유전자 치료는 서로 다른 분류예요.</li><li data-explains="4">(4) 맞아요. 숙주에서 유전자가 발현될 조건이 갖춰져야 해요.</li><li data-explains="5">(5) 맞아요. 환자의 유전자를 바꿨는지 따로 살펴야 해요.</li><li>수업과의 연결: 1013의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s3-protein">생산과 치료 구별 관련 개념</a>으로 판단해요.</li></ol><p class="answer">정답: (3)</p></details></article>
+<article class="card" id="p33" data-source="생성 변형 s3-therapy"><h3>P33. [변형] 세대 전달 판별</h3><div class="problem"><p>유전자 조작에 대한 다음 진술 중 옳은 것만 모두 고른 것은?</p><ul><li>ㄱ. 분화한 피부세포만 조작하면 그 조작은 보통 생식세포를 통해 자녀에게 전달되지 않는다.</li><li>ㄴ. 생식계열에 도입된 변화는 다음 세대로 이어질 수 있다.</li><li>ㄷ. 인슐린 단백질을 주사하면 환자의 인슐린 유전자가 정상 유전자로 교체된다.</li></ul><ul class="choices"><li data-choice="1">(1) ㄱ</li><li data-choice="2">(2) ㄴ</li><li data-choice="3">(3) ㄱ, ㄴ</li><li data-choice="4">(4) ㄴ, ㄷ</li><li data-choice="5">(5) ㄱ, ㄴ, ㄷ</li></ul></div><details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 세대 전달 판별. 근거 토픽: s3-therapy.</p></details><details class="hint"><summary>힌트 보기</summary><p>세포 계열별 전달과 약물/유전자 조작 구별.</p></details><details class="solution"><summary>풀이 보기</summary><p>ㄱ은 체세포와 생식계열 구별에 따라 참이에요. ㄴ은 생식계열 변화의 상속 가능성에 따라 참이에요. ㄷ은 약물 투여를 환자의 유전자 조작과 혼동한 거짓 진술이에요.</p><ol class="steps"><li data-explains="1">(1) 틀려요. ㄱ뿐 아니라 ㄴ도 참이에요.</li><li data-explains="2">(2) 틀려요. ㄴ뿐 아니라 ㄱ도 참이에요.</li><li data-explains="3">(3) 맞아요. ㄱ·ㄴ은 참이고 약물 주사만으로 유전자가 교체된다는 ㄷ은 거짓이에요.</li><li data-explains="4">(4) 틀려요. ㄷ은 거짓이고 ㄱ은 빠졌어요.</li><li data-explains="5">(5) 틀려요. ㄷ을 포함하면 맞지 않아요.</li><li>수업과의 연결: 1013의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s3-therapy">세대 전달 판별 관련 개념</a>으로 판단해요.</li></ol><p class="answer">정답: (3)</p></details></article>
+<article class="card" id="p34" data-source="생성 변형 s4-clone"><h3>P34. [변형] 세 제공자 구별</h3><div class="problem"><p>그림에서 A의 체세포 핵을 B의 핵이 제거된 난자에 넣고 배아를 C의 자궁에 이식했다. 태어난 동물의 핵 DNA와 미토콘드리아 DNA는 각각 주로 누구와 일치하는가?</p><figure class="figure"><svg id="p34-transfer" viewBox="0 0 540 160" role="img" aria-label="A 체세포 핵을 B 핵 제거 난자에 넣고 C 자궁에 이식"><circle class="fig-ink" cx="70" cy="75" r="34"/><circle class="fig-dot" cx="70" cy="75" r="12"/><text class="fig-text" x="22" y="130">A 체세포</text><path class="fig-accent" d="M108 75h90"/><circle class="fig-ink" cx="245" cy="75" r="38"/><text class="fig-text" x="194" y="130">B 핵 제거 난자</text><path class="fig-accent" d="M285 75h80"/><rect class="fig-ink" x="380" y="40" width="110" height="70" rx="20"/><text class="fig-text" x="405" y="82">C 자궁</text></svg><figcaption>A의 핵을 넣은 배아를 C에게 이식했어요.</figcaption></figure><ul class="choices"><li data-choice="1">(1) 핵 A, 미토콘드리아 B</li><li data-choice="2">(2) 핵 A, 미토콘드리아 C</li><li data-choice="3">(3) 핵 B, 미토콘드리아 A</li><li data-choice="4">(4) 핵 C, 미토콘드리아 B</li><li data-choice="5">(5) 핵과 미토콘드리아 모두 C</li></ul></div><details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 세 제공자 구별. 근거 토픽: s4-clone.</p></details><details class="hint"><summary>힌트 보기</summary><p>핵과 세포질 제공자를 따로 추적.</p></details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 맞아요. 핵은 체세포 제공자 A, 미토콘드리아는 난자 세포질 제공자 B에서 주로 와요.</li><li data-explains="2">(2) 틀려요. C는 자궁을 제공하며 미토콘드리아는 난자 제공자 B의 것이에요.</li><li data-explains="3">(3) 틀려요. B의 난자 핵은 제거했고 새 핵은 A에서 왔어요.</li><li data-explains="4">(4) 틀려요. 자궁 제공자 C의 핵이 배아에 들어간 것은 아니에요.</li><li data-explains="5">(5) 틀려요. C는 착상과 임신을 맡고 두 DNA의 주된 제공자는 A와 B예요.</li><li>수업과의 연결: 1013의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s4-clone">세 제공자 구별 관련 개념</a>으로 판단해요.</li></ol><p class="answer">정답: (1)</p></details></article>
+<article class="card" id="p35" data-source="생성 변형 s5-plant"><h3>P35. [변형] 작물 개량의 목적</h3><div class="problem"><p>다음은 식물을 이용한 유전공학 응용의 예로 적절치 않은 것은?</p><ul class="choices"><li data-choice="1">(1) 작물이 해충에 작용하는 단백질을 만들게 한다.</li><li data-choice="2">(2) 작물이 제초제를 견디도록 성질을 바꾼다.</li><li data-choice="3">(3) 쌀에 비타민 A 전구체가 쌓이도록 한다.</li><li data-choice="4">(4) 작물에서 필요한 의약품 단백질을 생산한다.</li><li data-choice="5">(5) 작물의 내성 유전자가 야생 잡초로 퍼지는 것을 품종 개량의 바람직한 성과로 삼는다.</li></ul></div><details class="original"><summary>원문 정보 보기</summary><p>기출 6강 26번 발문에 정답을 바꾼 생성 변형이에요. 다루는 혼동: 작물 개량의 목적. 근거 토픽: s5-plant.</p></details><details class="hint"><summary>힌트 보기</summary><p>목적에 맞는 변화와 생태적 유출 구별.</p></details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 맞아요. 살충성 단백질을 작물이 발현하면 해충 저항성을 얻을 수 있어요.</li><li data-explains="2">(2) 맞아요. 제초제 내성은 작물을 남기고 잡초를 제거하려는 목표예요.</li><li data-explains="3">(3) 맞아요. β-카로틴 같은 전구체 축적은 영양 개선이에요.</li><li data-explains="4">(4) 맞아요. 식물을 의약품 생산 공장으로 사용할 수 있어요.</li><li data-explains="5">(5) 틀려요. 원치 않는 내성 유전자 유출은 생태적 우려이며 개량 목적이 아니에요.</li><li>원문 정답과 달라진 점: 원치 않는 유전자 유출은 목적이 아니라 우려 대상이에요.</li><li>수업과의 연결: 1013의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s5-plant">작물 개량의 목적 관련 개념</a>으로 판단해요.</li></ol><p class="answer">정답: (5)</p></details></article>
+<article class="card" id="p36" data-source="생성 변형 s5-plant"><h3>P36. [변형] 빛으로 발현 확인</h3><div class="problem"><p>반딧불이의 루시퍼레이스 유전자를 도입한 식물에 빛을 내는 반응에 필요한 기질과 에너지가 공급되어 빛이 관찰됐다. 이 표지를 사용하는 직접적인 이유는?</p><ul class="choices"><li data-choice="1">(1) 식물이 제초제에 무조건 저항하도록 하기 위해서다.</li><li data-choice="2">(2) 도입한 유전자의 발현을 비교적 쉽게 확인하기 위해서다.</li><li data-choice="3">(3) 빛이 나면 식물의 모든 유전자가 교체됐음을 증명하기 위해서다.</li><li data-choice="4">(4) 빛이 나면 미토콘드리아 DNA가 없음을 증명하기 위해서다.</li><li data-choice="5">(5) 인슐린 유전자와 발광효소 유전자가 같은 유전자임을 확인하기 위해서다.</li></ul></div><details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 빛으로 발현 확인. 근거 토픽: s5-plant.</p></details><details class="hint"><summary>힌트 보기</summary><p>빛 표지의 직접 목적 확인.</p></details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 틀려요. 발광 표지는 제초제 저항성을 직접 부여하는 표지가 아니에요.</li><li data-explains="2">(2) 맞아요. 빛이라는 관찰 가능한 출력으로 발현을 확인하기 쉬워요.</li><li data-explains="3">(3) 틀려요. 한 표지의 발현은 전체 유전체 교체를 뜻하지 않아요.</li><li data-explains="4">(4) 틀려요. 빛은 미토콘드리아 DNA 존재 여부를 판단하는 기준이 아니에요.</li><li data-explains="5">(5) 틀려요. 두 유전자는 서로 다른 단백질을 암호화해요.</li><li>수업과의 연결: 1013의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s5-plant">빛으로 발현 확인 관련 개념</a>으로 판단해요.</li></ol><p class="answer">정답: (2)</p></details></article>
+<article class="card" id="p37" data-source="생성 변형 s5-gmo"><h3>P37. [변형] 내성 선택과 관리</h3><div class="problem"><p>내성 변이가 있는 잡초가 드물게 섞인 밭에 같은 제초제를 반복 사용했다. 살아남은 잡초가 씨를 퍼뜨리자 내성 잡초 비율이 높아졌다. 이 관찰을 가장 잘 설명한 것은?</p><ul class="choices"><li data-choice="1">(1) 제초제가 필요한 방향으로 모든 잡초를 계획적으로 바꾸었다.</li><li data-choice="2">(2) 살아남는 데 유리한 기존 변이가 선택되고 자손으로 이어졌다.</li><li data-choice="3">(3) 제초제 사용 때문에 모든 작물의 핵이 잡초의 핵으로 치환됐다.</li><li data-choice="4">(4) 잡초 비율 증가가 식품 섭취 독성을 직접 증명한다.</li><li data-choice="5">(5) 약을 더 많이 쓰면 내성 변이는 반드시 사라진다.</li></ul></div><details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 내성 선택과 관리. 근거 토픽: s5-gmo.</p></details><details class="hint"><summary>힌트 보기</summary><p>선재 변이 확인 후 생존·번식 차이와 비율 변화 연결.</p></details><details class="solution"><summary>풀이 보기</summary><ol class="steps"><li data-explains="1">(1) 틀려요. 변이는 필요에 맞춰 계획적으로 생긴다는 뜻이 아니에요.</li><li data-explains="2">(2) 맞아요. 내성 개체가 살아남고 번식해 그 변이를 가진 개체 비율이 커졌어요.</li><li data-explains="3">(3) 틀려요. 핵치환은 해당 재배 과정에 없어요.</li><li data-explains="4">(4) 틀려요. 재배 중 잡초 저항성과 식품 섭취 독성은 다른 문제예요.</li><li data-explains="5">(5) 틀려요. 더 많은 약으로도 내성이 반드시 사라지는 것은 아니며 과사용 위험이 커질 수 있어요.</li><li>수업과의 연결: 1013의 <a href="정리노트_1013_PCR_and_DNA_Technology.html#s5-gmo">내성 선택과 관리 관련 개념</a>으로 판단해요.</li></ol><p class="answer">정답: (2)</p></details></article>
+    </section>
+  </main>
+  <footer>출처: 2023·2024 생명과학 기출(6강 합본). 정답은 인쇄된 답안지와 독립 판단을 대조했어요. 변형 연습은 수업 내용으로 만든 생성 문제예요.</footer>
+    </div>
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="panel-right-title">
+      <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-right-title">풀이 도움</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-sub" id="aid-for" hidden></p>
+        <p class="panel-empty">문제로 넘어가면 그 문제의 교과서 원문, 힌트, 풀이가 여기에 나옵니다. 먼저 스스로 풀어 본 뒤 여세요.</p>
+        <div class="aids"></div>
+        <button class="solved-btn" id="solved-btn" type="button" aria-pressed="false" hidden><span>푼 문제로 표시</span></button>
+      </div>
+    </aside>
+  </div>
+  <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
+  <nav class="pager" aria-label="화면 이동">
+    <div class="pager-inner">
+      <button class="btn btn-ghost" id="pager-prev" type="button">이전</button>
+      <span class="pager-count" id="pager-count"></span>
+      <button class="btn btn-primary" id="pager-next" type="button">시작하기</button>
+    </div>
+  </nav>
+  <p class="sr-only" id="pager-status" aria-live="polite"></p>
+
+  <script id="theme-ui">
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const sysDark = matchMedia('(prefers-color-scheme: dark)');
+      const KEY = 'od-theme';
+      const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+      function label() {
+        const next = isDark() ? '라이트 모드로 전환' : '다크 모드로 전환';
+        btn.setAttribute('aria-label', next);
+        btn.title = next;
+      }
+      btn.addEventListener('click', () => {
+        const t = isDark() ? 'light' : 'dark';
+        // 시스템 설정과 같아지면 저장을 지워 다시 시스템을 따른다
+        if ((t === 'dark') === sysDark.matches) { delete root.dataset.theme; try { localStorage.removeItem(KEY); } catch (e) {} }
+        else { root.dataset.theme = t; try { localStorage.setItem(KEY, t); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+        label();
+      });
+      sysDark.addEventListener('change', label);
+      window.addEventListener('storage', (e) => {
+        if (e.key !== KEY) return;
+        if (e.newValue === 'light' || e.newValue === 'dark') root.dataset.theme = e.newValue; else delete root.dataset.theme;
+        label();
+      });
+      label();
+    })();
+  </script>
+  <script id="panels-ui">
+    (function () {
+      const body = document.body;
+      const layout = document.querySelector('.layout');
+      const kind = body.dataset.panels;
+      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const scrim = document.getElementById('panel-scrim');
+      const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
+      const wideMq = matchMedia('(min-width: 1024px)');
+      const roomyMq = matchMedia('(min-width: 1280px)');
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      // 푼 기록은 탭(세션) 단위로만 유지: 뒤로가기·새로고침엔 남고, 창을 닫고 다시 열면 초기화
+      const tabStore = {
+        get(k, d) { try { const v = sessionStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      const PREF = 'od-panels:' + kind;
+      // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
+      const RANGE = body.dataset.range || '';
+      const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+      const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+      let overlay = null;
+
+      // ---------- 열고 닫기 ----------
+      function docked() {
+        const pref = store.get(PREF, {});
+        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+      }
+      function sync() {
+        const wide = wideMq.matches;
+        const d = docked();
+        ['left', 'right'].forEach((side) => {
+          const open = wide ? d[side] : overlay === side;
+          const p = panels[side];
+          layout.dataset[side] = open ? 'open' : 'closed';
+          p.classList.toggle('is-open', !wide && open);
+          p.inert = !open;
+          if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
+          toggles[side].setAttribute('aria-expanded', String(open));
+        });
+        const drawer = !wide && overlay !== null;
+        scrim.classList.toggle('is-on', drawer);
+        body.classList.toggle('drawer-open', drawer);
+        blockers.forEach((el) => { el.inert = drawer; });
+      }
+      function openDrawer(side) {
+        overlay = side;
+        sync();
+        requestAnimationFrame(() => panels[side].querySelector('[data-panel-close]').focus());
+      }
+      function closeDrawer(refocus) {
+        if (overlay === null) return;
+        const side = overlay;
+        overlay = null;
+        sync();
+        if (refocus) toggles[side].focus();
+      }
+      function toggle(side) {
+        if (wideMq.matches) {
+          const d = docked();
+          d[side] = !d[side];
+          store.set(PREF, d);
+          sync();
+          if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+        } else if (overlay === side) closeDrawer(true);
+        else openDrawer(side);
+      }
+
+      toggles.left.addEventListener('click', () => toggle('left'));
+      toggles.right.addEventListener('click', () => toggle('right'));
+      scrim.addEventListener('click', () => closeDrawer(true));
+      document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
+      panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
+
+      // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      function applyWidths() {
+        const w = store.get(PREF + ':w', {});
+        ['left', 'right'].forEach((side) => {
+          if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
+          else layout.style.removeProperty(WIDTH[side].prop);
+        });
+      }
+      function maxFor(side) {
+        const other = side === 'left' ? panels.right : panels.left;
+        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
+      }
+      function setWidth(side, px, save) {
+        const v = Math.round(Math.min(Math.max(px, WIDTH[side].min), maxFor(side)));
+        layout.style.setProperty(WIDTH[side].prop, v + 'px');
+        panels[side].querySelector('.panel-resize').setAttribute('aria-valuenow', String(v));
+        if (save) { const w = store.get(PREF + ':w', {}); w[side] = v; store.set(PREF + ':w', w); }
+      }
+      function resetWidth(side) {
+        const w = store.get(PREF + ':w', {});
+        delete w[side];
+        store.set(PREF + ':w', w);
+        layout.style.removeProperty(WIDTH[side].prop);
+      }
+      document.querySelectorAll('.panel-resize').forEach((handle) => {
+        const side = handle.dataset.side;
+        const dir = side === 'left' ? 1 : -1;
+        handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
+        handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
+        handle.addEventListener('pointerdown', (e) => {
+          if (!wideMq.matches || e.button !== 0) return;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startW = panels[side].getBoundingClientRect().width;
+          handle.setPointerCapture(e.pointerId);
+          body.classList.add('is-resizing');
+          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const up = () => {
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', up);
+            handle.removeEventListener('pointercancel', up);
+            body.classList.remove('is-resizing');
+            setWidth(side, panels[side].getBoundingClientRect().width, true);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', up);
+          handle.addEventListener('pointercancel', up);
+        });
+        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('keydown', (e) => {
+          const step = e.shiftKey ? 64 : 16;
+          const cur = panels[side].getBoundingClientRect().width;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+        });
+      });
+      applyWidths();
+      const onMq = () => { overlay = null; sync(); };
+      wideMq.addEventListener('change', onMq);
+      roomyMq.addEventListener('change', onMq);
+
+      // ---------- 목차의 진행 표시 ----------
+      const progressN = document.getElementById('progress-n');
+      const progressBar = document.getElementById('progress-bar');
+      const progressTotal = document.getElementById('progress-total');
+      function markToc(done, total, doneLabel) {
+        panels.left.querySelectorAll('.toc-list a').forEach((a) => {
+          const id = decodeURIComponent(a.getAttribute('href').slice(1));
+          let mark = a.querySelector('.toc-mark');
+          if (!mark) {
+            mark = document.createElement('span');
+            mark.className = 'toc-mark';
+            mark.setAttribute('aria-hidden', 'true');
+            const state = document.createElement('span');
+            state.className = 'sr-only toc-state';
+            a.append(mark, state);
+          }
+          const isDone = done.has(id);
+          mark.classList.toggle('is-done', isDone);
+          mark.innerHTML = isDone ? ICON_DONE : ICON_TODO;
+          a.querySelector('.toc-state').textContent = isDone ? ' (' + doneLabel + ')' : '';
+        });
+        progressN.textContent = String(done.size);
+        progressTotal.textContent = String(total);
+        progressBar.style.transform = 'scaleX(' + (total ? done.size / total : 0) + ')';
+      }
+      function revealCurrent() {
+        const link = panels.left.querySelector('.toc-list a[aria-current="true"]');
+        if (link && layout.dataset.left === 'open') link.scrollIntoView({ block: 'nearest' });
+      }
+
+      // ---------- 복습문제: 오른쪽 = 원문 · 힌트 · 풀이 ----------
+      function setupReview() {
+        const KEY = 'od-review-solved:' + RANGE;
+        const cards = Array.from(document.querySelectorAll('main article.card'));
+        const aids = panels.right.querySelector('.aids');
+        const sub = document.getElementById('aid-for');
+        const empty = panels.right.querySelector('.panel-empty');
+        const btn = document.getElementById('solved-btn');
+        const groups = {};
+        const solved = new Set(tabStore.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        cards.forEach((card) => {
+          const g = document.createElement('div');
+          g.className = 'aid';
+          g.dataset.cardId = card.id;
+          g.hidden = true;
+          card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
+          aids.appendChild(g);
+          groups[card.id] = g;
+        });
+        let curId = null;
+        function paintBtn() {
+          const on = solved.has(curId);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.innerHTML = (on ? ICON_DONE : ICON_TODO) + '<span>' + (on ? '푼 문제 · 표시 해제' : '푼 문제로 표시') + '</span>';
+        }
+        btn.addEventListener('click', () => {
+          if (!curId) return;
+          if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
+          tabStore.set(KEY, Array.from(solved));
+          paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:answer', ({detail}) => {
+          if (!cards.some(c => c.id === detail.id)) return;
+          if (detail.restored && detail.selected !== null) return;
+          if (detail.selected === null) solved.delete(detail.id);
+          else solved.add(detail.id);
+          tabStore.set(KEY, Array.from(solved));
+          if (curId) paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          curId = s.matches('article.card') ? s.id : null;
+          Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
+          empty.hidden = Boolean(curId);
+          btn.hidden = !curId;
+          sub.textContent = curId ? ((s.querySelector('h3') || {}).textContent || '').trim() : '';
+          sub.hidden = !curId;
+          if (curId) paintBtn();
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(solved, cards.length, '푼 문제');
+          revealCurrent();
+        });
+      }
+
+      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
+      function setupNote() {
+        const KEY = 'od-note-read:' + RANGE;
+        const topics = Array.from(document.querySelectorAll('main article.topic'));
+        const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
+        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
+        const box = panels.right.querySelector('.sums');
+        const sums = {};
+        topics.forEach((t) => {
+          const el = t.querySelector(':scope > .sum');
+          if (!el) return;
+          el.hidden = true;
+          box.appendChild(el);
+          sums[t.id] = el;
+        });
+        const sub = document.getElementById('sum-for');
+        const empty = document.getElementById('sum-empty');
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          const key = s.matches('article.topic') ? s.id : 'intro';
+          Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
+          empty.hidden = Boolean(sums[key]);
+          sub.textContent = key === 'intro' ? '전체 흐름' : ((s.querySelector('h3') || {}).textContent || '').trim();
+          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(read, topics.length, '읽음');
+          revealCurrent();
+        });
+      }
+
+      if (kind === 'review') setupReview();
+      if (kind === 'note') setupNote();
+      sync();
+    })();
+  </script>
+  <script id="pager-ui">
+    (function () {
+      const root = document.documentElement;
+      const main = document.querySelector('main');
+      const hero = main.querySelector('.hero');
+      const screens = [hero].concat(Array.from(main.querySelectorAll(document.body.dataset.screens)));
+      if (screens.length < 2) { root.classList.remove('js'); return; }
+      screens.forEach((s) => s.classList.add('screen'));
+
+      const last = screens.length - 1;
+      const prevBtn = document.getElementById('pager-prev');
+      const nextBtn = document.getElementById('pager-next');
+      const count = document.getElementById('pager-count');
+      const bar = document.getElementById('pager-bar');
+      const status = document.getElementById('pager-status');
+      const toc = document.querySelector('#panel-left .toc');
+      const scroller = document.querySelector('.content');
+      const titleOf = (s) => ((s.querySelector('h3') || s.querySelector('h1') || {}).textContent || '').trim();
+      let cur = -1;
+
+      // 목차: 섹션 링크 아래에 화면(토픽·카드) 목록을 붙인다
+      const tocLinks = [];
+      Array.from(toc.querySelectorAll(':scope > a')).forEach((a) => {
+        const sec = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+        const group = document.createElement('div');
+        group.className = 'toc-group';
+        a.replaceWith(group);
+        group.appendChild(a);
+        if (!sec) return;
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        screens.forEach((s, i) => {
+          if (!sec.contains(s)) return;
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#' + s.id;
+          link.innerHTML = '<span class="toc-title"></span>';
+          link.firstChild.textContent = titleOf(s);
+          li.appendChild(link);
+          list.appendChild(li);
+          tocLinks[i] = link;
+        });
+        group.appendChild(list);
+      });
+
+      function indexFor(hash) {
+        const id = decodeURIComponent((hash || '').replace(/^#/, ''));
+        const el = id && document.getElementById(id);
+        if (!el || !main.contains(el)) return { i: 0 };
+        const i = screens.findIndex((s) => s.contains(el) || el.contains(s));
+        return { i: Math.max(i, 0), target: i >= 0 && screens[i].contains(el) && screens[i] !== el ? el : null };
+      }
+
+      function render(i, target) {
+        const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
+        if (i !== cur) {
+          if (cur >= 0) document.dispatchEvent(new CustomEvent('od:leave', { detail: { index: cur, screen: screens[cur] } }));
+          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
+          main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
+          const s = screens[i];
+          const sec = s.closest('section');
+          if (sec) sec.classList.add('is-on');
+          s.classList.add('is-current');
+          if (dir) { s.classList.remove('enter-next', 'enter-prev'); void s.offsetWidth; s.classList.add(dir); }
+          cur = i;
+          document.body.classList.toggle('at-end', i === last);
+          prevBtn.disabled = i === 0;
+          nextBtn.textContent = i === 0 ? '시작하기' : i === last ? '처음으로' : '다음';
+          count.textContent = i === 0 ? '' : i + ' / ' + last;
+          bar.style.transform = 'scaleX(' + (i / last) + ')';
+          status.textContent = i === 0 ? titleOf(s) : i + ' / ' + last + ', ' + titleOf(s);
+          tocLinks.forEach((link, k) => link && link.setAttribute('aria-current', String(k === i)));
+          document.dispatchEvent(new CustomEvent('od:screen', { detail: { index: i, screen: s } }));
+        }
+        if (target) target.scrollIntoView({ block: 'start' });
+        else scroller.scrollTo(0, 0);
+      }
+
+      function go(i) {
+        i = Math.min(Math.max(i, 0), last);
+        if (i === cur) return;
+        const url = i === 0 ? location.pathname + location.search : '#' + screens[i].id;
+        history.pushState(null, '', url);
+        render(i);
+      }
+
+      prevBtn.addEventListener('click', () => go(cur - 1));
+      nextBtn.addEventListener('click', () => go(cur === last ? 0 : cur + 1));
+      const fromUrl = () => { const r = indexFor(location.hash); render(r.i, r.target); };
+      window.addEventListener('hashchange', fromUrl);
+      window.addEventListener('popstate', fromUrl);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+
+      // 좌우로 밀어서 넘기기 (가로로 스크롤되는 영역은 제외)
+      let sx = 0, sy = 0, skip = true;
+      main.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (skip) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 64 && Math.abs(dx) > 2 * Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      fromUrl();
+    })();
+  </script>
+<!-- review-interaction:start -->
+<style>
+/* Progressive enhancement: original source remains readable without scripts. */
+.review-ready .choices { list-style:none; padding:0; }
+.review-ready .choices > li { margin:0 0 var(--s3); }
+.review-choice {
+  display:block; width:100%; min-height:44px; text-align:left; font:inherit;
+  color:var(--ink); background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:12px 16px; cursor:pointer; overflow-wrap:anywhere;
+}
+.review-choice:hover { border-color:var(--accent); }
+.review-choice:focus-visible, .review-reset:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+.review-choice[aria-expanded] { position:relative; padding-right:44px; }
+.review-choice[aria-expanded]::after { content:""; position:absolute; right:18px; top:20px; width:8px; height:8px; border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor; transform:rotate(45deg); }
+.review-choice[aria-expanded="true"]::after { transform:rotate(225deg); top:24px; }
+.review-choice[data-result="correct"], .review-choice[data-result="intended"] { border:3px solid var(--accent); }
+.review-choice[data-result="selected"] { border:3px solid var(--danger); }
+.review-choice[data-result="uncertain"] { border:3px solid var(--ink-2); }
+.review-choice-label { display:block; margin-top:6px; font-size:var(--fs-small); font-weight:700; color:var(--ink); }
+.review-choice-label[hidden], .review-diagnostic[hidden], .review-extra[hidden],
+.review-reset[hidden], .review-diagnostics[hidden] { display:none; }
+.review-diagnostics { list-style:none; padding:0; margin:0; }
+.review-diagnostic { padding:12px 16px 8px; color:var(--ink-2); overflow-wrap:anywhere; }
+.review-status { margin:var(--s3) 0; font-weight:650; }
+.review-status:empty { display:none; }
+.review-reset { min-height:44px; margin:var(--s2) 0 var(--s4); }
+.review-choice-content { padding:var(--s2) 0; }
+/* Look comes from the template's .solved-btn; only visibility and focus live here. */
+.review-unsure[hidden] { display:none; }
+.review-unsure.solved-btn[aria-pressed="true"] { border-color:#ffa030; color:#ffa030; }
+.review-unsure:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+.review-feedback {
+  position:fixed; top:calc(env(safe-area-inset-top) + 72px); left:50%; z-index:100;
+  transform:translateX(-50%); width:max-content; max-width:calc(100vw - 32px);
+  display:flex; align-items:center; gap:12px; padding:10px 16px;
+  border:2px solid var(--line); border-radius:12px; background:var(--bg);
+  color:var(--ink); font-weight:700; pointer-events:none;
+  animation:review-feedback-in 180ms ease-out both;
+}
+.review-feedback[data-result="correct"] { border-color:var(--accent); }
+.review-feedback[data-result="incorrect"] { border-color:var(--danger); }
+.review-feedback[data-result="saved"], .review-feedback[data-result="downloaded"] { border-color:var(--accent); }
+.review-feedback[data-result="saved"] .review-feedback-icon,
+.review-feedback[data-result="downloaded"] .review-feedback-icon { border-radius:50%; background:var(--accent); }
+.review-feedback[data-result="saved"] .review-feedback-icon::after,
+.review-feedback[data-result="downloaded"] .review-feedback-icon::after {
+  content:""; position:absolute; left:7px; top:3px; width:5px; height:10px;
+  border:solid var(--on-btn); border-width:0 2px 2px 0; rotate:45deg;
+}
+.review-feedback[data-result="unsure"] .review-feedback-icon { display:none; }
+.review-feedback[data-result="wrong-folder"] .review-feedback-icon { display:none; }
+.review-feedback[data-result="cancelled"] .review-feedback-icon { display:none; }
+.review-feedback-icon { position:relative; flex:none; width:20px; height:20px; }
+.review-feedback[data-result="correct"] .review-feedback-icon {
+  border-radius:50%; background:var(--accent); transform:scale(.45);
+  animation:review-pop 350ms ease-out both;
+}
+.review-feedback[data-result="correct"] .review-feedback-icon::before,
+.review-feedback[data-result="correct"] .review-feedback-icon::after {
+  content:""; position:absolute; left:8px; top:8px; width:4px; height:4px;
+  border-radius:50%; background:var(--accent);
+  box-shadow:0 -16px var(--accent), 16px 0 var(--accent), 0 16px var(--accent), -16px 0 var(--accent);
+  animation:review-burst 650ms ease-out both;
+}
+.review-feedback[data-result="correct"] .review-feedback-icon::after {
+  rotate:45deg; animation-delay:80ms;
+}
+.review-feedback[data-result="incorrect"] .review-feedback-icon {
+  animation:review-shake 320ms ease-in-out;
+}
+.review-feedback[data-result="incorrect"] .review-feedback-icon::before,
+.review-feedback[data-result="incorrect"] .review-feedback-icon::after {
+  content:""; position:absolute; left:9px; top:0; width:3px; height:20px;
+  border-radius:2px; background:var(--danger); rotate:45deg;
+}
+.review-feedback[data-result="incorrect"] .review-feedback-icon::after { rotate:-45deg; }
+@keyframes review-feedback-in {
+  from { opacity:0; translate:0 -8px; } to { opacity:1; translate:0 0; }
+}
+@keyframes review-pop {
+  from { transform:scale(.35); opacity:.5; } to { transform:scale(.65); opacity:1; }
+}
+@keyframes review-shake {
+  0%,100% { translate:0; } 25%,75% { translate:-5px; } 50% { translate:5px; }
+}
+@keyframes review-burst {
+  from { opacity:1; scale:.45; } to { opacity:0; scale:1.5; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .review-feedback, .review-feedback-icon, .review-feedback-icon::before,
+  .review-feedback-icon::after { animation:none !important; }
+  .review-feedback[data-result="correct"] .review-feedback-icon::before,
+  .review-feedback[data-result="correct"] .review-feedback-icon::after { display:none; }
+}
+.review-export-bar {
+  display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:12px;
+  max-width:var(--measure); margin:0 auto; padding:12px 16px 0;
+}
+body:not(.at-end) .review-export-bar { display:none; }
+.review-export-note { margin:0; font-size:var(--fs-small); color:var(--ink-2); }
+.review-export-note:empty { display:none; }
+.review-export-help-wrap { position:relative; }
+.review-export-help {
+  width:32px; height:32px; padding:0; border:1px solid var(--line); border-radius:50%;
+  color:var(--ink-2); font-weight:700; line-height:1;
+}
+.review-export-popup {
+  position:absolute; bottom:calc(100% + 10px); left:50%; translate:-50% 0; z-index:20;
+  width:min(320px, calc(100vw - 32px)); padding:14px 16px;
+  background:var(--surface); color:var(--ink); border:1px solid var(--line); border-radius:12px;
+  box-shadow:0 8px 24px rgba(0,0,0,.18); text-align:left;
+}
+.review-export-popup[hidden] { display:none; }
+.review-export-popup-text { margin:0 0 8px; font-size:var(--fs-small); line-height:1.6; }
+.review-export-popup-close { display:block; margin-left:auto; }
+@media print {
+  .review-export-bar { display:none !important; }
+  .review-feedback { display:none !important; }
+  .review-reset, .review-status, .review-choice-label, .review-unsure { display:none !important; }
+  .review-diagnostic[hidden] { display:list-item !important; }
+  .review-diagnostics[hidden] { display:block !important; }
+  .review-choice::after { display:none; }
+  .review-extra[hidden] { display:block !important; }
+  .review-choice { border:0 !important; box-shadow:none !important; padding:0; }
+}
+
+</style>
+<script id="review-interaction-model" type="application/json">{"cards": {"p1": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "3dc04678f84d7bc0ca7c8ad3eb70d9f34f38ba9476da369cbeba659d6955e866"}, "p10": {"answer": "5", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "8497cfebb8216d3c22bda317ed3a0a46a3c8037d23e553c6e56bdd418e463cf9"}, "p11": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "ae473957518c9110bcfb15349477a3be41f8447bca0e3efee40c1b05791e5aa9"}, "p12": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "eb42d8832475e2e8f50a094af05e04b9e6bdf29b07b981e319cbbb0c05e3c802"}, "p13": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "0265c22bae3f71a2fdc0328b72cce1bae30ef8eade44eb0e7b05fe23c4bcbf6a"}, "p14": {"answer": "5", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "c179fdb31af5b506b4dbed91a25423bfd5749dfb2f51737f8ef39829b2b9273d"}, "p15": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "dc3868067a05359f596b7aa452d03f137bc7967e77169e6af977fdfe42d4c29e"}, "p16": {"answer": "1", "mode": "ambiguous", "notice": "인쇄 정답이 없고 절반 표현에 모호성이 있어요. 상속 규칙에 따라 (1)로 판단했어요.", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "a939fb7ea00ceb0db6e868f323eac0d7358678ce3a57a1ca95be9e983fde4790"}, "p17": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "d85bf38ec57c7d4eecab18800872b1bf3612ab3f2be343f53b3e17fb026d7db4"}, "p18": {"answer": "5", "mode": "ambiguous", "notice": "인쇄 (3)은 오류로 판단해요. 수업 맥락 답은 (5)이지만 염료와 광원 조건이 빠져 있어요.", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "ad7221a7b2e597d27c1a6744f159d84887fb6d0f4fde0378bd03aaee4c07d6e9"}, "p19": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "94c801acbffe43f1c164cc75444e0200286111c73ec6d6ecd448f2842499b6cf"}, "p2": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "cb96835f1bf2bff3ad33a18dea26f9ee1cc1d1ab7e23ba2a968d1c86cce156da"}, "p20": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "8b896fd56037f6a9e7941c22c1cfdc70cf971cea9e11bcc0add6db6328573c4f"}, "p21": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "2c767272dcc7412086f092508f5185b2c630e1dd8218598de9c8e2f7e99f5170"}, "p22": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "d4f309889d8822167b3ac3667bfd194bcc96e6ce6911e9484e0caa8d06f4478f"}, "p23": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "fada272cc740842f4b4645cffc4ce7b3305a0e6fb4c36e752978cbe9e7737947"}, "p24": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "2523d11253954c4055f94c8f27fa33fcc4bf17bc09780b6ac98b0ab54b6a42ae"}, "p25": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}], "version": "5d84d5170a58593ff31a629be07aa8db07fbc2dd0ebfa55c79288cd36fe58923"}, "p26": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "75997e882944512cae9531a522f12c8534520618a212574ac2b4b2e30128df4f"}, "p27": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "2d374ea932ba91b0e0461c0fcdecdb9285e90ea85fc752e476dacf035818d8a3"}, "p28": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "e8ab444bd753317406ee245cdb043c808b370a010c5898390d3b204943dbd681"}, "p29": {"answer": "5", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "5d47bda7e1eba5c921ef1f41a74498379fb4f2a451ff749838f1bd4bedd0cc9a"}, "p3": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "7d6cdb566740387e82c3e16e56ddef61b8b2beb51089e505bdbf120ba20c117d"}, "p30": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "53a52926265ae6ce4864225d5faee00744758e091f4f66a16b2aa35a03c0787b"}, "p31": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "bac63dbddc67a3c6a2b2f84304097091b608a76a2f85f4cc5237564d4d47e680"}, "p32": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "4227e37ff336922f8c59ab97ee2d07924699c28be98bc0c533023540d52007b8"}, "p33": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "5bb35c1bd77978dd2c3092e15f9925e585bf4e6d3ea3cf5069d30da134982671"}, "p34": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "f919f86a8a2cd401a78567528ecd8ab053619eb10939bfe4b9de56b09ba045f0"}, "p35": {"answer": "5", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "9f44446be0d2bde513675a9879c0caea440a3ad17aaa0604d7b114eb4a1ba42d"}, "p36": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "c5c18dc897bc3548cf67436d2e439cb94b6c401c8a4fccce19f8f337e9d07493"}, "p37": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "47c9996f6b9b40d5845e5d7b997854b9fe6591c4a78fe1c81d99a7542a9c7ad0"}, "p4": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "4913b6ac07a0a3dbc00fcbd11361511c86fbe5dc6209bfbdfc58fc473a9af58a"}, "p5": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "d7a7f8a49d59d4508312aeea8e16a366a1a54c72db01caa68330cebbcacf718d"}, "p6": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "31ea9384d6ed2871c47d0617ecaa698e33506ee13ea1526e4c8a6be86a131c4d"}, "p7": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "e6d7e761fb036df78f706c6b1639b6afc801bba775ce8ce3e203ae88c951fced"}, "p8": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "8cf50eede3bbb8dabf520b4e64c683c485e19b8831020e9bedb8500c6c7f629f"}, "p9": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "1367e35d0393966a4f61c13ae1b95660d06ff3a55fba72b1fc3ab0b63fff5a30"}}, "documentId": "복습문제_1013_PCR_and_DNA_Technology.html", "errors": [], "schema": 1, "skipped": []}</script>
+<script>
+(function (scope) {
+  'use strict';
+  function stripDiagnosticPrefix(text, id) {
+    const match = text.match(/^\s*(?:\((\d+)\)|([A-Z])[.)])\s*/);
+    return match && (match[1] || match[2]) === id ? text.slice(match[0].length) : text;
+  }
+  function scrollAnswerIntoView(scroller, selectedLi, answerLi, selectedButton, answerButton) {
+    if (!scroller || !selectedLi.getClientRects().length) return;
+    const viewport = scroller.getBoundingClientRect();
+    const height = scroller.clientHeight;
+    const margin = 16;
+    const span = (a, b) => {
+      const x = a.getBoundingClientRect(), y = b.getBoundingClientRect();
+      return {top:Math.min(x.top, y.top), bottom:Math.max(x.bottom, y.bottom)};
+    };
+    let target = span(selectedLi, answerLi);
+    if (target.bottom - target.top > height - 2 * margin)
+      target = span(selectedButton, answerButton);
+    if (target.bottom - target.top > height - 2 * margin)
+      target = span(selectedButton, selectedButton);
+    scroller.scrollTop += (target.top + target.bottom - viewport.top - viewport.bottom) / 2;
+  }
+  function grade(card, selected) {
+    if (!card.options.some(o => o.id === selected)) return null;
+    if (card.mode === 'ambiguous') return 'ambiguous';
+    return selected === card.answer ? 'correct' : 'incorrect';
+  }
+  function storageKey(documentId, cardId) {
+    return 'od-review-attempt:v1:' + encodeURIComponent(documentId) + ':' + encodeURIComponent(cardId);
+  }
+  function readAttempt(storage, key, card) {
+    try {
+      const value = JSON.parse(storage.getItem(key));
+      return value && value.version === card.version && grade(card, value.selected) !== null ? value.selected : null;
+    } catch { return null; }
+  }
+  function readUnsure(storage, key, card) {
+    try {
+      const value = JSON.parse(storage.getItem(key));
+      return !!value && value.version === card.version && grade(card, value.selected) === 'correct' && value.unsure === true;
+    } catch { return false; }
+  }
+  function writeAttempt(storage, key, card, selected, unsure) {
+    try {
+      if (selected === null) storage.removeItem(key);
+      else storage.setItem(key, JSON.stringify({version:card.version, selected, unsure:unsure === true}));
+    } catch {}
+  }
+  function exportKey(documentId) {
+    return 'od-review-export:v1:' + encodeURIComponent(documentId);
+  }
+  function readSnapshot(storage, key) {
+    const empty = () => ({schema:1, cards:{}});
+    try {
+      const value = JSON.parse(storage.getItem(key));
+      return value && value.schema === 1 && value.cards && typeof value.cards === 'object' && !Array.isArray(value.cards)
+        ? value : empty();
+    } catch { return empty(); }
+  }
+  function writeSnapshot(storage, key, snapshot) {
+    try { storage.setItem(key, JSON.stringify(snapshot)); } catch {}
+  }
+  function updateSnapshot(snapshot, selectedById, ids, now, unsureById) {
+    const cards = Object.assign({}, snapshot.cards);
+    for (const id of ids) {
+      const selected = selectedById[id] === undefined ? null : selectedById[id];
+      const unsure = selected !== null && !!unsureById && unsureById[id] === true;
+      const prev = cards[id];
+      if (prev && prev.selected === selected && (prev.unsure === true) === unsure) continue;
+      cards[id] = {selected, unsure, updatedAt: selected === null ? null : now.toISOString()};
+    }
+    return {schema:1, cards};
+  }
+  function buildExport(model, snapshot, meta) {
+    const counts = {correct:0, incorrect:0, ambiguous:0};
+    let unsure = 0;
+    const cards = meta.ids.map(id => {
+      const data = model.cards[id];
+      const entry = snapshot.cards[id] || {};
+      const result = grade(data, entry.selected);
+      if (result !== null) counts[result] += 1;
+      const marked = result !== null && entry.unsure === true;
+      if (marked) unsure += 1;
+      return {
+        id, title: meta.titles[id] || '',
+        selected: result === null ? null : entry.selected,
+        answer: data.answer, result, unsure: marked,
+        updatedAt: result === null ? null : (entry.updatedAt || null)
+      };
+    });
+    const answered = counts.correct + counts.incorrect + counts.ambiguous;
+    return {
+      schema:1, documentId:model.documentId, range:meta.range, exportedAt:meta.now.toISOString(),
+      summary:{total:cards.length, answered, unanswered:cards.length - answered,
+        correct:counts.correct, incorrect:counts.incorrect, ambiguous:counts.ambiguous, unsure},
+      skipped: model.skipped || [], cards
+    };
+  }
+  function exportFilename(documentId, now) {
+    const p = n => String(n).padStart(2, '0');
+    const stamp = now.getFullYear() + p(now.getMonth() + 1) + p(now.getDate()) +
+      '-' + p(now.getHours()) + p(now.getMinutes());
+    return documentId.replace(/\.html?$/i, '') + '_풀이기록_' + stamp + '.json';
+  }
+  function handleStore(win) {
+    const run = async (mode, fn) => {
+      const db = await new Promise((resolve, reject) => {
+        const req = win.indexedDB.open('od-review-export', 1);
+        req.onupgradeneeded = () => req.result.createObjectStore('handles');
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+      try {
+        return await new Promise((resolve, reject) => {
+          const tx = db.transaction('handles', mode);
+          const req = fn(tx.objectStore('handles'));
+          tx.oncomplete = () => resolve(req.result);
+          tx.onerror = tx.onabort = () => reject(tx.error);
+        });
+      } finally { db.close(); }
+    };
+    return {
+      get: () => run('readonly', st => st.get('root')).then(h => h || null, () => null),
+      set: h => run('readwrite', st => st.put(h, 'root')).catch(() => {}),
+      clear: () => run('readwrite', st => st.delete('root')).catch(() => {})
+    };
+  }
+  async function resolveExportDir(root, documentId, range) {
+    const child = async (dir, name, create) => {
+      try { return await dir.getDirectoryHandle(name, create ? {create:true} : undefined); }
+      catch (error) { if (error && error.name === 'NotFoundError') return null; throw error; }
+    };
+    if (root.name === '풀이기록') return root;
+    if (root.name === '복습노트') {
+      const day = range ? await child(root, range, false) : null;
+      return day ? child(day, '풀이기록', true) : null;
+    }
+    try { await root.getFileHandle(documentId); }
+    catch (error) { if (error && error.name === 'NotFoundError') return null; throw error; }
+    return child(root, '풀이기록', true);
+  }
+  const isCancel = error => !!error && (error.name === 'AbortError' || error.name === 'NotAllowedError');
+  // The first export asks for the folder once and remembers it (IndexedDB), so
+  // later exports write straight into <날짜>/풀이기록 without a picker.
+  async function saveExport(win, text, filename, meta) {
+    meta = meta || {};
+    if (typeof win.showDirectoryPicker === 'function') {
+      const store = meta.store || handleStore(win);
+      const write = async root => {
+        const dir = await resolveExportDir(root, meta.documentId, meta.range);
+        if (!dir) return 'wrong-folder';
+        const file = await dir.getFileHandle(filename, {create:true});
+        const out = await file.createWritable();
+        await out.write(text);
+        await out.close();
+        return 'saved';
+      };
+      try {
+        const remembered = await store.get();
+        if (remembered) {
+          try {
+            let permission = await remembered.queryPermission({mode:'readwrite'});
+            if (permission !== 'granted') permission = await remembered.requestPermission({mode:'readwrite'});
+            if (permission !== 'granted') return 'cancelled';
+            if (await write(remembered) === 'saved') return 'saved';
+          } catch (error) { if (isCancel(error)) return 'cancelled'; }
+          await store.clear();
+        }
+        const root = await win.showDirectoryPicker({mode:'readwrite', id:'od-review-export'});
+        const result = await write(root);
+        if (result === 'saved') await store.set(root);
+        return result;
+      } catch (error) {
+        if (isCancel(error)) return 'cancelled';
+      }
+    }
+    const url = win.URL.createObjectURL(new win.Blob([text], {type:'application/json'}));
+    const a = win.document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    win.document.body.append(a);
+    a.click();
+    a.remove();
+    win.setTimeout(() => win.URL.revokeObjectURL(url), 1000);
+    return 'downloaded';
+  }
+  function mount(root, model, storage) {
+    if (!model || model.schema !== 1 || !model.cards) return;
+    const win = root.defaultView;
+    const emit = (id, selected, result, restored = false) => root.dispatchEvent(
+      new win.CustomEvent('od:answer', {detail:{id, selected, result, restored}}));
+    const element = (tag, cls, text) => {
+      const el = root.createElement(tag);
+      el.className = cls;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    };
+    const selectedById = {};
+    const unsureById = {};
+    let feedback = null;
+    let feedbackTimer = null;
+    let feedbackOwner = null;
+    function clearFeedback(owner = null) {
+      if (owner !== null && owner !== feedbackOwner) return;
+      if (feedbackTimer !== null) win.clearTimeout(feedbackTimer);
+      feedbackTimer = null;
+      if (feedback) feedback.remove();
+      feedback = null;
+      feedbackOwner = null;
+    }
+    function showFeedback(result, id, message, duration) {
+      clearFeedback();
+      if (!message && result !== 'correct' && result !== 'incorrect') return;
+      feedback = element('div', 'review-feedback');
+      feedback.dataset.reviewFeedback = '';
+      feedback.dataset.result = result;
+      feedback.setAttribute('aria-hidden', 'true');
+      feedback.append(
+        element('span', 'review-feedback-icon'),
+        element('span', 'review-feedback-text', message || (result === 'correct' ? '정답이에요' : '다시 확인해요'))
+      );
+      root.body.append(feedback);
+      feedbackOwner = id;
+      feedbackTimer = win.setTimeout(clearFeedback, duration || 1100);
+    }
+    const UNSURE_ICON_OFF = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+    const UNSURE_ICON_ON = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+    for (const [id, data] of Object.entries(model.cards)) {
+      const card = root.getElementById(id);
+      if (!card || card.classList.contains('review-ready')) continue;
+      const aid = Array.from(root.querySelectorAll('.aid')).find(n => n.dataset.cardId === id);
+      const solution = (aid || card).querySelector('details.solution');
+      const choices = Array.from(card.querySelectorAll('.choices > li'));
+      const diagnostics = solution ? Array.from(solution.querySelectorAll('ol.steps > li')) : [];
+      const options = data.options;
+      // Validate every reference before moving a single original node.
+      if (!solution || !Array.isArray(options) || choices.length !== options.length ||
+          !options.length || !options.some(o => o.id === data.answer) ||
+          new Set(options.map(o => o.index)).size !== options.length ||
+          new Set(options.map(o => o.diagnostic)).size !== options.length ||
+          options.some(o => !choices[o.index] || !diagnostics[o.diagnostic])) continue;
+      const positions = diagnostics.map(n => ({node:n, parent:n.parentNode, next:n.nextSibling}));
+      const diagnosticTexts = [];
+      const choiceNodes = choices.map(n => Array.from(n.childNodes));
+      const summary = solution.querySelector('summary');
+      const summaryText = summary ? summary.textContent : '';
+      const originalOpen = solution.open;
+      const originalHidden = solution.hidden;
+      let status, reset, notice, unsureBtn;
+      try {
+        // Some future cards supply the caution only as metadata. Keep its full
+        // explanation in the solution panel, without duplicating existing prose.
+        const compact = text => text.replace(/\s+/g, '');
+        if (data.mode === 'ambiguous' && data.notice &&
+            !compact(solution.textContent).includes(compact(data.notice))) {
+          notice = element('p', 'review-notice', data.notice);
+          solution.append(notice);
+        }
+        const controls = options.map(o => {
+          const li = choices[o.index];
+          const button = element('button', 'review-choice');
+          button.type = 'button';
+          const complex = li.querySelector('a,button,input,select,textarea,table,div,p,figure,ul,ol');
+          if (complex) {
+            button.textContent = o.id + '번 선택';
+            const content = element('div', 'review-choice-content');
+            content.id = id + '-choice-content-' + o.index;
+            content.append(...Array.from(li.childNodes));
+            button.setAttribute('aria-describedby', content.id);
+            li.append(button, content);
+          } else {
+            button.append(...Array.from(li.childNodes));
+            li.append(button);
+          }
+          const badge = element('span', 'review-choice-label');
+          badge.hidden = true;
+          button.append(badge);
+          button.setAttribute('aria-pressed', 'false');
+          const list = element('ol', 'review-diagnostics');
+          list.id = id + '-review-diagnostics-' + o.index;
+          const diagnostic = diagnostics[o.diagnostic];
+          const first = diagnostic.firstChild;
+          if (first && first.nodeType === 3) {
+            diagnosticTexts.push({node:first, text:first.textContent});
+            first.textContent = stripDiagnosticPrefix(first.textContent, o.id);
+          }
+          diagnostic.classList.add('review-diagnostic');
+          diagnostic.hidden = true;
+          list.append(diagnostic);
+          li.append(list);
+          return {id:o.id, button, badge, diagnostic, list};
+        });
+        status = element('p', 'review-status');
+        status.setAttribute('role', 'status');
+        status.setAttribute('aria-live', 'polite');
+        reset = element('button', 'review-reset text-btn', '다시 풀기');
+        reset.type = 'button';
+        card.querySelector('.choices').before(status);
+        card.querySelector('.choices').after(reset);
+        const key = storageKey(model.documentId, id);
+        let selected = readAttempt(storage, key, data);
+        let unsure = selected !== null && readUnsure(storage, key, data);
+        selectedById[id] = selected;
+        unsureById[id] = unsure;
+        unsureBtn = element('button', 'review-unsure solved-btn');
+        unsureBtn.type = 'button';
+        // Same look and place as the 푼 문제 button: bottom of the aid panel.
+        (aid || solution).append(unsureBtn);
+        const expanded = new Set(selected === null ? [] : [selected, data.answer]);
+        function paintDisclosure(c) {
+          const answered = selected !== null;
+          const open = answered && expanded.has(c.id);
+          c.diagnostic.hidden = !open;
+          c.list.hidden = !open;
+          if (answered) {
+            c.button.setAttribute('aria-expanded', String(open));
+            c.button.setAttribute('aria-controls', c.list.id);
+          } else {
+            c.button.removeAttribute('aria-expanded');
+            c.button.removeAttribute('aria-controls');
+          }
+        }
+        function paint() {
+          const answered = selected !== null;
+          const result = grade(data, selected);
+          reset.hidden = !answered;
+          unsureBtn.hidden = result !== 'correct';
+          unsureBtn.innerHTML = (unsure ? UNSURE_ICON_ON : UNSURE_ICON_OFF) +
+            '<span>' + (unsure ? '애매함 표시 취소' : '애매함으로 표시') + '</span>';
+          unsureBtn.setAttribute('aria-pressed', String(unsure));
+          unsureBtn.dataset.unsure = String(unsure);
+          status.textContent = !answered ? '' : result === 'ambiguous'
+            ? '단일 정답 판정 주의'
+            : result === 'correct' ? '정답이에요.' : '정답이 아니에요. 보기별 이유를 확인해 보세요.';
+          status.dataset.result = result || '';
+          controls.forEach(c => {
+            c.button.dataset.selected = String(c.id === selected);
+            if (answered) c.button.removeAttribute('aria-pressed');
+            else c.button.setAttribute('aria-pressed', 'false');
+            c.button.dataset.result = !answered ? '' : c.id === data.answer
+              ? (data.mode === 'ambiguous' ? 'intended' : 'correct')
+              : c.id === selected ? (data.mode === 'ambiguous' ? 'uncertain' : 'selected') : '';
+            c.badge.hidden = !answered;
+            c.badge.textContent = !answered ? '' : [
+              c.id === selected ? '내 선택' : '',
+              c.id === data.answer ? (data.mode === 'ambiguous' ? '출제 의도상 답' : '정답')
+                : data.mode === 'single' ? '정답 아님' : ''
+            ].filter(Boolean).join(' · ');
+            paintDisclosure(c);
+          });
+          solution.hidden = !answered;
+          solution.open = answered;
+          if (summary) summary.textContent = '추가 해설 · 수업과의 연결';
+        }
+        controls.forEach(c => c.button.addEventListener('click', () => {
+          if (selected !== null) {
+            if (expanded.has(c.id)) expanded.delete(c.id);
+            else expanded.add(c.id);
+            paintDisclosure(c);
+            return;
+          }
+          selected = c.id;
+          selectedById[id] = selected;
+          unsure = false;
+          unsureById[id] = false;
+          expanded.add(selected);
+          expanded.add(data.answer);
+          writeAttempt(storage, key, data, selected);
+          paint();
+          emit(id, selected, grade(data, selected));
+          showFeedback(grade(data, selected), id);
+          const selectedOption = options.find(o => o.id === selected);
+          const answerOption = options.find(o => o.id === data.answer);
+          const selectedControl = controls.find(control => control.id === selected);
+          const answerControl = controls.find(control => control.id === data.answer);
+          win.requestAnimationFrame(() => {
+            if (!card.isConnected || !card.getClientRects().length) return;
+            scrollAnswerIntoView(root.querySelector('.content'),
+              choices[selectedOption.index], choices[answerOption.index],
+              selectedControl.button, answerControl.button);
+          });
+        }));
+        reset.addEventListener('click', () => {
+          clearFeedback(id);
+          selected = null;
+          selectedById[id] = null;
+          unsure = false;
+          unsureById[id] = false;
+          expanded.clear();
+          writeAttempt(storage, key, data, null);
+          paint();
+          emit(id, null, null);
+          root.dispatchEvent(new win.CustomEvent('od:mark', {detail:{id}}));
+          controls[0].button.focus();
+        });
+        unsureBtn.addEventListener('click', () => {
+          if (selected === null) return;
+          unsure = !unsure;
+          unsureById[id] = unsure;
+          writeAttempt(storage, key, data, selected, unsure);
+          paint();
+          root.dispatchEvent(new win.CustomEvent('od:mark', {detail:{id}}));
+          showFeedback('unsure', id, unsure ? '애매함으로 표시했어요' : '애매함 표시를 취소했어요');
+        });
+        card.classList.add('review-ready');
+        solution.classList.add('review-extra');
+        paint();
+        if (selected !== null) emit(id, selected, grade(data, selected), true);
+        else {
+          try {
+            if (storage.getItem(key) !== null) {
+              writeAttempt(storage, key, data, null);
+              emit(id, null, null, true);
+            }
+          } catch {}
+        }
+      } catch (error) {
+        // Keep a readable static question if enhancement cannot be completed.
+        diagnosticTexts.forEach(p => { p.node.textContent = p.text; });
+        choices.forEach((li, i) => li.replaceChildren(...choiceNodes[i]));
+        positions.slice().reverse().forEach(p => {
+          p.node.hidden = false;
+          p.node.classList.remove('review-diagnostic');
+          p.parent.insertBefore(p.node, p.next);
+        });
+        for (const el of [status, reset, notice, unsureBtn]) if (el) el.remove();
+        solution.hidden = originalHidden;
+        solution.open = originalOpen;
+        if (summary) summary.textContent = summaryText;
+        solution.classList.remove('review-extra');
+        card.classList.remove('review-ready');
+        win.console.warn('문항 상호작용을 적용하지 못했습니다:', id, error);
+      }
+    }
+    const exportCards = Array.from(root.querySelectorAll('main article.card')).filter(el => model.cards[el.id]);
+    const pager = root.querySelector('.pager');
+    if (exportCards.length && pager && !pager.querySelector('.review-export-bar')) {
+      const ids = exportCards.map(el => el.id);
+      const titles = {};
+      exportCards.forEach(el => { titles[el.id] = ((el.querySelector('h3') || {}).textContent || '').trim(); });
+      const snapKey = exportKey(model.documentId);
+      let snapshot = readSnapshot(storage, snapKey);
+      root.addEventListener('od:leave', ({detail}) => {
+        const id = detail && detail.screen && detail.screen.id;
+        if (!model.cards[id]) return;
+        snapshot = updateSnapshot(snapshot, selectedById, [id], new Date(), unsureById);
+        writeSnapshot(storage, snapKey, snapshot);
+      });
+      root.addEventListener('od:mark', ({detail}) => {
+        const id = detail && detail.id;
+        if (!model.cards[id]) return;
+        snapshot = updateSnapshot(snapshot, selectedById, [id], new Date(), unsureById);
+        writeSnapshot(storage, snapKey, snapshot);
+      });
+      const bar = element('div', 'review-export-bar');
+      const button = element('button', 'btn btn-primary review-export', 'JSON 내보내기');
+      button.type = 'button';
+      const note = element('p', 'review-export-note sr-only');
+      note.setAttribute('role', 'status');
+      note.setAttribute('aria-live', 'polite');
+      const helpWrap = element('div', 'review-export-help-wrap');
+      const help = element('button', 'text-btn review-export-help', '?');
+      help.type = 'button';
+      help.setAttribute('aria-label', '저장 폴더 도움말');
+      help.setAttribute('aria-expanded', 'false');
+      const popup = element('div', 'review-export-popup');
+      popup.id = 'review-export-popup';
+      popup.setAttribute('role', 'note');
+      popup.hidden = true;
+      help.setAttribute('aria-controls', popup.id);
+      popup.append(
+        element('p', 'review-export-popup-text',
+          '처음 한 번만 이 HTML이 들어 있는 복습노트/날짜 폴더(또는 복습노트 폴더)를 골라 주세요. ' +
+          '그 뒤로는 창 없이 풀이기록 폴더에 바로 저장돼요. Chrome은 다운로드·문서·바탕 화면 자체는 막아요.'),
+        element('button', 'text-btn review-export-popup-close', '닫기'));
+      popup.querySelector('button').type = 'button';
+      helpWrap.append(help, popup);
+      const setHelp = open => {
+        popup.hidden = !open;
+        help.setAttribute('aria-expanded', String(open));
+      };
+      help.addEventListener('click', () => setHelp(popup.hidden));
+      popup.querySelector('button').addEventListener('click', () => { setHelp(false); help.focus(); });
+      root.addEventListener('keydown', e => { if (e.key === 'Escape' && !popup.hidden) { setHelp(false); help.focus(); } });
+      root.addEventListener('click', e => { if (!popup.hidden && !helpWrap.contains(e.target)) setHelp(false); });
+      root.addEventListener('od:screen', () => setHelp(false));
+      bar.append(button, helpWrap, note);
+      pager.prepend(bar);
+      root.addEventListener('od:screen', () => { note.textContent = ''; });
+      button.addEventListener('click', async () => {
+        if (button.disabled) return;
+        button.disabled = true;
+        const now = new Date();
+        snapshot = updateSnapshot(snapshot, selectedById, ids, now, unsureById);
+        writeSnapshot(storage, snapKey, snapshot);
+        const data = buildExport(model, snapshot, {ids, titles, range: root.body.dataset.range || '', now});
+        let outcome;
+        try {
+          outcome = await saveExport(win, JSON.stringify(data, null, 2) + '\n', exportFilename(model.documentId, now),
+            {documentId: model.documentId, range: root.body.dataset.range || ''});
+        }
+        finally { button.disabled = false; }
+        const message = outcome === 'saved' ? '풀이기록 폴더에 저장했어요'
+          : outcome === 'downloaded' ? '다운로드 폴더에 저장했어요'
+          : outcome === 'wrong-folder' ? '복습노트/' + (root.body.dataset.range || '날짜') + ' 폴더를 골라 주세요'
+          : '저장을 취소했어요';
+        note.textContent = message + '.';
+        showFeedback(outcome, 'export', message, 2200);
+      });
+    }
+    // Existing page CSS hides side panels when printing. Move original details,
+    // including static questions, into their cards for print, then restore them.
+    if (!root.documentElement.dataset.reviewPrint) {
+      root.documentElement.dataset.reviewPrint = 'ready';
+      let printPositions = [];
+      win.addEventListener('beforeprint', () => {
+        if (printPositions.length) return;
+        root.querySelectorAll('.aid[data-card-id]').forEach(aid => {
+          const card = root.getElementById(aid.dataset.cardId);
+          if (!card) return;
+          Array.from(aid.children).forEach(node => {
+            printPositions.push({node, parent:aid, open:node.open});
+            if (node.tagName === 'DETAILS') node.open = true;
+            card.append(node);
+          });
+        });
+      });
+      win.addEventListener('afterprint', () => {
+        printPositions.forEach(p => {p.parent.append(p.node); p.node.open = p.open;});
+        printPositions = [];
+      });
+    }
+  }
+  const api = {stripDiagnosticPrefix, grade, storageKey, readAttempt, readUnsure, writeAttempt, mount,
+    exportKey, readSnapshot, writeSnapshot, updateSnapshot, buildExport, exportFilename, saveExport, resolveExportDir, handleStore};
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else scope.ReviewInteraction = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
+</script>
+<script>(function () {
+      function start() {
+        try {
+          let storage = null;
+          try { storage = window.sessionStorage; } catch {}
+          ReviewInteraction.mount(document, JSON.parse(document.getElementById('review-interaction-model').textContent), storage);
+        } catch (error) { console.warn('복습문제 상호작용 초기화 실패:', error); }
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
+      else start();
+    })();</script>
+<!-- review-interaction:end -->
+</body>
+</html>
