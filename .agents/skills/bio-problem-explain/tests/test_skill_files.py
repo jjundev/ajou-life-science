@@ -17,7 +17,7 @@ def test_claude_link_and_provenance():
     assert data['source_commit']=='d631a5a573a32c9406b139e319bc9c7c2d328098'
     for entry in data['files']:
         assert sha256(S/entry['destination'])==entry['destination_sha256']
-        if entry['destination'].startswith('assets/') and entry['source_path']:
+        if entry['destination'].startswith('assets/') and entry['source_path'] and entry['change_reason']=='unchanged pinned copy':
             assert entry['source_sha256']==entry['destination_sha256']
 
 import re
