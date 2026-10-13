@@ -3,7 +3,7 @@ import subprocess
 import sys
 from pathlib import Path
 import pytest
-from helpers import fragment, approved
+from helpers import fragment, approved, choice_source_file, source_file
 from mpe_source import load_source
 from mpe_cli import load_run
 
@@ -119,3 +119,125 @@ def test_port_provenance_requires_git_repo(tmp_path):
     script = Path(__file__).resolve().parents[1] / 'scripts/port_provenance.py'
     r = subprocess.run([sys.executable, str(script), '--source', str(tmp_path)], capture_output=True, text=True)
     assert r.returncode != 0 and 'git' in r.stderr
+
+
+def test_extract_warns_static_choices(tmp_path):
+    repo = tmp_path / 'repo'
+    source = choice_source_file(repo)
+    result = call('extract', '--repo', repo, '--target', source, '--run', tmp_path / 'run')
+    assert result.returncode == 0, result.stderr
+    assert 'p1: 보기 모델 없음/불일치 — 정적 표시' in result.stderr
+
+
+def published_pack(tmp_path, reference=None):
+    repo = tmp_path / 'repo'
+    source = source_file(repo)
+    if reference:
+        (repo / '참조.html').write_text(reference, encoding='utf-8')
+    run = tmp_path / 'run'
+    assert call('extract', '--repo', repo, '--target', source, '--run', run).returncode == 0
+    item = load_run(run)[0]
+    for p in item['pack'].problems:
+        (item['folder'] / 'explanations' / f'{p.id}.html').write_text(fragment(p), encoding='utf-8')
+    (item['folder'] / 'evidence' / 'note.txt').write_text('검산 근거', encoding='utf-8')
+    assert call('build', '--run', run).returncode == 0
+    from mpe_cli import load_artifacts, load_fragments
+    item = load_run(run)[0]
+    reviews = approved(item['pack'], load_fragments(item), load_artifacts(item))
+    if reference:
+        import hashlib
+        ref = (repo / '참조.html').resolve()
+        reviews['references'] = [{'path': str(ref), 'sha256': hashlib.sha256(ref.read_bytes()).hexdigest()}]
+    (item['folder'] / 'review.json').write_text(json.dumps(reviews, ensure_ascii=False), encoding='utf-8')
+    result = call('publish', '--run', run)
+    assert result.returncode == 0, result.stderr
+    return repo, source
+
+def test_rerender_reuses_content_reviews(tmp_path):
+    repo, source = published_pack(tmp_path)
+    result = call('rerender', '--repo', repo, '--target', source, '--run', tmp_path / 'run2')
+    assert result.returncode == 0, result.stderr
+    folder = next(p for p in (tmp_path / 'run2').iterdir() if p.is_dir())
+    review = json.loads((folder / 'review.json').read_text())
+    assert review['content']['status'] == 'pass' and review['independent']['status'] == 'pass'
+    assert review['source_visual']['status'] == 'not_run' and review['browser']['status'] == 'not_run'
+    assert {p.name for p in (folder / 'explanations').glob('*.html')} == {'p1.html'}
+    assert (folder / 'evidence').is_dir() and any((folder / 'evidence').iterdir())
+    assert 'source_visual·browser 재검토 필요' in result.stdout
+
+def test_rerender_changed_source_keeps_reviews_unrun(tmp_path):
+    repo, source = published_pack(tmp_path)
+    source.write_text(source.read_text().replace('함수 결과를 구해요.', '함수 결과를 다시 구해요.'))
+    result = call('rerender', '--repo', repo, '--target', source, '--run', tmp_path / 'run2')
+    folder = next(p for p in (tmp_path / 'run2').iterdir() if p.is_dir())
+    review = json.loads((folder / 'review.json').read_text())
+    assert review['content']['status'] == 'not_run'
+    assert '입력 변경: 네 검토 모두 다시 필요' in result.stdout
+
+def test_rerender_without_published_fragments_fails(tmp_path):
+    repo = tmp_path / 'repo'
+    source = source_file(repo)
+    result = call('rerender', '--repo', repo, '--target', source, '--run', tmp_path / 'run')
+    assert result.returncode == 1 and '발행된 조각 없음' in result.stderr
+
+
+def git_commit_all(repo):
+    for args in (['init', '-q'], ['add', '-A'], ['-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-qm', 'published']):
+        subprocess.run(['git', *args], cwd=repo, check=True)
+
+def test_rerender_style_only_source_change_reuses_reviews(tmp_path):
+    repo, source = published_pack(tmp_path)
+    git_commit_all(repo)
+    source.write_text('<style>:root{--scroll:#ccc}</style>' + source.read_text())
+    result = call('rerender', '--repo', repo, '--target', source, '--run', tmp_path / 'run2')
+    assert result.returncode == 0, result.stderr
+    folder = next(p for p in (tmp_path / 'run2').iterdir() if p.is_dir())
+    review = json.loads((folder / 'review.json').read_text())
+    assert review['content']['status'] == 'pass' and review['independent']['status'] == 'pass'
+    assert review['source_visual']['status'] == 'not_run'
+    assert 'content·independent 재사용' in result.stdout and '문항 내용은 같아요' in result.stdout
+
+def test_rerender_content_change_with_history_keeps_reviews_unrun(tmp_path):
+    repo, source = published_pack(tmp_path)
+    git_commit_all(repo)
+    source.write_text(source.read_text().replace('함수 결과를 구해요.', '함수 결과를 다시 구해요.'))
+    result = call('rerender', '--repo', repo, '--target', source, '--run', tmp_path / 'run2')
+    folder = next(p for p in (tmp_path / 'run2').iterdir() if p.is_dir())
+    assert json.loads((folder / 'review.json').read_text())['content']['status'] == 'not_run'
+    assert '입력 변경: 네 검토 모두 다시 필요' in result.stdout
+
+
+def rerendered_review(tmp_path, repo, source):
+    result = call('rerender', '--repo', repo, '--target', source, '--run', tmp_path / 'run2')
+    assert result.returncode == 0, result.stderr
+    folder = next(p for p in (tmp_path / 'run2').iterdir() if p.is_dir())
+    return json.loads((folder / 'review.json').read_text()), result
+
+def test_rerender_rebases_reference_paths_to_current_checkout(tmp_path):
+    import shutil
+    repo, source = published_pack(tmp_path, reference='<p>본문</p>')
+    moved = tmp_path / 'moved'
+    shutil.copytree(repo, moved)
+    review, _ = rerendered_review(tmp_path, moved, moved / source.relative_to(repo))
+    assert review['content']['status'] == 'pass'
+    assert review['references'][0]['path'] == str((moved / '참조.html').resolve())
+
+def test_rerender_reference_style_only_change_updates_hash(tmp_path):
+    import hashlib
+    repo, source = published_pack(tmp_path, reference='<style>a{color:red}</style><p>본문</p>')
+    git_commit_all(repo)
+    ref = repo / '참조.html'
+    ref.write_text('<style>a{color:blue}</style><p>본문</p>', encoding='utf-8')
+    review, result = rerendered_review(tmp_path, repo, source)
+    assert review['references'][0]['sha256'] == hashlib.sha256(ref.read_bytes()).hexdigest()
+    assert '참조 자료는 스타일만 바뀌었어요: 참조.html' in result.stdout
+
+def test_rerender_reference_content_change_keeps_old_hash(tmp_path):
+    repo, source = published_pack(tmp_path, reference='<style>a{color:red}</style><p>본문</p>')
+    git_commit_all(repo)
+    ref = repo / '참조.html'
+    before = json.loads(next((repo / '복습노트/0917').glob('자료_*/validation.json')).read_text())['references'][0]['sha256']
+    ref.write_text('<style>a{color:red}</style><p>바뀐 본문</p>', encoding='utf-8')
+    review, result = rerendered_review(tmp_path, repo, source)
+    assert review['references'][0]['sha256'] == before
+    assert '참조 자료 변경: 검토를 다시 하세요: 참조.html' in result.stdout

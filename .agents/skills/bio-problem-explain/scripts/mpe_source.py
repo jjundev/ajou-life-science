@@ -3,9 +3,10 @@ import hashlib
 import json
 import re
 import unicodedata
+from dataclasses import replace
 from datetime import datetime
 from pathlib import Path
-from mpe_types import ExplainError, Problem, SourcePack
+from mpe_types import ChoiceModel, ExplainError, Problem, SourcePack
 from mpe_shared import HOMEWORK, REVIEW, Node, ReviewPdfError, read_cards, normalize_cards, parse
 
 def nfc(value):
@@ -168,6 +169,40 @@ def subparts(ask: str, original: str) -> tuple[str, ...]:
     if labels and len(labels)!=len(set(labels)): raise ExplainError('중복 소문항 표지')
     return tuple(labels) or ('main',)
 
+MODEL_RE = re.compile(r'<script id="review-interaction-model" type="application/json">(.*?)</script>', re.S)
+
+def choice_models(html_text: str, statements: dict[str, str]) -> dict[str, ChoiceModel]:
+    """Read the review pack's interaction model; keep only cards that match their choice list."""
+    match = MODEL_RE.search(html_text)
+    try:
+        cards = json.loads(match[1])['cards'] if match else {}
+    except (ValueError, KeyError, TypeError):
+        return {}
+    if not isinstance(cards, dict):
+        return {}
+    models = {}
+    for id_, card in cards.items():
+        if id_ not in statements or not isinstance(card, dict):
+            continue
+        lists = list(parse(statements[id_]).find_all(lambda n: n.tag in ('ul', 'ol') and 'choices' in n.classes))
+        options = card.get('options')
+        if not lists or not isinstance(options, list) or not all(isinstance(o, dict) for o in options):
+            continue
+        count = sum(1 for c in lists[0].children if isinstance(c, Node) and c.tag == 'li')
+        ids = [o.get('id') for o in options]
+        indexes = [o.get('index') for o in options]
+        if (len(options) != count or not all(isinstance(i, str) for i in ids) or len(set(ids)) != len(ids)
+                or card.get('answer') not in ids or card.get('mode') not in ('single', 'ambiguous')
+                or not all(type(i) is int for i in indexes) or sorted(indexes) != list(range(count))):
+            continue
+        ordered = tuple(o['id'] for o in sorted(options, key=lambda o: o['index']))
+        models[id_] = ChoiceModel(card['answer'], card['mode'], ordered)
+    return models
+
+def with_choices(path: Path, problems) -> tuple[Problem, ...]:
+    models = choice_models(path.read_text(encoding='utf-8'), {p.id: p.conditions_html for p in problems})
+    return tuple(replace(p, choice=models.get(p.id)) for p in problems)
+
 def load_source(path: Path, repo: Path) -> SourcePack:
     path = inside(existing_path(Path(path)), Path(repo))
     from mpe_forecast import FILENAME_RE, load_forecast_source
@@ -180,7 +215,7 @@ def load_source(path: Path, repo: Path) -> SourcePack:
         problems = tuple(Problem(c.id,int(c.id[1:]),c.title,c.source,c.original_html,
                                  c.statement_html,'',(),c.steps,c.answer_html,
                                  subparts(c.statement_html,c.original_html)) for c in pack.cards)
-        return SourcePack('review',pack.range,pack.slug,path,sha256(path),problems)
+        return SourcePack('review',pack.range,pack.slug,path,sha256(path),with_choices(path,problems))
     except (ReviewPdfError,OSError) as exc:
         if 'no review cards' in str(exc):
             candidates=[]
