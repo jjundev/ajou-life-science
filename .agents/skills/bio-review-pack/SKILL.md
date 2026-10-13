@@ -8,7 +8,9 @@ description: 생명과학 수업의 STT·강의노트·교과서와 23·24 기�
 수업 녹음 전사(STT)와 강의노트, 교과서, 기출·웹과제로 한 기간의 복습팩을 만든다. 중간에 사용자에게 묻지 않고 끝에 한 번 보고한다. 커밋은 제안만 한다.
 
 **산출물** (`복습노트/<range>/`, 기간(range)마다 폴더 하나):
-`정리노트_<range>_<slug>.html`, `복습문제_<range>_<slug>.html`, 같은 이름의 `.md` 두 개, `figures_<range>/`, `문제설명_<range>_<slug>.html`·`.md`, `figures_문제설명_<range>_<slug>/`, `자료_문제설명_<range>_<slug>/`, (장이 끝난 범위면) `장마감_<range>_<N>장.md`
+- 루트: `정리노트_<range>_<slug>.html`, `복습문제_<range>_<slug>.html`, `문제설명_<range>_<slug>.html`, `.pack/`
+- `.assets/`(숨김 폴더): 같은 이름의 `.md`(정리노트·복습문제·문제설명), `figures_<range>/`, `figures_문제설명_<range>_<slug>/`, `자료_문제설명_<range>_<slug>/`, `풀이기록/`, (장이 끝난 범위면) `장마감_<range>_<N>장.md`
+- `.assets/`는 숨김 폴더라 Glob·Grep 도구가 건너뛴다. 안의 파일은 `복습노트/<range>/.assets/…`처럼 경로를 글자 그대로 쓰고, 찾을 때는 Bash의 `ls`·`find`나 Python `pathlib`를 쓴다.
 
 **인자**: `[MMDD | MMDD-MMDD] [lite] [augment]`
 - `lite`: 작성자·요약 에이전트를 sonnet으로 하고, 6단계의 일반 리뷰를 생략한다. 블라인드 풀이 검사, 기계 검사, 브라우저 검사는 그대로 한다. 문제설명 저작·독립 검산·실자료 검토·브라우저 검증은 생략하지 않는다.
@@ -62,7 +64,7 @@ EOF
    에이전트는 `RUN` 밖에 쓰지 않는다. 임시·보조 파일은 `RUN/work/`에만 둔다. 저장소(`STT/`, `강의노트/`, `교과서/`, `23, 24 소스/`, `웹과제/`)에는 아무도 쓰지 않고, `복습노트/`에는 메인 에이전트만 쓴다.
 
 ### 1. 범위 파악
-1. 이번 STT가 다룰 장을 정한다. 직전 노트(가장 최근 `복습노트/*/정리노트_*.md`)의 마지막 장과 끊긴 지점, STT 앞부분을 본다. 확실하지 않으면 다음 장까지 넣는다. **먼저** 그 장들의 강의노트 텍스트를 쪽 번호와 함께 `RUN/slides.txt`에 추출한다. 요약 에이전트는 이 파일이 있다고 보고 시작하므로 추출이 끝난 뒤에 띄운다.
+1. 이번 STT가 다룰 장을 정한다. 직전 노트(가장 최근 `복습노트/*/.assets/정리노트_*.md`)의 마지막 장과 끊긴 지점, STT 앞부분을 본다. 확실하지 않으면 다음 장까지 넣는다. **먼저** 그 장들의 강의노트 텍스트를 쪽 번호와 함께 `RUN/slides.txt`에 추출한다. 요약 에이전트는 이 파일이 있다고 보고 시작하므로 추출이 끝난 뒤에 띄운다.
 ```bash
 REPO=… RUN=… CH="3" python3 - <<'EOF'
 import fitz, os, unicodedata as u
@@ -104,7 +106,7 @@ EOF
 - 위젯은 팩 전체에 0~2개다. 병렬 작성자끼리는 서로를 모르므로 **메인 에이전트가 띄우기 전에** 위젯을 둘 토픽(0~2개)을 정하고, 그 토픽의 섹션 작성자 브리프에만 `<위젯>` 자리에 "토픽 `<토픽 id>`에 위젯 1개: <무엇을 움직이면 무엇이 보이는지>"를 적는다. 나머지 작성자의 `<위젯>` 자리에는 "위젯 없음"이라고 적는다. 정한 토픽과 이유는 보고서 "스킬이 정한 사항"에 적는다.
 
 ### 4. 조립
-- **처음 조립할 때만**: `복습노트/<range>/`(또는 `복습노트/` 바로 아래)에 이번 `range`의 산출물(`정리노트_<range>_*`, `복습문제_<range>_*`의 `.html`·`.md`, `장마감_<range>_*.md`, `figures_<range>/`, `문제설명_<range>_*`, `figures_문제설명_<range>_*/`, `자료_문제설명_<range>_*/`)이 하나라도 있으면 먼저 백업한다. 다시 조립할 때(5~8단계에서 돌아온 경우)는 백업하지 않는다. 이미 스킬이 만든 초안이 백업에 섞이기 때문이다.
+- **처음 조립할 때만**: `복습노트/<range>/`(그 안의 `.assets/`, 또는 `복습노트/` 바로 아래)에 이번 `range`의 산출물(`정리노트_<range>_*`, `복습문제_<range>_*`의 `.html`·`.md`, `장마감_<range>_*.md`, `figures_<range>/`, `문제설명_<range>_*`, `figures_문제설명_<range>_*/`, `자료_문제설명_<range>_*/`)이 하나라도 있으면 먼저 백업한다. 다시 조립할 때(5~8단계에서 돌아온 경우)는 백업하지 않는다. 이미 스킬이 만든 초안이 백업에 섞이기 때문이다.
   - `RANGE`, `REPO`, `RUN`을 모두 실제 값으로 바꿔 한 명령으로 실행한다. 파일명은 NFC로 비교하므로 NFD 파일명도 잡힌다.
   - 백업은 매번 새 폴더 `RUN/previous-<시각>-<임의>/`에 만든다(이전 백업을 덮어쓰지 않음). `RANGE`가 형식에 안 맞거나, 대상이 있는데 복사된 파일 수가 다르면 종료 코드 1로 멈춘다. 이때는 조립하지 말고 원인을 고친다.
 ```bash
@@ -119,7 +121,8 @@ def want(n):
     return n.startswith((f"정리노트_{r}_", f"복습문제_{r}_", f"장마감_{r}_", f"문제설명_{r}_", f"figures_문제설명_{r}_", f"자료_문제설명_{r}_")) or n in (f"figures_{r}", ".pack")
 def listdir_nfc(d):  # NFD 폴더명도 찾는다
     return {u.normalize("NFC", n): os.path.join(d, n) for n in os.listdir(d)} if os.path.isdir(d) else {}
-srcs = [listdir_nfc(notes).get(r), notes]  # 날짜 폴더, 예전 형식(바로 아래)
+day = listdir_nfc(notes).get(r)
+srcs = [day, day and os.path.join(day, ".assets"), notes]  # 날짜 폴더, 그 안의 .assets, 예전 형식(바로 아래)
 hits = sorted({n: p for d in srcs if d and os.path.isdir(d) for n, p in listdir_nfc(d).items() if want(n)}.items())
 if not hits:
     print("백업할 기존 팩 없음"); sys.exit(0)
@@ -138,7 +141,7 @@ EOF
 ```bash
 python3 "$SKILL/scripts/assemble.py" --run "$RUN" --out "$REPO/복습노트/<range>"
 ```
-조립기는 `RUN/figures/`의 카드 그림을 `복습노트/<range>/figures_<range>/`로 복사한다.
+조립기는 `RUN/figures/`의 카드 그림을 `복습노트/<range>/.assets/figures_<range>/`로 복사한다. 카드의 `<img src>`는 `.assets/figures_<range>/pN.png`다.
 조립기는 `RUN`의 `manifest.json`·`question-audit.md`·`key-check.md`·`variants.md`·`problem-pages.txt`를 `복습노트/<range>/.pack/`에 복사하고 `.pack/log.md`에 실행 한 줄을 더한다. `.pack/`은 git으로 추적한다(금지어 목록과 감사표를 다음 보강에서 다시 쓴다). 내부 기록이라 STT 시각이 있어도 된다.
 
 ### 5. 기계 검사
@@ -174,8 +177,8 @@ python3 "$SKILL/scripts/check_html.py" --manifest "$RUN/manifest.json" --note "$
 ```bash
 python3 "$SKILL/scripts/html2md.py" "$REPO/복습노트/<range>/<정리노트>.html" "$REPO/복습노트/<range>/<복습문제>.html" --check
 ```
-- `OK`가 나와야 한다.
-- 변환한 두 MD와 `장마감_<range>_*.md`에서 `HH:MM` 형태의 후보를 검색한다. STT 녹음 위치는 삭제하고, 실제 학습 내용의 시간 표현이라면 문맥을 확인해 유지한다.
+- `OK`가 나와야 한다. MD와 SVG 그림은 `복습노트/<range>/.assets/`에 쓰이고, MD 안 링크는 `.assets/` 기준이다.
+- 변환한 두 MD(`복습노트/<range>/.assets/`)와 `.assets/장마감_<range>_*.md`에서 `HH:MM` 형태의 후보를 검색한다. STT 녹음 위치는 삭제하고, 실제 학습 내용의 시간 표현이라면 문맥을 확인해 유지한다.
 - 누락이 나오면 대부분 HTML 조각의 마크업 문제다(수식이 `svg`나 `.controls` 안에 있는 경우 등). 조각을 고치고 4단계부터 다시 한다.
 
 ### 8b. 문제설명
@@ -188,7 +191,7 @@ python3 "$SKILL/scripts/html2md.py" "$REPO/복습노트/<range>/<정리노트>.h
 이번 범위에서 장이 끝났으면 아래 **장 마감** 검토를 먼저 하고, 보고서의 `장 마감` 줄에 그 요약을 적는다. 다음 형식으로 끝낸다.
 ```
 ## 복습팩 <range> 완료  (문제설명 보류면 제목을 "복습팩 생성됨 / 문제설명 보류"로 바꾼다)
-- 파일: 복습노트/<range>/… (html 2, md 2, figures_<range>/ N개)
+- 파일: 복습노트/<range>/… (html 3, `.pack/`) · 복습노트/<range>/.assets/… (md 3, figures_<range>/ N개)
 - 범위: 배운 쪽 … / 예고만: … / 끊긴 지점: "…"
 - 난이도: 변형 기본(수준 1~2) N · 심화(수준 3) N · 목표와 실제 유형 수·난이도 차이 및 이유
 - 문항: 포함 N (웹과제 w, 기출 x) · 변형 v (쌍둥이 t · 그림 g · 상황 s · ㄱㄴㄷ k · 부정형 n · 용어 r · 낯선참 u · 장섞기 c) · 이전 팩 N · 보류 N · 범위 밖 N — 분류표 RUN/question-audit.md, 변형 RUN/variants.md. 표 해석은 별도 집계. 목표보다 부족한 유형은 사유를 한 줄씩(의무 최소 0인 선택 유형은 0개 자체가 미해결은 아님)
@@ -207,7 +210,7 @@ python3 "$SKILL/scripts/html2md.py" "$REPO/복습노트/<range>/<정리노트>.h
 `references/webquiz-style.md` 1절에 없는 장의 `웹과제/<N>장/questions.json`이 있으면 그 파일 5절대로 세어 보고서 끝에 "webquiz-style.md 갱신 제안"을 적는다. 같은 range의 팩을 다시 만들면 기존 카드 번호를 유지한다(새 문항은 기존 최대 번호 다음부터). `references/interactive-overrides.json`의 애매함 공지와 `복습노트/<range>/풀이기록/`이 카드 id로 문항을 가리키기 때문이다. 번호가 바뀌었다면 overrides 키를 새 번호에 맞게 고치고, 예전 풀이기록은 git 기록의 예전 HTML 기준이라고 보고서에 적는다. 끝나면 `풀이기록/`이 그대로인지 확인한다.
 
 **장 마감** (이번 범위에서 한 장이 끝났을 때만 — 요약의 끊긴 지점이 장 끝이거나 다음 장으로 넘어갔을 때):
-그 장을 다룬 모든 회차(`복습노트/*/`)를 모아 다음을 검토하고 `복습노트/<range>/장마감_<range>_<N>장.md`에 쓴다. 보고서에는 요약만 싣는다.
+그 장을 다룬 모든 회차(`복습노트/*/`)를 모아 다음을 검토하고 `복습노트/<range>/.assets/장마감_<range>_<N>장.md`에 쓴다. 보고서에는 요약만 싣는다.
 1. 회차별 범위와 절 연결: 어느 회차가 그 장의 어느 쪽을 다뤘는지, 빠진 쪽이 없는지.
 2. 필수 그림과 시험 판별 용어가 노트에 모두 있는지.
 3. 그 장의 **남은 보류 문항 전부**를 다시 분류한다: `시험 범위 확인됨 / 보충 학습 권장 / 제외 근거 있음 / 범위 불명`. 사유와 근거(강의계획서, 수업 발언 요지)를 함께 적되 학생용 장 마감 파일에 STT 녹음 시각은 넣지 않는다. 내부 감사 기록에는 타임스탬프를 남겨 대조한다. 생략을 곧바로 시험 제외로 바꾸지 않는다.
@@ -273,7 +276,7 @@ python3 "$SKILL/scripts/html2md.py" "$REPO/복습노트/<range>/<정리노트>.h
 | 웹과제 `questions.json` 없이 `raw/` 캡처만 있음 | "등록되지 않은 웹과제 자료"로 보고하고 partA를 뺀다("웹 자료 없음"이라고 쓰지 않는다) |
 | 웹과제 bank 검증 실패 | 멈추지 않고 문항은 쓰되, 실패한 필드와 source를 "미해결"에 적음 |
 | 포트 사용 중 | 다른 빈 포트 사용 |
-| 같은 range의 팩이 이미 있음 | 4단계 첫 조립 전에 기존 html·md·`장마감_<range>_*.md`·`figures_<range>/`를 새 폴더 `RUN/previous-<시각>-<임의>/`에 복사하고(다시 조립할 때는 복사하지 않음) 백업 경로를 보고서에 적음. 문제설명 파일(`문제설명_<range>_*`, `figures_문제설명_<range>_*`, `자료_문제설명_<range>_*`)도 같이 백업한다. 백업 명령이 실패하면 조립하지 않고 원인을 고친다 |
+| 같은 range의 팩이 이미 있음 | 4단계 첫 조립 전에 기존 html과 `.assets/`의 md·`장마감_<range>_*.md`·`figures_<range>/`를 새 폴더 `RUN/previous-<시각>-<임의>/`에 복사하고(다시 조립할 때는 복사하지 않음) 백업 경로를 보고서에 적음. 문제설명 파일(`문제설명_<range>_*`, `figures_문제설명_<range>_*`, `자료_문제설명_<range>_*`)도 같이 백업한다. 백업 명령이 실패하면 조립하지 않고 원인을 고친다 |
 | 검사 2회 실패 | 멈추지 않고 나머지 단계를 끝낸 뒤 "미해결"로 보고 |
 | 보강: `.pack` manifest와 HTML 카드 불일치 | 차이를 보고하고 멈춤(HTML을 덮어쓰지 않음) |
 | 보강: 기존 카드 보호 검사 실패 | 쓰지 않고 멈춤, 바뀐 카드와 필드를 보고 |

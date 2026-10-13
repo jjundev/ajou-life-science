@@ -6,7 +6,7 @@ manifest + 조각 파일 → 정리노트/복습문제 HTML 두 개 (표준 라�
   RUN/manifest.json
   RUN/sections/<section-id>.html   (섹션 안쪽: <article class="topic"> 들, <script> 가능)
   RUN/cards/<problem-id>.html      (<article class="card"> 하나)
-  RUN/figures/*                    (카드 원문 그림 등, out/figures_<range>/ 로 복사) (SVG 금지)
+  RUN/figures/*                    (카드 원문 그림 등, out/.assets/figures_<range>/ 로 복사) (SVG 금지)
 조각 안의 {{NOTE_HREF}} / {{REVIEW_HREF}} 는 실제 파일명으로 바뀐다.
 <script> 블록은 조각에서 빼서 </body> 앞({{SCRIPTS}})으로 모은다.
 CLI: assemble.py --run RUN --out 복습노트/<range>
@@ -24,6 +24,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import manifest as manifest_mod  # noqa: E402
+from assets_path import SIDE  # noqa: E402
 import review_interaction
 
 ASSETS = Path(__file__).resolve().parent.parent / "assets"
@@ -113,11 +114,11 @@ def check_figures(run_dir: Path) -> None:
 
 
 def copy_figures(run_dir: Path, out_dir: Path, range_: str) -> int:
-    """RUN/figures/ 의 파일을 out/figures_<range>/ 로 복사하고 개수를 돌려준다."""
+    """RUN/figures/ 의 파일을 out/.assets/figures_<range>/ 로 복사하고 개수를 돌려준다."""
     src = run_dir / "figures"
     if not src.is_dir():
         return 0
-    dst = out_dir / manifest_mod.fig_dir_name(range_)
+    dst = out_dir / SIDE / manifest_mod.fig_dir_name(range_)
     dst.mkdir(parents=True, exist_ok=True)
     count = 0
     for f in sorted(src.iterdir()):

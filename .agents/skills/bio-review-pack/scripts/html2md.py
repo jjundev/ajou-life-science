@@ -5,10 +5,12 @@ r"""정리노트/복습문제 HTML → GitHub 마크다운 변환기 (표준 라
 - <details>(원문/힌트/풀이)는 접히는 HTML <details>로 남긴다.
 - 인라인 SVG 그림은 figures_<range>/ 에 스타일을 인라인한 독립 SVG로 내보낸다.
 - <img>(카드 원문 그림)는 같은 상대 경로의 ![alt](src)로 옮긴다.
+- 복습팩(convert_pack)은 MD와 figures_<range>/ 를 날짜 폴더의 .assets/ 아래에 쓴다.
+  HTML 기준 경로(.assets/…)로 변환한 뒤 assets_path.rebase_md로 MD 위치 기준으로 바꾼다.
 - 위젯은 .widget-static(정적 SVG·표)으로 대체한다. 없으면 "HTML 버전에서 조작" 안내만 남긴다.
 - 표 안 수식의 \| 는 \Vert, | 는 \vert 로 바꾼다(GFM 표 구분자 충돌 방지).
 CLI:
-  html2md.py NOTE.html REVIEW.html            # 같은 폴더에 .md 두 개 + figures_<range>/
+  html2md.py NOTE.html REVIEW.html            # 같은 폴더의 .assets/ 에 .md 두 개 + figures_<range>/
   html2md.py NOTE.html REVIEW.html --check    # 변환 후 누락 검사(수식·앵커·그림·링크)
 """
 from __future__ import annotations
@@ -21,7 +23,11 @@ import sys
 import unicodedata
 from collections import Counter
 from html.parser import HTMLParser
+from pathlib import Path
 from urllib.parse import unquote
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from assets_path import SIDE, rebase_md  # noqa: E402
 
 VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"}
 NAME_RE = re.compile(r"^(정리노트|복습문제)_(\d{4}(?:-\d{4})?)_([A-Za-z0-9_]+)\.html$")
@@ -611,7 +617,7 @@ def check_md(html_path, md_path):
             continue
         path_dec = nfc(unquote(path_part))
         head, _, base = path_dec.rpartition("/")
-        if head in ("", ".") and base in pack:
+        if head in ("", ".", "..") and base in pack:
             problems.append(f"링크 미변환(.html): {target}")
             continue
         other = os.path.join(md_dir, path_dec)
@@ -630,7 +636,7 @@ def _md_svg_refs(md_path):
 
 
 def convert_pack(note_path, review_path, only=None):
-    """두 HTML을 같은 폴더에 .md로 변환한다. (md 경로 목록, 그림 파일 수)를 돌려준다.
+    """두 HTML을 같은 폴더의 .assets/ 아래 .md로 변환한다. (md 경로 목록, 그림 파일 수)를 돌려준다.
     only="review"면 복습문제 MD만 다시 쓰고, 정리노트 MD와 그 SVG는 건드리지 않는다."""
     if only not in (None, "review"):
         raise ValueError(f"only는 None 또는 'review': {only!r}")
@@ -643,9 +649,10 @@ def convert_pack(note_path, review_path, only=None):
     if os.path.dirname(os.path.abspath(review_path)) != out_dir:
         raise ValueError("두 HTML은 같은 폴더에 있어야 함")
     fig_name = f"figures_{matches[0].group(2)}"
-    fig_abs = os.path.join(out_dir, fig_name)
+    md_dir = os.path.join(out_dir, SIDE)
+    fig_abs = os.path.join(md_dir, fig_name)
     os.makedirs(fig_abs, exist_ok=True)
-    mds = [os.path.join(out_dir, n[:-5] + ".md") for n in names]
+    mds = [os.path.join(md_dir, n[:-5] + ".md") for n in names]
     if only == "review":
         keep = _md_svg_refs(mds[0])
         drop = _md_svg_refs(mds[1]) - keep
@@ -657,7 +664,7 @@ def convert_pack(note_path, review_path, only=None):
         old_svg = os.path.join(fig_abs, entry)
         if os.path.isfile(old_svg) and not os.path.islink(old_svg):
             os.remove(old_svg)
-    link_map = [(n, n[:-5] + ".md") for n in names]  # fix_href가 NFC로 비교하므로 NFD 링크도 잡힌다
+    link_map = [(n, f"{SIDE}/{n[:-5]}.md") for n in names]  # fix_href가 NFC로 비교하므로 NFD 링크도 잡힌다
     intros = [
         [f"> `{names[0]}`를 마크다운으로 옮겼어요. 그림은 `{fig_name}/` 폴더의 SVG, "
          "위젯은 대표 설정의 정적 그림으로 바꿨어요. 수식은 `$…$` / `$$…$$`라서 GitHub, Obsidian, Typora에서 보여요."],
@@ -669,8 +676,13 @@ def convert_pack(note_path, review_path, only=None):
         jobs = jobs[1:]
     outs = []
     for src, out, intro, prefix in jobs:
-        ctx = Ctx(link_map, fig_abs, fig_name, prefix=prefix, registry=registry)
+        # 날짜 폴더 기준(.assets/…)으로 변환한 뒤, .assets/ 안의 MD 기준으로 한 번만 바꾼다
+        ctx = Ctx(link_map, fig_abs, f"{SIDE}/{fig_name}", prefix=prefix, registry=registry)
         convert(src, out, ctx, intro)
+        with open(out, encoding="utf-8") as f:
+            md = f.read()
+        with open(out, "w", encoding="utf-8") as f:
+            f.write(rebase_md(md))
         outs.append(out)
     return outs, len(registry)
 

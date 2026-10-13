@@ -10,6 +10,8 @@ from _util import MINI_RUN
 import assemble
 import html2md
 
+RANGE = "0101-0102"
+
 
 def page(body):
     return f'<html><body><main><div class="hero"><h1>t</h1></div>{body}</main></body></html>'
@@ -53,13 +55,13 @@ class TestHtml2Md(unittest.TestCase):
 
     def test_widget_static_becomes_figure_and_table(self):
         self.assertEqual(self.figs, 1)
-        self.assertTrue((self.tmp / "figures_0101-0102" / "widget-mean-static.svg").exists())
+        self.assertTrue((self.tmp / ".assets" / "figures_0101-0102" / "widget-mean-static.svg").exists())
         self.assertIn('<a id="widget-mean"></a>', self.md)
         self.assertIn("![평균 1.5 막대](figures_0101-0102/widget-mean-static.svg)", self.md)
         self.assertIn("| 1, 2 | $\\frac{3}{2}$ |", self.md)
 
     def test_reconversion_removes_orphan_svgs_only(self):
-        fig = self.tmp / "figures_0101-0102"
+        fig = self.tmp / ".assets" / "figures_0101-0102"
         (fig / "old-orphan.svg").write_text("<svg/>", encoding="utf-8")
         (fig / "keep.txt").write_text("x", encoding="utf-8")
         (self.tmp / "outside.svg").write_text("<svg/>", encoding="utf-8")
@@ -79,6 +81,33 @@ class TestHtml2Md(unittest.TestCase):
         b.feed(r"<table><tr><th>a</th></tr><tr><td>$\|x\|$ | $|y|$</td></tr></table>")
         table = next(b.root.find_all(lambda n: n.tag == "table"))
         self.assertEqual(html2md.render_table(table, ctx)[2], r"| $\Vert x\Vert $ \| $\vert y\vert $ |")
+
+    def test_convert_pack_writes_into_assets(self):
+        side = Path(self.note).parent / ".assets"
+        self.assertEqual(Path(self.note_md).parent, side)
+        self.assertEqual(Path(self.review_md).parent, side)
+        self.assertTrue((side / f"figures_{RANGE}").is_dir())
+        self.assertFalse((Path(self.note).parent / f"figures_{RANGE}").exists())
+        text = Path(self.note_md).read_text(encoding="utf-8")
+        self.assertNotIn("](.assets/", text)
+        self.assertIn(f"](figures_{RANGE}/", text)  # SVG 내보내기
+        self.assertIn("](복습문제_", text)  # 형제 MD 링크
+        self.assertEqual(html2md.check_md(self.note, self.note_md), [])
+
+    def test_convert_pack_rerun_stays_in_assets(self):
+        orphan = Path(self.note).parent / ".assets" / f"figures_{RANGE}" / "old.svg"
+        orphan.write_text("<svg/>")
+        html2md.convert_pack(self.note, self.review)
+        self.assertFalse(orphan.exists())
+        left = sorted(p.name for p in Path(self.note).parent.iterdir() if not p.name.endswith(".html"))
+        self.assertEqual(left, [".assets", ".pack"])  # 날짜 폴더에는 html 외에 이 둘만
+
+    def test_check_md_detects_unrewritten_link_to_parent_html(self):
+        md = self.md.replace("(복습문제_0101-0102_Mini_Test.md)", "(../복습문제_0101-0102_Mini_Test.html#q1)")
+        Path(self.note_md).write_text(md, encoding="utf-8")
+        problems = html2md.check_md(self.note, self.note_md)
+        self.assertEqual(len(problems), 1)
+        self.assertTrue(problems[0].startswith("링크 미변환(.html): ../복습문제"))
 
     def test_check_md_detects_missing_math(self):
         Path(self.note_md).write_text(self.md.replace(r"\bar{x} = ", ""), encoding="utf-8")
@@ -118,7 +147,7 @@ class TestHtml2Md(unittest.TestCase):
         note, review = small_pack(d, f'<section id="s"><h2>A</h2>{fig}{dup}</section>',
                                   f'<section id="q"><h2>Q</h2>{fig}{dup}</section>')
         (note_md, review_md), figs = html2md.convert_pack(note, review)
-        files = sorted(x.name for x in (d / "figures_0101").iterdir())
+        files = sorted(x.name for x in (d / ".assets" / "figures_0101").iterdir())
         self.assertEqual(figs, 4)
         self.assertEqual(files, ["note-fig-1.svg", "review-fig-1.svg", "same-2.svg", "same.svg"])
         self.assertEqual(html2md.check_md(note, note_md), [])
@@ -167,7 +196,7 @@ class TestHtml2Md(unittest.TestCase):
                                   '<section id="q"><h2>Q</h2><p>q</p></section>', nfd=True)
         (note_md, review_md), _ = html2md.convert_pack(note, review)
         self.assertEqual(Path(note_md).name, "정리노트_0101_X.md")
-        self.assertIn("(./복습문제_0101_X.md#q)", Path(note_md).read_text(encoding="utf-8"))
+        self.assertIn("(복습문제_0101_X.md#q)", Path(note_md).read_text(encoding="utf-8"))
         self.assertEqual(html2md.check_md(note, note_md), [])
 
 
@@ -176,9 +205,10 @@ class TestOnlyReview(unittest.TestCase):
         self.tmp = Path(tempfile.mkdtemp())
         self.note, self.review = assemble.assemble(MINI_RUN, self.tmp)
         html2md.convert_pack(self.note, self.review)
-        self.note_md = self.note.with_suffix(".md")
-        self.review_md = self.review.with_suffix(".md")
-        self.figs = self.tmp / "figures_0101-0102"
+        side = self.tmp / ".assets"
+        self.note_md = side / self.note.with_suffix(".md").name
+        self.review_md = side / self.review.with_suffix(".md").name
+        self.figs = side / "figures_0101-0102"
 
     def tearDown(self):
         shutil.rmtree(self.tmp)

@@ -45,7 +45,7 @@ EOF
 ```
 - 카드에는 `original.content`(문제), `original.options`(보기, id가 `A`~`E`), `analysis.answer_option_id`(분석 정답), `analysis.option_diagnostics`(보기별 설명)를 쓴다. `observations.official_answer`가 있고 분석 정답과 다르면 `key-check.md`에 적고 카드에 공개한다.
 - `observations.selected_option_id`는 응시 화면에서 고른 보기일 뿐 정답이 아니다. 정답이나 풀이 근거로 쓰지 않는다.
-- `RUN/figures/`에는 PNG만 둔다(기출 그림 자르기, `card-rules.md`). `html2md.py`가 변환할 때 `figures_<range>/`의 SVG 파일을 모두 지우고 다시 내보내므로, SVG 파일은 `RUN/figures/`에 복사하지 않는다.
+- `RUN/figures/`에는 PNG만 둔다(기출 그림 자르기, `card-rules.md`). `html2md.py`가 변환할 때 `.assets/figures_<range>/`의 SVG 파일을 모두 지우고 다시 내보내므로, SVG 파일은 `RUN/figures/`에 복사하지 않는다.
 - 웹과제 그림은 SVG다. 문항 `content`의 `{"type": "figure", "asset_id": "q09"}` 항목은 bank `assets`에서 같은 `id`를 찾는다. `exam.path` SVG(bank 폴더 기준 경로, 예: `image/q09.svg`) 원문을 카드 `div.problem` 안 `<figure class="figure">`에 인라인으로 넣고 루트 `<svg>`의 `aria-label`에 `exam.alt`를 쓴다.
 - `explained.path` SVG는 해설이 들어 있으므로 풀이(`details.solution`) 안에만 넣는다(`aria-label`은 `explained.alt`). 문제·힌트·원문 정보에는 넣지 않는다.
 - 인라인 SVG의 `id`가 페이지에서 겹치지 않게 모든 `id`에 `<pid>-` 접두어를 붙이고, 그 id를 가리키는 `aria-labelledby`, `url(#…)`, `href="#…"`도 같이 바꾼다. 루트 `<svg>`에는 `id="<pid>-exam"`(풀이용은 `id="<pid>-explained"`)을 준다. MD 변환 때 이 id가 그림 파일 이름이 된다.
