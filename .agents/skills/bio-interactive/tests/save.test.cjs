@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
+const nfc = (p) => p.normalize('NFC');
 const { save } = require('../scripts/save.cjs');
 
 const SKILL = path.join(__dirname, '..');
@@ -26,7 +27,7 @@ test('first save gets 01', () => {
   const r = save({ src, dest, name: 'Test_Topic' });
   assert.equal(r.nn, '01');
   assert.equal(r.html, path.join(dest, '인터렉티브_01_Test_Topic.html'));
-  assert.equal(r.dir, path.join(dest, '자료_인터렉티브_01_Test_Topic'));
+  assert.equal(r.dir, path.join(dest, '.assets', '자료_인터렉티브_01_Test_Topic'));
   assert.match(fs.readFileSync(r.html, 'utf8'), /<title>테스트 주제<\/title>/);
   for (const f of ['Main.dc.html', 'canvas.json']) assert.ok(fs.existsSync(path.join(r.dir, f)), f);
   assert.match(JSON.parse(fs.readFileSync(path.join(r.dir, 'canvas.json'), 'utf8')).title, /테스트 주제/);
@@ -42,7 +43,7 @@ test('existing html moves to the next number', () => {
 test('skips a number whose data folder exists', () => {
   const { src, dest } = setup();
   fs.writeFileSync(path.join(dest, '인터렉티브_01.html'), 'x');
-  fs.mkdirSync(path.join(dest, '자료_인터렉티브_02'));
+  fs.mkdirSync(path.join(dest, '.assets', '자료_인터렉티브_02'), { recursive: true });
   assert.equal(save({ src, dest, name: 'Test_Topic' }).nn, '03');
 });
 
@@ -96,7 +97,7 @@ test('cli rejects a folder as the source', () => {
 test('numbers count files that already have a name', () => {
   const { src, dest } = setup();
   fs.writeFileSync(path.join(dest, '인터렉티브_01_Lac_Operon.html'), 'x');
-  fs.mkdirSync(path.join(dest, '자료_인터렉티브_02_Translation'));
+  fs.mkdirSync(path.join(dest, '.assets', '자료_인터렉티브_02_Translation'), { recursive: true });
   const r = save({ src, dest, name: 'Test_Topic' });
   assert.equal(r.nn, '03');
   assert.equal(path.basename(r.html), '인터렉티브_03_Test_Topic.html');
@@ -120,4 +121,12 @@ test('a Korean name with English proper nouns is kept as written', () => {
   const { src, dest } = setup();
   const r = save({ src, dest, name: '전사와 RNA 가공' });
   assert.equal(path.basename(r.html), '인터렉티브_01_전사와_RNA_가공.html');
+});
+
+test('save puts the data folder under .assets', () => {
+  const { src, dest } = setup();
+  const r = save({ src, dest, name: '전사' });
+  assert.equal(nfc(path.relative(dest, r.dir)), '.assets/자료_인터렉티브_01_전사');
+  assert.match(fs.readFileSync(r.html, 'utf8'), /생성 파일: \.assets\/자료_인터렉티브_01_전사\/Main\.dc\.html/);
+  assert.deepEqual(fs.readdirSync(dest).map(nfc).sort(), ['.assets', '인터렉티브_01_전사.html']);
 });

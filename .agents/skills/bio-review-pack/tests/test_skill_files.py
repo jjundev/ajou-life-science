@@ -196,6 +196,33 @@ class TestBackupSnippet(unittest.TestCase):
         names = sorted(unicodedata.normalize("NFC", n) for n in os.listdir(d))
         self.assertEqual(names, ["figures_0922", "복습문제_0922_A.md", "장마감_0922_3장.md", "정리노트_0922_A.html"])
 
+    def test_backs_up_assets_folder_layout(self):
+        pack = self.notes / "0922"
+        side = pack / ".assets"
+        (side / "figures_0922").mkdir(parents=True)
+        (side / "figures_0922" / "p2.png").write_bytes(b"x")
+        (side / unicodedata.normalize("NFD", "정리노트_0922_A.md")).write_text("n", encoding="utf-8")
+        (side / "장마감_0922_3장.md").write_text("c", encoding="utf-8")
+        (side / "figures_문제설명_0922_A").mkdir()
+        (side / "figures_문제설명_0922_A" / "a.png").write_bytes(b"x")
+        (side / "자료_문제설명_0922_A").mkdir()
+        (side / "자료_문제설명_0922_A" / "manifest.json").write_text("{}", encoding="utf-8")
+        (side / "자료_인터렉티브_01_A").mkdir()
+        (side / "자료_인터렉티브_01_A" / "x.json").write_text("{}", encoding="utf-8")
+        (side / "풀이기록").mkdir()
+        (side / "풀이기록" / "y.json").write_text("{}", encoding="utf-8")
+        (pack / "정리노트_0922_A.html").write_text("n", encoding="utf-8")
+        (pack / ".pack").mkdir()
+        (pack / ".pack" / "manifest.json").write_text("{}", encoding="utf-8")
+        r = self.backup("0922")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn("백업 7항목(파일 7개)", r.stdout)
+        (d,) = self.backups()
+        names = sorted(unicodedata.normalize("NFC", n) for n in os.listdir(d))
+        self.assertEqual(names, [
+            ".pack", "figures_0922", "figures_문제설명_0922_A", "자료_문제설명_0922_A", "장마감_0922_3장.md",
+            "정리노트_0922_A.html", "정리노트_0922_A.md"])
+
     def test_backs_up_pack_records(self):
         pack = self.notes / "0922"
         (pack / ".pack").mkdir(parents=True)
@@ -240,7 +267,7 @@ class TestBlindCopySnippet(unittest.TestCase):
 <article class="card" id="p1" data-source="기출 3강 12">
   <h3>P1. 그림 문항</h3>
   <div class="problem"><p>그림에서 옳은 것은?</p>
-    <figure class="figure"><img src="figures_x/p1.png" alt="세포 그림"></figure>
+    <figure class="figure"><img src=".assets/figures_x/p1.png" alt="세포 그림"></figure>
     <ul class="choices"><li>(1) 가</li><li>(2) 나</li></ul></div>
   <details class="original"><summary>원문 정보 보기</summary>기출 3강 합본 12번</details>
   <details class="hint"><summary>힌트 보기</summary>HINT_ONE</details>
@@ -295,7 +322,7 @@ class TestBlindCopySnippet(unittest.TestCase):
         self.assertIn("## p1.", out)
         self.assertIn("## p2.", out)
         figs = re.findall(r"^\[그림: (.+)\]$", out, re.M)
-        self.assertTrue(any(f.endswith("figures_x/p1.png") for f in figs), figs)
+        self.assertTrue(any(f.endswith(".assets/figures_x/p1.png") for f in figs), figs)
         svgs = [Path(f) for f in figs if f.endswith(".svg")]
         self.assertEqual(len(svgs), 1, figs)
         self.assertEqual(svgs[0].parent.name, "blind-figs")

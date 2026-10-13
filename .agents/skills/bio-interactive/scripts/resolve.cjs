@@ -35,8 +35,10 @@ function dateFolders(notesDir) {
     .map((d) => ({ name: d.name, start: d.name.slice(0, 4), end: d.name.slice(-4), path: path.join(notesDir, d.name) }));
 }
 
+// 정리노트 .md lives in <folder>/.assets/.
 function notesIn(folder) {
-  return list(folder).filter((d) => d.isFile() && /^정리노트_.*\.md$/.test(nfc(d.name))).map((d) => path.join(folder, d.name));
+  const assets = path.join(folder, '.assets');
+  return list(assets).filter((d) => d.isFile() && /^정리노트_.*\.md$/.test(nfc(d.name))).map((d) => path.join(assets, d.name));
 }
 
 function existingIn(folder) {
@@ -46,9 +48,10 @@ function existingIn(folder) {
   });
 }
 
+// Highest NN over <folder>/인터렉티브_NN*.html, <folder>/.assets/자료_인터렉티브_NN* and (legacy) <folder>/자료_인터렉티브_NN*.
 function nextNumber(folder) {
   let max = 0;
-  for (const d of list(folder)) {
+  for (const d of [...list(folder), ...list(path.join(folder, '.assets'))]) {
     const m = nfc(d.name).match(/^(?:인터렉티브_(\d{2,})(?:_[^/]*)?\.html|자료_인터렉티브_(\d{2,})(?:_[^/]*)?)$/);
     if (m) max = Math.max(max, Number(m[1] || m[2]));
   }

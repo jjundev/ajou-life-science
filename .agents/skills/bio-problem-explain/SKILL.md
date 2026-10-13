@@ -85,7 +85,7 @@ forecast 자동 연결에서 검토가 실패하면 [예상 스킬의 수정·�
 
 ### 레이아웃만 바뀐 기존 발행분 재발행
 
-템플릿·레이아웃만 바뀌고 원 복습문제와 설명 조각이 그대로이면 조각을 다시 쓰지 않는다. 팩마다 새 RUN으로 `rerender`를 실행하면 발행 자료 폴더의 `fragments/`·`evidence/`를 복사해 build하고, 발행된 `validation.json`의 input_hash가 현재 입력과 같을 때 references·content·independent 검토를 이식한다. 이어서 `check` → source_visual·browser 실제 검토 → `publish` 순서로 진행한다. "입력 변경: 네 검토 모두 다시 필요"가 나오면 1~7단계 전체를 따른다. `all`이면 최신 → 0901 순으로 팩마다 반복하고 위 결과 표로 보고한다.
+템플릿·레이아웃만 바뀌고 원 복습문제와 설명 조각이 그대로이면 조각을 다시 쓰지 않는다. 팩마다 새 RUN으로 `rerender`를 실행하면 발행 자료 폴더의 `fragments/`·`evidence/`를 복사해 build하고, 발행된 `validation.json`의 input_hash가 현재 입력과 같을 때 references·content·independent 검토를 이식한다. 원 복습문제나 참조 자료가 `<style>`·실행 `<script>`(답 모델 같은 JSON 데이터 스크립트는 제외)나 상대 src/href 앞의 `.assets/`만 다르거나, 날짜 폴더 루트의 참조 파일이 `.assets/`로 옮겨지기만 했으면(MD는 이전 때 고친 링크 포함) 같은 입력으로 보고 참조 경로·hash를 새로 적는다. 그 밖의 변경·누락은 "참조 자료 변경"·"참조 자료 없음"으로 알리며, 그 참조로 한 검토를 다시 한다. 이어서 `check` → source_visual·browser 실제 검토 → `publish` 순서로 진행한다. "입력 변경: 네 검토 모두 다시 필요"가 나오면 1~7단계 전체를 따른다. `all`이면 최신 → 0901 순으로 팩마다 반복하고 위 결과 표로 보고한다.
 
    ```sh
    SKILL=…; RUN=…; python3 "$SKILL/scripts/mpe_cli.py" rerender --repo "$PWD" --target "$PWD/복습노트/1013/복습문제_1013_….html" --run "$RUN"
@@ -93,7 +93,7 @@ forecast 자동 연결에서 검토가 실패하면 [예상 스킬의 수정·�
 
 ## 산출 위치
 
-입력과 같은 날짜 폴더 `복습노트/<range>/`에 `문제설명_<range>_<slug>.html/.md`, `figures_문제설명_<range>_<slug>/`, `자료_문제설명_<range>_<slug>/`를 저장한다. 자료 폴더에는 생성 기록·검토·설명 조각·검산·로컬 자원이 들어간다. 정리노트·복습문제에 링크를 자동 삽입하지 않는다. 읽음 상태 키는 `bio-problem-explain-review-<range>-<slug>`다.
+입력과 같은 날짜 폴더 `복습노트/<range>/`에는 `문제설명_<range>_<slug>.html`만 두고, 나머지는 숨김 폴더 `복습노트/<range>/.assets/` 안에 `.assets/문제설명_<range>_<slug>.md`, `.assets/figures_문제설명_<range>_<slug>/`, `.assets/자료_문제설명_<range>_<slug>/`로 저장한다. MD 안의 링크는 `.assets/` 기준이라 원 문제 보기는 `../복습문제_….html`이다. 자료 폴더에는 생성 기록·검토·설명 조각·검산·로컬 자원이 들어간다. 정리노트·복습문제에 링크를 자동 삽입하지 않는다. 읽음 상태 키는 `bio-problem-explain-review-<range>-<slug>`다.
 
 forecast 출력은 같은 `웹과제예상/<N>장/` 폴더의 `문제해설_<N>장_웹과제예상_v<K>.html/.md`, `figures_문제해설_<N>장_웹과제예상_v<K>/`, `자료_문제해설_<N>장_웹과제예상_v<K>/`다. 제목은 `생명과학 <N>장 웹과제 예상 v<K> 문제해설`, 읽음 상태 키는 `bio-problem-explain-forecast-<N>장-웹과제예상_v<K>`다. 기존 예상문제에 링크를 자동 삽입하지 않는다.
 

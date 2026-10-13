@@ -12,7 +12,7 @@
 - 출력: `<RUN>/cards/<pid>.html` 문제마다 한 파일, 기출 그림은 `<RUN>/figures/<pid>.png`(웹과제 SVG 그림은 파일로 만들지 않고 카드에 인라인). 다른 곳에 쓰지 않는다.
 - 임시·보조 파일은 `<RUN>/work/` 아래에만 둔다. 저장소와 `<RUN>` 밖(scratchpad 루트, `/tmp` 등)에는 아무것도 쓰지 않는다. 한글(NFD) 파일명은 Python `os.listdir` + `unicodedata.normalize('NFC', …)`로 찾아 연다.
 - 확인용으로 브라우저 탭을 열었으면 보고 전에 모두 닫는다(메인 에이전트의 브라우저 검사가 탭 수 제한에 걸린다).
-- 자기 검사: 카드별 `terms`가 글자 그대로 있는지, `정답:` 줄이 `answer`와 같은지, 모든 보기에 진단이 있는지, 원문 문항이면 문제와 보기가 원문과 글자까지 같은지(줄바꿈 흔적만 고친다), 변형이면 `RUN/variants.md`의 혼동 묶음을 겨냥하는지, 원문자(①~⑳)와 금지어와 STT 녹음 시각이 하나도 없는지, 기출 그림이면 `<img src>`가 `figures_<range>/<pid>.png`이고 그 파일을 `<RUN>/figures/`에 만들었는지, 웹과제 그림이면 SVG가 인라인이고 모든 `id`에 `<pid>-` 접두어가 붙었으며 `explained` SVG가 풀이 밖에 없는지, 변형 연습 그림(인라인 SVG)도 모든 `id`와 그 id를 가리키는 `aria-labelledby`·`url(#…)`에 `<pid>-` 접두어가 붙었는지. 어긋나면 고치지 말고 보고에 적는다.
+- 자기 검사: 카드별 `terms`가 글자 그대로 있는지, `정답:` 줄이 `answer`와 같은지, 모든 보기에 진단이 있는지, 원문 문항이면 문제와 보기가 원문과 글자까지 같은지(줄바꿈 흔적만 고친다), 변형이면 `RUN/variants.md`의 혼동 묶음을 겨냥하는지, 원문자(①~⑳)와 금지어와 STT 녹음 시각이 하나도 없는지, 기출 그림이면 `<img src>`가 `.assets/figures_<range>/<pid>.png`이고 그 파일을 `<RUN>/figures/`에 만들었는지, 웹과제 그림이면 SVG가 인라인이고 모든 `id`에 `<pid>-` 접두어가 붙었으며 `explained` SVG가 풀이 밖에 없는지, 변형 연습 그림(인라인 SVG)도 모든 `id`와 그 id를 가리키는 `aria-labelledby`·`url(#…)`에 `<pid>-` 접두어가 붙었는지. 어긋나면 고치지 말고 보고에 적는다.
 - 보고: 카드별 한 줄(출처, 정답, 답안지 오류 여부), 풀이에 정리노트에 없는 사실이 필요했던 곳.
 ---
 
@@ -21,7 +21,7 @@
 <article class="card" id="pN" data-source="기출 3강 12">
   <h3>PN. 한 줄 제목</h3>
   <div class="problem"><p>…문제 원문…</p>
-    <figure class="figure"><img src="figures_<range>/pN.png" alt="한국어 그림 설명"></figure>   ← 기출 그림 문항만
+    <figure class="figure"><img src=".assets/figures_<range>/pN.png" alt="한국어 그림 설명"></figure>   ← 기출 그림 문항만
     <ul class="choices"><li>(1) …</li><li>(2) …</li></ul></div>
   <details class="original"><summary>원문 정보 보기</summary>기출 3강 합본 12번 (PDF 3쪽)</details>
   <details class="hint"><summary>힌트 보기</summary>…한두 문장…</details>
@@ -35,7 +35,7 @@
 - 구조와 순서는 위와 같다: `<h3>` → `div.problem` → `details.original` → `details.hint` → `details.solution`. 블라인드 사본 스크립트가 이 순서에 기댄다.
 - `data-source`는 manifest `source`와 글자까지 같다.
 - 보기 번호: 기출은 `(1)`~`(5)`(원문 ①~⑤을 옮긴 것), 웹과제는 bank 보기 id 그대로 `A.`~`E.`, 변형 연습은 `(1)`~`(n)`. 원문 순서를 바꾸지 않는다.
-- 웹과제 그림(SVG)은 `RUN/figures/`에 복사하지 않는다(`RUN/figures/`에는 기출 PNG만 둔다. `html2md.py`가 `figures_<range>/`의 SVG 파일을 지운다). bank `assets`의 `exam.path` SVG 원문을 `div.problem` 안 `<figure class="figure">`에 인라인으로 넣고 `aria-label`에 `exam.alt`를 쓴다. `explained.path` SVG는 해설이 들어 있으므로 `details.solution` 안에만 넣는다. 모든 `id`(와 그 id를 가리키는 `aria-labelledby`, `url(#…)`)에 `<pid>-` 접두어를 붙인다. 자세한 것은 `problem-selection.md` 2절.
+- 웹과제 그림(SVG)은 `RUN/figures/`에 복사하지 않는다(`RUN/figures/`에는 기출 PNG만 둔다. `html2md.py`가 `.assets/figures_<range>/`의 SVG 파일을 지운다). bank `assets`의 `exam.path` SVG 원문을 `div.problem` 안 `<figure class="figure">`에 인라인으로 넣고 `aria-label`에 `exam.alt`를 쓴다. `explained.path` SVG는 해설이 들어 있으므로 `details.solution` 안에만 넣는다. 모든 `id`(와 그 id를 가리키는 `aria-labelledby`, `url(#…)`)에 `<pid>-` 접두어를 붙인다. 자세한 것은 `problem-selection.md` 2절.
 - 웹과제 `statements` 항목(`{"type": "statements", "items": [{"id": "a", "text": "…"}, …]}`)은 문제 문단 다음에 `<ul>`로 싣고, 항목마다 bank id 그대로 `a.`~`d.` 라벨을 붙인다(`<li>a. …</li>`). 순서와 글자를 바꾸지 않는다.
 - 원문 정보 보기: 출처, 문항 번호, PDF 쪽만 쓴다(웹과제는 `웹과제 1장 q01 (스크린샷 s01)`). 인쇄된 답은 여기에 쓰지 않는다.
 - 변형 작성자는 `variants.md`의 수준과 최소 풀이 단계에 맞춘다. 인접 개념의 한 부분을 바꾼 오답을 우선하고, 숫자·생물·그림·발문 방향을 바꿔도 불필요한 추론 단계를 추가하지 않는다. 실제 필요한 단계가 설계와 다르면 메인에게 보고한다. 난이도 배지는 추가하지 않는다.

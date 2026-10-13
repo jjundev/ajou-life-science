@@ -13,6 +13,8 @@ from pathlib import Path
 import re
 import sys
 
+from assets_path import SIDE
+
 LAYER_NAMES = {"eli5", "formal", "prof", "warn"}
 TOP_LEVEL_TYPES = {
     "course": str, "range": str, "slug": str,
@@ -166,6 +168,11 @@ def review_name(m: dict) -> str:
 
 def fig_dir_name(range_: str) -> str:
     return f"figures_{range_}"
+
+
+def fig_href(range_: str) -> str:
+    """날짜 폴더 HTML에서 본 그림 폴더 URL(카드 <img src>의 접두)."""
+    return f"{SIDE}/{fig_dir_name(range_)}"
 
 
 def main(argv: list[str] | None = None) -> int:

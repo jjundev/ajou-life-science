@@ -1,4 +1,4 @@
-"""다운로드 폴더의 풀이기록 JSON을 복습노트/<날짜>/풀이기록/ 으로 옮긴다."""
+"""다운로드 폴더의 풀이기록 JSON을 복습노트/<날짜>/.assets/풀이기록/ 으로 옮긴다."""
 from __future__ import annotations
 import argparse
 import json
@@ -33,12 +33,12 @@ def collect(downloads: Path, root: Path, dry_run: bool = False) -> list[tuple[Pa
         if folder is None:
             results.append((src, None, 'skipped', '해당 복습문제 폴더를 하나로 정할 수 없음'))
             continue
-        dst = folder / '풀이기록' / src.name
+        dst = folder / '.assets' / '풀이기록' / src.name
         if dst.exists():
             results.append((src, dst, 'skipped', '같은 이름 파일이 이미 있음'))
             continue
         if not dry_run:
-            dst.parent.mkdir(exist_ok=True)
+            dst.parent.mkdir(parents=True, exist_ok=True)
             shutil.move(str(src), str(dst))
         results.append((src, dst, 'would-move' if dry_run else 'moved', ''))
     return results

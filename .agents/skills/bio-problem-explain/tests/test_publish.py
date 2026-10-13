@@ -75,10 +75,23 @@ def test_success_preserves_original_and_saves_review(tmp_path):
     report = next(p for p in published if p.name == 'validation.json')
     assert json.loads(report.read_text(encoding='utf-8'))['browser']['status'] == 'pass'
 
+def test_review_publish_lands_side_files_under_assets(tmp_path):
+    pack, fragments, artifacts = setup(tmp_path)
+    folder = pack.path.parent
+    publish_explanation(pack, artifacts, fragments, approved(pack, fragments, artifacts), folder, tmp_path / 'backup')
+    stem = artifacts.html.stem
+    side = folder / '.assets'
+    assert (side / f'{stem}.md').read_bytes() == artifacts.md.read_bytes()
+    assert (side / f'자료_문제설명_{pack.range}_{pack.slug}' / 'validation.json').is_file()
+    assert not (folder / f'{stem}.md').exists()
+    assert sorted(p.name for p in folder.iterdir() if p.name != pack.path.name) == ['.assets', f'{stem}.html']
+
 def test_replace_failure_rolls_back_pair(tmp_path, monkeypatch):
     pack, fragments, artifacts = setup(tmp_path)
     for file in (artifacts.html, artifacts.md):
-        (pack.path.parent / file.name).write_bytes(b'old-' + file.suffix.encode())
+        old = pack.path.parent / file.relative_to(artifacts.html.parent)
+        old.parent.mkdir(exist_ok=True)
+        old.write_bytes(b'old-' + file.suffix.encode())
     replace_copy = review_pdf_publish._replace_copy
     calls = 0
     def fail_once(source, destination):
@@ -91,7 +104,7 @@ def test_replace_failure_rolls_back_pair(tmp_path, monkeypatch):
     with pytest.raises(ExplainError, match='injected'):
         publish_explanation(pack, artifacts, fragments, approved(pack, fragments, artifacts), pack.path.parent, tmp_path / 'backup')
     for file in (artifacts.html, artifacts.md):
-        assert (pack.path.parent / file.name).read_bytes() == b'old-' + file.suffix.encode()
+        assert (pack.path.parent / file.relative_to(artifacts.html.parent)).read_bytes() == b'old-' + file.suffix.encode()
     assert not list(pack.path.parent.rglob('validation.json'))
 
 def test_overlapping_publication_lock_is_refused(tmp_path):

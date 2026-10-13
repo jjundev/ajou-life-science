@@ -1,4 +1,5 @@
 import os
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -52,6 +53,28 @@ class BioSttTests(unittest.TestCase):
         # 1001 has 복습노트/1001 ending 4장 and starting 5장
         ch_1001 = infer_chapter(ROOT, "1001")
         self.assertIn(ch_1001, [4, 5])
+
+    def test_03b_infer_chapter_reads_chapter_close_from_assets(self):
+        from infer_context import infer_chapter
+
+        # 3장 마감을 쓰는 이유: 기본 fallback(5장)과 구분되도록 (3 + 1 = 4)
+        with tempfile.TemporaryDirectory() as d:
+            repo = Path(d)
+            assets = repo / "복습노트/1001/.assets"
+            assets.mkdir(parents=True)
+            (assets / "장마감_1001_3장.md").write_text("x", encoding="utf-8")
+            self.assertEqual(infer_chapter(repo, "1006"), 4)
+            self.assertEqual(infer_chapter(repo, "1001"), 3)
+
+    def test_03c_infer_chapter_ignores_chapter_close_at_date_root(self):
+        from infer_context import infer_chapter
+
+        # 장마감은 .assets 안에서만 찾는다(옛 루트 위치 호환 없음)
+        with tempfile.TemporaryDirectory() as d:
+            repo = Path(d)
+            (repo / "복습노트/1001").mkdir(parents=True)
+            (repo / "복습노트/1001/장마감_1001_3장.md").write_text("x", encoding="utf-8")
+            self.assertEqual(infer_chapter(repo, "1006"), 5)
 
     def test_04_extract_terms(self):
         from infer_context import extract_chapter_terms

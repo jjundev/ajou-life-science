@@ -174,3 +174,10 @@ def test_forecast_source_info_is_not_labelled_past_exam_original(tmp_path):
     text = artifacts.html.read_text()
     assert '<summary>원문·출처 정보 보기</summary>' in text
     assert '기출 원문 보기' not in text
+
+
+def test_forecast_outputs_stay_beside_html(tmp_path):
+    source, run, item = build_run(tmp_path)
+    artifacts = load_artifacts(item)
+    assert artifacts.md.parent == artifacts.html.parent
+    assert not (artifacts.html.parent / '.assets').exists()

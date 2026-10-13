@@ -49,9 +49,10 @@ class TestAssemble(unittest.TestCase):
         self.assertIn('<section id="partB"><h2>B. 기출</h2>', self.review_html)
 
     def test_card_figures_copied(self):
-        # 카드 원문 그림(RUN/figures/)은 산출물 figures_<range>/ 로 복사된다.
-        self.assertEqual((self.tmp / "figures_0101-0102" / "p2.png").read_bytes(),
+        # 카드 원문 그림(RUN/figures/)은 산출물 .assets/figures_<range>/ 로 복사된다.
+        self.assertEqual((self.tmp / ".assets" / "figures_0101-0102" / "p2.png").read_bytes(),
                          (MINI_RUN / "figures" / "p2.png").read_bytes())
+        self.assertFalse((self.tmp / "figures_0101-0102").exists())
 
     def test_progress_keys_are_scoped_by_range(self):
         # 팩마다 p1, s1-… id가 겹치므로 진행 기록 키에 기간이 들어가야 한다.

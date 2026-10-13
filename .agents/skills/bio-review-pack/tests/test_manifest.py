@@ -140,6 +140,7 @@ class TestManifest(unittest.TestCase):
         self.assertEqual(manifest.note_name(m), "정리노트_0101-0102_Mini_Test.html")
         self.assertEqual(manifest.review_name(m), "복습문제_0101-0102_Mini_Test.html")
         self.assertEqual(manifest.fig_dir_name("0101-0102"), "figures_0101-0102")
+        self.assertEqual(manifest.fig_href("0922"), ".assets/figures_0922")
 
 
 if __name__ == "__main__":

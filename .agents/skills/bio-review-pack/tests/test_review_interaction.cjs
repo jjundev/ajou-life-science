@@ -213,7 +213,7 @@ function fakeStore(initial) {
 }
 const META = {documentId:'d.html', range:'0929'};
 
-test('날짜 폴더를 고르면 풀이기록 안에 저장하고 핸들을 기억', async () => {
+test('날짜 폴더를 고르면 .assets/풀이기록 안에 저장하고 핸들을 기억', async () => {
   const written = {};
   const root = fakeDir('0929', {files:['d.html']}, written);
   const store = fakeStore();
@@ -227,19 +227,40 @@ test('날짜 폴더를 고르면 풀이기록 안에 저장하고 핸들을 기�
   assert.equal(written.closed, true);
   assert.equal(store.value, root);
   assert.equal(log.clicks, 0);
+  assert.ok(root.dirs['.assets'] && root.dirs['.assets'].dirs['풀이기록']);
+  assert.equal(root.dirs['풀이기록'], undefined);
 });
 
-test('풀이기록·복습노트 폴더를 골라도 같은 위치에 저장', async () => {
+test('풀이기록 폴더를 골라도 그 폴더에 저장', async () => {
   const w1 = {};
   const out = fakeDir('풀이기록', {}, w1);
   assert.equal(await api.saveExport(fakeWin(async () => out).win, '{}', 'f.json', {...META, store:fakeStore()}), 'saved');
   assert.equal(w1.dir, '풀이기록');
+  assert.deepEqual(out.dirs, {});
+});
+
+test('.assets·복습노트 폴더를 골라도 .assets/풀이기록', async () => {
+  const w1 = {};
+  const side = fakeDir('.assets', {}, w1);
+  assert.equal(await api.saveExport(fakeWin(async () => side).win, '{}', 'f.json', {...META, store:fakeStore()}), 'saved');
+  assert.equal(w1.dir, '풀이기록');
+  assert.ok(side.dirs['풀이기록']);
+  assert.equal(side.dirs['.assets'], undefined);
   const w2 = {};
   const notes = fakeDir('복습노트', {}, w2);
   notes.dirs['0929'] = fakeDir('0929', {}, w2);
   assert.equal(await api.saveExport(fakeWin(async () => notes).win, '{}', 'f.json', {...META, store:fakeStore()}), 'saved');
   assert.equal(w2.dir, '풀이기록');
-  assert.ok(notes.dirs['0929'].dirs['풀이기록']);
+  assert.ok(notes.dirs['0929'].dirs['.assets'].dirs['풀이기록']);
+  assert.equal(notes.dirs['0929'].dirs['풀이기록'], undefined);
+});
+
+test('복습노트를 골랐는데 범위 폴더가 없으면 wrong-folder', async () => {
+  const written = {};
+  const notes = fakeDir('복습노트', {}, written);
+  assert.equal(await api.saveExport(fakeWin(async () => notes).win, '{}', 'f.json', {...META, store:fakeStore()}), 'wrong-folder');
+  assert.deepEqual(written, {});
+  assert.deepEqual(notes.dirs, {});
 });
 
 test('관계없는 폴더는 저장하지 않고 wrong-folder', async () => {
