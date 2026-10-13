@@ -38,9 +38,10 @@ description: '생명과학 복습노트 날짜(MMDD)나 주제로 DNA 3D 모형�
 ```bash
 SKILL=…; REPO=…; RUN=…; mkdir -p "$RUN" && node "$SKILL/scripts/resolve.cjs" "$REPO" "<인자>" | tee "$RUN/target.json"
 ```
+- 인자 `MMDD-MMDD`는 그 이름의 범위 폴더가 있을 때만 날짜로 쓴다(없으면 `NO_TARGET`).
 - 출력: `kind`(date|topic), `folder`(= `DEST`), `exists`, `date`, `notes`(정리노트 `.md`), `stt`, `existing`(같은 폴더 `인터렉티브_*`·`3D모형_*`와 `<title>`), `next`(다음 번호).
 - 날짜가 `0922-0924` 같은 범위 폴더 안이면 그 폴더가 나온다. 폴더는 없고 STT만 있으면 `exists: false`로 새 폴더 자리가 나온다.
-- 주제가 어느 정리노트에도 없으면 `복습노트/주제별/`이 나온다(교과서·강의노트로 만든다).
+- 주제는 정리노트 본문(링크 글자 제외)에서 찾고, H2·H3 제목에 나온 폴더를 먼저, 그다음 가장 최근 폴더를 고른다. 어느 정리노트에도 없으면 `복습노트/주제별/`이 나온다(교과서·강의노트로 만든다).
 - `{"error":"NO_TARGET"}` → 「대상 없음: <인자>의 복습노트 폴더와 STT가 없어요」라고 보고하고 멈춘다. `NO_ARG` → 사용법을 보여 주고 멈춘다.
 
 ### 2. 주제 고르기
@@ -67,7 +68,7 @@ SKILL=…; RUN=…; for n in 1 2; do mkdir -p "$RUN/$n" && cp "$SKILL/assets/tem
 ```bash
 SKILL=…; RUN=…; for n in 1 2; do echo "== $n"; node "$SKILL/scripts/check.cjs" "$RUN/$n/Main.dc.html"; done
 ```
-모두 `ok`여야 한다. 오류(`SHELL_MISSING`, `HOLE_UNKNOWN`, `EVENT_UNSUPPORTED`, `HEX_IN_MARKUP`, `RENDER_THROWS`, `DRAW_THROWS`, `SCENE_EMPTY`, `TEMPLATE_LEFT`)는 그 작성자에게 한 번 돌려보내 고친다. 그래도 남으면 그 주제는 「보류」.
+모두 `ok`여야 한다. 오류(`SHELL_MISSING`, `HOLE_UNKNOWN`, `HOLE_SYNTAX`, `EVENT_UNSUPPORTED`, `HEX_IN_MARKUP`, `RENDER_THROWS`, `DRAW_THROWS`, `SCENE_EMPTY`, `TEMPLATE_LEFT`)는 그 작성자에게 한 번 돌려보내 고친다. 그래도 남으면 그 주제는 「보류」.
 
 ### 5. 내용 검토 (별도 opus 에이전트, 주제마다 1명, 병렬)
 작성자가 아닌 새 에이전트에게 `Main.dc.html`, 브리프, 근거 자료를 주고 다음을 대조하게 한다.

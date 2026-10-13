@@ -13,6 +13,18 @@ function bodyMarkup(src) {
   return src.slice(src.indexOf('</helmet>') + '</helmet>'.length, src.indexOf('</x-dc>'));
 }
 
+// The runtime only parses {{dotted.path}}; sc-if value, sc-for list, ref and on* must be exactly one hole.
+function holeSyntax(markup) {
+  const bad = new Set();
+  const plain = markup.replace(/\shint-[\w-]+="[^"]*"/g, '');
+  for (const m of plain.matchAll(/\{\{([\s\S]*?)\}\}/g)) if (!/^\s*[\w.$]+\s*$/.test(m[1])) bad.add(m[1].trim());
+  for (const m of plain.matchAll(/<(sc-if|sc-for)\b[^>]*>|\s(ref|on[A-Za-z]+)="([^"]*)"/g)) {
+    const attrs = m[1] ? [...m[0].matchAll(/\s(value|list)="([^"]*)"/g)].map((x) => [x[1], x[2]]) : [[m[2], m[3]]];
+    for (const [name, val] of attrs) if (val.includes('{{') && !/^\s*\{\{\s*[\w.$]+\s*\}\}\s*$/.test(val)) bad.add(name);
+  }
+  return [...bad];
+}
+
 // Every {{hole}} must name a renderVals key or an enclosing <sc-for as> name.
 function unknownHoles(markup, keys) {
   const bad = new Set(), scope = [];
@@ -96,6 +108,7 @@ function check(file, opts = {}) {
 
   for (const s of SHELL) if (!head.includes(s)) errors.push('SHELL_MISSING:' + s);
   for (const m of markup.matchAll(/\s(on[A-Z]\w*)=/g)) if (!EVENTS.includes(m[1])) errors.push('EVENT_UNSUPPORTED:' + m[1]);
+  for (const h of holeSyntax(markup)) errors.push('HOLE_SYNTAX:' + h);
   for (const m of markup.matchAll(/(?<!&)#[0-9a-fA-F]{6}(?![0-9a-fA-F])/g)) errors.push('HEX_IN_MARKUP:' + m[0]);
 
   let topic;

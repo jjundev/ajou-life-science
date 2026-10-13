@@ -130,3 +130,27 @@ test('cli prints json, or an error code with exit 1', () => {
   assert.equal(bad.status, 1);
   assert.deepEqual(JSON.parse(bad.stdout), { error: 'NO_TARGET' });
 });
+
+test('topic prefers the note that teaches it over a later back-link', () => {
+  const repo = fixture({
+    '복습노트/1006/정리노트_1006_B.md': '## 전사\n### lac 오페론의 억제자 스위치\n오페론은 ...',
+    '복습노트/1008/정리노트_1008_C.md': '# 세포 호흡\n[지난 1006 수업: 전사·번역과 오페론](../1006/x.html)\n',
+  });
+  assert.ok(nfc(resolve({ repo, arg: '오페론' }).folder).endsWith('복습노트/1006'));
+});
+
+test('range argument resolves to that range folder', () => {
+  const repo = fixture({ '복습노트/0922-0924/정리노트_0922-0924_X.md': '' });
+  const r = resolve({ repo, arg: '0922-0924' });
+  assert.equal(r.kind, 'date');
+  assert.ok(nfc(r.folder).endsWith('복습노트/0922-0924'));
+  assert.throws(() => resolve({ repo, arg: '0101-0102' }), { code: 'NO_TARGET' });
+});
+
+test('a heading with every word of a multi-word topic counts as a heading match', () => {
+  const repo = fixture({
+    '복습노트/1001/정리노트_1001_A.md': '## 3. DNA 구조가 복제를 예고한다\n본문',
+    '복습노트/1008/정리노트_1008_C.md': '# 번역\n지난 시간 DNA 복제에 이어서',
+  });
+  assert.ok(nfc(resolve({ repo, arg: 'DNA 복제' }).folder).endsWith('복습노트/1001'));
+});

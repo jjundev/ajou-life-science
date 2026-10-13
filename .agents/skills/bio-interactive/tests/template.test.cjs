@@ -135,3 +135,16 @@ test('flat scene is not fogged', () => {
   const arcs = calls.filter((x) => x.op === 'arc');
   assert.ok(Math.max(...arcs.map((x) => x.alpha)) > 0.99);
 });
+
+test('a scene error is logged once, not swallowed', (t) => {
+  const fs = require('node:fs'), os = require('node:os');
+  const src = fs.readFileSync(T, 'utf8').replace(/buildScene\(mode, I, O\) \{/, '$& throw new Error("boom");');
+  const f = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'bi-tpl-')), 'x.dc.html');
+  fs.writeFileSync(f, src);
+  const { c } = loadComponent(f);
+  const { ctx } = makeCtx();
+  c.attachCanvas(makeCanvas(ctx));
+  const err = t.mock.method(console, 'error', () => {});
+  for (let k = 1; k <= 3; k++) c.tick(16 * k);
+  assert.equal(err.mock.callCount(), 1);
+});

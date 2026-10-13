@@ -560,7 +560,8 @@ class Component extends DCLogic {
       if (this.sim.f >= pb.fmax) this.setState({ playing: false, f: this.sim.f });
       else if (t - (this.lastPush || 0) > 120) { this.lastPush = t; this.setState({ f: this.sim.f }); }
     }
-    try { this.draw(dt, t); } catch (err) {}
+    // a broken scene keeps the page alive but is reported once for the browser check
+    try { this.draw(dt, t); } catch (err) { if (!this.drawErr) { this.drawErr = true; console.error(err); } }
     this.raf = requestAnimationFrame(this._tick);
   }
 

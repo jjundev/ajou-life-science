@@ -68,3 +68,12 @@ test('cli exit codes', () => {
   assert.equal(bad.status, 1);
   assert.match(bad.stdout, /TEMPLATE_LEFT:DEMO/);
 });
+
+test('hole syntax the runtime cannot parse', () => {
+  const r1 = check(mutate((s) => s.replace('<sc-if value="{{hasSteps}}"', '<sc-if value="{{!hasSteps}}"')), A);
+  assert.ok(r1.errors.includes('HOLE_SYNTAX:!hasSteps'), r1.errors.join());
+  const r2 = check(mutate((s) => s.replace('<p class="source">', '<p class="source">{{isPlaying ? 1 : 2}}')), A);
+  assert.ok(r2.errors.includes('HOLE_SYNTAX:isPlaying ? 1 : 2'), r2.errors.join());
+  const r3 = check(mutate((s) => s.replace('onClick="{{zoomIn}}"', 'onClick="x{{zoomIn}}"')), A);
+  assert.ok(r3.errors.includes('HOLE_SYNTAX:onClick'), r3.errors.join());
+});

@@ -62,7 +62,13 @@ function resolve({ repo, arg }) {
   const folders = dateFolders(notesDir);
   let kind, folder, date;
 
-  if (/^\d{4}$/.test(a)) {
+  if (/^\d{4}-\d{4}$/.test(a)) {
+    kind = 'date';
+    date = a.slice(0, 4);
+    const hit = folders.find((f) => f.name === a);
+    if (!hit) throw fail('NO_TARGET');
+    folder = hit.path;
+  } else if (/^\d{4}$/.test(a)) {
     kind = 'date';
     date = a;
     const hit = folders.find((f) => f.name === a) || folders.find((f) => f.start <= a && a <= f.end);
@@ -71,9 +77,18 @@ function resolve({ repo, arg }) {
     else throw fail('NO_TARGET');
   } else {
     kind = 'topic';
-    const needle = squash(a);
-    const hits = folders.filter((f) => notesIn(f.path).some((n) => squash(fs.readFileSync(n, 'utf8')).includes(needle)));
-    hits.sort((x, y) => (x.end < y.end ? 1 : x.end > y.end ? -1 : 0));
+    // Link text is dropped so a later note's back-link ("지난 1006 수업: …오페론") does not count;
+    // notes with every word of the topic in one H2/H3 heading win, then the latest end date.
+    const needle = squash(a), words = a.split(/\s+/).map(squash);
+    const inHeading = (l) => /^#{2,3}\s/.test(l) && words.every((w) => squash(l).includes(w));
+    const hits = [];
+    for (const f of folders) {
+      const texts = notesIn(f.path).map((n) => fs.readFileSync(n, 'utf8').replace(/\[[^\]]*\]\([^)]*\)/g, ''));
+      const heading = texts.some((t) => t.split('\n').some(inHeading));
+      if (!heading && !texts.some((t) => squash(t).includes(needle))) continue;
+      hits.push(Object.assign({ heading }, f));
+    }
+    hits.sort((x, y) => (y.heading - x.heading) || (x.end < y.end ? 1 : x.end > y.end ? -1 : 0));
     if (hits.length) { folder = hits[0].path; date = hits[0].end; }
     else { folder = child(notesDir, '주제별') || path.join(notesDir, '주제별'); date = null; }
   }
