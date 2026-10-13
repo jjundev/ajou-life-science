@@ -27,6 +27,7 @@ class SourcePack:
     path: Path
     sha256: str
     problems: tuple[Problem, ...]
+    context_hashes: tuple[tuple[str, str], ...] = ()
 
 @dataclass(frozen=True)
 class Artifacts:

@@ -170,6 +170,9 @@ def subparts(ask: str, original: str) -> tuple[str, ...]:
 
 def load_source(path: Path, repo: Path) -> SourcePack:
     path = inside(existing_path(Path(path)), Path(repo))
+    from mpe_forecast import FILENAME_RE, load_forecast_source
+    if re.fullmatch(FILENAME_RE, nfc(path.name)):
+        return load_forecast_source(path, repo)
     if not re.fullmatch(REVIEW.filename_re,nfc(path.name)):
         raise ExplainError('복습문제 HTML만 지원해요: '+str(path))
     try:

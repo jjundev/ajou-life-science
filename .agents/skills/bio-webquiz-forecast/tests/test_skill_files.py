@@ -53,3 +53,20 @@ class TestSkillFiles(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def test_explanation_handoff_is_required_before_report():
+    text = (SKILL/'SKILL.md').read_text()
+    assert '### 9. 예상문제해설 생성' in text
+    step = text.split('### 9.')[1].split('### 10.')[0]
+    assert 'bio-problem-explain' in step and '명시' in step and 'lite' in step
+    assert (SKILL/'references/explanation-handoff.md').is_file()
+    assert '문제해설_' in text.split('### 10.')[1]
+
+
+def test_explanation_retry_contract():
+    path = SKILL/'references/explanation-handoff.md'
+    assert path.is_file()
+    text = path.read_text()
+    for phrase in ('최대 2회', '6–8단계', '새 RUN', '초기화하지', '부분 완료', 'attempt=0', 'source_visual', 'independent', 'references', 'lite'):
+        assert phrase in text, phrase

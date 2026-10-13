@@ -25,6 +25,10 @@ def publish_explanation(pack, artifacts, fragments, reviews, destination, backup
             raise ExplainError('검토 후 생성 파일 변경: 다시 화면·내용을 검토하세요')
         repo = Path(manifest['repo'])
         inside(pack.path, repo)
+        for name, digest in pack.context_hashes:
+            path = inside(Path(name), repo)
+            if not path.is_file() or sha256(path) != digest:
+                raise ExplainError('문맥 자료 변경: extract부터 다시 실행하세요: ' + name)
         references = reviews.get('references')
         if not isinstance(references, list):
             raise ExplainError('참조 자료 hash 목록 필요')

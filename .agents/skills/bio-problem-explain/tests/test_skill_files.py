@@ -69,7 +69,22 @@ def test_printed_key_error_rule():
 
 def test_referenced_files_exist():
     text=(S/'SKILL.md').read_text(encoding='utf-8')
-    refs=set(re.findall(r'((?:references/[\w.-]+\.md)|(?:scripts/[\w.-]+\.py)|(?:assets/[\w.-]+\.json))',text))
+    refs=set(re.findall(r'(?<![\w/.-])((?:\.\./[\w.-]+/)?(?:references/[\w.-]+\.md|scripts/[\w.-]+\.py|assets/[\w.-]+\.json))',text))
     assert refs
     for ref in refs:
         assert (S/ref).is_file(),ref
+
+
+def test_forecast_authoring_and_verification_contract():
+    for name in ('references/authoring.md', 'references/verification.md'):
+        text = (S/name).read_text()
+        for phrase in ('forecast', 'pack.json', 'blueprint.md', 'o1', 'o2', '변형'):
+            assert phrase in text, (name, phrase)
+    text = (S/'references/verification.md').read_text()
+    assert '설계표의 정답' in text and '제공하지' in text
+
+
+def test_forecast_output_and_scope_contract():
+    text = (S/'SKILL.md').read_text()
+    for phrase in ('문제해설_<N>장_웹과제예상_v<K>', '명시', '자동 백필', 'all', 'p1–p15'):
+        assert phrase in text, phrase

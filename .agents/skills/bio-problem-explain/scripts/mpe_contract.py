@@ -10,6 +10,8 @@ KEYS = ('understand', 'recall', 'start', 'solve', 'verify', 'pitfall', 'retry')
 
 def payload_hash(pack, fragments):
     payload = {'source_sha256': pack.sha256, 'fragments': fragments}
+    if pack.context_hashes:
+        payload['context_hashes'] = pack.context_hashes
     return hashlib.sha256(json.dumps(payload, ensure_ascii=False, sort_keys=True,
                                     separators=(',', ':')).encode('utf-8')).hexdigest()
 

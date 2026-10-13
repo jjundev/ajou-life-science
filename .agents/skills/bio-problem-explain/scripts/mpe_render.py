@@ -16,6 +16,9 @@ from mpe_types import ExplainError, Artifacts
 ASSETS = Path(__file__).resolve().parents[1] / 'assets'
 
 def names(pack):
+    if pack.profile == 'forecast':
+        stem = f'문제해설_{pack.range}_{pack.slug}'
+        return stem, f'figures_{stem}', f'자료_{stem}'
     stem = f'과제{pack.range}_문제설명_{pack.slug}' if pack.profile == 'homework' else f'문제설명_{pack.range}_{pack.slug}'
     range_ = f'hw{pack.range}' if pack.profile == 'homework' else pack.range
     return stem, f'figures_문제설명_{range_}_{pack.slug}', f'자료_문제설명_{range_}_{pack.slug}'
@@ -149,7 +152,8 @@ def build_explanation(pack, fragments, stage: Path, repo: Path) -> Artifacts:
                    + ('<h4>구할 것</h4><div data-source-field="ask">' + p.ask_html + '</div>' if p.ask_html else '')
                    + ''.join(p.figures_html) + '</div>')
         if p.original_html:
-            reading += '<div class="layer formal" data-original-problem="' + p.id + '"><h4>기출 원문</h4>' + p.original_html + '</div>'
+            label = '원문·출처 정보' if pack.profile == 'forecast' else '기출 원문'
+            reading += '<div class="layer formal" data-original-problem="' + p.id + '"><h4>' + label + '</h4>' + p.original_html + '</div>'
         # Validate each block separately: a summary remains a direct fragment child.
         reading = resources(reading, p, pack, repo, stage, fig_name, pack.path.parent, 'source')
         explanation = resources(fragments[p.id], p, pack, repo, stage, fig_name, pack.path.parent, 'explain')
@@ -161,6 +165,8 @@ def build_explanation(pack, fragments, stage: Path, repo: Path) -> Artifacts:
         (data_dir / 'fragments').mkdir(exist_ok=True)
         (data_dir / 'fragments' / f'{p.id}.html').write_text(fragments[p.id], encoding='utf-8')
     title = f'생명과학 {"과제" if pack.profile == "homework" else "복습"} {pack.range} 문제설명'
+    if pack.profile == 'forecast':
+        title = f'생명과학 {pack.range} 웹과제 예상 {pack.slug.split("_")[-1]} 문제해설'
     values = {'PAGE_TITLE': html.escape(title), 'BRAND': '문제풀이 입문 설명', 'DESCRIPTION': '첫 줄부터 완성 답과 검산까지 설명해요.',
               'TOC': '<ul class="toc-list">' + ''.join(toc) + '</ul>', 'TITLE': html.escape(title),
               'SUBTITLE': '주어진 조건을 읽고, 첫 줄을 쓰고, 이유를 따라가며 답을 확인해요.',
@@ -179,6 +185,7 @@ def build_explanation(pack, fragments, stage: Path, repo: Path) -> Artifacts:
     files = tuple(sorted(p for p in stage.rglob('*') if p.is_file()))
     dump(manifest_path, {'version': 1, 'profile': pack.profile, 'range': pack.range, 'slug': pack.slug,
                          'source': str(pack.path), 'source_sha256': pack.sha256,
+                         'context_hashes': [list(pair) for pair in pack.context_hashes],
                          'input_hash': payload_hash(pack, fragments), 'reading_key': values['RANGE'],
                          'destination': str(pack.path.parent), 'repo': str(repo.resolve()),
                          'problems': [{'id': p.id, 'subparts': list(p.subparts)} for p in pack.problems],
@@ -192,6 +199,12 @@ def check_artifacts(pack, artifacts):
         manifest = json.loads(artifacts.manifest.read_text(encoding='utf-8'))
         if manifest['source_sha256'] != pack.sha256 or manifest['source'] != str(pack.path):
             errors.append('manifest 입력 불일치')
+        if manifest.get('context_hashes', []) != [list(pair) for pair in pack.context_hashes]:
+            errors.append('manifest 문맥 불일치')
+        for name, digest in pack.context_hashes:
+            path = inside(Path(name), Path(manifest['repo']))
+            if not path.is_file() or sha256(path) != digest:
+                errors.append('문맥 자료 변경/누락: ' + name)
         if manifest['problems'] != [{'id': p.id, 'subparts': list(p.subparts)} for p in pack.problems]:
             errors.append('manifest 문항 집합 불일치')
         owned = set(manifest['files']) | {artifacts.manifest.relative_to(root).as_posix()}
