@@ -1,0 +1,1170 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>DNA 구조와 복제 3D</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@font-face { font-family: 'Pretendard'; font-weight: 400; font-style: normal; font-display: swap; src: url('/_blob/dd1d3953de63c5ab814c306871dccf20') format('woff2'); }
+@font-face { font-family: 'Pretendard'; font-weight: 600; font-style: normal; font-display: swap; src: url('/_blob/d257a544d99d1fc66440f6a1d9316bd8') format('woff2'); }
+@font-face { font-family: 'Pretendard'; font-weight: 700; font-style: normal; font-display: swap; src: url('/_blob/b69c0fa22f1218f8085a91dd4569765f') format('woff2'); }
+@font-face { font-family: 'Pretendard'; font-weight: 800; font-style: normal; font-display: swap; src: url('/_blob/62017f31a156497cc3f9d9dd8ed70e4c') format('woff2'); }
+body{margin:0}
+.app{--radius:8px;--tap:48px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--dur:220ms;--dur-exit:150ms;--ease-out:cubic-bezier(.2,.8,.2,1);--scrim:rgba(0,0,0,.4);
+  height:100vh;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;box-sizing:border-box;
+  background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;font-size:16px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.app *,.app *::before,.app *::after{box-sizing:border-box}
+.app button{font-family:inherit;color:inherit}
+.app :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.num{font-variant-numeric:tabular-nums}
+
+.topbar{display:flex;align-items:center;gap:var(--s2);min-height:56px;padding:var(--s2) var(--s3);background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:17px;font-weight:700;white-space:nowrap}
+.text-btn{flex:none;min-height:44px;min-width:44px;padding:0 var(--s3);border:0;border-radius:var(--radius);background:transparent;color:var(--ink);font:600 14px/1 'Pretendard',system-ui,sans-serif;cursor:pointer}
+.panel-toggle{display:inline-flex;align-items:center;gap:var(--s1);padding:0 var(--s2)}
+.panel-toggle svg,.theme-toggle svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.panel-toggle .strip{fill:transparent;stroke:none;transition:fill 150ms ease-out}
+.panel-toggle[aria-expanded="true"]{color:var(--accent-ink)}
+.panel-toggle[aria-expanded="true"] .strip{fill:currentColor}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;padding:0}
+.seg{flex:none;display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.seg button{min-height:40px;padding:0 var(--s3);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+.layout{display:grid;grid-template-columns:auto minmax(320px,1fr) auto;min-height:0}
+.panel{position:relative;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--bg);color:var(--ink)}
+.panel-left{grid-column:1;width:clamp(260px,20vw,320px);border-right:1px solid var(--line)}
+.panel-right{grid-column:3;width:clamp(320px,24vw,400px);border-left:1px solid var(--line)}
+.panel-inner{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--s4) var(--s4) var(--s6)}
+.panel-head{display:flex;align-items:center;gap:var(--s2);min-height:44px;margin-bottom:var(--s2)}
+.panel-head h2{flex:1 1 0;min-width:0;margin:0;font-size:22px;line-height:1.4}
+.stage{grid-column:2;position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--bg)}
+.scrim{display:none}
+.panel-resize{display:none}
+
+.sec{margin-top:var(--s5);padding-top:var(--s5);border-top:1px solid var(--line)}
+.sec:first-child{margin-top:0;padding-top:0;border-top:0}
+.sec-title{display:block;margin:0 0 var(--s3);font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-0.01em}
+.sub{margin:var(--s3) 0 0;font-size:14px;line-height:1.6;color:var(--ink-2)}
+
+.opt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.btn{display:flex;align-items:center;gap:var(--s2);width:100%;min-height:var(--tap);padding:0 var(--s3);border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font-size:14px;font-weight:600;line-height:1.3;text-align:left;cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.btn .box{flex:none;width:12px;height:12px;border-radius:3px;border:1.5px solid currentColor}
+.btn[aria-pressed="true"] .box{background:currentColor}
+.steps{display:flex;flex-direction:column;gap:var(--s2)}
+.steps .btn{padding:var(--s2) var(--s3);gap:var(--s3)}
+.step-num{flex:none;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid;font-size:12px;font-weight:700;color:var(--ink)}
+.step-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.step-txt b{font-size:15px;font-weight:700}
+.step-txt span{font-size:13px;font-weight:500;color:var(--ink-2)}
+.detail{margin-top:var(--s3);padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+
+.seq{display:flex;flex-direction:column;gap:var(--s1);font-size:12px;font-weight:700}
+.seq-row{display:flex;align-items:center;gap:1px}
+.seq-end{flex:none;width:18px;color:var(--ink-2);font-weight:600}
+.seq-end.r{text-align:right}
+.seq-cell{flex:1 1 0;min-width:0;height:24px;display:inline-flex;align-items:center;justify-content:center;border-radius:3px}
+
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.tiles.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tile{padding:var(--s3);border-radius:var(--radius);background:var(--surface)}
+.tile b{display:block;font-size:20px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}
+.tile span{display:block;font-size:13px;line-height:1.4;color:var(--ink-2)}
+.bars{display:flex;flex-direction:column;gap:6px;font-size:13px;font-variant-numeric:tabular-nums}
+.bar-row{display:flex;align-items:center;gap:10px}
+.bar-row b{width:14px}
+.bar-track{flex:1;height:8px;border-radius:4px;background:var(--surface);overflow:hidden}
+.bar-track span{display:block;height:100%}
+.bar-row .n{width:24px;text-align:right}
+.events{display:flex;flex-direction:column;gap:var(--s2)}
+.event{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.6}
+.dot{flex:none;width:10px;height:10px;margin-top:7px;border-radius:50%}
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2) var(--s3);font-size:13px;color:var(--ink-2)}
+.legend div{display:flex;align-items:center;gap:var(--s2)}
+.sw{flex:none;width:16px;height:6px;border-radius:3px}
+.sw.ball{width:12px;height:12px;border-radius:50%}
+.sec.warn{border-top:0;padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+.warn .sec-title{color:var(--warn);font-size:17px}
+.mistake{margin-top:var(--s3)}
+.mistake b{display:block;font-weight:700}
+.mistake span{color:var(--ink-2)}
+.source{margin:var(--s5) 0 0;font-size:13px;line-height:1.6;color:var(--ink-2)}
+
+.canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.view-btns{position:absolute;top:var(--s3);right:var(--s3);display:flex;gap:6px}
+.icon-btn{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);cursor:pointer}
+.icon-btn-text{font-size:13px;font-weight:700;line-height:1;letter-spacing:0.02em}
+.icon-btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.icon-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.float{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius)}
+.hover-card{position:absolute;left:var(--s3);bottom:var(--s3);display:flex;flex-direction:column;gap:2px;padding:var(--s3) var(--s4);pointer-events:none}
+.hover-card .k{font-size:13px;color:var(--ink-2)}
+.hover-card .v{font-size:18px;font-weight:700}
+.playbar{position:absolute;left:var(--s3);right:var(--s3);bottom:var(--s3);display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3)}
+.play{flex:none;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--radius);background:var(--btn-bg);color:var(--on-btn) !important;cursor:pointer}
+.play svg{width:18px;height:18px;fill:currentColor}
+.scrub{flex:1 1 200px;min-width:160px;display:flex;flex-direction:column;gap:2px}
+.scrub span{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.scrub input{width:100%;height:24px;margin:0;accent-color:var(--accent)}
+.speeds{display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.speeds button{min-width:48px;height:40px;padding:0 var(--s2);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
+.speeds button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+@media (hover:hover){.btn:hover,.icon-btn:hover{background:var(--surface)}.text-btn:hover{background:var(--surface)}}
+@media (min-width:1024px){
+  .panel-head{display:none}
+  .layout{--pl:var(--pl-user,clamp(260px,20vw,320px));--pr:var(--pr-user,clamp(320px,24vw,400px))}
+  .panel{width:0;border-width:0;visibility:hidden;transition:width var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left.is-open{width:var(--pl)}
+  .panel-right.is-open{width:var(--pr)}
+  .panel.is-open{visibility:visible;border-width:1px;transition:width var(--dur) var(--ease-out)}
+  .panel-left .panel-inner{width:var(--pl)}
+  .panel-right .panel-inner{width:var(--pr);align-self:flex-end}
+  .layout.is-resizing .panel{transition:none}
+  .layout.is-resizing{cursor:col-resize;user-select:none}
+  .panel-resize{display:block;position:absolute;top:0;bottom:0;z-index:2;width:12px;padding:0;border:0;background:transparent;cursor:col-resize;touch-action:none}
+  .panel-left .panel-resize{right:0}
+  .panel-right .panel-resize{left:0}
+  .panel-resize::after{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--accent);opacity:0;transition:opacity 150ms ease-out}
+  .panel-left .panel-resize::after{right:0}
+  .panel-right .panel-resize::after{left:0}
+  .panel-resize:focus-visible{outline:none}
+  .panel-resize:focus-visible::after,.is-resizing .panel-resize:active::after{opacity:1}
+  @media (hover:hover){.panel-resize:hover::after{opacity:1}}
+}
+@media (max-width: 1023.98px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .stage{grid-column:1}
+  .panel{position:fixed;top:0;bottom:0;z-index:40;visibility:hidden;transition:transform var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left{left:0;width:min(304px,88vw);transform:translateX(-100%)}
+  .panel-right{right:0;width:min(360px,88vw);transform:translateX(100%)}
+  .panel.is-open{visibility:visible;transform:none;transition:transform var(--dur) var(--ease-out)}
+  .panel-inner{padding-top:calc(var(--s3) + env(safe-area-inset-top));padding-bottom:calc(var(--s6) + env(safe-area-inset-bottom))}
+  .scrim{display:block;position:fixed;inset:0;z-index:35;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .scrim.is-on{opacity:1;visibility:visible;transition:opacity var(--dur) var(--ease-out)}
+}
+@media (max-width:640px){.brand{display:none}.topbar{justify-content:space-between}}
+@media (max-width:480px){.panel-toggle span{display:none}.seg button{padding:0 var(--s2)}}
+@media (prefers-reduced-motion:reduce){.panel,.panel.is-open,.scrim,.scrim.is-on,.panel-toggle .strip,.panel-resize::after{transition:none}}
+</style>
+</helmet>
+<div class="app" onKeyDown="{{onKey}}" style="--bg: {{th.bg}}; --surface: {{th.surface}}; --ink: {{th.ink}}; --ink-2: {{th.ink2}}; --line: {{th.line}}; --accent: {{th.accent}}; --accent-ink: {{th.accentInk}}; --btn-bg: {{th.btnBg}}; --on-btn: {{th.onBtn}}; --warn: {{th.warn}}; --prof: {{th.prof}}; --supp: {{th.supp}}; --danger: {{th.danger}}">
+<header class="topbar">
+<button class="text-btn panel-toggle" type="button" aria-label="조작 패널" aria-expanded="{{leftExpanded}}" onClick="{{toggleLeft}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M9 4v16"></path></svg><span>조작</span></button>
+<strong class="brand">DNA 구조와 복제</strong>
+<div class="seg" role="group" aria-label="보기 선택">
+<button type="button" aria-pressed="{{tabS}}" onClick="{{toStructure}}">① 구조</button>
+<button type="button" aria-pressed="{{tabR}}" onClick="{{toReplication}}">② 복제</button>
+</div>
+<button class="text-btn theme-toggle" type="button" aria-label="{{themeLabel}}" title="{{themeLabel}}" onClick="{{toggleTheme}}">
+<sc-if value="{{isDark}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+<sc-if value="{{isLight}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></sc-if>
+</button>
+<button class="text-btn panel-toggle" type="button" aria-label="설명 패널" aria-expanded="{{rightExpanded}}" onClick="{{toggleRight}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M15 4v16"></path></svg><span>설명</span></button>
+</header>
+
+<div class="layout {{layoutCls}}" style="{{layoutStyle}}">
+<aside class="panel panel-left {{leftCls}}" aria-label="조작">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="220" aria-valuemax="480" aria-valuenow="{{leftWNow}}" ref="{{leftHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>조작</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<sc-if value="{{isStructure}}" hint-placeholder-val="{{ true }}">
+<div>
+<div class="sec">
+<h3 class="sec-title">보기 옵션</h3>
+<div class="opt">
+<sc-for list="{{toggles}}" as="t" hint-placeholder-count="6">
+<button class="btn" type="button" aria-pressed="{{t.pressed}}" onClick="{{t.toggle}}"><span class="box" aria-hidden="true"></span>{{t.label}}</button>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">서열</h3>
+<div class="seq">
+<div class="seq-row">
+<span class="seq-end" style="color: {{strand.c1}}">5′</span>
+<sc-for list="{{seqTop}}" as="b" hint-placeholder-count="20"><span class="seq-cell" onMouseEnter="{{b.enter}}" onMouseLeave="{{b.leave}}" style="background: {{b.bg}}; color: {{b.fg}}">{{b.ch}}</span></sc-for>
+<span class="seq-end r" style="color: {{strand.c1}}">3′</span>
+</div>
+<div class="seq-row">
+<span class="seq-end" style="color: {{strand.c2}}">3′</span>
+<sc-for list="{{seqBot}}" as="b" hint-placeholder-count="20"><span class="seq-cell" onMouseEnter="{{b.enter}}" onMouseLeave="{{b.leave}}" style="background: {{b.bg}}; color: {{b.fg}}">{{b.ch}}</span></sc-for>
+<span class="seq-end r" style="color: {{strand.c2}}">5′</span>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isReplication}}" hint-placeholder-val="{{ false }}">
+<div>
+<div class="sec">
+<h3 class="sec-title">복제 6단계</h3>
+<div class="steps">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="6">
+<button class="btn" type="button" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}"><span class="step-num num" style="border-color: {{s.c}}">{{s.num}}</span><span class="step-txt"><b>{{s.title}}</b><span>{{s.who}}</span></span></button>
+</sc-for>
+</div>
+<sc-if value="{{hasStep}}" hint-placeholder-val="{{ false }}">
+<div class="detail" aria-live="polite">{{stepDetail}}</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+</div>
+</aside>
+
+<section class="stage" aria-label="3D 보기">
+<canvas class="canvas" ref="{{canvasRef}}" role="img" aria-label="{{canvasLabel}}"></canvas>
+<div class="view-btns">
+<sc-if value="{{isReplication}}" hint-placeholder-val="{{ false }}"><button class="icon-btn icon-btn-text" type="button" aria-label="3D 입체로 보기" aria-pressed="{{view3dPressed}}" onClick="{{toggle3d}}">3D</button></sc-if>
+<button class="icon-btn" type="button" aria-label="확대" onClick="{{zoomIn}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="축소" onClick="{{zoomOut}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="시점 처음으로" onClick="{{resetView}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v5h5"></path></svg></button>
+</div>
+
+<sc-if value="{{showHoverCard}}" hint-placeholder-val="{{ false }}">
+<div class="hover-card float">
+<span class="k num">{{hoverInfo.idx}}번째 염기쌍</span>
+<span class="v"><span style="color: {{hoverInfo.c1}}">{{hoverInfo.b1}}</span> – <span style="color: {{hoverInfo.c2}}">{{hoverInfo.b2}}</span> · 수소결합 {{hoverInfo.hb}}개</span>
+<span class="k">{{hoverInfo.note}}</span>
+</div>
+</sc-if>
+
+<sc-if value="{{isReplication}}" hint-placeholder-val="{{ false }}">
+<div class="playbar float">
+<button class="play" type="button" aria-label="{{playLabel}}" onClick="{{togglePlay}}">
+<sc-if value="{{isPlaying}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></sc-if>
+<sc-if value="{{notPlaying}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5l12 7-12 7z"></path></svg></sc-if>
+</button>
+<label class="scrub">
+<span>분기점 위치 · 원점에서 {{fLabel}}쌍</span>
+<input type="range" min="0" max="600" step="1" value="{{fInt}}" onChange="{{onScrub}}">
+</label>
+<div class="speeds" role="group" aria-label="재생 속도">
+<sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{sp.pressed}}" onClick="{{sp.pick}}">{{sp.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</section>
+
+<aside class="panel panel-right {{rightCls}}" aria-label="설명">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="280" aria-valuemax="720" aria-valuenow="{{rightWNow}}" ref="{{rightHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>설명</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<sc-if value="{{isStructure}}" hint-placeholder-val="{{ true }}">
+<div>
+<div class="sec">
+<h3 class="sec-title">숫자로 보는 이중나선</h3>
+<div class="tiles">
+<div class="tile"><b>0.34 nm</b><span>이웃한 염기쌍 사이</span></div>
+<div class="tile"><b>3.4 nm</b><span>한 바퀴 (약 10쌍)</span></div>
+<div class="tile"><b>2 nm</b><span>지름</span></div>
+<div class="tile"><b>오른나선</b><span>꼬임 방향 (역평행과 별개)</span></div>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">샤가프 규칙</h3>
+<div class="bars">
+<sc-for list="{{chargaff}}" as="r" hint-placeholder-count="4">
+<div class="bar-row"><b style="color: {{r.tc}}">{{r.b}}</b><span class="bar-track"><span style="width: {{r.w}}; background: {{r.c}}"></span></span><span class="n">{{r.n}}</span></div>
+</sc-for>
+</div>
+<p class="sub">두 가닥을 합치면 A = T, G = C예요. 위 가닥 하나만 세면 A {{s1.A}} · T {{s1.T}} · G {{s1.G}} · C {{s1.C}}개라서, 한 가닥 안에서는 같지 않을 수 있어요.</p>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw ball" style="background: {{strand.c1}}"></span>인산 (큰 구)</div>
+<div><span class="sw ball" style="width: 9px; height: 9px; background: {{strand.c1s}}"></span>디옥시리보스 (작은 구)</div>
+<div><span class="sw" style="background: {{legend.A}}"></span>A 아데닌</div>
+<div><span class="sw" style="background: {{legend.T}}"></span>T 티민</div>
+<div><span class="sw" style="background: {{legend.G}}"></span>G 구아닌</div>
+<div><span class="sw" style="background: {{legend.C}}"></span>C 사이토신</div>
+</div>
+<p class="sub">두 가닥은 역평행이고, 가운데 점은 수소결합이에요 (A–T 2개, G–C 3개).</p>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isReplication}}" hint-placeholder-val="{{ false }}">
+<div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 분기점에서 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{events}}" as="e" hint-placeholder-count="3">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<div class="tiles three">
+<div class="tile"><b style="color: {{statColor.done}}">{{stats.done}}</b><span>완성된 오카자키 조각</span></div>
+<div class="tile"><b style="color: {{statColor.rna}}">{{stats.rna}}</b><span>지연가닥의 RNA 프라이머</span></div>
+<div class="tile"><b>{{stats.nick}}</b><span>아직 안 이은 닉</span></div>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw" style="background: {{legend.parent}}"></span>옛 가닥 (주형)</div>
+<div><span class="sw" style="background: {{legend.newDna}}"></span>새 DNA</div>
+<div><span class="sw" style="background: {{legend.rna}}"></span>RNA 프라이머 (U 포함)</div>
+<div><span class="sw ball" style="background: transparent; border: 2px solid {{legend.ring}}"></span>닉 (골격 결합 1개 빠짐)</div>
+<sc-for list="{{enzymes}}" as="z" hint-placeholder-count="5">
+<div><span class="sw ball" style="background: {{z.c}}"></span>{{z.name}}</div>
+</sc-for>
+</div>
+<p class="sub">두 팔은 각각 옛 가닥 하나 + 새 가닥 하나예요 (반보존적 복제).</p>
+</div>
+</div>
+</sc-if>
+
+<div class="sec warn">
+<h3 class="sec-title">꼭 기억해요</h3>
+<sc-for list="{{mistakes}}" as="m" hint-placeholder-count="3">
+<div class="mistake"><b>{{m.title}}</b><span>{{m.text}}</span></div>
+</sc-for>
+</div>
+<p class="source">출처: 1001 정리노트 3–5절 · 강의노트 5장 p1–2. 효소 이름은 원핵세포(대장균) 기준이고, 오카자키 조각 길이(10쌍)·효소 위치·속도는 보기 쉽게 단순화했어요. 원점의 선도가닥 프라이머 교체는 생략했어요.</p>
+</div>
+</aside>
+</div>
+<div class="scrim {{scrimCls}}" aria-hidden="true" onClick="{{closePanels}}"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(...args) {
+    super(...args);
+    let reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    let narrow = false;
+    try { narrow = window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) {}
+    let saved = null;
+    try { saved = window.localStorage.getItem('od-theme'); } catch (e) {}
+    const PANEL_W = { left: { min: 220, max: 480 }, right: { min: 280, max: 720 } };
+    let widths = {};
+    try { widths = JSON.parse(window.localStorage.getItem('dna3d-panel-w')) || {}; } catch (e) {}
+    const okW = (side) => { const v = widths[side]; return typeof v === 'number' && v >= PANEL_W[side].min && v <= PANEL_W[side].max ? v : null; };
+    this.state = {
+      mode: 'structure', f: 0, playing: false, speed: 1, step: -1, hover: -1,
+      ends: true, letters: true, hb: true, dims: false, nuc: false, spin: !reduce,
+      theme: (saved === 'light' || saved === 'dark') ? saved : (this.systemDark() ? 'dark' : 'light'),
+      // leftOpen/rightOpen: docked panels on wide screens; drawer: the one open drawer on narrow screens
+      leftOpen: true, rightOpen: true, drawer: null, narrow: narrow,
+      // leftW/rightW: user-set docked widths in px (null = default); resizing: a handle is being dragged
+      leftW: okW('left'), rightW: okW('right'), resizing: false,
+      // view3d: replication daughters wound into helices (off = the flat ladder); not saved
+      view3d: true
+    };
+    this.reduceMotion = reduce;
+    this.K = {
+      PANEL_W: PANEL_W, PANEL_W_KEY: 'dna3d-panel-w', PANEL_DEFAULT: { left: 320, right: 400 },
+      THEMES: {
+        light: { bg: '#ffffff', surface: '#f7f8fa', ink: '#111111', ink2: '#6b7280', line: '#d9dee7', accent: '#1677ff', accentInk: '#1b64da', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#b54708', prof: '#6941c6', supp: '#067647', danger: '#d92d20' },
+        dark: { bg: '#17171c', surface: '#212128', ink: '#f2f4f6', ink2: '#a3abb8', line: '#34353d', accent: '#3182f6', accentInk: '#6ea4ff', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#f5a15c', prof: '#b69cff', supp: '#5fd39a', danger: '#ff6b61' }
+      },
+      PAL: {
+        light: { bg: '#ffffff', labelBg: '#f7f8fa', labelLine: '#d9dee7', ink: '#111111', hb: '#111111', ring: '#111111',
+          parent: '#8A94A3', parentSugar: '#6B7584', newDna: '#1FA58A', newSugar: '#16806B', rna: '#FF5FA2', rnaSugar: '#C93F80', G: '#D9A50F', blobAlpha: 0.30 },
+        dark: { bg: '#17171c', labelBg: '#212128', labelLine: '#34353d', ink: '#f2f4f6', hb: '#f2f4f6', ring: '#f2f4f6',
+          parent: '#AEB7C4', parentSugar: '#7F8A99', newDna: '#6FD3C1', newSugar: '#3FA893', rna: '#FF5FA2', rnaSugar: '#C93F80', G: '#F6C945', blobAlpha: 0.42 }
+      },
+      TW: Math.PI / 5, RISE: 0.34, OFF: Math.PI * 150 / 180, L: 10, FMAX: 60, AR: 0.62,
+      SEQ: 'TAACAGGTCAGCATCGTACG',
+      TPL: 'ATGCGTACCTAGGATCCGATTACAGGCTTAACGGTATCCAGTCGATGCATTGACCGTAGCTAAGTC',
+      COMP: { A: 'T', T: 'A', G: 'C', C: 'G' },
+      BASE: { A: '#4FC08D', T: '#E5604F', G: '#F6C945', C: '#4A86E8', U: '#F2949C' },
+      ENZ: {
+        helicase: { name: '헬리케이스', c: '#B48CF2' },
+        primase: { name: '프라이메이스', c: '#F27FB2' },
+        pol3: { name: 'DNA 중합효소 III', c: '#59B6F0' },
+        pol1: { name: 'DNA 중합효소 I', c: '#F5A35C' },
+        ligase: { name: 'DNA 연결효소', c: '#9BE36D' }
+      },
+      MISTAKES: {
+        structure: [
+          { title: '역평행 ≠ 오른나선', text: '역평행은 두 가닥의 5′·3′ 끝 배치, 오른나선은 꼬이는 방향이에요. ‘5′·3′ 방향’을 켜고 화살표와 꼬임을 따로 보세요.' },
+          { title: '0.34 nm와 3.4 nm', text: '이웃한 염기쌍 사이가 0.34 nm, 약 10쌍이 한 바퀴를 돌아 3.4 nm예요. ‘길이 (nm)’를 켜면 3D 위에 자가 나와요.' },
+          { title: '새 뉴클레오타이드는 3′-OH에', text: '뉴클레오타이드 = 인산 + 디옥시리보스(2′-H) + 염기. 새 dNTP의 5′ 인산이 기존 가닥 3′-OH와 결합해서 가닥은 5′→3′로만 자라요.' }
+        ],
+        replication: [
+          { title: '지연가닥도 5′→3′', text: '지연가닥이 3′→5′로 자라는 게 아니에요. 분기점 반대 방향으로 조각마다 5′→3′로 만들어져요. 각 조각의 5′ 끝에 분홍 프라이머가 있어요.' },
+          { title: '채우기 ≠ 잇기', text: '프라이머 자리를 DNA로 채우는 건 DNA 중합효소 I, 남은 닉의 골격 결합을 잇는 건 DNA 연결효소예요. 연결효소는 염기를 만들지 않아요.' },
+          { title: '원점은 자리, 분기점은 움직이는 경계', text: '재생해 보면 ‘복제원점’ 표시는 왼쪽으로 멀어지고, Y자 분기점은 헬리케이스와 함께 계속 앞으로 가요.' }
+        ]
+      },
+      STEPS: [
+        { f: 5, key: 'helicase', c: '#B48CF2', title: '두 가닥 벌리기', who: '헬리케이스',
+          text: '헬리케이스가 ATP 에너지로 염기쌍 사이 수소결합을 끊어 두 가닥을 벌려요. 벌어진 Y자 경계가 복제분기점이에요. 원점은 시작한 자리로 고정, 분기점은 계속 이동해요.' },
+        { f: 11.8, key: 'primase', c: '#F27FB2', title: 'RNA 프라이머 놓기', who: '프라이메이스',
+          text: '프라이메이스가 드러난 주형에 짧은 RNA 프라이머를 만들어요. RNA라서 주형의 A 맞은편에 T가 아니라 U가 와요. 프라이머가 DNA 중합효소에 3′-OH 시작점을 줘요.' },
+        { f: 17, key: 'pol3', c: '#59B6F0', title: '선도가닥 연속 합성', who: 'DNA 중합효소 III',
+          text: 'DNA 중합효소 III가 기존 가닥의 3′-OH에 주형과 짝이 맞는 dNTP를 붙여요. 새 가닥은 5′→3′로만 자라고, 선도가닥은 그 방향이 분기점 진행 방향과 같아서 끊김 없이 이어져요.' },
+        { f: 23.5, key: 'pol3lag', c: '#59B6F0', title: '지연가닥 오카자키 조각', who: 'DNA 중합효소 III',
+          text: '반대쪽 주형에서는 5′→3′ 합성이 분기점과 반대 방향이에요. 그래서 분기점이 열릴 때마다 새 프라이머를 놓고 짧은 오카자키 조각을 만들어요. 조각 하나하나도 5′→3′예요.' },
+        { f: 26.9, key: 'pol1', c: '#F5A35C', title: '프라이머를 DNA로 교체', who: 'DNA 중합효소 I',
+          text: 'DNA 중합효소 I이 앞 조각의 RNA 프라이머를 제거하고, 뒤 조각의 3′-OH를 늘려 그 자리를 DNA로 채워요. 분홍이 민트로 바뀌는 곳을 보세요.' },
+        { f: 28.3, key: 'ligase', c: '#9BE36D', title: '닉 잇기', who: 'DNA 연결효소',
+          text: '채운 뒤에도 이웃 조각 사이에 인산다이에스테르 결합 하나가 빠진 닉이 남아요(고리 표시). DNA 연결효소가 이 결합을 만들어 조각을 한 가닥으로 이어요.' }
+      ]
+    };
+    this.cam = { yaw: -0.55, pitch: 0.32, zoom: 1 };
+    this.sim = { f: 0, cx: 0, tw: 1 };
+    this.pointer = { x: -1, y: -1, inside: false, drag: false, lx: 0, ly: 0 };
+    this.colorCache = {};
+    this.lastPick = -1;
+    this._tick = (t) => this.tick(t);
+    this._canvasRef = (el) => this.attachCanvas(el);
+    this.handles = {};
+    this._handleRefL = (el) => this.attachHandle('left', el);
+    this._handleRefR = (el) => this.attachHandle('right', el);
+  }
+
+  componentWillUnmount() {
+    this.attachCanvas(null);
+    this.attachHandle('left', null);
+    this.attachHandle('right', null);
+  }
+
+  systemDark() {
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; }
+  }
+  isNarrow() {
+    try { return window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) { return false; }
+  }
+  syncBreakpoint() { this.setState({ narrow: this.isNarrow(), drawer: null }); }
+  // In drawer mode only one panel is open at a time.
+  togglePanel(side) {
+    const st = this.state;
+    if (st.narrow) this.setState({ drawer: st.drawer === side ? null : side });
+    else if (side === 'left') this.setState({ leftOpen: !st.leftOpen });
+    else this.setState({ rightOpen: !st.rightOpen });
+  }
+  // Docked panel width: the canvas column always keeps at least 400px.
+  panelMax(side) {
+    const lim = this.K.PANEL_W[side], other = side === 'left' ? 'right' : 'left', st = this.state;
+    const h = this.handles[other];
+    const otherOpen = other === 'left' ? st.leftOpen : st.rightOpen;
+    const otherW = !otherOpen ? 0 : h ? h.el.parentElement.getBoundingClientRect().width
+      : (st[other + 'W'] || this.K.PANEL_DEFAULT[other]);
+    return Math.max(lim.min, Math.min(lim.max, (window.innerWidth || 1440) - otherW - 400));
+  }
+  setPanelWidth(side, px, save) {
+    const v = Math.round(Math.min(Math.max(px, this.K.PANEL_W[side].min), this.panelMax(side)));
+    this.setState({ [side + 'W']: v });
+    if (save) this.savePanelWidths(side, v);
+  }
+  resetPanelWidth(side) {
+    this.setState({ [side + 'W']: null });
+    this.savePanelWidths(side, null);
+  }
+  savePanelWidths(side, v) {
+    try {
+      const key = this.K.PANEL_W_KEY;
+      let w = {};
+      try { w = JSON.parse(window.localStorage.getItem(key)) || {}; } catch (e) {}
+      if (v == null) delete w[side]; else w[side] = v;
+      window.localStorage.setItem(key, JSON.stringify(w));
+    } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ }
+  }
+  // Re-fit user widths when the window shrinks (not saved).
+  refitPanels() {
+    ['left', 'right'].forEach((side) => {
+      const w = this.state[side + 'W'];
+      if (w != null && w > this.panelMax(side)) this.setPanelWidth(side, w, false);
+    });
+  }
+  attachHandle(side, el) {
+    const old = this.handles[side];
+    if (old && old.el === el) return;
+    if (old) {
+      Object.keys(old.on).forEach((ev) => old.el.removeEventListener(ev, old.on[ev]));
+      delete this.handles[side];
+      if (!Object.keys(this.handles).length) window.removeEventListener('resize', this._refit);
+    }
+    if (!el) return;
+    const dir = side === 'left' ? 1 : -1;
+    const width = () => el.parentElement.getBoundingClientRect().width;
+    let drag = null;
+    const on = {
+      pointerdown: (e) => {
+        if (this.state.narrow || e.button !== 0) return;
+        e.preventDefault();
+        drag = { x: e.clientX, w: width() };
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        this.setState({ resizing: true });
+      },
+      pointermove: (e) => { if (drag) this.setPanelWidth(side, drag.w + dir * (e.clientX - drag.x), false); },
+      pointerup: () => {
+        if (!drag) return;
+        drag = null;
+        this.setState({ resizing: false });
+        this.setPanelWidth(side, width(), true);
+      },
+      dblclick: () => this.resetPanelWidth(side),
+      keydown: (e) => {
+        const step = e.shiftKey ? 64 : 16;
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          e.preventDefault(); e.stopPropagation();
+          this.setPanelWidth(side, width() + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+        } else if (e.key === 'Home') { e.preventDefault(); e.stopPropagation(); this.resetPanelWidth(side); }
+      }
+    };
+    on.pointercancel = on.pointerup;
+    Object.keys(on).forEach((ev) => el.addEventListener(ev, on[ev]));
+    if (!Object.keys(this.handles).length) {
+      this._refit = this._refit || (() => this.refitPanels());
+      window.addEventListener('resize', this._refit);
+    }
+    this.handles[side] = { el: el, on: on };
+  }
+  textTone(hex) { return this.state.theme === 'light' ? this.mix(hex, '#000000', 0.4) : hex; }
+  pal() { return this.K.PAL[this.state.theme] || this.K.PAL.dark; }
+  baseColor(b) { return b === 'G' ? this.pal().G : this.K.BASE[b]; }
+  setTheme(t) {
+    this.setState({ theme: t });
+    try {
+      if ((t === 'dark') === this.systemDark()) window.localStorage.removeItem('od-theme');
+      else window.localStorage.setItem('od-theme', t);
+    } catch (e) {}
+  }
+
+  attachCanvas(el) {
+    if (this.canvas === el) return;
+    if (this.canvas) {
+      const c = this.canvas;
+      c.removeEventListener('pointerdown', this._pd);
+      c.removeEventListener('pointermove', this._pm);
+      c.removeEventListener('pointerup', this._pu);
+      c.removeEventListener('pointercancel', this._pu);
+      c.removeEventListener('pointerleave', this._pl);
+      cancelAnimationFrame(this.raf);
+      try { this._mq.removeEventListener('change', this._mqH); } catch (err) {}
+    }
+    this.canvas = el || null;
+    if (!el) return;
+    this.ctx = el.getContext('2d');
+    const p = this.pointer;
+    this._pd = (e) => {
+      p.drag = true; p.lx = e.clientX; p.ly = e.clientY;
+      try { el.setPointerCapture(e.pointerId); } catch (err) {}
+      el.style.cursor = 'grabbing';
+    };
+    this._pm = (e) => {
+      const r = el.getBoundingClientRect();
+      p.x = e.clientX - r.left; p.y = e.clientY - r.top; p.inside = true;
+      if (p.drag) {
+        this.cam.yaw += (e.clientX - p.lx) * 0.008;
+        this.cam.pitch = Math.max(-1.45, Math.min(1.45, this.cam.pitch + (e.clientY - p.ly) * 0.008));
+        p.lx = e.clientX; p.ly = e.clientY;
+      }
+    };
+    this._pu = () => { p.drag = false; el.style.cursor = 'grab'; };
+    this._pl = () => {
+      p.inside = false;
+      if (this.lastPick !== -1) { this.lastPick = -1; this.setState({ hover: -1 }); }
+    };
+    el.addEventListener('pointerdown', this._pd);
+    el.addEventListener('pointermove', this._pm);
+    el.addEventListener('pointerup', this._pu);
+    el.addEventListener('pointercancel', this._pu);
+    el.addEventListener('pointerleave', this._pl);
+    try {
+      this._mq = window.matchMedia('(max-width: 1023.98px)');
+      this._mqH = () => this.syncBreakpoint();
+      this._mq.addEventListener('change', this._mqH);
+    } catch (err) {}
+    this.last = 0;
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  tick(t) {
+    if (!this.canvas) return;
+    const dt = this.last ? Math.min(0.05, (t - this.last) / 1000) : 0;
+    this.last = t;
+    const st = this.state, K = this.K;
+    if (st.mode === 'structure' && st.spin && !this.pointer.drag) this.cam.yaw += dt * 0.3;
+    if (st.mode === 'replication' && st.playing) {
+      this.sim.f = Math.min(K.FMAX, this.sim.f + dt * 1.4 * st.speed);
+      if (this.sim.f >= K.FMAX) this.setState({ playing: false, f: this.sim.f });
+      else if (t - (this.lastPush || 0) > 120) { this.lastPush = t; this.setState({ f: this.sim.f }); }
+    }
+    this.easeTwist(dt);
+    try { this.draw(dt, t); } catch (err) {}
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  // sim.tw follows the 3D toggle over 0.4 s (at once with reduced motion).
+  easeTwist(dt) {
+    const to = this.state.view3d ? 1 : 0;
+    if (this.reduceMotion) { this.sim.tw = to; return; }
+    const tw = this.sim.tw;
+    this.sim.tw = to > tw ? Math.min(to, tw + dt * 2.5) : Math.max(to, tw - dt * 2.5);
+  }
+
+  // ---------- math helpers ----------
+  lerp(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+  sm(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+  rgb(hex) { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  mix(hex, to, amt) {
+    const a = this.rgb(hex), b = this.rgb(to);
+    return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * amt) + ',' + Math.round(a[1] + (b[1] - a[1]) * amt) + ',' + Math.round(a[2] + (b[2] - a[2]) * amt) + ')';
+  }
+  rgba(hex, al) { const a = this.rgb(hex); return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + al + ')'; }
+  shades(hex) {
+    let s = this.colorCache[hex];
+    if (!s) { s = { hi: this.mix(hex, '#FFFFFF', 0.55), mid: hex, lo: this.mix(hex, '#000000', 0.55) }; this.colorCache[hex] = s; }
+    return s;
+  }
+  proj(p, V) {
+    const x = p[0] - V.cx, y = p[1], z = p[2];
+    const x1 = x * V.cy + z * V.sy, z1 = -x * V.sy + z * V.cy;
+    const y2 = y * V.cp - z1 * V.sp, z2 = y * V.sp + z1 * V.cp;
+    const s = V.F / Math.max(2, V.D - z2);
+    return [V.ox + x1 * s, V.oy - y2 * s, z2, s];
+  }
+
+  // ---------- structure scene ----------
+  buildStructure(I, O) {
+    const K = this.K, st = this.state, N = K.SEQ.length, mid = (N - 1) / 2;
+    const hx = (h, r, ph) => { const th = h * K.TW + ph; return [(h - mid) * K.RISE, r * Math.cos(th), r * Math.sin(th)]; };
+    const s1 = K.SEQ.split(''), s2 = s1.map((b) => K.COMP[b]);
+    const C1 = '#8AB4FF', C1s = '#5F8FE0', C2 = '#F2A36B', C2s = '#C97A45';
+    const NI = 5, nucOn = st.nuc, hov = st.hover, pal = this.pal();
+    const al = (strand, i) => (nucOn ? ((strand === 1 && i === NI) ? 1 : 0.2) : 1);
+    this.pairs = [];
+    for (let i = 0; i < N; i++) {
+      const S1 = hx(i, 0.78, 0), S2 = hx(i, 0.78, K.OFF);
+      const P1 = hx(i - 0.5, 1.0, 0), P2 = hx(i + 0.5, 1.0, K.OFF);
+      const a1 = al(1, i), a2 = al(2, i);
+      I.push({ k: 0, p: P1, r: 0.17, c: C1, a: a1 });
+      I.push({ k: 0, p: S1, r: 0.13, c: C1s, a: a1 });
+      I.push({ k: 0, p: P2, r: 0.17, c: C2, a: a2 });
+      I.push({ k: 0, p: S2, r: 0.13, c: C2s, a: a2 });
+      I.push({ k: 1, p: S1, q: P1, w: 0.07, c: C1, a: a1 });
+      if (i > 0) I.push({ k: 1, p: P1, q: hx(i - 1, 0.78, 0), w: 0.07, c: C1, a: Math.min(a1, al(1, i - 1)) });
+      I.push({ k: 1, p: S2, q: P2, w: 0.07, c: C2, a: a2 });
+      if (i < N - 1) I.push({ k: 1, p: P2, q: hx(i + 1, 0.78, K.OFF), w: 0.07, c: C2, a: a2 });
+      const M = this.lerp(S1, S2, 0.5), g = st.hb ? 0.76 : 1;
+      const E1 = this.lerp(S1, M, g), E2 = this.lerp(S2, M, g);
+      const hot = hov === i, bw = hot ? 0.27 : 0.19;
+      I.push({ k: 1, p: S1, q: E1, w: bw, c: this.baseColor(s1[i]), a: a1, rod: true });
+      I.push({ k: 1, p: S2, q: E2, w: bw, c: this.baseColor(s2[i]), a: a2, rod: true });
+      if (st.hb) {
+        const n = (s1[i] === 'G' || s1[i] === 'C') ? 3 : 2;
+        for (let d = 1; d <= n; d++) I.push({ k: 0, p: this.lerp(E1, E2, d / (n + 1)), r: 0.045, c: pal.hb, a: nucOn ? 0.2 : 0.95, flat: true });
+      }
+      if (st.letters) {
+        I.push({ k: 3, p: this.lerp(S1, M, 0.42), text: s1[i], c: '#0B0F14', a: a1, size: 11 });
+        I.push({ k: 3, p: this.lerp(S2, M, 0.42), text: s2[i], c: '#0B0F14', a: a2, size: 11 });
+      }
+      this.pairs.push({ i: i, a: S1, b: S2 });
+      if (hot) O.push({ t: 'label', p: hx(i, 1.5, 0), text: s1[i] + '–' + s2[i] + ' · 수소결합 ' + ((s1[i] === 'G' || s1[i] === 'C') ? 3 : 2) + '개', c: pal.ink, dy: -18, lead: true });
+    }
+    if (st.ends) {
+      O.push({ t: 'label', p: hx(-0.5, 1.0, 0), text: '5′', c: C1, dx: -26, dy: -10, size: 14 });
+      O.push({ t: 'label', p: hx(N - 1, 0.78, 0), text: '3′', c: C1, dx: 26, dy: -10, size: 14 });
+      O.push({ t: 'label', p: hx(N - 0.5, 1.0, K.OFF), text: '5′', c: C2, dx: 26, dy: 12, size: 14 });
+      O.push({ t: 'label', p: hx(0, 0.78, K.OFF), text: '3′', c: C2, dx: -26, dy: 12, size: 14 });
+      for (let i = 2; i < N - 1; i += 5) {
+        I.push({ k: 4, p: hx(i, 1.28, 0), q: hx(i + 1, 1.28, 0), c: this.textTone(C1), a: nucOn ? 0.3 : 1 });
+        I.push({ k: 4, p: hx(i + 1, 1.28, K.OFF), q: hx(i, 1.28, K.OFF), c: this.textTone(C2), a: nucOn ? 0.3 : 1 });
+      }
+    }
+    if (st.dims) {
+      const W = pal.ink, y0 = -1.55, x0 = (0 - mid) * K.RISE, x10 = (10 - mid) * K.RISE;
+      I.push({ k: 1, p: [x0, y0, 0], q: [x10, y0, 0], w: 0.03, c: W, a: 0.9, flat: true });
+      I.push({ k: 1, p: [x0, y0 - 0.15, 0], q: [x0, y0 + 0.15, 0], w: 0.03, c: W, a: 0.9, flat: true });
+      I.push({ k: 1, p: [x10, y0 - 0.15, 0], q: [x10, y0 + 0.15, 0], w: 0.03, c: W, a: 0.9, flat: true });
+      O.push({ t: 'label', p: [(x0 + x10) / 2, y0, 0], text: '한 바퀴 ≈ 3.4 nm (약 10쌍)', c: W, dy: 22 });
+      const xa = (14 - mid) * K.RISE, xb = (15 - mid) * K.RISE, y1 = 1.55;
+      I.push({ k: 1, p: [xa, y1, 0], q: [xb, y1, 0], w: 0.03, c: W, a: 0.9, flat: true });
+      I.push({ k: 1, p: [xa, y1 - 0.15, 0], q: [xa, y1 + 0.15, 0], w: 0.03, c: W, a: 0.9, flat: true });
+      I.push({ k: 1, p: [xb, y1 - 0.15, 0], q: [xb, y1 + 0.15, 0], w: 0.03, c: W, a: 0.9, flat: true });
+      O.push({ t: 'label', p: [(xa + xb) / 2, y1, 0], text: '염기쌍 사이 0.34 nm', c: W, dy: -24 });
+      const xd = (N - 1 - mid) * K.RISE + 0.7;
+      I.push({ k: 1, p: [xd, -1, 0], q: [xd, 1, 0], w: 0.03, c: W, a: 0.9, flat: true });
+      I.push({ k: 1, p: [xd - 0.12, -1, 0], q: [xd + 0.12, -1, 0], w: 0.03, c: W, a: 0.9, flat: true });
+      I.push({ k: 1, p: [xd - 0.12, 1, 0], q: [xd + 0.12, 1, 0], w: 0.03, c: W, a: 0.9, flat: true });
+      O.push({ t: 'label', p: [xd, 0, 0], text: '지름 ≈ 2 nm', c: W, dx: 52 });
+    }
+    if (nucOn) {
+      const S = hx(NI, 0.78, 0), P = hx(NI - 0.5, 1.0, 0), Mb = this.lerp(S, hx(NI, 0.78, K.OFF), 0.35);
+      O.push({ t: 'label', p: P, text: '인산', c: '#8AB4FF', dx: -40, dy: -34, lead: true });
+      O.push({ t: 'label', p: S, text: '디옥시리보스 (2′-H)', c: '#8AB4FF', dx: 0, dy: 40, lead: true });
+      O.push({ t: 'label', p: Mb, text: '염기 ' + s1[NI], c: this.baseColor(s1[NI]), dx: 54, dy: -30, lead: true });
+      O.push({ t: 'label', p: [0, 2.1, 0], text: '뉴클레오타이드 1개 = 인산 + 당 + 염기', c: pal.ink, dy: -6 });
+    }
+  }
+
+  // ---------- replication model ----------
+  lagState(i, f) {
+    const L = this.K.L;
+    if (i < 0) return null;
+    const k = Math.floor(i / L), j = i - k * L, Pk = k * L + L + 1;
+    if (j >= L - 3) {
+      const R = Pk + L + 5.2;
+      if (f >= R + (L - 1 - j) * 0.5) return { kind: 'dna', owner: k + 1, fill: true };
+      if (f >= Pk + (L - 1 - j) * 0.3) return { kind: 'rna', owner: k };
+      return null;
+    }
+    if (f >= Pk + 1 + (L - 4 - j) * 0.62) return { kind: 'dna', owner: k };
+    return null;
+  }
+  lagBond(i, f) {
+    const a = this.lagState(i, f), b = this.lagState(i + 1, f);
+    if (!a || !b) return false;
+    if (a.owner === b.owner) return true;
+    const L = this.K.L, jb = (i + 1) % L;
+    if (b.fill && jb === L - 3 && b.owner === a.owner + 1) return f >= b.owner * L + L + 1 + 7.8;
+    return false;
+  }
+  isNick(i, f) {
+    const a = this.lagState(i, f), b = this.lagState(i + 1, f);
+    if (!a || !b) return false;
+    const L = this.K.L;
+    return !!b.fill && (i + 1) % L === L - 3 && b.owner === a.owner + 1 && !this.lagBond(i, f);
+  }
+
+  // Flat daughter arm behind the fork (z = 0); enzymes and strand labels sit on it.
+  armPos(h, sg, yoff) {
+    const a = Math.max(0, this.sim.f - h) * this.K.AR;
+    return [-a, sg * (1.0 + 3.0 * (1 - Math.exp(-a / 1.6)) + yoff), 0];
+  }
+  // f at which lagging base j first gets a partner (same thresholds as lagState).
+  lagOn(j) {
+    const L = this.K.L, k = Math.floor(j / L), jj = j - k * L, Pk = k * L + L + 1;
+    return jj >= L - 3 ? Pk + (L - 1 - jj) * 0.3 : Pk + 1 + (L - 4 - jj) * 0.62;
+  }
+  // How far the daughter duplex at h is wound (0 flat, 1 helix): paired bases only,
+  // easing in over 3 pairs from the nearest unpaired spot or the fork, times the 3D toggle.
+  // A new pair ramps in over f (leading: 1, lagging: 0.6) so nothing jumps during playback.
+  twistW(h, sg) {
+    const tw = this.sim.tw;
+    if (!tw) return 0;
+    const f = this.sim.f;
+    // per-frame cache: the value depends only on (f, tw, i, sg)
+    let C = this._twc;
+    if (!C || C.f !== f || C.tw !== tw) C = this._twc = { f: f, tw: tw, m: new Map() };
+    const pairedness = (j) => j < 0 ? 0 : Math.max(0, Math.min(1, sg > 0 ? f - 1 - j : (f - this.lagOn(j)) / 0.6));
+    const at = (i) => {
+      const key = i * 2 + (sg > 0 ? 1 : 0);
+      let w = C.m.get(key);
+      if (w !== undefined) return w;
+      w = 1;
+      for (let d = 0; d <= 3 && w > 0; d++) {
+        const e = this.sm(d / 3);
+        w = Math.min(w, e + (1 - e) * pairedness(i - d), e + (1 - e) * pairedness(i + d));
+      }
+      C.m.set(key, w * tw);
+      return w * tw;
+    };
+    const i0 = Math.floor(h), u = h - i0;
+    return u ? at(i0) + (at(i0 + 1) - at(i0)) * u : at(i0);
+  }
+  // Right-handed daughter helix around the arm's centre line (yoff -0.78), same phases as the parent.
+  dhelix(h, sg, yoff) {
+    const C = this.armPos(h, sg, -0.78), d = yoff + 0.78, r = Math.abs(d);
+    const th = h * this.K.TW + sg * Math.PI / 2 + (d < 0 ? sg * this.K.OFF : 0);
+    return [C[0], C[1] + r * Math.cos(th), C[2] + r * Math.sin(th)];
+  }
+  dpos(h, sg, yoff) {
+    const w = this.twistW(h, sg), a = this.armPos(h, sg, yoff);
+    return w ? this.lerp(a, this.dhelix(h, sg, yoff), w) : a;
+  }
+  // Base-pair midpoint of a daughter duplex (where both rods meet).
+  dmid(i, sg) {
+    const w = this.twistW(i, sg), a = this.armPos(i, sg, -0.78);
+    return w ? this.lerp(a, this.lerp(this.dhelix(i, sg, 0), this.dhelix(i, sg, -1.56), 0.5), w) : a;
+  }
+
+  buildReplication(I, O) {
+    const K = this.K, st = this.state, f = this.sim.f, L = K.L;
+    const hel = (h, r, ph) => { const th = h * K.TW + ph; return [(h - f) * K.RISE, r * Math.cos(th), r * Math.sin(th)]; };
+    const arm = (h, sg, yoff) => this.armPos(h, sg, yoff);
+    const tpl = (h, sg, ph, r, yoff) => this.lerp(hel(h, r, ph), this.dpos(h, sg, yoff), this.sm((f - h + 0.5) / 2.5));
+    const tmid = (i, sg) => {
+      const hm = this.lerp(hel(i, 0.78, 0), hel(i, 0.78, K.OFF), 0.5);
+      return this.lerp(hm, this.dmid(i, sg), this.sm((f - i + 0.5) / 2.5));
+    };
+    const newS = (i, sg) => this.dpos(i, sg, -1.56);
+    const newP = (h, sg) => this.dpos(h, sg, -1.76);
+    const tA = (i) => K.TPL[((i % K.TPL.length) + K.TPL.length) % K.TPL.length];
+    const tB = (i) => K.COMP[tA(i)];
+    const pal = this.pal();
+    const PAR = pal.parent, PARs = pal.parentSugar, NEW = pal.newDna, NEWs = pal.newSugar, RNA = pal.rna, RNAs = pal.rnaSugar;
+    const fl = Math.floor(f), iMin = Math.max(0, fl - 34), iMax = fl + 20;
+    const fade = (i) => Math.max(0, Math.min(1, (iMax - i) / 5)) * (iMin > 0 ? Math.max(0, Math.min(1, (i - iMin) / 5)) : 1);
+    const leadHas = (i) => i >= 0 && i <= f - 2;
+    for (let i = iMin; i <= iMax; i++) {
+      const fa = fade(i), t = this.sm((f - i + 0.5) / 2.5);
+      const SA = tpl(i, 1, 0, 0.78, 0), PA = tpl(i + 0.5, 1, 0, 1.0, 0.2);
+      const SB = tpl(i, -1, K.OFF, 0.78, 0), PB = tpl(i - 0.5, -1, K.OFF, 1.0, 0.2);
+      I.push({ k: 0, p: PA, r: 0.17, c: PAR, a: fa });
+      I.push({ k: 0, p: SA, r: 0.13, c: PARs, a: fa });
+      I.push({ k: 0, p: PB, r: 0.17, c: PAR, a: fa });
+      I.push({ k: 0, p: SB, r: 0.13, c: PARs, a: fa });
+      I.push({ k: 1, p: SA, q: PA, w: 0.07, c: PAR, a: fa });
+      if (i < iMax) I.push({ k: 1, p: PA, q: tpl(i + 1, 1, 0, 0.78, 0), w: 0.07, c: PAR, a: fa });
+      I.push({ k: 1, p: SB, q: PB, w: 0.07, c: PAR, a: fa });
+      if (i > iMin) I.push({ k: 1, p: PB, q: tpl(i - 1, -1, K.OFF, 0.78, 0), w: 0.07, c: PAR, a: fa });
+      const MA = tmid(i, 1), MB = tmid(i, -1);
+      const EA = this.lerp(SA, MA, 0.76), EB = this.lerp(SB, MB, 0.76);
+      I.push({ k: 1, p: SA, q: EA, w: 0.19, c: this.baseColor(tA(i)), a: fa, rod: true });
+      I.push({ k: 1, p: SB, q: EB, w: 0.19, c: this.baseColor(tB(i)), a: fa, rod: true });
+      const nA = (tA(i) === 'G' || tA(i) === 'C') ? 3 : 2;
+      if (t < 0.2) {
+        for (let d = 1; d <= nA; d++) I.push({ k: 0, p: this.lerp(EA, EB, d / (nA + 1)), r: 0.045, c: pal.hb, a: 0.9 * fa, flat: true });
+      }
+      if (leadHas(i)) {
+        const rna = i < 3, NS = newS(i, 1), NP = newP(i - 0.5, 1);
+        let b = K.COMP[tA(i)]; if (rna && b === 'T') b = 'U';
+        const bc = rna ? RNA : NEW, sc = rna ? RNAs : NEWs;
+        I.push({ k: 0, p: NP, r: 0.17, c: bc, a: fa });
+        I.push({ k: 0, p: NS, r: 0.13, c: sc, a: fa });
+        I.push({ k: 1, p: NS, q: NP, w: 0.07, c: bc, a: fa });
+        if (leadHas(i - 1)) I.push({ k: 1, p: NP, q: newS(i - 1, 1), w: 0.07, c: bc, a: fa });
+        const EN = this.lerp(NS, MA, 0.76);
+        I.push({ k: 1, p: NS, q: EN, w: 0.19, c: this.baseColor(b), a: fa, rod: true });
+        for (let d = 1; d <= nA; d++) I.push({ k: 0, p: this.lerp(EA, EN, d / (nA + 1)), r: 0.045, c: pal.hb, a: 0.9 * fa, flat: true });
+      }
+      const ls = this.lagState(i, f);
+      if (ls) {
+        const rna = ls.kind === 'rna', NS = newS(i, -1), NP = newP(i + 0.5, -1);
+        let b = tA(i); if (rna && b === 'T') b = 'U';
+        const bc = rna ? RNA : NEW, sc = rna ? RNAs : NEWs;
+        I.push({ k: 0, p: NP, r: 0.17, c: bc, a: fa });
+        I.push({ k: 0, p: NS, r: 0.13, c: sc, a: fa });
+        I.push({ k: 1, p: NS, q: NP, w: 0.07, c: bc, a: fa });
+        if (this.lagBond(i, f)) I.push({ k: 1, p: NP, q: newS(i + 1, -1), w: 0.07, c: bc, a: fa });
+        const EN = this.lerp(NS, MB, 0.76);
+        I.push({ k: 1, p: NS, q: EN, w: 0.19, c: this.baseColor(b), a: fa, rod: true });
+        for (let d = 1; d <= nA; d++) I.push({ k: 0, p: this.lerp(EB, EN, d / (nA + 1)), r: 0.045, c: pal.hb, a: 0.9 * fa, flat: true });
+        if (this.isNick(i, f)) O.push({ t: 'ring', p: this.lerp(NP, newS(i + 1, -1), 0.5), text: '닉' });
+      }
+    }
+    // enzymes
+    const E = K.ENZ, foc = st.step >= 0 ? K.STEPS[st.step].key : null;
+    const enz = (key, ekey, p, r, dy) => {
+      const isF = foc === key, dim = foc && !isF;
+      I.push({ k: 5, p: p, r: r, c: E[ekey].c, a: dim ? 0.45 : 1, focus: isF });
+      O.push({ t: 'label', p: p, text: E[ekey].name, c: E[ekey].c, dy: dy, lead: true, size: isF ? 14 : 12, a: dim ? 0.6 : 1 });
+    };
+    enz('helicase', 'helicase', [0.25, 0, 0], 1.05, -70);
+    if (f >= 1.6 && f < 4.2) enz('primase', 'primase', arm(1, 1, -1.4), 0.7, 46);
+    if (f >= 3) enz('pol3', 'pol3', arm(Math.floor(f - 2) + 0.6, 1, -1.2), 0.85, 50);
+    for (let k = 0; k < 7; k++) {
+      const Pk = k * L + L + 1;
+      if (f >= Pk - 0.1 && f < Pk + 1) enz('primase', 'primase', arm(k * L + L - 2, -1, -1.4), 0.75, -50);
+      if (f >= Pk + 1 && f < Pk + 5) {
+        const idx = k * L + Math.max(0, Math.floor(L - 4 - (f - Pk - 1) / 0.62));
+        enz('pol3lag', 'pol3', arm(idx - 0.6, -1, -1.25), 0.85, -54);
+      }
+      if (k >= 1) {
+        const R = Pk + 5.2;
+        if (f >= R && f < R + 1.5) enz('pol1', 'pol1', arm(k * L - 1 - Math.min(2, Math.floor((f - R) / 0.5)) - 0.5, -1, -1.3), 0.8, -54);
+        if (f >= R + 1.5 && f < Pk + 7.8) enz('ligase', 'ligase', arm(k * L - 3.5, -1, -1.4), 0.75, -54);
+      }
+    }
+    // strand and place labels
+    O.push({ t: 'label', p: [0.6, -1.6, 0], text: '복제분기점 · 진행 →', c: pal.ink, dy: 34, size: 12 });
+    O.push({ t: 'label', p: hel(fl + 12, 1.0, 0), text: '부모 DNA (아직 이중나선)', c: PAR, dy: -40, lead: true, size: 12 });
+    if (iMin === 0 && f > 2) O.push({ t: 'label', p: [-f * K.AR, 0, 0], text: '복제원점', c: pal.ink, size: 12 });
+    if (f > 9) {
+      // strand names sit on the duplex's flat outline so they never cross in 3D
+      O.push({ t: 'label', p: arm((f - 2) * 0.55, 1, -1.56), text: '선도가닥 · 연속', c: NEW, dy: 26, size: 12 });
+      O.push({ t: 'label', p: arm(f * 0.55, 1, 0.2), text: '옛 가닥 (주형)', c: PAR, dy: -22, size: 12 });
+    }
+    if (f > 16) O.push({ t: 'label', p: arm(Math.max(5, f - 14), -1, -1.56), text: '지연가닥 · 오카자키 조각', c: NEW, dy: -26, size: 12 });
+    if (st.ends) {
+      if (iMin === 0 && f > 3) {
+        O.push({ t: 'label', p: arm(-0.6, 1, 0.2), text: '3′', c: PAR, dx: -16, size: 11 });
+        O.push({ t: 'label', p: arm(-0.6, -1, 0.2), text: '5′', c: PAR, dx: -16, size: 11 });
+        O.push({ t: 'label', p: newS(-0.6, 1), text: '5′', c: RNA, dx: -16, size: 11 });
+      }
+      if (f >= 3) O.push({ t: 'label', p: newS(Math.floor(f - 2) + 0.5, 1), text: '3′', c: NEW, dx: 14, dy: 14, size: 11 });
+      for (let k = 0; k < 7; k++) {
+        const Pk = k * L + L + 1;
+        if (f >= Pk + 0.3 && f < Pk + 5) {
+          O.push({ t: 'label', p: newS(k * L + L - 0.4, -1), text: '5′', c: RNA, dx: 12, dy: -14, size: 11 });
+          let lo = k * L + L - 1;
+          while (lo - 1 >= k * L && this.lagState(lo - 1, f)) lo--;
+          O.push({ t: 'label', p: newS(lo - 0.5, -1), text: '3′', c: NEW, dx: -12, dy: -14, size: 11 });
+        }
+      }
+    }
+  }
+
+  // ---------- drawing ----------
+  draw(dt, now) {
+    const el = this.canvas, ctx = this.ctx, st = this.state, K = this.K;
+    const dpr = window.devicePixelRatio || 1;
+    const W = el.clientWidth, H = el.clientHeight;
+    if (!W || !H) return;
+    if (el.width !== Math.round(W * dpr) || el.height !== Math.round(H * dpr)) { el.width = Math.round(W * dpr); el.height = Math.round(H * dpr); }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const pal = this.pal();
+    ctx.fillStyle = pal.bg; ctx.fillRect(0, 0, W, H);
+
+    const I = [], O = [];
+    let scale, D, target;
+    if (st.mode === 'structure') {
+      this.buildStructure(I, O);
+      scale = Math.min(W / 9.8, H / 4.6); D = 30; target = 0;
+    } else {
+      this.buildReplication(I, O);
+      scale = Math.min(W / 27, H / 11.5); D = 60;
+      const xmin = -Math.min(this.sim.f, 34) * K.AR - 1, xmax = 20 * K.RISE;
+      target = (xmin + xmax) / 2;
+    }
+    this.sim.cx += (target - this.sim.cx) * Math.min(1, dt * 4 || 1);
+    const z = this.cam.zoom;
+    const V = {
+      cx: this.sim.cx, cy: Math.cos(this.cam.yaw), sy: Math.sin(this.cam.yaw), cp: Math.cos(this.cam.pitch), sp: Math.sin(this.cam.pitch),
+      F: scale * z * D, D: D, ox: W / 2, oy: H / 2 - (st.mode === 'replication' ? 20 : 0)
+    };
+    let zmin = Infinity, zmax = -Infinity;
+    for (const it of I) {
+      it.A = this.proj(it.p, V);
+      if (it.q) { it.B = this.proj(it.q, V); it.z = (it.A[2] + it.B[2]) / 2; } else it.z = it.A[2];
+      if (it.z < zmin) zmin = it.z;
+      if (it.z > zmax) zmax = it.z;
+    }
+    I.sort((a, b) => a.z - b.z);
+    const span = Math.max(0.001, zmax - zmin);
+    for (const it of I) {
+      const fog = 0.42 + 0.58 * ((it.z - zmin) / span);
+      ctx.globalAlpha = Math.max(0, (it.a == null ? 1 : it.a) * fog);
+      if (ctx.globalAlpha < 0.01) continue;
+      const x = it.A[0], y = it.A[1], s = it.A[3];
+      if (it.k === 0) {
+        const R = it.r * s;
+        if (R < 0.4) continue;
+        if (it.flat) { ctx.fillStyle = it.c; ctx.beginPath(); ctx.arc(x, y, Math.max(1.3, R), 0, 6.2832); ctx.fill(); }
+        else {
+          const sh = this.shades(it.c);
+          const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+          g.addColorStop(0, sh.hi); g.addColorStop(0.5, sh.mid); g.addColorStop(1, sh.lo);
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        }
+      } else if (it.k === 1) {
+        const lw = Math.max(1, it.w * (s + it.B[3]) / 2);
+        ctx.lineCap = it.flat ? 'butt' : 'round';
+        if (it.rod) {
+          ctx.strokeStyle = this.shades(it.c).lo; ctx.lineWidth = lw + 2;
+          ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+        }
+        ctx.strokeStyle = it.c; ctx.lineWidth = lw;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+      } else if (it.k === 3) {
+        const fs = Math.max(8, Math.min(14, it.size * s / (scale * z) * 1.05));
+        ctx.font = '700 ' + fs + 'px "Pretendard", system-ui, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = it.c; ctx.fillText(it.text, x, y + 0.5);
+      } else if (it.k === 4) {
+        const ang = Math.atan2(it.B[1] - y, it.B[0] - x), mx = (x + it.B[0]) / 2, my = (y + it.B[1]) / 2, r = 6;
+        ctx.fillStyle = it.c; ctx.beginPath();
+        ctx.moveTo(mx + Math.cos(ang) * r, my + Math.sin(ang) * r);
+        ctx.lineTo(mx + Math.cos(ang + 2.5) * r, my + Math.sin(ang + 2.5) * r);
+        ctx.lineTo(mx + Math.cos(ang - 2.5) * r, my + Math.sin(ang - 2.5) * r);
+        ctx.closePath(); ctx.fill();
+      } else if (it.k === 5) {
+        const R = it.r * s;
+        let g;
+        if (this.sim.tw >= 0.5) {
+          // 3D: lit translucent sphere, highlight up-left like the atoms
+          g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+          g.addColorStop(0, 'rgba(255,255,255,0.55)'); g.addColorStop(0.3, this.rgba(it.c, Math.min(1, pal.blobAlpha + 0.15))); g.addColorStop(1, this.rgba(it.c, 0.18));
+        } else {
+          g = ctx.createRadialGradient(x, y, R * 0.1, x, y, R);
+          g.addColorStop(0, this.rgba(it.c, pal.blobAlpha)); g.addColorStop(1, this.rgba(it.c, 0.12));
+        }
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        ctx.strokeStyle = it.c; ctx.lineWidth = it.focus ? 3 : 1.5; ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+    // hover pick (structure)
+    if (st.mode === 'structure' && this.pairs) {
+      let pick = -1;
+      const p = this.pointer;
+      if (p.inside && !p.drag) {
+        let best = 10;
+        for (const pr of this.pairs) {
+          const a = this.proj(pr.a, V), b = this.proj(pr.b, V);
+          const vx = b[0] - a[0], vy = b[1] - a[1], L2 = vx * vx + vy * vy || 1;
+          const tt = Math.max(0, Math.min(1, ((p.x - a[0]) * vx + (p.y - a[1]) * vy) / L2));
+          const dx = a[0] + vx * tt - p.x, dy = a[1] + vy * tt - p.y, d = Math.sqrt(dx * dx + dy * dy);
+          if (d < best) { best = d; pick = pr.i; }
+        }
+        if (pick !== this.lastPick) { this.lastPick = pick; this.setState({ hover: pick }); }
+      }
+    }
+    for (const o of O) this.drawOverlay(o, V, now);
+  }
+
+  drawOverlay(o, V, now) {
+    const ctx = this.ctx, A = this.proj(o.p, V), pal = this.pal();
+    if (o.t === 'ring') {
+      const r = Math.max(6, 0.32 * A[3]) * (1 + 0.15 * Math.sin((now || 0) / 160));
+      ctx.globalAlpha = 1; ctx.strokeStyle = pal.ring; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(A[0], A[1], r, 0, 6.2832); ctx.stroke();
+      ctx.font = '600 11px "Pretendard", system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = pal.ring; ctx.fillText(o.text, A[0], A[1] + r + 10);
+      return;
+    }
+    const size = o.size || 12, x = A[0] + (o.dx || 0), y = A[1] + (o.dy || 0);
+    ctx.font = '600 ' + size + 'px "Pretendard", system-ui, sans-serif';
+    const tw = ctx.measureText(o.text).width, w = tw + 14, h = size + 10;
+    ctx.globalAlpha = o.a == null ? 1 : o.a;
+    if (o.lead) {
+      ctx.strokeStyle = this.rgba(o.c, 0.6); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(x, y); ctx.stroke();
+    }
+    ctx.fillStyle = pal.labelBg;
+    ctx.strokeStyle = this.rgba(o.c, 0.55); ctx.lineWidth = 1;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x - w / 2, y - h / 2, w, h, 6); else ctx.rect(x - w / 2, y - h / 2, w, h);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = pal.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(o.text, x, y + 0.5);
+    ctx.globalAlpha = 1;
+  }
+
+  // ---------- panel data ----------
+  events(f) {
+    const K = this.K, L = K.L, E = K.ENZ, out = [];
+    if (f < 0.3) out.push({ c: '#8FA0B3', text: '시작 전이에요. 복제원점에서 두 가닥이 아직 수소결합으로 붙어 있어요. ▶를 눌러 보세요.' });
+    else if (f < K.FMAX) out.push({ c: E.helicase.c, text: '헬리케이스가 ATP를 써서 수소결합을 끊고, 분기점을 오른쪽으로 옮겨요.' });
+    if (f >= 1.6 && f < 4.2) out.push({ c: E.primase.c, text: '프라이메이스가 원점에 선도가닥용 RNA 프라이머를 놓아요.' });
+    if (f >= 3 && f < K.FMAX) out.push({ c: E.pol3.c, text: 'DNA 중합효소 III가 선도가닥 3′-OH에 dNTP를 붙여 분기점 쪽으로 쭉 늘려요.' });
+    for (let k = 0; k < 7; k++) {
+      const P = k * L + L + 1;
+      if (f >= P - 0.1 && f < P + 1) out.push({ c: E.primase.c, text: '프라이메이스가 ' + (k + 1) + '번째 오카자키 조각의 RNA 프라이머를 만들어요. 주형 A의 짝은 U예요.' });
+      if (f >= P + 1 && f < P + 4.72) out.push({ c: E.pol3.c, text: 'DNA 중합효소 III가 ' + (k + 1) + '번째 조각을 분기점 반대쪽으로 합성해요. 이 조각도 5′→3′예요.' });
+      if (k >= 1 && f >= P + 5.2 && f < P + 6.7) out.push({ c: E.pol1.c, text: 'DNA 중합효소 I이 ' + k + '번째 조각의 RNA 프라이머를 떼고 그 자리를 DNA로 채워요.' });
+      if (k >= 1 && f >= P + 6.7 && f < P + 7.8) out.push({ c: E.ligase.c, text: 'DNA 연결효소가 ' + k + '번째와 ' + (k + 1) + '번째 조각 사이 닉을 이어요.' });
+    }
+    if (f >= K.FMAX) out.push({ c: '#6FD3C1', text: '여기서 멈췄어요. 두 딸 DNA는 각각 옛 가닥 하나 + 새 가닥 하나예요 (반보존적).' });
+    return out;
+  }
+  stats(f) {
+    const L = this.K.L;
+    let done = 0, rna = 0, nick = 0;
+    for (let k = 0; k < 7; k++) {
+      const P = k * L + L + 1;
+      if (f >= P + 4.72) done++;
+      if (f >= P && f < P + L + 6.7) rna++;
+      if (k >= 1 && f >= P + 6.7 && f < P + 7.8) nick++;
+    }
+    return { done: done, rna: rna, nick: nick };
+  }
+
+  setMode(mode) {
+    if (mode === 'structure') this.cam = { yaw: -0.55, pitch: 0.32, zoom: 1 };
+    else this.cam = { yaw: -0.22, pitch: 0.28, zoom: 1 };
+    this.lastPick = -1;
+    this.setState({ mode: mode, hover: -1 });
+  }
+
+  renderVals() {
+    const st = this.state, K = this.K, isS = st.mode === 'structure';
+    const pal = this.pal();
+    const togDefs = [['ends', '5′·3′ 방향'], ['letters', '염기 글자'], ['hb', '수소결합'], ['dims', '길이 (nm)'], ['nuc', '뉴클레오타이드 하나'], ['spin', '자동 회전']];
+    const toggles = togDefs.map((d) => {
+      const on = !!st[d[0]];
+      return {
+        label: d[1], pressed: on ? 'true' : 'false',
+        toggle: () => { const o = {}; o[d[0]] = !st[d[0]]; this.setState(o); }
+      };
+    });
+    const s1 = K.SEQ.split('');
+    const cell = (ch, i) => {
+      const hot = st.hover === i;
+      return { ch: ch, bg: hot ? this.baseColor(ch) : 'transparent', fg: hot ? '#111111' : this.textTone(this.baseColor(ch)),
+        enter: () => this.setState({ hover: i }), leave: () => this.setState({ hover: -1 }) };
+    };
+    const seqTop = s1.map((b, i) => cell(b, i));
+    const seqBot = s1.map((b, i) => cell(K.COMP[b], i));
+    const cnt = { A: 0, T: 0, G: 0, C: 0 }, c1 = { A: 0, T: 0, G: 0, C: 0 };
+    s1.forEach((b) => { c1[b]++; cnt[b]++; cnt[K.COMP[b]]++; });
+    const mx = Math.max(cnt.A, cnt.T, cnt.G, cnt.C) || 1;
+    const chargaff = ['A', 'T', 'G', 'C'].map((b) => ({ b: b, n: cnt[b], c: this.baseColor(b), tc: this.textTone(this.baseColor(b)), w: Math.round(cnt[b] / mx * 100) + '%' }));
+    let hoverInfo = { idx: 0, b1: '', b2: '', hb: 0, c1: '', c2: '', note: '' };
+    if (st.hover >= 0 && st.hover < s1.length) {
+      const b1 = s1[st.hover], b2 = K.COMP[b1], gc = b1 === 'G' || b1 === 'C';
+      const pur = (b) => (b === 'A' || b === 'G');
+      hoverInfo = { idx: st.hover + 1, b1: b1, b2: b2, hb: gc ? 3 : 2, c1: this.textTone(this.baseColor(b1)), c2: this.textTone(this.baseColor(b2)),
+        note: (pur(b1) ? '퓨린(두 고리)' : '피리미딘(한 고리)') + ' + ' + (pur(b2) ? '퓨린(두 고리)' : '피리미딘(한 고리)') + ' 짝' };
+    }
+    const f = st.f;
+    const steps = K.STEPS.map((s, i) => ({
+      num: i + 1, title: s.title, who: s.who, c: s.c, pressed: st.step === i ? 'true' : 'false',
+      pick: () => { this.sim.f = s.f; this.setState({ f: s.f, playing: false, step: i }); }
+    }));
+    const speeds = [0.5, 1, 2].map((v) => ({
+      label: v + '×', pressed: st.speed === v ? 'true' : 'false',
+      pick: () => this.setState({ speed: v })
+    }));
+    const isDark = st.theme === 'dark';
+    const leftOn = st.narrow ? st.drawer === 'left' : st.leftOpen, rightOn = st.narrow ? st.drawer === 'right' : st.rightOpen;
+    return {
+      th: K.THEMES[st.theme], isDark: isDark, isLight: !isDark,
+      themeLabel: isDark ? '라이트 모드로 전환' : '다크 모드로 전환',
+      toggleTheme: () => this.setTheme(isDark ? 'light' : 'dark'),
+      canvasRef: this._canvasRef,
+      isStructure: isS, isReplication: !isS,
+      view3dPressed: st.view3d ? 'true' : 'false',
+      toggle3d: () => this.setState({ view3d: !st.view3d }),
+      tabS: isS ? 'true' : 'false', tabR: isS ? 'false' : 'true',
+      leftCls: leftOn ? 'is-open' : '', rightCls: rightOn ? 'is-open' : '',
+      leftExpanded: leftOn ? 'true' : 'false', rightExpanded: rightOn ? 'true' : 'false',
+      scrimCls: (st.narrow && st.drawer) ? 'is-on' : '',
+      toggleLeft: () => this.togglePanel('left'),
+      toggleRight: () => this.togglePanel('right'),
+      closePanels: () => this.setState({ drawer: null }),
+      layoutStyle: ((st.leftW ? '--pl-user: ' + st.leftW + 'px; ' : '') + (st.rightW ? '--pr-user: ' + st.rightW + 'px;' : '')).trim(),
+      layoutCls: st.resizing ? 'is-resizing' : '',
+      leftWNow: st.leftW ? String(st.leftW) : '', rightWNow: st.rightW ? String(st.rightW) : '',
+      leftHandleRef: this._handleRefL, rightHandleRef: this._handleRefR,
+      onKey: (e) => { if (e.key === 'Escape' && st.narrow && st.drawer) this.setState({ drawer: null }); },
+      mistakes: K.MISTAKES[st.mode],
+      strand: { c1: this.textTone('#8AB4FF'), c1s: '#5F8FE0', c2: this.textTone('#F2A36B') },
+      statColor: { done: this.textTone(pal.newDna), rna: this.textTone(pal.rna) },
+      legend: { parent: pal.parent, newDna: pal.newDna, rna: pal.rna, ring: pal.ring, A: K.BASE.A, T: K.BASE.T, G: pal.G, C: K.BASE.C },
+      enzymes: ['helicase', 'primase', 'pol3', 'pol1', 'ligase'].map((k) => K.ENZ[k]),
+      toStructure: () => this.setMode('structure'),
+      toReplication: () => this.setMode('replication'),
+      canvasLabel: isS ? 'B형 DNA 이중나선 20염기쌍 3D 모형. 끌어서 회전할 수 있어요.' : 'DNA 복제분기점 3D 모형. 분기점이 원점에서 ' + f.toFixed(1) + '염기쌍 진행했어요.',
+      zoomIn: () => { this.cam.zoom = Math.min(3, this.cam.zoom * 1.2); },
+      zoomOut: () => { this.cam.zoom = Math.max(0.5, this.cam.zoom / 1.2); },
+      resetView: () => { if (isS) this.cam = { yaw: -0.55, pitch: 0.32, zoom: 1 }; else this.cam = { yaw: -0.22, pitch: 0.28, zoom: 1 }; },
+      toggles: toggles, seqTop: seqTop, seqBot: seqBot, chargaff: chargaff, s1: c1,
+      showHoverCard: isS && st.hover >= 0, hoverInfo: hoverInfo,
+      isPlaying: st.playing, notPlaying: !st.playing, playLabel: st.playing ? '일시정지' : '재생',
+      togglePlay: () => {
+        if (!st.playing && this.sim.f >= K.FMAX) this.sim.f = 0;
+        this.setState({ playing: !st.playing, step: -1, f: this.sim.f });
+      },
+      fInt: Math.round(f * 10), fLabel: f.toFixed(1),
+      onScrub: (e) => { const v = Number(e.target.value) / 10; this.sim.f = v; this.setState({ f: v, playing: false, step: -1 }); },
+      speeds: speeds, steps: steps,
+      hasStep: st.step >= 0, stepDetail: st.step >= 0 ? K.STEPS[st.step].text : '',
+      events: this.events(f), stats: this.stats(f)
+    };
+  }
+}
+</script>
+</body>
+</html>
