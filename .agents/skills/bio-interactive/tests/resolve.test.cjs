@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { resolve } = require('../scripts/resolve.cjs');
+const { resolve, nextNumber } = require('../scripts/resolve.cjs');
 
 // Builds a repo in a tmp dir. Every path is written NFD like macOS stores Korean names.
 // A value of null makes a directory.
@@ -20,21 +20,21 @@ function fixture(tree) {
 const nfc = (p) => p.normalize('NFC');
 
 test('date folder with notes and stt', () => {
-  const repo = fixture({ '복습노트/1006/정리노트_1006_X.md': '# 전사', '복습노트/1006/정리노트_1006_X.html': '', 'STT/1006 생명.md': '...' });
+  const repo = fixture({ '복습노트/1006/.assets/정리노트_1006_X.md': '# 전사', '복습노트/1006/정리노트_1006_X.html': '', 'STT/1006 생명.md': '...' });
   const r = resolve({ repo, arg: '1006' });
   assert.equal(r.kind, 'date');
   assert.equal(r.date, '1006');
   assert.equal(r.exists, true);
   assert.ok(nfc(r.folder).endsWith('복습노트/1006'));
   assert.equal(r.notes.length, 1);
-  assert.ok(nfc(r.notes[0]).endsWith('정리노트_1006_X.md'));
+  assert.ok(nfc(r.notes[0]).endsWith('1006/.assets/정리노트_1006_X.md'));
   assert.ok(r.stt && nfc(r.stt).endsWith('STT/1006 생명.md'));
   assert.ok(fs.existsSync(r.stt));
   assert.equal(r.next, '01');
 });
 
 test('finds NFD-named folders', () => {
-  const repo = fixture({ '복습노트/1006/정리노트_1006_전사와_번역.md': '# 전사', 'STT/1006 생명.md': '...' });
+  const repo = fixture({ '복습노트/1006/.assets/정리노트_1006_전사와_번역.md': '# 전사', 'STT/1006 생명.md': '...' });
   const r = resolve({ repo, arg: '1006' });
   assert.equal(r.notes.length, 1);
   assert.ok(fs.existsSync(r.folder));
@@ -42,7 +42,7 @@ test('finds NFD-named folders', () => {
 });
 
 test('date inside a range folder', () => {
-  const repo = fixture({ '복습노트/0922-0924/정리노트_0922-0924_X.md': '', '복습노트/0929/정리노트_0929_Y.md': '' });
+  const repo = fixture({ '복습노트/0922-0924/.assets/정리노트_0922-0924_X.md': '', '복습노트/0929/.assets/정리노트_0929_Y.md': '' });
   const r = resolve({ repo, arg: '0923' });
   assert.ok(nfc(r.folder).endsWith('복습노트/0922-0924'));
   assert.equal(r.exists, true);
@@ -55,7 +55,7 @@ test('exact folder wins over a range that also covers the date', () => {
 });
 
 test('stt only date points to a new folder', () => {
-  const repo = fixture({ '복습노트/1006/정리노트_1006_X.md': '', 'STT/1013 생명.md': '...' });
+  const repo = fixture({ '복습노트/1006/.assets/정리노트_1006_X.md': '', 'STT/1013 생명.md': '...' });
   const r = resolve({ repo, arg: '1013' });
   assert.equal(r.exists, false);
   assert.ok(nfc(r.folder).endsWith('복습노트/1013'));
@@ -77,9 +77,9 @@ test('empty arg is NO_ARG', () => {
 
 test('topic picks the latest note that mentions it', () => {
   const repo = fixture({
-    '복습노트/0929/정리노트_0929_A.md': '젖당 오페론은 다음 시간에',
-    '복습노트/1006/정리노트_1006_B.md': 'lac 오페론의 조절',
-    '복습노트/1008/정리노트_1008_C.md': '세포 호흡',
+    '복습노트/0929/.assets/정리노트_0929_A.md': '젖당 오페론은 다음 시간에',
+    '복습노트/1006/.assets/정리노트_1006_B.md': 'lac 오페론의 조절',
+    '복습노트/1008/.assets/정리노트_1008_C.md': '세포 호흡',
     'STT/1006 생명.md': '...',
   });
   const r = resolve({ repo, arg: '오페론' });
@@ -90,12 +90,12 @@ test('topic picks the latest note that mentions it', () => {
 });
 
 test('topic match ignores spaces, case, and NFD note text', () => {
-  const repo = fixture({ '복습노트/1006/정리노트_1006_B.md': 'Lac 오페론'.normalize('NFD') });
+  const repo = fixture({ '복습노트/1006/.assets/정리노트_1006_B.md': 'Lac 오페론'.normalize('NFD') });
   assert.ok(nfc(resolve({ repo, arg: 'lac오페론' }).folder).endsWith('복습노트/1006'));
 });
 
 test('topic not in any note goes to 주제별', () => {
-  const repo = fixture({ '복습노트/1006/정리노트_1006_B.md': '오페론' });
+  const repo = fixture({ '복습노트/1006/.assets/정리노트_1006_B.md': '오페론' });
   const r = resolve({ repo, arg: '광합성' });
   assert.equal(r.kind, 'topic');
   assert.ok(nfc(r.folder).endsWith('복습노트/주제별'));
@@ -116,17 +116,17 @@ test('existing interactives are listed with titles', () => {
 });
 
 test('next number skips past every existing NN', () => {
-  const repo = fixture({ '복습노트/1001/인터렉티브_03.html': '<title>a</title>', '복습노트/1001/자료_인터렉티브_04': null, '복습노트/1001/인터렉티브_01.html': '' });
+  const repo = fixture({ '복습노트/1001/인터렉티브_03.html': '<title>a</title>', '복습노트/1001/.assets/자료_인터렉티브_04': null, '복습노트/1001/인터렉티브_01.html': '' });
   assert.equal(resolve({ repo, arg: '1001' }).next, '05');
 });
 
 test('next number counts names with a content suffix', () => {
-  const repo = fixture({ '복습노트/1001/인터렉티브_02_DNA_Replication.html': '<title>a</title>', '복습노트/1001/자료_인터렉티브_03_Mitosis': null });
+  const repo = fixture({ '복습노트/1001/인터렉티브_02_DNA_Replication.html': '<title>a</title>', '복습노트/1001/.assets/자료_인터렉티브_03_Mitosis': null });
   assert.equal(resolve({ repo, arg: '1001' }).next, '04');
 });
 
 test('cli prints json, or an error code with exit 1', () => {
-  const repo = fixture({ '복습노트/1006/정리노트_1006_X.md': '' });
+  const repo = fixture({ '복습노트/1006/.assets/정리노트_1006_X.md': '' });
   const cli = path.join(__dirname, '..', 'scripts', 'resolve.cjs');
   const ok = spawnSync('node', [cli, repo, '1006'], { encoding: 'utf8' });
   assert.equal(ok.status, 0);
@@ -138,14 +138,14 @@ test('cli prints json, or an error code with exit 1', () => {
 
 test('topic prefers the note that teaches it over a later back-link', () => {
   const repo = fixture({
-    '복습노트/1006/정리노트_1006_B.md': '## 전사\n### lac 오페론의 억제자 스위치\n오페론은 ...',
-    '복습노트/1008/정리노트_1008_C.md': '# 세포 호흡\n[지난 1006 수업: 전사·번역과 오페론](../1006/x.html)\n',
+    '복습노트/1006/.assets/정리노트_1006_B.md': '## 전사\n### lac 오페론의 억제자 스위치\n오페론은 ...',
+    '복습노트/1008/.assets/정리노트_1008_C.md': '# 세포 호흡\n[지난 1006 수업: 전사·번역과 오페론](../1006/x.html)\n',
   });
   assert.ok(nfc(resolve({ repo, arg: '오페론' }).folder).endsWith('복습노트/1006'));
 });
 
 test('range argument resolves to that range folder', () => {
-  const repo = fixture({ '복습노트/0922-0924/정리노트_0922-0924_X.md': '' });
+  const repo = fixture({ '복습노트/0922-0924/.assets/정리노트_0922-0924_X.md': '' });
   const r = resolve({ repo, arg: '0922-0924' });
   assert.equal(r.kind, 'date');
   assert.ok(nfc(r.folder).endsWith('복습노트/0922-0924'));
@@ -154,8 +154,23 @@ test('range argument resolves to that range folder', () => {
 
 test('a heading with every word of a multi-word topic counts as a heading match', () => {
   const repo = fixture({
-    '복습노트/1001/정리노트_1001_A.md': '## 3. DNA 구조가 복제를 예고한다\n본문',
-    '복습노트/1008/정리노트_1008_C.md': '# 번역\n지난 시간 DNA 복제에 이어서',
+    '복습노트/1001/.assets/정리노트_1001_A.md': '## 3. DNA 구조가 복제를 예고한다\n본문',
+    '복습노트/1008/.assets/정리노트_1008_C.md': '# 번역\n지난 시간 DNA 복제에 이어서',
   });
   assert.ok(nfc(resolve({ repo, arg: 'DNA 복제' }).folder).endsWith('복습노트/1001'));
+});
+
+test('nextNumber counts .assets data folders in a range folder', () => {
+  const repo = fixture({ '복습노트/0922-0924/.assets/자료_인터렉티브_03_x/Main.dc.html': '' });
+  assert.equal(nextNumber(path.join(repo, '복습노트/0922-0924')), '04');
+});
+
+test('nextNumber still counts legacy root data folders and tolerates a missing .assets', () => {
+  const repo = fixture({ '복습노트/1001/자료_인터렉티브_02_old': null, '복습노트/1001/인터렉티브_01.html': '' });
+  assert.equal(nextNumber(path.join(repo, '복습노트/1001')), '03');
+});
+
+test('notes at the date-folder root are not read any more', () => {
+  const repo = fixture({ '복습노트/1006/정리노트_1006_X.md': '# 전사', 'STT/1006 생명.md': '...' });
+  assert.deepEqual(resolve({ repo, arg: '1006' }).notes, []);
 });

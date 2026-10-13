@@ -1,7 +1,7 @@
 // Saves one topic into a 복습노트 folder under the next free number, then builds its page.
 // Usage: node save.cjs <RUN/n/Main.dc.html> <DEST> <name>   → {"nn", "html", "dir"} JSON (exit 0), usage (exit 2) or the error (exit 1) on stderr
-// Files are 인터렉티브_NN_<name>.html and 자료_인터렉티브_NN_<name>/; spaces in name become '_'.
-// Never overwrites: the number skips every 인터렉티브_NN* and 자료_인터렉티브_NN*. Nothing is written next to the source.
+// Files are 인터렉티브_NN_<name>.html and .assets/자료_인터렉티브_NN_<name>/; spaces in name become '_'.
+// Never overwrites: the number skips every 인터렉티브_NN* and .assets/자료_인터렉티브_NN*. Nothing is written next to the source.
 const fs = require('node:fs');
 const path = require('node:path');
 const { nextNumber } = require('./resolve.cjs');
@@ -20,9 +20,18 @@ function save({ src, dest, name }) {
   dest = path.resolve(dest);
   fs.mkdirSync(dest, { recursive: true });
   const nn = nextNumber(dest);
-  const dir = path.join(dest, '자료_인터렉티브_' + nn + '_' + name);
+  const assets = path.join(dest, '.assets');
+  const hadAssets = fs.existsSync(assets);
+  const dir = path.join(assets, '자료_인터렉티브_' + nn + '_' + name);
   const html = path.join(dest, '인터렉티브_' + nn + '_' + name + '.html');
-  fs.mkdirSync(dir); // not recursive: fails instead of writing into a folder that appeared meanwhile
+  fs.mkdirSync(assets, { recursive: true });
+  const dropEmptyAssets = () => { if (!hadAssets) try { fs.rmdirSync(assets); } catch (e) { /* not empty: keep */ } };
+  try {
+    fs.mkdirSync(dir); // not recursive: fails instead of writing into a folder that appeared meanwhile
+  } catch (e) {
+    dropEmptyAssets();
+    throw e;
+  }
   try {
     const copy = path.join(dir, 'Main.dc.html');
     fs.copyFileSync(src, copy);
@@ -31,6 +40,7 @@ function save({ src, dest, name }) {
   } catch (e) {
     // A half-made number would push every later save past a gap.
     fs.rmSync(dir, { recursive: true, force: true });
+    dropEmptyAssets();
     throw e;
   }
   return { nn, html, dir };

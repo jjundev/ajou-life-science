@@ -60,3 +60,9 @@ test('follow-up rules are stated', () => {
   assert.ok(md.includes('lac_오페론_스위치') && md.includes('고유명사'), 'names are Korean with English proper nouns');
   assert.ok(!/인터렉티브_NN\.html|자료_인터렉티브_NN[/"]/.test(md), 'no unnamed file pattern left');
 });
+
+test('docs put the data folder and notes under .assets', () => {
+  const md = read('SKILL.md').normalize('NFC');
+  for (const s of ['.assets/자료_인터렉티브_NN_<이름>/', '"<DEST>/.assets/자료_인터렉티브_NN_<이름>"', '`.assets/`의 정리노트'])
+    assert.ok(md.includes(s), s);
+});

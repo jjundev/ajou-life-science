@@ -13,7 +13,7 @@ description: '생명과학 복습노트 날짜(MMDD)나 주제로 DNA 3D 모형�
 
 **산출물** (`DEST` 폴더, 번호 `NN`은 두 자리, `<이름>`은 내용을 나타내는 한국어 이름):
 - `인터렉티브_NN_<이름>.html` — 브라우저에서 바로 여는 단독 파일
-- `자료_인터렉티브_NN_<이름>/` — 원본 `Main.dc.html`과 `canvas.json`(나중에 Design 캔버스로 올릴 때 쓰는 매니페스트)
+- `.assets/자료_인터렉티브_NN_<이름>/` — 원본 `Main.dc.html`과 `canvas.json`(나중에 Design 캔버스로 올릴 때 쓰는 매니페스트)
 
 **진행 표시**: 단계마다 한 줄만 쓴다. 예: `3/8 작성 중: 주제 3개 (병렬)`
 
@@ -39,7 +39,7 @@ description: '생명과학 복습노트 날짜(MMDD)나 주제로 DNA 3D 모형�
 SKILL=…; REPO=…; RUN=…; mkdir -p "$RUN" && node "$SKILL/scripts/resolve.cjs" "$REPO" "<인자>" | tee "$RUN/target.json"
 ```
 - 인자 `MMDD-MMDD`는 그 이름의 범위 폴더가 있을 때만 날짜로 쓴다(없으면 `NO_TARGET`).
-- 출력: `kind`(date|topic), `folder`(= `DEST`), `exists`, `date`, `notes`(정리노트 `.md`), `stt`, `existing`(같은 폴더 `인터렉티브_*`·`3D모형_*`와 `<title>`), `next`(다음 번호).
+- 출력: `kind`(date|topic), `folder`(= `DEST`), `exists`, `date`, `notes`(`.assets/`의 정리노트 `.md`), `stt`, `existing`(같은 폴더 `인터렉티브_*`·`3D모형_*`와 `<title>`), `next`(다음 번호).
 - 날짜가 `0922-0924` 같은 범위 폴더 안이면 그 폴더가 나온다. 폴더는 없고 STT만 있으면 `exists: false`로 새 폴더 자리가 나온다.
 - 주제는 정리노트 본문(링크 글자 제외)에서 찾고, H2·H3 제목에 나온 폴더를 먼저, 그다음 가장 최근 폴더를 고른다. 어느 정리노트에도 없으면 `복습노트/주제별/`이 나온다(교과서·강의노트로 만든다).
 - `{"error":"NO_TARGET"}` → 「대상 없음: <인자>의 복습노트 폴더와 STT가 없어요」라고 보고하고 멈춘다. `NO_ARG` → 사용법을 보여 주고 멈춘다.
@@ -93,7 +93,7 @@ SKILL=…; RUN=…; for n in 1 2; do node "$SKILL/scripts/build.cjs" "$RUN/$n/Ma
 고친 것이 있으면 4단계부터 다시 한다(한 번). 그래도 문제가 남으면 「보류」.
 
 ### 7. 저장
-통과한 주제를 점수 순으로 주제마다 한 번씩 `save.cjs`로 저장한다(셸 반복문 없이 한 줄씩). `<이름>`은 3단계에서 돌려받은 파일 이름이다. 다음 빈 번호를 고르고(`인터렉티브_NN_*`도 `자료_인터렉티브_NN_*`도 없는 번호), 덮어쓰지 않으며, `RUN`에는 아무것도 쓰지 않는다.
+통과한 주제를 점수 순으로 주제마다 한 번씩 `save.cjs`로 저장한다(셸 반복문 없이 한 줄씩). `<이름>`은 3단계에서 돌려받은 파일 이름이다. 다음 빈 번호를 고르고(`인터렉티브_NN_*`도 `.assets/자료_인터렉티브_NN_*`도 없는 번호), 덮어쓰지 않으며, `RUN`에는 아무것도 쓰지 않는다.
 ```bash
 SKILL=…; RUN=…; DEST=…; node "$SKILL/scripts/save.cjs" "$RUN/<n>/Main.dc.html" "$DEST" "<이름>"
 ```
@@ -108,7 +108,7 @@ SKILL=…; RUN=…; DEST=…; node "$SKILL/scripts/save.cjs" "$RUN/<n>/Main.dc.h
 - 단순화·교과서 보충: …
 - 검토에서 고친 것: …
 - 실행 폴더: RUN 경로
-- 커밋 제안: git add "<DEST>/인터렉티브_NN_<이름>.html" "<DEST>/자료_인터렉티브_NN_<이름>" && git commit -m "docs(notes): add <MMDD> interactives"
+- 커밋 제안: git add "<DEST>/인터렉티브_NN_<이름>.html" "<DEST>/.assets/자료_인터렉티브_NN_<이름>" && git commit -m "docs(notes): add <MMDD> interactives"
 ```
 
 ## 실패 처리
