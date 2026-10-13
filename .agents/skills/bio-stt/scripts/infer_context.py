@@ -103,14 +103,16 @@ def infer_chapter(repo_root: Path | str, mmdd: str) -> int:
 
         if target_folder:
             f_dir = review_root / target_folder
-            # 장마감 파일 확인 (예: 장마감_1001_4장.md)
-            for f in f_dir.iterdir():
-                m_close = re.match(r"장마감_\d{4}_(\d+)장\.md", nfc(f.name))
-                if m_close:
-                    closed_ch = int(m_close.group(1))
-                    if target_folder == mmdd:
-                        return closed_ch
-                    return closed_ch + 1
+            # 장마감 파일 확인 (예: .assets/장마감_1001_4장.md) — 부속 파일은 .assets 안에만 둔다
+            assets_dir = f_dir / ".assets"
+            if assets_dir.is_dir():
+                for f in assets_dir.iterdir():
+                    m_close = re.match(r"장마감_\d{4}_(\d+)장\.md", nfc(f.name))
+                    if m_close:
+                        closed_ch = int(m_close.group(1))
+                        if target_folder == mmdd:
+                            return closed_ch
+                        return closed_ch + 1
 
             # 정리노트 내 슬라이드 태그 확인
             for f in f_dir.iterdir():
