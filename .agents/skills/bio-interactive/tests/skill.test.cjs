@@ -40,3 +40,9 @@ test('.claude link resolves to the skill', () => {
   assert.equal(fs.readlinkSync(link), '../../.agents/skills/bio-interactive');
   assert.equal(fs.realpathSync(link), fs.realpathSync(SKILL));
 });
+
+test('follow-up rules are stated', () => {
+  const md = read('SKILL.md');
+  for (const s of ['scripts/steps.cjs', 'scripts/save.cjs', 'STEP_OFF_PHASE', 'phase']) assert.ok(md.includes(s), s);
+  assert.ok(!/mkdir "\$DEST\/자료_인터렉티브/.test(md), 'old manual save snippet removed');
+});

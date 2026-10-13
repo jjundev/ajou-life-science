@@ -61,20 +61,21 @@ SKILL=…; RUN=…; for n in 1 2; do mkdir -p "$RUN/$n" && cp "$SKILL/assets/tem
 - 계약 `references/scene-api.md`, 디자인 규칙 `references/design.md`
 - 품질 기준 예시 `references/example-dna.dc.html` — 장면을 실제 구조(개수·방향·비율)로 모델링하는 방식, 단계·꼭 기억해요·출처 문구의 밀도를 본다. 이 예시는 예전 형식(`tabS` 등)이라 셸 부분은 따라 하지 않는다.
 - 근거 자료: `notes`, `stt`, 해당 장의 `강의노트/N장 *.pdf`, `교과서/생명과학_기초와_응용_2판/0N장_*.pdf`
-- 지시: 수업에서 다룬 내용만 쓰고, 교과서에서 보충한 것은 패널 문구에 「(교과서 보충)」으로 표시한다. 단순화한 것(개수·속도·위치)은 `__SOURCE__` 자리 출처 한 줄에 적는다. 끝내기 전에 `node "$SKILL/scripts/check.cjs" "$RUN/<n>/Main.dc.html"`이 `ok`를 내야 한다.
+- 지시: 수업에서 다룬 내용만 쓰고, 교과서에서 보충한 것은 패널 문구에 「(교과서 보충)」으로 표시한다. 단순화한 것(개수·속도·위치)은 `__SOURCE__` 자리 출처 한 줄에 적는다. 단계에 `f`를 쓰면 그 단계 과정이 화면에 다 보이는 지점에 두고, `phase`에 그 지점 재생 바 글자에 나오는 과정 이름을 적는다(다음 과정의 시작점에 두지 않는다). 끝내기 전에 `node "$SKILL/scripts/check.cjs" "$RUN/<n>/Main.dc.html"`이 `ok`를 내야 한다.
 - 돌려받을 것: 제목, 모드·단계 목록, 단순화한 것, 확신 없는 사실.
 
 ### 4. 검사
 ```bash
 SKILL=…; RUN=…; for n in 1 2; do echo "== $n"; node "$SKILL/scripts/check.cjs" "$RUN/$n/Main.dc.html"; done
 ```
-모두 `ok`여야 한다. 오류(`SHELL_MISSING`, `HOLE_UNKNOWN`, `HOLE_SYNTAX`, `EVENT_UNSUPPORTED`, `HEX_IN_MARKUP`, `TOPIC_INVALID`, `RENDER_THROWS`, `DRAW_THROWS`, `SCENE_EMPTY`, `SCENE_NAN`, `TEMPLATE_LEFT`)는 출력 줄 그대로(예외 문장이 `—` 뒤에 붙어 있다) 그 작성자에게 한 번 돌려보내 고친다. 그래도 남으면 그 주제는 「보류」.
+모두 `ok`여야 한다. 오류(`SHELL_MISSING`, `HOLE_UNKNOWN`, `HOLE_SYNTAX`, `EVENT_UNSUPPORTED`, `HEX_IN_MARKUP`, `TOPIC_INVALID`, `STEP_OFF_PHASE`, `RENDER_THROWS`, `DRAW_THROWS`, `SCENE_EMPTY`, `SCENE_NAN`, `TEMPLATE_LEFT`)는 출력 줄 그대로(예외 문장이 `—` 뒤에 붙어 있다) 그 작성자에게 한 번 돌려보내 고친다. 그래도 남으면 그 주제는 「보류」.
 
 ### 5. 내용 검토 (별도 opus 에이전트, 주제마다 1명, 병렬)
-작성자가 아닌 새 에이전트에게 `Main.dc.html`, 브리프, 근거 자료를 주고 다음을 대조하게 한다.
+작성자가 아닌 새 에이전트에게 `Main.dc.html`, 브리프, 근거 자료, 그리고 단계마다 화면에 나오는 값(`node "$SKILL/scripts/steps.cjs" "$RUN/<n>/Main.dc.html"` 출력)을 주고 다음을 대조하게 한다.
 - 패널 문구·단계·꼭 기억해요·출처가 정리노트·교과서와 맞는지(용어, 방향 5′→3′ 같은 사실, 효소·분자 이름)
 - 장면 모델이 사실과 맞는지(개수, 순서, 방향, 상대 크기, 무엇이 무엇에 붙는지)
 - 수업 밖 내용에 「(교과서 보충)」 표시가 있는지
+- 단계 문구가 그 지점의 재생 바 글자·캔버스 설명·패널 값과 맞는지
 Critical·Important는 그 작성자에게 한 번에 모아 돌려보내 고치고 4단계를 다시 한다. 수정은 한 번만 한다. 남으면 「보류」.
 
 ### 6. 브라우저 확인
@@ -84,18 +85,19 @@ SKILL=…; RUN=…; for n in 1 2; do node "$SKILL/scripts/build.cjs" "$RUN/$n/Ma
 ```
 주제마다 1440×900과 375×812에서 각각 라이트·다크로 확인한다.
 - 콘솔 오류 0, 375px에서 가로 스크롤 없음
-- 모드 전환, 재생·일시정지·스크럽·속도(재생 모드), 단계 누르기
+- 모드 전환, 재생·일시정지·스크럽·속도(재생 모드)
+- 단계 누르기: `node "$SKILL/scripts/steps.cjs" "$RUN/<n>/Main.dc.html"` 출력과 화면(재생 바 글자, 캔버스, 패널)을 단계마다 대조한다
 - 패널 열고 닫기(375px는 서랍, Escape로 닫힘), 넓은 화면 패널 너비 조절
 - 회전 모드에서 끌어서 회전, 확대·축소·시점 처음으로
 - 캔버스 라벨이 겹치거나 화면 밖으로 잘리지 않음, 다크에서 색이 묻히지 않음
 고친 것이 있으면 4단계부터 다시 한다(한 번). 그래도 문제가 남으면 「보류」.
 
 ### 7. 저장
-통과한 주제를 점수 순으로 `next`부터 번호를 붙여 저장한다. 덮어쓰지 않도록 `mkdir`(-p 없이)과 존재 검사로 막는다.
+통과한 주제를 점수 순으로 주제마다 한 번씩 `save.cjs`로 저장한다(셸 반복문 없이 한 줄씩). 다음 빈 번호를 고르고(`인터렉티브_NN.html`도 `자료_인터렉티브_NN`도 없는 번호), 덮어쓰지 않으며, `RUN`에는 아무것도 쓰지 않는다.
 ```bash
-SKILL=…; RUN=…; DEST=…; NN=01; n=1; mkdir -p "$DEST" && [ ! -e "$DEST/인터렉티브_$NN.html" ] && mkdir "$DEST/자료_인터렉티브_$NN" && cp "$RUN/$n/Main.dc.html" "$DEST/자료_인터렉티브_$NN/Main.dc.html" && node "$SKILL/scripts/build.cjs" "$DEST/자료_인터렉티브_$NN/Main.dc.html" "$DEST/인터렉티브_$NN.html"
+SKILL=…; RUN=…; DEST=…; node "$SKILL/scripts/save.cjs" "$RUN/<n>/Main.dc.html" "$DEST"
 ```
-`build.cjs`가 `자료_인터렉티브_NN/canvas.json`도 함께 만든다. 저장한 `인터렉티브_NN.html`을 내장 브라우저로 한 번 열어 콘솔 오류가 없는지만 다시 본다.
+출력 JSON(`{"nn", "html", "dir"}`)의 `dir`에 `Main.dc.html`과 `canvas.json`이 생긴다. `html`을 내장 브라우저로 한 번 열어 콘솔 오류가 없는지만 다시 본다.
 
 ### 8. 보고
 ```
@@ -116,7 +118,7 @@ SKILL=…; RUN=…; DEST=…; NN=01; n=1; mkdir -p "$DEST" && [ ! -e "$DEST/인�
 | 후보 0개 | 「후보 없음」과 이유 보고 후 멈춤 |
 | 검사·내용 검토·브라우저 확인 실패(수정 1회 후에도) | 그 주제만 저장하지 않고 「보류」, 나머지는 계속 |
 | 모든 주제 보류 | 파일 없이 보고만 |
-| 번호 자리에 이미 파일이 있음 | 다음 빈 번호로 넘긴다(덮어쓰지 않음) |
+| 번호 자리에 이미 파일이나 자료 폴더가 있음 | `save.cjs`가 다음 빈 번호로 넘긴다(덮어쓰지 않음) |
 
 ## 템플릿 고치기
 셸(패널·테마·재생 바·그리기)을 바꿔야 하면 `assets/template.dc.html`을 고치고 `references/scene-api.md`를 맞춘 뒤 테스트를 돌린다.
