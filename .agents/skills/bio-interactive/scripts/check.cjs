@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const { readDc, loadComponent, makeCtx, makeCanvas } = require('./harness.cjs');
 
 const SHELL = ['class="app"', 'class="topbar"', 'class="layout', 'panel panel-left', 'panel panel-right', 'class="scrim',
-  'class="stage"', 'ref="{{canvasRef}}"', 'class="view-btns"', '@media (max-width: 1023.98px)', 'aria-label="{{themeLabel}}"', 'class="source"'];
+  'class="stage"', 'ref="{{canvasRef}}"', 'class="view-btns"', '@media (max-width: 1023.98px)', 'aria-label="{{themeLabel}}"'];
 const EVENTS = ['onClick', 'onKeyDown', 'onMouseEnter', 'onMouseLeave', 'onChange'];
 const FRAMES = 120;
 
@@ -203,7 +203,7 @@ function check(file, opts = {}) {
   stepChecks(file, add);
 
   if (!opts.allowTemplate) {
-    for (const p of ['__TITLE__', '__SOURCE__']) if (src.includes(p)) add('TEMPLATE_LEFT:' + p);
+    for (const p of ['__TITLE__']) if (src.includes(p)) add('TEMPLATE_LEFT:' + p);
     if (topic.DEMO === true) add('TEMPLATE_LEFT:DEMO');
   }
   return { ok: errors.length === 0, errors, details };

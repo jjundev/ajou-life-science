@@ -2,7 +2,7 @@
 
 주제 하나는 템플릿을 복사한 `Main.dc.html` 한 파일이에요. 바꾸는 곳은 네 군데뿐이에요.
 
-1. 자리표시 `__TITLE__`(`<title>`과 `.brand`, 2곳)과 `__SOURCE__`(`.source`, 출처 한 줄)
+1. 자리표시 `__TITLE__`(`<title>`과 `.brand`, 2곳)
 2. 마크업 슬롯 `<!-- SLOT:left -->` … `<!-- /SLOT:left -->`, `<!-- SLOT:right -->` … `<!-- /SLOT:right -->` 사이(예시 내용은 지우고 새로 써요)
 3. 스크립트 맨 위 주제 훅 네 개: `topic()`, `buildScene()`, `extraState()`, `extraVals()`
 4. 그 밖의 셸(상단 바, 패널, 캔버스, 재생 바, 「꼭 기억해요」, 공통 메서드)은 고치지 않아요. 고쳐야 하면 템플릿을 고치고 테스트를 돌려요.
@@ -20,7 +20,7 @@
 | `RENDER_THROWS` | `renderVals()`가 예외 |
 | `DRAW_THROWS` | 장면 그리기 예외(모드별 `:a`, 단계 누른 뒤 `:step2`) |
 | `SCENE_EMPTY` / `SCENE_NAN` | 그린 것이 없음 / 좌표가 숫자가 아님(예: `cam.zoom` 빠짐) |
-| `TEMPLATE_LEFT` | `__TITLE__`, `__SOURCE__`, `DEMO`가 남음 |
+| `TEMPLATE_LEFT` | `__TITLE__`, `DEMO`가 남음 |
 
 ## `topic()`
 

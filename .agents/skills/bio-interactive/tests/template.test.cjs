@@ -123,8 +123,20 @@ test('scrub and step pick move f', () => {
 test('placeholders and slots are present', () => {
   const m = markupPart(T);
   assert.equal(m.split('__TITLE__').length - 1, 2);
-  for (const s of ['__SOURCE__', '<!-- SLOT:left -->', '<!-- SLOT:right -->']) assert.ok(m.includes(s), s);
+  for (const s of ['<!-- SLOT:left -->', '<!-- SLOT:right -->']) assert.ok(m.includes(s), s);
   assert.equal(m.includes('@font-face'), false);
+});
+
+test('first section in each panel has no divider', () => {
+  const rule = markupPart(T).match(/\.panel-head \+ \.sec\{([^}]*)\}/);
+  assert.ok(rule, '.panel-head + .sec rule');
+  assert.ok(rule[1].includes('border-top:0'), rule[1]);
+});
+
+test('template has no source line', () => {
+  const m = markupPart(T);
+  assert.equal(m.includes('class="source"'), false);
+  assert.equal(m.includes('__SOURCE__'), false);
 });
 
 test('flat scene is not fogged', () => {
