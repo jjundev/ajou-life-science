@@ -46,5 +46,6 @@ test('follow-up rules are stated', () => {
   for (const s of ['scripts/steps.cjs', 'scripts/save.cjs', 'STEP_OFF_PHASE', 'phase']) assert.ok(md.includes(s), s);
   assert.ok(!/mkdir "\$DEST\/자료_인터렉티브/.test(md), 'old manual save snippet removed');
   assert.ok(md.includes('save.cjs" "$RUN/<n>/Main.dc.html" "$DEST" "<이름>"'), 'save takes the name');
+  assert.ok(md.includes('lac_오페론_스위치') && md.includes('고유명사'), 'names are Korean with English proper nouns');
   assert.ok(!/인터렉티브_NN\.html|자료_인터렉티브_NN[/"]/.test(md), 'no unnamed file pattern left');
 });

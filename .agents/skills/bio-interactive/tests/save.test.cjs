@@ -115,3 +115,9 @@ test('rejects a missing or unsafe name and writes nothing', () => {
     assert.throws(() => save({ src, dest, name }), /name/, String(name));
   assert.deepEqual(fs.readdirSync(dest), []);
 });
+
+test('a Korean name with English proper nouns is kept as written', () => {
+  const { src, dest } = setup();
+  const r = save({ src, dest, name: '전사와 RNA 가공' });
+  assert.equal(path.basename(r.html), '인터렉티브_01_전사와_RNA_가공.html');
+});
