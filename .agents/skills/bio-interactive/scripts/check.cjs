@@ -60,7 +60,7 @@ function unknownHoles(markup, vals) {
   return [...bad];
 }
 
-// Topic data the shell relies on. Steps are numbered from 1 like on screen.
+// Topic data the shell relies on. Steps are numbered from 1 in STEPS order.
 // A step with f names its phase: the process name the playback label shows at that f
 // (one whole ' · ' part of a '<과정 이름> · f / fmax' label, so '억제자' does not pass on '억제자 이동').
 function topicChecks(topic, add) {
@@ -163,7 +163,7 @@ function stepChecks(file, add) {
   const n = (c.T.STEPS || []).length;
   for (let i = 0; i < n; i++) {
     try {
-      c.renderVals().steps[i].pick();
+      c.pickStep(i);
       c.renderVals();
       c.draw(0.016, 0);
     } catch (e) {

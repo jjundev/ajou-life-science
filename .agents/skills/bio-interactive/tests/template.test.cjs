@@ -120,6 +120,19 @@ test('scrub and step pick move f', () => {
   assert.equal(v.stepDetail, S.text);
 });
 
+test('pickStep switches mode and moves f', () => {
+  const { c } = loadComponent(T);
+  const S = c.topic().STEPS[1];
+  c.setMode('a');
+  c.setState({ playing: true });
+  c.pickStep(1);
+  assert.equal(c.state.mode, S.mode);
+  assert.equal(c.state.f, S.f);
+  assert.equal(c.state.playing, false);
+  assert.equal(c.state.step, 1);
+  assert.equal(c.renderVals().stepDetail, S.text);
+});
+
 test('placeholders and slots are present', () => {
   const m = markupPart(T);
   assert.equal(m.split('__TITLE__').length - 1, 2);

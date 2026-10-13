@@ -702,6 +702,14 @@ class Component extends DCLogic {
     this.setState({ mode: mode, f: 0, playing: false, step: -1 });
   }
 
+  pickStep(i) {
+    const s = (this.T.STEPS || [])[i];
+    if (!s) return;
+    if (s.mode !== this.state.mode) this.setMode(s.mode);
+    if (s.f != null) this.sim.f = s.f;
+    this.setState({ f: this.sim.f, playing: false, step: i });
+  }
+
   renderVals() {
     const st = this.state, T = this.T, m = this.modeDef(), pb = m.playback;
     const tg = T.TOGGLES ? (Array.isArray(T.TOGGLES) ? T.TOGGLES : (T.TOGGLES[st.mode] || [])) : [];
@@ -713,11 +721,7 @@ class Component extends DCLogic {
     const STEPS = T.STEPS || [];
     const steps = STEPS.map((s, i) => ({
       num: i + 1, title: s.title, who: s.who, c: s.c, pressed: st.step === i ? 'true' : 'false',
-      pick: () => {
-        if (s.mode !== this.state.mode) this.setMode(s.mode);
-        if (s.f != null) this.sim.f = s.f;
-        this.setState({ f: this.sim.f, playing: false, step: i });
-      }
+      pick: () => this.pickStep(i)
     }));
     const speeds = [0.5, 1, 2].map((v) => ({
       label: v + '×', pressed: st.speed === v ? 'true' : 'false',

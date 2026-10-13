@@ -20,7 +20,7 @@ function stepsReport(file) {
   const { c } = loadComponent(file, { narrow: false });
   c.attachCanvas(makeCanvas(makeCtx().ctx, 800, 600));
   return (c.T.STEPS || []).map((s, i) => {
-    c.renderVals().steps[i].pick();
+    c.pickStep(i);
     c.draw(0.016, 0);
     const v = c.renderVals();
     return {
