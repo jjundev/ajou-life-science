@@ -146,16 +146,22 @@ def build_explanation(pack, fragments, stage: Path, repo: Path) -> Artifacts:
     shutil.copy2(ASSETS / 'template-provenance.json', data_dir / 'template-provenance.json')
     articles = []
     toc = []
+    choices = {}
     for p in pack.problems:
-        reading = (f'<div class="layer formal" data-source-problem="{p.id}"><h4>주어진 조건</h4>'
+        reading = (f'<div class="layer formal" data-source-problem="{p.id}">'
                    + '<div data-source-field="conditions">' + p.conditions_html + '</div>'
                    + ('<h4>구할 것</h4><div data-source-field="ask">' + p.ask_html + '</div>' if p.ask_html else '')
                    + ''.join(p.figures_html) + '</div>')
-        if p.original_html:
-            label = '원문·출처 정보' if pack.profile == 'forecast' else '기출 원문'
-            reading += '<div class="layer formal" data-original-problem="' + p.id + '"><h4>' + label + '</h4>' + p.original_html + '</div>'
-        # Validate each block separately: a summary remains a direct fragment child.
+        # Validate each block separately: details wraps the original only after its content passed.
         reading = resources(reading, p, pack, repo, stage, fig_name, pack.path.parent, 'source')
+        if p.original_html:
+            label = '원문·출처 정보 보기' if pack.profile == 'forecast' else '기출 원문 보기'
+            original = resources(p.original_html, p, pack, repo, stage, fig_name, pack.path.parent, 'source')
+            reading += ('<details class="original" data-original-problem="' + p.id + '"><summary>' + label + '</summary>'
+                        + original + '</details>')
+        reading = f'<div class="problem-pane" data-problem-for="{p.id}">' + reading + '</div>'
+        if p.choice:
+            choices[p.id] = {'answer': p.choice.answer, 'mode': p.choice.mode, 'options': list(p.choice.option_ids)}
         explanation = resources(fragments[p.id], p, pack, repo, stage, fig_name, pack.path.parent, 'explain')
         original_link = quote(pack.path.name, safe='') + '#' + p.id
         articles.append(f'<article class="topic" id="{p.id}"><h3>{html.escape(p.title)}</h3>'
@@ -169,9 +175,11 @@ def build_explanation(pack, fragments, stage: Path, repo: Path) -> Artifacts:
         title = f'생명과학 {pack.range} 웹과제 예상 {pack.slug.split("_")[-1]} 문제해설'
     values = {'PAGE_TITLE': html.escape(title), 'BRAND': '문제풀이 입문 설명', 'DESCRIPTION': '첫 줄부터 완성 답과 검산까지 설명해요.',
               'TOC': '<ul class="toc-list">' + ''.join(toc) + '</ul>', 'TITLE': html.escape(title),
-              'SUBTITLE': '주어진 조건을 읽고, 첫 줄을 쓰고, 이유를 따라가며 답을 확인해요.',
+              'SUBTITLE': '왼쪽 목차로 문항을 고르고, 오른쪽 문제를 보며 해설을 따라가요.',
               'SECTIONS': '<section id="problems"><h2>문항별 설명</h2>' + ''.join(articles) + '</section>',
-              'FOOTER': '원 문제·정리노트·PDF는 보존해요.', 'SCRIPTS': '',
+              'FOOTER': '원 문제·정리노트·PDF는 보존해요.',
+              'SCRIPTS': ('<script type="application/json" id="explain-choice-model">'
+                          + json.dumps(choices, ensure_ascii=False).replace('</', '<\\/') + '</script>'),
               'RANGE': f'bio-problem-explain-{pack.profile}-{pack.range}-{pack.slug}', 'VENDOR': data_name + '/vendor'}
     text = (ASSETS / 'note-template.html').read_text(encoding='utf-8')
     for key, value in values.items():
