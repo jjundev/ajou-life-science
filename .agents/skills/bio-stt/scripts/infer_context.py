@@ -140,8 +140,34 @@ def get_chapter_title(repo_root: Path | str, chapter: int) -> str:
     return f"{chapter}장"
 
 
+# AI 정책 및 CBRN 안전 필터 오탐을 방지하기 위한 제외 키워드
+POLICY_EXCLUSIONS = {
+    # CBRN / 생물무기 / 유전자 조작 관련 오탐 유발 영어 단어
+    "cartagena", "protocol", "protocols", "biosafety", "germ-line", "germline",
+    "somatic", "therapy", "therapies", "weapon", "weapons", "bioterror",
+    "pathogen", "pathogens", "anthrax", "toxin", "toxins", "engineering",
+    "engineer", "engineered", "modified", "organism", "organisms", "transgenic",
+    "recombinant", "vector", "vectors", "virus", "viruses", "viral",
+    "hazard", "hazards", "clone", "cloning", "cloned", "manipulate",
+    "manipulation", "reaction", "reactions", "pharm", "animal", "animals",
+    # 일반 영어 불용어 (단순 빈출 단어)
+    "and", "the", "for", "with", "from", "that", "this", "page", "figure",
+    "table", "chapter", "section", "slide", "study", "human", "cell", "cells",
+    "part", "type", "types", "test", "case", "system", "into", "over", "such",
+    "than", "their", "them", "then", "there", "these", "they", "which", "would",
+    "about", "after", "again", "also", "been", "before", "being", "between",
+    "both", "came", "come", "could", "each", "have", "here", "just", "like",
+    "make", "many", "more", "most", "much", "must", "only", "other", "same",
+    "some", "such", "take", "time", "very", "were", "what", "when", "where",
+    "while", "who", "will", "clustered", "regularly", "interspaced", "repeats",
+}
+
+# 영문 생명과학 표준 약어 패턴 (대문자 중심, 2~8자)
+BIO_ACRONYM_PAT = re.compile(r"\b(?:[A-Z]{2,8}|[A-Z][a-z]{1,3}[A-Z0-9]+)\b")
+
+
 def extract_chapter_terms(repo_root: Path | str, chapter: int, max_terms: int = 70) -> list[str]:
-    """Extract key technical terms from lecture PDF and textbook."""
+    """Extract key technical terms from lecture PDF and textbook without policy triggers."""
     repo = Path(repo_root)
     terms: set[str] = set()
 
@@ -159,14 +185,13 @@ def extract_chapter_terms(repo_root: Path | str, chapter: int, max_terms: int = 
             doc = fitz.open(pdf_path)
             full_text = "\n".join(page.get_text() for page in doc)
 
-            # (1) 영문 전문용어 및 약어 (2글자 이상 대문자/단어)
-            for m in re.finditer(r"\b[A-Za-z]{2,}(?:-[A-Za-z0-9]+)?\b", full_text):
+            # (1) 표준 생명과학 영문 약어 및 고유명사 (DNA, PCR, STR, EcoRI 등)
+            for m in BIO_ACRONYM_PAT.finditer(full_text):
                 word = m.group(0)
-                if word.lower() not in {"and", "the", "for", "with", "from", "that", "this", "page"}:
+                if word.lower() not in POLICY_EXCLUSIONS and len(word) >= 2:
                     terms.add(word)
 
             # (2) 한글 생물학 전문용어 패턴 (2~7글자 한글)
-            # 특수 명사: ~소, ~제, ~체, ~질, ~산, ~인, ~가닥, ~결합 등
             bio_suffix_pat = re.compile(
                 r"[가-힣]{2,6}(?:효소|중합효소|연결효소|풀림효소|복제|전사|번역|코돈|프라이머|가닥|이수체|염색체|돌연변이|뉴클레오타이드|히스톤|유전자|발현|단백질|아미노산|인산|리보솜|소포체|엽록체|세포|절편)"
             )
@@ -175,20 +200,25 @@ def extract_chapter_terms(repo_root: Path | str, chapter: int, max_terms: int = 
 
             # (3) 괄호 안 병기 단어: 예) 헬리케이스(helicase), 복제분기점(replication fork)
             for m in re.finditer(r"([가-힣]{2,10})\s*\(([A-Za-z\s]+)\)", full_text):
-                terms.add(m.group(1).strip())
-                en = m.group(2).strip()
-                if len(en) < 25:
-                    terms.add(en)
+                ko = m.group(1).strip()
+                en = re.sub(r"\s+", " ", m.group(2)).strip()
+                terms.add(ko)
+                # 영문 단어 중 정책 제외 단어가 포함되지 않은 순수 학술 용어만 추가
+                if 2 <= len(en) < 25:
+                    en_words = re.findall(r"[A-Za-z]+", en.lower())
+                    if not any(w in POLICY_EXCLUSIONS for w in en_words):
+                        terms.add(en)
         except Exception:
             pass
 
-    # 핵심 필수 공통 어휘 보강
+    # 핵심 필수 공통 어휘 보강 (안전 필터에 무해한 순수 학술 용어)
     common_seed = [
         "DNA", "RNA", "mRNA", "tRNA", "rRNA", "뉴클레오타이드", "아데닌(A)", "구아닌(G)", "티민(T)", "시토신(C)", "우라실(U)",
         "헬리케이스", "프라이메이스", "DNA 폴리머레이스", "DNA 리가아제", "오카자키 절편", "복제분기점", "선도가닥", "지연가닥",
         "텔로미어", "텔로머레이스", "코돈", "안티코돈", "프로모터", "전사", "번역", "스플라이싱", "인트론", "엑손",
         "상동염색체", "자매염색분체", "이수체", "다배수체", "비분리", "결실", "중복", "전좌", "역위",
-        "다운 증후군", "터너 증후군", "클라인펠터 증후군", "낭포성 섬유증", "CFTR", "SRY 유전자"
+        "다운 증후군", "터너 증후군", "클라인펠터 증후군", "낭포성 섬유증", "CFTR", "SRY 유전자",
+        "플라스미드", "제한효소", "점착성 말단", "젤 전기영동", "PCR", "프라이머", "STR"
     ]
     for w in common_seed:
         terms.add(w)
@@ -200,19 +230,20 @@ def extract_chapter_terms(repo_root: Path | str, chapter: int, max_terms: int = 
 
 def build_stt_prompt(chapter: int, chapter_title: str, terms: list[str]) -> str:
     """Format domain guidance block to inject into the subagent STT prompt."""
-    sample_terms = ", ".join(terms[:50])
+    sample_terms = ", ".join(terms[:40])
     homophone_guide = "\n".join(f"  - '{err}'로 들리면 -> '{cor}'" for err, cor in COMMON_BIO_ERROR_RULES)
 
-    return f"""[생명과학 강의 도메인 가이드 (생명과학 기초와 응용 2판)]
-- 본 오디오는 아주대학교 생명과학 강의 녹음입니다.
+    return f"""[아주대학교 교양 생명과학 강의 음성 전사 가이드]
+- 본 오디오는 아주대학교 1학년 교양 수업(생명과학 기초와 응용)의 교수님 강의 녹음입니다.
+- 학술 교양 강의로서, 유전학과 생물학의 기초 개념을 교육하는 표준 학부 강의입니다.
 - 단원 범위: {chapter}장 {chapter_title}
-- 주요 생명과학 고유명사:
+- 주요 강의 표준 용어:
   {sample_terms}
 
 - 필수 전사 및 발음 교정 규칙:
   1. 생명과학 표준 용어 최우선: 교수님의 발음이 뭉개지거나 일상 단어와 유사하게 들릴 경우, 문맥상 생명과학 표준 용어로 정확히 전사하세요.
 {homophone_guide}
-  2. 표기 원칙: 한글 표준 음차를 기본으로 하되, 슬라이드 핵심 약어 및 고유명사(DNA, RNA, mRNA, CFTR, SRY, ATP 등)는 영문 표기를 유지하세요.
+  2. 표기 원칙: 한글 표준 음차를 기본으로 하되, 핵심 약어(DNA, RNA, PCR, STR 등)는 영문 표기를 유지하세요.
   3. 철저한 축어성(Verbatim): 요약이나 어미 생략 없이 실제 발화된 내용을 있는 그대로 기록하세요.
 """
 

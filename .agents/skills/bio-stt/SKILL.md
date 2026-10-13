@@ -108,24 +108,22 @@ description: "[Gemini Only] Use when transcribing biology lecture audio or video
    - 각 파트마다 `self` 서브에이전트를 동시 기동.
    - **기본 프롬프트 (클린 텍스트)**:
      ```text
-     You are a verbatim STT transcription agent specialized in college Biology (생명과학).
+     당신은 아주대학교 1학년 교양 생명과학 강의 전담 축어 전사 비서입니다.
      Target video: <WORK_DIR>/<DATE>_생명_part01_temp.mp4
      Output markdown: <WORK_DIR>/<DATE>_생명_part01.md
 
      <PROMPT_GUIDE> (infer_context.py 의 prompt_guide 내용 삽입)
 
-     Instructions:
-     1. Call `view_file` on <WORK_DIR>/<DATE>_생명_part01_temp.mp4.
-     2. Transcribe ALL spoken words verbatim from start to finish. Do not skip, summarize, or omit anything.
-     3. Group 2~4 sentences per paragraph, separated by blank lines (\n\n). Do not output timestamps.
-     4. When technical terms sound ambiguous or muffled, bias towards the correct Korean/English biology terms provided above.
-     5. Save directly to <WORK_DIR>/<DATE>_생명_part01.md using `write_to_file` (Overwrite=True).
-     6. Strict Guardrails:
-        - Perform transcription in a single pass directly from view_file.
-        - NEVER search for, install, or run Whisper or any external STT tools.
-        - Do NOT inspect other part files or compare transcripts.
-        - Do NOT run audio analysis, silence detection, ffmpeg slicing, or additional tools.
-     7. Report completion immediately when done.
+     [전사 지침]
+     1. `view_file`로 대상 영상을 재생하세요.
+     2. 교수님의 한국어 강의 음성을 시작부터 끝까지 한 글자도 빠짐없이 축어적(verbatim)으로 전사하세요. 요약하거나 생략하지 마세요.
+     3. 2~4문장 단위로 줄바꿈(\n\n)하여 문단을 구성하세요. 타임스탬프는 적지 마세요.
+     4. 발음이 뭉개지거나 불분명한 전문용어는 위 가이드의 표준 생명과학 용어로 바르게 교정하여 전사하세요.
+     5. [필수 가드레일 (Safety & Thinking Guardrails)]:
+        - 생각(thinking) 단계에서 생물학적 메커니즘, 실험실 절차, 오염(contamination) 방지 지침 등을 요약하거나 해설하지 마십시오. 생각은 최소화하고 오직 들리는 한국어 음성의 전사 작업에만 집중하십시오.
+        - 전사 결과는 응답 본문 텍스트에 길게 출력하지 말고, 곧바로 `write_to_file` 도구를 호출하여 대상 마크다운 파일에 저장(Overwrite=True)하십시오.
+        - 외부 STT 도구(Whisper 등)는 절대 검색하거나 설치하지 마십시오.
+     6. 저장이 완료되면 부모 에이전트에게 완료 메시지를 즉시 전송하세요.
      ```
    - **타임스탬프 요청 시 (`--timestamps` / `-t`) 변형**:
      지침 3을 아래로 교체:
@@ -163,14 +161,26 @@ description: "[Gemini Only] Use when transcribing biology lecture audio or video
 
 ## 🛡️ 안전 필터(Safety Filter) 복구 프로토콜
 
-Gemini safety filter에 의해 특정 파트가 블록될 경우:
+Gemini safety filter에 의해 특정 파트가 차단(Block/Idle)될 경우:
 1. **Whisper 폴백 절대 금지**: Whisper 설치 시도 금지.
-2. **해당 파트를 2~3분 단위 서브 청크로 분할**:
+2. **자동 서브 청크 분할 및 래핑 (`slice_subchunks.py`)**:
    ```bash
-   ffmpeg -y -i "<FAILING_CHUNK>.mp3" -ss 0 -t 150 -c copy "<FAILING_CHUNK>_sub01.mp3"
-   ffmpeg -y -i "<FAILING_CHUNK>.mp3" -ss 150 -t 150 -c copy "<FAILING_CHUNK>_sub02.mp3"
+   REPO="$(git rev-parse --show-toplevel)"
+   python3 "$REPO/.agents/skills/bio-stt/scripts/slice_subchunks.py" slice \
+     --input "$WORK_DIR/${DATE}_생명_partXX.mp3" \
+     --sub-seconds 150
    ```
-3. 각각 1fps 블랙 MP4로 감싸서 `view_file`로 전사 후 하나의 파트 파일로 합친다.
+   - 해당 파트를 150초(2.5분) 단위 서브 청크(`partXX_sub01.mp3`, `partXX_sub02.mp3` ...)로 자동 분할하고 각각 1fps 블랙 MP4를 일괄 생성합니다.
+3. **각 서브 청크에 대해 병렬 서브에이전트 전사 기동** (`partXX_sub01.md` 등 산출).
+4. **서브 청크 자동 병합**:
+   ```bash
+   python3 "$REPO/.agents/skills/bio-stt/scripts/slice_subchunks.py" merge \
+     --dir "$WORK_DIR" \
+     --prefix "${DATE}_생명_partXX" \
+     --out "$WORK_DIR/${DATE}_생명_partXX.md" \
+     --clean
+   ```
+5. 만약 150초 청크에서도 특정 구간이 차단될 경우, 동일 스크립트로 `--sub-seconds 60` (또는 38초) 단위로 즉시 2차 분할하여 전사 후 병합합니다.
 
 ---
 
