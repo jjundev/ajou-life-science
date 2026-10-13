@@ -271,6 +271,21 @@ with sync_playwright() as pw:
     assert not logs,logs
    results.append({'viewport':[width,height],'theme':theme,'console_errors':logs,'failed_resources':failed,'external_requests':external,'overflow':False,'interaction':'TOC, next/prev, summary, close, resize, theme pass'})
    page.close()
+ # touch: a tablet-wide touch screen can move the floating window by its grip and undock the head
+ ctx=browser.new_context(viewport={'width':1180,'height':820},has_touch=True);page=ctx.new_page();cdp=ctx.new_cdp_session(page)
+ page.goto(url+'#p3',wait_until='networkidle');page.evaluate("localStorage.setItem('od-panels:explain:v2:prob',JSON.stringify({dock:'float'}))");page.reload();page.wait_for_timeout(200)
+ def touchdrag(x,y,dx,dy):
+  cdp.send('Input.dispatchTouchEvent',{'type':'touchStart','touchPoints':[{'x':x,'y':y}]})
+  for i in range(1,11):cdp.send('Input.dispatchTouchEvent',{'type':'touchMove','touchPoints':[{'x':x+dx*i/10,'y':y+dy*i/10}]});page.wait_for_timeout(16)
+  cdp.send('Input.dispatchTouchEvent',{'type':'touchEnd','touchPoints':[]});page.wait_for_timeout(150)
+ B0=page.locator('#panel-prob').bounding_box();M=page.locator('#panel-prob .float-move').bounding_box()
+ touchdrag(M['x']+M['width']/2,M['y']+M['height']/2,-150,120);B1=page.locator('#panel-prob').bounding_box()
+ assert abs(B1['x']-(B0['x']-150))<=2 and abs(B1['y']-(B0['y']+120))<=2,(B0,B1)
+ page.locator('#panel-prob [data-dock="left"]').click();page.wait_for_timeout(150)
+ T,G=[page.locator(s).bounding_box() for s in ('#panel-prob .panel-tabs','#panel-prob .prob-dock')]
+ touchdrag((T['x']+T['width']+G['x'])/2,T['y']+T['height']/2,300,200)
+ assert page.locator('.layout').get_attribute('data-prob-dock')=='float'
+ ctx.close()
  browser.close()
 server.shutdown()
 (root/'results.json').write_text(json.dumps(results,ensure_ascii=False,indent=2))

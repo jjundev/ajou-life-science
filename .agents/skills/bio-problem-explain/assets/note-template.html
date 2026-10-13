@@ -422,6 +422,8 @@
       @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
       body.is-resizing { cursor: col-resize; user-select: none; }
       .layout[data-prob-dock="right"] .panel-prob .panel-resize, .layout[data-prob-dock="right"] .panel-prob .panel-resize::after { left: 0; right: auto; }
+      /* 터치 화면에서도 머리·이동 버튼 끌기가 스크롤로 넘어가 취소되지 않게 */
+      .panel-prob .panel-head, .float-move { touch-action: none; }
       /* 띄운 문제 창: grid에서 빠져 본문 위에 뜬다. 위치·크기는 스크립트가 --fx/--fy/--fw/--fh로 준다 */
       .layout[data-prob-dock="float"] .panel-prob { position: fixed; left: var(--fx); top: var(--fy); width: var(--fw); height: var(--fh); z-index: 30;
         border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 12px 32px rgb(0 0 0 / .18); }
@@ -845,13 +847,14 @@
           snap = ev.clientX <= SNAP ? 'left' : ev.clientX >= W - SNAP ? 'right' : null;
           dockPreview(snap);
         };
-        const up = () => {
+        const up = (ev) => {
           head.removeEventListener('pointermove', move);
           head.removeEventListener('pointerup', up);
           head.removeEventListener('pointercancel', up);
           body.classList.remove('is-dragging');
           dockPreview(null);
-          if (snap) setDock(snap);
+          // 브라우저가 끌기를 취소했으면 가장자리 근처여도 붙이지 않는다
+          if (snap && ev.type === 'pointerup') setDock(snap);
           else if (floating && cur) saveProb({ x: cur.x, y: cur.y });
         };
         head.addEventListener('pointermove', move);
