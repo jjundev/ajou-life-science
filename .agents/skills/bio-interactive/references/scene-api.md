@@ -15,7 +15,7 @@
 | `HOLE_SYNTAX` | 런타임이 못 읽는 구멍(`{{!x}}`, `{{a ? b : c}}`, `onClick="x{{f}}"`) |
 | `HOLE_UNKNOWN` | 없는 값(`{{is.cycle}}`처럼 모드 이름을 바꾼 뒤 남은 것, `{{s.titel}}` 같은 오타) |
 | `EVENT_UNSUPPORTED` / `HEX_IN_MARKUP` | 아래 마크업 규칙 위반 |
-| `TOPIC_INVALID` | `topic()` 데이터 누락·불일치: 모드 필드(`cam`, `fit`, `D`, `canvasLabel`), `STEPS[n].mode`가 없는 모드, `STEPS[n].f`가 재생 범위 밖, `f`가 있는 `STEPS[n].phase` 빠짐, 모드별 `MISTAKES`, `PAL.light`/`PAL.dark` (단계 번호는 화면처럼 1부터) |
+| `TOPIC_INVALID` | `topic()` 데이터 누락·불일치: 모드 필드(`cam`, `fit`, `D`, `canvasLabel`), `STEPS[n].mode`가 없는 모드, `STEPS[n].f`가 재생 범위 밖, `f`가 있는 `STEPS[n].phase` 빠짐, 모드별 `MISTAKES`, `PAL.light`/`PAL.dark` (단계 번호는 `STEPS` 전체 순서로 1부터) |
 | `STEP_OFF_PHASE` | 단계의 `f`에서 재생 바 글자(`playback.label(f)`)의 과정 이름이 `phase`와 다름(다음 과정에 들어가 있음), 또는 `label`이 예외 |
 | `RENDER_THROWS` | `renderVals()`가 예외 |
 | `DRAW_THROWS` | 장면 그리기 예외(모드별 `:a`, 단계 누른 뒤 `:step2`) |
