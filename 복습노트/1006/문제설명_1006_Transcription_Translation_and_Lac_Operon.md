@@ -1,6 +1,6 @@
 # 생명과학 복습 1006 문제설명
 
-주어진 조건을 읽고, 첫 줄을 쓰고, 이유를 따라가며 답을 확인해요.
+왼쪽 목차로 문항을 고르고, 오른쪽 문제를 보며 해설을 따라가요.
 
 문제의 첫 줄부터 검산까지 설명해요.
 
@@ -50,8 +50,6 @@
 
 기출 5강 3 · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p1)
 
-#### 주어진 조건
-
 DNA의 암호화 서열의 특정 세 개 염기가 TGA이다. 이 서열을 바탕으로한 mRNA의 코돈에 결합하는 tRNA의 안티코돈은 무엇인가?
 
 - (1) TGA
@@ -60,9 +58,11 @@ DNA의 암호화 서열의 특정 세 개 염기가 TGA이다. 이 서열을 바
 - (4) ACT
 - (5) UGA
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 3번 (PDF 1쪽)
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -159,8 +159,6 @@ UAA·UAG·UGA는 아미노산을 지정하지 않는 종결 코돈(stop codon)�
 
 기출 5강 5 · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p2)
 
-#### 주어진 조건
-
 TTACAGGTCC 유전자로부터 만들어진 mRNA는 어느 것인가?
 
 - (1) AATGTCCAGG
@@ -168,9 +166,11 @@ TTACAGGTCC 유전자로부터 만들어진 mRNA는 어느 것인가?
 - (3) AAUGUCCAGG
 - (4) UUACAGGUCC
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 5번 (PDF 1쪽)
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -261,8 +261,6 @@ TTACAGGTCC 유전자로부터 만들어진 mRNA는 어느 것인가?
 
 기출 5강 6 · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p3)
 
-#### 주어진 조건
-
 DNA 복제 과정 중 어떤 유전자 서열에 하나의 염기쌍이 삽입되어 종결코돈이 중간에 생겼다면, 이로서 발생하는 현상으로 옳은 것만 &lt;보기&gt;에서 고른 것은?
 
 - a. 번역틀이동 돌연변이다.
@@ -277,9 +275,11 @@ DNA 복제 과정 중 어떤 유전자 서열에 하나의 염기쌍이 삽입�
 - (4) b, c, e
 - (5) b, c, d
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 6번 (PDF 1쪽)
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -361,8 +361,6 @@ a, e 맞음 / b, c, d 틀림 → (1).
 
 기출 5강 10 · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p4)
 
-#### 주어진 조건
-
 단백질 합성 과정 중 핵 안에 남아 있는 물질은?
 
 - (1) tRNA
@@ -371,9 +369,11 @@ a, e 맞음 / b, c, d 틀림 → (1).
 - (4) rRNA
 - (5) mRNA
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 10번 (PDF 2쪽)
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -450,8 +450,6 @@ tRNA·리보솜·rRNA·mRNA는 세포질에서 번역 참여 → (3) DNA.
 
 기출 5강 11 · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p5)
 
-#### 주어진 조건
-
 리보솜은 무엇으로 구성되어 있는가?
 
 - (1) DNA와 단백질
@@ -459,9 +457,11 @@ tRNA·리보솜·rRNA·mRNA는 세포질에서 번역 참여 → (3) DNA.
 - (3) tRNA 와 mRNA
 - (4) rRNA 와 단백질
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 11번 (PDF 2쪽)
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -536,8 +536,6 @@ DNA·mRNA·tRNA는 리보솜 재료가 아님 → (4).
 
 기출 5강 12 · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p6)
 
-#### 주어진 조건
-
 만약 두 개의 뉴클레오타이드가 하나의 아미노산을 결정하는 데 사용된다면, 단백질 합성 시 몇 개의 아미노산을 지정할 수 있는가?
 
 - (1) 64
@@ -546,9 +544,11 @@ DNA·mRNA·tRNA는 리보솜 재료가 아님 → (4).
 - (4) 4
 - (5) 16
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 12번 (PDF 2쪽)
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -627,8 +627,6 @@ $4 \times 4 = 16$ → (5).
 
 기출 5강 18 · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p7)
 
-#### 주어진 조건
-
 다음은 원핵생물의 오페론에 대한 설명이다. 맞는 설명은?
 
 - (1) 젖당이 배지내에서 모두 소모되면 lac 오페론이 작동된다
@@ -637,9 +635,11 @@ $4 \times 4 = 16$ → (5).
 - (4) 알로락토스는 lac 오페론의 유도자로 작용한다
 - (5) lac 오페론은 유도자가 억제자를 활성화 시키면 전사된다
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 18번 (PDF 2쪽)
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -718,8 +718,6 @@ $4 \times 4 = 16$ → (5).
 
 기출 5강 19 · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p8)
 
-#### 주어진 조건
-
 다음 중 과오 돌연변이(missense mutation)가 될 수 없는 것은?
 
 - (1) 암호화 서열에서 염기 1개 삭제
@@ -728,9 +726,11 @@ $4 \times 4 = 16$ → (5).
 - (4) 번역틀이동에 의해 야기된다
 - (5) 낫모양적혈구빈혈증 유전자에 대한 암호
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 19번 (PDF 3쪽)
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -823,8 +823,6 @@ $4 \times 4 = 16$ → (5).
 
 기출 5강 20 · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p9)
 
-#### 주어진 조건
-
 운반 RNA (tRNA)에 대한 설명으로 옳은 것은?
 
 - (1) 단당류 (monosaccharide)를 운반한다
@@ -832,9 +830,11 @@ $4 \times 4 = 16$ → (5).
 - (3) 전령 RNA (mRNA)로 만들어진다
 - (4) 전령 RNA (mRNA)의 코돈과 상보적인 안티코돈 부분을 가지고 있다
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 20번 (PDF 3쪽)
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -919,8 +919,6 @@ mRNA=정보, 리보솜=장소, tRNA=운반 역할표를 먼저 써요.
 
 기출 5강 21 · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p10)
 
-#### 주어진 조건
-
 효소와 같은 세포내 단백질은 일반적으로 항상 생산되지는 않거나, 시간에 따라 일정한 비율로 생산되지는 않는다. 이러한 현상의 원인은 무엇인가?
 
 - (1) 유전 암호의 중복성
@@ -928,9 +926,11 @@ mRNA=정보, 리보솜=장소, tRNA=운반 역할표를 먼저 써요.
 - (3) 유전자 발현의 조절
 - (4) 틀이동 돌연변이(framshift mutation)
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 21번 (PDF 3쪽)
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -1013,8 +1013,6 @@ mRNA=정보, 리보솜=장소, tRNA=운반 역할표를 먼저 써요.
 
 기출 5강 23 · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p11)
 
-#### 주어진 조건
-
 돌연변이가 발생하였지만 생성된 단백질의 기능에 큰 변화를 주지 않았을 때, 이를 무엇이라고 하는가?
 
 - (1) 변역틀이동 돌연변이
@@ -1023,9 +1021,11 @@ mRNA=정보, 리보솜=장소, tRNA=운반 역할표를 먼저 써요.
 - (4) 과오 돌연변이
 - (5) 유전 암호의 보편성
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 23번 (PDF 3쪽)
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -1118,8 +1118,6 @@ mRNA=정보, 리보솜=장소, tRNA=운반 역할표를 먼저 써요.
 
 기출 5강 25 · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p12)
 
-#### 주어진 조건
-
 번역틀이동 돌연변이는 ( ) 의 결과로 생긴다.
 
 - (1) 아미노산이 정상적으로 기능을 띠는 단백질로 조합
@@ -1127,9 +1125,11 @@ mRNA=정보, 리보솜=장소, tRNA=운반 역할표를 먼저 써요.
 - (3) 유전자의 암호화 부위에 염기 하나가 삽입 또는 삭제
 - (4) 한 개의 아미노산이 유사한 성질의 다른 아미노산으로 치환
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 25번 (PDF 3쪽)
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -1213,8 +1213,6 @@ AUG|GAC|CGG에 염기 하나를 넣고 다시 끊어 봐요.
 
 기출 5강 26 · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p13)
 
-#### 주어진 조건
-
 DNA 분자의 코돈 CCU를 코돈 CCC로 변화시킨 돌연변이를 가정하자. 이 두 코돈은 모두 프롤린을 지시한다. 이러한 예를 무엇이라 하는가?
 
 - (1) 유전암호의 진화성
@@ -1223,9 +1221,11 @@ DNA 분자의 코돈 CCU를 코돈 CCC로 변화시킨 돌연변이를 가정하
 - (4) 유전암호의 중복성
 - (5) 유전암호의 모호성
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 26번 (PDF 3쪽)
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -1310,8 +1310,6 @@ CCU → Pro, CCC → Pro ⇒ 여러 개 → 하나.
 
 기출 5강 28 · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p14)
 
-#### 주어진 조건
-
 다음 중 두 DNA 가닥을 분리시키는 것은 무엇인가?
 
 - (1) 안티코돈
@@ -1319,9 +1317,11 @@ CCU → Pro, CCC → Pro ⇒ 여러 개 → 하나.
 - (3) tRNA
 - (4) RNA 중합효소
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 28번 (PDF 3쪽)
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -1404,8 +1404,6 @@ DNA를 여는 것은 효소. 복제는 헬리케이스, 전사는 RNA 중합효�
 
 기출 5강 34 · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p15)
 
-#### 주어진 조건
-
 번역 과정 중 tRNA의 기능은?
 
 - (1) 단백질 합성에 필요한 정보를 담고 있다.
@@ -1413,9 +1411,11 @@ DNA를 여는 것은 효소. 복제는 헬리케이스, 전사는 RNA 중합효�
 - (3) RNA 중합효소의 출발점으로 작용한다.
 - (4) 전령 RNA(mRNA)의 이중 나선을 단일 나선으로 푼다.
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 34번 (PDF 4쪽)
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -1498,8 +1498,6 @@ DNA를 여는 것은 효소. 복제는 헬리케이스, 전사는 RNA 중합효�
 
 기출 5강 35 · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p16)
 
-#### 주어진 조건
-
 RNA 중합효소는 전사를 시작할 때 ( ) 에 결합한다.
 
 - (1) 리보솜
@@ -1508,9 +1506,11 @@ RNA 중합효소는 전사를 시작할 때 ( ) 에 결합한다.
 - (4) 인트론
 - (5) 프로모터
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 35번 (PDF 4쪽)
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -1595,8 +1595,6 @@ RNA 중합효소는 전사를 시작할 때 ( ) 에 결합한다.
 
 기출 5강 36 · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p17)
 
-#### 주어진 조건
-
 유전자에 일어난 돌연변이는 _____________.
 
 - (1) 새로운 기능을 갖는 단백질을 만들 수 없다.
@@ -1605,9 +1603,11 @@ RNA 중합효소는 전사를 시작할 때 ( ) 에 결합한다.
 - (4) 단백질을 만들 수 없다
 - (5) 유전자에 의해 만들어지는 단백질에 영향을 미치지 않을 수도 있다.
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 36번 (PDF 4쪽)
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -1695,8 +1695,6 @@ RNA 중합효소는 전사를 시작할 때 ( ) 에 결합한다.
 
 기출 5강 37 · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p18)
 
-#### 주어진 조건
-
 다음 중 번역 과정에 직접적으로 참여하지 않는 분자는?
 
 - (1) tRNA
@@ -1705,9 +1703,11 @@ RNA 중합효소는 전사를 시작할 때 ( ) 에 결합한다.
 - (4) mRNA
 - (5) DNA
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 37번 (PDF 4쪽)
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -1792,8 +1792,6 @@ DNA는 전사의 주형이고 번역에서는 mRNA 사본을 읽어요. 부정�
 
 기출 5강 38 · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p19)
 
-#### 주어진 조건
-
 어떤 아미노산이 번역 과정에서 맨 처음 시작하는가?
 
 - (1) 아르지닌
@@ -1802,9 +1800,11 @@ DNA는 전사의 주형이고 번역에서는 mRNA 사본을 읽어요. 부정�
 - (4) 글리신
 - (5) 페닐알라닌
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 38번 (PDF 4쪽)
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -1889,8 +1889,6 @@ DNA는 전사의 주형이고 번역에서는 mRNA 사본을 읽어요. 부정�
 
 기출 5강 42 · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p20)
 
-#### 주어진 조건
-
 단백질의 아미노산 서열을 결정하는 데 필요한 뉴클레오타이드 서열을 가지고 있는 DNA는?
 
 - (1) 운반RNA(tRNA)
@@ -1899,9 +1897,11 @@ DNA는 전사의 주형이고 번역에서는 mRNA 사본을 읽어요. 부정�
 - (4) 전령 RNA(mRNA)
 - (5) 리보솜RNA(rRNA)
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 42번 (PDF 5쪽)
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -1994,8 +1994,6 @@ mRNA: 코돈 서열(정보). tRNA: 아미노산 운반(배달). rRNA: 리보솜 
 
 생성 변형 s5-operon · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p21)
 
-#### 주어진 조건
-
 다음은 원핵생물의 오페론에 대한 설명이다. 맞는 설명은?
 
 - (1) 알로락토스는 작동자를 이루는 DNA 서열이다.
@@ -2004,9 +2002,11 @@ mRNA: 코돈 서열(정보). tRNA: 아미노산 운반(배달). rRNA: 리보솜 
 - (4) 유도자가 억제자에 결합하면 억제자가 작동자에 더 잘 결합한다.
 - (5) RNA 중합효소는 작동자에 결합하는 억제 단백질이다.
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 18번 발문에 정답을 바꾼 생성 변형이에요. 다루는 혼동: 알로락토스와 활성 억제자 구분예요.
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -2092,8 +2092,6 @@ mRNA: 코돈 서열(정보). tRNA: 아미노산 운반(배달). rRNA: 리보솜 
 
 생성 변형 s3-trna · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p22)
 
-#### 주어진 조건
-
 운반 RNA (tRNA)에 대한 설명으로 옳은 것은?
 
 - (1) 전령 RNA의 정보를 복제해 새로운 DNA를 만든다.
@@ -2102,9 +2100,11 @@ mRNA: 코돈 서열(정보). tRNA: 아미노산 운반(배달). rRNA: 리보솜 
 - (4) 코돈과 안티코돈은 같은 방향으로 나란히 결합한다.
 - (5) 수소결합이 있는 부분이 하나도 없다.
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 기출 5강 20번 발문에 정답을 바꾼 생성 변형이에요. 다루는 혼동: 아미노산 결합 위치예요.
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -2190,8 +2190,6 @@ L자 tRNA에 3′ 말단과 안티코돈 이름표를 달아요.
 
 생성 변형 s3-trna · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p23)
 
-#### 주어진 조건
-
 그림의 (가)는 mRNA, (나)는 그 코돈에 결합하는 tRNA의 세 염기예요. (나)를 5′에서 3′ 방향으로 적으면?
 
 ![(가)의 세 염기 A C G가 5′에서 3′ 방향으로 놓이고, 맞은편 (나)는 3′에서 5′ 방향의 빈칸 세 개로 놓인 염기쌍 그림](figures_문제설명_1006_Transcription_Translation_and_Lac_Operon/p23-source-p23-pairing.svg)
@@ -2202,9 +2200,11 @@ L자 tRNA에 3′ 말단과 안티코돈 이름표를 달아요.
 - (4) ACG
 - (5) GCA
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 역평행과 안티코돈예요.
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -2295,8 +2295,6 @@ RNA 짝 A–U, G–C. 코돈·안티코돈은 역평행. 서열은 5′부터 �
 
 생성 변형 s1-processing · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p24)
 
-#### 주어진 조건
-
 그림은 핵 안에서 일어나는 가공을 나타내요. (가), (나), (다)에 관한 설명으로 옳지 않은 것은?
 
 ![(가)는 위쪽 세 구간 전체를 가리켜요. 가운데 (나)는 아래로 내려오며 빠지고 오른쪽 (다)는 왼쪽 구간과 연결되어 남아요. 아래 가닥 양 끝에는 모자와 꼬리가 있어요.](figures_문제설명_1006_Transcription_Translation_and_Lac_Operon/p24-source-p24-processing.svg)
@@ -2307,9 +2305,11 @@ RNA 짝 A–U, G–C. 코돈·안티코돈은 역평행. 서열은 5′부터 �
 - (4) 모자와 꼬리는 RNA를 보호하는 데 도움을 준다.
 - (5) (나)는 핵 바깥에서 번역된 뒤 잘려 나간다.
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 인트론의 전사와 제거예요.
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -2395,8 +2395,6 @@ RNA 짝 A–U, G–C. 코돈·안티코돈은 역평행. 서열은 5′부터 �
 
 생성 변형 s4-frameshift · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p25)
 
-#### 주어진 조건
-
 암호화 부위 중간에서 세 염기를 삭제했어요. 개시·종결 신호는 그대로이고 추가 변화는 없어요. 바른 설명은?
 
 - (1) 삭제 뒤 모든 코돈이 반드시 한 칸씩 밀린다.
@@ -2405,9 +2403,11 @@ RNA 짝 A–U, G–C. 코돈·안티코돈은 역평행. 서열은 5′부터 �
 - (4) 삭제 뒤 읽는 틀은 유지될 수 있지만 아미노산은 줄거나 달라질 수 있다.
 - (5) DNA 염기 수가 늘어난다.
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 3배수 삭제와 틀이동예요.
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -2491,8 +2491,6 @@ RNA 짝 A–U, G–C. 코돈·안티코돈은 역평행. 서열은 5′부터 �
 
 생성 변형 s5-operon · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p26)
 
-#### 주어진 조건
-
 포도당 효과는 고려하지 않는 단순 모형이에요. 억제 단백질이 작동자에 결합하지 못하게 되었어요. 젖당이 없을 때 예상되는 결과는?
 
 - (1) 정상 모형과 달리 억제자가 전사를 막지 못한다.
@@ -2501,9 +2499,11 @@ RNA 짝 A–U, G–C. 코돈·안티코돈은 역평행. 서열은 5′부터 �
 - (4) lacI 유전자가 작동자에 대신 결합한다.
 - (5) RNA 중합효소가 아미노산을 직접 연결한다.
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 작동자와 억제자 구분예요.
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -2587,8 +2587,6 @@ lac 오페론: 억제자(단백질)가 작동자(DNA)에 붙어야 전사가 막
 
 생성 변형 s2-code · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p27)
 
-#### 주어진 조건
-
 표준 유전암호에 관한 옳은 진술만 모두 고르면?
 
 - ㄱ. 여러 코돈이 같은 아미노산을 지정할 수 있어요.
@@ -2601,9 +2599,11 @@ lac 오페론: 억제자(단백질)가 작동자(DNA)에 붙어야 전사가 막
 - (4) ㄱ, ㄷ
 - (5) ㄱ, ㄴ, ㄷ
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 중복성 대 모호성예요.
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -2693,8 +2693,6 @@ $4^3=64$ 코돈, 61개 아미노산 지정·3개 종결. 중복성은 여러 코
 
 생성 변형 s3-ribosome · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p28)
 
-#### 주어진 조건
-
 번역의 구성 요소에 관한 설명으로 옳지 않은 것은?
 
 - (1) 전령 RNA는 번역할 정보를 담아요.
@@ -2703,9 +2701,11 @@ $4^3=64$ 코돈, 61개 아미노산 지정·3개 종결. 중복성은 여러 코
 - (4) 아미노산들이 연결되어 폴리펩티드를 이루어요.
 - (5) rRNA와 단백질은 모두 뉴클레오타이드만 연결된 중합체예요.
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 원문 기출이 아닌 생성 변형이에요. 다루는 혼동: RNA와 단백질예요.
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -2784,8 +2784,6 @@ mRNA 정보, tRNA 운반, 리보솜 조립. RNA는 뉴클레오타이드 중합�
 
 생성 변형 s1-transcription · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p29)
 
-#### 주어진 조건
-
 전사에 관한 설명으로 옳지 않은 것은?
 
 - (1) RNA 합성은 5′에서 3′ 방향으로 진행돼요.
@@ -2794,9 +2792,11 @@ mRNA 정보, tRNA 운반, 리보솜 조립. RNA는 뉴클레오타이드 중합�
 - (4) 매번 핵 속 전체 DNA를 모두 RNA로 복사해야 해요.
 - (5) 단백질로 번역되지 않는 RNA를 암호화하는 유전자도 있어요.
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 전사 단위 대 유전체예요.
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -2879,8 +2879,6 @@ RNA 중합효소(RNA polymerase)는 프로모터(promoter)에 결합해 DNA를 �
 
 생성 변형 s3-trna · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p30)
 
-#### 주어진 조건
-
 운반 RNA와 코돈의 관계에 관한 설명으로 옳지 않은 것은?
 
 - (1) 코돈과 안티코돈은 상보적으로 결합해요.
@@ -2889,9 +2887,11 @@ RNA 중합효소(RNA polymerase)는 프로모터(promoter)에 결합해 DNA를 �
 - (4) 하나의 운반 RNA가 여러 코돈을 읽을 수 있는 경우도 있어요.
 - (5) 종결 코돈에는 반드시 아미노산을 달고 온 운반 RNA가 결합해요.
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 코돈과 안티코돈 방향예요.
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -2975,8 +2975,6 @@ tRNA 그림에 3′ 말단·안티코돈을 표시하고 종결 코돈 줄을 �
 
 생성 변형 s4-substitution · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p31)
 
-#### 주어진 조건
-
 CCU와 CCC가 둘 다 프롤린을 지정한다고 알려져 있어요. 암호화 부위의 CCU가 CCC로 바뀌었을 때 가장 직접적인 판정은?
 
 - (1) 정지 돌연변이이다.
@@ -2985,9 +2983,11 @@ CCU와 CCC가 둘 다 프롤린을 지정한다고 알려져 있어요. 암호�
 - (4) 이 위치의 아미노산이 바뀌지 않는 침묵 돌연변이이다.
 - (5) 염기가 하나 추가된 삽입이다.
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 염기 변화 대 단백질 변화예요.
+
+</details>
 
 #### 문제를 내 말로 읽어요
 
@@ -3071,8 +3071,6 @@ CCU → CCC: 염기 수 3 → 3, 프롤린 → 프롤린.
 
 생성 변형 s2-code · [원 문제 보기](%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p32)
 
-#### 주어진 조건
-
 염기 종류가 다섯 가지인 가상 체계에서 두 염기로 하나의 신호를 만들어요. 서로 다른 신호의 최대 수는?
 
 - (1) 10
@@ -3081,9 +3079,11 @@ CCU → CCC: 염기 수 3 → 3, 프롤린 → 프롤린.
 - (4) 32
 - (5) 125
 
-#### 기출 원문
+<details><summary>기출 원문 보기</summary>
 
 원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 경우의 수예요.
+
+</details>
 
 #### 문제를 내 말로 읽어요
 

@@ -212,7 +212,7 @@
     }
 
     /* ---------- 좌우 패널 (drawer) ---------- */
-    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 360px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
     body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
     .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
     .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
@@ -284,6 +284,48 @@
 
     @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
 
+    /* 문제해설: 오른쪽 문제 · 요약 탭, 좁은 화면은 해설 위 접힘 */
+    .panel-tabs { flex: 1 1 0; min-width: 0; display: flex; gap: var(--s1); border-bottom: 1px solid var(--line); }
+    .panel-tabs [role="tab"] { min-height: var(--tap); padding: 0 var(--s3); margin-bottom: -1px; border: 0; border-bottom: 2px solid transparent;
+      background: transparent; color: var(--ink-2); font: 700 var(--fs-panel)/1 var(--font); cursor: pointer; }
+    .panel-tabs [role="tab"][aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+    .probs, .sum-tab { padding-top: var(--s2); }
+    .problem-pane > .layer:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+    .problem-pane details.original { margin-top: var(--s4); padding-top: var(--s2); border-top: 1px solid var(--line); }
+    .problem-pane details.original > summary { display: flex; align-items: center; min-height: 44px; cursor: pointer; font-weight: 600; color: var(--ink-2); }
+    .problem-pane img { max-width: 100%; height: auto; }
+    .topic > .problem-pane { margin-top: var(--s3); padding: var(--s4); border: 1px solid var(--line); border-radius: var(--radius); }
+    .problem-toggle { display: flex; align-items: center; justify-content: center; width: 100%; min-height: var(--tap); margin-top: var(--s3); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .problem-toggle[aria-expanded="true"] { border-color: var(--accent); color: var(--accent-ink); }
+    @media (hover: hover) { .problem-toggle:hover, .panel-tabs [role="tab"]:hover { background: var(--surface); } }
+    .problem-pane img, .problem-pane svg.zoomable { cursor: zoom-in; }
+    .is-target { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: var(--radius); }
+    .figure-sheet { width: min(96vw, 1100px); max-height: 90dvh; margin: auto; border-radius: 16px; }
+    .figure-sheet img, .figure-sheet svg { display: block; width: 100%; max-width: 100%; height: auto; cursor: default; }
+
+    /* 클릭형 보기: bio-review-pack review-interaction.css의 보기 규칙 */
+    .review-ready .choices { list-style:none; padding:0; }
+    .review-ready .choices > li { margin:0 0 var(--s3); }
+    .review-choice {
+      display:block; width:100%; min-height:44px; text-align:left; font:inherit;
+      color:var(--ink); background:var(--surface); border:1px solid var(--line);
+      border-radius:8px; padding:12px 16px; cursor:pointer; overflow-wrap:anywhere;
+    }
+    .review-choice:hover { border-color:var(--accent); }
+    .review-choice:focus-visible, .review-reset:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+    .review-choice[data-result="correct"], .review-choice[data-result="intended"] { border:3px solid var(--accent); }
+    .review-choice[data-result="incorrect"] { border:3px solid var(--danger); }
+    .review-choice[aria-pressed="true"][data-result=""] { border:3px solid var(--ink-2); }
+    .review-badge { display:block; margin-top:6px; font-size:var(--fs-small); font-weight:700; color:var(--ink); }
+    .review-badge[hidden], .review-reset[hidden] { display:none; }
+    .review-status { margin:var(--s3) 0; font-weight:650; }
+    .review-status:empty { display:none; }
+    .review-reset { min-height:44px; margin:var(--s2) 0 var(--s4); }
+    .review-choice-content { padding:var(--s2) 0; }
+    .review-choice-content > :first-child { margin-top:0; }
+    .review-choice-content > :last-child { margin-bottom:0; }
+
     /* 넓은 화면: 본문 옆에 붙는 패널 */
     @media (min-width: 1024px) {
       .layout { --l: var(--panel-l-user, var(--panel-l)); }
@@ -350,13 +392,13 @@
     img, svg { max-width:100%; height:auto; }
   </style>
 </head>
-<body data-screens="article.topic" data-panels="note" data-range="bio-problem-explain-review-0910-Cells_and_Cellular_Respiration">
+<body data-screens="article.topic" data-panels="explain" data-range="bio-problem-explain-review-0910-Cells_and_Cellular_Respiration">
   <header class="topbar">
     <div class="topbar-inner">
       <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
       <strong class="brand">문제풀이 입문 설명</strong>
       <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
-      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>요약</span></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>문제</span></button>
     </div>
     <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
   </header>
@@ -377,10 +419,10 @@
   <main>
     <div class="hero">
       <h1>생명과학 복습 0910 문제설명</h1>
-      <p>주어진 조건을 읽고, 첫 줄을 쓰고, 이유를 따라가며 답을 확인해요.</p>
+      <p>왼쪽 목차로 문항을 고르고, 오른쪽 문제를 보며 해설을 따라가요.</p>
     </div>
-<section id="problems"><h2>문항별 설명</h2><article class="topic" id="p2"><h3>P2. 세포 구성요소와 구조·기능의 짝</h3><p class="panel-meta">웹과제 1장 q12 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p2">원 문제 보기</a></p><div class="layer formal" data-source-problem="p2"><h4>주어진 조건</h4><div data-source-field="conditions"><p>다음 세포 구성요소와 그 구조 및 기능이 바르게 짝지워진 것이 아닌 것은?</p>
-    <ul class="choices"><li>A. 중간섬유 - 중간 정도의 굵기</li><li>B. 액포 - 영양소, 노폐물 등 저장</li><li>C. 미세섬유 - 세포소기관을 이동시킴, 방추사 형성</li><li>D. 틸라코이드 - 여러 층이 쌓여 그라나 형성, 엽록소 분포</li></ul></div></div><div class="layer formal" data-original-problem="p2"><h4>기출 원문</h4>웹과제 1장 q12 (스크린샷 s13)</div><div class="layer eli5" data-explanation="understand">
+<section id="problems"><h2>문항별 설명</h2><article class="topic" id="p2"><h3>P2. 세포 구성요소와 구조·기능의 짝</h3><p class="panel-meta">웹과제 1장 q12 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p2">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p2"><div class="layer formal" data-source-problem="p2"><div data-source-field="conditions"><p>다음 세포 구성요소와 그 구조 및 기능이 바르게 짝지워진 것이 아닌 것은?</p>
+    <ul class="choices"><li>A. 중간섬유 - 중간 정도의 굵기</li><li>B. 액포 - 영양소, 노폐물 등 저장</li><li>C. 미세섬유 - 세포소기관을 이동시킴, 방추사 형성</li><li>D. 틸라코이드 - 여러 층이 쌓여 그라나 형성, 엽록소 분포</li></ul></div></div><details class="original" data-original-problem="p2"><summary>기출 원문 보기</summary>웹과제 1장 q12 (스크린샷 s13)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>세포 구성요소 네 개에 각각 "구조나 기능" 설명이 짝지어져 있어요. 이 가운데 짝이 <strong>바르지 않은 것</strong>을 하나 골라요. 맞는 짝 셋과 틀린 짝 하나를 가르는 부정형 문제예요.</p>
   <p>주어진 것은 이름–설명 짝 네 개이고, 구할 것은 설명이 다른 구성요소의 것으로 바뀌어 붙은 짝이에요.</p>
@@ -432,8 +474,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>C는 미세소관의 방추사 기능을 미세섬유에 붙였으므로 틀린 짝.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 1장 p.20–22와 대조하면 A·B·D는 일치, C만 불일치 → 답 C.</p></div>
 </div>
-</article><article class="topic" id="p41"><h3>P41. 지방이 1g당 ATP를 더 많이 내는 이유</h3><p class="panel-meta">웹과제 2장 q02 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p41">원 문제 보기</a></p><div class="layer formal" data-source-problem="p41"><h4>주어진 조건</h4><div data-source-field="conditions"><p>동일한 질량(1g)의 호흡 기질을 세포 호흡을 통해 완전 연소 및 산화 시킬 때, 지방(트라이글리세라이드)이 탄수화물(포도당 또는 글리코젠)보다 더 많은 ATP를 생산할 수 있는 화학적 이유로 가장 타당한 것은?</p>
-    <ul class="choices"><li>A. 지방 분자 내 탄소 원자들의 평균 산화 상태가 탄수화물보다 훨씬 낮아(환원도가 높아) 산화 과정에서 더 많은 전자를 방출하기 때문이다</li><li>B. 지방은 시트르산 회로를 거치지 않고 산소와 직접 결합하여 에너지를 방출하기 때문이다</li><li>C. 지방산은 해당작용을 거치지 않고 직접 미토콘드리아 내막의 ATP 합성효소를 활성화하기 때문이다</li><li>D. 탄수화물은 지방에 비해 분자 내 수소(H) 원자의 결합 비율이 훨씬 높기 때문이다</li><li>E. 지방은 물에 녹지 않아 삼투압을 유발하지 않으므로 세포 내 산소 소비를 억제하기 때문이다</li></ul></div></div><div class="layer formal" data-original-problem="p41"><h4>기출 원문</h4>웹과제 2장 q02 (스크린샷 s02)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p41"><h3>P41. 지방이 1g당 ATP를 더 많이 내는 이유</h3><p class="panel-meta">웹과제 2장 q02 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p41">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p41"><div class="layer formal" data-source-problem="p41"><div data-source-field="conditions"><p>동일한 질량(1g)의 호흡 기질을 세포 호흡을 통해 완전 연소 및 산화 시킬 때, 지방(트라이글리세라이드)이 탄수화물(포도당 또는 글리코젠)보다 더 많은 ATP를 생산할 수 있는 화학적 이유로 가장 타당한 것은?</p>
+    <ul class="choices"><li>A. 지방 분자 내 탄소 원자들의 평균 산화 상태가 탄수화물보다 훨씬 낮아(환원도가 높아) 산화 과정에서 더 많은 전자를 방출하기 때문이다</li><li>B. 지방은 시트르산 회로를 거치지 않고 산소와 직접 결합하여 에너지를 방출하기 때문이다</li><li>C. 지방산은 해당작용을 거치지 않고 직접 미토콘드리아 내막의 ATP 합성효소를 활성화하기 때문이다</li><li>D. 탄수화물은 지방에 비해 분자 내 수소(H) 원자의 결합 비율이 훨씬 높기 때문이다</li><li>E. 지방은 물에 녹지 않아 삼투압을 유발하지 않으므로 세포 내 산소 소비를 억제하기 때문이다</li></ul></div></div><details class="original" data-original-problem="p41"><summary>기출 원문 보기</summary>웹과제 2장 q02 (스크린샷 s02)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 같은 1 g의 지방(트라이글리세라이드)과 탄수화물(포도당, 글리코젠)을 세포호흡으로 끝까지 산화시켜요. 지방 쪽이 ATP를 더 많이 만들어요.</p>
   <p>구할 것: 그 차이를 설명하는 <strong>화학적 이유</strong>로 가장 타당한 것 하나를 골라요.</p>
@@ -490,7 +532,7 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>지방은 같은 경로(아세틸-CoA → 시트르산 회로 → 전자전달계)로 더 많은 전자를 넘겨요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.39(지방 에너지 약 2배, 아세틸-CoA 경로), p.36과 일치해요. 답 A.</p></div>
 </div>
-</article><article class="topic" id="p42"><h3>P42. 효소 유무에 따른 자유에너지 그래프 읽기</h3><p class="panel-meta">웹과제 2장 q04 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p42">원 문제 보기</a></p><div class="layer formal" data-source-problem="p42"><h4>주어진 조건</h4><div data-source-field="conditions"><p>그림은 효소가 있을 때와 없을 때 반응물(a+b)과 생성물(c)의 자유에너지 변화이다.</p>
+</article><article class="topic" id="p42"><h3>P42. 효소 유무에 따른 자유에너지 그래프 읽기</h3><p class="panel-meta">웹과제 2장 q04 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p42">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p42"><div class="layer formal" data-source-problem="p42"><div data-source-field="conditions"><p>그림은 효소가 있을 때와 없을 때 반응물(a+b)과 생성물(c)의 자유에너지 변화이다.</p>
     <figure class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 450" role="img" aria-labelledby="p42-web-ch02-q04-exam-title p42-web-ch02-q04-exam-desc" id="p42-source-p42-exam" aria-label="반응 진행에 따른 자유에너지 그래프. a+b에서 출발해 높은 봉우리와 낮은 봉우리 두 곡선이 c로 내려가며, 세로 화살표 I·II·III·IV가 점선 수준 사이를 잇는다.">
   <title id="p42-source-p42-web-ch02-q04-exam-title">효소 유무에 따른 반응의 자유에너지 변화 그래프</title>
   <desc id="p42-source-p42-web-ch02-q04-exam-desc">세로축은 자유에너지, 가로축은 반응 진행이다. 반응물 a+b 수준에서 출발한 곡선 두 개가 각각 높은 봉우리와 낮은 봉우리를 지나 더 낮은 생성물 c 수준에 도달한다. 점선이 높은 봉우리 꼭대기, 낮은 봉우리 꼭대기, a+b 수준, c 수준에 그어져 있다. 양방향 화살표 I은 낮은 봉우리 꼭대기에서 c 수준까지, II는 낮은 봉우리 꼭대기에서 a+b 수준까지, III은 높은 봉우리 꼭대기에서 a+b 수준까지, IV는 a+b 수준에서 c 수준까지의 높이를 나타낸다.</desc>
@@ -527,7 +569,7 @@
   </g>
 </svg></figure>
     <p>이에 대한 설명으로 옳은 것은?</p>
-    <ul class="choices"><li>A. 효소에 의해 IV 의 크기는 작아진다.</li><li>B. II의 크기가 클수록 반응 속도는 빨라진다.</li><li>C. 위 반응은 활성화 에너지가 없어도 진행된다.</li><li>D. 효소에 의해 활성화 에너지가 I 에서 IV 로 변한다.</li><li>E. 효소가 없는 경우 활성화 에너지는 III 이다.</li></ul></div></div><div class="layer formal" data-original-problem="p42"><h4>기출 원문</h4>웹과제 2장 q04 (스크린샷 s04)</div><div class="layer eli5" data-explanation="understand">
+    <ul class="choices"><li>A. 효소에 의해 IV 의 크기는 작아진다.</li><li>B. II의 크기가 클수록 반응 속도는 빨라진다.</li><li>C. 위 반응은 활성화 에너지가 없어도 진행된다.</li><li>D. 효소에 의해 활성화 에너지가 I 에서 IV 로 변한다.</li><li>E. 효소가 없는 경우 활성화 에너지는 III 이다.</li></ul></div></div><details class="original" data-original-problem="p42"><summary>기출 원문 보기</summary>웹과제 2장 q04 (스크린샷 s04)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 반응물(a+b)이 생성물(c)로 바뀌는 반응의 자유에너지 그래프예요. 봉우리가 높은 곡선과 낮은 곡선 두 개가 있고, 높이를 나타내는 화살표 I, II, III, IV가 있어요. 생성물 c는 반응물 a+b보다 아래에 있어요.</p>
   <p>구할 것: 각 화살표가 무엇을 뜻하는지 읽고, 효소에 대한 설명으로 <strong>옳은 것</strong> 하나를 골라요.</p>
@@ -585,8 +627,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>II = 효소 있을 때, III = 효소 없을 때 활성화 에너지, IV = ΔG, I = 활성화 에너지 아님.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.34 그림 2.3(b)와 대응하고 소거로 E만 남아요. 답 E.</p></div>
 </div>
-</article><article class="topic" id="p43"><h3>P43. 전자전달계에서 일어나는 일</h3><p class="panel-meta">웹과제 2장 q05 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p43">원 문제 보기</a></p><div class="layer formal" data-source-problem="p43"><h4>주어진 조건</h4><div data-source-field="conditions"><p>세포 호흡의 마지막 관계인 '전자전달계'에서 일어나는 현상에 대한 설명으로 옳지 않은 것은?</p>
-    <ul class="choices"><li>A. 전달을 마친 전자를 최종적으로 받아 물을 만드는 물질은 산소이다</li><li>B. 수소 이온이 ATP 합성효소를 통해 막간 공간에서 기질로 들어갈 때, 수소 이온을 수송시키는 추가적인 ATP 소모가 일어난다</li><li>C. 전자가 이동하면서 방출하는 에너지를 이용해 수소 이온을 막 바깥(막간공간)으로 퍼 올린다</li><li>D. 밖으로 나갔던 수소 ATP 합성효소를 통과해 다시 들어오면서 ATP가 합성된다</li><li>E. 영양소에서 떨어져 나온 전자가 여러 단백질 복합체를 차례대로 거치며 이동한다</li></ul></div></div><div class="layer formal" data-original-problem="p43"><h4>기출 원문</h4>웹과제 2장 q05 (스크린샷 s05)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p43"><h3>P43. 전자전달계에서 일어나는 일</h3><p class="panel-meta">웹과제 2장 q05 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p43">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p43"><div class="layer formal" data-source-problem="p43"><div data-source-field="conditions"><p>세포 호흡의 마지막 관계인 '전자전달계'에서 일어나는 현상에 대한 설명으로 옳지 않은 것은?</p>
+    <ul class="choices"><li>A. 전달을 마친 전자를 최종적으로 받아 물을 만드는 물질은 산소이다</li><li>B. 수소 이온이 ATP 합성효소를 통해 막간 공간에서 기질로 들어갈 때, 수소 이온을 수송시키는 추가적인 ATP 소모가 일어난다</li><li>C. 전자가 이동하면서 방출하는 에너지를 이용해 수소 이온을 막 바깥(막간공간)으로 퍼 올린다</li><li>D. 밖으로 나갔던 수소 ATP 합성효소를 통과해 다시 들어오면서 ATP가 합성된다</li><li>E. 영양소에서 떨어져 나온 전자가 여러 단백질 복합체를 차례대로 거치며 이동한다</li></ul></div></div><details class="original" data-original-problem="p43"><summary>기출 원문 보기</summary>웹과제 2장 q05 (스크린샷 s05)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 세포호흡의 마지막 단계인 전자전달계(electron transport chain)에서 일어나는 일을 적은 다섯 문장이에요.</p>
   <p>구할 것: 전자전달계에 대한 설명으로 <strong>옳지 않은 것</strong>을 골라요. 틀린 문장 하나를 찾는 부정형이에요.</p>
@@ -646,8 +688,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>기울기를 따라 내려오는 H⁺는 ATP를 쓰지 않고 만들어요. B만 틀려요. 발문 ‘관계’, 보기 D ‘수소’는 오타예요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.37, p.41 그림 2.13, p.42와 강의노트 2장 p.3이 일치해요. 답 B.</p></div>
 </div>
-</article><article class="topic" id="p44"><h3>P44. 효소에 대한 진술 판단</h3><p class="panel-meta">웹과제 2장 q08 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p44">원 문제 보기</a></p><div class="layer formal" data-source-problem="p44"><h4>주어진 조건</h4><div data-source-field="conditions"><p>효소에 대한 다음 진술 중 맞는 것은?</p>
-    <ul class="choices"><li>A. 결합 특이성이 매우 낮다</li><li>B. 효소에 의한 최종 반응 생성물을 기질이라고 한다</li><li>C. 다른 단백질처럼 pH의 영향을 받지 않는다</li><li>D. 고온에서는 일반적으로 단백질 변성에 의해 활성이 사라진다</li><li>E. 반응이 끝나면 효소 자신도 분해되어 소모된다</li></ul></div></div><div class="layer formal" data-original-problem="p44"><h4>기출 원문</h4>웹과제 2장 q08 (스크린샷 s08)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p44"><h3>P44. 효소에 대한 진술 판단</h3><p class="panel-meta">웹과제 2장 q08 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p44">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p44"><div class="layer formal" data-source-problem="p44"><div data-source-field="conditions"><p>효소에 대한 다음 진술 중 맞는 것은?</p>
+    <ul class="choices"><li>A. 결합 특이성이 매우 낮다</li><li>B. 효소에 의한 최종 반응 생성물을 기질이라고 한다</li><li>C. 다른 단백질처럼 pH의 영향을 받지 않는다</li><li>D. 고온에서는 일반적으로 단백질 변성에 의해 활성이 사라진다</li><li>E. 반응이 끝나면 효소 자신도 분해되어 소모된다</li></ul></div></div><details class="original" data-original-problem="p44"><summary>기출 원문 보기</summary>웹과제 2장 q08 (스크린샷 s08)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 효소(enzyme)의 성질을 적은 다섯 문장이에요. 특이성, 기질이라는 용어, pH, 온도, 반응 뒤 효소의 운명을 하나씩 다뤄요.</p>
   <p>구할 것: 효소에 대해 <strong>맞는</strong> 진술 하나를 골라요.</p>
@@ -705,7 +747,7 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>A·B·C·E는 성질을 뒤집었고, D(고온 변성)만 맞아요. ‘일반적으로’는 온천 세균 같은 예외를 인정하는 표현이에요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.34~35, 강의노트 2장 p.1과 일치해요. 답 D.</p></div>
 </div>
-</article><article class="topic" id="p45"><h3>P45. 세포호흡 개요 모식도의 단계</h3><p class="panel-meta">웹과제 2장 q09 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p45">원 문제 보기</a></p><div class="layer formal" data-source-problem="p45"><h4>주어진 조건</h4><div data-source-field="conditions"><p>세포호흡 전체 과정의 개요 모식도이다. 아래 과정에서 옳지 않은 설명은?</p>
+</article><article class="topic" id="p45"><h3>P45. 세포호흡 개요 모식도의 단계</h3><p class="panel-meta">웹과제 2장 q09 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p45">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p45"><div class="layer formal" data-source-problem="p45"><div data-source-field="conditions"><p>세포호흡 전체 과정의 개요 모식도이다. 아래 과정에서 옳지 않은 설명은?</p>
     <figure class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 335" role="img" aria-labelledby="p45-web-ch02-q09-exam-title p45-web-ch02-q09-exam-desc" id="p45-source-p45-exam" aria-label="미토콘드리아 윤곽 위에 해당과정 상자, (가) 상자, 순환 화살표 (나), 큰 (다) 상자가 왼쪽에서 오른쪽으로 이어지고, 해당과정·(나)·(다) 아래로 화살표와 별 모양 표시가 있다.">
   <title id="p45-source-p45-web-ch02-q09-exam-title">세포호흡 전체 과정의 개요 모식도</title>
   <desc id="p45-source-p45-web-ch02-q09-exam-desc">배경에 미토콘드리아의 윤곽이 옅게 그려져 있다. 왼쪽의 (해당과정) 상자에서 화살표가 (가) 상자로 이어지고, (가)에서 굽은 화살표가 원형 회로 (나)로 들어간다. 오른쪽에는 큰 (다) 상자가 있다. 위쪽에는 (해당과정), (가), (나)에서 올라온 관 모양 선이 오른쪽으로 이어져 (다)로 내려간다. (해당과정) 아래에는 노란 화살표와 노란 별 모양, (나)와 (다) 아래에는 회색 화살표와 회색 별 모양이 있다.</desc>
@@ -755,7 +797,7 @@
     <polygon points="690,280 695.7,291.4 712,282.9 705.6,294.2 728.1,291 711.3,299.2 734,302 711.3,304.8 728.1,313 705.6,309.8 712,321.1 695.7,312.6 690,324 684.3,312.6 668,321.1 674.4,309.8 651.9,313 668.7,304.8 646,302 668.7,299.2 651.9,291 674.4,294.2 668,282.9 684.3,291.4" fill="#c9c8b7" stroke="#b9b8a6" stroke-width="1.5" stroke-linejoin="round"/>
   </g>
 </svg></figure>
-    <ul class="choices"><li>A. 이산화탄소는 (다) 과정에서 생성된다</li><li>B. NADH는 (가)와 (나)에서 모두 생성된다</li><li>C. (가) ~ (다) 중 산화적 인산화는 (다) 과정에서 일어난다</li><li>D. (나)에서 NADH와 FADH2가 생성된다</li><li>E. 해당과정 결과 2개의 ATP가 생성된다</li></ul></div></div><div class="layer formal" data-original-problem="p45"><h4>기출 원문</h4>웹과제 2장 q09 (스크린샷 s09)</div><div class="layer eli5" data-explanation="understand">
+    <ul class="choices"><li>A. 이산화탄소는 (다) 과정에서 생성된다</li><li>B. NADH는 (가)와 (나)에서 모두 생성된다</li><li>C. (가) ~ (다) 중 산화적 인산화는 (다) 과정에서 일어난다</li><li>D. (나)에서 NADH와 FADH2가 생성된다</li><li>E. 해당과정 결과 2개의 ATP가 생성된다</li></ul></div></div><details class="original" data-original-problem="p45"><summary>기출 원문 보기</summary>웹과제 2장 q09 (스크린샷 s09)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 세포호흡 전체를 그린 모식도예요. 왼쪽부터 (해당과정) → (가) → 원 모양의 회로 (나) → 큰 상자 (다) 순서로 이어지고, 뒤에 미토콘드리아 윤곽이 깔려 있어요. 위쪽의 관은 해당과정·(가)·(나)에서 나온 무언가를 (다)로 실어 나르고, 해당과정·(나)·(다) 아래에는 별 모양(ATP)이 그려져 있어요.</p>
   <p>구할 것: (가)~(다)가 어떤 단계인지 먼저 정하고, 그 단계에 대한 설명으로 <strong>옳지 않은 것</strong>을 골라요. 틀린 문장을 찾는 부정형이에요.</p>
@@ -816,8 +858,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>(다)는 물을 만들고 CO₂는 만들지 않아요. A만 틀려요. E는 순생성량 2 ATP라 맞아요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>탄소 6개 = 2(가) + 4(나). 교과서 2장 p.42 그림 2.14, p.37~39와 일치해요. 답 A.</p></div>
 </div>
-</article><article class="topic" id="p46"><h3>P46. 해당과정이 만드는 것</h3><p class="panel-meta">웹과제 2장 q12 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p46">원 문제 보기</a></p><div class="layer formal" data-source-problem="p46"><h4>주어진 조건</h4><div data-source-field="conditions"><p>해당과정의 산물은?</p>
-    <ul class="choices"><li>A. 피루브산, NADH, ATP</li><li>B. 젖산과 피루브산</li><li>C. ATP, NADPH</li><li>D. ADP와 NAD+</li><li>E. 피루브산과 ADP</li></ul></div></div><div class="layer formal" data-original-problem="p46"><h4>기출 원문</h4>웹과제 2장 q12 (스크린샷 s13)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p46"><h3>P46. 해당과정이 만드는 것</h3><p class="panel-meta">웹과제 2장 q12 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p46">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p46"><div class="layer formal" data-source-problem="p46"><div data-source-field="conditions"><p>해당과정의 산물은?</p>
+    <ul class="choices"><li>A. 피루브산, NADH, ATP</li><li>B. 젖산과 피루브산</li><li>C. ATP, NADPH</li><li>D. ADP와 NAD+</li><li>E. 피루브산과 ADP</li></ul></div></div><details class="original" data-original-problem="p46"><summary>기출 원문 보기</summary>웹과제 2장 q12 (스크린샷 s13)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 세포호흡의 첫 단계인 해당과정(glycolysis)이 있어요.</p>
   <p>구할 것: 해당과정이 <strong>끝나고 나서 생겨 있는 것(산물, product)</strong>만 모은 보기를 골라요. 해당과정에 들어가는 재료(반응물)나, 해당과정 다음 단계에서 생기는 물질이 섞이면 안 돼요.</p>
@@ -875,7 +917,7 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>ADP·NAD⁺는 반응물, 젖산은 발효, NADPH는 광합성이에요. 모두 산물인 보기는 A뿐이에요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>소거로 A만 남고, 교과서 2장 p.38 반응식과 일치해요. 답 A.</p></div>
 </div>
-</article><article class="topic" id="p47"><h3>P47. 그림 속 분자가 에너지를 주는 방법</h3><p class="panel-meta">웹과제 2장 q15 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p47">원 문제 보기</a></p><div class="layer formal" data-source-problem="p47"><h4>주어진 조건</h4><div data-source-field="conditions"><p>아래 분자는 어떻게 세포에 에너지를 제공하는가?</p>
+</article><article class="topic" id="p47"><h3>P47. 그림 속 분자가 에너지를 주는 방법</h3><p class="panel-meta">웹과제 2장 q15 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p47">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p47"><div class="layer formal" data-source-problem="p47"><div data-source-field="conditions"><p>아래 분자는 어떻게 세포에 에너지를 제공하는가?</p>
     <figure class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 290" role="img" aria-labelledby="p47-web-ch02-q15-exam-title p47-web-ch02-q15-exam-desc" id="p47-source-p47-exam" aria-label="질소성 염기(아데닌), 당(리보오스), 3개의 음전하를 띤 인산이 차례로 연결된 분자 그림. 세 개의 가는 화살표가 염기–당, 당–첫 인산, 둘째–셋째 인산 사이 결합을 가리킨다.">
   <title id="p47-source-p47-web-ch02-q15-exam-title">아래 분자의 구조 모식도</title>
   <desc id="p47-source-p47-web-ch02-q15-exam-desc">왼쪽에 육각형과 오각형이 붙은 질소성 염기(아데닌, 오각형에 A 표시), 가운데에 O와 S가 표시된 짙은 오각형의 당(리보오스), 오른쪽에 P 세 개가 사슬로 이어진 3개의 음전하를 띤 인산이 있고 각 P 위에 음전하 기호가 있다. 가는 화살표 세 개가 각각 염기와 당 사이 결합, 당과 첫 번째 인산 사이 결합, 두 번째와 세 번째 인산 사이 결합을 가리킨다.</desc>
@@ -917,7 +959,7 @@
     <line x1="426" y1="272" x2="426" y2="229.2" stroke="#666" stroke-width="1.3"/><polygon points="426,222 430.9,231 421.1,231" fill="#666"/>
   </g>
 </svg></figure>
-    <ul class="choices"><li>A. 미토콘드리아에서 에너지를 생성하는 데 사용되는 양성자를 방출한다</li><li>B. 위치에너지를 생성하기 위해 미토콘드리아 막을 통과하는 전자를 운반한다</li><li>C. 인산기를 잃으면서 에너지를 방출한다</li><li>D. 염기를 잃으면서 에너지를 방출한다</li><li>E. 에너지 원천인 전자를 방출한다</li></ul></div></div><div class="layer formal" data-original-problem="p47"><h4>기출 원문</h4>웹과제 2장 q15 (스크린샷 s16)</div><div class="layer eli5" data-explanation="understand">
+    <ul class="choices"><li>A. 미토콘드리아에서 에너지를 생성하는 데 사용되는 양성자를 방출한다</li><li>B. 위치에너지를 생성하기 위해 미토콘드리아 막을 통과하는 전자를 운반한다</li><li>C. 인산기를 잃으면서 에너지를 방출한다</li><li>D. 염기를 잃으면서 에너지를 방출한다</li><li>E. 에너지 원천인 전자를 방출한다</li></ul></div></div><details class="original" data-original-problem="p47"><summary>기출 원문 보기</summary>웹과제 2장 q15 (스크린샷 s16)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 염기(아데닌), 당(리보오스), 음전하를 띤 인산 3개가 차례로 이어진 분자 그림이 있어요.</p>
   <p>구할 것: 먼저 이 분자가 무엇인지 알아보고, 그 분자가 <strong>어떤 방식으로</strong> 세포에 에너지를 주는지 골라요.</p>
@@ -974,8 +1016,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>ATP는 전자·H⁺·염기가 아니라 끝의 인산기를 잃으며 에너지를 내요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>‘무엇을 잃나’로 분류하면 C만 인산기이고, 교과서 2장 p.32–33과 일치해요. 답 C.</p></div>
 </div>
-</article><article class="topic" id="p48"><h3>P48. ATP 합성효소만 막았을 때</h3><p class="panel-meta">웹과제 2장 q16 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p48">원 문제 보기</a></p><div class="layer formal" data-source-problem="p48"><h4>주어진 조건</h4><div data-source-field="conditions"><p>미토콘드리아 내막에서 전자전달은 방해하지 않고, 수소이온이 ATP 합성효소를 통과하지 못하도록 방해한다면 어떤 결과가 발생할까?</p>
-    <ul class="choices"><li>A. ATP 합성량 증가</li><li>B. 산소 소모의 증가</li><li>C. 발효과정의 감소</li><li>D. 내막을 가로질러 형성되는 pH 차이의 감소</li><li>E. 내막을 가로질러 형성되는 pH 차이의 증가</li></ul></div></div><div class="layer formal" data-original-problem="p48"><h4>기출 원문</h4>웹과제 2장 q16 (스크린샷 s17)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p48"><h3>P48. ATP 합성효소만 막았을 때</h3><p class="panel-meta">웹과제 2장 q16 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p48">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p48"><div class="layer formal" data-source-problem="p48"><div data-source-field="conditions"><p>미토콘드리아 내막에서 전자전달은 방해하지 않고, 수소이온이 ATP 합성효소를 통과하지 못하도록 방해한다면 어떤 결과가 발생할까?</p>
+    <ul class="choices"><li>A. ATP 합성량 증가</li><li>B. 산소 소모의 증가</li><li>C. 발효과정의 감소</li><li>D. 내막을 가로질러 형성되는 pH 차이의 감소</li><li>E. 내막을 가로질러 형성되는 pH 차이의 증가</li></ul></div></div><details class="original" data-original-problem="p48"><summary>기출 원문 보기</summary>웹과제 2장 q16 (스크린샷 s17)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 미토콘드리아 내막에서 두 가지 조건이 걸려 있어요. ① 전자전달은 <strong>평소대로 계속</strong>돼요. ② H⁺(수소이온)는 ATP 합성효소를 <strong>통과하지 못해요</strong>.</p>
   <p>구할 것: 이 두 조건이 동시에 걸렸을 때 생기는 결과를 골라요.</p>
@@ -1035,8 +1077,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>H⁺가 막 사이 공간에 쌓여 pH 차이는 커지고, ATP 합성은 줄어요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>H⁺가 새는 반대 상황(기울기 감소)과 비교하면 이 문제는 E 방향이에요. 교과서 2장 p.39, p.41 그림 2.13과 일치해요. 답 E.</p></div>
 </div>
-</article><article class="topic" id="p3"><h3>P3. 막 수송 방식에 대한 옳은 설명</h3><p class="panel-meta">기출 1강 40 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p3">원 문제 보기</a></p><div class="layer formal" data-source-problem="p3"><h4>주어진 조건</h4><div data-source-field="conditions"><p>세포막의 수송 과정에서 사용되는 수송매커니즘에 대한 설명 중 옳은 것은?</p>
-    <ul class="choices"><li>(1) 촉진확산은 특정 분자를 가리지 않고 모든 분자에서 가능하다.</li><li>(2) 촉진확산은 지질막을 통해 수송된다</li><li>(3) 삼투현상은 능동수송의 대표적인 예라고 할 수 있다.</li><li>(4) 단순확산은 수송되는 분자가 고농도가 되면 포화되어 멈추게 된다.</li><li>(5) 능동수송의 경우 수송되는 물질의 농도기울기와 반대 방향으로 작용한다.</li></ul></div></div><div class="layer formal" data-original-problem="p3"><h4>기출 원문</h4>기출 1강 합본 40번 (PDF 3쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p3"><h3>P3. 막 수송 방식에 대한 옳은 설명</h3><p class="panel-meta">기출 1강 40 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p3">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p3"><div class="layer formal" data-source-problem="p3"><div data-source-field="conditions"><p>세포막의 수송 과정에서 사용되는 수송매커니즘에 대한 설명 중 옳은 것은?</p>
+    <ul class="choices"><li>(1) 촉진확산은 특정 분자를 가리지 않고 모든 분자에서 가능하다.</li><li>(2) 촉진확산은 지질막을 통해 수송된다</li><li>(3) 삼투현상은 능동수송의 대표적인 예라고 할 수 있다.</li><li>(4) 단순확산은 수송되는 분자가 고농도가 되면 포화되어 멈추게 된다.</li><li>(5) 능동수송의 경우 수송되는 물질의 농도기울기와 반대 방향으로 작용한다.</li></ul></div></div><details class="original" data-original-problem="p3"><summary>기출 원문 보기</summary>기출 1강 합본 40번 (PDF 3쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>세포막을 건너는 수송 방식(단순확산, 촉진확산, 삼투, 능동수송)에 대한 설명 다섯 개 가운데 <strong>옳은 것</strong> 하나를 골라요.</p>
   <p>보기마다 "어느 수송 방식인가"와 "그 방식의 어떤 특성(막의 어느 부분을 지나나, 특이성, 에너지, 방향, 포화)을 말하나"를 짚어서 교과서의 특성 표와 맞춰 봐요.</p>
@@ -1090,8 +1132,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>(1)(2)(4)는 표의 칸을 바꿔 쓴 것, (3) 삼투는 수동, (5)만 옳다.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 1장 p.23 표 1.1과 대조해 (5)만 일치.</p></div>
 </div>
-</article><article class="topic" id="p4"><h3>P4. 포도당에서 나온 에너지가 가는 곳</h3><p class="panel-meta">기출 2강 1 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p4">원 문제 보기</a></p><div class="layer formal" data-source-problem="p4"><h4>주어진 조건</h4><div data-source-field="conditions"><p>세포호흡에서 포도당이 이산화탄소와 물로 분해되면서 방출된 에너지는 어디로 가는가?</p>
-    <ul class="choices"><li>(1) ATP</li><li>(2) 열로 방출</li><li>(3) 젖산</li><li>(4) 세포막</li></ul></div></div><div class="layer formal" data-original-problem="p4"><h4>기출 원문</h4>기출 2강 합본 1번 (PDF 1쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p4"><h3>P4. 포도당에서 나온 에너지가 가는 곳</h3><p class="panel-meta">기출 2강 1 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p4">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p4"><div class="layer formal" data-source-problem="p4"><div data-source-field="conditions"><p>세포호흡에서 포도당이 이산화탄소와 물로 분해되면서 방출된 에너지는 어디로 가는가?</p>
+    <ul class="choices"><li>(1) ATP</li><li>(2) 열로 방출</li><li>(3) 젖산</li><li>(4) 세포막</li></ul></div></div><details class="original" data-original-problem="p4"><summary>기출 원문 보기</summary>기출 2강 합본 1번 (PDF 1쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>포도당이 세포호흡으로 이산화탄소와 물까지 완전히 분해될 때 에너지가 나와요. 그 에너지를 세포가 <strong>어디에 담아 두는지</strong>를 묻는 문제예요.</p>
   <p>"어디로 가는가"는 에너지가 흘러가 저장되는 곳(에너지 통화)을 묻는 질문으로 읽어요.</p>
@@ -1144,8 +1186,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>문항 결함: (2) 열도 사실이지만, 세포가 에너지를 담는 곳을 묻는 의도라 답은 (1) ATP.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 1장 p.20(대부분 ATP로 저장), 2장 p.43(효율 약 32%, 나머지 열)로 확인.</p></div>
 </div>
-</article><article class="topic" id="p5"><h3>P5. 세포호흡 과정과 그 생성물의 짝</h3><p class="panel-meta">기출 2강 2 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p5">원 문제 보기</a></p><div class="layer formal" data-source-problem="p5"><h4>주어진 조건</h4><div data-source-field="conditions"><p>세포호흡에서 일어나는 과정과 그 과정에서 생성되는 물질이 올바르게 짝 지어진 것은 무엇인가?</p>
-    <ul class="choices"><li>(1) 시트르산 회로, 산소</li><li>(2) 광의존반응, 산소</li><li>(3) 광의존반응, 이산화탄소</li><li>(4) 시트르산 회로, 이산화탄소</li></ul></div></div><div class="layer formal" data-original-problem="p5"><h4>기출 원문</h4>기출 2강 합본 2번 (PDF 1쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p5"><h3>P5. 세포호흡 과정과 그 생성물의 짝</h3><p class="panel-meta">기출 2강 2 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p5">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p5"><div class="layer formal" data-source-problem="p5"><div data-source-field="conditions"><p>세포호흡에서 일어나는 과정과 그 과정에서 생성되는 물질이 올바르게 짝 지어진 것은 무엇인가?</p>
+    <ul class="choices"><li>(1) 시트르산 회로, 산소</li><li>(2) 광의존반응, 산소</li><li>(3) 광의존반응, 이산화탄소</li><li>(4) 시트르산 회로, 이산화탄소</li></ul></div></div><details class="original" data-original-problem="p5"><summary>기출 원문 보기</summary>기출 2강 합본 2번 (PDF 1쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>보기마다 "과정, 생성물" 두 칸이 짝지어져 있어요. 두 칸을 모두 통과해야 정답이에요. 첫째, 그 과정이 <strong>세포호흡</strong>에서 일어나는가. 둘째, 그 과정에서 그 물질이 <strong>만들어지는가</strong>.</p>
   <p>구할 것은 두 조건을 동시에 만족하는 짝 하나예요.</p>
@@ -1195,8 +1237,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>두 조건을 모두 만족하는 짝은 (4) 시트르산 회로–이산화탄소.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.40 그림 2.12, 강의노트 2장 p2에서 시트르산 회로의 CO₂ 방출 확인.</p></div>
 </div>
-</article><article class="topic" id="p6"><h3>P6. 효소에 대한 틀린 설명</h3><p class="panel-meta">기출 2강 6 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p6">원 문제 보기</a></p><div class="layer formal" data-source-problem="p6"><h4>주어진 조건</h4><div data-source-field="conditions"><p>다음 효소에 대한 설명 중 틀린 것은?</p>
-    <ul class="choices"><li>(1) 효소작용은 비가역적반응을 가역적으로 만든다.</li><li>(2) 효소는 반응에 필요한 에너지를 낮추어 반응이 빨리 일어나게 한다.</li><li>(3) 효소는 촉매할 기질과 구조적 입체성이 맞아야 한다.</li><li>(4) 효소는 반응의 활성화에너지를 낮춘다.</li><li>(5) 효소는 촉매하는 기질에 따라 명명하며 대다수는 -ase로 끝난다.</li></ul></div></div><div class="layer formal" data-original-problem="p6"><h4>기출 원문</h4>기출 2강 합본 6번 (PDF 1쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p6"><h3>P6. 효소에 대한 틀린 설명</h3><p class="panel-meta">기출 2강 6 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p6">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p6"><div class="layer formal" data-source-problem="p6"><div data-source-field="conditions"><p>다음 효소에 대한 설명 중 틀린 것은?</p>
+    <ul class="choices"><li>(1) 효소작용은 비가역적반응을 가역적으로 만든다.</li><li>(2) 효소는 반응에 필요한 에너지를 낮추어 반응이 빨리 일어나게 한다.</li><li>(3) 효소는 촉매할 기질과 구조적 입체성이 맞아야 한다.</li><li>(4) 효소는 반응의 활성화에너지를 낮춘다.</li><li>(5) 효소는 촉매하는 기질에 따라 명명하며 대다수는 -ase로 끝난다.</li></ul></div></div><details class="original" data-original-problem="p6"><summary>기출 원문 보기</summary>기출 2강 합본 6번 (PDF 1쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>효소에 대한 설명 다섯 개 가운데 <strong>틀린 것</strong> 하나를 고르는 부정형 문제예요.</p>
   <p>보기마다 "효소가 바꾸는 것"과 "효소가 바꾸지 못하는 것" 중 어느 쪽을 말하는지 구분하면 틀린 보기가 드러나요.</p>
@@ -1247,8 +1289,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>(1) 비가역 → 가역은 방향을 바꾸는 것이라 틀림.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.34 그림 2.3(b): 봉우리만 낮아지고 방출 에너지는 같음.</p></div>
 </div>
-</article><article class="topic" id="p7"><h3>P7. 많은 조효소의 재료가 되는 유기물 보조인자</h3><p class="panel-meta">기출 2강 7 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p7">원 문제 보기</a></p><div class="layer formal" data-source-problem="p7"><h4>주어진 조건</h4><div data-source-field="conditions"><p>다음 중 우리 몸에서 분해되지 않으며, 고등동물의 많은 조효소의 유래가 되는 유기물 보조인자는?</p>
-    <ul class="choices"><li>(1) 단백질</li><li>(2) 지방</li><li>(3) 탄수화물</li><li>(4) 비타민</li><li>(5) 뉴클레오타이드</li></ul></div></div><div class="layer formal" data-original-problem="p7"><h4>기출 원문</h4>기출 2강 합본 7번 (PDF 1쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p7"><h3>P7. 많은 조효소의 재료가 되는 유기물 보조인자</h3><p class="panel-meta">기출 2강 7 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p7">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p7"><div class="layer formal" data-source-problem="p7"><div data-source-field="conditions"><p>다음 중 우리 몸에서 분해되지 않으며, 고등동물의 많은 조효소의 유래가 되는 유기물 보조인자는?</p>
+    <ul class="choices"><li>(1) 단백질</li><li>(2) 지방</li><li>(3) 탄수화물</li><li>(4) 비타민</li><li>(5) 뉴클레오타이드</li></ul></div></div><details class="original" data-original-problem="p7"><summary>기출 원문 보기</summary>기출 2강 합본 7번 (PDF 1쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>효소를 곁에서 돕는 "유기물 보조인자" 가운데, 고등동물의 많은 조효소가 만들어지는 재료를 하나 골라요.</p>
   <p>조건이 세 개예요. 유기물이고, 효소를 돕는 보조인자이며, 많은 조효소의 출처예요. "우리 몸에서 분해되지 않으며"는 에너지를 얻으려고 태우는 연료가 아니라는 뜻으로 읽어요.</p>
@@ -1299,8 +1341,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>연료로 분해되는 (1)(2)(3) 제외, 조효소의 출처는 (4) 비타민.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.34–35, 강의노트 2장 p1과 일치.</p></div>
 </div>
-</article><article class="topic" id="p8"><h3>P8. ATP가 에너지를 내놓는 방식</h3><p class="panel-meta">기출 2강 8 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p8">원 문제 보기</a></p><div class="layer formal" data-source-problem="p8"><h4>주어진 조건</h4><div data-source-field="conditions"><p>세포에서 ATP는 어떻게 에너지를 생성하는가?</p>
-    <ul class="choices"><li>(1) 에너지를 생산하는 미토콘드리아에서 사용되는 양성자를 방출한다</li><li>(2) 인산기를 잃고, 에너지를 방출한다</li><li>(3) 에너지의 원천이 되는 전자를 방출한다</li><li>(4) 인산기를 얻고, 에너지를 방출한다.</li><li>(5) 위치에너지를 생산하는 미토콘드리아 막을 통해 전자를 왕복시킨다.</li></ul></div></div><div class="layer formal" data-original-problem="p8"><h4>기출 원문</h4>기출 2강 합본 8번 (PDF 1쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p8"><h3>P8. ATP가 에너지를 내놓는 방식</h3><p class="panel-meta">기출 2강 8 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p8">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p8"><div class="layer formal" data-source-problem="p8"><div data-source-field="conditions"><p>세포에서 ATP는 어떻게 에너지를 생성하는가?</p>
+    <ul class="choices"><li>(1) 에너지를 생산하는 미토콘드리아에서 사용되는 양성자를 방출한다</li><li>(2) 인산기를 잃고, 에너지를 방출한다</li><li>(3) 에너지의 원천이 되는 전자를 방출한다</li><li>(4) 인산기를 얻고, 에너지를 방출한다.</li><li>(5) 위치에너지를 생산하는 미토콘드리아 막을 통해 전자를 왕복시킨다.</li></ul></div></div><details class="original" data-original-problem="p8"><summary>기출 원문 보기</summary>기출 2강 합본 8번 (PDF 1쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>ATP가 세포에 에너지를 내주는 방식을 묻는 문제예요. 문제의 "에너지를 생성"은 ATP가 저장된 에너지를 <strong>내놓는</strong> 방식으로 읽어요.</p>
   <p>보기는 무엇을 내놓는지(양성자, 인산기, 전자)와 인산기를 잃는지 얻는지로 갈라져요.</p>
@@ -1352,8 +1394,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>인산기를 잃을 때 에너지 방출 → (2). H⁺·전자는 ATP를 만드는 쪽 이야기.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.32 본문, p.33 그림 2.1(b)와 일치.</p></div>
 </div>
-</article><article class="topic" id="p9"><h3>P9. 엽록체 내부를 채운 액체</h3><p class="panel-meta">기출 2강 10 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p9">원 문제 보기</a></p><div class="layer formal" data-source-problem="p9"><h4>주어진 조건</h4><div data-source-field="conditions"><p>엽록체 내부를 채우고 있는 유동액은 무엇인가?</p>
-    <ul class="choices"><li>(1) 스트로마</li><li>(2) 틸라코이드</li><li>(3) 기공</li><li>(4) 그라나</li><li>(5) 엽록소</li></ul></div></div><div class="layer formal" data-original-problem="p9"><h4>기출 원문</h4>기출 2강 합본 10번 (PDF 1쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p9"><h3>P9. 엽록체 내부를 채운 액체</h3><p class="panel-meta">기출 2강 10 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p9">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p9"><div class="layer formal" data-source-problem="p9"><div data-source-field="conditions"><p>엽록체 내부를 채우고 있는 유동액은 무엇인가?</p>
+    <ul class="choices"><li>(1) 스트로마</li><li>(2) 틸라코이드</li><li>(3) 기공</li><li>(4) 그라나</li><li>(5) 엽록소</li></ul></div></div><details class="original" data-original-problem="p9"><summary>기출 원문 보기</summary>기출 2강 합본 10번 (PDF 1쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>엽록체 안을 채우고 있는 <strong>액체(유동액)</strong>의 이름을 고르는 문제예요.</p>
   <p>보기에는 엽록체의 막 구조, 잎 표면의 구조, 색소 분자가 섞여 있어요. "액체 공간인가"라는 한 가지 기준으로 걸러요.</p>
@@ -1403,8 +1445,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>액체 공간은 (1) 스트로마뿐.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 1장 p.21 그림 1.24 "스트로마(액체 내부)", 강의노트 1장 p6.</p></div>
 </div>
-</article><article class="topic" id="p10"><h3>P10. 생물이 일할 때 쓰는 화학에너지의 원천</h3><p class="panel-meta">기출 2강 11 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p10">원 문제 보기</a></p><div class="layer formal" data-source-problem="p10"><h4>주어진 조건</h4><div data-source-field="conditions"><p>생물학적 작용을 하는 자유에너지를 공급하는 화학에너지의 원천은 무엇인가?</p>
-    <ul class="choices"><li>(1) NADP</li><li>(2) RuBP</li><li>(3) ADP</li><li>(4) ATP</li></ul></div></div><div class="layer formal" data-original-problem="p10"><h4>기출 원문</h4>기출 2강 합본 11번 (PDF 1쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p10"><h3>P10. 생물이 일할 때 쓰는 화학에너지의 원천</h3><p class="panel-meta">기출 2강 11 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p10">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p10"><div class="layer formal" data-source-problem="p10"><div data-source-field="conditions"><p>생물학적 작용을 하는 자유에너지를 공급하는 화학에너지의 원천은 무엇인가?</p>
+    <ul class="choices"><li>(1) NADP</li><li>(2) RuBP</li><li>(3) ADP</li><li>(4) ATP</li></ul></div></div><details class="original" data-original-problem="p10"><summary>기출 원문 보기</summary>기출 2강 합본 11번 (PDF 1쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 분자 이름 네 개(NADP, RuBP, ADP, ATP)예요.</p>
   <p>구할 것: 세포가 일(생물학적 작용)을 할 때 <strong>바로 꺼내 쓰는 화학에너지의 원천</strong>이 무엇인지 하나 골라요.</p>
@@ -1459,9 +1501,9 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>ADP는 방전된 형태, RuBP는 탄소 고정 당, NAD(P)는 전자운반체 → ATP만 남아요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 p.32·p.33 그림 2.2 대조, 기출 인쇄 답 (4). 원문 보기 (1)은 NAD. 답 (4).</p></div>
 </div>
-</article><article class="topic" id="p11"><h3>P11. 활성 부위를 막는 약물의 구조</h3><p class="panel-meta">기출 2강 14 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p11">원 문제 보기</a></p><div class="layer formal" data-source-problem="p11"><h4>주어진 조건</h4><div data-source-field="conditions"><figure class="figure"><img src="figures_문제설명_0910_Cells_and_Cellular_Respiration/63ad3aabbcb07676-p11.png" alt="β-갈락토오스가수분해효소의 반응 순환 그림. 이당류인 젖당(포도당과 갈락토오스가 이어진 분자)이 효소의 활성부위에 결합해 효소-기질 복합체를 이루고, 물(H2O)이 들어오며 효소가 젖당의 두 당을 잘라 포도당과 갈락토오스를 내보낸 뒤, 변하지 않은 효소가 다시 다른 반응을 촉매하는 과정이 화살표로 이어져 있다."></figure>
+</article><article class="topic" id="p11"><h3>P11. 활성 부위를 막는 약물의 구조</h3><p class="panel-meta">기출 2강 14 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p11">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p11"><div class="layer formal" data-source-problem="p11"><div data-source-field="conditions"><figure class="figure"><img src="figures_문제설명_0910_Cells_and_Cellular_Respiration/63ad3aabbcb07676-p11.png" alt="β-갈락토오스가수분해효소의 반응 순환 그림. 이당류인 젖당(포도당과 갈락토오스가 이어진 분자)이 효소의 활성부위에 결합해 효소-기질 복합체를 이루고, 물(H2O)이 들어오며 효소가 젖당의 두 당을 잘라 포도당과 갈락토오스를 내보낸 뒤, 변하지 않은 효소가 다시 다른 반응을 촉매하는 과정이 화살표로 이어져 있다."></figure>
     <p>새로이 개발된 약물이 위 그림에 보이는 효소의 활성부위를 차단한다고 가정하자. 이 약물의 구조는 (   )의 구조와 유사할 것이다.</p>
-    <ul class="choices"><li>(1) 갈락토오스</li><li>(2) 포도당</li><li>(3) 젖당</li><li>(4) 설탕</li><li>(5) 엿당</li></ul></div></div><div class="layer formal" data-original-problem="p11"><h4>기출 원문</h4>기출 2강 합본 14번 (PDF 2쪽 왼쪽). 문제가 가리키는 "위 그림"은 합본에서 제자리에 인쇄되지 않고 PDF 2쪽 오른쪽 아래(24번 옆)로 밀려 인쇄되어 있어요. 그 그림을 잘라 문제 위에 넣었어요.</div><div class="layer eli5" data-explanation="understand">
+    <ul class="choices"><li>(1) 갈락토오스</li><li>(2) 포도당</li><li>(3) 젖당</li><li>(4) 설탕</li><li>(5) 엿당</li></ul></div></div><details class="original" data-original-problem="p11"><summary>기출 원문 보기</summary>기출 2강 합본 14번 (PDF 2쪽 왼쪽). 문제가 가리키는 "위 그림"은 합본에서 제자리에 인쇄되지 않고 PDF 2쪽 오른쪽 아래(24번 옆)로 밀려 인쇄되어 있어요. 그 그림을 잘라 문제 위에 넣었어요.</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 젖당을 포도당과 갈락토오스로 자르는 효소(β-갈락토오스가수분해효소)의 반응 순환 그림, 그리고 이 효소의 활성부위를 막는 새 약물이에요.</p>
   <p>구할 것: 그 약물의 구조가 <strong>어떤 분자와 닮았을지</strong> 골라요.</p>
@@ -1517,8 +1559,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>생성물 조각(1)(2)과 다른 이당류(4)(5)는 활성부위에 맞지 않아요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 p.34 그림 2.4(β-갈락토스가수분해효소, 기질 젖당) 대조, 기출 인쇄 답 (3). 답 (3).</p></div>
 </div>
-</article><article class="topic" id="p12"><h3>P12. H⁺ 기울기를 쓰는 단백질의 이름과 기능</h3><p class="panel-meta">기출 2강 15 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p12">원 문제 보기</a></p><div class="layer formal" data-source-problem="p12"><h4>주어진 조건</h4><div data-source-field="conditions"><p>미토콘드리아의 내막에서 H⁺ 이온의 농도기울기를 이용하는 단백질 채널의 이름과 기능은 무엇인가?</p>
-    <ul class="choices"><li>(1) 루비스코; ATP에서 ADP를 만든다.</li><li>(2) ATP 합성효소; ATP에 인산을 첨가시킨다.</li><li>(3) 그라나; ATP의 결합을 끊는다.</li><li>(4) 루비스코; ADP에서 ATP를 만든다</li><li>(5) ATP 합성효소; ADP에 인산을 첨가시킨다.</li></ul></div></div><div class="layer formal" data-original-problem="p12"><h4>기출 원문</h4>기출 2강 합본 15번 (PDF 2쪽 왼쪽). 원문의 "H^〖+〗"는 첨자가 깨진 조판 오류라서 의도한 글자인 H⁺로 옮겼어요.</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p12"><h3>P12. H⁺ 기울기를 쓰는 단백질의 이름과 기능</h3><p class="panel-meta">기출 2강 15 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p12">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p12"><div class="layer formal" data-source-problem="p12"><div data-source-field="conditions"><p>미토콘드리아의 내막에서 H⁺ 이온의 농도기울기를 이용하는 단백질 채널의 이름과 기능은 무엇인가?</p>
+    <ul class="choices"><li>(1) 루비스코; ATP에서 ADP를 만든다.</li><li>(2) ATP 합성효소; ATP에 인산을 첨가시킨다.</li><li>(3) 그라나; ATP의 결합을 끊는다.</li><li>(4) 루비스코; ADP에서 ATP를 만든다</li><li>(5) ATP 합성효소; ADP에 인산을 첨가시킨다.</li></ul></div></div><details class="original" data-original-problem="p12"><summary>기출 원문 보기</summary>기출 2강 합본 15번 (PDF 2쪽 왼쪽). 원문의 "H^〖+〗"는 첨자가 깨진 조판 오류라서 의도한 글자인 H⁺로 옮겼어요.</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 미토콘드리아 내막에 있고, H⁺ 이온의 농도기울기를 이용하는 단백질 채널이에요.</p>
   <p>구할 것: 그 단백질의 <strong>이름</strong>과 <strong>기능</strong>이 둘 다 맞게 짝지어진 보기 하나를 골라요.</p>
@@ -1572,8 +1614,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>(2)는 기능 X(ATP에 인산), (4)는 이름 X(루비스코). 둘 다 O는 (5)뿐.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 p.37 본문, p.41 그림 2.13 대조, 기출 인쇄 답 (5). 답 (5).</p></div>
 </div>
-</article><article class="topic" id="p13"><h3>P13. 효소에 대한 잘못된 서술</h3><p class="panel-meta">기출 2강 16 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p13">원 문제 보기</a></p><div class="layer formal" data-source-problem="p13"><h4>주어진 조건</h4><div data-source-field="conditions"><p>효소에 대한 잘못된 서술은?</p>
-    <ul class="choices"><li>(1) 반복해서 사용될 수 있다.</li><li>(2) 물질대사 반응을 촉진하는 단백질이다.</li><li>(3) 기질에 ATP를 제공한다.</li><li>(4) 효소가 촉매하는 특정한 기질을 갖는다</li></ul></div></div><div class="layer formal" data-original-problem="p13"><h4>기출 원문</h4>기출 2강 합본 16번 (PDF 2쪽 왼쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p13"><h3>P13. 효소에 대한 잘못된 서술</h3><p class="panel-meta">기출 2강 16 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p13">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p13"><div class="layer formal" data-source-problem="p13"><div data-source-field="conditions"><p>효소에 대한 잘못된 서술은?</p>
+    <ul class="choices"><li>(1) 반복해서 사용될 수 있다.</li><li>(2) 물질대사 반응을 촉진하는 단백질이다.</li><li>(3) 기질에 ATP를 제공한다.</li><li>(4) 효소가 촉매하는 특정한 기질을 갖는다</li></ul></div></div><details class="original" data-original-problem="p13"><summary>기출 원문 보기</summary>기출 2강 합본 16번 (PDF 2쪽 왼쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 효소에 대한 서술 네 개예요.</p>
   <p>구할 것: 이 가운데 <strong>잘못된 서술</strong> 하나를 골라요. 부정형이라 ‘틀려요’로 판정된 보기가 답이에요.</p>
@@ -1626,8 +1668,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>(1)(2)(4)는 효소의 성질, (3) ‘기질에 ATP 제공’은 틀려요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 p.33(활성화 에너지), p.34(재사용·특이성) 대조, 기출 인쇄 답 (3). 답 (3).</p></div>
 </div>
-</article><article class="topic" id="p14"><h3>P14. 식물세포와 동물세포의 대사</h3><p class="panel-meta">기출 2강 18 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p14">원 문제 보기</a></p><div class="layer formal" data-source-problem="p14"><h4>주어진 조건</h4><div data-source-field="conditions"><p>식물과 동물세포의 대사에 관한 옳은 설명은?</p>
-    <ul class="choices"><li>(1) 식물세포는 세포호흡만을 수행하며, 동물세포는 광합성만을 수행한다.</li><li>(2) 동물세포는 세포호흡만을 수행하며, 식물세포는 광합성만을 수행한다.</li><li>(3) 식물과 동물 세포 모두 광합성과 세포호흡을 수행한다.</li><li>(4) 식물세포는 세포호흡과 광합성을 수행하며, 동물세포는 세포호흡만을 수행한다.</li></ul></div></div><div class="layer formal" data-original-problem="p14"><h4>기출 원문</h4>기출 2강 합본 18번 (PDF 2쪽). 문제와 보기 (1)~(3)은 2쪽 왼쪽 아래에 있고, 보기 (3)의 끝("한다.")과 보기 (4)는 2쪽 오른쪽 위로 넘어가 있어요.</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p14"><h3>P14. 식물세포와 동물세포의 대사</h3><p class="panel-meta">기출 2강 18 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p14">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p14"><div class="layer formal" data-source-problem="p14"><div data-source-field="conditions"><p>식물과 동물세포의 대사에 관한 옳은 설명은?</p>
+    <ul class="choices"><li>(1) 식물세포는 세포호흡만을 수행하며, 동물세포는 광합성만을 수행한다.</li><li>(2) 동물세포는 세포호흡만을 수행하며, 식물세포는 광합성만을 수행한다.</li><li>(3) 식물과 동물 세포 모두 광합성과 세포호흡을 수행한다.</li><li>(4) 식물세포는 세포호흡과 광합성을 수행하며, 동물세포는 세포호흡만을 수행한다.</li></ul></div></div><details class="original" data-original-problem="p14"><summary>기출 원문 보기</summary>기출 2강 합본 18번 (PDF 2쪽). 문제와 보기 (1)~(3)은 2쪽 왼쪽 아래에 있고, 보기 (3)의 끝("한다.")과 보기 (4)는 2쪽 오른쪽 위로 넘어가 있어요.</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 식물세포와 동물세포가 광합성·세포호흡을 하는지에 대한 네 가지 조합이에요.</p>
   <p>구할 것: <strong>옳은</strong> 조합 하나를 골라요.</p>
@@ -1680,8 +1722,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>(2)는 식물이 호흡도 한다는 점을 놓쳤고, (3)은 동물 광합성이라 틀려요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 p.36 그림 2.7 설명 대조, 기출 인쇄 답 (4). 답 (4).</p></div>
 </div>
-</article><article class="topic" id="p15"><h3>P15. 효소가 반응을 촉진하는 방법</h3><p class="panel-meta">기출 2강 19 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p15">원 문제 보기</a></p><div class="layer formal" data-source-problem="p15"><h4>주어진 조건</h4><div data-source-field="conditions"><p>효소는 (   )에 의해 화학반응을 촉진한다.</p>
-    <ul class="choices"><li>(1) 세포의 형태를 바꾸어</li><li>(2) 세포를 가열하여</li><li>(3) 기질에 에너지를 공급하여</li><li>(4) 반응의 활성화 에너지를 감소시켜</li></ul></div></div><div class="layer formal" data-original-problem="p15"><h4>기출 원문</h4>기출 2강 합본 19번 (PDF 2쪽 오른쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p15"><h3>P15. 효소가 반응을 촉진하는 방법</h3><p class="panel-meta">기출 2강 19 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p15">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p15"><div class="layer formal" data-source-problem="p15"><div data-source-field="conditions"><p>효소는 (   )에 의해 화학반응을 촉진한다.</p>
+    <ul class="choices"><li>(1) 세포의 형태를 바꾸어</li><li>(2) 세포를 가열하여</li><li>(3) 기질에 에너지를 공급하여</li><li>(4) 반응의 활성화 에너지를 감소시켜</li></ul></div></div><details class="original" data-original-problem="p15"><summary>기출 원문 보기</summary>기출 2강 합본 19번 (PDF 2쪽 오른쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: “효소는 (   )에 의해 화학반응을 촉진한다”는 빈칸 문장과 네 가지 방법이에요.</p>
   <p>구할 것: 효소가 반응을 빠르게 하는 <strong>실제 방법</strong> 하나를 골라요.</p>
@@ -1734,8 +1776,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>세포 형태 변경·가열·에너지 공급은 효소의 방법이 아니에요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 p.33 소제목, p.34 그림 2.3b 대조, 기출 인쇄 답 (4). 답 (4).</p></div>
 </div>
-</article><article class="topic" id="p16"><h3>P16. 전자전달계의 주된 기능</h3><p class="panel-meta">기출 2강 22 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p16">원 문제 보기</a></p><div class="layer formal" data-source-problem="p16"><h4>주어진 조건</h4><div data-source-field="conditions"><p>전자전달계의 가장 주된 생화학적 기능은?</p>
-    <ul class="choices"><li>(1) 포도당을 피루브산으로 쪼개는 것</li><li>(2) 미토콘드리아 내막을 가로질러 H⁺ 농도기울기를 형성하는 것</li><li>(3) ATP에 인산기를 첨가하는 것</li><li>(4) ATP 합성효소를 통한 수소이온의 이동</li></ul></div></div><div class="layer formal" data-original-problem="p16"><h4>기출 원문</h4>기출 2강 합본 22번 (PDF 2쪽 오른쪽). 원문 보기 (2)의 "H〖〗^〖+〗"는 첨자가 깨진 조판 오류라서 의도한 글자인 H⁺로 옮겼어요.</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p16"><h3>P16. 전자전달계의 주된 기능</h3><p class="panel-meta">기출 2강 22 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p16">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p16"><div class="layer formal" data-source-problem="p16"><div data-source-field="conditions"><p>전자전달계의 가장 주된 생화학적 기능은?</p>
+    <ul class="choices"><li>(1) 포도당을 피루브산으로 쪼개는 것</li><li>(2) 미토콘드리아 내막을 가로질러 H⁺ 농도기울기를 형성하는 것</li><li>(3) ATP에 인산기를 첨가하는 것</li><li>(4) ATP 합성효소를 통한 수소이온의 이동</li></ul></div></div><details class="original" data-original-problem="p16"><summary>기출 원문 보기</summary>기출 2강 합본 22번 (PDF 2쪽 오른쪽). 원문 보기 (2)의 "H〖〗^〖+〗"는 첨자가 깨진 조판 오류라서 의도한 글자인 H⁺로 옮겼어요.</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 세포호흡과 관련된 네 가지 일이에요.</p>
   <p>구할 것: 그중 <strong>전자전달계 자체</strong>가 하는 가장 주된 일을 골라요.</p>
@@ -1788,7 +1830,7 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>(1)은 해당과정, (3)(4)는 ATP 합성효소의 일. 전자전달계 자체의 일은 (2).</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 p.41 그림 2.13 상자, p.37 본문 대조, 기출 인쇄 답 (2). 답 (2).</p></div>
 </div>
-</article><article class="topic" id="p17"><h3>P17. 활성화 에너지 장벽이 없다면</h3><p class="panel-meta">기출 2강 23 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p17">원 문제 보기</a></p><div class="layer formal" data-source-problem="p17"><h4>주어진 조건</h4><div data-source-field="conditions"><p>활성화 에너지 장벽이 없다면 어떤 일이 일어나겠는가?</p></div></div><div class="layer formal" data-original-problem="p17"><h4>기출 원문</h4>기출 2강 합본 23번 (PDF 2쪽 오른쪽). 원문에는 보기가 없는 서술형 문항이에요.</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p17"><h3>P17. 활성화 에너지 장벽이 없다면</h3><p class="panel-meta">기출 2강 23 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p17">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p17"><div class="layer formal" data-source-problem="p17"><div data-source-field="conditions"><p>활성화 에너지 장벽이 없다면 어떤 일이 일어나겠는가?</p></div></div><details class="original" data-original-problem="p17"><summary>기출 원문 보기</summary>기출 2강 합본 23번 (PDF 2쪽 오른쪽). 원문에는 보기가 없는 서술형 문항이에요.</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: “활성화 에너지 장벽이 없다면”이라는 가정 하나예요. 보기가 없는 서술형(단답형) 문항이에요.</p>
   <p>구할 것: 장벽이 사라졌을 때 몸속 화학반응이 <strong>어떻게 달라지는지</strong> 한 문장으로 써요.</p>
@@ -1840,8 +1882,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>턱이 없으면 자발적 반응이 곧바로 진행돼 조절이 불가능해요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 p.33 본문, p.34 그림 2.3a의 반대 경우, 기출 인쇄 답과 일치. 답: 필요 여부와 관계없이 진행.</p></div>
 </div>
-</article><article class="topic" id="p18"><h3>P18. 물질대사의 전자운반체</h3><p class="panel-meta">기출 2강 25 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p18">원 문제 보기</a></p><div class="layer formal" data-source-problem="p18"><h4>주어진 조건</h4><div data-source-field="conditions"><p>물질대사에 관여하는 전자운반체는 무엇인가?</p>
-    <ul class="choices"><li>(1) CO₂</li><li>(2) CoQ</li><li>(3) ATP</li><li>(4) ADP</li><li>(5) NADH</li></ul></div></div><div class="layer formal" data-original-problem="p18"><h4>기출 원문</h4>기출 2강 합본 25번 (PDF 3쪽 왼쪽). 원문 보기 (1)의 "CO〖〗_〖2〗"는 첨자가 깨진 조판 오류라서 의도한 글자인 CO₂로 옮겼어요.</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p18"><h3>P18. 물질대사의 전자운반체</h3><p class="panel-meta">기출 2강 25 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p18">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p18"><div class="layer formal" data-source-problem="p18"><div data-source-field="conditions"><p>물질대사에 관여하는 전자운반체는 무엇인가?</p>
+    <ul class="choices"><li>(1) CO₂</li><li>(2) CoQ</li><li>(3) ATP</li><li>(4) ADP</li><li>(5) NADH</li></ul></div></div><details class="original" data-original-problem="p18"><summary>기출 원문 보기</summary>기출 2강 합본 25번 (PDF 3쪽 왼쪽). 원문 보기 (1)의 "CO〖〗_〖2〗"는 첨자가 깨진 조판 오류라서 의도한 글자인 CO₂로 옮겼어요.</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 분자 다섯 개(CO₂, CoQ, ATP, ADP, NADH)예요.</p>
   <p>구할 것: 물질대사에서 <strong>전자를 실어 나르는 운반체</strong>를 골라요.</p>
@@ -1897,8 +1939,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>CO₂·ATP·ADP 제외. (2) CoQ는 엄밀히 맞을 수 있으나 의도된 답은 NADH.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 p.38(NAD⁺ 전자운반체), p.41 그림 2.13(유비퀴논) 대조, 기출 인쇄 답 (5). 답 (5).</p></div>
 </div>
-</article><article class="topic" id="p19"><h3>P19. 전자전달계의 최종 전자 수용체</h3><p class="panel-meta">기출 2강 27 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p19">원 문제 보기</a></p><div class="layer formal" data-source-problem="p19"><h4>주어진 조건</h4><div data-source-field="conditions"><p>세포호흡 과정에서 전자전달계의 최종 전자 수용체는?</p>
-    <ul class="choices"><li>(1) 탄소</li><li>(2) 물</li><li>(3) 수소</li><li>(4) 산소</li><li>(5) 이산화탄소</li></ul></div></div><div class="layer formal" data-original-problem="p19"><h4>기출 원문</h4>기출 2강 합본 27번 (PDF 3쪽 왼쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p19"><h3>P19. 전자전달계의 최종 전자 수용체</h3><p class="panel-meta">기출 2강 27 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p19">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p19"><div class="layer formal" data-source-problem="p19"><div data-source-field="conditions"><p>세포호흡 과정에서 전자전달계의 최종 전자 수용체는?</p>
+    <ul class="choices"><li>(1) 탄소</li><li>(2) 물</li><li>(3) 수소</li><li>(4) 산소</li><li>(5) 이산화탄소</li></ul></div></div><details class="original" data-original-problem="p19"><summary>기출 원문 보기</summary>기출 2강 합본 27번 (PDF 3쪽 왼쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 세포호흡의 전자전달계(electron transport chain)와 보기 다섯 개(탄소, 물, 수소, 산소, 이산화탄소)예요.</p>
   <p>구할 것: 전자전달계를 따라 내려온 전자가 <strong>마지막에 붙잡히는 분자</strong>, 곧 최종 전자 수용체(final electron acceptor)를 골라요.</p>
@@ -1953,8 +1995,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>물은 결과물, H⁺는 함께 붙는 이온, 탄소·CO₂는 다른 단계. 전자를 받는 것은 산소예요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.39 ‘최종 수용체인 산소’, p.41 그림 2.13. 답 (4).</p></div>
 </div>
-</article><article class="topic" id="p20"><h3>P20. 해당과정의 산화형 전자 전달체</h3><p class="panel-meta">기출 2강 28 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p20">원 문제 보기</a></p><div class="layer formal" data-source-problem="p20"><h4>주어진 조건</h4><div data-source-field="conditions"><p>다음 중 해당과정에서 산화된 형태의 전자 전달체로 작용하는 것은 무엇인가?</p>
-    <ul class="choices"><li>(1) NAD+</li><li>(2) 산소</li><li>(3) NADP+</li><li>(4) 무한대</li><li>(5) ADP</li></ul></div></div><div class="layer formal" data-original-problem="p20"><h4>기출 원문</h4>기출 2강 합본 28번 (PDF 3쪽 왼쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p20"><h3>P20. 해당과정의 산화형 전자 전달체</h3><p class="panel-meta">기출 2강 28 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p20">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p20"><div class="layer formal" data-source-problem="p20"><div data-source-field="conditions"><p>다음 중 해당과정에서 산화된 형태의 전자 전달체로 작용하는 것은 무엇인가?</p>
+    <ul class="choices"><li>(1) NAD+</li><li>(2) 산소</li><li>(3) NADP+</li><li>(4) 무한대</li><li>(5) ADP</li></ul></div></div><details class="original" data-original-problem="p20"><summary>기출 원문 보기</summary>기출 2강 합본 28번 (PDF 3쪽 왼쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 해당과정(glycolysis)과 보기 다섯 개(NAD⁺, 산소, NADP⁺, 무한대, ADP)예요.</p>
   <p>구할 것: 해당과정에서 <strong>산화된 형태(전자를 아직 받지 않은 빈 상태)</strong>로 존재하다가 전자를 받아 나르는 전자 전달체(electron carrier)를 골라요. 조건이 두 개예요. ① 해당과정에서 일하고, ② 전자 전달체의 산화형이어야 해요.</p>
@@ -2012,7 +2054,7 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>전자 전달체이면서 해당과정에서 쓰이는 것은 NAD⁺뿐. NADP⁺는 광합성, 산소는 최종 수용체, ADP는 인산기를 받아요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.38 해당과정 반응식과 NAD⁺ 설명. 답 (1).</p></div>
 </div>
-</article><article class="topic" id="p21"><h3>P21. 세포호흡의 주된 기능</h3><p class="panel-meta">기출 2강 29 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p21">원 문제 보기</a></p><div class="layer formal" data-source-problem="p21"><h4>주어진 조건</h4><div data-source-field="conditions"><p>세포호흡의 주된 기능은?</p></div></div><div class="layer formal" data-original-problem="p21"><h4>기출 원문</h4>기출 2강 합본 29번 (PDF 3쪽). 원문에도 보기가 없는 서술형 문항이에요.</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p21"><h3>P21. 세포호흡의 주된 기능</h3><p class="panel-meta">기출 2강 29 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p21">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p21"><div class="layer formal" data-source-problem="p21"><div data-source-field="conditions"><p>세포호흡의 주된 기능은?</p></div></div><details class="original" data-original-problem="p21"><summary>기출 원문 보기</summary>기출 2강 합본 29번 (PDF 3쪽). 원문에도 보기가 없는 서술형 문항이에요.</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: ‘세포호흡(cellular respiration)’이라는 과정 이름 하나예요. 보기가 없는 단답형이에요.</p>
   <p>구할 것: 세포호흡이 세포에 <strong>무엇을 해 주려고</strong> 일어나는지, 곧 주된 기능을 한 구절로 써요.</p>
@@ -2067,8 +2109,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>CO₂·H₂O는 부산물, 세포가 얻는 것은 ATP. 대부분은 H⁺가 ATP 합성효소를 지날 때 생겨요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.36 그림 2.7b, p.43 32 ATP. 기출 표시 답과 일치. 답: ATP 합성.</p></div>
 </div>
-</article><article class="topic" id="p22"><h3>P22. 효소의 다양성을 만드는 아미노산의 수</h3><p class="panel-meta">기출 2강 30 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p22">원 문제 보기</a></p><div class="layer formal" data-source-problem="p22"><h4>주어진 조건</h4><div data-source-field="conditions"><p>신체에서 효소와 기질의 무제한적 다양성은 ____개의 아미노산으로부터 만들어질 수 있다.</p>
-    <ul class="choices"><li>(1) 수백만개</li><li>(2) 10</li><li>(3) 4</li><li>(4) 무한대</li><li>(5) 20</li></ul></div></div><div class="layer formal" data-original-problem="p22"><h4>기출 원문</h4>기출 2강 합본 30번 (PDF 3쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p22"><h3>P22. 효소의 다양성을 만드는 아미노산의 수</h3><p class="panel-meta">기출 2강 30 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p22">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p22"><div class="layer formal" data-source-problem="p22"><div data-source-field="conditions"><p>신체에서 효소와 기질의 무제한적 다양성은 ____개의 아미노산으로부터 만들어질 수 있다.</p>
+    <ul class="choices"><li>(1) 수백만개</li><li>(2) 10</li><li>(3) 4</li><li>(4) 무한대</li><li>(5) 20</li></ul></div></div><details class="original" data-original-problem="p22"><summary>기출 원문 보기</summary>기출 2강 합본 30번 (PDF 3쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: ‘효소와 기질의 무제한적 다양성이 ____개의 아미노산으로부터 만들어진다’는 빈칸 문장과 숫자 보기 다섯 개예요.</p>
   <p>구할 것: 단백질(효소)을 만드는 <strong>재료 아미노산의 종류 수</strong>를 빈칸에 넣어요. ‘만들어진 것의 종류’가 아니라 ‘재료의 종류’를 묻는다는 점이 핵심이에요.</p>
@@ -2125,8 +2167,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>수백만·무한대는 산물(조합), 4는 DNA 염기. 재료는 20가지예요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 1장 p.12 ‘20종류의 아미노산’. 답 (5). 문장의 ‘기질’은 엄밀하지 않은 표현이에요.</p></div>
 </div>
-</article><article class="topic" id="p23"><h3>P23. 미토콘드리아 내막에서 일어나는 작용</h3><p class="panel-meta">기출 2강 33 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p23">원 문제 보기</a></p><div class="layer formal" data-source-problem="p23"><h4>주어진 조건</h4><div data-source-field="conditions"><p>다음 중 미토콘드리아 내막에서 일어나는 작용은?</p>
-    <ul class="choices"><li>(1) 시트르산 회로</li><li>(2) 해당과정</li><li>(3) 산화적 인산화</li><li>(4) 발효</li><li>(5) 기질 수준 인산화</li></ul></div></div><div class="layer formal" data-original-problem="p23"><h4>기출 원문</h4>기출 2강 합본 33번 (PDF 3쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p23"><h3>P23. 미토콘드리아 내막에서 일어나는 작용</h3><p class="panel-meta">기출 2강 33 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p23">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p23"><div class="layer formal" data-source-problem="p23"><div data-source-field="conditions"><p>다음 중 미토콘드리아 내막에서 일어나는 작용은?</p>
+    <ul class="choices"><li>(1) 시트르산 회로</li><li>(2) 해당과정</li><li>(3) 산화적 인산화</li><li>(4) 발효</li><li>(5) 기질 수준 인산화</li></ul></div></div><details class="original" data-original-problem="p23"><summary>기출 원문 보기</summary>기출 2강 합본 33번 (PDF 3쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 대사 과정 이름 다섯 개(시트르산 회로, 해당과정, 산화적 인산화, 발효, 기질 수준 인산화)예요.</p>
   <p>구할 것: 이 가운데 <strong>미토콘드리아 내막(inner membrane)</strong>에서 일어나는 것을 골라요. 과정마다 ‘어디서 일어나는가’라는 주소를 맞히는 문제예요.</p>
@@ -2181,8 +2223,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>H⁺ 기울기가 필요한 산화적 인산화만 막에서 일어나요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.41 그림 2.13, p.42. 내막 칸은 (3)뿐. 답 (3).</p></div>
 </div>
-</article><article class="topic" id="p24"><h3>P24. ATP가 에너지를 내놓는 방법</h3><p class="panel-meta">기출 2강 35 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p24">원 문제 보기</a></p><div class="layer formal" data-source-problem="p24"><h4>주어진 조건</h4><div data-source-field="conditions"><p>ATP는 어떻게 세포에 에너지를 제공하는가?</p>
-    <ul class="choices"><li>(1) 에너지를 생산하는 미토콘드리아에서 사용되는 양성자를 방출한다.</li><li>(2) 에너지의 원천이 되는 전자를 방출한다.</li><li>(3) 인산기를 얻고, 에너지를 방출한다.</li><li>(4) 인산기를 잃고, 에너지를 방출한다.</li><li>(5) 위치에너지를 생산하는 미토콘드리아 막을 통해 전자를 왕복시킨다.</li></ul></div></div><div class="layer formal" data-original-problem="p24"><h4>기출 원문</h4>기출 2강 합본 35번 (PDF 3쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p24"><h3>P24. ATP가 에너지를 내놓는 방법</h3><p class="panel-meta">기출 2강 35 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p24">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p24"><div class="layer formal" data-source-problem="p24"><div data-source-field="conditions"><p>ATP는 어떻게 세포에 에너지를 제공하는가?</p>
+    <ul class="choices"><li>(1) 에너지를 생산하는 미토콘드리아에서 사용되는 양성자를 방출한다.</li><li>(2) 에너지의 원천이 되는 전자를 방출한다.</li><li>(3) 인산기를 얻고, 에너지를 방출한다.</li><li>(4) 인산기를 잃고, 에너지를 방출한다.</li><li>(5) 위치에너지를 생산하는 미토콘드리아 막을 통해 전자를 왕복시킨다.</li></ul></div></div><details class="original" data-original-problem="p24"><summary>기출 원문 보기</summary>기출 2강 합본 35번 (PDF 3쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: ATP가 에너지를 내놓는 방식에 대한 보기 다섯 개예요. 양성자, 전자, 인산기 얻기, 인산기 잃기, 전자 왕복이 등장해요.</p>
   <p>구할 것: ATP가 세포에 에너지를 제공할 때 <strong>ATP 분자 자신에게 일어나는 변화</strong>를 골라요.</p>
@@ -2237,8 +2279,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>잃으면 방출, 얻으면 저장. 양성자·전자는 ATP를 만드는 쪽 이야기예요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.32, p.33 그림 2.1b·2.2a. 답 (4).</p></div>
 </div>
-</article><article class="topic" id="p25"><h3>P25. 화학삼투적 인산화에 필요한 것</h3><p class="panel-meta">기출 2강 37 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p25">원 문제 보기</a></p><div class="layer formal" data-source-problem="p25"><h4>주어진 조건</h4><div data-source-field="conditions"><p>화학삼투적 인산화를 통한 ATP 합성에 있어서 필요한 것은?</p>
-    <ul class="choices"><li>(1) 전자전달계</li><li>(2) 손상되지 않은 미토콘드리아나 엽록체</li><li>(3) 모두 필요하다.</li><li>(4) 양성자의 농도기울기</li><li>(5) ADP</li></ul></div></div><div class="layer formal" data-original-problem="p25"><h4>기출 원문</h4>기출 2강 합본 37번 (PDF 3쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p25"><h3>P25. 화학삼투적 인산화에 필요한 것</h3><p class="panel-meta">기출 2강 37 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p25">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p25"><div class="layer formal" data-source-problem="p25"><div data-source-field="conditions"><p>화학삼투적 인산화를 통한 ATP 합성에 있어서 필요한 것은?</p>
+    <ul class="choices"><li>(1) 전자전달계</li><li>(2) 손상되지 않은 미토콘드리아나 엽록체</li><li>(3) 모두 필요하다.</li><li>(4) 양성자의 농도기울기</li><li>(5) ADP</li></ul></div></div><details class="original" data-original-problem="p25"><summary>기출 원문 보기</summary>기출 2강 합본 37번 (PDF 3쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 화학삼투적 인산화(chemiosmotic phosphorylation)로 ATP를 만들 때 필요할 법한 것 네 가지(전자전달계, 온전한 미토콘드리아나 엽록체, 양성자 농도기울기, ADP)와 ‘(3) 모두 필요하다’라는 묶음 보기예요.</p>
   <p>구할 것: 화학삼투로 ATP를 만드는 데 <strong>필요한 것</strong>을 골라요. 네 개가 하나씩 필요한지 확인한 뒤, 모두 필요하면 묶음 보기를 골라요.</p>
@@ -2294,7 +2336,7 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>(1)(2)(4)(5)는 각각 필요하지만 일부일 뿐. 넷을 모두 담는 (3)이 의도한 답이에요. 개별 보기도 참이라는 문항 결함이 있어요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.42, 하나씩 빼 보기. 기출 표시 답 ③. 답 (3).</p></div>
 </div>
-</article><article class="topic" id="p26"><h3>P26. ATP를 가장 많이 만드는 과정</h3><p class="panel-meta">기출 2강 38 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p26">원 문제 보기</a></p><div class="layer formal" data-source-problem="p26"><h4>주어진 조건</h4><div data-source-field="conditions"><p>다음 과정 중 포도당 한 분자당 가장 많은 수의 ATP를 생성하는 대사 과정은?</p></div></div><div class="layer formal" data-original-problem="p26"><h4>기출 원문</h4>기출 2강 합본 38번 (PDF 3쪽). 원문에도 보기가 없는 서술형 문항이에요.</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p26"><h3>P26. ATP를 가장 많이 만드는 과정</h3><p class="panel-meta">기출 2강 38 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p26">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p26"><div class="layer formal" data-source-problem="p26"><div data-source-field="conditions"><p>다음 과정 중 포도당 한 분자당 가장 많은 수의 ATP를 생성하는 대사 과정은?</p></div></div><details class="original" data-original-problem="p26"><summary>기출 원문 보기</summary>기출 2강 합본 38번 (PDF 3쪽). 원문에도 보기가 없는 서술형 문항이에요.</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 포도당 한 분자가 세포호흡을 거치는 상황이에요. 보기가 없는 단답형이에요.</p>
   <p>구할 것: 해당과정, 피루브산 산화, 시트르산 회로, 전자전달계(산화적 인산화) 가운데 <strong>ATP를 가장 많이 만드는 단계</strong>의 이름을 써요.</p>
@@ -2349,8 +2391,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>직접 4 ATP vs $10 \times 2.5 + 2 \times 1.5 = 28$ ATP. 마지막 단계가 대부분이에요. 엄밀히는 ATP 합성효소까지 포함한 산화적 인산화예요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.42 그림 2.14 합계 32, 전자전달 28. 답: 전자전달계.</p></div>
 </div>
-</article><article class="topic" id="p27"><h3>P27. 효소에 대한 맞는 진술</h3><p class="panel-meta">기출 2강 39 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p27">원 문제 보기</a></p><div class="layer formal" data-source-problem="p27"><h4>주어진 조건</h4><div data-source-field="conditions"><p>효소에 대한 다음 진술 중 맞는 것은?</p>
-    <ul class="choices"><li>(1) 효소는 결합 특이성이 매우 낮다.</li><li>(2) 효소는 여러 번 재사용된다.</li><li>(3) 효소는 다른 단백질처럼 고열에 영향을 받지 않는다.</li><li>(4) 효소는 화학 반응에서 소모된다.</li></ul></div></div><div class="layer formal" data-original-problem="p27"><h4>기출 원문</h4>기출 2강 합본 39번 (PDF 3쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p27"><h3>P27. 효소에 대한 맞는 진술</h3><p class="panel-meta">기출 2강 39 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p27">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p27"><div class="layer formal" data-source-problem="p27"><div data-source-field="conditions"><p>효소에 대한 다음 진술 중 맞는 것은?</p>
+    <ul class="choices"><li>(1) 효소는 결합 특이성이 매우 낮다.</li><li>(2) 효소는 여러 번 재사용된다.</li><li>(3) 효소는 다른 단백질처럼 고열에 영향을 받지 않는다.</li><li>(4) 효소는 화학 반응에서 소모된다.</li></ul></div></div><details class="original" data-original-problem="p27"><summary>기출 원문 보기</summary>기출 2강 합본 39번 (PDF 3쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 효소(enzyme)에 대한 진술 네 개예요. 특이성, 재사용, 고열, 소모 여부를 말해요.</p>
   <p>구할 것: 이 가운데 <strong>맞는 진술</strong> 하나를 골라요.</p>
@@ -2403,8 +2445,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>(1)(3)(4)는 각 성질의 반대. 촉매라서 재사용되는 (2)만 맞아요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.34 그림 2.4 촉매 순환, p.35 변성. 답 (2).</p></div>
 </div>
-</article><article class="topic" id="p28"><h3>P28. 언덕 위 바위와 효소</h3><p class="panel-meta">기출 2강 42 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p28">원 문제 보기</a></p><div class="layer formal" data-source-problem="p28"><h4>주어진 조건</h4><div data-source-field="conditions"><p>효소의 활성화에너지는 마치 바위를 언덕을 따라 아래로 굴리기 위에 언덕 위에서 서 있는 바위를 ‘미는 것’과 유사하다. 효소는 어떻게 이 일을 하는가?</p>
-    <ul class="choices"><li>(1) 효소는 바위를 움직이기 위해 필요한 노력을 감소시킨다.</li><li>(2) 효소는 바위를 움직이기 위해 필요한 노력을 증가시킨다.</li><li>(3) 효소는 바위가 굴러 내려가는 언덕의 경사를 증가시킨다.</li><li>(4) 효소는 언덕 아래에 도달하는데 걸리는 높이를 감소시킨다.</li></ul></div></div><div class="layer formal" data-original-problem="p28"><h4>기출 원문</h4>기출 2강 합본 42번 (PDF 4쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p28"><h3>P28. 언덕 위 바위와 효소</h3><p class="panel-meta">기출 2강 42 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p28">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p28"><div class="layer formal" data-source-problem="p28"><div data-source-field="conditions"><p>효소의 활성화에너지는 마치 바위를 언덕을 따라 아래로 굴리기 위에 언덕 위에서 서 있는 바위를 ‘미는 것’과 유사하다. 효소는 어떻게 이 일을 하는가?</p>
+    <ul class="choices"><li>(1) 효소는 바위를 움직이기 위해 필요한 노력을 감소시킨다.</li><li>(2) 효소는 바위를 움직이기 위해 필요한 노력을 증가시킨다.</li><li>(3) 효소는 바위가 굴러 내려가는 언덕의 경사를 증가시킨다.</li><li>(4) 효소는 언덕 아래에 도달하는데 걸리는 높이를 감소시킨다.</li></ul></div></div><details class="original" data-original-problem="p28"><summary>기출 원문 보기</summary>기출 2강 합본 42번 (PDF 4쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 반응을 ‘언덕 위 바위를 굴려 내리는 일’에 비유해요. 바위가 굴러 내려가려면 먼저 살짝 밀어 줘야 하고, 이 미는 일이 활성화 에너지(activation energy)예요.</p>
   <p>구할 것: 효소(enzyme)가 이 비유에서 <strong>무엇을 바꾸는지</strong> 하나를 골라요.</p>
@@ -2459,8 +2501,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>미는 노력을 줄이는 (1)이 효소의 일이에요. (4)는 ‘어느 높이’인지 흐린 문항 결함이 있어요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.34 그림 2.3, 강의노트 2장 p1과 일치해요. 기출 해당 쪽에는 답 표시가 없어요. 답 (1).</p></div>
 </div>
-</article><article class="topic" id="p29"><h3>P29. 전자전달계가 하는 일</h3><p class="panel-meta">기출 2강 43 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p29">원 문제 보기</a></p><div class="layer formal" data-source-problem="p29"><h4>주어진 조건</h4><div data-source-field="conditions"><p>전자전달계란?</p>
-    <ul class="choices"><li>(1) 미토콘드리아의 기질에 위치하고 있다.</li><li>(2) 막간공간에 존재하는 일련의 효소들이다.</li><li>(3) 미토콘드리아의 내막에 존재하는 일련의 뉴클레오티드이다.</li><li>(4) 단백질에서 단백질로 전자를 운반하며 기질로부터 양성자를 막간 공간으로 이동시킨다.</li><li>(5) 그 마지막 단계에 전기음성도가 큰 이산화탄소를 가지고 있다.</li></ul></div></div><div class="layer formal" data-original-problem="p29"><h4>기출 원문</h4>기출 2강 합본 43번 (PDF 4쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p29"><h3>P29. 전자전달계가 하는 일</h3><p class="panel-meta">기출 2강 43 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p29">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p29"><div class="layer formal" data-source-problem="p29"><div data-source-field="conditions"><p>전자전달계란?</p>
+    <ul class="choices"><li>(1) 미토콘드리아의 기질에 위치하고 있다.</li><li>(2) 막간공간에 존재하는 일련의 효소들이다.</li><li>(3) 미토콘드리아의 내막에 존재하는 일련의 뉴클레오티드이다.</li><li>(4) 단백질에서 단백질로 전자를 운반하며 기질로부터 양성자를 막간 공간으로 이동시킨다.</li><li>(5) 그 마지막 단계에 전기음성도가 큰 이산화탄소를 가지고 있다.</li></ul></div></div><details class="original" data-original-problem="p29"><summary>기출 원문 보기</summary>기출 2강 합본 43번 (PDF 4쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 전자전달계(electron transport chain)에 대한 설명 다섯 개예요. 위치, 무엇으로 이루어졌는지, 하는 일, 마지막 전자 받는 물질이 섞여 있어요.</p>
   <p>구할 것: 전자전달계를 <strong>바르게</strong> 설명한 것 하나를 골라요.</p>
@@ -2516,8 +2558,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>(1)(2) 위치, (3) 구성, (5) 최종 수용체가 틀려서 (4)만 남아요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.41 그림 2.13, 강의노트 2장 p3, 기출 인쇄 답 ④와 일치해요. 답 (4).</p></div>
 </div>
-</article><article class="topic" id="p30"><h3>P30. 활성화 에너지 장벽이 없다면</h3><p class="panel-meta">기출 2강 44 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p30">원 문제 보기</a></p><div class="layer formal" data-source-problem="p30"><h4>주어진 조건</h4><div data-source-field="conditions"><p>활성화 에너지 장벽이 없다면 어떤 일이 일어나겠는가??</p>
-    <ul class="choices"><li>(1) 기질이 적절히 효소에 결합하지 않을 것이다</li><li>(2) 조효소가 기능을 하지 않지만, 이로 인한 효소 기능에 영향이 있지는 않을 것이다.</li><li>(3) 체내에서 화학반응이 일어나지 않을 것이다</li><li>(4) 신체에서 일어나는 모든 화학반응은 필요로 하는지 여부와 관계없이 진행될 것이다.</li><li>(5) 식품 분자가 분해될 수 없는 지점에서 신체의 대사작용이 감소할 것이다.</li></ul></div></div><div class="layer formal" data-original-problem="p30"><h4>기출 원문</h4>기출 2강 합본 44번 (PDF 4쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p30"><h3>P30. 활성화 에너지 장벽이 없다면</h3><p class="panel-meta">기출 2강 44 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p30">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p30"><div class="layer formal" data-source-problem="p30"><div data-source-field="conditions"><p>활성화 에너지 장벽이 없다면 어떤 일이 일어나겠는가??</p>
+    <ul class="choices"><li>(1) 기질이 적절히 효소에 결합하지 않을 것이다</li><li>(2) 조효소가 기능을 하지 않지만, 이로 인한 효소 기능에 영향이 있지는 않을 것이다.</li><li>(3) 체내에서 화학반응이 일어나지 않을 것이다</li><li>(4) 신체에서 일어나는 모든 화학반응은 필요로 하는지 여부와 관계없이 진행될 것이다.</li><li>(5) 식품 분자가 분해될 수 없는 지점에서 신체의 대사작용이 감소할 것이다.</li></ul></div></div><details class="original" data-original-problem="p30"><summary>기출 원문 보기</summary>기출 2강 합본 44번 (PDF 4쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 반응을 시작하려면 넘어야 하는 턱, 즉 활성화 에너지 장벽(activation energy barrier)이 <strong>아예 없다고 가정</strong>해요.</p>
   <p>구할 것: 그러면 몸에서 어떤 일이 벌어질지 가장 알맞은 결과 하나를 골라요.</p>
@@ -2573,8 +2615,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>반응이 쉬워지는 방향은 (4)뿐이에요. ‘모든’은 자발적 반응으로 좁혀 읽어야 하는 문항 결함이에요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>소거로 (4)만 남고, 교과서 2장 p.33과 기출 인쇄 답 ④가 일치해요. 답 (4).</p></div>
 </div>
-</article><article class="topic" id="p40"><h3>P40. 광합성 진핵생물의 세포막이 하지 않는 일</h3><p class="panel-meta">기출 1강 22 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p40">원 문제 보기</a></p><div class="layer formal" data-source-problem="p40"><h4>주어진 조건</h4><div data-source-field="conditions"><p>광합성 진핵생물의 원형질막(세포막)에 대한 설명 중 옳지 않은 것은?</p>
-    <ul class="choices"><li>(1) 세포 모양을 결정한다.</li><li>(2) 이산화탄소와 물을 당으로 바꾼다.</li><li>(3) 외부 환경으로부터 세포의 내용물을 격리시킨다.</li><li>(4) 세포내로 특정 영양소가 들어올 수 있게 한다.</li><li>(5) 세포 외부에서 특정 분자가 들어올 수 있게 한다.</li></ul></div></div><div class="layer formal" data-original-problem="p40"><h4>기출 원문</h4>기출 1강 합본 22번 (PDF 2쪽). 원문에서 문항 옆에 붙은 물 분자 그림은 26번 문항("위 그림을 보고")의 그림이라 옮기지 않았어요.</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p40"><h3>P40. 광합성 진핵생물의 세포막이 하지 않는 일</h3><p class="panel-meta">기출 1강 22 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p40">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p40"><div class="layer formal" data-source-problem="p40"><div data-source-field="conditions"><p>광합성 진핵생물의 원형질막(세포막)에 대한 설명 중 옳지 않은 것은?</p>
+    <ul class="choices"><li>(1) 세포 모양을 결정한다.</li><li>(2) 이산화탄소와 물을 당으로 바꾼다.</li><li>(3) 외부 환경으로부터 세포의 내용물을 격리시킨다.</li><li>(4) 세포내로 특정 영양소가 들어올 수 있게 한다.</li><li>(5) 세포 외부에서 특정 분자가 들어올 수 있게 한다.</li></ul></div></div><details class="original" data-original-problem="p40"><summary>기출 원문 보기</summary>기출 1강 합본 22번 (PDF 2쪽). 원문에서 문항 옆에 붙은 물 분자 그림은 26번 문항("위 그림을 보고")의 그림이라 옮기지 않았어요.</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 광합성을 하는 진핵생물(식물, 조류 등)의 세포에서 원형질막(plasma membrane, 세포막)이 하는 일을 적은 다섯 문장이에요.</p>
   <p>구할 것: 세포막에 대한 설명으로 <strong>옳지 않은 것</strong>을 골라요. 틀린 문장을 찾는 부정형이에요.</p>
@@ -2632,8 +2674,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>(2) 광합성은 엽록체의 일이라 조건 없이 틀려요. (1)은 식물에서 세포벽 때문에 조건이 붙는 문항 결함이에요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>기출 1강 22번 인쇄 답 ②, 교과서 1장 p.21~22와 일치해요. 답 (2).</p></div>
 </div>
-</article><article class="topic" id="p31"><h3>P31. [변형] 미토콘드리아와 엽록체에서 서로 대응하는 부분</h3><p class="panel-meta">생성 변형 s0-chloroplast · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p31">원 문제 보기</a></p><div class="layer formal" data-source-problem="p31"><h4>주어진 조건</h4><div data-source-field="conditions"><p>미토콘드리아와 엽록체는 모두 이중막으로 싸여 있고, 자기만의 DNA와 리보솜을 가진다. 미토콘드리아의 한 부분과 그에 대응하는 엽록체의 부분을 바르게 짝지은 것은?</p>
-    <ul class="choices"><li>(1) 미토콘드리아의 기질 — 엽록체의 스트로마</li><li>(2) 미토콘드리아의 크리스테 — 엽록체 내막이 안쪽으로 접힌 주름</li><li>(3) 미토콘드리아의 외막 — 틸라코이드 막</li><li>(4) 미토콘드리아의 기질 — 그라나</li><li>(5) 미토콘드리아의 내막 — 엽록체의 외막</li></ul></div></div><div class="layer formal" data-original-problem="p31"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 미토콘드리아 내막(크리스테로 접힘)과 엽록체 내막(매끈하고 틸라코이드가 따로 있음), 미토콘드리아 기질과 엽록체 스트로마의 대응. 근거 토픽: s0-chloroplast(엽록체: 이중막 안의 틸라코이드)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p31"><h3>P31. [변형] 미토콘드리아와 엽록체에서 서로 대응하는 부분</h3><p class="panel-meta">생성 변형 s0-chloroplast · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p31">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p31"><div class="layer formal" data-source-problem="p31"><div data-source-field="conditions"><p>미토콘드리아와 엽록체는 모두 이중막으로 싸여 있고, 자기만의 DNA와 리보솜을 가진다. 미토콘드리아의 한 부분과 그에 대응하는 엽록체의 부분을 바르게 짝지은 것은?</p>
+    <ul class="choices"><li>(1) 미토콘드리아의 기질 — 엽록체의 스트로마</li><li>(2) 미토콘드리아의 크리스테 — 엽록체 내막이 안쪽으로 접힌 주름</li><li>(3) 미토콘드리아의 외막 — 틸라코이드 막</li><li>(4) 미토콘드리아의 기질 — 그라나</li><li>(5) 미토콘드리아의 내막 — 엽록체의 외막</li></ul></div></div><details class="original" data-original-problem="p31"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 미토콘드리아 내막(크리스테로 접힘)과 엽록체 내막(매끈하고 틸라코이드가 따로 있음), 미토콘드리아 기질과 엽록체 스트로마의 대응. 근거 토픽: s0-chloroplast(엽록체: 이중막 안의 틸라코이드)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 미토콘드리아(mitochondrion)와 엽록체(chloroplast)는 둘 다 이중막이고 자기 DNA와 리보솜을 가져요.</p>
   <p>구할 것: 미토콘드리아의 한 부분과 <strong>같은 자리·같은 성격</strong>인 엽록체 부분을 바르게 짝지은 것 하나를 골라요.</p>
@@ -2690,8 +2732,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>액체 공간이면서 DNA·리보솜이 있는 기질과 스트로마가 짝이에요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 1장 p.20, p.21 그림 1.24, p.22와 강의노트 1장 p5·p6이 일치해요. 답 (1).</p></div>
 </div>
-</article><article class="topic" id="p32"><h3>P32. [변형] 아메바 운동과 근육 수축을 멈춘 세포골격</h3><p class="panel-meta">생성 변형 s1-cytoskeleton · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p32">원 문제 보기</a></p><div class="layer formal" data-source-problem="p32"><h4>주어진 조건</h4><div data-source-field="conditions"><p>어떤 약물은 세포골격 가운데 한 종류만 흩어 놓는다. 이 약물을 처리하자 아메바는 모양을 바꾸며 기어가지 못했고, 근육세포는 수축하지 못했다. 이 약물이 흩어 놓은 세포골격과 그것을 이루는 단백질을 바르게 짝지은 것은?</p>
-    <ul class="choices"><li>(1) 미세소관 — 튜불린</li><li>(2) 미세섬유 — 액틴</li><li>(3) 중간섬유 — 케라틴</li><li>(4) 미세소관 — 액틴</li><li>(5) 중간섬유 — 액틴</li></ul></div></div><div class="layer formal" data-original-problem="p32"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 세포골격 세 종류(미세소관, 중간섬유, 미세섬유)의 기능과 단위체 구분. 근거 토픽: s1-cytoskeleton(세포골격: 물풍선이 아니라 텐트)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p32"><h3>P32. [변형] 아메바 운동과 근육 수축을 멈춘 세포골격</h3><p class="panel-meta">생성 변형 s1-cytoskeleton · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p32">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p32"><div class="layer formal" data-source-problem="p32"><div data-source-field="conditions"><p>어떤 약물은 세포골격 가운데 한 종류만 흩어 놓는다. 이 약물을 처리하자 아메바는 모양을 바꾸며 기어가지 못했고, 근육세포는 수축하지 못했다. 이 약물이 흩어 놓은 세포골격과 그것을 이루는 단백질을 바르게 짝지은 것은?</p>
+    <ul class="choices"><li>(1) 미세소관 — 튜불린</li><li>(2) 미세섬유 — 액틴</li><li>(3) 중간섬유 — 케라틴</li><li>(4) 미세소관 — 액틴</li><li>(5) 중간섬유 — 액틴</li></ul></div></div><details class="original" data-original-problem="p32"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 세포골격 세 종류(미세소관, 중간섬유, 미세섬유)의 기능과 단위체 구분. 근거 토픽: s1-cytoskeleton(세포골격: 물풍선이 아니라 텐트)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 어떤 약물이 세포골격(cytoskeleton) 한 종류만 흩어 놓았더니 <strong>아메바가 모양을 바꾸며 기어가지 못하고</strong>, <strong>근육세포가 수축하지 못했어요</strong>.</p>
   <p>구할 것: 망가진 세포골격의 이름과 그것을 이루는 단백질을 <strong>둘 다</strong> 바르게 짝지은 것 하나를 골라요.</p>
@@ -2749,8 +2791,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>아메바 운동과 근육 수축은 둘 다 미세섬유의 일이고, 미세섬유의 단백질은 액틴이에요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 1장 p.20과 강의노트 1장 p6이 일치해요. 답 (2).</p></div>
 </div>
-</article><article class="topic" id="p33"><h3>P33. [변형] 소낭 수송의 길, 운반자, 짐</h3><p class="panel-meta">생성 변형 s1-cytoskeleton · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p33">원 문제 보기</a></p><div class="layer formal" data-source-problem="p33"><h4>주어진 조건</h4><div data-source-field="conditions"><p>신경세포 안에서 신경전달물질이 든 소낭이 세포 끝 쪽으로 옮겨진다. 이 수송에 참여하는 것을 '길', '길 위를 걸어가는 것', '실려 가는 것'으로 나눌 때, 순서대로 바르게 짝지은 것은?</p>
-    <ul class="choices"><li>(1) 미세소관, 키네신, 소낭</li><li>(2) 키네신, 미세소관, 소낭</li><li>(3) 중간섬유, 키네신, 소낭</li><li>(4) 미세소관, 소낭, 키네신</li><li>(5) 미세섬유, 키네신, 소낭</li></ul></div></div><div class="layer formal" data-original-problem="p33"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 소낭 수송에서 트랙(미세소관), 운동단백질(키네신), 화물(소낭)의 역할 구분. 근거 토픽: s1-cytoskeleton(세포골격: 물풍선이 아니라 텐트)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p33"><h3>P33. [변형] 소낭 수송의 길, 운반자, 짐</h3><p class="panel-meta">생성 변형 s1-cytoskeleton · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p33">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p33"><div class="layer formal" data-source-problem="p33"><div data-source-field="conditions"><p>신경세포 안에서 신경전달물질이 든 소낭이 세포 끝 쪽으로 옮겨진다. 이 수송에 참여하는 것을 '길', '길 위를 걸어가는 것', '실려 가는 것'으로 나눌 때, 순서대로 바르게 짝지은 것은?</p>
+    <ul class="choices"><li>(1) 미세소관, 키네신, 소낭</li><li>(2) 키네신, 미세소관, 소낭</li><li>(3) 중간섬유, 키네신, 소낭</li><li>(4) 미세소관, 소낭, 키네신</li><li>(5) 미세섬유, 키네신, 소낭</li></ul></div></div><details class="original" data-original-problem="p33"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 소낭 수송에서 트랙(미세소관), 운동단백질(키네신), 화물(소낭)의 역할 구분. 근거 토픽: s1-cytoskeleton(세포골격: 물풍선이 아니라 텐트)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 신경세포 안에서 신경전달물질이 든 소낭(vesicle)이 세포 끝 쪽으로 옮겨져요.</p>
   <p>구할 것: 이 수송에 참여하는 것을 <strong>‘길’, ‘길 위를 걸어가는 것’, ‘실려 가는 것’의 순서</strong>로 바르게 짝지은 것 하나를 골라요.</p>
@@ -2807,9 +2849,9 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>세 칸이 순서까지 모두 맞는 보기는 (1)뿐이에요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>칸별 소거로 (1)만 남고, 교과서 1장 p.20·강의노트 1장 p5의 ‘소포의 궤도’와 일치해요. 답 (1).</p></div>
 </div>
-</article><article class="topic" id="p34"><h3>P34. [변형] ATP의 구조와 에너지 방출 방향</h3><p class="panel-meta">생성 변형 s2-atp · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p34">원 문제 보기</a></p><div class="layer formal" data-source-problem="p34"><h4>주어진 조건</h4><div data-source-field="conditions"><p>ATP에 대한 설명으로 옳은 것만을 있는 대로 고른 것은?</p>
+</article><article class="topic" id="p34"><h3>P34. [변형] ATP의 구조와 에너지 방출 방향</h3><p class="panel-meta">생성 변형 s2-atp · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p34">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p34"><div class="layer formal" data-source-problem="p34"><div data-source-field="conditions"><p>ATP에 대한 설명으로 옳은 것만을 있는 대로 고른 것은?</p>
     <ul><li>ㄱ. ATP를 이루는 당은 디옥시리보스이다.</li><li>ㄴ. ATP가 인산기 하나를 잃고 ADP가 될 때 에너지가 방출된다.</li><li>ㄷ. 아데노신은 고리가 2개인 염기(퓨린)인 아데닌과 당인 리보스가 결합한 것이다.</li></ul>
-    <ul class="choices"><li>(1) ㄱ</li><li>(2) ㄴ</li><li>(3) ㄱ, ㄴ</li><li>(4) ㄴ, ㄷ</li><li>(5) ㄱ, ㄴ, ㄷ</li></ul></div></div><div class="layer formal" data-original-problem="p34"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 리보스(RNA)와 디옥시리보스(DNA), 아데노신(아데닌 + 리보스)과 아데닌, ATP → ADP에서 에너지가 나오는 방향. 앞선 수업(0908)의 퓨린 염기 개념을 ㄷ에 엮었어요. 근거 토픽: s2-atp(ATP: 저금해 두었다 꺼내 쓰는 에너지)</div><div class="layer eli5" data-explanation="understand">
+    <ul class="choices"><li>(1) ㄱ</li><li>(2) ㄴ</li><li>(3) ㄱ, ㄴ</li><li>(4) ㄴ, ㄷ</li><li>(5) ㄱ, ㄴ, ㄷ</li></ul></div></div><details class="original" data-original-problem="p34"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 리보스(RNA)와 디옥시리보스(DNA), 아데노신(아데닌 + 리보스)과 아데닌, ATP → ADP에서 에너지가 나오는 방향. 앞선 수업(0908)의 퓨린 염기 개념을 ㄷ에 엮었어요. 근거 토픽: s2-atp(ATP: 저금해 두었다 꺼내 쓰는 에너지)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: ATP(adenosine triphosphate)에 대한 진술 ㄱ, ㄴ, ㄷ이 있어요. ㄱ은 당의 종류, ㄴ은 에너지가 나오는 방향, ㄷ은 아데노신의 구성을 말해요.</p>
   <p>구할 것: <strong>옳은 진술만 모두</strong> 고른 조합을 찾아요.</p>
@@ -2870,8 +2912,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>ㄱ은 디옥시리보스라 X, ㄴ·ㄷ은 O라서 ㄴ, ㄷ이에요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.33 그림 2.1과 일치하고, 소거로도 (4)만 남아요. 답 (4).</p></div>
 </div>
-</article><article class="topic" id="p35"><h3>P35. [변형] 온도를 계속 올릴 때 효소 반응 속도</h3><p class="panel-meta">생성 변형 s3-temp-ph · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p35">원 문제 보기</a></p><div class="layer formal" data-source-problem="p35"><h4>주어진 조건</h4><div data-source-field="conditions"><p>사람 몸에서 작용하는 어떤 효소의 반응 속도를 재면서 반응 온도를 20℃에서 70℃까지 천천히 올렸다. 온도에 따른 반응 속도의 변화로 가장 알맞은 것은?</p>
-    <ul class="choices"><li>(1) 온도가 오를수록 분자 운동이 빨라지므로 70℃까지 반응 속도가 계속 빨라진다.</li><li>(2) 20℃부터 온도를 올리는 내내 반응 속도가 계속 느려진다.</li><li>(3) 처음에는 반응 속도가 빨라지다가, 최적 온도를 넘으면 효소의 구조가 풀려(변성) 급격히 느려진다.</li><li>(4) 효소는 반응 전후에 변하지 않는 촉매이므로 온도와 관계없이 반응 속도가 일정하다.</li><li>(5) 최적 온도까지는 빨라지다가, 그 뒤로는 효소가 변하지 않으므로 70℃까지 같은 속도를 유지한다.</li></ul></div></div><div class="layer formal" data-original-problem="p35"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 온도가 오르면 활성이 오르다가 변성으로 떨어지는 두 구간, 그리고 "효소는 변하지 않는다"가 적용되는 범위. 근거 토픽: s3-temp-ph(온도와 pH: 구조가 깨지면 기능이 깨진다)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p35"><h3>P35. [변형] 온도를 계속 올릴 때 효소 반응 속도</h3><p class="panel-meta">생성 변형 s3-temp-ph · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p35">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p35"><div class="layer formal" data-source-problem="p35"><div data-source-field="conditions"><p>사람 몸에서 작용하는 어떤 효소의 반응 속도를 재면서 반응 온도를 20℃에서 70℃까지 천천히 올렸다. 온도에 따른 반응 속도의 변화로 가장 알맞은 것은?</p>
+    <ul class="choices"><li>(1) 온도가 오를수록 분자 운동이 빨라지므로 70℃까지 반응 속도가 계속 빨라진다.</li><li>(2) 20℃부터 온도를 올리는 내내 반응 속도가 계속 느려진다.</li><li>(3) 처음에는 반응 속도가 빨라지다가, 최적 온도를 넘으면 효소의 구조가 풀려(변성) 급격히 느려진다.</li><li>(4) 효소는 반응 전후에 변하지 않는 촉매이므로 온도와 관계없이 반응 속도가 일정하다.</li><li>(5) 최적 온도까지는 빨라지다가, 그 뒤로는 효소가 변하지 않으므로 70℃까지 같은 속도를 유지한다.</li></ul></div></div><details class="original" data-original-problem="p35"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 온도가 오르면 활성이 오르다가 변성으로 떨어지는 두 구간, 그리고 "효소는 변하지 않는다"가 적용되는 범위. 근거 토픽: s3-temp-ph(온도와 pH: 구조가 깨지면 기능이 깨진다)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 사람 몸에서 작용하는 효소(enzyme)의 반응 속도를 재면서 온도를 20℃에서 70℃까지 천천히 올려요.</p>
   <p>구할 것: 온도가 오르는 동안 반응 속도가 <strong>어떤 모양으로 변하는지</strong> 가장 알맞은 설명 하나를 골라요.</p>
@@ -2928,8 +2970,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>상승 구간과 변성 구간을 모두 담은 보기는 (3)뿐이에요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.35 그림 2.5(a)와 강의노트 2장 p1이 일치해요. 답 (3).</p></div>
 </div>
-</article><article class="topic" id="p36"><h3>P36. [변형] 같은 1 g에서 꺼낼 수 있는 에너지의 순서</h3><p class="panel-meta">생성 변형 s4-redox · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p36">원 문제 보기</a></p><div class="layer formal" data-source-problem="p36"><h4>주어진 조건</h4><div data-source-field="conditions"><p>지방, 포도당, 이산화탄소를 각각 1 g씩 준비했다. 각 물질이 가진 전자가 산소 쪽으로 모두 떨어질 때까지 산화시킨다면, 꺼낼 수 있는 에너지가 많은 것부터 순서대로 바르게 나열한 것은?</p>
-    <ul class="choices"><li>(1) 지방 &gt; 포도당 &gt; 이산화탄소</li><li>(2) 포도당 &gt; 지방 &gt; 이산화탄소</li><li>(3) 이산화탄소 &gt; 포도당 &gt; 지방</li><li>(4) 지방 = 포도당 &gt; 이산화탄소</li><li>(5) 이산화탄소 &gt; 지방 &gt; 포도당</li></ul></div></div><div class="layer formal" data-original-problem="p36"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 환원된(떨어질 전자, 곧 C–H를 많이 가진) 물질일수록 에너지가 많다는 원리. 근거 토픽: s4-redox(산화·환원: 전자는 끌어당기는 쪽으로 떨어진다)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p36"><h3>P36. [변형] 같은 1 g에서 꺼낼 수 있는 에너지의 순서</h3><p class="panel-meta">생성 변형 s4-redox · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p36">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p36"><div class="layer formal" data-source-problem="p36"><div data-source-field="conditions"><p>지방, 포도당, 이산화탄소를 각각 1 g씩 준비했다. 각 물질이 가진 전자가 산소 쪽으로 모두 떨어질 때까지 산화시킨다면, 꺼낼 수 있는 에너지가 많은 것부터 순서대로 바르게 나열한 것은?</p>
+    <ul class="choices"><li>(1) 지방 &gt; 포도당 &gt; 이산화탄소</li><li>(2) 포도당 &gt; 지방 &gt; 이산화탄소</li><li>(3) 이산화탄소 &gt; 포도당 &gt; 지방</li><li>(4) 지방 = 포도당 &gt; 이산화탄소</li><li>(5) 이산화탄소 &gt; 지방 &gt; 포도당</li></ul></div></div><details class="original" data-original-problem="p36"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 환원된(떨어질 전자, 곧 C–H를 많이 가진) 물질일수록 에너지가 많다는 원리. 근거 토픽: s4-redox(산화·환원: 전자는 끌어당기는 쪽으로 떨어진다)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 지방, 포도당, 이산화탄소를 <strong>같은 1 g</strong>씩 준비해, 가진 전자가 산소 쪽으로 모두 떨어질 때까지 산화시켜요.</p>
   <p>구할 것: 꺼낼 수 있는 에너지가 <strong>많은 것부터</strong> 바르게 나열한 순서 하나를 골라요.</p>
@@ -2985,8 +3027,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>같은 1 g이면 지방 &gt; 포도당 &gt; 이산화탄소예요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>양 끝 소거로 (1)만 남고, 교과서 2장 p.36 그림 2.6의 원리와 일치해요. 답 (1).</p></div>
 </div>
-</article><article class="topic" id="p37"><h3>P37. [변형] 세포호흡에서 산화되는 쪽과 환원되는 쪽</h3><p class="panel-meta">생성 변형 s4-redox · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p37">원 문제 보기</a></p><div class="layer formal" data-source-problem="p37"><h4>주어진 조건</h4><div data-source-field="conditions"><p>몸 안에서 포도당이 세포호흡으로 분해될 때 일어나는 산화와 환원에 대한 설명으로 옳은 것은?</p>
-    <ul class="choices"><li>(1) 산소는 전자를 잃어 산화된다.</li><li>(2) 포도당은 전자를 잃어 산화되고, 산소는 전자를 얻어 환원된다.</li><li>(3) 한 물질이 전자를 잃는 산화는, 그 전자를 받는 다른 물질의 환원 없이 혼자 일어날 수 있다.</li><li>(4) NAD⁺는 전자를 내주고 NADH가 된다.</li><li>(5) 포도당은 전자를 얻어 환원되고, 산소는 전자를 잃어 산화된다.</li></ul></div></div><div class="layer formal" data-original-problem="p37"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 누가 산화되고 누가 환원되는지, 산화와 환원이 동시에 일어난다는 점, NAD⁺ → NADH의 방향. 근거 토픽: s4-redox(산화·환원: 전자는 끌어당기는 쪽으로 떨어진다)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p37"><h3>P37. [변형] 세포호흡에서 산화되는 쪽과 환원되는 쪽</h3><p class="panel-meta">생성 변형 s4-redox · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p37">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p37"><div class="layer formal" data-source-problem="p37"><div data-source-field="conditions"><p>몸 안에서 포도당이 세포호흡으로 분해될 때 일어나는 산화와 환원에 대한 설명으로 옳은 것은?</p>
+    <ul class="choices"><li>(1) 산소는 전자를 잃어 산화된다.</li><li>(2) 포도당은 전자를 잃어 산화되고, 산소는 전자를 얻어 환원된다.</li><li>(3) 한 물질이 전자를 잃는 산화는, 그 전자를 받는 다른 물질의 환원 없이 혼자 일어날 수 있다.</li><li>(4) NAD⁺는 전자를 내주고 NADH가 된다.</li><li>(5) 포도당은 전자를 얻어 환원되고, 산소는 전자를 잃어 산화된다.</li></ul></div></div><details class="original" data-original-problem="p37"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 누가 산화되고 누가 환원되는지, 산화와 환원이 동시에 일어난다는 점, NAD⁺ → NADH의 방향. 근거 토픽: s4-redox(산화·환원: 전자는 끌어당기는 쪽으로 떨어진다)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 몸 안에서 포도당이 세포호흡(cellular respiration)으로 분해되는 상황이에요. 이때 전자가 이 물질에서 저 물질로 옮겨 가요.</p>
   <p>구할 것: 누가 산화되고 누가 환원되는지, 산화와 환원이 따로 일어날 수 있는지, NAD⁺와 NADH가 어느 방향으로 바뀌는지를 <strong>옳게</strong> 쓴 보기 하나를 골라요.</p>
@@ -3043,8 +3085,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>출발점 포도당은 산화, 도착점 산소는 환원이에요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>전체 반응식과 교과서 2장 p.36~38이 (2)와 일치해요. 답 (2).</p></div>
 </div>
-</article><article class="topic" id="p38"><h3>P38. [변형] ATP를 만드는 방식이 다른 하나</h3><p class="panel-meta">생성 변형 s5-phosphorylation · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p38">원 문제 보기</a></p><div class="layer formal" data-source-problem="p38"><h4>주어진 조건</h4><div data-source-field="conditions"><p>세포호흡에서 ATP가 만들어지는 경우 다섯 가지를 골랐다. 이 가운데 ATP를 만드는 방식이 나머지 넷과 다른 하나는?</p>
-    <ul class="choices"><li>(1) 해당과정의 에너지 방출 단계에서 만들어지는 ATP</li><li>(2) 시트르산 회로가 한 바퀴 돌 때 만들어지는 ATP</li><li>(3) 미토콘드리아 내막의 ATP 합성효소가 H⁺의 흐름으로 만드는 ATP</li><li>(4) 포도당이 분해되면서 생긴 물질이 자기 인산기를 ADP에 직접 넘겨 만드는 ATP</li><li>(5) 미토콘드리아 기질에서 효소가 반응물의 인산기를 ADP에 직접 옮겨 만드는 ATP</li></ul></div></div><div class="layer formal" data-original-problem="p38"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 기질 수준 인산화(기질이 인산기를 ADP에 직접 넘김)와 산화적 인산화(전자전달계, H⁺ 기울기, ATP 합성효소). 근거 토픽: s5-phosphorylation(기질 수준 인산화와 산화적 인산화)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p38"><h3>P38. [변형] ATP를 만드는 방식이 다른 하나</h3><p class="panel-meta">생성 변형 s5-phosphorylation · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p38">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p38"><div class="layer formal" data-source-problem="p38"><div data-source-field="conditions"><p>세포호흡에서 ATP가 만들어지는 경우 다섯 가지를 골랐다. 이 가운데 ATP를 만드는 방식이 나머지 넷과 다른 하나는?</p>
+    <ul class="choices"><li>(1) 해당과정의 에너지 방출 단계에서 만들어지는 ATP</li><li>(2) 시트르산 회로가 한 바퀴 돌 때 만들어지는 ATP</li><li>(3) 미토콘드리아 내막의 ATP 합성효소가 H⁺의 흐름으로 만드는 ATP</li><li>(4) 포도당이 분해되면서 생긴 물질이 자기 인산기를 ADP에 직접 넘겨 만드는 ATP</li><li>(5) 미토콘드리아 기질에서 효소가 반응물의 인산기를 ADP에 직접 옮겨 만드는 ATP</li></ul></div></div><details class="original" data-original-problem="p38"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 기질 수준 인산화(기질이 인산기를 ADP에 직접 넘김)와 산화적 인산화(전자전달계, H⁺ 기울기, ATP 합성효소). 근거 토픽: s5-phosphorylation(기질 수준 인산화와 산화적 인산화)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 세포호흡에서 ATP가 만들어지는 다섯 경우예요. 장소(세포질, 미토콘드리아 기질, 내막)는 서로 달라요.</p>
   <p>구할 것: 장소가 아니라 <strong>ATP를 만드는 방식</strong>이 나머지 넷과 다른 하나를 골라요.</p>
@@ -3100,8 +3142,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>H⁺ 흐름으로 ATP 합성효소가 만드는 (3)만 산화적 인산화예요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.37 그림 2.8의 꼬리표가 (3)만 달라요. 답 (3).</p></div>
 </div>
-</article><article class="topic" id="p39"><h3>P39. [변형] 미토콘드리아에서 H⁺가 오가는 방향</h3><p class="panel-meta">생성 변형 s5-atp-synthase · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p39">원 문제 보기</a></p><div class="layer formal" data-source-problem="p39"><h4>주어진 조건</h4><div data-source-field="conditions"><p>미토콘드리아 내막의 전자전달계와 ATP 합성효소에서 일어나는 H⁺(수소 이온)의 이동을 바르게 설명한 것은?</p>
-    <ul class="choices"><li>(1) 전자전달계는 전자가 떨어질 때 나온 에너지로 H⁺를 막 사이 공간에서 기질로 퍼낸다.</li><li>(2) 막 사이 공간에 쌓인 H⁺는 인지질 이중층을 자유롭게 통과해 기질로 돌아온다.</li><li>(3) 전자전달계는 H⁺를 기질에서 막 사이 공간으로 퍼내고, H⁺는 ATP 합성효소를 통해서만 기질로 돌아오며 이때 ATP가 만들어진다.</li><li>(4) 전자가 떨어질 때 나온 에너지로 H⁺의 이동을 거치지 않고 곧바로 ADP에 인산기가 붙는다.</li><li>(5) 전자전달계는 H⁺를 기질에서 막 사이 공간으로 퍼내고, H⁺가 ATP 합성효소를 지나 돌아올 때는 ATP가 소모된다.</li></ul></div></div><div class="layer formal" data-original-problem="p39"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: H⁺의 방향(퍼낼 때는 기질 → 막 사이 공간, 돌아올 때는 ATP 합성효소 통과), 전자의 에너지가 바로 ATP가 되지 않는다는 점. 근거 토픽: s5-atp-synthase(H⁺ 기울기와 ATP 합성효소)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p39"><h3>P39. [변형] 미토콘드리아에서 H⁺가 오가는 방향</h3><p class="panel-meta">생성 변형 s5-atp-synthase · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p39">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p39"><div class="layer formal" data-source-problem="p39"><div data-source-field="conditions"><p>미토콘드리아 내막의 전자전달계와 ATP 합성효소에서 일어나는 H⁺(수소 이온)의 이동을 바르게 설명한 것은?</p>
+    <ul class="choices"><li>(1) 전자전달계는 전자가 떨어질 때 나온 에너지로 H⁺를 막 사이 공간에서 기질로 퍼낸다.</li><li>(2) 막 사이 공간에 쌓인 H⁺는 인지질 이중층을 자유롭게 통과해 기질로 돌아온다.</li><li>(3) 전자전달계는 H⁺를 기질에서 막 사이 공간으로 퍼내고, H⁺는 ATP 합성효소를 통해서만 기질로 돌아오며 이때 ATP가 만들어진다.</li><li>(4) 전자가 떨어질 때 나온 에너지로 H⁺의 이동을 거치지 않고 곧바로 ADP에 인산기가 붙는다.</li><li>(5) 전자전달계는 H⁺를 기질에서 막 사이 공간으로 퍼내고, H⁺가 ATP 합성효소를 지나 돌아올 때는 ATP가 소모된다.</li></ul></div></div><details class="original" data-original-problem="p39"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: H⁺의 방향(퍼낼 때는 기질 → 막 사이 공간, 돌아올 때는 ATP 합성효소 통과), 전자의 에너지가 바로 ATP가 되지 않는다는 점. 근거 토픽: s5-atp-synthase(H⁺ 기울기와 ATP 합성효소)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 미토콘드리아 내막에 전자전달계와 ATP 합성효소가 있고, 그 사이에서 H⁺(수소 이온)가 오가요.</p>
   <p>구할 것: H⁺가 <strong>어느 쪽에서 어느 쪽으로</strong>, <strong>어떤 통로로</strong> 움직이는지, 그리고 그때 ATP가 만들어지는지 쓰이는지를 모두 바르게 쓴 보기 하나를 골라요.</p>
@@ -3158,8 +3200,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>방향·통로·에너지 출입 세 조건을 모두 맞춘 보기는 (3)뿐이에요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.41 그림 2.13, p.42와 일치하고 소거로도 (3)만 남아요. 답 (3).</p></div>
 </div>
-</article><article class="topic" id="p49"><h3>P49. [변형] 효소 설명 중 틀린 것 다시 고르기</h3><p class="panel-meta">생성 변형 s3-enzyme · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p49">원 문제 보기</a></p><div class="layer formal" data-source-problem="p49"><h4>주어진 조건</h4><div data-source-field="conditions"><p>다음 효소에 대한 설명 중 틀린 것은?</p>
-    <ul class="choices"><li>(1) 효소는 반응물과 생성물의 에너지 차이를 그대로 두며, 반응이 일어나는 방향도 바꾸지 않는다.</li><li>(2) 녹말(아밀로스)을 분해하는 효소의 이름은 아밀레이스이다.</li><li>(3) 활성 부위는 기질 분자의 일부로, 효소가 기질의 이 부분을 붙잡아 반응을 일으킨다.</li><li>(4) 효소마다 가장 잘 작용하는 온도가 달라서, -10℃에서 활성이 가장 높은 효소도 있다.</li><li>(5) 효소는 단백질로 된 촉매이며, 아미노산 순서가 정한 입체 구조가 그 기능을 정한다.</li></ul></div></div><div class="layer formal" data-original-problem="p49"><h4>기출 원문</h4>기출 2강 6번 발문에 정답을 바꾼 생성 변형이에요. 다루는 혼동: 활성 부위가 효소의 일부인지 기질의 일부인지, 효소가 바꾸는 것(활성화 에너지)과 바꾸지 않는 것(에너지 차이, 반응 방향). 근거 토픽: s3-enzyme(효소는 언덕을 낮춘다)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p49"><h3>P49. [변형] 효소 설명 중 틀린 것 다시 고르기</h3><p class="panel-meta">생성 변형 s3-enzyme · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p49">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p49"><div class="layer formal" data-source-problem="p49"><div data-source-field="conditions"><p>다음 효소에 대한 설명 중 틀린 것은?</p>
+    <ul class="choices"><li>(1) 효소는 반응물과 생성물의 에너지 차이를 그대로 두며, 반응이 일어나는 방향도 바꾸지 않는다.</li><li>(2) 녹말(아밀로스)을 분해하는 효소의 이름은 아밀레이스이다.</li><li>(3) 활성 부위는 기질 분자의 일부로, 효소가 기질의 이 부분을 붙잡아 반응을 일으킨다.</li><li>(4) 효소마다 가장 잘 작용하는 온도가 달라서, -10℃에서 활성이 가장 높은 효소도 있다.</li><li>(5) 효소는 단백질로 된 촉매이며, 아미노산 순서가 정한 입체 구조가 그 기능을 정한다.</li></ul></div></div><details class="original" data-original-problem="p49"><summary>기출 원문 보기</summary>기출 2강 6번 발문에 정답을 바꾼 생성 변형이에요. 다루는 혼동: 활성 부위가 효소의 일부인지 기질의 일부인지, 효소가 바꾸는 것(활성화 에너지)과 바꾸지 않는 것(에너지 차이, 반응 방향). 근거 토픽: s3-enzyme(효소는 언덕을 낮춘다)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 효소(enzyme)에 대한 설명 다섯 개가 있어요.</p>
   <p>구할 것: 이 중 <strong>틀린 설명 하나</strong>를 골라요. 맞는 설명 네 개는 답이 아니에요.</p>
@@ -3219,8 +3261,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>(3)은 활성 부위를 기질의 일부라고 바꿔 말해 틀려요. 낯선 (4)는 교재의 북극 눈 벼룩 예로 맞아요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 2장 p.34 활성부위 정의, p.33·p.35와 대조하면 어긋나는 문장은 (3)뿐이에요. 답 (3).</p></div>
 </div>
-</article><article class="topic" id="p50"><h3>P50. [변형] NADH 말고 또 하나의 전자운반체</h3><p class="panel-meta">생성 변형 s4-krebs · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p50">원 문제 보기</a></p><div class="layer formal" data-source-problem="p50"><h4>주어진 조건</h4><div data-source-field="conditions"><p>물질대사에 관여하는 전자운반체는 무엇인가?</p>
-    <ul class="choices"><li>(1) 시트르산 회로에서 탄소가 떨어져 나와 생긴 CO₂</li><li>(2) 전자전달계 맨 끝에서 전자를 받는 O₂</li><li>(3) 해당과정의 에너지 요구 단계에서 쓰이는 ATP</li><li>(4) 크렙스 회로에서 만들어지는 FADH₂</li><li>(5) 인산기를 받아 ATP가 되는 ADP</li></ul></div></div><div class="layer formal" data-original-problem="p50"><h4>기출 원문</h4>기출 2강 25번 발문에 정답을 바꾼 생성 변형이에요. 다루는 혼동: FADH₂도 NADH와 같은 전자 운반체라는 점, 전자를 마지막으로 받는 산소(최종 전자수용체)와 전자를 실어 나르는 운반체의 구분, 전자가 아닌 인산기를 주고받는 ATP·ADP. 근거 토픽: s4-krebs(피루브산 산화와 시트르산 회로)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p50"><h3>P50. [변형] NADH 말고 또 하나의 전자운반체</h3><p class="panel-meta">생성 변형 s4-krebs · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p50">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p50"><div class="layer formal" data-source-problem="p50"><div data-source-field="conditions"><p>물질대사에 관여하는 전자운반체는 무엇인가?</p>
+    <ul class="choices"><li>(1) 시트르산 회로에서 탄소가 떨어져 나와 생긴 CO₂</li><li>(2) 전자전달계 맨 끝에서 전자를 받는 O₂</li><li>(3) 해당과정의 에너지 요구 단계에서 쓰이는 ATP</li><li>(4) 크렙스 회로에서 만들어지는 FADH₂</li><li>(5) 인산기를 받아 ATP가 되는 ADP</li></ul></div></div><details class="original" data-original-problem="p50"><summary>기출 원문 보기</summary>기출 2강 25번 발문에 정답을 바꾼 생성 변형이에요. 다루는 혼동: FADH₂도 NADH와 같은 전자 운반체라는 점, 전자를 마지막으로 받는 산소(최종 전자수용체)와 전자를 실어 나르는 운반체의 구분, 전자가 아닌 인산기를 주고받는 ATP·ADP. 근거 토픽: s4-krebs(피루브산 산화와 시트르산 회로)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 세포호흡에 등장하는 분자 다섯 가지(CO₂, O₂, ATP, FADH₂, ADP)가 있어요.</p>
   <p>구할 것: 이 중 전자를 싣고 옮기는 <strong>전자운반체(electron carrier)</strong>를 골라요.</p>
@@ -3277,7 +3319,7 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>크렙스 회로 = 시트르산 회로. 여기서 만든 FADH₂가 전자를 실어 나르는 운반체예요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>‘무엇을 주고받나’로 분류하면 (4)만 운반 칸이고, 교과서 2장 p.39–40과 일치해요. 답 (4).</p></div>
 </div>
-</article><article class="topic" id="p51"><h3>P51. [변형] 미토콘드리아 단면에서 일이 일어나는 자리</h3><p class="panel-meta">생성 변형 s5-phosphorylation · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p51">원 문제 보기</a></p><div class="layer formal" data-source-problem="p51"><h4>주어진 조건</h4><div data-source-field="conditions"><p>그림은 세포 안의 미토콘드리아를 단면으로 나타낸 것이다. A~E는 각각 외막, 내막, 막 사이 공간, 기질, 세포질 중 하나이다. 이에 대한 설명으로 옳지 않은 것은?</p>
+</article><article class="topic" id="p51"><h3>P51. [변형] 미토콘드리아 단면에서 일이 일어나는 자리</h3><p class="panel-meta">생성 변형 s5-phosphorylation · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p51">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p51"><div class="layer formal" data-source-problem="p51"><div data-source-field="conditions"><p>그림은 세포 안의 미토콘드리아를 단면으로 나타낸 것이다. A~E는 각각 외막, 내막, 막 사이 공간, 기질, 세포질 중 하나이다. 이에 대한 설명으로 옳지 않은 것은?</p>
     <figure class="figure"><svg id="p51-source-p51-exam" viewBox="0 0 600 320" role="img" aria-label="세포 단면 그림. 큰 둥근 사각형 선 안에 타원 선이 있고 위쪽에 A라고 표시되어 있다. 타원 안에는 위쪽에서 안으로 세 번 접혀 들어간 선이 있고 오른쪽에 B라고 표시되어 있다. 타원 선과 접힌 선 사이의 좁은 틈에 C, 접힌 선 안쪽의 넓은 공간에 D, 타원 바깥이면서 큰 사각형 안쪽인 공간에 E가 적혀 있다.">
         <rect class="fig-ink" x="10" y="10" width="580" height="300" rx="18"/>
         <ellipse class="fig-ink" cx="300" cy="170" rx="200" ry="105"/>
@@ -3290,7 +3332,7 @@
         <text class="fig-text" x="257" y="175" text-anchor="middle">D</text>
         <text class="fig-text" x="55" y="175" text-anchor="middle">E</text>
       </svg></figure>
-    <ul class="choices"><li>(1) 포도당이 피루브산 2분자로 쪼개지는 과정은 E에서 일어난다.</li><li>(2) 시트르산 회로에서 탄소가 CO₂로 떨어져 나가는 곳은 D이다.</li><li>(3) 전자전달계 복합체와 ATP 합성효소는 B에 박혀 있고, 전자전달계가 퍼낸 H⁺는 C에 쌓인다.</li><li>(4) A는 매끈하고 B는 여러 번 접혀 있어, B의 넓어진 표면에 ATP를 만드는 단백질이 많이 박힌다.</li><li>(5) 기질 수준 인산화는 이름 그대로 D에서만 일어나므로, E에서는 ATP가 만들어지지 않는다.</li></ul></div></div><div class="layer formal" data-original-problem="p51"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: "기질 수준 인산화"의 기질(반응물, substrate)과 미토콘드리아 기질(공간, matrix), 세포호흡 단계별 장소(세포질, 기질, 내막). 근거 토픽: s5-phosphorylation(기질 수준 인산화와 산화적 인산화)</div><div class="layer eli5" data-explanation="understand">
+    <ul class="choices"><li>(1) 포도당이 피루브산 2분자로 쪼개지는 과정은 E에서 일어난다.</li><li>(2) 시트르산 회로에서 탄소가 CO₂로 떨어져 나가는 곳은 D이다.</li><li>(3) 전자전달계 복합체와 ATP 합성효소는 B에 박혀 있고, 전자전달계가 퍼낸 H⁺는 C에 쌓인다.</li><li>(4) A는 매끈하고 B는 여러 번 접혀 있어, B의 넓어진 표면에 ATP를 만드는 단백질이 많이 박힌다.</li><li>(5) 기질 수준 인산화는 이름 그대로 D에서만 일어나므로, E에서는 ATP가 만들어지지 않는다.</li></ul></div></div><details class="original" data-original-problem="p51"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: "기질 수준 인산화"의 기질(반응물, substrate)과 미토콘드리아 기질(공간, matrix), 세포호흡 단계별 장소(세포질, 기질, 내막). 근거 토픽: s5-phosphorylation(기질 수준 인산화와 산화적 인산화)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 세포 속 미토콘드리아 단면 그림이 있고, A~E는 외막, 내막, 막 사이 공간, 기질, 세포질 중 하나예요.</p>
   <p>구할 것: 먼저 A~E가 각각 무엇인지 정한 뒤, 세포호흡 단계가 일어나는 장소에 대한 설명 중 <strong>옳지 않은 것 하나</strong>를 골라요.</p>
@@ -3347,7 +3389,7 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>기질 수준 인산화의 기질은 반응물(substrate)이에요. 해당과정의 ATP도 세포질(E)에서 기질 수준 인산화로 생겨 (5)가 틀려요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>해당과정 ATP라는 반례로 (5)가 무너지고, 교과서 2장 p.37–38과 일치해요. 답 (5).</p></div>
 </div>
-</article><article class="topic" id="p52"><h3>P52. [변형] 식물 세포 그림에서 벽과 막 가려내기</h3><p class="panel-meta">생성 변형 s0-vacuole-wall · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p52">원 문제 보기</a></p><div class="layer formal" data-source-problem="p52"><h4>주어진 조건</h4><div data-source-field="conditions"><p>그림은 어떤 식물 세포의 구조를 나타낸 것이다. A~E는 각각 세포벽, 세포막, 액포, 엽록체, 미토콘드리아 중 하나이다. 이에 대한 설명으로 옳지 않은 것은?</p>
+</article><article class="topic" id="p52"><h3>P52. [변형] 식물 세포 그림에서 벽과 막 가려내기</h3><p class="panel-meta">생성 변형 s0-vacuole-wall · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p52">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p52"><div class="layer formal" data-source-problem="p52"><div data-source-field="conditions"><p>그림은 어떤 식물 세포의 구조를 나타낸 것이다. A~E는 각각 세포벽, 세포막, 액포, 엽록체, 미토콘드리아 중 하나이다. 이에 대한 설명으로 옳지 않은 것은?</p>
     <figure class="figure"><svg id="p52-source-p52-exam" viewBox="0 0 560 340" role="img" aria-label="식물 세포 그림. 가장 바깥에 굵은 둥근 사각형 선이 있고 A라고 표시되어 있다. 그 바로 안쪽에 얇은 둥근 사각형 선이 있고 B라고 표시되어 있다. 가운데에는 그림에서 가장 큰 타원 C가 있다. 왼쪽 위에는 두 겹의 매끈한 타원 선 안에 짧은 선이 세 무더기로 쌓인 작은 구조 D가, 왼쪽 아래에는 바깥 타원 선 안에 위쪽이 여러 번 안으로 접혀 들어간 닫힌 안쪽 선이 있는 작은 구조 E가 있다.">
         <rect class="fig-ink" x="20" y="20" width="420" height="300" rx="14" style="stroke-width:6"/>
         <rect class="fig-ink" x="36" y="36" width="388" height="268" rx="10"/>
@@ -3373,7 +3415,7 @@
         <path class="fig-accent" d="M66 255 H76 V270 H84 V255 H96 V270 H104 V255 H116 V270 H124 V255 H134 V276 H66 Z"/>
         <text class="fig-text" x="100" y="230" text-anchor="middle">E</text>
       </svg></figure>
-    <ul class="choices"><li>(1) C는 염분, 당분, 폐기물, 색소 등을 쌓아 두는 창고로, 이 세포에서 리소좀 역할을 대신한다.</li><li>(2) 섬유소로 된 단단한 구조는 B이고, 인지질 이중층으로 된 말랑한 막은 A이다.</li><li>(3) D는 매끈한 이중막 안에 납작한 주머니 막이 쌓여 있는 소기관으로, 동물세포에는 없다.</li><li>(4) E는 내막이 여러 번 접힌 소기관으로, 동물세포에도 있다.</li><li>(5) 이 세포는 D가 있어 광합성을 하고, E가 있어 세포호흡도 한다.</li></ul></div></div><div class="layer formal" data-original-problem="p52"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 세포막(인지질 이중층, 말랑함, 안쪽)과 세포벽(셀룰로스, 단단함, 바깥쪽)의 위치와 성분, 액포의 리소좀 역할, 식물세포도 미토콘드리아로 세포호흡을 한다는 점. 근거 토픽: s0-vacuole-wall(액포와 세포벽: 식물세포만의 창고와 벽), 함께 쓰는 토픽: s0-chloroplast</div><div class="layer eli5" data-explanation="understand">
+    <ul class="choices"><li>(1) C는 염분, 당분, 폐기물, 색소 등을 쌓아 두는 창고로, 이 세포에서 리소좀 역할을 대신한다.</li><li>(2) 섬유소로 된 단단한 구조는 B이고, 인지질 이중층으로 된 말랑한 막은 A이다.</li><li>(3) D는 매끈한 이중막 안에 납작한 주머니 막이 쌓여 있는 소기관으로, 동물세포에는 없다.</li><li>(4) E는 내막이 여러 번 접힌 소기관으로, 동물세포에도 있다.</li><li>(5) 이 세포는 D가 있어 광합성을 하고, E가 있어 세포호흡도 한다.</li></ul></div></div><details class="original" data-original-problem="p52"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 세포막(인지질 이중층, 말랑함, 안쪽)과 세포벽(셀룰로스, 단단함, 바깥쪽)의 위치와 성분, 액포의 리소좀 역할, 식물세포도 미토콘드리아로 세포호흡을 한다는 점. 근거 토픽: s0-vacuole-wall(액포와 세포벽: 식물세포만의 창고와 벽), 함께 쓰는 토픽: s0-chloroplast</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 식물 세포 그림이 있고, A~E는 세포벽, 세포막, 액포, 엽록체, 미토콘드리아 중 하나예요.</p>
   <p>구할 것: 먼저 그림의 모양과 위치로 A~E를 정한 뒤, 이에 대한 설명 중 <strong>옳지 않은 것 하나</strong>를 골라요.</p>
@@ -3430,8 +3472,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>(2)는 세포벽(A)과 세포막(B)을 뒤바꿔 말해 틀려요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>바깥→안 순서(벽 → 막)로 다시 보면 (2)만 어긋나고, 교과서 1장 p.20–22와 일치해요. 답 (2).</p></div>
 </div>
-</article><article class="topic" id="p53"><h3>P53. [변형] 에너지를 들이지 않아도 일어나는 일</h3><p class="panel-meta">생성 변형 s2-atp-use · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p53">원 문제 보기</a></p><div class="layer formal" data-source-problem="p53"><h4>주어진 조건</h4><div data-source-field="conditions"><p>다음 중 세포가 에너지를 들여야 일어나는 일이 아닌 것은?</p>
-    <ul class="choices"><li>(1) 산소 농도가 높은 혈액 쪽에서 산소 농도가 낮은 세포 안쪽으로 산소가 들어오는 것</li><li>(2) 팔을 굽힐 때 위팔 근육세포가 수축하는 것</li><li>(3) 아미노산 같은 작은 분자 여러 개가 이어져 단백질 같은 큰 분자가 만들어지는 것</li><li>(4) 세포 안 농도가 이미 바깥보다 높은 이온을 바깥에서 세포 안으로 계속 더 들여오는 것</li><li>(5) 세포 안에서 ATP의 인산기가 단백질에 붙어, 활동하지 않던 단백질이 활동하는 단백질로 바뀌는 것</li></ul></div></div><div class="layer formal" data-original-problem="p53"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 물질이 옮겨 가면 늘 에너지가 든다는 착각, 확산(농도기울기를 따라, 에너지 불필요)과 능동수송(농도기울기와 반대로, 에너지 필요)의 방향 구분. 근거 토픽: s2-atp-use(ATP를 쓰는 곳)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p53"><h3>P53. [변형] 에너지를 들이지 않아도 일어나는 일</h3><p class="panel-meta">생성 변형 s2-atp-use · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p53">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p53"><div class="layer formal" data-source-problem="p53"><div data-source-field="conditions"><p>다음 중 세포가 에너지를 들여야 일어나는 일이 아닌 것은?</p>
+    <ul class="choices"><li>(1) 산소 농도가 높은 혈액 쪽에서 산소 농도가 낮은 세포 안쪽으로 산소가 들어오는 것</li><li>(2) 팔을 굽힐 때 위팔 근육세포가 수축하는 것</li><li>(3) 아미노산 같은 작은 분자 여러 개가 이어져 단백질 같은 큰 분자가 만들어지는 것</li><li>(4) 세포 안 농도가 이미 바깥보다 높은 이온을 바깥에서 세포 안으로 계속 더 들여오는 것</li><li>(5) 세포 안에서 ATP의 인산기가 단백질에 붙어, 활동하지 않던 단백질이 활동하는 단백질로 바뀌는 것</li></ul></div></div><details class="original" data-original-problem="p53"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 물질이 옮겨 가면 늘 에너지가 든다는 착각, 확산(농도기울기를 따라, 에너지 불필요)과 능동수송(농도기울기와 반대로, 에너지 필요)의 방향 구분. 근거 토픽: s2-atp-use(ATP를 쓰는 곳)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 세포 안팎에서 일어나는 일 다섯 가지가 있어요.</p>
   <p>구할 것: 세포가 에너지(ATP)를 <strong>들이지 않아도 저절로 일어나는 일 하나</strong>를 골라요. 에너지가 필요한 일 네 개는 답이 아니에요.</p>
@@ -3488,8 +3530,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>(1)은 혈액(고) → 세포(저) 산소 확산이라 에너지가 필요 없어 틀려요, (2)–(5)는 맞아요. 부정형이라 틀려요인 (1)이 답이에요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>(1)과 (4)는 방향만 반대예요. 교과서 1장 p.23 표 1.1, 2장 p.33 그림 2.2와 일치해요. 답 (1).</p></div>
 </div>
-</article><article class="topic" id="p54"><h3>P54. [변형] 포도당의 전자가 옮겨 가는 길</h3><p class="panel-meta">생성 변형 s4-nad · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p54">원 문제 보기</a></p><div class="layer formal" data-source-problem="p54"><h4>주어진 조건</h4><div data-source-field="conditions"><p>세포 안에서 포도당이 분해될 때 전자가 옮겨 가는 과정에 대한 설명으로 옳지 않은 것은?</p>
-    <ul class="choices"><li>(1) 해당과정에서 포도당의 C–H 전자 일부가 NAD⁺로 옮겨 가 NADH가 생긴다.</li><li>(2) 포도당의 전자는 산소까지 한 번에 떨어지지 않고 운반체를 거쳐 층층이 떨어지므로, 몸 안에서 포도당이 한꺼번에 타 버리지 않는다.</li><li>(3) 포도당의 탄소는 CO₂가 되어 빠져나가고, 포도당의 전자는 NADH와 FADH₂에 실려 미토콘드리아 내막의 전자전달계로 간다.</li><li>(4) NAD⁺는 전자와 H⁺를 받아 NADH가 되며, 이때 NAD⁺는 전자를 받았으므로 산화된다.</li><li>(5) 전자전달계에 전자를 내준 NADH는 NAD⁺로 돌아가 다시 전자를 받는 데 쓰인다.</li></ul></div></div><div class="layer formal" data-original-problem="p54"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: NAD⁺가 "산화된 형태"라는 이름과, 전자를 받을 때 일어나는 일(환원)의 구분, 탄소의 행방(CO₂)과 전자의 행방(NADH·FADH₂), 운반체가 재생되어 다시 쓰인다는 점. 근거 토픽: s4-nad(NAD⁺와 세포호흡 3단계)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p54"><h3>P54. [변형] 포도당의 전자가 옮겨 가는 길</h3><p class="panel-meta">생성 변형 s4-nad · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0910_Cells_and_Cellular_Respiration.html#p54">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p54"><div class="layer formal" data-source-problem="p54"><div data-source-field="conditions"><p>세포 안에서 포도당이 분해될 때 전자가 옮겨 가는 과정에 대한 설명으로 옳지 않은 것은?</p>
+    <ul class="choices"><li>(1) 해당과정에서 포도당의 C–H 전자 일부가 NAD⁺로 옮겨 가 NADH가 생긴다.</li><li>(2) 포도당의 전자는 산소까지 한 번에 떨어지지 않고 운반체를 거쳐 층층이 떨어지므로, 몸 안에서 포도당이 한꺼번에 타 버리지 않는다.</li><li>(3) 포도당의 탄소는 CO₂가 되어 빠져나가고, 포도당의 전자는 NADH와 FADH₂에 실려 미토콘드리아 내막의 전자전달계로 간다.</li><li>(4) NAD⁺는 전자와 H⁺를 받아 NADH가 되며, 이때 NAD⁺는 전자를 받았으므로 산화된다.</li><li>(5) 전자전달계에 전자를 내준 NADH는 NAD⁺로 돌아가 다시 전자를 받는 데 쓰인다.</li></ul></div></div><details class="original" data-original-problem="p54"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: NAD⁺가 "산화된 형태"라는 이름과, 전자를 받을 때 일어나는 일(환원)의 구분, 탄소의 행방(CO₂)과 전자의 행방(NADH·FADH₂), 운반체가 재생되어 다시 쓰인다는 점. 근거 토픽: s4-nad(NAD⁺와 세포호흡 3단계)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 포도당이 분해될 때 전자가 어디로 옮겨 가는지에 대한 설명 다섯 개예요.</p>
   <p>구할 것: 이 가운데 <strong>옳지 않은 것(틀린 설명)</strong> 하나를 골라요. 맞는 설명을 고르는 문제가 아니에요.</p>
@@ -3555,12 +3597,21 @@
       <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
       <div class="panel-inner">
         <div class="panel-head">
-          <h2 id="panel-right-title">페이지 요약</h2>
+          <h2 id="panel-right-title" class="sr-only">문제와 요약</h2>
+          <div class="panel-tabs" role="tablist" aria-labelledby="panel-right-title">
+            <button type="button" role="tab" id="tab-problem" data-tab="problem" aria-controls="tabpanel-problem" aria-selected="true">문제</button>
+            <button type="button" role="tab" id="tab-summary" data-tab="summary" aria-controls="tabpanel-summary" aria-selected="false" tabindex="-1">요약</button>
+          </div>
           <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
         </div>
-        <p class="panel-sub" id="sum-for">전체 흐름</p>
-        <p class="panel-empty" id="sum-empty">페이지를 넘기면 그 페이지의 핵심 식과 용어가 여기에 나옵니다.</p>
-        <div class="sums"></div>
+        <div class="probs" role="tabpanel" id="tabpanel-problem" aria-labelledby="tab-problem">
+          <p class="panel-empty" id="prob-empty">문항을 고르면 여기에 문제가 나와요.</p>
+        </div>
+        <div class="sum-tab" role="tabpanel" id="tabpanel-summary" aria-labelledby="tab-summary" hidden>
+          <p class="panel-sub" id="sum-for">전체 흐름</p>
+          <p class="panel-empty" id="sum-empty">페이지를 넘기면 그 페이지의 핵심 식과 용어가 여기에 나옵니다.</p>
+          <div class="sums"></div>
+        </div>
       </div>
     </aside>
   </div>
@@ -3573,7 +3624,7 @@
     </div>
   </nav>
   <p class="sr-only" id="pager-status" aria-live="polite"></p>
-
+<script type="application/json" id="explain-choice-model">{"p2": {"answer": "C", "mode": "single", "options": ["A", "B", "C", "D"]}, "p41": {"answer": "A", "mode": "single", "options": ["A", "B", "C", "D", "E"]}, "p42": {"answer": "E", "mode": "single", "options": ["A", "B", "C", "D", "E"]}, "p43": {"answer": "B", "mode": "single", "options": ["A", "B", "C", "D", "E"]}, "p44": {"answer": "D", "mode": "single", "options": ["A", "B", "C", "D", "E"]}, "p45": {"answer": "A", "mode": "single", "options": ["A", "B", "C", "D", "E"]}, "p46": {"answer": "A", "mode": "single", "options": ["A", "B", "C", "D", "E"]}, "p47": {"answer": "C", "mode": "single", "options": ["A", "B", "C", "D", "E"]}, "p48": {"answer": "E", "mode": "single", "options": ["A", "B", "C", "D", "E"]}, "p3": {"answer": "5", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p4": {"answer": "1", "mode": "ambiguous", "options": ["1", "2", "3", "4"]}, "p5": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4"]}, "p6": {"answer": "1", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p7": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p8": {"answer": "2", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p9": {"answer": "1", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p10": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4"]}, "p11": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p12": {"answer": "5", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p13": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4"]}, "p14": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4"]}, "p15": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4"]}, "p16": {"answer": "2", "mode": "single", "options": ["1", "2", "3", "4"]}, "p18": {"answer": "5", "mode": "ambiguous", "options": ["1", "2", "3", "4", "5"]}, "p19": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p20": {"answer": "1", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p22": {"answer": "5", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p23": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p24": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p25": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p27": {"answer": "2", "mode": "single", "options": ["1", "2", "3", "4"]}, "p28": {"answer": "1", "mode": "ambiguous", "options": ["1", "2", "3", "4"]}, "p29": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p30": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p40": {"answer": "2", "mode": "ambiguous", "options": ["1", "2", "3", "4", "5"]}, "p31": {"answer": "1", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p32": {"answer": "2", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p33": {"answer": "1", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p34": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p35": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p36": {"answer": "1", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p37": {"answer": "2", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p38": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p39": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p49": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p50": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p51": {"answer": "5", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p52": {"answer": "2", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p53": {"answer": "1", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p54": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}}</script>
   <script id="theme-ui">
     (function () {
       const root = document.documentElement;
@@ -3627,6 +3678,8 @@
       // ---------- 열고 닫기 ----------
       function docked() {
         const pref = store.get(PREF, {});
+        // 문제해설은 문제가 오른쪽에 있으므로 오른쪽을 기본으로 연다
+        if (kind === 'explain') return { left: pref.left ?? roomyMq.matches, right: pref.right ?? true };
         return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
       }
       function sync() {
@@ -3819,38 +3872,247 @@
         });
       }
 
-      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
-      function setupNote() {
+      // ---------- 문제해설: 오른쪽 = [문제 | 요약] 탭, 좁은 화면은 해설 위 접힘 ----------
+      function setupExplain() {
         const KEY = 'od-note-read:' + RANGE;
+        const TAB = 'bio-problem-explain-tab';
         const topics = Array.from(document.querySelectorAll('main article.topic'));
         const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
-        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
         const box = panels.right.querySelector('.sums');
-        const sums = {};
-        topics.forEach((t) => {
-          const el = t.querySelector(':scope > .sum');
-          if (!el) return;
-          el.hidden = true;
-          box.appendChild(el);
-          sums[t.id] = el;
-        });
+        const probs = panels.right.querySelector('.probs');
+        const sumTab = panels.right.querySelector('.sum-tab');
+        const tabList = panels.right.querySelector('.panel-tabs');
+        const tabs = Array.from(tabList.querySelectorAll('[role="tab"]'));
+        const title = document.getElementById('panel-right-title');
+        const label = toggles.right.querySelector('span');
         const sub = document.getElementById('sum-for');
         const empty = document.getElementById('sum-empty');
+        const probEmpty = document.getElementById('prob-empty');
+        const sums = {};
+        const panes = {};
+        const opens = {};
+        const expanded = new Set();
+        let curId = null;
+        let tab = store.get(TAB, 'problem') === 'summary' ? 'summary' : 'problem';
+        topics.forEach((t) => {
+          // 조각의 <div class="sum" hidden> 을 요약 탭으로 옮긴다. 없으면 안내 문구만 보인다.
+          const el = t.querySelector(':scope > .sum');
+          if (el) { el.hidden = true; box.appendChild(el); sums[t.id] = el; }
+          const pane = t.querySelector(':scope > .problem-pane');
+          if (!pane) return;
+          pane.id = 'problem-' + t.id;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'problem-toggle';
+          btn.setAttribute('aria-controls', pane.id);
+          btn.addEventListener('click', () => {
+            if (expanded.has(t.id)) expanded.delete(t.id); else expanded.add(t.id);
+            paintToggle(t.id);
+            window.mlLayoutMath?.();
+          });
+          panes[t.id] = pane;
+          opens[t.id] = btn;
+        });
+        function paintToggle(id) {
+          const on = expanded.has(id);
+          opens[id].setAttribute('aria-expanded', String(on));
+          opens[id].textContent = on ? '문제 접기' : '문제 보기';
+          panes[id].hidden = !on;
+        }
+        function showTab(name, save) {
+          tabs.forEach((b) => { const on = b.dataset.tab === name; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; });
+          probs.hidden = name !== 'problem';
+          sumTab.hidden = name !== 'summary';
+          if (save) { tab = name; store.set(TAB, name); }
+          window.mlLayoutMath?.();
+        }
+        // 넓은 화면은 오른쪽 문제 탭, 좁은 화면은 각 문항 메타 줄 뒤 "문제 보기" 아래로 옮긴다
+        function mountPanes() {
+          const wide = wideMq.matches;
+          Object.keys(panes).forEach((id) => {
+            if (wide) { opens[id].remove(); probs.appendChild(panes[id]); panes[id].hidden = id !== curId; }
+            else {
+              const topic = document.getElementById(id);
+              (topic.querySelector(':scope > .panel-meta') || topic.querySelector('h3')).after(opens[id], panes[id]);
+              paintToggle(id);
+            }
+          });
+          tabList.hidden = !wide;
+          title.classList.toggle('sr-only', wide);
+          title.textContent = wide ? '문제와 요약' : '페이지 요약';
+          label.textContent = wide ? '문제' : '요약';
+          probEmpty.hidden = Boolean(curId && panes[curId]);
+          showTab(wide ? tab : 'summary', false);
+        }
+        // ---------- 보기 클릭: 판정 표시와 해설 판정 문단으로 이동 (선택은 메모리에만) ----------
+        let model = {};
+        try { model = JSON.parse((document.getElementById('explain-choice-model') || {}).textContent || '{}') || {}; } catch (e) { model = {}; }
+        const scroller = document.querySelector('.content');
+        const picks = new Map();
+        const ui = {};
+        let targetTimer = 0;
+        const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        function paint(id) {
+          const { m, status, reset } = ui[id];
+          const pick = picks.get(id);
+          const ambiguous = m.mode === 'ambiguous';
+          panes[id].querySelectorAll('.review-choice').forEach((b) => {
+            const cid = b.dataset.choiceId;
+            const mine = pick === cid;
+            const answer = pick !== undefined && cid === m.answer;
+            b.dataset.result = answer ? (ambiguous ? 'intended' : 'correct') : mine && !ambiguous ? 'incorrect' : '';
+            b.setAttribute('aria-pressed', String(mine));
+            const labels = [];
+            if (mine) labels.push('내 선택');
+            if (answer) labels.push(ambiguous ? '출제 의도상 답' : '정답');
+            const badge = b.querySelector('.review-badge');
+            badge.textContent = labels.join(' · ');
+            badge.hidden = !labels.length;
+          });
+          status.textContent = pick === undefined ? '' : ambiguous ? '출제 의도상 답을 표시했어요.'
+            : pick === m.answer ? '정답이에요.' : '정답이 아니에요. 해설에서 판정 이유를 확인해요.';
+          reset.hidden = pick === undefined;
+        }
+        function jump(id, cid) {
+          const solve = document.getElementById(id).querySelector('[data-explanation="solve"]');
+          if (!solve) return;
+          const re = new RegExp('^\\(?' + escapeRe(cid) + '(\\)|\\.|\\s)');
+          const target = Array.from(solve.querySelectorAll('p, li')).find((n) => re.test(n.textContent.trim())) || solve.querySelector('h4') || solve;
+          const top = scroller.scrollTop + target.getBoundingClientRect().top - scroller.getBoundingClientRect().top - scroller.clientHeight / 4;
+          scroller.scrollTo({ top: Math.max(0, top), behavior: 'auto' });
+          document.querySelectorAll('main .is-target').forEach((n) => n.classList.remove('is-target'));
+          target.classList.add('is-target');
+          clearTimeout(targetTimer);
+          targetTimer = setTimeout(() => target.classList.remove('is-target'), 1600);
+        }
+        Object.keys(panes).forEach((id) => {
+          const m = model[id];
+          const list = panes[id].querySelector('.choices');
+          if (!m || !list || !Array.isArray(m.options)) return;
+          const items = Array.from(list.children).filter((li) => li.tagName === 'LI');
+          // 모델과 보기 수가 다르면 정적 문제로 둔다
+          if (items.length !== m.options.length) return;
+          panes[id].classList.add('review-ready');
+          items.forEach((li, i) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'review-choice';
+            btn.dataset.choiceId = m.options[i];
+            btn.dataset.result = '';
+            btn.setAttribute('aria-pressed', 'false');
+            const content = document.createElement('div');
+            content.className = 'review-choice-content';
+            while (li.firstChild) content.appendChild(li.firstChild);
+            const badge = document.createElement('span');
+            badge.className = 'review-badge';
+            badge.hidden = true;
+            btn.append(content, badge);
+            li.appendChild(btn);
+            btn.addEventListener('click', () => { picks.set(id, m.options[i]); paint(id); jump(id, m.options[i]); });
+          });
+          const status = document.createElement('p');
+          status.className = 'review-status';
+          status.setAttribute('aria-live', 'polite');
+          const reset = document.createElement('button');
+          reset.type = 'button';
+          reset.className = 'review-reset text-btn';
+          reset.textContent = '다시 고르기';
+          reset.hidden = true;
+          reset.addEventListener('click', () => { picks.delete(id); paint(id); });
+          list.after(status, reset);
+          ui[id] = { m, status, reset };
+        });
+
+        // ---------- 문제 그림: 눌러서 크게 보기 ----------
+        let sheet = null;
+        // 확대본의 SVG id는 원본과 겹치지 않게 바꾸고, 내부 참조(url(#…), href)도 함께 바꾼다
+        function cloneSvg(svg) {
+          const copy = svg.cloneNode(true);
+          const nodes = [copy, ...copy.querySelectorAll('*')];
+          const ids = new Map();
+          nodes.forEach((n) => { if (n.id) { ids.set(n.id, n.id + '-zoom'); n.id += '-zoom'; } });
+          if (ids.size) nodes.forEach((n) => Array.from(n.attributes).forEach((a) => {
+            let v = a.value.replace(/url\(#([^)]*)\)/g, (m, id) => (ids.has(id) ? 'url(#' + ids.get(id) + ')' : m));
+            if (v.startsWith('#') && ids.has(v.slice(1))) v = '#' + ids.get(v.slice(1));
+            if (v !== a.value) n.setAttribute(a.name, v);
+          }));
+          copy.classList.remove('zoomable');
+          copy.style.width = '100%';
+          copy.style.maxWidth = '100%';
+          copy.style.height = 'auto';
+          return copy;
+        }
+        function zoom(fig) {
+          if (!sheet) {
+            sheet = document.createElement('dialog');
+            sheet.className = 'sheet figure-sheet';
+            sheet.setAttribute('aria-label', '그림 크게 보기');
+            sheet.innerHTML = '<div class="sheet-inner"><div class="sheet-head"><h2>그림</h2><button class="text-btn sheet-close" type="button">닫기</button></div><div class="figure-sheet-body"></div></div>';
+            sheet.querySelector('.sheet-close').addEventListener('click', () => sheet.close());
+            sheet.addEventListener('click', (e) => { if (e.target === sheet) sheet.close(); });
+            document.body.appendChild(sheet);
+          }
+          let big;
+          if (fig.tagName.toLowerCase() === 'img') {
+            big = document.createElement('img');
+            big.src = fig.currentSrc || fig.src;
+            big.alt = fig.alt;
+          } else big = cloneSvg(fig);
+          sheet.querySelector('.figure-sheet-body').replaceChildren(big);
+          sheet.showModal();
+        }
+        Object.values(panes).forEach((pane) => {
+          // 지금 있는 SVG는 모두 원본 그림이다(KaTeX는 나중에 렌더링된다). 중첩 SVG는 바깥 것만.
+          pane.querySelectorAll('svg').forEach((svg) => { if (!svg.parentElement.closest('svg')) svg.classList.add('zoomable'); });
+          pane.addEventListener('click', (e) => {
+            const fig = e.target.closest('img, svg.zoomable');
+            if (fig && !fig.closest('.review-choice')) zoom(fig);
+          });
+        });
+
+        // ---------- 인쇄: 문제를 모든 문항의 해설 위에 펼친다 ----------
+        function mountForPrint() {
+          Object.keys(panes).forEach((id) => {
+            const topic = document.getElementById(id);
+            opens[id].remove();
+            (topic.querySelector(':scope > .panel-meta') || topic.querySelector('h3')).after(panes[id]);
+            panes[id].hidden = false;
+          });
+        }
+        const printMq = matchMedia('print');
+        printMq.addEventListener('change', () => (printMq.matches ? mountForPrint() : mountPanes()));
+        window.addEventListener('beforeprint', mountForPrint);
+        window.addEventListener('afterprint', mountPanes);
+
+        tabs.forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab, true)));
+        tabList.addEventListener('keydown', (e) => {
+          if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+          e.preventDefault();
+          e.stopPropagation();
+          const next = tab === 'problem' ? 'summary' : 'problem';
+          showTab(next, true);
+          tabs.find((b) => b.dataset.tab === next).focus();
+        });
         document.addEventListener('od:screen', (e) => {
           const s = e.detail.screen;
           const key = s.matches('article.topic') ? s.id : 'intro';
+          curId = key === 'intro' ? null : key;
           Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
           empty.hidden = Boolean(sums[key]);
           sub.textContent = key === 'intro' ? '전체 흐름' : ((s.querySelector('h3') || {}).textContent || '').trim();
-          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          if (wideMq.matches) Object.keys(panes).forEach((id) => { panes[id].hidden = id !== curId; });
+          probEmpty.hidden = Boolean(curId && panes[curId]);
+          if (curId && !read.has(curId)) { read.add(curId); store.set(KEY, Array.from(read)); }
           panels.right.querySelector('.panel-inner').scrollTop = 0;
           markToc(read, topics.length, '읽음');
           revealCurrent();
         });
+        wideMq.addEventListener('change', mountPanes);
+        mountPanes();
       }
 
       if (kind === 'review') setupReview();
-      if (kind === 'note') setupNote();
+      if (kind === 'explain') setupExplain();
       sync();
     })();
   </script>
@@ -3946,7 +4208,7 @@
       window.addEventListener('popstate', fromUrl);
 
       document.addEventListener('keydown', (e) => {
-        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open') || document.querySelector('dialog[open]')) return;
         if (e.target.closest('input, select, textarea, [contenteditable="true"], .math-row')) return;
         if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
         if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
@@ -3985,7 +4247,7 @@
       }
       function layout() {
         queued = false;
-        document.querySelectorAll('main .katex, .sums .katex').forEach((math) => {
+        document.querySelectorAll('main .katex, .sums .katex, .probs .katex').forEach((math) => {
           if (!math.getClientRects().length) return;
           const tex = math.querySelector('annotation')?.textContent || '';
           const display = math.parentElement.classList.contains('katex-display');
@@ -4036,6 +4298,7 @@
       new ResizeObserver(schedule).observe(document.querySelector('.content'));
       new ResizeObserver(schedule).observe(document.querySelector('#panel-right .panel-inner'));
       new MutationObserver(schedule).observe(document.querySelector('.sums'), {subtree:true, attributes:true, attributeFilter:['hidden']});
+      new MutationObserver(schedule).observe(document.querySelector('.probs'), {subtree:true, attributes:true, attributeFilter:['hidden']});
       document.fonts.ready.then(schedule);
       schedule();
     })();
