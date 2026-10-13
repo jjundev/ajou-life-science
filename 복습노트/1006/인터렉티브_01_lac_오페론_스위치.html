@@ -1,0 +1,1112 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>lac 오페론 스위치</title>
+<!-- 생성 파일: 자료_인터렉티브_01_lac_오페론_스위치/Main.dc.html을 고친 뒤 bio-interactive/scripts/build.cjs로 다시 만드세요. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+<style>
+body{margin:0}
+.app{--radius:8px;--tap:48px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--dur:220ms;--dur-exit:150ms;--ease-out:cubic-bezier(.2,.8,.2,1);--scrim:rgba(0,0,0,.4);
+  height:100vh;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;box-sizing:border-box;
+  background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;font-size:16px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.app *,.app *::before,.app *::after{box-sizing:border-box}
+.app button{font-family:inherit;color:inherit}
+.app :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.num{font-variant-numeric:tabular-nums}
+
+.topbar{display:flex;align-items:center;gap:var(--s2);min-height:56px;padding:var(--s2) var(--s3);background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:17px;font-weight:700;white-space:nowrap}
+.text-btn{flex:none;min-height:44px;min-width:44px;padding:0 var(--s3);border:0;border-radius:var(--radius);background:transparent;color:var(--ink);font:600 14px/1 'Pretendard',system-ui,sans-serif;cursor:pointer}
+.panel-toggle{display:inline-flex;align-items:center;gap:var(--s1);padding:0 var(--s2)}
+.panel-toggle svg,.theme-toggle svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.panel-toggle .strip{fill:transparent;stroke:none;transition:fill 150ms ease-out}
+.panel-toggle[aria-expanded="true"]{color:var(--accent-ink)}
+.panel-toggle[aria-expanded="true"] .strip{fill:currentColor}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;padding:0}
+.seg{flex:none;display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.seg button{min-height:40px;padding:0 var(--s3);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+.layout{display:grid;grid-template-columns:auto minmax(320px,1fr) auto;min-height:0}
+.panel{position:relative;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--bg);color:var(--ink)}
+.panel-left{grid-column:1;width:clamp(260px,20vw,320px);border-right:1px solid var(--line)}
+.panel-right{grid-column:3;width:clamp(320px,24vw,400px);border-left:1px solid var(--line)}
+.panel-inner{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--s4) var(--s4) var(--s6)}
+.panel-inner::-webkit-scrollbar{width:8px}
+.panel-inner::-webkit-scrollbar-track{background:transparent}
+.panel-inner::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:8px;border:2px solid var(--bg)}
+.panel-inner::-webkit-scrollbar-thumb:hover{background:var(--scroll-hover)}
+@supports (scrollbar-color:auto){.panel-inner{scrollbar-width:thin;scrollbar-color:var(--scroll) transparent}}
+.panel-head{display:flex;align-items:center;gap:var(--s2);min-height:44px;margin-bottom:var(--s2)}
+.panel-head h2{flex:1 1 0;min-width:0;margin:0;font-size:22px;line-height:1.4}
+.stage{grid-column:2;position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--bg)}
+.scrim{display:none}
+.panel-resize{display:none}
+
+.sec{margin-top:var(--s5);padding-top:var(--s5);border-top:1px solid var(--line)}
+.panel-head + .sec,.panel-head + div > .sec:first-child{margin-top:0;padding-top:0;border-top:0}
+.sec-title{display:block;margin:0 0 var(--s3);font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-0.01em}
+.sub{margin:var(--s3) 0 0;font-size:14px;line-height:1.6;color:var(--ink-2)}
+
+.opt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.btn{display:flex;align-items:center;gap:var(--s2);width:100%;min-height:var(--tap);padding:0 var(--s3);border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font-size:14px;font-weight:600;line-height:1.3;text-align:left;cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.btn .box{flex:none;width:12px;height:12px;border-radius:3px;border:1.5px solid currentColor}
+.btn[aria-pressed="true"] .box{background:currentColor}
+.steps{display:flex;flex-direction:column;gap:var(--s2)}
+.steps .btn{padding:var(--s2) var(--s3);gap:var(--s3)}
+.step-num{flex:none;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid;font-size:12px;font-weight:700;color:var(--ink)}
+.step-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.step-txt b{font-size:15px;font-weight:700}
+.step-txt span{font-size:13px;font-weight:500;color:var(--ink-2)}
+.detail{margin-top:var(--s3);padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+
+
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.tiles.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tile{padding:var(--s3);border-radius:var(--radius);background:var(--surface)}
+.tile b{display:block;font-size:20px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}
+.tile span{display:block;font-size:13px;line-height:1.4;color:var(--ink-2)}
+.events{display:flex;flex-direction:column;gap:var(--s2)}
+.event{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.6}
+.dot{flex:none;width:10px;height:10px;margin-top:7px;border-radius:50%}
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2) var(--s3);font-size:13px;color:var(--ink-2)}
+.legend div{display:flex;align-items:center;gap:var(--s2)}
+.sw{flex:none;width:16px;height:6px;border-radius:3px}
+.sw.ball{width:12px;height:12px;border-radius:50%}
+.sec.warn{border-top:0;padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+.warn .sec-title{color:var(--warn);font-size:17px}
+.mistake{margin-top:var(--s3)}
+.mistake b{display:block;font-weight:700}
+.mistake span{color:var(--ink-2)}
+
+.canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.canvas.is-fixed{cursor:default}
+.view-btns{position:absolute;top:var(--s3);right:var(--s3);display:flex;gap:6px}
+.icon-btn{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);cursor:pointer}
+.icon-btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.icon-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.float{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius)}
+.hover-card{position:absolute;left:var(--s3);bottom:var(--s3);display:flex;flex-direction:column;gap:2px;padding:var(--s3) var(--s4);pointer-events:none}
+.hover-card .k{font-size:13px;color:var(--ink-2)}
+.hover-card .v{font-size:18px;font-weight:700}
+.playbar{position:absolute;left:var(--s3);right:var(--s3);bottom:var(--s3);display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3)}
+.play{flex:none;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--radius);background:var(--btn-bg);color:var(--on-btn) !important;cursor:pointer}
+.play svg{width:18px;height:18px;fill:currentColor}
+.scrub{flex:1 1 200px;min-width:160px;display:flex;flex-direction:column;gap:2px}
+.scrub span{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.scrub input{width:100%;height:24px;margin:0;accent-color:var(--accent)}
+.speeds{display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.speeds button{min-width:48px;height:40px;padding:0 var(--s2);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
+.speeds button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+@media (hover:hover){.btn:hover,.icon-btn:hover{background:var(--surface)}.text-btn:hover{background:var(--surface)}}
+@media (min-width:1024px){
+  .panel-head{display:none}
+  .layout{--pl:var(--pl-user,clamp(260px,20vw,320px));--pr:var(--pr-user,clamp(320px,24vw,400px))}
+  .panel{width:0;border-width:0;visibility:hidden;transition:width var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left.is-open{width:var(--pl)}
+  .panel-right.is-open{width:var(--pr)}
+  .panel.is-open{visibility:visible;border-width:1px;transition:width var(--dur) var(--ease-out)}
+  .panel-left .panel-inner{width:var(--pl)}
+  .panel-right .panel-inner{width:var(--pr);align-self:flex-end}
+  .layout.is-resizing .panel{transition:none}
+  .layout.is-resizing{cursor:col-resize;user-select:none}
+  .panel-resize{display:block;position:absolute;top:0;bottom:0;z-index:2;width:12px;padding:0;border:0;background:transparent;cursor:col-resize;touch-action:none}
+  .panel-left .panel-resize{right:0}
+  .panel-right .panel-resize{left:0}
+  .panel-resize::after{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--accent);opacity:0;transition:opacity 150ms ease-out}
+  .panel-left .panel-resize::after{right:0}
+  .panel-right .panel-resize::after{left:0}
+  .panel-resize:focus-visible{outline:none}
+  .panel-resize:focus-visible::after,.is-resizing .panel-resize:active::after{opacity:1}
+  @media (hover:hover){.panel-resize:hover::after{opacity:1}}
+}
+@media (max-width: 1023.98px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .stage{grid-column:1}
+  .panel{position:fixed;top:0;bottom:0;z-index:40;visibility:hidden;transition:transform var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left{left:0;width:min(304px,88vw);transform:translateX(-100%)}
+  .panel-right{right:0;width:min(360px,88vw);transform:translateX(100%)}
+  .panel.is-open{visibility:visible;transform:none;transition:transform var(--dur) var(--ease-out)}
+  .panel-inner{padding-top:calc(var(--s3) + env(safe-area-inset-top));padding-bottom:calc(var(--s6) + env(safe-area-inset-bottom))}
+  .scrim{display:block;position:fixed;inset:0;z-index:35;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .scrim.is-on{opacity:1;visibility:visible;transition:opacity var(--dur) var(--ease-out)}
+}
+@media (max-width:640px){.brand{display:none}.topbar{justify-content:space-between}}
+@media (max-width:480px){.panel-toggle span{display:none}.seg button{padding:0 var(--s2)}}
+@media (prefers-reduced-motion:reduce){.panel,.panel.is-open,.scrim,.scrim.is-on,.panel-toggle .strip,.panel-resize::after{transition:none}}
+</style>
+</head>
+<body>
+<div id="dc-root"></div>
+<template id="dc-template">
+<div class="app" onKeyDown="{{onKey}}" style="--bg: {{th.bg}}; --surface: {{th.surface}}; --ink: {{th.ink}}; --ink-2: {{th.ink2}}; --line: {{th.line}}; --accent: {{th.accent}}; --accent-ink: {{th.accentInk}}; --btn-bg: {{th.btnBg}}; --on-btn: {{th.onBtn}}; --warn: {{th.warn}}; --prof: {{th.prof}}; --supp: {{th.supp}}; --danger: {{th.danger}}; --scroll: {{th.scroll}}; --scroll-hover: {{th.scrollHover}}">
+<header class="topbar">
+<button class="text-btn panel-toggle" type="button" aria-label="조작 패널" aria-expanded="{{leftExpanded}}" onClick="{{toggleLeft}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M9 4v16"></path></svg><span>조작</span></button>
+<strong class="brand">lac 오페론 스위치</strong>
+<sc-if value="{{hasModes}}" hint-placeholder-val="{{ true }}">
+<div class="seg" role="group" aria-label="보기 선택">
+<sc-for list="{{modes}}" as="md" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{md.pressed}}" onClick="{{md.pick}}">{{md.label}}</button>
+</sc-for>
+</div>
+</sc-if>
+<button class="text-btn theme-toggle" type="button" aria-label="{{themeLabel}}" title="{{themeLabel}}" onClick="{{toggleTheme}}">
+<sc-if value="{{isDark}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+<sc-if value="{{isLight}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></sc-if>
+</button>
+<button class="text-btn panel-toggle" type="button" aria-label="설명 패널" aria-expanded="{{rightExpanded}}" onClick="{{toggleRight}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M15 4v16"></path></svg><span>설명</span></button>
+</header>
+
+<div class="layout {{layoutCls}}" style="{{layoutStyle}}">
+<aside class="panel panel-left {{leftCls}}" aria-label="조작">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="220" aria-valuemax="480" aria-valuenow="{{leftWNow}}" ref="{{leftHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>조작</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<sc-if value="{{hasToggles}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">보기 옵션</h3>
+<div class="opt">
+<sc-for list="{{toggles}}" as="t" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{t.pressed}}" onClick="{{t.toggle}}"><span class="box" aria-hidden="true"></span>{{t.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<!-- SLOT:left -->
+<div class="sec">
+<h3 class="sec-title">젖당 스위치</h3>
+<div class="opt">
+<button class="btn" type="button" aria-pressed="{{sw.off}}" onClick="{{sw.pickOff}}"><span class="box" aria-hidden="true"></span>젖당 없음</button>
+<button class="btn" type="button" aria-pressed="{{sw.on}}" onClick="{{sw.pickOn}}"><span class="box" aria-hidden="true"></span>젖당 있음</button>
+</div>
+<p class="sub">포도당은 없음으로 고정했어요. 누르면 그 조건을 처음부터 재생해요.</p>
+</div>
+<!-- /SLOT:left -->
+
+<sc-if value="{{hasSteps}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">단계</h3>
+<div class="steps">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}"><span class="step-num num" style="border-color: {{s.c}}">{{s.num}}</span><span class="step-txt"><b>{{s.title}}</b><span>{{s.who}}</span></span></button>
+</sc-for>
+</div>
+<sc-if value="{{hasStep}}" hint-placeholder-val="{{ false }}">
+<div class="detail" aria-live="polite">{{stepDetail}}</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</aside>
+
+<section class="stage" aria-label="모형 보기">
+<canvas class="canvas {{canvasCls}}" ref="{{canvasRef}}" role="img" aria-label="{{canvasLabel}}"></canvas>
+<div class="view-btns">
+<button class="icon-btn" type="button" aria-label="확대" onClick="{{zoomIn}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="축소" onClick="{{zoomOut}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="시점 처음으로" onClick="{{resetView}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v5h5"></path></svg></button>
+</div>
+
+<sc-if value="{{hasPlayback}}" hint-placeholder-val="{{ false }}">
+<div class="playbar float">
+<button class="play" type="button" aria-label="{{playLabel}}" onClick="{{togglePlay}}">
+<sc-if value="{{isPlaying}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></sc-if>
+<sc-if value="{{notPlaying}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5l12 7-12 7z"></path></svg></sc-if>
+</button>
+<label class="scrub">
+<span>{{fLabel}}</span>
+<input type="range" min="0" max="{{fMax10}}" step="1" value="{{fInt}}" onChange="{{onScrub}}">
+</label>
+<div class="speeds" role="group" aria-label="재생 속도">
+<sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{sp.pressed}}" onClick="{{sp.pick}}">{{sp.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</section>
+
+<aside class="panel panel-right {{rightCls}}" aria-label="설명">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="280" aria-valuemax="720" aria-valuenow="{{rightWNow}}" ref="{{rightHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>설명</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<!-- SLOT:right -->
+<div>
+<div class="sec">
+<h3 class="sec-title">지금 조건과 결과</h3>
+<div class="tiles">
+<div class="tile"><b>없음</b><span>포도당 (고정)</span></div>
+<div class="tile"><b>{{cond.lac}}</b><span>젖당</span></div>
+<div class="tile"><b>{{cond.rep}}</b><span>억제자</span></div>
+<div class="tile"><b>{{cond.tx}}</b><span>lac 유전자 전사</span></div>
+</div>
+</div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{events}}" as="e" hint-placeholder-count="2">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">구성 요소</h3>
+<div class="legend">
+<div><span class="sw" style="background: {{legend.prom}}"></span>프로모터 (DNA)</div>
+<div><span class="sw" style="background: {{legend.oper}}"></span>작동자 (DNA)</div>
+<div><span class="sw" style="background: {{legend.lacZ}}"></span><span class="sw" style="background: {{legend.lacY}}"></span><span class="sw" style="background: {{legend.lacA}}"></span>lacZ · lacY · lacA</div>
+<div><span class="sw" style="background: {{legend.lacI}}"></span>lacI (오페론 바깥)</div>
+<div><span class="sw ball" style="background: {{legend.rep}}"></span>억제자 (단백질)</div>
+<div><span class="sw ball" style="background: {{legend.repOff}}"></span>억제자 (모양 바뀜)</div>
+<div><span class="sw ball" style="background: {{legend.pol}}"></span>RNA 중합효소</div>
+<div><span class="sw" style="background: {{legend.mrna}}"></span>mRNA</div>
+<div><span class="sw ball" style="background: {{legend.ribo}}"></span>리보솜</div>
+<div><span class="sw ball" style="background: {{legend.lac}}"></span>젖당</div>
+<div><span class="sw ball" style="background: {{legend.allo}}"></span>알로락토스 (유도자)</div>
+<div><span aria-hidden="true" style="color: {{legend.block}}; font-weight: 700">✕</span>전사 시작 막힘</div>
+</div>
+<sc-if value="{{is.off}}" hint-placeholder-val="{{ true }}">
+<p class="sub">강의노트·교과서(그림 5.20a)와 교수님 설명은 억제자 때문에 RNA 중합효소가 프로모터에 붙지 못한다고 했고, 영어 슬라이드는 중합효소가 나아가지 못하게 막는 장애물(roadblock)에 비유했어요. 어느 쪽이든 lac 유전자는 전사되지 않아요.</p>
+</sc-if>
+<sc-if value="{{is.on}}" hint-placeholder-val="{{ false }}">
+<p class="sub">세 단백질이 모두 젖당을 직접 자르는 효소는 아니에요. 이 모형은 포도당 없음을 고정했어요. 젖당이 있다는 조건 하나로 모든 환경에서 강한 발현이 보장되지는 않아요.</p>
+</sc-if>
+</div>
+</div>
+<!-- /SLOT:right -->
+
+<div class="sec warn">
+<h3 class="sec-title">꼭 기억해요</h3>
+<sc-for list="{{mistakes}}" as="m" hint-placeholder-count="3">
+<div class="mistake"><b>{{m.title}}</b><span>{{m.text}}</span></div>
+</sc-for>
+</div>
+</div>
+</aside>
+</div>
+<div class="scrim {{scrimCls}}" aria-hidden="true" onClick="{{closePanels}}"></div>
+</div>
+</template>
+<script>
+// Minimal x-dc runtime for opening the canvas component as a plain HTML page.
+// Supports what Main.dc.html uses: {{dotted.path}} holes in text and attributes,
+// event attributes (onClick, onKeyDown, onMouseEnter, onMouseLeave, onChange),
+// callback ref, <sc-if value> and <sc-for list as>.
+const DC_EVENTS = { onclick: 'click', onkeydown: 'keydown', onmouseenter: 'mouseenter', onmouseleave: 'mouseleave', onchange: 'input' };
+const DC_HOLE = /\{\{\s*([\w.$]+)\s*\}\}/g;
+let dcSchedule = () => {};
+
+class DCLogic {
+  constructor(props) { this.props = props || {}; this.state = {}; }
+  setState(u) {
+    this.state = Object.assign({}, this.state, typeof u === 'function' ? u(this.state) : u);
+    dcSchedule();
+  }
+}
+
+function dcGet(scope, path) {
+  let o = scope;
+  for (const k of path.split('.')) { if (o == null) return undefined; o = o[k]; }
+  return o;
+}
+function dcInterp(str, scope) {
+  return str.replace(DC_HOLE, (_, p) => { const v = dcGet(scope, p); return v == null ? '' : String(v); });
+}
+function dcSingle(str) {
+  const m = str.match(/^\s*\{\{\s*([\w.$]+)\s*\}\}\s*$/);
+  return m ? m[1] : null;
+}
+
+// Compiles one node in place; pushes updaters that take the current scope.
+function dcCompile(node, ups) {
+  if (node.nodeType === 3) {
+    if (!node.data.includes('{{')) return;
+    const src = node.data;
+    let last;
+    ups.push((s) => { const v = dcInterp(src, s); if (v !== last) { node.data = v; last = v; } });
+    return;
+  }
+  if (node.nodeType !== 1) return;
+  const tag = node.tagName.toLowerCase();
+  if (tag === 'sc-if' || tag === 'sc-for') { dcBlock(node, tag, ups); return; }
+  for (const a of [...node.attributes]) {
+    const name = a.name, val = a.value;
+    if (name.startsWith('hint-')) { node.removeAttribute(name); continue; }
+    if (!val.includes('{{')) continue;
+    node.removeAttribute(name);
+    if (DC_EVENTS[name]) {
+      const p = dcSingle(val);
+      let cur;
+      node.addEventListener(DC_EVENTS[name], (e) => { const f = dcGet(cur, p); if (typeof f === 'function') f(e); });
+      ups.push((s) => { cur = s; });
+    } else if (name === 'ref') {
+      const p = dcSingle(val);
+      let done = false;
+      ups.push((s) => { if (!done) { done = true; const f = dcGet(s, p); if (typeof f === 'function') f(node); } });
+    } else {
+      let last;
+      ups.push((s) => {
+        const v = dcInterp(val, s);
+        if (v === last) return;
+        last = v;
+        if (name === 'value' && 'value' in node) node.value = v; else node.setAttribute(name, v);
+      });
+    }
+  }
+  for (const c of [...node.childNodes]) dcCompile(c, ups);
+}
+
+function dcBlock(el, tag, ups) {
+  const anchor = document.createComment(tag);
+  el.parentNode.replaceChild(anchor, el);
+  const tpl = document.createDocumentFragment();
+  while (el.firstChild) tpl.appendChild(el.firstChild);
+  const make = () => {
+    const frag = tpl.cloneNode(true), u = [];
+    for (const c of [...frag.childNodes]) dcCompile(c, u);
+    return { frag: frag, nodes: [...frag.childNodes], u: u };
+  };
+  if (tag === 'sc-if') {
+    const p = dcSingle(el.getAttribute('value') || '');
+    let inst = null;
+    ups.push((s) => {
+      const on = !!dcGet(s, p);
+      if (!on) { if (inst) { inst.nodes.forEach((n) => n.remove()); inst = null; } return; }
+      if (!inst) { inst = make(); anchor.parentNode.insertBefore(inst.frag, anchor); }
+      inst.u.forEach((f) => f(s));
+    });
+  } else {
+    const p = dcSingle(el.getAttribute('list') || ''), as = el.getAttribute('as');
+    const insts = [];
+    ups.push((s) => {
+      const list = dcGet(s, p) || [];
+      while (insts.length > list.length) insts.pop().nodes.forEach((n) => n.remove());
+      while (insts.length < list.length) { const i = make(); anchor.parentNode.insertBefore(i.frag, anchor); insts.push(i); }
+      list.forEach((item, k) => { const sc = Object.create(s); sc[as] = item; insts[k].u.forEach((f) => f(sc)); });
+    });
+  }
+}
+
+function mountDC(Component) {
+  const comp = new Component({});
+  const frag = document.getElementById('dc-template').content.cloneNode(true), ups = [];
+  for (const c of [...frag.childNodes]) dcCompile(c, ups);
+  const root = document.getElementById('dc-root');
+  let pending = false;
+  const render = () => { pending = false; const v = comp.renderVals(); ups.forEach((f) => f(v)); };
+  dcSchedule = () => { if (!pending) { pending = true; queueMicrotask(render); } };
+  root.appendChild(frag);
+  render();
+  window.addEventListener('pagehide', () => { if (comp.componentWillUnmount) comp.componentWillUnmount(); });
+}
+class Component extends DCLogic {
+  // ================= 주제 훅: 주제마다 바꾸는 곳은 이 네 메서드뿐이에요 =================
+  // 계약은 bio-interactive/references/scene-api.md에 있어요.
+
+  topic() {
+    // 장면 좌표(평면, y 위쪽). DNA는 y = 0. lacZ·Y·A 길이는 실제 비율(약 3.1 : 1.3 : 0.6 kb)에 가깝게.
+    const G = {
+      dnaL: -7.6, dnaR: 7.3, I: [-7.2, -5.1], P: [-4.3, -3.1], O: [-3.1, -2.3],
+      Z: [-2.3, 3.4], Y: [3.4, 5.7], A: [5.7, 6.85],
+      MY: -1.9, RB: [-6.15, -2.85], RO: [-2.7, 0.42], RL: [0.6, 1.75],
+      PW: [-5.0, 1.55], PB: [-3.7, 0.5], M0: -2.5, BR: 2.3,
+      L: [[-0.9, 3.3], [1.8, 3.15], [4.4, 3.35]], PROT_Y: -3.15
+    };
+    const phase = (mode, f) => {
+      if (mode === 'off') {
+        const rep = f < 2.6 ? '만드는 중(설명용)' : f < 4 ? '만드는 중' : f < 5.8 ? '이동 중' : '작동자에 결합';
+        const tx = f < 5.8 ? '—' : '막힘';
+        const ev = f < 2 ? [{ c: 'lacI', text: 'lacI가 전사돼 lacI mRNA가 만들어지고 있어요.' }]
+          : f < 4 ? [{ c: 'ribo', text: '리보솜이 lacI mRNA를 번역해 억제자를 만들어요.' }]
+            : f < 5.8 ? [{ c: 'rep', text: '억제자가 작동자(operator) 쪽으로 가고 있어요.' }]
+              : f < 6.6 ? [{ c: 'oper', text: '젖당이 없어 억제자가 작동자에 붙었어요.' }]
+                : [{ c: 'block', text: '억제자가 작동자를 차지하고 있어 RNA 중합효소가 프로모터에 붙지 못해요.' },
+                  { c: 'lacZ', text: 'lacZ·lacY·lacA는 전사되지 않아 아미노산과 에너지를 아껴요.' }];
+        return { rep: rep, tx: tx, ev: ev };
+      }
+      const rep = f < 3.5 ? '작동자에 결합' : f < 5 ? '알로락토스 결합' : f < 6.5 ? '떨어지는 중' : '떨어짐';
+      const tx = f < 5 ? '막힘' : f < 6.5 ? '시작 전' : f < 7.5 ? '시작' : f < 11 ? '진행 중' : '끝 · mRNA 1개';
+      const nProt = [13.4, 12.8, 12.8].filter((t) => f >= t).length;
+      const ev = f < 2 ? [{ c: 'lac', text: '젖당이 세포 안으로 들어와요.' }]
+        : f < 3.5 ? [{ c: 'allo', text: '젖당이 약간 변형돼 알로락토스가 생겨요.' }]
+          : f < 5 ? [{ c: 'allo', text: '알로락토스가 작동자가 아니라 억제자에 붙어요.' }]
+            : f < 6.5 ? [{ c: 'repOff', text: '억제자 구조가 바뀌어 작동자에서 떨어져요.' }]
+              : f < 7.5 ? [{ c: 'pol', text: '작동자가 비자 RNA 중합효소가 프로모터에 붙어요.' }]
+                : f < 11 ? [{ c: 'mrna', text: 'lacZ→lacY→lacA를 이어서 mRNA 한 분자로 전사해요.' }]
+                  : f < 13.8 ? [{ c: 'ribo', text: '리보솜이 한 mRNA에서 세 단백질을 따로 번역해요.' },
+                    { c: 'lacZ', text: 'lac 단백질 세 개가 만들어지는 중이에요. 완성 ' + nProt + ' / 3' }]
+                    : [{ c: 'lacZ', text: '번역이 끝나 lacZ·lacY·lacA 단백질 3개가 생겼어요.' }];
+      return { rep: rep, tx: tx, ev: ev };
+    };
+    return {
+      G: G, phase: phase,
+      MODES: [
+        { key: 'off', label: '젖당 없음', cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [16.6, 10.4], D: 60,
+          autoSpin: false, rotatable: false,
+          playback: { fmax: 8, rate: 0.8, label: (f) => (f < 2 ? 'lacI 전사' : f < 4 ? '억제자 번역' : f < 5.8 ? '억제자 이동' : f < 6.6 ? '작동자 결합' : '전사 막힘') + ' · ' + f.toFixed(1) + ' / 8' },
+          canvasLabel: (f) => '포도당 없음, 젖당 없음 조건의 lac 오페론 도식. ' + (f < 2 ? 'lacI가 전사되고 있어요.'
+            : f < 4 ? '리보솜이 lacI mRNA를 번역해 억제자를 만들고 있어요.'
+              : f < 5.8 ? '억제자가 작동자로 이동하고 있어요.'
+                : f < 6.6 ? '젖당이 없어 억제자가 작동자에 붙었어요.'
+                : '억제자가 작동자에 붙어 있어 RNA 중합효소가 프로모터에 붙지 못하고, lac 유전자는 전사되지 않아요.') },
+        { key: 'on', label: '젖당 있음', cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [16.6, 10.4], D: 60,
+          autoSpin: false, rotatable: false,
+          playback: { fmax: 14, rate: 1, label: (f) => (f < 2 ? '젖당 유입' : f < 3.5 ? '알로락토스 생성' : f < 5 ? '억제자에 결합' : f < 6.5 ? '억제자 이탈' : f < 7.5 ? '프로모터 결합' : f < 11 ? '전사' : f < 13.8 ? '번역' : '번역 끝') + ' · ' + f.toFixed(1) + ' / 14' },
+          canvasLabel: (f) => '포도당 없음, 젖당 있음 조건의 lac 오페론 도식. ' + (f < 3.5 ? '젖당이 들어와 알로락토스가 생기고 있어요.'
+            : f < 6.5 ? '알로락토스가 억제자에 붙어 억제자가 작동자에서 떨어지고 있어요.'
+              : f < 11 ? 'RNA 중합효소가 lacZ, lacY, lacA를 mRNA 한 분자로 전사하고 있어요.'
+                : f < 13.8 ? '리보솜들이 한 mRNA에서 lacZ, lacY, lacA 단백질 세 개를 따로 번역하고 있어요.' : '번역이 끝나 lacZ, lacY, lacA 단백질 세 개가 생겼어요.') }
+      ],
+      STEPS: [
+        { mode: 'off', f: 3.8, phase: '억제자 번역', c: '#7B5CD6', title: '억제자 만들기', who: 'lacI · 리보솜',
+          text: 'lacI는 lac 오페론 바깥에 따로 있는 조절 유전자예요. lacI mRNA를 리보솜이 번역해 억제자 단백질을 만들어요. 억제자는 젖당이 있든 없든 늘 만들어져요. 실제 세포에는 억제자가 늘 있어요. 여기서는 억제자가 어디서 오는지 보여 주려고 처음부터 그렸어요.' },
+        { mode: 'off', f: 6.3, phase: '작동자 결합', c: '#D98A0B', title: '억제자가 작동자에 결합', who: '억제자',
+          text: '젖당이 없으면 억제자가 프로모터와 lacZ 사이의 작동자(operator)에 붙어요. 작동자는 DNA 서열, 억제자는 단백질이에요.' },
+        { mode: 'off', f: 8, phase: '전사 막힘', c: '#2F80ED', title: '전사가 막혀요', who: 'RNA 중합효소',
+          text: '억제자가 작동자를 차지하고 있어 RNA 중합효소가 프로모터에 붙지 못해요. lacZ·lacY·lacA가 발현되지 않으니 아미노산과 에너지를 아낄 수 있어요.' },
+        { mode: 'on', f: 3.3, phase: '알로락토스 생성', c: '#1FA3A8', title: '젖당 → 알로락토스', who: '젖당',
+          text: '젖당(갈락토스+포도당)이 세포 안으로 들어와요. 젖당이 약간 변형돼 알로락토스(allolactose)가 생겨요. 억제자에 실제로 붙는 것은 젖당 자신이 아니라 알로락토스예요.' },
+        { mode: 'on', f: 6.3, phase: '억제자 이탈', c: '#65A30D', title: '억제자가 떨어져요', who: '알로락토스',
+          text: '알로락토스(유도자, inducer)가 억제자에 결합하면 억제자 구조가 바뀌어요. 바뀐 억제자는 작동자에 붙지 못하고 떨어져 작동자가 드러나요.' },
+        { mode: 'on', f: 10.9, phase: '전사', c: '#E8559B', title: '한 mRNA로 전사', who: 'RNA 중합효소',
+          text: 'RNA 중합효소가 프로모터에 붙어 lacZ→lacY→lacA를 차례로 전사해요. 세 유전자가 한 프로모터 아래 나란히 있어 mRNA 한 분자로 만들어져요.' },
+        { mode: 'on', f: 12.3, phase: '번역', c: '#9A6A44', title: '세 단백질 번역', who: '리보솜',
+          text: '한 mRNA의 lacZ·lacY·lacA 구간마다 리보솜이 붙어 단백질을 따로 번역해요. 세 단백질을 이어 붙인 한 폴리펩티드가 아니에요. 교수님은 피자를 먹을 때 함께 필요한 가위·칼·포크에 비유하셨어요.' }
+      ],
+      MISTAKES: {
+        off: [
+          { title: '작동자 ≠ 억제자', text: '작동자는 DNA 서열, 억제자는 단백질이에요. 화면에서 DNA 줄의 주황 칸이 작동자, 그 위에 앉은 보라 덩어리가 억제자예요.' },
+          { title: '프로모터 ≠ 작동자', text: '프로모터는 RNA 중합효소가 붙는 자리, 작동자는 억제자가 붙는 자리예요. 작동자는 프로모터와 lacZ 사이에 있어요.' },
+          { title: 'lacI는 오페론 바깥', text: 'lacI는 lacZYA와 함께 전사되는 구조유전자가 아니에요. 1단계처럼 젖당이 없어도 억제자는 만들어져요.' }
+        ],
+        on: [
+          { title: '알로락토스는 억제자에 붙어요', text: '알로락토스는 작동자(DNA)가 아니라 억제자(단백질)에 붙어요. 5단계에서 억제자의 DNA에 닿는 부분이 벌어지는 걸 보세요.' },
+          { title: 'mRNA 1개 → 단백질 3개', text: 'lacZ·lacY·lacA는 mRNA 한 분자로 전사되지만, 번역하면 단백질 세 개가 따로 만들어져요. 7단계에서 리보솜 셋을 확인해요.' },
+          { title: '전사 ≠ 번역', text: '프로모터에서 시작해 mRNA를 만드는 것이 전사(RNA 중합효소), mRNA를 읽어 단백질을 잇는 것이 번역(리보솜)이에요.' }
+        ]
+      },
+      TOGGLES: [['labels', '이름표'], ['dir', '5′·3′ 표시']],
+      PAL: {
+        light: { bg: '#ffffff', labelBg: '#f7f8fa', ink: '#111111', ring: '#111111', blobAlpha: 0.30,
+          dna: '#9AA3B0', lacI: '#7B5CD6', prom: '#2F9E5E', oper: '#D98A0B', lacZ: '#D2463F', lacY: '#E0736A', lacA: '#A8344F',
+          rep: '#8E6BE8', repOff: '#A9A3BF', pol: '#2F80ED', mrna: '#E8559B', ribo: '#9A6A44',
+          lac: '#1FA3A8', lac2: '#5CC4C8', allo: '#65A30D', allo2: '#84CC16', block: '#D92D20' },
+        dark: { bg: '#17171c', labelBg: '#212128', ink: '#f2f4f6', ring: '#f2f4f6', blobAlpha: 0.42,
+          dna: '#8A93A0', lacI: '#A88BFF', prom: '#5FD39A', oper: '#F5B547', lacZ: '#FF7A70', lacY: '#FFA39A', lacA: '#E06A86',
+          rep: '#B69CFF', repOff: '#9893AD', pol: '#6EA4FF', mrna: '#FF85BF', ribo: '#C9976B',
+          lac: '#4FD1D6', lac2: '#8FE3E6', allo: '#A3E635', allo2: '#BEF264', block: '#FF6B61' }
+      }
+    };
+  }
+
+  // 장면 만들기: I(그리기 항목)와 O(라벨)에 push만 해요. 진행값은 this.sim.f를 써요.
+  buildScene(mode, I, O) {
+    const pal = this.pal(), st = this.state, G = this.T.G, f = this.sim.f, on = mode === 'on';
+    const sm = (x) => this.sm(x), cl = (x) => Math.max(0, Math.min(1, x));
+    const mid = (r) => (r[0] + r[1]) / 2;
+    const seg = (x0, x1, y, w, c, a) => I.push({ k: 1, p: [x0, y, 0], q: [x1, y, 0], w: w, c: c, flat: true, a: a });
+    const txt = (x, y, text, c, size, a) => I.push({ k: 3, p: [x, y, 0], text: text, size: size || 11, c: this.textTone(c), a: a });
+    const lerp2 = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+    const bez = (a, c, b, t) => [(1 - t) * (1 - t) * a[0] + 2 * (1 - t) * t * c[0] + t * t * b[0], (1 - t) * (1 - t) * a[1] + 2 * (1 - t) * t * c[1] + t * t * b[1]];
+    const label = (p, text, c, dx, dy, a) => { if (st.labels) O.push({ p: [p[0], p[1], 0], text: text, c: c, dx: dx || 0, dy: dy || 0, a: a }); };
+
+    // 고정 조건
+    txt(0, 4.45, '포도당 없음(고정) · 젖당 ' + (on ? '있음' : '없음'), pal.ink, 13);
+
+    // DNA: 골격 + 구역(lacI · 프로모터 · 작동자 · lacZ · lacY · lacA)
+    seg(G.dnaL, G.dnaR, 0, 0.1, pal.dna);
+    [['I', 'lacI'], ['P', 'prom'], ['O', 'oper'], ['Z', 'lacZ'], ['Y', 'lacY'], ['A', 'lacA']].forEach((d) => {
+      seg(G[d[0]][0] + 0.03, G[d[0]][1] - 0.03, 0, 0.34, pal[d[1]]);
+    });
+    txt(mid(G.I), -0.5, 'lacI', pal.lacI, 12);
+    txt(mid(G.P), -0.5, '프로모터', pal.prom, 11);
+    txt(mid(G.O), -1.15, '작동자', pal.oper, 11);
+    txt(mid(G.Z), -0.5, 'lacZ', pal.lacZ, 12);
+    txt(mid(G.Y), -0.5, 'lacY', pal.lacY, 12);
+    txt(mid(G.A), -0.5, 'lacA', pal.lacA, 12);
+    // lac 오페론 범위(프로모터~lacA): lacI는 바깥
+    I.push({ k: 1, p: [G.P[0], G.BR - 0.2, 0], q: [G.P[0], G.BR, 0], w: 0.03, c: pal.dna });
+    I.push({ k: 1, p: [G.P[0], G.BR, 0], q: [G.A[1], G.BR, 0], w: 0.03, c: pal.dna });
+    I.push({ k: 1, p: [G.A[1], G.BR, 0], q: [G.A[1], G.BR - 0.2, 0], w: 0.03, c: pal.dna });
+    txt(1.3, G.BR + 0.25, 'lac 오페론', pal.dna, 11);
+
+    // 분자 그리기 도우미
+    const ribosome = (x, y, a) => {
+      I.push({ k: 5, p: [x, y + 0.17, 0], r: 0.3, c: pal.ribo, a: a });
+      I.push({ k: 5, p: [x, y - 0.15, 0], r: 0.2, c: pal.ribo, a: a });
+    };
+    // 억제자: 머리 + DNA에 닿는 두 부분. u = 알로락토스 결합 뒤 모양 변화(0–1)
+    const repressor = (c, u, a, sc) => {
+      const head = [c[0], c[1] + 0.12 * sc, 0];
+      I.push({ k: 5, p: head, r: 0.42 * sc, c: pal.rep, a: a * (1 - u) });
+      if (u > 0) I.push({ k: 5, p: head, r: 0.42 * sc, c: pal.repOff, a: a * u });
+      const dx = 0.15 + 0.2 * u, dy = -0.3 + 0.14 * u;
+      [-1, 1].forEach((s) => I.push({ k: 0, p: [c[0] + s * dx * sc, c[1] + dy * sc, 0], r: 0.11 * sc, c: u < 0.5 ? pal.rep : pal.repOff, a: a }));
+      return [head[0] + 0.5 * sc, head[1] + 0.05 * sc];
+    };
+    // 이당류: 두 단위체(구) + 연결. allo면 연결 모양이 달라요
+    const sugar = (p, c1, c2, ang, a) => {
+      const dx = 0.18 * Math.cos(ang), dy = 0.18 * Math.sin(ang);
+      const p1 = [p[0] - dx, p[1] - dy, 0], p2 = [p[0] + dx, p[1] + dy, 0];
+      I.push({ k: 1, p: p1, q: p2, w: 0.06, c: c1, a: a });
+      I.push({ k: 0, p: p1, r: 0.15, c: c1, a: a });
+      I.push({ k: 0, p: p2, r: 0.15, c: c2, a: a });
+    };
+    const ends = (x0, x1, y, a) => {
+      if (!st.dir) return;
+      txt(x0, y + 0.32, '5′', pal.mrna, 11, a);
+      txt(x1, y + 0.32, '3′', pal.mrna, 11, a);
+      if (x1 - x0 > 0.4) I.push({ k: 4, p: [x1 - 0.4, y, 0], q: [x1, y, 0], c: pal.mrna, a: a });
+    };
+
+    // lacI 발현: 젖당과 상관없이 늘 일어나요
+    const iA = on ? 0.45 : 1, ig = on ? 1 : sm(f / 2);
+    if (ig > 0.01) {
+      const x1 = G.I[0] + (G.I[1] - G.I[0]) * ig;
+      seg(G.I[0], x1, G.MY, 0.1, pal.mrna, iA);
+      ends(G.I[0], x1, G.MY, iA);
+      if (!on && f < 2.6) label([mid(G.I), G.MY], 'lacI mRNA', pal.mrna, 0, 24);
+    }
+    if (on) ribosome(mid(G.I), G.MY, 0.4);
+    else if (f > 1.8 && f < 4.4) {
+      const rp = cl((f - 2) / 2), ra = sm((f - 1.8) / 0.3) * (1 - sm((f - 4) / 0.4));
+      const rx = G.I[0] + (G.I[1] - G.I[0]) * rp;
+      ribosome(rx, G.MY, ra);
+      if (f < 3) label([rx, G.MY], '리보솜', pal.ribo, 0, 30, ra);
+    }
+
+    // 억제자 위치와 상태
+    let rc = null, ru = 0, rs = 1, ra = 1;
+    if (!on) {
+      if (f >= 2.6) {
+        rs = 0.35 + 0.65 * sm((f - 2.6) / 1.4);
+        ra = sm((f - 2.6) / 0.5);
+        const t = sm((f - 4) / 1.8);
+        rc = t <= 0 ? G.RB : bez(G.RB, [-4.9, 1.2], G.RO, t);
+      }
+    } else {
+      ru = sm((f - 4.8) / 0.6);
+      rc = lerp2(G.RO, G.RL, sm((f - 5.3) / 1.2));
+    }
+    let pocket = null;
+    if (rc) {
+      pocket = repressor(rc, ru, ra, rs);
+      const moved = on && ru > 0.5;
+      label(rc, moved ? '억제자(모양 바뀜)' : '억제자', pal.rep, moved ? 84 : 0, moved ? 0 : rc[1] < -1 ? 34 : -40, ra);
+      if (!on && f >= 5.8 && f < 6.8) O.push({ t: 'ring', p: [mid(G.O), 0, 0], text: '결합' });
+      if (on && f >= 6 && f < 7.4) O.push({ t: 'ring', p: [mid(G.O), 0, 0], text: '노출' });
+    }
+
+    // 젖당과 알로락토스(젖당 있음)
+    if (on) {
+      G.L.forEach((Lp, i) => {
+        const te = sm((f - 0.3 * i) / 1.5);
+        if (te <= 0) return;
+        let p = lerp2([Lp[0], 5.2], Lp, te);
+        if (i === 0) {
+          const u = sm((f - 2) / 1.5), tm = sm((f - 3.5) / 1.5);
+          if (tm > 0 && pocket) p = lerp2(Lp, pocket, tm);
+          if (u < 1) sugar(p, pal.lac, pal.lac2, 0, te * (1 - u));
+          if (u > 0) sugar(p, pal.allo, pal.allo2, 0.8, u);
+          if (u > 0.5 && f < 4.6) label(p, '알로락토스', pal.allo, 0, -24);
+        } else {
+          sugar(p, pal.lac, pal.lac2, 0, te);
+          if (i === 2 && f > 1.2) label(p, '젖당', pal.lac, 40, 0, te);
+        }
+      });
+    }
+
+    // RNA 중합효소
+    if (!on) {
+      if (f > 5.6) {
+        const t = sm((f - 5.8) / 1.0), a = sm((f - 5.6) / 0.4);
+        const p = lerp2([-6.9, 2.0], G.PW, t);
+        I.push({ k: 5, p: [p[0], p[1], 0], r: 0.62, c: pal.pol, a: a });
+        label(p, 'RNA 중합효소', pal.pol, -20, -40, a);
+        const xa = sm((f - 6.6) / 0.5);
+        if (xa > 0) {
+          const c = [-4.15, 0.95], d = 0.17;
+          I.push({ k: 1, p: [c[0] - d, c[1] - d, 0], q: [c[0] + d, c[1] + d, 0], w: 0.07, c: pal.block, a: xa });
+          I.push({ k: 1, p: [c[0] - d, c[1] + d, 0], q: [c[0] + d, c[1] - d, 0], w: 0.07, c: pal.block, a: xa });
+        }
+      }
+    } else {
+      let p = G.PW, a = 1;
+      if (f >= 6.5) p = lerp2(G.PW, G.PB, sm((f - 6.5) / 1.0));
+      if (f >= 7.5) p = [G.PB[0] + (G.A[1] - G.PB[0]) * cl((f - 7.5) / 3.5), G.PB[1]];
+      if (f >= 11) { p = lerp2([G.A[1], G.PB[1]], [7.9, 1.7], sm((f - 11) / 0.8)); a = 1 - sm((f - 11) / 0.8); }
+      if (a > 0.01) {
+        I.push({ k: 5, p: [p[0], p[1], 0], r: 0.62, c: pal.pol, a: a, focus: f >= 7.5 && f < 11 });
+        // 떨어져 나온 억제자 아래를 지날 때는 이름표를 잠깐 숨겨 겹치지 않게 해요
+        if (!(f >= 7.5 && Math.abs(p[0] - G.RL[0]) < 2.2)) label(p, 'RNA 중합효소', pal.pol, -20, -40, a);
+      }
+      // lac mRNA: 5′ 끝은 작동자 근처, 중합효소를 따라 3′ 쪽으로 자라요
+      const tip = f >= 11 ? G.A[1] : Math.max(G.M0, p[0]);
+      if (f >= 7.5 && tip > G.M0 + 0.05) {
+        seg(G.M0, tip, G.MY, 0.1, pal.mrna);
+        if (f < 11) I.push({ k: 1, p: [tip, -0.2, 0], q: [tip, G.MY, 0], w: 0.05, c: pal.mrna });
+        ends(G.M0, tip, G.MY, 1);
+        label([-1.6, G.MY], 'lac mRNA', pal.mrna, 0, 22);
+      }
+      // 번역: 한 mRNA 위 세 구간에서 리보솜이 따로 단백질을 만들어요
+      [['Z', 11.0, 13.4, 0.6], ['Y', 11.5, 12.8, 0.42], ['A', 11.9, 12.8, 0.3]].forEach((g) => {
+        const r = G[g[0]], t0 = g[1], t1 = g[2], c = pal['lac' + g[0]];
+        if (f < t0) return;
+        const pr = cl((f - t0) / (t1 - t0)), rbA = sm((f - t0) / 0.3) * (1 - sm((f - t1) / 0.4));
+        const rx = r[0] + (r[1] - r[0]) * pr, pc = [mid(r), G.PROT_Y, 0];
+        if (rbA > 0.01) {
+          ribosome(rx, G.MY, rbA);
+          I.push({ k: 1, p: [rx, G.MY - 0.3, 0], q: pc, w: 0.04, c: c, a: rbA * 0.8 });
+        }
+        I.push({ k: 5, p: pc, r: g[3] * (0.35 + 0.65 * pr), c: c, a: sm(pr * 3) });
+        txt(pc[0], G.PROT_Y - (g[0] === 'A' ? 1.4 : 0.85), 'lac' + g[0] + ' 단백질', c, 11, sm((pr - 0.4) * 3));
+      });
+    }
+  }
+
+  // 주제 전용 상태(보기 옵션 키 등). 공통 상태에 합쳐져요.
+  extraState() {
+    return { labels: true, dir: true };
+  }
+
+  // 주제 전용 마크업 값. renderVals() 결과에 합쳐져요.
+  extraVals(st) {
+    const pal = this.pal(), ph = this.T.phase(st.mode, st.f);
+    const flip = (k) => () => {
+      this.setMode(k);
+      this.sim.f = 0;
+      this.setState({ f: 0, playing: true, step: -1 });
+    };
+    return {
+      legend: pal,
+      cond: { lac: st.mode === 'on' ? '있음' : '없음', rep: ph.rep, tx: ph.tx },
+      events: ph.ev.map((e) => ({ c: pal[e.c], text: e.text })),
+      sw: { off: st.mode === 'off' ? 'true' : 'false', on: st.mode === 'on' ? 'true' : 'false', pickOff: flip('off'), pickOn: flip('on') }
+    };
+  }
+
+  // ================= 공통 셸: 아래는 주제와 무관해요. 고치지 않아요 =================
+  constructor(...args) {
+    super(...args);
+    let reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    let narrow = false;
+    try { narrow = window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) {}
+    let saved = null;
+    try { saved = window.localStorage.getItem('od-theme'); } catch (e) {}
+    const PANEL_W = { left: { min: 220, max: 480 }, right: { min: 280, max: 720 } };
+    let widths = {};
+    try { widths = JSON.parse(window.localStorage.getItem('interactive-panel-w')) || {}; } catch (e) {}
+    const okW = (side) => { const v = widths[side]; return typeof v === 'number' && v >= PANEL_W[side].min && v <= PANEL_W[side].max ? v : null; };
+    this.T = this.topic();
+    this.state = Object.assign({
+      mode: this.T.MODES[0].key, f: 0, playing: false, speed: 1, step: -1, spin: !reduce,
+      theme: (saved === 'light' || saved === 'dark') ? saved : (this.systemDark() ? 'dark' : 'light'),
+      // leftOpen/rightOpen: docked panels on wide screens; drawer: the one open drawer on narrow screens
+      leftOpen: true, rightOpen: true, drawer: null, narrow: narrow,
+      // leftW/rightW: user-set docked widths in px (null = default); resizing: a handle is being dragged
+      leftW: okW('left'), rightW: okW('right'), resizing: false
+    }, this.extraState());
+    this.reduceMotion = reduce;
+    this.K = {
+      PANEL_W: PANEL_W, PANEL_W_KEY: 'interactive-panel-w', PANEL_DEFAULT: { left: 320, right: 400 },
+      THEMES: {
+        light: { bg: '#ffffff', surface: '#f7f8fa', ink: '#111111', ink2: '#6b7280', line: '#d9dee7', accent: '#1677ff', accentInk: '#1b64da', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#b54708', prof: '#6941c6', supp: '#067647', danger: '#d92d20', scroll: '#c9d0db', scrollHover: '#9aa3b2' },
+        dark: { bg: '#17171c', surface: '#212128', ink: '#f2f4f6', ink2: '#a3abb8', line: '#34353d', accent: '#3182f6', accentInk: '#6ea4ff', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#f5a15c', prof: '#b69cff', supp: '#5fd39a', danger: '#ff6b61', scroll: '#3f414b', scrollHover: '#5b5e6a' }
+      }
+    };
+    this.cam = Object.assign({}, this.modeDef().cam);
+    this.sim = { f: 0, cx: 0 };
+    this.pointer = { x: -1, y: -1, inside: false, drag: false, lx: 0, ly: 0 };
+    this.colorCache = {};
+    this._tick = (t) => this.tick(t);
+    this._canvasRef = (el) => this.attachCanvas(el);
+    this.handles = {};
+    this._handleRefL = (el) => this.attachHandle('left', el);
+    this._handleRefR = (el) => this.attachHandle('right', el);
+  }
+
+  componentWillUnmount() {
+    this.attachCanvas(null);
+    this.attachHandle('left', null);
+    this.attachHandle('right', null);
+  }
+
+  modeDef(key) {
+    const k = key || this.state.mode;
+    return this.T.MODES.find((m) => m.key === k) || this.T.MODES[0];
+  }
+  systemDark() {
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; }
+  }
+  isNarrow() {
+    try { return window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) { return false; }
+  }
+  syncBreakpoint() { this.setState({ narrow: this.isNarrow(), drawer: null }); }
+  // In drawer mode only one panel is open at a time.
+  togglePanel(side) {
+    const st = this.state;
+    if (st.narrow) this.setState({ drawer: st.drawer === side ? null : side });
+    else if (side === 'left') this.setState({ leftOpen: !st.leftOpen });
+    else this.setState({ rightOpen: !st.rightOpen });
+  }
+  // Docked panel width: the canvas column always keeps at least 400px.
+  panelMax(side) {
+    const lim = this.K.PANEL_W[side], other = side === 'left' ? 'right' : 'left', st = this.state;
+    const h = this.handles[other];
+    const otherOpen = other === 'left' ? st.leftOpen : st.rightOpen;
+    const otherW = !otherOpen ? 0 : h ? h.el.parentElement.getBoundingClientRect().width
+      : (st[other + 'W'] || this.K.PANEL_DEFAULT[other]);
+    return Math.max(lim.min, Math.min(lim.max, (window.innerWidth || 1440) - otherW - 400));
+  }
+  setPanelWidth(side, px, save) {
+    const v = Math.round(Math.min(Math.max(px, this.K.PANEL_W[side].min), this.panelMax(side)));
+    this.setState({ [side + 'W']: v });
+    if (save) this.savePanelWidths(side, v);
+  }
+  resetPanelWidth(side) {
+    this.setState({ [side + 'W']: null });
+    this.savePanelWidths(side, null);
+  }
+  savePanelWidths(side, v) {
+    try {
+      const key = this.K.PANEL_W_KEY;
+      let w = {};
+      try { w = JSON.parse(window.localStorage.getItem(key)) || {}; } catch (e) {}
+      if (v == null) delete w[side]; else w[side] = v;
+      window.localStorage.setItem(key, JSON.stringify(w));
+    } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ }
+  }
+  // Re-fit user widths when the window shrinks (not saved).
+  refitPanels() {
+    ['left', 'right'].forEach((side) => {
+      const w = this.state[side + 'W'];
+      if (w != null && w > this.panelMax(side)) this.setPanelWidth(side, w, false);
+    });
+  }
+  attachHandle(side, el) {
+    const old = this.handles[side];
+    if (old && old.el === el) return;
+    if (old) {
+      Object.keys(old.on).forEach((ev) => old.el.removeEventListener(ev, old.on[ev]));
+      delete this.handles[side];
+      if (!Object.keys(this.handles).length) window.removeEventListener('resize', this._refit);
+    }
+    if (!el) return;
+    const dir = side === 'left' ? 1 : -1;
+    const width = () => el.parentElement.getBoundingClientRect().width;
+    let drag = null;
+    const on = {
+      pointerdown: (e) => {
+        if (this.state.narrow || e.button !== 0) return;
+        e.preventDefault();
+        drag = { x: e.clientX, w: width() };
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        this.setState({ resizing: true });
+      },
+      pointermove: (e) => { if (drag) this.setPanelWidth(side, drag.w + dir * (e.clientX - drag.x), false); },
+      pointerup: () => {
+        if (!drag) return;
+        drag = null;
+        this.setState({ resizing: false });
+        this.setPanelWidth(side, width(), true);
+      },
+      dblclick: () => this.resetPanelWidth(side),
+      keydown: (e) => {
+        const step = e.shiftKey ? 64 : 16;
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          e.preventDefault(); e.stopPropagation();
+          this.setPanelWidth(side, width() + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+        } else if (e.key === 'Home') { e.preventDefault(); e.stopPropagation(); this.resetPanelWidth(side); }
+      }
+    };
+    on.pointercancel = on.pointerup;
+    Object.keys(on).forEach((ev) => el.addEventListener(ev, on[ev]));
+    if (!Object.keys(this.handles).length) {
+      this._refit = this._refit || (() => this.refitPanels());
+      window.addEventListener('resize', this._refit);
+    }
+    this.handles[side] = { el: el, on: on };
+  }
+  textTone(hex) { return this.state.theme === 'light' ? this.mix(hex, '#000000', 0.4) : hex; }
+  pal() { return this.T.PAL[this.state.theme] || this.T.PAL.dark; }
+  setTheme(t) {
+    this.setState({ theme: t });
+    try {
+      if ((t === 'dark') === this.systemDark()) window.localStorage.removeItem('od-theme');
+      else window.localStorage.setItem('od-theme', t);
+    } catch (e) {}
+  }
+
+  attachCanvas(el) {
+    if (this.canvas === el) return;
+    if (this.canvas) {
+      const c = this.canvas;
+      c.removeEventListener('pointerdown', this._pd);
+      c.removeEventListener('pointermove', this._pm);
+      c.removeEventListener('pointerup', this._pu);
+      c.removeEventListener('pointercancel', this._pu);
+      c.removeEventListener('pointerleave', this._pl);
+      cancelAnimationFrame(this.raf);
+      try { this._mq.removeEventListener('change', this._mqH); } catch (err) {}
+    }
+    this.canvas = el || null;
+    if (!el) return;
+    this.ctx = el.getContext('2d');
+    const p = this.pointer;
+    this._pd = (e) => {
+      if (!this.modeDef().rotatable) return;
+      p.drag = true; p.lx = e.clientX; p.ly = e.clientY;
+      try { el.setPointerCapture(e.pointerId); } catch (err) {}
+      el.style.cursor = 'grabbing';
+    };
+    this._pm = (e) => {
+      const r = el.getBoundingClientRect();
+      p.x = e.clientX - r.left; p.y = e.clientY - r.top; p.inside = true;
+      if (p.drag && this.modeDef().rotatable) {
+        this.cam.yaw += (e.clientX - p.lx) * 0.008;
+        this.cam.pitch = Math.max(-1.45, Math.min(1.45, this.cam.pitch + (e.clientY - p.ly) * 0.008));
+        p.lx = e.clientX; p.ly = e.clientY;
+      }
+    };
+    this._pu = () => { p.drag = false; el.style.cursor = ''; };
+    this._pl = () => { p.inside = false; };
+    el.addEventListener('pointerdown', this._pd);
+    el.addEventListener('pointermove', this._pm);
+    el.addEventListener('pointerup', this._pu);
+    el.addEventListener('pointercancel', this._pu);
+    el.addEventListener('pointerleave', this._pl);
+    try {
+      this._mq = window.matchMedia('(max-width: 1023.98px)');
+      this._mqH = () => this.syncBreakpoint();
+      this._mq.addEventListener('change', this._mqH);
+    } catch (err) {}
+    this.last = 0;
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  tick(t) {
+    if (!this.canvas) return;
+    const dt = this.last ? Math.min(0.05, (t - this.last) / 1000) : 0;
+    this.last = t;
+    const st = this.state, m = this.modeDef(), pb = m.playback;
+    if (m.autoSpin && st.spin && !this.pointer.drag) this.cam.yaw += dt * 0.3;
+    if (pb && st.playing) {
+      this.sim.f = Math.min(pb.fmax, this.sim.f + dt * pb.rate * st.speed);
+      if (this.sim.f >= pb.fmax) this.setState({ playing: false, f: this.sim.f });
+      else if (t - (this.lastPush || 0) > 120) { this.lastPush = t; this.setState({ f: this.sim.f }); }
+    }
+    // a broken scene keeps the page alive but is reported once for the browser check
+    try { this.draw(dt, t); } catch (err) { if (!this.drawErr) { this.drawErr = true; console.error(err); } }
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  // ---------- math helpers (장면에서 써도 돼요) ----------
+  lerp(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+  sm(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+  rgb(hex) { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  mix(hex, to, amt) {
+    const a = this.rgb(hex), b = this.rgb(to);
+    return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * amt) + ',' + Math.round(a[1] + (b[1] - a[1]) * amt) + ',' + Math.round(a[2] + (b[2] - a[2]) * amt) + ')';
+  }
+  rgba(hex, al) { const a = this.rgb(hex); return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + al + ')'; }
+  shades(hex) {
+    let s = this.colorCache[hex];
+    if (!s) { s = { hi: this.mix(hex, '#FFFFFF', 0.55), mid: hex, lo: this.mix(hex, '#000000', 0.55) }; this.colorCache[hex] = s; }
+    return s;
+  }
+  proj(p, V) {
+    const x = p[0] - V.cx, y = p[1], z = p[2];
+    const x1 = x * V.cy + z * V.sy, z1 = -x * V.sy + z * V.cy;
+    const y2 = y * V.cp - z1 * V.sp, z2 = y * V.sp + z1 * V.cp;
+    const s = V.F / Math.max(2, V.D - z2);
+    return [V.ox + x1 * s, V.oy - y2 * s, z2, s];
+  }
+
+  // ---------- drawing ----------
+  draw(dt, now) {
+    const el = this.canvas, ctx = this.ctx, st = this.state, m = this.modeDef();
+    const dpr = window.devicePixelRatio || 1;
+    const W = el.clientWidth, H = el.clientHeight;
+    if (!W || !H) return;
+    if (el.width !== Math.round(W * dpr) || el.height !== Math.round(H * dpr)) { el.width = Math.round(W * dpr); el.height = Math.round(H * dpr); }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const pal = this.pal();
+    ctx.fillStyle = pal.bg; ctx.fillRect(0, 0, W, H);
+
+    const I = [], O = [];
+    this.buildScene(st.mode, I, O);
+    const scale = Math.min(W / m.fit[0], H / m.fit[1]), D = m.D, z = this.cam.zoom;
+    const V = {
+      cx: this.sim.cx, cy: Math.cos(this.cam.yaw), sy: Math.sin(this.cam.yaw), cp: Math.cos(this.cam.pitch), sp: Math.sin(this.cam.pitch),
+      F: scale * z * D, D: D, ox: W / 2, oy: H / 2 - (m.playback ? 20 : 0)
+    };
+    let zmin = Infinity, zmax = -Infinity;
+    for (const it of I) {
+      it.A = this.proj(it.p, V);
+      if (it.q) { it.B = this.proj(it.q, V); it.z = (it.A[2] + it.B[2]) / 2; } else it.z = it.A[2];
+      if (it.z < zmin) zmin = it.z;
+      if (it.z > zmax) zmax = it.z;
+    }
+    I.sort((a, b) => a.z - b.z);
+    // depth fog; a flat scene (all items at one depth) is drawn without it
+    const span = zmax - zmin;
+    for (const it of I) {
+      const fog = span < 0.01 ? 1 : 0.42 + 0.58 * ((it.z - zmin) / span);
+      ctx.globalAlpha = Math.max(0, (it.a == null ? 1 : it.a) * fog);
+      if (ctx.globalAlpha < 0.01) continue;
+      const x = it.A[0], y = it.A[1], s = it.A[3];
+      if (it.k === 0) {
+        const R = it.r * s;
+        if (R < 0.4) continue;
+        if (it.flat) { ctx.fillStyle = it.c; ctx.beginPath(); ctx.arc(x, y, Math.max(1.3, R), 0, 6.2832); ctx.fill(); }
+        else {
+          const sh = this.shades(it.c);
+          const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+          g.addColorStop(0, sh.hi); g.addColorStop(0.5, sh.mid); g.addColorStop(1, sh.lo);
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        }
+      } else if (it.k === 1) {
+        const lw = Math.max(1, it.w * (s + it.B[3]) / 2);
+        ctx.lineCap = it.flat ? 'butt' : 'round';
+        if (it.rod) {
+          ctx.strokeStyle = this.shades(it.c).lo; ctx.lineWidth = lw + 2;
+          ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+        }
+        ctx.strokeStyle = it.c; ctx.lineWidth = lw;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+      } else if (it.k === 3) {
+        const fs = Math.max(8, Math.min(14, it.size * s / (scale * z) * 1.05));
+        ctx.font = '700 ' + fs + 'px "Pretendard", system-ui, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = it.c; ctx.fillText(it.text, x, y + 0.5);
+      } else if (it.k === 4) {
+        const ang = Math.atan2(it.B[1] - y, it.B[0] - x), mx = (x + it.B[0]) / 2, my = (y + it.B[1]) / 2, r = 6;
+        ctx.fillStyle = it.c; ctx.beginPath();
+        ctx.moveTo(mx + Math.cos(ang) * r, my + Math.sin(ang) * r);
+        ctx.lineTo(mx + Math.cos(ang + 2.5) * r, my + Math.sin(ang + 2.5) * r);
+        ctx.lineTo(mx + Math.cos(ang - 2.5) * r, my + Math.sin(ang - 2.5) * r);
+        ctx.closePath(); ctx.fill();
+      } else if (it.k === 5) {
+        // lit translucent sphere, highlight up-left like the solid spheres
+        const R = it.r * s, ba = pal.blobAlpha == null ? 0.3 : pal.blobAlpha;
+        const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+        g.addColorStop(0, 'rgba(255,255,255,0.55)'); g.addColorStop(0.3, this.rgba(it.c, Math.min(1, ba + 0.15))); g.addColorStop(1, this.rgba(it.c, 0.18));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        ctx.strokeStyle = it.c; ctx.lineWidth = it.focus ? 3 : 1.5; ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+    for (const o of O) this.drawOverlay(o, V, now);
+  }
+
+  drawOverlay(o, V, now) {
+    const ctx = this.ctx, A = this.proj(o.p, V), pal = this.pal();
+    if (o.t === 'ring') {
+      const r = Math.max(6, 0.32 * A[3]) * (1 + (this.reduceMotion ? 0 : 0.15 * Math.sin((now || 0) / 160)));
+      ctx.globalAlpha = 1; ctx.strokeStyle = pal.ring; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(A[0], A[1], r, 0, 6.2832); ctx.stroke();
+      ctx.font = '600 11px "Pretendard", system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = pal.ring; ctx.fillText(o.text, A[0], A[1] + r + 10);
+      return;
+    }
+    const size = o.size || 12, x = A[0] + (o.dx || 0), y = A[1] + (o.dy || 0);
+    ctx.font = '600 ' + size + 'px "Pretendard", system-ui, sans-serif';
+    const tw = ctx.measureText(o.text).width, w = tw + 14, h = size + 10;
+    ctx.globalAlpha = o.a == null ? 1 : o.a;
+    if (o.lead) {
+      ctx.strokeStyle = this.rgba(o.c, 0.6); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(x, y); ctx.stroke();
+    }
+    ctx.fillStyle = pal.labelBg;
+    ctx.strokeStyle = this.rgba(o.c, 0.55); ctx.lineWidth = 1;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x - w / 2, y - h / 2, w, h, 6); else ctx.rect(x - w / 2, y - h / 2, w, h);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = pal.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(o.text, x, y + 0.5);
+    ctx.globalAlpha = 1;
+  }
+
+  setMode(mode) {
+    this.cam = Object.assign({}, this.modeDef(mode).cam);
+    this.sim.f = 0;
+    this.pointer.drag = false;
+    this.setState({ mode: mode, f: 0, playing: false, step: -1 });
+  }
+
+  renderVals() {
+    const st = this.state, T = this.T, m = this.modeDef(), pb = m.playback;
+    const tg = T.TOGGLES ? (Array.isArray(T.TOGGLES) ? T.TOGGLES : (T.TOGGLES[st.mode] || [])) : [];
+    const togDefs = tg.concat(m.autoSpin ? [['spin', '자동 회전']] : []);
+    const toggles = togDefs.map((d) => ({
+      label: d[1], pressed: st[d[0]] ? 'true' : 'false',
+      toggle: () => { const o = {}; o[d[0]] = !st[d[0]]; this.setState(o); }
+    }));
+    const STEPS = T.STEPS || [];
+    const steps = STEPS.map((s, i) => ({
+      num: i + 1, title: s.title, who: s.who, c: s.c, pressed: st.step === i ? 'true' : 'false',
+      pick: () => {
+        if (s.mode !== this.state.mode) this.setMode(s.mode);
+        if (s.f != null) this.sim.f = s.f;
+        this.setState({ f: this.sim.f, playing: false, step: i });
+      }
+    }));
+    const speeds = [0.5, 1, 2].map((v) => ({
+      label: v + '×', pressed: st.speed === v ? 'true' : 'false',
+      pick: () => this.setState({ speed: v })
+    }));
+    const is = {};
+    T.MODES.forEach((d) => { is[d.key] = d.key === st.mode; });
+    const f = st.f;
+    const isDark = st.theme === 'dark';
+    const leftOn = st.narrow ? st.drawer === 'left' : st.leftOpen, rightOn = st.narrow ? st.drawer === 'right' : st.rightOpen;
+    return Object.assign({
+      th: this.K.THEMES[st.theme], isDark: isDark, isLight: !isDark,
+      themeLabel: isDark ? '라이트 모드로 전환' : '다크 모드로 전환',
+      toggleTheme: () => this.setTheme(isDark ? 'light' : 'dark'),
+      canvasRef: this._canvasRef, canvasCls: m.rotatable ? '' : 'is-fixed',
+      hasModes: T.MODES.length > 1, is: is,
+      modes: T.MODES.map((d) => ({ label: d.label, pressed: d.key === st.mode ? 'true' : 'false', pick: () => { if (d.key !== this.state.mode) this.setMode(d.key); } })),
+      leftCls: leftOn ? 'is-open' : '', rightCls: rightOn ? 'is-open' : '',
+      leftExpanded: leftOn ? 'true' : 'false', rightExpanded: rightOn ? 'true' : 'false',
+      scrimCls: (st.narrow && st.drawer) ? 'is-on' : '',
+      toggleLeft: () => this.togglePanel('left'),
+      toggleRight: () => this.togglePanel('right'),
+      closePanels: () => this.setState({ drawer: null }),
+      layoutStyle: ((st.leftW ? '--pl-user: ' + st.leftW + 'px; ' : '') + (st.rightW ? '--pr-user: ' + st.rightW + 'px;' : '')).trim(),
+      layoutCls: st.resizing ? 'is-resizing' : '',
+      leftWNow: st.leftW ? String(st.leftW) : '', rightWNow: st.rightW ? String(st.rightW) : '',
+      leftHandleRef: this._handleRefL, rightHandleRef: this._handleRefR,
+      onKey: (e) => { if (e.key === 'Escape' && st.narrow && st.drawer) this.setState({ drawer: null }); },
+      hasToggles: toggles.length > 0, toggles: toggles,
+      hasSteps: steps.length > 0, steps: steps,
+      hasStep: st.step >= 0 && st.step < STEPS.length, stepDetail: st.step >= 0 && STEPS[st.step] ? STEPS[st.step].text : '',
+      mistakes: (T.MISTAKES && T.MISTAKES[st.mode]) || [],
+      canvasLabel: m.canvasLabel(f),
+      zoomIn: () => { this.cam.zoom = Math.min(3, this.cam.zoom * 1.2); },
+      zoomOut: () => { this.cam.zoom = Math.max(0.5, this.cam.zoom / 1.2); },
+      resetView: () => { this.cam = Object.assign({}, m.cam); },
+      hasPlayback: !!pb, isPlaying: st.playing, notPlaying: !st.playing, playLabel: st.playing ? '일시정지' : '재생',
+      togglePlay: () => {
+        if (!pb) return;
+        if (!st.playing && this.sim.f >= pb.fmax) this.sim.f = 0;
+        this.setState({ playing: !st.playing, step: -1, f: this.sim.f });
+      },
+      fInt: Math.round(f * 10), fLabel: pb ? pb.label(f) : '', fMax10: pb ? Math.round(pb.fmax * 10) : 0,
+      onScrub: (e) => { const v = Number(e.target.value) / 10; this.sim.f = v; this.setState({ f: v, playing: false, step: -1 }); },
+      speeds: speeds
+    }, this.extraVals(st));
+  }
+}
+mountDC(Component);
+</script>
+</body>
+</html>
