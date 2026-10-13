@@ -85,7 +85,7 @@ forecast 자동 연결에서 검토가 실패하면 [예상 스킬의 수정·�
 
 ## 산출 위치
 
-입력과 같은 날짜 폴더 `복습노트/<range>/`에 `문제설명_<range>_<slug>.html/.md`, `figures_문제설명_<range>_<slug>/`, `자료_문제설명_<range>_<slug>/`를 저장한다. 자료 폴더에는 생성 기록·검토·설명 조각·검산·로컬 자원이 들어간다. 정리노트·복습문제에 링크를 자동 삽입하지 않는다. 읽음 상태 키는 `bio-problem-explain-review-<range>-<slug>`다.
+입력과 같은 날짜 폴더 `복습노트/<range>/`에는 `문제설명_<range>_<slug>.html`만 두고, 나머지는 숨김 폴더 `복습노트/<range>/.assets/` 안에 `.assets/문제설명_<range>_<slug>.md`, `.assets/figures_문제설명_<range>_<slug>/`, `.assets/자료_문제설명_<range>_<slug>/`로 저장한다. MD 안의 링크는 `.assets/` 기준이라 원 문제 보기는 `../복습문제_….html`이다. 자료 폴더에는 생성 기록·검토·설명 조각·검산·로컬 자원이 들어간다. 정리노트·복습문제에 링크를 자동 삽입하지 않는다. 읽음 상태 키는 `bio-problem-explain-review-<range>-<slug>`다.
 
 forecast 출력은 같은 `웹과제예상/<N>장/` 폴더의 `문제해설_<N>장_웹과제예상_v<K>.html/.md`, `figures_문제해설_<N>장_웹과제예상_v<K>/`, `자료_문제해설_<N>장_웹과제예상_v<K>/`다. 제목은 `생명과학 <N>장 웹과제 예상 v<K> 문제해설`, 읽음 상태 키는 `bio-problem-explain-forecast-<N>장-웹과제예상_v<K>`다. 기존 예상문제에 링크를 자동 삽입하지 않는다.
 

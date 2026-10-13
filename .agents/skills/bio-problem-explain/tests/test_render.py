@@ -2,11 +2,12 @@ from dataclasses import replace
 import json, re, base64, hashlib
 from pathlib import Path
 import pytest
+from urllib.parse import unquote
 from helpers import fragment, source_file
 from mpe_source import load_source, sha256
 from mpe_shared import parse
 from mpe_types import ExplainError
-from mpe_render import build_explanation, check_artifacts
+from mpe_render import build_explanation, check_artifacts, names
 
 def make(tmp_path):
     source=source_file(tmp_path/'repo');pack=load_source(source,tmp_path/'repo')
@@ -60,12 +61,13 @@ def test_repeated_svg_ids_scoped(tmp_path):
 
 def test_nfd_image_link_and_missing_anchor(tmp_path):
     pack,fragments=make(tmp_path)
-    image=pack.path.parent/'그림.png'
+    image=pack.path.parent/'.assets'/'figures_0917'/'그림.png'
+    image.parent.mkdir(parents=True)
     image.write_bytes(base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jJ1sAAAAASUVORK5CYII='))
-    fragments['p1']+='<figure><img src="%EA%B7%B8%EB%A6%BC.png" alt="그림"><figcaption>상태</figcaption></figure>'
+    fragments['p1']+='<figure><img src=".assets/figures_0917/%EA%B7%B8%EB%A6%BC.png" alt="그림"><figcaption>상태</figcaption></figure>'
     result=build_explanation(pack,fragments,tmp_path/'stage',tmp_path/'repo')
     assert check_artifacts(pack,result)==[]
-    assert re.search(r'!\[그림\]\(figures_[^)]+\.png\)',result.md.read_text())
+    assert re.search(r'!\[그림\]\(figures_문제설명_0917_Recursion/[^)]+\.png\)',unquote(result.md.read_text()))
     with pytest.raises(ExplainError,match='앵커'):
         build_explanation(pack,{'p1':fragments['p1']+'<a href="'+pack.path.name+'#missing">x</a>'},tmp_path/'bad',tmp_path/'repo')
 
@@ -155,3 +157,28 @@ def test_authored_svg_stroke_width_style_refused(tmp_path):
     pack,fragments=make(tmp_path)
     with pytest.raises(ExplainError,match='style'):
         build_explanation(pack,{'p1':fragments['p1']+SVG_RECT.format(s='stroke-width:6',extra='')},tmp_path/'stage',tmp_path/'repo')
+
+
+def test_review_outputs_go_under_assets(tmp_path):
+    pack,fragments=make(tmp_path)
+    stage=tmp_path/'stage'
+    art=build_explanation(pack,fragments,stage,tmp_path/'repo')
+    assert check_artifacts(pack,art)==[]
+    html=art.html.read_text(encoding='utf-8')
+    assert 'href=".assets/자료_문제설명_' in html and '/vendor/katex/katex.min.css' in html
+    assert art.html.parent==stage and art.md.parent==stage/'.assets'
+    md=unquote(art.md.read_text(encoding='utf-8'))
+    assert '](.assets/' not in md
+    assert f'](../{pack.path.name}#p1)' in md  # 원 문제 보기 -> ../복습문제_....html
+    assert (stage/'.assets'/f'figures_문제설명_{pack.range}_{pack.slug}').is_dir()
+    assert (stage/'.assets'/f'자료_문제설명_{pack.range}_{pack.slug}'/'manifest.json').is_file()
+    assert not any(p.name.startswith(('figures_','자료_')) or p.suffix=='.md' for p in stage.iterdir())
+
+def test_review_names_under_assets(tmp_path):
+    pack,_=make(tmp_path)
+    assert names(pack)==('문제설명_0917_Recursion','.assets/figures_문제설명_0917_Recursion','.assets/자료_문제설명_0917_Recursion')
+
+def test_homework_names_unchanged(tmp_path):
+    pack,_=make(tmp_path)
+    hw=replace(pack,profile='homework',range='3')
+    assert names(hw)==('과제3_문제설명_Recursion','figures_문제설명_hw3_Recursion','자료_문제설명_hw3_Recursion')

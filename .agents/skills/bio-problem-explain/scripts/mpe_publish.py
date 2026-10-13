@@ -38,13 +38,14 @@ def publish_explanation(pack, artifacts, fragments, reviews, destination, backup
                 raise ExplainError('참조 자료 변경: ' + str(path))
         stage_root = artifacts.html.parent.resolve()
         stem, fig_name, data_name = names(pack)
+        md_rel = (Path(fig_name).parent / (stem + '.md')).as_posix()  # .assets/<stem>.md for review, <stem>.md otherwise
         allowed_roots = {fig_name, data_name}
         mapping = {}
         for src in artifacts.files:
             src = Path(src).absolute()
             inside(src, stage_root)
             relative = src.relative_to(stage_root)
-            owned = (len(relative.parts) == 1 and relative.name in (stem + '.html', stem + '.md')) or (len(relative.parts) > 1 and relative.parts[0] in allowed_roots)
+            owned = relative.as_posix() in (stem + '.html', md_rel) or any(relative.is_relative_to(root) for root in allowed_roots)
             if not owned or relative.name == 'validation.json':
                 raise ExplainError('소유하지 않은 산출 경로: ' + str(relative))
             dst = inside(destination / relative, repo)

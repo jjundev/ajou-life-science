@@ -88,3 +88,9 @@ def test_forecast_output_and_scope_contract():
     text = (S/'SKILL.md').read_text()
     for phrase in ('문제해설_<N>장_웹과제예상_v<K>', '명시', '자동 백필', 'all', 'p1–p15'):
         assert phrase in text, phrase
+
+
+def test_skill_documents_review_assets_layout():
+    text=(S/'SKILL.md').read_text(encoding='utf-8')
+    for needle in ('.assets/문제설명_<range>_<slug>.md','.assets/figures_문제설명_<range>_<slug>/','.assets/자료_문제설명_<range>_<slug>/'):
+        assert needle in text,needle
