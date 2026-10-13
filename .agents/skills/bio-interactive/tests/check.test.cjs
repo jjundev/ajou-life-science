@@ -143,3 +143,13 @@ test('phase check skips a step whose f is already invalid', () => {
   assert.ok(r.errors.includes('TOPIC_INVALID:STEPS[2].f'), r.details.join('\n'));
   assert.ok(!r.errors.some((e) => e.startsWith('STEP_OFF_PHASE')), r.details.join('\n'));
 });
+
+test('phase that is only part of the process name is off phase', () => {
+  const r = check(mutate((s) => s.replace("phase: '진행'", "phase: '진'")), A);
+  assert.ok(r.errors.includes('STEP_OFF_PHASE:2'), r.details.join('\n'));
+});
+
+test('blank phase is missing', () => {
+  const r = check(mutate((s) => s.replace("phase: '진행'", "phase: ' '")), A);
+  assert.ok(r.errors.includes('TOPIC_INVALID:STEPS[2].phase'), r.details.join('\n'));
+});

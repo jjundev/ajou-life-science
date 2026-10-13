@@ -37,3 +37,13 @@ test('cli without a file exits 2', () => {
   assert.equal(spawnSync(process.execPath, [SCRIPT], { encoding: 'utf8' }).status, 2);
   assert.equal(spawnSync(process.execPath, [SCRIPT, '/no/such/Main.dc.html'], { encoding: 'utf8' }).status, 2);
 });
+
+test('panel keeps step values when the topic has many colors', () => {
+  const src = fs.readFileSync(T, 'utf8');
+  const many = Array.from({ length: 40 }, (_, i) => 'c' + i + ": '#" + String(i).padStart(6, '0') + "'").join(', ');
+  const out = src.replace('legend: { a: pal.a, link: pal.link },', 'legend: { a: pal.a, link: pal.link, ' + many + ' },');
+  assert.notEqual(out, src, 'mutation changed nothing');
+  const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'bi-steps-')), 'Main.dc.html');
+  fs.writeFileSync(file, out);
+  assert.ok(stepsReport(file)[1].panel.includes('6번째 구까지 나타났어요.'), stepsReport(file)[1].panel);
+});

@@ -6,10 +6,13 @@ const { loadComponent, makeCtx, makeCanvas } = require('./harness.cjs');
 
 const PANEL_MAX = 400;
 
-// Topic panel values (extraVals) without the handlers, as one JSON line.
+const COLOR = /^(#[0-9a-f]{3,8}|rgba?\(.*\))$/i;
+
+// Topic panel values (extraVals) without handlers and colors, as one JSON line: palettes would fill the line
+// before the values that change from step to step.
 function panelOf(c) {
   const vals = c.extraVals(c.state) || {};
-  const plain = JSON.stringify(vals, (k, v) => (typeof v === 'function' ? undefined : v));
+  const plain = JSON.stringify(vals, (k, v) => (typeof v === 'function' || (typeof v === 'string' && COLOR.test(v)) ? undefined : v));
   return plain.length > PANEL_MAX ? plain.slice(0, PANEL_MAX) + '…' : plain;
 }
 

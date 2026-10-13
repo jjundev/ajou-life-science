@@ -74,3 +74,20 @@ test('cli prints the result and exits 2 on bad input', () => {
   assert.equal(spawnSync(process.execPath, [SCRIPT, src], { encoding: 'utf8' }).status, 2);
   assert.equal(spawnSync(process.execPath, [SCRIPT, '/no/such/Main.dc.html', dest], { encoding: 'utf8' }).status, 2);
 });
+
+test('a failed save leaves no numbered folder', () => {
+  const { tmp, dest } = setup();
+  assert.throws(() => save({ src: path.join(tmp, 'run', '1'), dest }));
+  assert.deepEqual(fs.readdirSync(dest), []);
+  const bad = path.join(tmp, 'bad.dc.html');
+  fs.writeFileSync(bad, '<title>x</title>');
+  assert.throws(() => save({ src: bad, dest }));
+  assert.deepEqual(fs.readdirSync(dest), []);
+});
+
+test('cli rejects a folder as the source', () => {
+  const { tmp, dest } = setup();
+  const r = spawnSync(process.execPath, [SCRIPT, path.join(tmp, 'run', '1'), dest], { encoding: 'utf8' });
+  assert.equal(r.status, 2);
+  assert.deepEqual(fs.readdirSync(dest), []);
+});

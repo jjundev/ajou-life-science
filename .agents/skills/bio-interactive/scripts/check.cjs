@@ -61,7 +61,8 @@ function unknownHoles(markup, vals) {
 }
 
 // Topic data the shell relies on. Steps are numbered from 1 like on screen.
-// A step with f names its phase: the process name the playback label shows at that f.
+// A step with f names its phase: the process name the playback label shows at that f
+// (the part before ' · ' in the '<과정 이름> · f / fmax' convention, so '억제자' does not pass on '억제자 이동').
 function topicChecks(topic, add) {
   const modes = topic.MODES || [];
   for (const m of modes) for (const k of ['cam', 'fit', 'D', 'canvasLabel']) if (m[k] == null) add('TOPIC_INVALID:MODES.' + m.key + '.' + k);
@@ -79,14 +80,16 @@ function topicChecks(topic, add) {
 }
 
 function phaseCheck(s, n, playback, add) {
-  if (typeof s.phase !== 'string' || !s.phase) return add('TOPIC_INVALID:STEPS[' + n + '].phase');
+  const phase = typeof s.phase === 'string' ? s.phase.trim() : '';
+  if (!phase) return add('TOPIC_INVALID:STEPS[' + n + '].phase');
   let label;
   try {
     label = String(playback.label(s.f));
   } catch (e) {
     return add('STEP_OFF_PHASE:' + n, e);
   }
-  if (!label.includes(s.phase)) add('STEP_OFF_PHASE:' + n, "기대 '" + s.phase + "', 실제 '" + label + "'");
+  const named = label.includes(' · ');
+  if (named ? label.split(' · ')[0].trim() !== phase : !label.includes(phase)) add('STEP_OFF_PHASE:' + n, "기대 '" + s.phase + "', 실제 '" + label + "'");
 }
 
 function renderChecks(file, modes, add) {
