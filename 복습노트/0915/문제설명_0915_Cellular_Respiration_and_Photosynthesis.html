@@ -83,6 +83,7 @@
     .layer h4 { margin: 0 0 var(--s3); font-size: var(--fs-layer); line-height: 1.5; }
     .layer [data-source-field] + h4 { margin-top: var(--s5); }
     .layer p { margin: var(--s3) 0; }
+    .verdict-card { padding: var(--s3) var(--s4); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
     .layer .part, .layer [data-subpart] + [data-subpart] { margin-top: var(--s4); }
     .layer li + li { margin-top: var(--s3); }
     .sum > p + p, .sum > .summary-group + .summary-group { margin-top: var(--s5); }
@@ -430,6 +431,7 @@
       .layout { display: block; }
       .content { overflow: visible; }
       .panel, .scrim { display: none !important; }
+      .verdict-card { break-inside: avoid; }
     }
 
     .topic, .layer, .content, main { min-width: 0; }
@@ -3082,6 +3084,13 @@
         let curId = null;
         const saved = store.get(TAB, 'problem');
         let tab = ['problem', 'original', 'summary'].includes(saved) ? saved : 'problem';
+        // 보기 문항의 판정 문단((1), A, ㄱ, ① 로 시작)을 보기별 카드로 보인다
+        const verdictRe = /^\(?([0-9]+|[A-Za-z]|[ㄱ-ㅎ]|[①-⑩])(\)|\.|\s)/;
+        topics.filter((t) => t.querySelector('.choices')).forEach((t) => {
+          t.querySelectorAll('[data-explanation="solve"] [data-subpart] > p').forEach((p) => {
+            if (verdictRe.test(p.textContent.trim())) p.classList.add('verdict-card');
+          });
+        });
         topics.forEach((t) => {
           // 조각의 <div class="sum" hidden> 을 요약 탭으로 옮긴다. 없으면 안내 문구만 보인다.
           const el = t.querySelector(':scope > .sum');
