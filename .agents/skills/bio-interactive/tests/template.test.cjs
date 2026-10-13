@@ -128,8 +128,9 @@ test('placeholders and slots are present', () => {
 });
 
 test('first section in each panel has no divider', () => {
-  const rule = markupPart(T).match(/\.panel-head \+ \.sec\{([^}]*)\}/);
-  assert.ok(rule, '.panel-head + .sec rule');
+  // A slot often wraps its sections in a bare <div>; that first section counts too.
+  const rule = markupPart(T).match(/\.panel-head \+ \.sec,\.panel-head \+ div > \.sec:first-child\{([^}]*)\}/);
+  assert.ok(rule, '.panel-head + .sec and wrapped first .sec rule');
   assert.ok(rule[1].includes('border-top:0'), rule[1]);
 });
 
