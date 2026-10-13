@@ -57,7 +57,7 @@ function makeCtx() {
       if (prop in t) return t[prop];
       if (typeof prop !== 'string') return undefined;
       return (...args) => {
-        calls.push({ op: prop, args, fillStyle: t.fillStyle, strokeStyle: t.strokeStyle });
+        calls.push({ op: prop, args, fillStyle: t.fillStyle, strokeStyle: t.strokeStyle, alpha: t.globalAlpha });
         if (prop === 'createRadialGradient' || prop === 'createLinearGradient') return { addColorStop() {} };
         if (prop === 'measureText') return { width: 10 };
         return undefined;

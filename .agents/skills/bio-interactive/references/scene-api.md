@@ -1,0 +1,87 @@
+# 장면 작성 계약 (`assets/template.dc.html`)
+
+주제 하나는 템플릿을 복사한 `Main.dc.html` 한 파일이에요. 바꾸는 곳은 네 군데뿐이에요.
+
+1. 자리표시 `__TITLE__`(`<title>`과 `.brand`, 2곳)과 `__SOURCE__`(`.source`, 출처 한 줄)
+2. 마크업 슬롯 `<!-- SLOT:left -->` … `<!-- /SLOT:left -->`, `<!-- SLOT:right -->` … `<!-- /SLOT:right -->` 사이(예시 내용은 지우고 새로 써요)
+3. 스크립트 맨 위 주제 훅 네 개: `topic()`, `buildScene()`, `extraState()`, `extraVals()`
+4. 그 밖의 셸(상단 바, 패널, 캔버스, 재생 바, 「꼭 기억해요」, 공통 메서드)은 고치지 않아요. 고쳐야 하면 템플릿을 고치고 테스트를 돌려요.
+
+다 쓰면 `node scripts/check.cjs <Main.dc.html>`이 `ok`를 내야 해요.
+
+## `topic()`
+
+```js
+topic() {
+  return {
+    MODES: [Mode, ...],          // 1–3개. 첫 번째가 처음 화면. 2개 이상이면 상단 바에 모드 버튼이 생겨요
+    STEPS: [Step, ...],          // 선택. 있으면 왼쪽 「단계」 목록이 생겨요
+    MISTAKES: { a: [{ title, text }, ...], ... },   // 모드 key별 「꼭 기억해요」 3개
+    TOGGLES: { a: [['labels', '이름표'], ...] },    // 선택. 모드 key별(또는 모든 모드 공통 배열) 보기 옵션
+    PAL: { light: {...}, dark: {...} }               // 캔버스 색
+  };
+}
+```
+
+- `DEMO: true`는 템플릿 예시 표시예요. 실제 주제에서는 지워요(남으면 `TEMPLATE_LEFT:DEMO`).
+- `TOGGLES`의 첫 값은 상태 키예요. 초기값을 `extraState()`에 넣어요. 자동 회전(`spin`)은 `autoSpin` 모드에 셸이 알아서 붙여요.
+
+### Mode
+
+| 키 | 뜻 |
+|---|---|
+| `key` | 짧은 영문 키(`'a'`, `'cycle'` 등). 마크업에서 `{{is.<key>}}`로 그 모드인지 알 수 있어요 |
+| `label` | 상단 버튼 글자(2–4자, 예: 「구조」 「과정」) |
+| `cam` | `{ yaw, pitch, zoom }` 처음 시점. 평면 장면은 `{ yaw: 0, pitch: 0, zoom: 1 }` |
+| `fit` | `[w, h]` 장면 단위로 화면에 담을 너비·높이. 화면 크기 = `min(W / w, H / h)` |
+| `D` | 원근 거리. 작을수록 원근이 세요(구조 30, 넓은 과정 60 정도) |
+| `autoSpin` | 처음에 천천히 돌지(동작 줄이기 설정이면 꺼져요) |
+| `rotatable` | 끌어서 돌릴 수 있는지. 평면 도식은 `false` |
+| `playback` | `null` 또는 `{ fmax, rate, label(f) }`. 재생 바가 생기고 `f`가 0→`fmax`로 초당 `rate × 속도`만큼 늘어요. `label(f)`는 스크럽 위 글자 |
+| `canvasLabel(f)` | 캔버스의 `aria-label`. 지금 화면을 한 문장으로 |
+
+### Step
+
+`{ mode, f?, c, title, who, text }` — 누르면 그 `mode`로 바꾸고, `f`가 있으면 그 진행값으로 옮기고 재생을 멈춰요. `c`는 번호 테두리 색, `who`는 행위자(효소 이름 등), `text`는 아래 상세 칸 문장.
+
+### PAL
+
+`light`·`dark` 둘 다 필요해요. 셸이 쓰는 키: `bg`(캔버스 배경, 테마 `bg`와 같게), `labelBg`(라벨 칩 배경), `ink`(라벨 글자), `ring`(고리 표시), `blobAlpha`(반투명 구 진하기, 기본 0.3). 나머지 키는 장면 색으로 자유롭게 써요. 다크 색은 같은 색상의 밝은 쪽으로 맞춰요.
+
+## `buildScene(mode, I, O)`
+
+매 프레임 불려요. 배열에 push만 하고 그리지는 않아요. 진행값은 `this.sim.f`(매끄러운 값), 토글은 `this.state.<키>`, 색은 `this.pal()`.
+
+좌표는 `[x, y, z]` 장면 단위, 원점이 화면 가운데, y가 위쪽이에요. 카메라 중심은 원점에 고정이라 장면을 원점 둘레에 놓아요. 깊이 안개는 앞뒤 차이가 있을 때만 생겨요(평면 장면은 그대로 진하게).
+
+| `k` | 모양 | 필드 |
+|---|---|---|
+| `0` | 빛 받은 구 | `p, r, c`, `flat?`(납작한 원), `a?`(투명도 0–1) |
+| `1` | 막대·선 | `p, q, w, c`, `rod?`(어두운 테두리로 입체 막대), `flat?`(끝 각지게), `a?` |
+| `3` | 글자 | `p, text, size, c` (`size`는 장면 단위, 화면에서 8–14px로 잘려요) |
+| `4` | 화살촉 | `p, q, c` — `p→q` 가운데에 `q` 쪽을 향한 삼각형 |
+| `5` | 반투명 음영 구 | `p, r, c`, `focus?`(테두리 굵게) — 효소·소기관처럼 덩어리 |
+
+`O`(라벨, 항상 맨 위에 그려져요):
+- 칩: `{ p, text, c, size?, dx?, dy?, lead?, a? }` — `dx/dy` 픽셀만큼 옮기고 `lead`면 `p`까지 선을 그어요. 겹치지 않게 평면 기준으로 고정 오프셋을 줘요.
+- 고리: `{ t: 'ring', p, text }` — 깜박이는 원과 아래 글자(닉, 결합 자리 표시 등).
+
+도우미: `this.lerp(a, b, t)`, `this.sm(x)`(0–1 부드러운 계단), `this.mix(hex, to, amt)`, `this.rgba(hex, a)`, `this.textTone(hex)`(라이트에서 글자용으로 어둡게).
+
+## `extraState()` / `extraVals(st)`
+
+- `extraState()` → 초기 상태에 합쳐요(토글 키, 주제 전용 선택값).
+- `extraVals(st)` → `renderVals()` 결과에 합쳐요. 슬롯 마크업의 `{{…}}`은 공통 키나 여기 키만 쓸 수 있어요(아니면 `HOLE_UNKNOWN`).
+
+## 공통 상태와 마크업 값
+
+상태: `mode, f, playing, speed, step, spin, theme, leftOpen, rightOpen, drawer, narrow, leftW, rightW, resizing` (+ `extraState()`)
+
+`renderVals()` 공통 키: `th, isDark, isLight, themeLabel, toggleTheme, canvasRef, canvasCls, hasModes, is, modes[{label, pressed, pick}], leftCls, rightCls, leftExpanded, rightExpanded, scrimCls, toggleLeft, toggleRight, closePanels, layoutStyle, layoutCls, leftWNow, rightWNow, leftHandleRef, rightHandleRef, onKey, hasToggles, toggles[{label, pressed, toggle}], hasSteps, steps[{num, title, who, c, pressed, pick}], hasStep, stepDetail, mistakes, canvasLabel, zoomIn, zoomOut, resetView, hasPlayback, isPlaying, notPlaying, playLabel, togglePlay, fInt, fLabel, fMax10, onScrub, speeds[{label, pressed, pick}]`
+
+## 마크업 규칙
+
+- 런타임이 아는 것만: `{{점.경로}}` 구멍, `onClick`·`onKeyDown`·`onMouseEnter`·`onMouseLeave`·`onChange`, `ref`, `<sc-if value>`, `<sc-for list as>`. 그 밖의 이벤트는 동작하지 않아요(`EVENT_UNSUPPORTED`).
+- `<sc-if>` 안에는 요소 하나로 감싸서 넣어요.
+- 마크업에 `#rrggbb`를 직접 쓰지 않아요. 색은 CSS 토큰(`var(--ink-2)` 등)이나 `{{legend.x}}` 같은 구멍으로만(`HEX_IN_MARKUP`).
+- 쓸 수 있는 공통 클래스: `.sec`, `.sec-title`, `.sub`, `.opt`, `.btn`, `.tiles`(`.three`), `.tile`, `.events`, `.event`, `.dot`, `.legend`, `.sw`(`.ball`), `.detail`, `.num`, `.float`, `.hover-card`.
