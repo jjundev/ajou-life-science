@@ -299,10 +299,10 @@
       border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
     .problem-toggle[aria-expanded="true"] { border-color: var(--accent); color: var(--accent-ink); }
     @media (hover: hover) { .problem-toggle:hover, .panel-tabs [role="tab"]:hover { background: var(--surface); } }
-    .problem-pane img { cursor: zoom-in; }
+    .problem-pane img, .problem-pane svg.zoomable { cursor: zoom-in; }
     .is-target { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: var(--radius); }
     .figure-sheet { width: min(96vw, 1100px); max-height: 90dvh; margin: auto; border-radius: 16px; }
-    .figure-sheet img { display: block; width: 100%; height: auto; cursor: default; }
+    .figure-sheet img, .figure-sheet svg { display: block; width: 100%; max-width: 100%; height: auto; cursor: default; }
 
     /* 클릭형 보기: bio-review-pack review-interaction.css의 보기 규칙 */
     .review-ready .choices { list-style:none; padding:0; }
@@ -857,25 +857,64 @@
 
         // ---------- 문제 그림: 눌러서 크게 보기 ----------
         let sheet = null;
-        function zoom(img) {
+        // 확대본의 SVG id는 원본과 겹치지 않게 바꾸고, 내부 참조(url(#…), href)도 함께 바꾼다
+        function cloneSvg(svg) {
+          const copy = svg.cloneNode(true);
+          const nodes = [copy, ...copy.querySelectorAll('*')];
+          const ids = new Map();
+          nodes.forEach((n) => { if (n.id) { ids.set(n.id, n.id + '-zoom'); n.id += '-zoom'; } });
+          if (ids.size) nodes.forEach((n) => Array.from(n.attributes).forEach((a) => {
+            let v = a.value.replace(/url\(#([^)]*)\)/g, (m, id) => (ids.has(id) ? 'url(#' + ids.get(id) + ')' : m));
+            if (v.startsWith('#') && ids.has(v.slice(1))) v = '#' + ids.get(v.slice(1));
+            if (v !== a.value) n.setAttribute(a.name, v);
+          }));
+          copy.classList.remove('zoomable');
+          copy.style.width = '100%';
+          copy.style.maxWidth = '100%';
+          copy.style.height = 'auto';
+          return copy;
+        }
+        function zoom(fig) {
           if (!sheet) {
             sheet = document.createElement('dialog');
             sheet.className = 'sheet figure-sheet';
             sheet.setAttribute('aria-label', '그림 크게 보기');
-            sheet.innerHTML = '<div class="sheet-inner"><div class="sheet-head"><h2>그림</h2><button class="text-btn sheet-close" type="button">닫기</button></div><img alt=""></div>';
+            sheet.innerHTML = '<div class="sheet-inner"><div class="sheet-head"><h2>그림</h2><button class="text-btn sheet-close" type="button">닫기</button></div><div class="figure-sheet-body"></div></div>';
             sheet.querySelector('.sheet-close').addEventListener('click', () => sheet.close());
             sheet.addEventListener('click', (e) => { if (e.target === sheet) sheet.close(); });
             document.body.appendChild(sheet);
           }
-          const big = sheet.querySelector('img');
-          big.src = img.currentSrc || img.src;
-          big.alt = img.alt;
+          let big;
+          if (fig.tagName.toLowerCase() === 'img') {
+            big = document.createElement('img');
+            big.src = fig.currentSrc || fig.src;
+            big.alt = fig.alt;
+          } else big = cloneSvg(fig);
+          sheet.querySelector('.figure-sheet-body').replaceChildren(big);
           sheet.showModal();
         }
-        Object.values(panes).forEach((pane) => pane.addEventListener('click', (e) => {
-          const img = e.target.closest('img');
-          if (img && !img.closest('.review-choice')) zoom(img);
-        }));
+        Object.values(panes).forEach((pane) => {
+          // 지금 있는 SVG는 모두 원본 그림이다(KaTeX는 나중에 렌더링된다). 중첩 SVG는 바깥 것만.
+          pane.querySelectorAll('svg').forEach((svg) => { if (!svg.parentElement.closest('svg')) svg.classList.add('zoomable'); });
+          pane.addEventListener('click', (e) => {
+            const fig = e.target.closest('img, svg.zoomable');
+            if (fig && !fig.closest('.review-choice')) zoom(fig);
+          });
+        });
+
+        // ---------- 인쇄: 문제를 모든 문항의 해설 위에 펼친다 ----------
+        function mountForPrint() {
+          Object.keys(panes).forEach((id) => {
+            const topic = document.getElementById(id);
+            opens[id].remove();
+            (topic.querySelector(':scope > .panel-meta') || topic.querySelector('h3')).after(panes[id]);
+            panes[id].hidden = false;
+          });
+        }
+        const printMq = matchMedia('print');
+        printMq.addEventListener('change', () => (printMq.matches ? mountForPrint() : mountPanes()));
+        window.addEventListener('beforeprint', mountForPrint);
+        window.addEventListener('afterprint', mountPanes);
 
         tabs.forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab, true)));
         tabList.addEventListener('keydown', (e) => {

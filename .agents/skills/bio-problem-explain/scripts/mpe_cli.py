@@ -1,11 +1,14 @@
 """Extract → agent-authored fragments → build/check → reviewed publication."""
 import argparse
-from dataclasses import asdict
+from dataclasses import asdict, replace
+import hashlib
 import json
 import re
 from pathlib import Path
 import shutil
+import subprocess
 import sys
+import tempfile
 import uuid
 from mpe_contract import initial_reviews, payload_hash, validate_fragment
 from mpe_source import inside, load_source, resolve_sources, sha256
@@ -118,6 +121,25 @@ def build(item, fragments):
     dump(folder / 'review.json', review)
     print('build:', artifacts.html)
 
+def published_source(pack, digest):
+    """The review source as it was when published: the git blob whose SHA-256 is the published one."""
+    if pack.profile != 'review':
+        return None
+    try:
+        git = lambda *args: subprocess.run(['git', *args], cwd=pack.path.parent, capture_output=True, check=True).stdout
+        name = pack.path.name
+        for commit in git('log', '--format=%H', '--', name).decode().split():
+            data = git('show', f'{commit}:./{name}')
+            if hashlib.sha256(data).hexdigest() == digest:
+                with tempfile.TemporaryDirectory() as tmp:
+                    path = Path(tmp) / pack.path.parent.name / name
+                    path.parent.mkdir()
+                    path.write_bytes(data)
+                    return load_source(path, Path(tmp))
+    except (OSError, subprocess.CalledProcessError, ExplainError):
+        return None
+    return None
+
 def rerender(repo, target, run):
     """Rebuild published packs with the current template from their published fragments and evidence."""
     if extract(repo, target, run):
@@ -139,12 +161,21 @@ def rerender(repo, target, run):
             stored = data / 'validation.json'
             stored = read_json(inside(stored, item['repo'])) if stored.is_file() else {}
             # The payload hash covers source and fragments, not the template, so content reviews stay valid.
-            if stored.get('input_hash') == payload_hash(pack, fragments):
+            same = stored.get('input_hash') == payload_hash(pack, fragments)
+            note = ''
+            if not same and stored.get('input_hash'):
+                # A source edited only outside its cards (e.g. page CSS) keeps the same problems.
+                digest = read_json(inside(data / 'manifest.json', item['repo'])).get('source_sha256', '')
+                old = published_source(pack, digest)
+                same = (old is not None and old.problems == pack.problems
+                        and payload_hash(replace(pack, sha256=digest), fragments) == stored['input_hash'])
+                note = '원본 파일은 바뀌었지만 문항 내용은 같아요: ' if same else ''
+            if same:
                 review = read_json(folder / 'review.json')
                 for key in ('references', 'content', 'independent'):
                     review[key] = stored[key]
                 dump(folder / 'review.json', review)
-                print('rerender: content·independent 재사용, source_visual·browser 재검토 필요')
+                print(f'rerender: {note}content·independent 재사용, source_visual·browser 재검토 필요')
             else:
                 print('rerender: 입력 변경: 네 검토 모두 다시 필요')
         except (ExplainError, OSError, ValueError, KeyError, TypeError) as exc:

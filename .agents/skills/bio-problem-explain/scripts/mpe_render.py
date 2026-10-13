@@ -65,7 +65,7 @@ def resources(markup, problem, pack, repo, stage, fig_name, destination, scope):
     nodes = list(root.find_all(lambda n: True))
     errors = markup_errors(root, allow_summary=True)
     # Existing textbook figures carry static presentation; authored styles stay forbidden.
-    if scope == 'source':
+    if scope in ('source', 'original'):
         for node in nodes:
             value = node.attrs.get('style', '')
             allowed = (node.tag == 'figure' and value == 'margin:16px 0') or (
@@ -156,7 +156,7 @@ def build_explanation(pack, fragments, stage: Path, repo: Path) -> Artifacts:
         reading = resources(reading, p, pack, repo, stage, fig_name, pack.path.parent, 'source')
         if p.original_html:
             label = '원문·출처 정보 보기' if pack.profile == 'forecast' else '기출 원문 보기'
-            original = resources(p.original_html, p, pack, repo, stage, fig_name, pack.path.parent, 'source')
+            original = resources(p.original_html, p, pack, repo, stage, fig_name, pack.path.parent, 'original')
             reading += ('<details class="original" data-original-problem="' + p.id + '"><summary>' + label + '</summary>'
                         + original + '</details>')
         reading = f'<div class="problem-pane" data-problem-for="{p.id}">' + reading + '</div>'

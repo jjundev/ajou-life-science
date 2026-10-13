@@ -173,3 +173,29 @@ def test_rerender_without_published_fragments_fails(tmp_path):
     source = source_file(repo)
     result = call('rerender', '--repo', repo, '--target', source, '--run', tmp_path / 'run')
     assert result.returncode == 1 and '발행된 조각 없음' in result.stderr
+
+
+def git_commit_all(repo):
+    for args in (['init', '-q'], ['add', '-A'], ['-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-qm', 'published']):
+        subprocess.run(['git', *args], cwd=repo, check=True)
+
+def test_rerender_style_only_source_change_reuses_reviews(tmp_path):
+    repo, source = published_pack(tmp_path)
+    git_commit_all(repo)
+    source.write_text('<style>:root{--scroll:#ccc}</style>' + source.read_text())
+    result = call('rerender', '--repo', repo, '--target', source, '--run', tmp_path / 'run2')
+    assert result.returncode == 0, result.stderr
+    folder = next(p for p in (tmp_path / 'run2').iterdir() if p.is_dir())
+    review = json.loads((folder / 'review.json').read_text())
+    assert review['content']['status'] == 'pass' and review['independent']['status'] == 'pass'
+    assert review['source_visual']['status'] == 'not_run'
+    assert 'content·independent 재사용' in result.stdout and '문항 내용은 같아요' in result.stdout
+
+def test_rerender_content_change_with_history_keeps_reviews_unrun(tmp_path):
+    repo, source = published_pack(tmp_path)
+    git_commit_all(repo)
+    source.write_text(source.read_text().replace('함수 결과를 구해요.', '함수 결과를 다시 구해요.'))
+    result = call('rerender', '--repo', repo, '--target', source, '--run', tmp_path / 'run2')
+    folder = next(p for p in (tmp_path / 'run2').iterdir() if p.is_dir())
+    assert json.loads((folder / 'review.json').read_text())['content']['status'] == 'not_run'
+    assert '입력 변경: 네 검토 모두 다시 필요' in result.stdout

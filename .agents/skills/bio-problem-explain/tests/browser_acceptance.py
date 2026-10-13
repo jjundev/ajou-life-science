@@ -76,6 +76,17 @@ with sync_playwright() as pw:
     assert page.locator('dialog.figure-sheet[open] img').is_visible()
     page.keyboard.press('Escape');page.wait_for_timeout(100)
     assert page.locator('dialog.figure-sheet[open]').count()==0
+    page.locator('[data-problem-for="p2"] svg[aria-label="문제 화살표"]').click()
+    assert page.locator('dialog.figure-sheet[open] svg').is_visible()
+    assert page.evaluate('(()=>{const a=[...document.querySelectorAll("[id]")].map(e=>e.id);return a.length===new Set(a).size})()')
+    page.keyboard.press('Escape');page.wait_for_timeout(100)
+   page.goto(url+'#p3');page.wait_for_timeout(100)
+   page.emulate_media(media='print');page.wait_for_timeout(150)
+   assert page.locator('#p3 > [data-problem-for="p3"] [data-source-problem="p3"]').is_visible()
+   assert page.locator('#p1 > [data-problem-for="p1"]').is_visible() and page.locator('.problem-toggle:visible').count()==0
+   page.emulate_media(media='screen');page.wait_for_timeout(150)
+   if width>=1024:assert page.locator('#panel-right .probs [data-problem-for="p3"]').is_visible()
+   else:assert page.locator('#p3 .problem-toggle').is_visible()
    page.goto(url,wait_until='networkidle')
    page.locator('#pager-next').click();page.wait_for_timeout(100)
    assert page.locator('#p1').is_visible()

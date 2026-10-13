@@ -56,6 +56,14 @@ def test_problem_without_choice_absent_from_model(tmp_path):
     pack,fragments=make(tmp_path);text=build_explanation(pack,fragments,tmp_path/'stage',tmp_path/'repo').html.read_text()
     assert re.search(r'id="explain-choice-model">\{\}</script>',text)
 
+def test_statement_and_original_sharing_svg_ids_stay_unique(tmp_path):
+    pack,fragments=make(tmp_path)
+    svg='<svg viewBox="0 0 10 10"><defs><marker id="m"></marker></defs><path marker-end="url(#m)" d="M0 0L5 5"></path></svg>'
+    p=replace(pack.problems[0],conditions_html=pack.problems[0].conditions_html+svg,original_html=pack.problems[0].original_html+svg)
+    pack=replace(pack,problems=(p,))
+    result=build_explanation(pack,fragments,tmp_path/'stage',tmp_path/'repo')
+    assert check_artifacts(pack,result)==[]
+
 def test_template_bytes_match_provenance():
     template=Path(__file__).resolve().parents[1]/'assets/note-template.html'
     provenance=json.loads((template.parent/'port-provenance.json').read_text())
