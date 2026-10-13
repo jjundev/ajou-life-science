@@ -1,0 +1,1162 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>녹말과 셀룰로오스</title>
+<!-- 생성 파일: 자료_인터렉티브_04_녹말과_셀룰로오스_α_β_결합/Main.dc.html을 고친 뒤 bio-interactive/scripts/build.cjs로 다시 만드세요. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+<style>
+body{margin:0}
+.app{--radius:8px;--tap:48px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--dur:220ms;--dur-exit:150ms;--ease-out:cubic-bezier(.2,.8,.2,1);--scrim:rgba(0,0,0,.4);
+  height:100vh;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;box-sizing:border-box;
+  background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;font-size:16px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.app *,.app *::before,.app *::after{box-sizing:border-box}
+.app button{font-family:inherit;color:inherit}
+.app :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.num{font-variant-numeric:tabular-nums}
+
+.topbar{display:flex;align-items:center;gap:var(--s2);min-height:56px;padding:var(--s2) var(--s3);background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:17px;font-weight:700;white-space:nowrap}
+.text-btn{flex:none;min-height:44px;min-width:44px;padding:0 var(--s3);border:0;border-radius:var(--radius);background:transparent;color:var(--ink);font:600 14px/1 'Pretendard',system-ui,sans-serif;cursor:pointer}
+.panel-toggle{display:inline-flex;align-items:center;gap:var(--s1);padding:0 var(--s2)}
+.panel-toggle svg,.theme-toggle svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.panel-toggle .strip{fill:transparent;stroke:none;transition:fill 150ms ease-out}
+.panel-toggle[aria-expanded="true"]{color:var(--accent-ink)}
+.panel-toggle[aria-expanded="true"] .strip{fill:currentColor}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;padding:0}
+.seg{flex:none;display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.seg button{min-height:40px;padding:0 var(--s3);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+.layout{display:grid;grid-template-columns:auto minmax(320px,1fr) auto;min-height:0}
+.panel{position:relative;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--bg);color:var(--ink)}
+.panel-left{grid-column:1;width:clamp(260px,20vw,320px);border-right:1px solid var(--line)}
+.panel-right{grid-column:3;width:clamp(320px,24vw,400px);border-left:1px solid var(--line)}
+.panel-inner{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--s4) var(--s4) var(--s6)}
+.panel-inner::-webkit-scrollbar{width:8px}
+.panel-inner::-webkit-scrollbar-track{background:transparent}
+.panel-inner::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:8px;border:2px solid var(--bg)}
+.panel-inner::-webkit-scrollbar-thumb:hover{background:var(--scroll-hover)}
+@supports (scrollbar-color:auto){.panel-inner{scrollbar-width:thin;scrollbar-color:var(--scroll) transparent}}
+.panel-head{display:flex;align-items:center;gap:var(--s2);min-height:44px;margin-bottom:var(--s2)}
+.panel-head h2{flex:1 1 0;min-width:0;margin:0;font-size:22px;line-height:1.4}
+.stage{grid-column:2;position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--bg)}
+.scrim{display:none}
+.panel-resize{display:none}
+
+.sec{margin-top:var(--s5);padding-top:var(--s5);border-top:1px solid var(--line)}
+.panel-head + .sec,.panel-head + div > .sec:first-child{margin-top:0;padding-top:0;border-top:0}
+.sec-title{display:block;margin:0 0 var(--s3);font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-0.01em}
+.sub{margin:var(--s3) 0 0;font-size:14px;line-height:1.6;color:var(--ink-2)}
+
+.opt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.btn{display:flex;align-items:center;gap:var(--s2);width:100%;min-height:var(--tap);padding:0 var(--s3);border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font-size:14px;font-weight:600;line-height:1.3;text-align:left;cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.btn .box{flex:none;width:12px;height:12px;border-radius:3px;border:1.5px solid currentColor}
+.btn[aria-pressed="true"] .box{background:currentColor}
+.steps{display:flex;flex-direction:column;gap:var(--s2)}
+.steps .btn{padding:var(--s2) var(--s3);gap:var(--s3)}
+.step-num{flex:none;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid;font-size:12px;font-weight:700;color:var(--ink)}
+.step-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.step-txt b{font-size:15px;font-weight:700}
+.step-txt span{font-size:13px;font-weight:500;color:var(--ink-2)}
+.detail{margin-top:var(--s3);padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+
+
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.tiles.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tile{padding:var(--s3);border-radius:var(--radius);background:var(--surface)}
+.tile b{display:block;font-size:20px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}
+.tile span{display:block;font-size:13px;line-height:1.4;color:var(--ink-2)}
+.events{display:flex;flex-direction:column;gap:var(--s2)}
+.event{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.6}
+.dot{flex:none;width:10px;height:10px;margin-top:7px;border-radius:50%}
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2) var(--s3);font-size:13px;color:var(--ink-2)}
+.legend div{display:flex;align-items:center;gap:var(--s2)}
+.sw{flex:none;width:16px;height:6px;border-radius:3px}
+.sw.ball{width:12px;height:12px;border-radius:50%}
+.sec.warn{border-top:0;padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+.warn .sec-title{color:var(--warn);font-size:17px}
+.mistake{margin-top:var(--s3)}
+.mistake b{display:block;font-weight:700}
+.mistake span{color:var(--ink-2)}
+
+.canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.canvas.is-fixed{cursor:default}
+.view-btns{position:absolute;top:var(--s3);right:var(--s3);display:flex;gap:6px}
+.icon-btn{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);cursor:pointer}
+.icon-btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.icon-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.float{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius)}
+.hover-card{position:absolute;left:var(--s3);bottom:var(--s3);display:flex;flex-direction:column;gap:2px;padding:var(--s3) var(--s4);pointer-events:none}
+.hover-card .k{font-size:13px;color:var(--ink-2)}
+.hover-card .v{font-size:18px;font-weight:700}
+.playbar{position:absolute;left:var(--s3);right:var(--s3);bottom:var(--s3);display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3)}
+.play{flex:none;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--radius);background:var(--btn-bg);color:var(--on-btn) !important;cursor:pointer}
+.play svg{width:18px;height:18px;fill:currentColor}
+.scrub{flex:1 1 200px;min-width:160px;display:flex;flex-direction:column;gap:2px}
+.scrub span{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.scrub input{width:100%;height:24px;margin:0;accent-color:var(--accent)}
+.speeds{display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.speeds button{min-width:48px;height:40px;padding:0 var(--s2);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
+.speeds button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+@media (hover:hover){.btn:hover,.icon-btn:hover{background:var(--surface)}.text-btn:hover{background:var(--surface)}}
+@media (min-width:1024px){
+  .panel-head{display:none}
+  .layout{--pl:var(--pl-user,clamp(260px,20vw,320px));--pr:var(--pr-user,clamp(320px,24vw,400px))}
+  .panel{width:0;border-width:0;visibility:hidden;transition:width var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left.is-open{width:var(--pl)}
+  .panel-right.is-open{width:var(--pr)}
+  .panel.is-open{visibility:visible;border-width:1px;transition:width var(--dur) var(--ease-out)}
+  .panel-left .panel-inner{width:var(--pl)}
+  .panel-right .panel-inner{width:var(--pr);align-self:flex-end}
+  .layout.is-resizing .panel{transition:none}
+  .layout.is-resizing{cursor:col-resize;user-select:none}
+  .panel-resize{display:block;position:absolute;top:0;bottom:0;z-index:2;width:12px;padding:0;border:0;background:transparent;cursor:col-resize;touch-action:none}
+  .panel-left .panel-resize{right:0}
+  .panel-right .panel-resize{left:0}
+  .panel-resize::after{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--accent);opacity:0;transition:opacity 150ms ease-out}
+  .panel-left .panel-resize::after{right:0}
+  .panel-right .panel-resize::after{left:0}
+  .panel-resize:focus-visible{outline:none}
+  .panel-resize:focus-visible::after,.is-resizing .panel-resize:active::after{opacity:1}
+  @media (hover:hover){.panel-resize:hover::after{opacity:1}}
+}
+@media (max-width: 1023.98px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .stage{grid-column:1}
+  .panel{position:fixed;top:0;bottom:0;z-index:40;visibility:hidden;transition:transform var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left{left:0;width:min(304px,88vw);transform:translateX(-100%)}
+  .panel-right{right:0;width:min(360px,88vw);transform:translateX(100%)}
+  .panel.is-open{visibility:visible;transform:none;transition:transform var(--dur) var(--ease-out)}
+  .panel-inner{padding-top:calc(var(--s3) + env(safe-area-inset-top));padding-bottom:calc(var(--s6) + env(safe-area-inset-bottom))}
+  .scrim{display:block;position:fixed;inset:0;z-index:35;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .scrim.is-on{opacity:1;visibility:visible;transition:opacity var(--dur) var(--ease-out)}
+}
+@media (max-width:640px){.brand{display:none}.topbar{justify-content:space-between}}
+@media (max-width:480px){.panel-toggle span{display:none}.seg button{padding:0 var(--s2)}}
+@media (prefers-reduced-motion:reduce){.panel,.panel.is-open,.scrim,.scrim.is-on,.panel-toggle .strip,.panel-resize::after{transition:none}}
+</style>
+</head>
+<body>
+<div id="dc-root"></div>
+<template id="dc-template">
+<div class="app" onKeyDown="{{onKey}}" style="--bg: {{th.bg}}; --surface: {{th.surface}}; --ink: {{th.ink}}; --ink-2: {{th.ink2}}; --line: {{th.line}}; --accent: {{th.accent}}; --accent-ink: {{th.accentInk}}; --btn-bg: {{th.btnBg}}; --on-btn: {{th.onBtn}}; --warn: {{th.warn}}; --prof: {{th.prof}}; --supp: {{th.supp}}; --danger: {{th.danger}}; --scroll: {{th.scroll}}; --scroll-hover: {{th.scrollHover}}">
+<header class="topbar">
+<button class="text-btn panel-toggle" type="button" aria-label="조작 패널" aria-expanded="{{leftExpanded}}" onClick="{{toggleLeft}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M9 4v16"></path></svg><span>조작</span></button>
+<strong class="brand">녹말과 셀룰로오스</strong>
+<sc-if value="{{hasModes}}" hint-placeholder-val="{{ true }}">
+<div class="seg" role="group" aria-label="보기 선택">
+<sc-for list="{{modes}}" as="md" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{md.pressed}}" onClick="{{md.pick}}">{{md.label}}</button>
+</sc-for>
+</div>
+</sc-if>
+<button class="text-btn theme-toggle" type="button" aria-label="{{themeLabel}}" title="{{themeLabel}}" onClick="{{toggleTheme}}">
+<sc-if value="{{isDark}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+<sc-if value="{{isLight}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></sc-if>
+</button>
+<button class="text-btn panel-toggle" type="button" aria-label="설명 패널" aria-expanded="{{rightExpanded}}" onClick="{{toggleRight}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M15 4v16"></path></svg><span>설명</span></button>
+</header>
+
+<div class="layout {{layoutCls}}" style="{{layoutStyle}}">
+<aside class="panel panel-left {{leftCls}}" aria-label="조작">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="220" aria-valuemax="480" aria-valuenow="{{leftWNow}}" ref="{{leftHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>조작</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<sc-if value="{{hasToggles}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">보기 옵션</h3>
+<div class="opt">
+<sc-for list="{{toggles}}" as="t" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{t.pressed}}" onClick="{{t.toggle}}"><span class="box" aria-hidden="true"></span>{{t.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<!-- SLOT:left -->
+<sc-if value="{{is.ring}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">1번 탄소의 OH</h3>
+<div class="opt">
+<button class="btn" type="button" aria-pressed="{{anomA}}" onClick="{{pickA}}"><span class="box" aria-hidden="true"></span>α 포도당 (아래)</button>
+<button class="btn" type="button" aria-pressed="{{anomB}}" onClick="{{pickB}}"><span class="box" aria-hidden="true"></span>β 포도당 (위)</button>
+</div>
+<p class="sub">고리 O 옆 탄소 둘 중 CH₂OH가 없는 쪽이 1번 탄소예요. 그 OH 방향만 바뀌어요.</p>
+</div>
+</sc-if>
+<!-- /SLOT:left -->
+
+<sc-if value="{{hasSteps}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">단계</h3>
+<div class="steps">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}"><span class="step-num num" style="border-color: {{s.c}}">{{s.num}}</span><span class="step-txt"><b>{{s.title}}</b><span>{{s.who}}</span></span></button>
+</sc-for>
+</div>
+<sc-if value="{{hasStep}}" hint-placeholder-val="{{ false }}">
+<div class="detail" aria-live="polite">{{stepDetail}}</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</aside>
+
+<section class="stage" aria-label="모형 보기">
+<canvas class="canvas {{canvasCls}}" ref="{{canvasRef}}" role="img" aria-label="{{canvasLabel}}"></canvas>
+<div class="view-btns">
+<button class="icon-btn" type="button" aria-label="확대" onClick="{{zoomIn}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="축소" onClick="{{zoomOut}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="시점 처음으로" onClick="{{resetView}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v5h5"></path></svg></button>
+</div>
+
+<sc-if value="{{hasPlayback}}" hint-placeholder-val="{{ false }}">
+<div class="playbar float">
+<button class="play" type="button" aria-label="{{playLabel}}" onClick="{{togglePlay}}">
+<sc-if value="{{isPlaying}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></sc-if>
+<sc-if value="{{notPlaying}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5l12 7-12 7z"></path></svg></sc-if>
+</button>
+<label class="scrub">
+<span>{{fLabel}}</span>
+<input type="range" min="0" max="{{fMax10}}" step="1" value="{{fInt}}" onChange="{{onScrub}}">
+</label>
+<div class="speeds" role="group" aria-label="재생 속도">
+<sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{sp.pressed}}" onClick="{{sp.pick}}">{{sp.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</section>
+
+<aside class="panel panel-right {{rightCls}}" aria-label="설명">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="280" aria-valuemax="720" aria-valuenow="{{rightWNow}}" ref="{{rightHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>설명</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<!-- SLOT:right -->
+<div class="sec">
+<h3 class="sec-title">{{tilesTitle}}</h3>
+<div class="tiles">
+<sc-for list="{{tiles}}" as="t" hint-placeholder-count="4">
+<div class="tile"><b>{{t.v}}</b><span>{{t.k}}</span></div>
+</sc-for>
+</div>
+</div>
+<sc-if value="{{is.enzyme}}" hint-placeholder-val="{{ false }}">
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{events}}" as="e" hint-placeholder-count="1">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<sc-for list="{{legend}}" as="l" hint-placeholder-count="6">
+<div><span class="{{l.cls}}" style="background: {{l.c}}"></span>{{l.label}}</div>
+</sc-for>
+</div>
+<p class="sub">{{note}}</p>
+</div>
+<!-- /SLOT:right -->
+
+<div class="sec warn">
+<h3 class="sec-title">꼭 기억해요</h3>
+<sc-for list="{{mistakes}}" as="m" hint-placeholder-count="3">
+<div class="mistake"><b>{{m.title}}</b><span>{{m.text}}</span></div>
+</sc-for>
+</div>
+</div>
+</aside>
+</div>
+<div class="scrim {{scrimCls}}" aria-hidden="true" onClick="{{closePanels}}"></div>
+</div>
+</template>
+<script>
+// Minimal x-dc runtime for opening the canvas component as a plain HTML page.
+// Supports what Main.dc.html uses: {{dotted.path}} holes in text and attributes,
+// event attributes (onClick, onKeyDown, onMouseEnter, onMouseLeave, onChange),
+// callback ref, <sc-if value> and <sc-for list as>.
+const DC_EVENTS = { onclick: 'click', onkeydown: 'keydown', onmouseenter: 'mouseenter', onmouseleave: 'mouseleave', onchange: 'input' };
+const DC_HOLE = /\{\{\s*([\w.$]+)\s*\}\}/g;
+let dcSchedule = () => {};
+
+class DCLogic {
+  constructor(props) { this.props = props || {}; this.state = {}; }
+  setState(u) {
+    this.state = Object.assign({}, this.state, typeof u === 'function' ? u(this.state) : u);
+    dcSchedule();
+  }
+}
+
+function dcGet(scope, path) {
+  let o = scope;
+  for (const k of path.split('.')) { if (o == null) return undefined; o = o[k]; }
+  return o;
+}
+function dcInterp(str, scope) {
+  return str.replace(DC_HOLE, (_, p) => { const v = dcGet(scope, p); return v == null ? '' : String(v); });
+}
+function dcSingle(str) {
+  const m = str.match(/^\s*\{\{\s*([\w.$]+)\s*\}\}\s*$/);
+  return m ? m[1] : null;
+}
+
+// Compiles one node in place; pushes updaters that take the current scope.
+function dcCompile(node, ups) {
+  if (node.nodeType === 3) {
+    if (!node.data.includes('{{')) return;
+    const src = node.data;
+    let last;
+    ups.push((s) => { const v = dcInterp(src, s); if (v !== last) { node.data = v; last = v; } });
+    return;
+  }
+  if (node.nodeType !== 1) return;
+  const tag = node.tagName.toLowerCase();
+  if (tag === 'sc-if' || tag === 'sc-for') { dcBlock(node, tag, ups); return; }
+  for (const a of [...node.attributes]) {
+    const name = a.name, val = a.value;
+    if (name.startsWith('hint-')) { node.removeAttribute(name); continue; }
+    if (!val.includes('{{')) continue;
+    node.removeAttribute(name);
+    if (DC_EVENTS[name]) {
+      const p = dcSingle(val);
+      let cur;
+      node.addEventListener(DC_EVENTS[name], (e) => { const f = dcGet(cur, p); if (typeof f === 'function') f(e); });
+      ups.push((s) => { cur = s; });
+    } else if (name === 'ref') {
+      const p = dcSingle(val);
+      let done = false;
+      ups.push((s) => { if (!done) { done = true; const f = dcGet(s, p); if (typeof f === 'function') f(node); } });
+    } else {
+      let last;
+      ups.push((s) => {
+        const v = dcInterp(val, s);
+        if (v === last) return;
+        last = v;
+        if (name === 'value' && 'value' in node) node.value = v; else node.setAttribute(name, v);
+      });
+    }
+  }
+  for (const c of [...node.childNodes]) dcCompile(c, ups);
+}
+
+function dcBlock(el, tag, ups) {
+  const anchor = document.createComment(tag);
+  el.parentNode.replaceChild(anchor, el);
+  const tpl = document.createDocumentFragment();
+  while (el.firstChild) tpl.appendChild(el.firstChild);
+  const make = () => {
+    const frag = tpl.cloneNode(true), u = [];
+    for (const c of [...frag.childNodes]) dcCompile(c, u);
+    return { frag: frag, nodes: [...frag.childNodes], u: u };
+  };
+  if (tag === 'sc-if') {
+    const p = dcSingle(el.getAttribute('value') || '');
+    let inst = null;
+    ups.push((s) => {
+      const on = !!dcGet(s, p);
+      if (!on) { if (inst) { inst.nodes.forEach((n) => n.remove()); inst = null; } return; }
+      if (!inst) { inst = make(); anchor.parentNode.insertBefore(inst.frag, anchor); }
+      inst.u.forEach((f) => f(s));
+    });
+  } else {
+    const p = dcSingle(el.getAttribute('list') || ''), as = el.getAttribute('as');
+    const insts = [];
+    ups.push((s) => {
+      const list = dcGet(s, p) || [];
+      while (insts.length > list.length) insts.pop().nodes.forEach((n) => n.remove());
+      while (insts.length < list.length) { const i = make(); anchor.parentNode.insertBefore(i.frag, anchor); insts.push(i); }
+      list.forEach((item, k) => { const sc = Object.create(s); sc[as] = item; insts[k].u.forEach((f) => f(sc)); });
+    });
+  }
+}
+
+function mountDC(Component) {
+  const comp = new Component({});
+  const frag = document.getElementById('dc-template').content.cloneNode(true), ups = [];
+  for (const c of [...frag.childNodes]) dcCompile(c, ups);
+  const root = document.getElementById('dc-root');
+  let pending = false;
+  const render = () => { pending = false; const v = comp.renderVals(); ups.forEach((f) => f(v)); };
+  dcSchedule = () => { if (!pending) { pending = true; queueMicrotask(render); } };
+  root.appendChild(frag);
+  render();
+  window.addEventListener('pagehide', () => { if (comp.componentWillUnmount) comp.componentWillUnmount(); });
+}
+class Component extends DCLogic {
+  // ================= 주제 훅: 주제마다 바꾸는 곳은 이 네 메서드뿐이에요 =================
+  // 계약은 bio-interactive/references/scene-api.md에 있어요.
+
+  topic() {
+    // 분해 모드 진행 계산: 녹말 포도당 8개(결합 b0–b6), 셀룰로오스 포도당 6개(결합 5개)
+    const sm = (x) => { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
+    const lin = (a, b, t) => a + (b - a) * Math.max(0, Math.min(1, t));
+    const phaseName = (f) => f < 2 ? '사슬 준비' : f < 6 ? '아밀라아제' : f < 7.5 ? '엿당'
+      : f < 10.5 ? '엿당 분해 효소' : f < 12 ? '포도당' : '셀룰로오스';
+    const ENZ = (f) => {
+      const a1 = sm((f - 5.2) / 0.6), a2 = sm((f - 9.8) / 0.5);
+      const ux = (i) => (i - 3.5) * 1.1 + (Math.floor(i / 2) - 1.5) * 0.4 * a1 + ((i % 2) - 0.5) * 0.35 * a2;
+      const amX = lin(-4.6, 4.6, (f - 2) / 3.2), maX = lin(-4.6, 4.6, (f - 7.8) / 2);
+      const cut = [];
+      for (let b = 0; b < 7; b++) {
+        if (b % 2) cut.push(f < 2 ? 0 : sm((amX - (b - 3) * 1.1) / 0.25));
+        else { const bx = (b - 3) * 1.1 + (b / 2 - 1.5) * 0.4; cut.push(f < 7.8 ? 0 : sm((maX - bx) / 0.25)); }
+      }
+      // 이어진 조각 세기
+      const segs = []; let run = 1;
+      for (let b = 0; b < 7; b++) { if (cut[b] >= 0.5) { segs.push(run); run = 1; } else run++; }
+      segs.push(run);
+      const maltose = segs.filter((n) => n === 2).length, glucose = segs.filter((n) => n === 1).length;
+      const nCut = cut.filter((c) => c >= 0.5).length;
+      // 효소 위치와 투명도
+      let am = null;
+      if (f >= 1 && f < 7) am = { x: amX, row: 's', a: sm(f - 1) * (1 - sm((f - 6.6) / 0.4)) };
+      else if (f >= 12) am = { x: lin(-4.6, 0, (f - 12.4) / 1), row: 'c', a: sm((f - 12) / 0.4) };
+      const ma = (f >= 7.5 && f < 12) ? { x: maX, a: sm((f - 7.5) / 0.3) * (1 - sm((f - 11.6) / 0.4)) } : null;
+      return { phase: phaseName(f), a1: a1, a2: a2, ux: ux, cut: cut, nCut: nCut, maltose: maltose, glucose: glucose, am: am, ma: ma, stuck: f >= 13.4 };
+    };
+    const PAL = {
+      light: { bg: '#ffffff', labelBg: '#f7f8fa', ink: '#111111', ring: '#111111', blobAlpha: 0.28,
+        C: '#4B5563', O: '#E5484D', H: '#A3ACB9', bond: '#9AA3AF', alpha: '#1E88E5', beta: '#E08A00', amyl: '#8E44AD', malt: '#12A37F', stop: '#D92D20' },
+      dark: { bg: '#17171c', labelBg: '#212128', ink: '#f2f4f6', ring: '#f2f4f6', blobAlpha: 0.40,
+        C: '#B8C0CC', O: '#FF7A7A', H: '#E6E9EE', bond: '#7D8695', alpha: '#5AA9FF', beta: '#FFB547', amyl: '#C29BF5', malt: '#3DD6A8', stop: '#FF6B61' }
+    };
+    const LP = PAL.light;
+    return {
+      ENZ: ENZ,
+      MODES: [
+        { key: 'ring', label: '포도당', cam: { yaw: -0.55, pitch: 0.42, zoom: 1 }, fit: [7.6, 7], D: 30,
+          autoSpin: true, rotatable: true, playback: null,
+          canvasLabel: () => (this.state.anom === 'b' ? 'β' : 'α') + ' 포도당 고리 3D 모형. 탄소 5개와 산소 1개가 육각형을 이루고, 1번 탄소의 OH가 ' + (this.state.anom === 'b' ? '위' : '아래') + '를 향해요. 끌어서 회전할 수 있어요.' },
+        { key: 'chain', label: '사슬', cam: { yaw: -0.22, pitch: 0.5, zoom: 1 }, fit: [12.5, 12.5], D: 40,
+          autoSpin: false, rotatable: true, playback: null,
+          canvasLabel: () => (this.state.step === 1 ? '녹말 줄 강조. ' : this.state.step === 2 ? '셀룰로오스 줄 강조. ' : '') + '녹말은 포도당 6개가 α 1→4 결합으로 같은 방향으로, 셀룰로오스는 포도당 6개가 β 1→4 결합으로 한 단위씩 뒤집혀 이어진 모형' + (this.state.glyco ? '이고, 위에 가지가 있는 글리코겐도 있어요.' : '이에요.') },
+        { key: 'enzyme', label: '분해', cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [12.5, 8.5], D: 60,
+          autoSpin: false, rotatable: false,
+          playback: { fmax: 15, rate: 1, label: (f) => phaseName(f) + ' · ' + f.toFixed(1) + ' / 15' },
+          canvasLabel: (f) => {
+            const e = ENZ(f), parts = [];
+            if (e.maltose) parts.push('엿당 ' + e.maltose + '개');
+            if (e.glucose) parts.push('포도당 ' + e.glucose + '개');
+            const head = e.nCut ? '녹말 포도당 8개 사슬에서 α 결합 ' + e.nCut + '개가 끊겨 ' + parts.join(', ') + '가 됐어요.' : '녹말 포도당 8개 사슬이 아직 그대로예요.';
+            return head + ' 셀룰로오스의 β 결합 5개는 그대로예요.';
+          } }
+      ],
+      STEPS: [
+        { mode: 'ring', c: LP.alpha, title: 'α 포도당과 β 포도당', who: '포도당 고리',
+          text: '포도당 고리는 탄소 5개와 산소 1개로 된 육각형이에요. 고리 O 옆 탄소 둘 중 CH₂OH가 없는 쪽이 1번 탄소이고, 그 OH가 아래면 α, 위면 β예요. 왼쪽 버튼으로 바꿔 보세요.' },
+        { mode: 'chain', c: LP.alpha, title: 'α 1→4 결합', who: '녹말',
+          text: 'α 포도당의 1번 탄소와 다음 포도당의 4번 탄소가 O 하나로 이어져요. 모든 포도당이 같은 방향이라 연결 O가 모두 아래에 있어요.' },
+        { mode: 'chain', c: LP.beta, title: 'β 1→4 결합 (뒤집힘)', who: '셀룰로오스',
+          text: 'β 포도당끼리 1번과 4번 탄소로 이어지는데, 한 단위씩 뒤집혀 있어요. 그래서 CH₂OH와 연결 O가 위아래로 번갈아 보여요.' },
+        { mode: 'enzyme', f: 5.9, phase: '아밀라아제', c: LP.amyl, title: '엿당 단위로 자르기', who: '아밀라아제',
+          text: '아밀라아제가 녹말의 α 결합을 끊는데, 포도당 2개 단위로 잘라요. 포도당 8개 사슬에서 결합 3개가 끊겨 엿당 4개가 나와요.' },
+        { mode: 'enzyme', f: 10.4, phase: '엿당 분해 효소', c: LP.malt, title: '엿당을 포도당으로', who: '엿당 분해 효소',
+          text: '엿당 분해 효소가 엿당 가운데의 α 결합을 끊어요. 결합 4개가 더 끊겨 포도당 8개가 되고, 소장에서 흡수돼요.' },
+        { mode: 'enzyme', f: 14.5, phase: '셀룰로오스', c: LP.stop, title: 'β 결합은 못 끊어요', who: '사람의 효소',
+          text: '아밀라아제는 α 결합만 끊어요. 사람에게는 β 결합을 끊는 효소가 없어서 셀룰로오스는 식이섬유로 남아요. 소는 장 속 공생 미생물이 β 결합을 끊어 줘요.' }
+      ],
+      MISTAKES: {
+        ring: [
+          { title: 'OH 아래 = α, 위 = β', text: '고리를 만들 때 1번 탄소의 OH가 아래면 α, 위면 β예요. 고리 O 옆 탄소 둘 중 CH₂OH가 없는 쪽이 1번 탄소예요. 거기 OH만 보세요.' },
+          { title: 'α·β 모두 같은 포도당', text: '둘 다 C₆H₁₂O₆ 포도당이에요. 다른 곳은 1번 탄소 OH 방향 하나뿐이에요. 버튼을 눌러 바뀌는 곳을 확인해요.' },
+          { title: '고리 = 탄소 5 + 산소 1', text: '육각형 꼭짓점이 모두 탄소는 아니에요. 산소 1개가 고리에 들어가고, 6번 탄소는 고리 밖 CH₂OH로 붙어요.' }
+        ],
+        chain: [
+          { title: '재료는 같고 연결 방식이 달라요', text: '녹말과 셀룰로오스는 둘 다 포도당 중합체예요. 다른 건 α 결합이냐 β 결합이냐예요.' },
+          { title: '옮겨 간 게 아니라 뒤집힌 것', text: 'OH가 아래·위로 옮겨 간 게 아니라 포도당이 통째로 뒤집혀서 연결 O가 위로 보여요. 뒤집힌 단위는 CH₂OH는 위아래, 고리 O는 앞뒤가 바뀌어 있어요.' },
+          { title: '녹말 = 식물, 글리코겐 = 동물', text: '둘 다 α 결합 연료 저장 형태예요. 글리코겐은 가지가 더 많고 간·근육에 저장해요. ‘글리코겐 보기’를 켜 보세요.' }
+        ],
+        enzyme: [
+          { title: '아밀라아제는 엿당 단위로', text: '포도당 하나씩이 아니라 2개(엿당) 단위로 잘라요. 엿당을 포도당으로 자르는 건 엿당 분해 효소예요.' },
+          { title: '소는 공생 미생물 덕분', text: '소가 β 결합을 끊는 효소를 가진 게 아니에요. 장 속 미생물이 끊고, 소는 분해 산물을 흡수해요.' },
+          { title: '연료 ≠ 구조', text: '녹말·글리코겐은 연료(포도당 저장), 셀룰로오스는 식물 세포벽의 구조 성분이에요. 사람에게는 식이섬유예요.' }
+        ]
+      },
+      TOGGLES: {
+        ring: [['nums', '탄소 번호'], ['hyd', 'H 원자']],
+        chain: [['glyco', '글리코겐 보기'], ['nums', '1·4번 탄소']],
+        enzyme: [['labels', '이름표']]
+      },
+      PAL: PAL
+    };
+  }
+
+  // 장면 만들기: I(그리기 항목)와 O(라벨)에 push만 해요. 진행값은 this.sim.f를 써요.
+  buildScene(mode, I, O) {
+    const pal = this.pal(), st = this.state;
+    const S3 = Math.sqrt(3) / 2;
+    // 고리 원자 자리(하워스 투영): C1 오른쪽, 고리 O는 C1과 C5 사이(뒤), C4 왼쪽
+    const ringLocal = (R) => ({
+      C1: [R, 0, 0], C2: [R / 2, 0, S3 * R], C3: [-R / 2, 0, S3 * R],
+      C4: [-R, 0, 0], C5: [-R / 2, 0, -S3 * R], O5: [R / 2, 0, -S3 * R]
+    });
+    const ORDER = ['C1', 'C2', 'C3', 'C4', 'C5', 'O5'];
+    const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+
+    if (mode === 'ring') {
+      const R = 1.4, L = ringLocal(R), beta = st.anom === 'b';
+      // 각 탄소의 위(+1)/아래(-1) 치환기: D-포도당 하워스 투영
+      const SUB = { C1: beta ? 1 : -1, C2: -1, C3: 1, C4: -1 };
+      ORDER.forEach((k, i) => I.push({ k: 1, p: L[k], q: L[ORDER[(i + 1) % 6]], w: 0.13, c: pal.bond, rod: true }));
+      ORDER.forEach((k) => I.push({ k: 0, p: L[k], r: k === 'O5' ? 0.3 : 0.27, c: k === 'O5' ? pal.O : pal.C }));
+      const out = (k) => { const p = L[k], n = Math.hypot(p[0], p[2]); return [p[0] / n, 0, p[2] / n]; };
+      ['C1', 'C2', 'C3', 'C4'].forEach((k) => {
+        const u = out(k), s = SUB[k];
+        const pO = add(L[k], [u[0] * 0.3, s * 1.0, u[2] * 0.3]);
+        const pHo = add(pO, [u[0] * 0.42, s * 0.2, u[2] * 0.42]);
+        const pH = add(L[k], [u[0] * 0.25, -s * 0.75, u[2] * 0.25]);
+        I.push({ k: 1, p: L[k], q: pO, w: 0.08, c: k === 'C1' ? (beta ? pal.beta : pal.alpha) : pal.bond, rod: k === 'C1' });
+        I.push({ k: 1, p: pO, q: pHo, w: 0.06, c: pal.bond });
+        I.push({ k: 0, p: pO, r: 0.22, c: pal.O });
+        I.push({ k: 0, p: pHo, r: 0.13, c: pal.H });
+        if (st.hyd) { I.push({ k: 1, p: L[k], q: pH, w: 0.05, c: pal.bond }); I.push({ k: 0, p: pH, r: 0.13, c: pal.H }); }
+        if (k === 'C1') {
+          O.push({ p: pO, text: '1번 탄소 OH (' + (beta ? '위 → β' : '아래 → α') + ')', c: beta ? pal.beta : pal.alpha, dy: beta ? -30 : 30 });
+        }
+      });
+      // C5: 위로 CH2OH(6번 탄소), 아래로 H
+      const u5 = out('C5');
+      const C6 = add(L.C5, [u5[0] * 0.3, 1.0, u5[2] * 0.3]);
+      const O6 = add(C6, [u5[0] * 0.55, 0.45, u5[2] * 0.55]);
+      const H6 = add(O6, [u5[0] * 0.38, 0.12, u5[2] * 0.38]);
+      I.push({ k: 1, p: L.C5, q: C6, w: 0.08, c: pal.bond });
+      I.push({ k: 1, p: C6, q: O6, w: 0.07, c: pal.bond });
+      I.push({ k: 1, p: O6, q: H6, w: 0.06, c: pal.bond });
+      I.push({ k: 0, p: C6, r: 0.24, c: pal.C });
+      I.push({ k: 0, p: O6, r: 0.22, c: pal.O });
+      I.push({ k: 0, p: H6, r: 0.13, c: pal.H });
+      if (st.hyd) { const pH = add(L.C5, [u5[0] * 0.25, -0.75, u5[2] * 0.25]); I.push({ k: 1, p: L.C5, q: pH, w: 0.05, c: pal.bond }); I.push({ k: 0, p: pH, r: 0.13, c: pal.H }); }
+      O.push({ p: L.O5, text: '고리 O', c: pal.O, dx: 18, dy: -26, lead: true });
+      O.push({ p: O6, text: 'CH₂OH (6번 탄소)', c: pal.C, dy: -26 });
+      if (st.nums) {
+        ['C1', 'C2', 'C3', 'C4', 'C5'].forEach((k, i) => {
+          const u = out(k);
+          I.push({ k: 3, p: [L[k][0] - u[0] * 0.5, 0.0, L[k][2] - u[2] * 0.5], text: String(i + 1), size: 0.5, c: pal.ink });
+        });
+        I.push({ k: 3, p: add(C6, [-u5[0] * 0.45, 0.1, -u5[2] * 0.45]), text: '6', size: 0.5, c: pal.ink });
+      }
+      return;
+    }
+
+    if (mode === 'chain') {
+      const R = 0.5, L = ringLocal(R), GAP = 1.7;
+      const units = [];
+      // 포도당 한 단위: flip이면 사슬 축(x)을 중심으로 180° 뒤집힘 (y, z 부호 반대)
+      const unit = (c, flip, anom) => {
+        const W = {};
+        const tf = (p) => add(c, flip ? [p[0], -p[1], -p[2]] : p);
+        ORDER.forEach((k) => { W[k] = tf(L[k]); });
+        W.C6 = tf([L.C5[0], 0.72, L.C5[2]]);
+        const u = { W: W, c: c, flip: flip, anom: anom, s: (anom === 'a' ? -1 : 1) * (flip ? -1 : 1) };
+        ORDER.forEach((k, i) => I.push({ k: 1, p: W[k], q: W[ORDER[(i + 1) % 6]], w: 0.07, c: pal.bond, rod: true }));
+        ORDER.forEach((k) => I.push({ k: 0, p: W[k], r: k === 'O5' ? 0.15 : 0.12, c: k === 'O5' ? pal.O : pal.C }));
+        I.push({ k: 1, p: W.C5, q: W.C6, w: 0.06, c: pal.bond });
+        I.push({ k: 0, p: W.C6, r: 0.12, c: pal.C });
+        units.push(u);
+        return u;
+      };
+      // a의 1번 탄소 — O — b의 4번 탄소 (글리코사이드 결합)
+      const link = (a, b) => {
+        const Ob = [(a.W.C1[0] + b.W.C4[0]) / 2, a.c[1] + a.s * 0.5, (a.W.C1[2] + b.W.C4[2]) / 2];
+        const col = a.anom === 'a' ? pal.alpha : pal.beta;
+        I.push({ k: 1, p: a.W.C1, q: Ob, w: 0.1, c: col, rod: true });
+        I.push({ k: 1, p: Ob, q: b.W.C4, w: 0.1, c: col, rod: true });
+        I.push({ k: 0, p: Ob, r: 0.16, c: pal.O });
+        return Ob;
+      };
+      const row = (y, anom, alt) => {
+        const r = [];
+        for (let i = 0; i < 6; i++) r.push(unit([(i - 2.5) * GAP, y, 0], alt && i % 2 === 1, anom));
+        const bridges = [];
+        for (let i = 0; i < 5; i++) bridges.push(link(r[i], r[i + 1]));
+        if (st.nums) {
+          const a = r[1], b = r[2];
+          I.push({ k: 3, p: add(a.W.C1, [0.14, -a.s * 0.4, 0.12]), text: '1', size: 0.42, c: pal.ink });
+          I.push({ k: 3, p: add(b.W.C4, [-0.14, -a.s * 0.4, 0.12]), text: '4', size: 0.42, c: pal.ink });
+        }
+        return { r: r, bridges: bridges };
+      };
+      const g = st.glyco;
+      const yS = g ? -0.9 : 2.1, yC = g ? -4.4 : -2.1, yG = 2.5;
+      const focus = st.step === 1 ? 's' : st.step === 2 ? 'c' : null;
+      const dim = (from, on) => { if (focus && !on) for (let i = from; i < I.length; i++) I[i].a = 0.25; };
+      let n0 = I.length;
+      const sRow = row(yS, 'a', false);
+      dim(n0, focus === 's');
+      n0 = I.length;
+      const cRow = row(yC, 'b', true);
+      dim(n0, focus === 'c');
+      O.push({ p: sRow.r[0].W.C6, text: '녹말 · α 1→4 (식물)', c: pal.alpha, dx: 34, dy: -22 });
+      O.push({ p: cRow.r[0].W.C6, text: '셀룰로오스 · β 1→4', c: pal.beta, dx: 34, dy: -16 });
+      O.push({ p: sRow.bridges[3], text: '연결 O 모두 아래', c: pal.alpha, dy: 26, lead: true });
+      O.push({ p: cRow.r[1].W.C6, text: '뒤집힌 포도당', c: pal.beta, dy: 26, lead: true });
+      if (g) {
+        n0 = I.length;
+        const gRow = row(yG, 'a', false);
+        // 가지: 본 사슬 포도당의 6번 탄소에 다른 사슬의 1번 탄소가 O로 붙어요
+        const branch = (k, n) => {
+          const m = gRow.r[k], O6 = add(m.W.C6, [0, 0.5, 0]);
+          const b = [];
+          for (let j = 0; j < n; j++) b.unshift(unit([O6[0] - R - j * GAP, O6[1] + 0.5, O6[2]], false, 'a'));
+          for (let j = 0; j < n - 1; j++) link(b[j], b[j + 1]);
+          const last = b[n - 1];
+          I.push({ k: 1, p: m.W.C6, q: O6, w: 0.1, c: pal.alpha, rod: true });
+          I.push({ k: 1, p: O6, q: last.W.C1, w: 0.1, c: pal.alpha, rod: true });
+          I.push({ k: 0, p: O6, r: 0.16, c: pal.O });
+        };
+        branch(3, 2);
+        branch(5, 1);
+        dim(n0, false);
+        O.push({ p: gRow.r[0].W.C6, text: '글리코겐 · 가지 많음 (동물)', c: pal.alpha, dx: 44, dy: -22 });
+      }
+      return;
+    }
+
+    // ---------- 분해(평면 도식) ----------
+    const f = this.sim.f, E = this.T.ENZ(f), h = 0.42;
+    const yS = 1.6, yC = -1.5;
+    // 육각형 고리(정면): C1 오른쪽, C4 왼쪽, 고리 O는 C1 옆(위, 뒤집히면 아래), C5의 CH2OH 표시
+    const hexV = (cx, cy, flip, k) => { const a = k * Math.PI / 3 * (flip ? -1 : 1); return [cx + h * Math.cos(a), cy + h * Math.sin(a), 0]; };
+    const glc = (cx, cy, flip, a) => {
+      for (let k = 0; k < 6; k++) I.push({ k: 1, p: hexV(cx, cy, flip, k), q: hexV(cx, cy, flip, k + 1), w: 0.06, c: pal.C, a: a });
+      I.push({ k: 0, p: hexV(cx, cy, flip, 1), r: 0.09, c: pal.O, flat: true, a: a });
+      const c5 = hexV(cx, cy, flip, 2);
+      I.push({ k: 1, p: c5, q: [c5[0], c5[1] + (flip ? -0.3 : 0.3), 0], w: 0.05, c: pal.C, a: a });
+    };
+    const bond = (x1, x2, cy, s, col, a) => {
+      if (a <= 0.01) return;
+      const pO = [(x1 + x2) / 2, cy + s * 0.3, 0];
+      I.push({ k: 1, p: [x1, cy, 0], q: pO, w: 0.07, c: col, a: a });
+      I.push({ k: 1, p: pO, q: [x2, cy, 0], w: 0.07, c: col, a: a });
+      I.push({ k: 0, p: pO, r: 0.1, c: pal.O, flat: true, a: a });
+    };
+    // 녹말: 포도당 8개, α 1→4, 같은 방향
+    for (let i = 0; i < 8; i++) glc(E.ux(i), yS, false, 1);
+    for (let b = 0; b < 7; b++) bond(E.ux(b) + h, E.ux(b + 1) - h, yS, -1, pal.alpha, 1 - E.cut[b]);
+    // 셀룰로오스: 포도당 6개, β 1→4, 한 단위씩 뒤집힘
+    const cx = (i) => (i - 2.5) * 1.2;
+    for (let i = 0; i < 6; i++) glc(cx(i), yC, i % 2 === 1, 1);
+    for (let b = 0; b < 5; b++) bond(cx(b) + h, cx(b + 1) - h, yC, b % 2 ? -1 : 1, pal.beta, 1);
+    const lab = st.labels;
+    const inward = (x) => x > 1.5 ? -56 : x < -1.5 ? 56 : 0; // 칩이 화면 가장자리로 나가지 않게
+    if (E.am && E.am.a > 0.01) {
+      const p = [E.am.x, E.am.row === 's' ? yS : yC, 0];
+      I.push({ k: 5, p: p, r: 0.62, c: pal.amyl, a: E.am.a, focus: E.am.row === 'c' });
+      if (lab) O.push({ p: p, text: '아밀라아제', c: pal.amyl, dx: inward(E.am.x), dy: E.am.row === 's' ? 52 : -62, a: E.am.a });
+    }
+    if (E.ma && E.ma.a > 0.01) {
+      const p = [E.ma.x, yS, 0];
+      I.push({ k: 5, p: p, r: 0.62, c: pal.malt, a: E.ma.a });
+      if (lab) O.push({ p: p, text: '엿당 분해 효소', c: pal.malt, dx: inward(E.ma.x), dy: 50, a: E.ma.a });
+    }
+    if (E.stuck) {
+      O.push({ t: 'ring', p: [0, yC + 0.3, 0], text: '' });
+      O.push({ p: [0, yC + 0.3, 0], text: 'β 결합은 못 끊어요', c: pal.stop, dy: 62 });
+    }
+    if (lab) {
+      O.push({ p: [-3.8, yS + 1.1, 0], text: '녹말 (α 1→4)', c: pal.alpha });
+      O.push({ p: [-3.3, yC - 1.25, 0], text: '셀룰로오스 (β 1→4)', c: pal.beta });
+      const prod = E.glucose === 8 ? '포도당 8개 → 소장에서 흡수' : E.glucose > 0 ? '엿당 ' + E.maltose + ' · 포도당 ' + E.glucose : E.maltose > 0 ? '엿당 ' + E.maltose + '개' : '';
+      if (prod) O.push({ p: [2.6, yS + 1.1, 0], text: prod, c: E.glucose > 0 ? pal.malt : pal.amyl });
+    }
+  }
+
+  // 주제 전용 상태(보기 옵션 키 등). 공통 상태에 합쳐져요.
+  extraState() {
+    return { anom: 'a', nums: true, hyd: true, glyco: false, labels: true };
+  }
+
+  // 주제 전용 마크업 값. renderVals() 결과에 합쳐져요.
+  extraVals(st) {
+    const pal = this.pal(), beta = st.anom === 'b';
+    const ball = 'sw ball', line = 'sw';
+    let tilesTitle, tiles, legend, note, events = [];
+    if (st.mode === 'ring') {
+      tilesTitle = '숫자로 보는 포도당';
+      tiles = [
+        { v: '6개', k: '고리 원자 (C 5 + O 1)' },
+        { v: '6개', k: '탄소 수 (C₆H₁₂O₆)' },
+        { v: beta ? '위' : '아래', k: '1번 탄소 OH 방향' },
+        { v: beta ? 'β' : 'α', k: '포도당 종류' }
+      ];
+      legend = [
+        { cls: ball, c: pal.C, label: '탄소 (C)' }, { cls: ball, c: pal.O, label: '산소 (O)' },
+        { cls: ball, c: pal.H, label: '수소 (H)' }, { cls: line, c: beta ? pal.beta : pal.alpha, label: '1번 탄소–OH' }
+      ];
+      note = '6번 탄소는 고리 밖 CH₂OH예요. 나머지 OH 방향은 α·β가 같아요.';
+    } else if (st.mode === 'chain') {
+      tilesTitle = '숫자로 보는 사슬';
+      tiles = [
+        { v: st.glyco ? '21개' : '12개', k: '포도당 수' + (st.glyco ? ' (6 + 6 + 9)' : ' (6 + 6)') },
+        { v: '5개', k: '녹말 α 1→4 결합' },
+        { v: '5개', k: '셀룰로오스 β 1→4 결합' },
+        { v: '3개', k: '뒤집힌 포도당 (셀룰로오스)' }
+      ].concat(st.glyco ? [{ v: '2개', k: '글리코겐 가지(α 1→6) (교과서 보충)' }] : []);
+      legend = [
+        { cls: ball, c: pal.C, label: '탄소 (C)' }, { cls: ball, c: pal.O, label: '산소 (O)' },
+        { cls: line, c: pal.alpha, label: 'α 결합' }, { cls: line, c: pal.beta, label: 'β 결합' }
+      ];
+      note = st.step === 1 ? '녹말: 6개 모두 같은 방향이라 CH₂OH는 모두 위, 연결 O는 모두 아래예요.'
+        : st.step === 2 ? '셀룰로오스: 2·4·6번째 포도당이 뒤집혀 CH₂OH가 아래로, 연결 O가 위·아래 번갈아 있어요.'
+        : st.glyco ? '가지는 본 사슬 6번 탄소에 붙는 α 1→6 결합이에요 (교과서 보충). 녹말·글리코겐은 연료, 셀룰로오스는 구조예요.'
+        : '녹말·글리코겐은 연료, 셀룰로오스는 식물 세포벽의 구조 성분이에요.';
+    } else {
+      const E = this.T.ENZ(st.f);
+      tilesTitle = '숫자로 보는 분해';
+      tiles = [
+        { v: E.nCut + ' / 7', k: '끊긴 α 결합 (녹말)' },
+        { v: E.maltose + '개', k: '지금 엿당' },
+        { v: E.glucose + '개', k: '지금 낱개 포도당' },
+        { v: '0 / 5', k: '끊긴 β 결합 (셀룰로오스)' },
+        { v: '14개', k: '포도당 (녹말 8 + 셀룰로오스 6)' }
+      ];
+      legend = [
+        { cls: line, c: pal.alpha, label: 'α 결합' }, { cls: line, c: pal.beta, label: 'β 결합' },
+        { cls: ball, c: pal.O, label: '산소 (고리 O·연결 O)' }, { cls: ball, c: pal.amyl, label: '아밀라아제' },
+        { cls: ball, c: pal.malt, label: '엿당 분해 효소' }
+      ];
+      note = '육각형 하나가 포도당 하나예요. 짧은 꼬리는 CH₂OH 자리라 뒤집힘이 보여요.';
+      const ph = E.phase;
+      events = [ph === '사슬 준비' ? { c: pal.ink, text: '녹말(α 1→4)과 셀룰로오스(β 1→4)가 있어요. ▶를 눌러 보세요.' }
+        : ph === '아밀라아제' ? { c: pal.amyl, text: '아밀라아제가 녹말의 α 결합을 하나 걸러 끊어요.' }
+          : ph === '엿당' ? { c: pal.amyl, text: '포도당 2개짜리 엿당 4개가 생겼어요.' }
+            : ph === '엿당 분해 효소' ? { c: pal.malt, text: '엿당 분해 효소가 엿당 가운데 α 결합을 끊어요.' }
+              : ph === '포도당' ? { c: pal.malt, text: '포도당 8개가 소장에서 흡수되어 온몸 세포로 가요.' }
+                : { c: pal.stop, text: '아밀라아제가 와도 β 결합은 끊지 못해요. 소는 장 속 공생 미생물이 끊어 줘요.' }];
+    }
+    return {
+      anomA: beta ? 'false' : 'true', anomB: beta ? 'true' : 'false',
+      pickA: () => this.setState({ anom: 'a' }), pickB: () => this.setState({ anom: 'b' }),
+      tilesTitle: tilesTitle, tiles: tiles, legend: legend, note: note, events: events
+    };
+  }
+
+  // ================= 공통 셸: 아래는 주제와 무관해요. 고치지 않아요 =================
+  constructor(...args) {
+    super(...args);
+    let reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    let narrow = false;
+    try { narrow = window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) {}
+    let saved = null;
+    try { saved = window.localStorage.getItem('od-theme'); } catch (e) {}
+    const PANEL_W = { left: { min: 220, max: 480 }, right: { min: 280, max: 720 } };
+    let widths = {};
+    try { widths = JSON.parse(window.localStorage.getItem('interactive-panel-w')) || {}; } catch (e) {}
+    const okW = (side) => { const v = widths[side]; return typeof v === 'number' && v >= PANEL_W[side].min && v <= PANEL_W[side].max ? v : null; };
+    this.T = this.topic();
+    this.state = Object.assign({
+      mode: this.T.MODES[0].key, f: 0, playing: false, speed: 1, step: -1, spin: !reduce,
+      theme: (saved === 'light' || saved === 'dark') ? saved : (this.systemDark() ? 'dark' : 'light'),
+      // leftOpen/rightOpen: docked panels on wide screens; drawer: the one open drawer on narrow screens
+      leftOpen: true, rightOpen: true, drawer: null, narrow: narrow,
+      // leftW/rightW: user-set docked widths in px (null = default); resizing: a handle is being dragged
+      leftW: okW('left'), rightW: okW('right'), resizing: false
+    }, this.extraState());
+    this.reduceMotion = reduce;
+    this.K = {
+      PANEL_W: PANEL_W, PANEL_W_KEY: 'interactive-panel-w', PANEL_DEFAULT: { left: 320, right: 400 },
+      THEMES: {
+        light: { bg: '#ffffff', surface: '#f7f8fa', ink: '#111111', ink2: '#6b7280', line: '#d9dee7', accent: '#1677ff', accentInk: '#1b64da', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#b54708', prof: '#6941c6', supp: '#067647', danger: '#d92d20', scroll: '#c9d0db', scrollHover: '#9aa3b2' },
+        dark: { bg: '#17171c', surface: '#212128', ink: '#f2f4f6', ink2: '#a3abb8', line: '#34353d', accent: '#3182f6', accentInk: '#6ea4ff', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#f5a15c', prof: '#b69cff', supp: '#5fd39a', danger: '#ff6b61', scroll: '#3f414b', scrollHover: '#5b5e6a' }
+      }
+    };
+    this.cam = Object.assign({}, this.modeDef().cam);
+    this.sim = { f: 0, cx: 0 };
+    this.pointer = { x: -1, y: -1, inside: false, drag: false, lx: 0, ly: 0 };
+    this.colorCache = {};
+    this._tick = (t) => this.tick(t);
+    this._canvasRef = (el) => this.attachCanvas(el);
+    this.handles = {};
+    this._handleRefL = (el) => this.attachHandle('left', el);
+    this._handleRefR = (el) => this.attachHandle('right', el);
+  }
+
+  componentWillUnmount() {
+    this.attachCanvas(null);
+    this.attachHandle('left', null);
+    this.attachHandle('right', null);
+  }
+
+  modeDef(key) {
+    const k = key || this.state.mode;
+    return this.T.MODES.find((m) => m.key === k) || this.T.MODES[0];
+  }
+  systemDark() {
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; }
+  }
+  isNarrow() {
+    try { return window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) { return false; }
+  }
+  syncBreakpoint() { this.setState({ narrow: this.isNarrow(), drawer: null }); }
+  // In drawer mode only one panel is open at a time.
+  togglePanel(side) {
+    const st = this.state;
+    if (st.narrow) this.setState({ drawer: st.drawer === side ? null : side });
+    else if (side === 'left') this.setState({ leftOpen: !st.leftOpen });
+    else this.setState({ rightOpen: !st.rightOpen });
+  }
+  // Docked panel width: the canvas column always keeps at least 400px.
+  panelMax(side) {
+    const lim = this.K.PANEL_W[side], other = side === 'left' ? 'right' : 'left', st = this.state;
+    const h = this.handles[other];
+    const otherOpen = other === 'left' ? st.leftOpen : st.rightOpen;
+    const otherW = !otherOpen ? 0 : h ? h.el.parentElement.getBoundingClientRect().width
+      : (st[other + 'W'] || this.K.PANEL_DEFAULT[other]);
+    return Math.max(lim.min, Math.min(lim.max, (window.innerWidth || 1440) - otherW - 400));
+  }
+  setPanelWidth(side, px, save) {
+    const v = Math.round(Math.min(Math.max(px, this.K.PANEL_W[side].min), this.panelMax(side)));
+    this.setState({ [side + 'W']: v });
+    if (save) this.savePanelWidths(side, v);
+  }
+  resetPanelWidth(side) {
+    this.setState({ [side + 'W']: null });
+    this.savePanelWidths(side, null);
+  }
+  savePanelWidths(side, v) {
+    try {
+      const key = this.K.PANEL_W_KEY;
+      let w = {};
+      try { w = JSON.parse(window.localStorage.getItem(key)) || {}; } catch (e) {}
+      if (v == null) delete w[side]; else w[side] = v;
+      window.localStorage.setItem(key, JSON.stringify(w));
+    } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ }
+  }
+  // Re-fit user widths when the window shrinks (not saved).
+  refitPanels() {
+    ['left', 'right'].forEach((side) => {
+      const w = this.state[side + 'W'];
+      if (w != null && w > this.panelMax(side)) this.setPanelWidth(side, w, false);
+    });
+  }
+  attachHandle(side, el) {
+    const old = this.handles[side];
+    if (old && old.el === el) return;
+    if (old) {
+      Object.keys(old.on).forEach((ev) => old.el.removeEventListener(ev, old.on[ev]));
+      delete this.handles[side];
+      if (!Object.keys(this.handles).length) window.removeEventListener('resize', this._refit);
+    }
+    if (!el) return;
+    const dir = side === 'left' ? 1 : -1;
+    const width = () => el.parentElement.getBoundingClientRect().width;
+    let drag = null;
+    const on = {
+      pointerdown: (e) => {
+        if (this.state.narrow || e.button !== 0) return;
+        e.preventDefault();
+        drag = { x: e.clientX, w: width() };
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        this.setState({ resizing: true });
+      },
+      pointermove: (e) => { if (drag) this.setPanelWidth(side, drag.w + dir * (e.clientX - drag.x), false); },
+      pointerup: () => {
+        if (!drag) return;
+        drag = null;
+        this.setState({ resizing: false });
+        this.setPanelWidth(side, width(), true);
+      },
+      dblclick: () => this.resetPanelWidth(side),
+      keydown: (e) => {
+        const step = e.shiftKey ? 64 : 16;
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          e.preventDefault(); e.stopPropagation();
+          this.setPanelWidth(side, width() + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+        } else if (e.key === 'Home') { e.preventDefault(); e.stopPropagation(); this.resetPanelWidth(side); }
+      }
+    };
+    on.pointercancel = on.pointerup;
+    Object.keys(on).forEach((ev) => el.addEventListener(ev, on[ev]));
+    if (!Object.keys(this.handles).length) {
+      this._refit = this._refit || (() => this.refitPanels());
+      window.addEventListener('resize', this._refit);
+    }
+    this.handles[side] = { el: el, on: on };
+  }
+  textTone(hex) { return this.state.theme === 'light' ? this.mix(hex, '#000000', 0.4) : hex; }
+  pal() { return this.T.PAL[this.state.theme] || this.T.PAL.dark; }
+  setTheme(t) {
+    this.setState({ theme: t });
+    try {
+      if ((t === 'dark') === this.systemDark()) window.localStorage.removeItem('od-theme');
+      else window.localStorage.setItem('od-theme', t);
+    } catch (e) {}
+  }
+
+  attachCanvas(el) {
+    if (this.canvas === el) return;
+    if (this.canvas) {
+      const c = this.canvas;
+      c.removeEventListener('pointerdown', this._pd);
+      c.removeEventListener('pointermove', this._pm);
+      c.removeEventListener('pointerup', this._pu);
+      c.removeEventListener('pointercancel', this._pu);
+      c.removeEventListener('pointerleave', this._pl);
+      cancelAnimationFrame(this.raf);
+      try { this._mq.removeEventListener('change', this._mqH); } catch (err) {}
+    }
+    this.canvas = el || null;
+    if (!el) return;
+    this.ctx = el.getContext('2d');
+    const p = this.pointer;
+    this._pd = (e) => {
+      if (!this.modeDef().rotatable) return;
+      p.drag = true; p.lx = e.clientX; p.ly = e.clientY;
+      try { el.setPointerCapture(e.pointerId); } catch (err) {}
+      el.style.cursor = 'grabbing';
+    };
+    this._pm = (e) => {
+      const r = el.getBoundingClientRect();
+      p.x = e.clientX - r.left; p.y = e.clientY - r.top; p.inside = true;
+      if (p.drag && this.modeDef().rotatable) {
+        this.cam.yaw += (e.clientX - p.lx) * 0.008;
+        this.cam.pitch = Math.max(-1.45, Math.min(1.45, this.cam.pitch + (e.clientY - p.ly) * 0.008));
+        p.lx = e.clientX; p.ly = e.clientY;
+      }
+    };
+    this._pu = () => { p.drag = false; el.style.cursor = ''; };
+    this._pl = () => { p.inside = false; };
+    el.addEventListener('pointerdown', this._pd);
+    el.addEventListener('pointermove', this._pm);
+    el.addEventListener('pointerup', this._pu);
+    el.addEventListener('pointercancel', this._pu);
+    el.addEventListener('pointerleave', this._pl);
+    try {
+      this._mq = window.matchMedia('(max-width: 1023.98px)');
+      this._mqH = () => this.syncBreakpoint();
+      this._mq.addEventListener('change', this._mqH);
+    } catch (err) {}
+    this.last = 0;
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  tick(t) {
+    if (!this.canvas) return;
+    const dt = this.last ? Math.min(0.05, (t - this.last) / 1000) : 0;
+    this.last = t;
+    const st = this.state, m = this.modeDef(), pb = m.playback;
+    if (m.autoSpin && st.spin && !this.pointer.drag) this.cam.yaw += dt * 0.3;
+    if (pb && st.playing) {
+      this.sim.f = Math.min(pb.fmax, this.sim.f + dt * pb.rate * st.speed);
+      if (this.sim.f >= pb.fmax) this.setState({ playing: false, f: this.sim.f });
+      else if (t - (this.lastPush || 0) > 120) { this.lastPush = t; this.setState({ f: this.sim.f }); }
+    }
+    // a broken scene keeps the page alive but is reported once for the browser check
+    try { this.draw(dt, t); } catch (err) { if (!this.drawErr) { this.drawErr = true; console.error(err); } }
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  // ---------- math helpers (장면에서 써도 돼요) ----------
+  lerp(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+  sm(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+  rgb(hex) { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  mix(hex, to, amt) {
+    const a = this.rgb(hex), b = this.rgb(to);
+    return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * amt) + ',' + Math.round(a[1] + (b[1] - a[1]) * amt) + ',' + Math.round(a[2] + (b[2] - a[2]) * amt) + ')';
+  }
+  rgba(hex, al) { const a = this.rgb(hex); return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + al + ')'; }
+  shades(hex) {
+    let s = this.colorCache[hex];
+    if (!s) { s = { hi: this.mix(hex, '#FFFFFF', 0.55), mid: hex, lo: this.mix(hex, '#000000', 0.55) }; this.colorCache[hex] = s; }
+    return s;
+  }
+  proj(p, V) {
+    const x = p[0] - V.cx, y = p[1], z = p[2];
+    const x1 = x * V.cy + z * V.sy, z1 = -x * V.sy + z * V.cy;
+    const y2 = y * V.cp - z1 * V.sp, z2 = y * V.sp + z1 * V.cp;
+    const s = V.F / Math.max(2, V.D - z2);
+    return [V.ox + x1 * s, V.oy - y2 * s, z2, s];
+  }
+
+  // ---------- drawing ----------
+  draw(dt, now) {
+    const el = this.canvas, ctx = this.ctx, st = this.state, m = this.modeDef();
+    const dpr = window.devicePixelRatio || 1;
+    const W = el.clientWidth, H = el.clientHeight;
+    if (!W || !H) return;
+    if (el.width !== Math.round(W * dpr) || el.height !== Math.round(H * dpr)) { el.width = Math.round(W * dpr); el.height = Math.round(H * dpr); }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const pal = this.pal();
+    ctx.fillStyle = pal.bg; ctx.fillRect(0, 0, W, H);
+
+    const I = [], O = [];
+    this.buildScene(st.mode, I, O);
+    const scale = Math.min(W / m.fit[0], H / m.fit[1]), D = m.D, z = this.cam.zoom;
+    const V = {
+      cx: this.sim.cx, cy: Math.cos(this.cam.yaw), sy: Math.sin(this.cam.yaw), cp: Math.cos(this.cam.pitch), sp: Math.sin(this.cam.pitch),
+      F: scale * z * D, D: D, ox: W / 2, oy: H / 2 - (m.playback ? 20 : 0)
+    };
+    let zmin = Infinity, zmax = -Infinity;
+    for (const it of I) {
+      it.A = this.proj(it.p, V);
+      if (it.q) { it.B = this.proj(it.q, V); it.z = (it.A[2] + it.B[2]) / 2; } else it.z = it.A[2];
+      if (it.z < zmin) zmin = it.z;
+      if (it.z > zmax) zmax = it.z;
+    }
+    I.sort((a, b) => a.z - b.z);
+    // depth fog; a flat scene (all items at one depth) is drawn without it
+    const span = zmax - zmin;
+    for (const it of I) {
+      const fog = span < 0.01 ? 1 : 0.42 + 0.58 * ((it.z - zmin) / span);
+      ctx.globalAlpha = Math.max(0, (it.a == null ? 1 : it.a) * fog);
+      if (ctx.globalAlpha < 0.01) continue;
+      const x = it.A[0], y = it.A[1], s = it.A[3];
+      if (it.k === 0) {
+        const R = it.r * s;
+        if (R < 0.4) continue;
+        if (it.flat) { ctx.fillStyle = it.c; ctx.beginPath(); ctx.arc(x, y, Math.max(1.3, R), 0, 6.2832); ctx.fill(); }
+        else {
+          const sh = this.shades(it.c);
+          const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+          g.addColorStop(0, sh.hi); g.addColorStop(0.5, sh.mid); g.addColorStop(1, sh.lo);
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        }
+      } else if (it.k === 1) {
+        const lw = Math.max(1, it.w * (s + it.B[3]) / 2);
+        ctx.lineCap = it.flat ? 'butt' : 'round';
+        if (it.rod) {
+          ctx.strokeStyle = this.shades(it.c).lo; ctx.lineWidth = lw + 2;
+          ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+        }
+        ctx.strokeStyle = it.c; ctx.lineWidth = lw;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+      } else if (it.k === 3) {
+        const fs = Math.max(8, Math.min(14, it.size * s / (scale * z) * 1.05));
+        ctx.font = '700 ' + fs + 'px "Pretendard", system-ui, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = it.c; ctx.fillText(it.text, x, y + 0.5);
+      } else if (it.k === 4) {
+        const ang = Math.atan2(it.B[1] - y, it.B[0] - x), mx = (x + it.B[0]) / 2, my = (y + it.B[1]) / 2, r = 6;
+        ctx.fillStyle = it.c; ctx.beginPath();
+        ctx.moveTo(mx + Math.cos(ang) * r, my + Math.sin(ang) * r);
+        ctx.lineTo(mx + Math.cos(ang + 2.5) * r, my + Math.sin(ang + 2.5) * r);
+        ctx.lineTo(mx + Math.cos(ang - 2.5) * r, my + Math.sin(ang - 2.5) * r);
+        ctx.closePath(); ctx.fill();
+      } else if (it.k === 5) {
+        // lit translucent sphere, highlight up-left like the solid spheres
+        const R = it.r * s, ba = pal.blobAlpha == null ? 0.3 : pal.blobAlpha;
+        const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+        g.addColorStop(0, 'rgba(255,255,255,0.55)'); g.addColorStop(0.3, this.rgba(it.c, Math.min(1, ba + 0.15))); g.addColorStop(1, this.rgba(it.c, 0.18));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        ctx.strokeStyle = it.c; ctx.lineWidth = it.focus ? 3 : 1.5; ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+    for (const o of O) this.drawOverlay(o, V, now);
+  }
+
+  drawOverlay(o, V, now) {
+    const ctx = this.ctx, A = this.proj(o.p, V), pal = this.pal();
+    if (o.t === 'ring') {
+      const r = Math.max(6, 0.32 * A[3]) * (1 + (this.reduceMotion ? 0 : 0.15 * Math.sin((now || 0) / 160)));
+      ctx.globalAlpha = 1; ctx.strokeStyle = pal.ring; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(A[0], A[1], r, 0, 6.2832); ctx.stroke();
+      ctx.font = '600 11px "Pretendard", system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = pal.ring; ctx.fillText(o.text, A[0], A[1] + r + 10);
+      return;
+    }
+    const size = o.size || 12, x = A[0] + (o.dx || 0), y = A[1] + (o.dy || 0);
+    ctx.font = '600 ' + size + 'px "Pretendard", system-ui, sans-serif';
+    const tw = ctx.measureText(o.text).width, w = tw + 14, h = size + 10;
+    ctx.globalAlpha = o.a == null ? 1 : o.a;
+    if (o.lead) {
+      ctx.strokeStyle = this.rgba(o.c, 0.6); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(x, y); ctx.stroke();
+    }
+    ctx.fillStyle = pal.labelBg;
+    ctx.strokeStyle = this.rgba(o.c, 0.55); ctx.lineWidth = 1;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x - w / 2, y - h / 2, w, h, 6); else ctx.rect(x - w / 2, y - h / 2, w, h);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = pal.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(o.text, x, y + 0.5);
+    ctx.globalAlpha = 1;
+  }
+
+  setMode(mode) {
+    this.cam = Object.assign({}, this.modeDef(mode).cam);
+    this.sim.f = 0;
+    this.pointer.drag = false;
+    this.setState({ mode: mode, f: 0, playing: false, step: -1 });
+  }
+
+  renderVals() {
+    const st = this.state, T = this.T, m = this.modeDef(), pb = m.playback;
+    const tg = T.TOGGLES ? (Array.isArray(T.TOGGLES) ? T.TOGGLES : (T.TOGGLES[st.mode] || [])) : [];
+    const togDefs = tg.concat(m.autoSpin ? [['spin', '자동 회전']] : []);
+    const toggles = togDefs.map((d) => ({
+      label: d[1], pressed: st[d[0]] ? 'true' : 'false',
+      toggle: () => { const o = {}; o[d[0]] = !st[d[0]]; this.setState(o); }
+    }));
+    const STEPS = T.STEPS || [];
+    const steps = STEPS.map((s, i) => ({
+      num: i + 1, title: s.title, who: s.who, c: s.c, pressed: st.step === i ? 'true' : 'false',
+      pick: () => {
+        if (s.mode !== this.state.mode) this.setMode(s.mode);
+        if (s.f != null) this.sim.f = s.f;
+        this.setState({ f: this.sim.f, playing: false, step: i });
+      }
+    }));
+    const speeds = [0.5, 1, 2].map((v) => ({
+      label: v + '×', pressed: st.speed === v ? 'true' : 'false',
+      pick: () => this.setState({ speed: v })
+    }));
+    const is = {};
+    T.MODES.forEach((d) => { is[d.key] = d.key === st.mode; });
+    const f = st.f;
+    const isDark = st.theme === 'dark';
+    const leftOn = st.narrow ? st.drawer === 'left' : st.leftOpen, rightOn = st.narrow ? st.drawer === 'right' : st.rightOpen;
+    return Object.assign({
+      th: this.K.THEMES[st.theme], isDark: isDark, isLight: !isDark,
+      themeLabel: isDark ? '라이트 모드로 전환' : '다크 모드로 전환',
+      toggleTheme: () => this.setTheme(isDark ? 'light' : 'dark'),
+      canvasRef: this._canvasRef, canvasCls: m.rotatable ? '' : 'is-fixed',
+      hasModes: T.MODES.length > 1, is: is,
+      modes: T.MODES.map((d) => ({ label: d.label, pressed: d.key === st.mode ? 'true' : 'false', pick: () => { if (d.key !== this.state.mode) this.setMode(d.key); } })),
+      leftCls: leftOn ? 'is-open' : '', rightCls: rightOn ? 'is-open' : '',
+      leftExpanded: leftOn ? 'true' : 'false', rightExpanded: rightOn ? 'true' : 'false',
+      scrimCls: (st.narrow && st.drawer) ? 'is-on' : '',
+      toggleLeft: () => this.togglePanel('left'),
+      toggleRight: () => this.togglePanel('right'),
+      closePanels: () => this.setState({ drawer: null }),
+      layoutStyle: ((st.leftW ? '--pl-user: ' + st.leftW + 'px; ' : '') + (st.rightW ? '--pr-user: ' + st.rightW + 'px;' : '')).trim(),
+      layoutCls: st.resizing ? 'is-resizing' : '',
+      leftWNow: st.leftW ? String(st.leftW) : '', rightWNow: st.rightW ? String(st.rightW) : '',
+      leftHandleRef: this._handleRefL, rightHandleRef: this._handleRefR,
+      onKey: (e) => { if (e.key === 'Escape' && this.state.narrow && this.state.drawer) this.setState({ drawer: null }); },
+      hasToggles: toggles.length > 0, toggles: toggles,
+      hasSteps: steps.length > 0, steps: steps,
+      hasStep: st.step >= 0 && st.step < STEPS.length, stepDetail: st.step >= 0 && STEPS[st.step] ? STEPS[st.step].text : '',
+      mistakes: (T.MISTAKES && T.MISTAKES[st.mode]) || [],
+      canvasLabel: m.canvasLabel(f),
+      zoomIn: () => { this.cam.zoom = Math.min(3, this.cam.zoom * 1.2); },
+      zoomOut: () => { this.cam.zoom = Math.max(0.5, this.cam.zoom / 1.2); },
+      resetView: () => { this.cam = Object.assign({}, m.cam); },
+      hasPlayback: !!pb, isPlaying: st.playing, notPlaying: !st.playing, playLabel: st.playing ? '일시정지' : '재생',
+      togglePlay: () => {
+        if (!pb) return;
+        if (!st.playing && this.sim.f >= pb.fmax) this.sim.f = 0;
+        this.setState({ playing: !st.playing, step: -1, f: this.sim.f });
+      },
+      fInt: Math.round(f * 10), fLabel: pb ? pb.label(f) : '', fMax10: pb ? Math.round(pb.fmax * 10) : 0,
+      onScrub: (e) => { const v = Number(e.target.value) / 10; this.sim.f = v; this.setState({ f: v, playing: false, step: -1 }); },
+      speeds: speeds
+    }, this.extraVals(st));
+  }
+}
+mountDC(Component);
+</script>
+</body>
+</html>

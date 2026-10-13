@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>인지질 이중층</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+.app{--radius:8px;--tap:48px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--dur:220ms;--dur-exit:150ms;--ease-out:cubic-bezier(.2,.8,.2,1);--scrim:rgba(0,0,0,.4);
+  height:100vh;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;box-sizing:border-box;
+  background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;font-size:16px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.app *,.app *::before,.app *::after{box-sizing:border-box}
+.app button{font-family:inherit;color:inherit}
+.app :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.num{font-variant-numeric:tabular-nums}
+
+.topbar{display:flex;align-items:center;gap:var(--s2);min-height:56px;padding:var(--s2) var(--s3);background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:17px;font-weight:700;white-space:nowrap}
+.text-btn{flex:none;min-height:44px;min-width:44px;padding:0 var(--s3);border:0;border-radius:var(--radius);background:transparent;color:var(--ink);font:600 14px/1 'Pretendard',system-ui,sans-serif;cursor:pointer}
+.panel-toggle{display:inline-flex;align-items:center;gap:var(--s1);padding:0 var(--s2)}
+.panel-toggle svg,.theme-toggle svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.panel-toggle .strip{fill:transparent;stroke:none;transition:fill 150ms ease-out}
+.panel-toggle[aria-expanded="true"]{color:var(--accent-ink)}
+.panel-toggle[aria-expanded="true"] .strip{fill:currentColor}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;padding:0}
+.seg{flex:none;display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.seg button{min-height:40px;padding:0 var(--s3);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+.layout{display:grid;grid-template-columns:auto minmax(320px,1fr) auto;min-height:0}
+.panel{position:relative;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--bg);color:var(--ink)}
+.panel-left{grid-column:1;width:clamp(260px,20vw,320px);border-right:1px solid var(--line)}
+.panel-right{grid-column:3;width:clamp(320px,24vw,400px);border-left:1px solid var(--line)}
+.panel-inner{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--s4) var(--s4) var(--s6)}
+.panel-inner::-webkit-scrollbar{width:8px}
+.panel-inner::-webkit-scrollbar-track{background:transparent}
+.panel-inner::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:8px;border:2px solid var(--bg)}
+.panel-inner::-webkit-scrollbar-thumb:hover{background:var(--scroll-hover)}
+@supports (scrollbar-color:auto){.panel-inner{scrollbar-width:thin;scrollbar-color:var(--scroll) transparent}}
+.panel-head{display:flex;align-items:center;gap:var(--s2);min-height:44px;margin-bottom:var(--s2)}
+.panel-head h2{flex:1 1 0;min-width:0;margin:0;font-size:22px;line-height:1.4}
+.stage{grid-column:2;position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--bg)}
+.scrim{display:none}
+.panel-resize{display:none}
+
+.sec{margin-top:var(--s5);padding-top:var(--s5);border-top:1px solid var(--line)}
+.panel-head + .sec,.panel-head + div > .sec:first-child{margin-top:0;padding-top:0;border-top:0}
+.sec-title{display:block;margin:0 0 var(--s3);font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-0.01em}
+.sub{margin:var(--s3) 0 0;font-size:14px;line-height:1.6;color:var(--ink-2)}
+
+.opt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.btn{display:flex;align-items:center;gap:var(--s2);width:100%;min-height:var(--tap);padding:0 var(--s3);border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font-size:14px;font-weight:600;line-height:1.3;text-align:left;cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.btn .box{flex:none;width:12px;height:12px;border-radius:3px;border:1.5px solid currentColor}
+.btn[aria-pressed="true"] .box{background:currentColor}
+.steps{display:flex;flex-direction:column;gap:var(--s2)}
+.steps .btn{padding:var(--s2) var(--s3);gap:var(--s3)}
+.step-num{flex:none;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid;font-size:12px;font-weight:700;color:var(--ink)}
+.step-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.step-txt b{font-size:15px;font-weight:700}
+.step-txt span{font-size:13px;font-weight:500;color:var(--ink-2)}
+.detail{margin-top:var(--s3);padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+
+
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.tiles.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tile{padding:var(--s3);border-radius:var(--radius);background:var(--surface)}
+.tile b{display:block;font-size:20px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}
+.tile span{display:block;font-size:13px;line-height:1.4;color:var(--ink-2)}
+.events{display:flex;flex-direction:column;gap:var(--s2)}
+.event{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.6}
+.dot{flex:none;width:10px;height:10px;margin-top:7px;border-radius:50%}
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2) var(--s3);font-size:13px;color:var(--ink-2)}
+.legend div{display:flex;align-items:center;gap:var(--s2)}
+.sw{flex:none;width:16px;height:6px;border-radius:3px}
+.sw.ball{width:12px;height:12px;border-radius:50%}
+.sec.warn{border-top:0;padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+.warn .sec-title{color:var(--warn);font-size:17px}
+.mistake{margin-top:var(--s3)}
+.mistake b{display:block;font-weight:700}
+.mistake span{color:var(--ink-2)}
+
+.canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.canvas.is-fixed{cursor:default}
+.view-btns{position:absolute;top:var(--s3);right:var(--s3);display:flex;gap:6px}
+.icon-btn{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);cursor:pointer}
+.icon-btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.icon-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.float{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius)}
+.hover-card{position:absolute;left:var(--s3);bottom:var(--s3);display:flex;flex-direction:column;gap:2px;padding:var(--s3) var(--s4);pointer-events:none}
+.hover-card .k{font-size:13px;color:var(--ink-2)}
+.hover-card .v{font-size:18px;font-weight:700}
+.playbar{position:absolute;left:var(--s3);right:var(--s3);bottom:var(--s3);display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3)}
+.play{flex:none;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--radius);background:var(--btn-bg);color:var(--on-btn) !important;cursor:pointer}
+.play svg{width:18px;height:18px;fill:currentColor}
+.scrub{flex:1 1 200px;min-width:160px;display:flex;flex-direction:column;gap:2px}
+.scrub span{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.scrub input{width:100%;height:24px;margin:0;accent-color:var(--accent)}
+.speeds{display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.speeds button{min-width:48px;height:40px;padding:0 var(--s2);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
+.speeds button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+@media (hover:hover){.btn:hover,.icon-btn:hover{background:var(--surface)}.text-btn:hover{background:var(--surface)}}
+@media (min-width:1024px){
+  .panel-head{display:none}
+  .layout{--pl:var(--pl-user,clamp(260px,20vw,320px));--pr:var(--pr-user,clamp(320px,24vw,400px))}
+  .panel{width:0;border-width:0;visibility:hidden;transition:width var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left.is-open{width:var(--pl)}
+  .panel-right.is-open{width:var(--pr)}
+  .panel.is-open{visibility:visible;border-width:1px;transition:width var(--dur) var(--ease-out)}
+  .panel-left .panel-inner{width:var(--pl)}
+  .panel-right .panel-inner{width:var(--pr);align-self:flex-end}
+  .layout.is-resizing .panel{transition:none}
+  .layout.is-resizing{cursor:col-resize;user-select:none}
+  .panel-resize{display:block;position:absolute;top:0;bottom:0;z-index:2;width:12px;padding:0;border:0;background:transparent;cursor:col-resize;touch-action:none}
+  .panel-left .panel-resize{right:0}
+  .panel-right .panel-resize{left:0}
+  .panel-resize::after{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--accent);opacity:0;transition:opacity 150ms ease-out}
+  .panel-left .panel-resize::after{right:0}
+  .panel-right .panel-resize::after{left:0}
+  .panel-resize:focus-visible{outline:none}
+  .panel-resize:focus-visible::after,.is-resizing .panel-resize:active::after{opacity:1}
+  @media (hover:hover){.panel-resize:hover::after{opacity:1}}
+}
+@media (max-width: 1023.98px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .stage{grid-column:1}
+  .panel{position:fixed;top:0;bottom:0;z-index:40;visibility:hidden;transition:transform var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left{left:0;width:min(304px,88vw);transform:translateX(-100%)}
+  .panel-right{right:0;width:min(360px,88vw);transform:translateX(100%)}
+  .panel.is-open{visibility:visible;transform:none;transition:transform var(--dur) var(--ease-out)}
+  .panel-inner{padding-top:calc(var(--s3) + env(safe-area-inset-top));padding-bottom:calc(var(--s6) + env(safe-area-inset-bottom))}
+  .scrim{display:block;position:fixed;inset:0;z-index:35;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .scrim.is-on{opacity:1;visibility:visible;transition:opacity var(--dur) var(--ease-out)}
+}
+@media (max-width:640px){.brand{display:none}.topbar{justify-content:space-between}}
+@media (max-width:480px){.panel-toggle span{display:none}.seg button{padding:0 var(--s2)}}
+@media (prefers-reduced-motion:reduce){.panel,.panel.is-open,.scrim,.scrim.is-on,.panel-toggle .strip,.panel-resize::after{transition:none}}
+</style>
+</helmet>
+<div class="app" onKeyDown="{{onKey}}" style="--bg: {{th.bg}}; --surface: {{th.surface}}; --ink: {{th.ink}}; --ink-2: {{th.ink2}}; --line: {{th.line}}; --accent: {{th.accent}}; --accent-ink: {{th.accentInk}}; --btn-bg: {{th.btnBg}}; --on-btn: {{th.onBtn}}; --warn: {{th.warn}}; --prof: {{th.prof}}; --supp: {{th.supp}}; --danger: {{th.danger}}; --scroll: {{th.scroll}}; --scroll-hover: {{th.scrollHover}}">
+<header class="topbar">
+<button class="text-btn panel-toggle" type="button" aria-label="조작 패널" aria-expanded="{{leftExpanded}}" onClick="{{toggleLeft}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M9 4v16"></path></svg><span>조작</span></button>
+<strong class="brand">인지질 이중층</strong>
+<sc-if value="{{hasModes}}" hint-placeholder-val="{{ true }}">
+<div class="seg" role="group" aria-label="보기 선택">
+<sc-for list="{{modes}}" as="md" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{md.pressed}}" onClick="{{md.pick}}">{{md.label}}</button>
+</sc-for>
+</div>
+</sc-if>
+<button class="text-btn theme-toggle" type="button" aria-label="{{themeLabel}}" title="{{themeLabel}}" onClick="{{toggleTheme}}">
+<sc-if value="{{isDark}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+<sc-if value="{{isLight}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></sc-if>
+</button>
+<button class="text-btn panel-toggle" type="button" aria-label="설명 패널" aria-expanded="{{rightExpanded}}" onClick="{{toggleRight}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M15 4v16"></path></svg><span>설명</span></button>
+</header>
+
+<div class="layout {{layoutCls}}" style="{{layoutStyle}}">
+<aside class="panel panel-left {{leftCls}}" aria-label="조작">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="220" aria-valuemax="480" aria-valuenow="{{leftWNow}}" ref="{{leftHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>조작</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<sc-if value="{{hasToggles}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">보기 옵션</h3>
+<div class="opt">
+<sc-for list="{{toggles}}" as="t" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{t.pressed}}" onClick="{{t.toggle}}"><span class="box" aria-hidden="true"></span>{{t.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<!-- SLOT:left -->
+<sc-if value="{{is.fluid}}" hint-placeholder-val="{{ false }}">
+<div class="sec">
+<h3 class="sec-title">불포화 꼬리 비율</h3>
+<div class="opt" role="group" aria-label="불포화 꼬리 비율">
+<sc-for list="{{ratios}}" as="r" hint-placeholder-count="5">
+<button class="btn" type="button" aria-pressed="{{r.pressed}}" onClick="{{r.pick}}"><span class="box" aria-hidden="true"></span>{{r.label}}</button>
+</sc-for>
+</div>
+<p class="sub">꼬리 16개 중 이중결합에서 꺾인 꼬리의 비율이에요.</p>
+</div>
+</sc-if>
+<!-- /SLOT:left -->
+
+<sc-if value="{{hasSteps}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">단계</h3>
+<div class="steps">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}"><span class="step-num num" style="border-color: {{s.c}}">{{s.num}}</span><span class="step-txt"><b>{{s.title}}</b><span>{{s.who}}</span></span></button>
+</sc-for>
+</div>
+<sc-if value="{{hasStep}}" hint-placeholder-val="{{ false }}">
+<div class="detail" aria-live="polite">{{stepDetail}}</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</aside>
+
+<section class="stage" aria-label="모형 보기">
+<canvas class="canvas {{canvasCls}}" ref="{{canvasRef}}" role="img" aria-label="{{canvasLabel}}"></canvas>
+<div class="view-btns">
+<button class="icon-btn" type="button" aria-label="확대" onClick="{{zoomIn}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="축소" onClick="{{zoomOut}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="시점 처음으로" onClick="{{resetView}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v5h5"></path></svg></button>
+</div>
+
+<sc-if value="{{hasPlayback}}" hint-placeholder-val="{{ false }}">
+<div class="playbar float">
+<button class="play" type="button" aria-label="{{playLabel}}" onClick="{{togglePlay}}">
+<sc-if value="{{isPlaying}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></sc-if>
+<sc-if value="{{notPlaying}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5l12 7-12 7z"></path></svg></sc-if>
+</button>
+<label class="scrub">
+<span>{{fLabel}}</span>
+<input type="range" min="0" max="{{fMax10}}" step="1" value="{{fInt}}" onChange="{{onScrub}}">
+</label>
+<div class="speeds" role="group" aria-label="재생 속도">
+<sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{sp.pressed}}" onClick="{{sp.pick}}">{{sp.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</section>
+
+<aside class="panel panel-right {{rightCls}}" aria-label="설명">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="280" aria-valuemax="720" aria-valuenow="{{rightWNow}}" ref="{{rightHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>설명</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<!-- SLOT:right -->
+<sc-if value="{{is.mol}}" hint-placeholder-val="{{ true }}">
+<div>
+<div class="sec">
+<h3 class="sec-title">숫자로 보는 인지질</h3>
+<div class="tiles three">
+<div class="tile"><b>2개</b><span>지방산 꼬리</span></div>
+<div class="tile"><b>1개</b><span>인산기 머리</span></div>
+<div class="tile"><b>1개</b><span>글리세롤</span></div>
+</div>
+<sc-if value="{{cmpOn}}" hint-placeholder-val="{{ false }}"><p class="sub">옆의 중성지질은 지방산 3개, 인산기 0개예요.</p></sc-if>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw ball" style="background: {{legend.head}}"></span>인산기 머리</div>
+<div><span class="sw ball" style="background: {{legend.glyc}}"></span>글리세롤</div>
+<div><span class="sw" style="background: {{legend.sat}}"></span>포화 꼬리</div>
+<div><span class="sw" style="background: {{legend.unsat}}"></span>불포화 꼬리</div>
+</div>
+<p class="sub">인산기 쪽은 극성 머리, 지방산 쪽은 비극성 꼬리예요. 꼬리 탄소 수는 줄여 그렸어요.</p>
+<p class="sub">인산기 위에 붙는 다른 극성 단위는 생략했어요 (교과서 보충).</p>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{is.self}}" hint-placeholder-val="{{ false }}">
+<div>
+<div class="sec">
+<h3 class="sec-title">숫자로 보는 이중층</h3>
+<div class="tiles">
+<div class="tile"><b>48개</b><span>인지질 수 (한 층 24개)</span></div>
+<div class="tile"><b>{{layerState}}</b><span>층 상태</span></div>
+</div>
+</div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{selfEvents}}" as="e" hint-placeholder-count="1">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw ball" style="background: {{legend.head}}"></span>친수성 머리</div>
+<div><span class="sw" style="background: {{legend.sat}}"></span>소수성 꼬리</div>
+<div><span class="sw ball" style="background: {{legend.water}}"></span>물</div>
+</div>
+<p class="sub">세포 밖과 안이 모두 물이라 머리가 양쪽을 향해요.</p>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{is.fluid}}" hint-placeholder-val="{{ false }}">
+<div>
+<div class="sec">
+<h3 class="sec-title">숫자로 보는 유동성</h3>
+<div class="tiles">
+<div class="tile"><b>{{unsatPct}}</b><span>불포화 꼬리 {{unsatCount}}</span></div>
+<div class="tile"><b>{{gapCount}}</b><span>분자 사이 틈</span></div>
+<div class="tile"><b>{{fluidState}}</b><span>막 상태 (경향)</span></div>
+</div>
+<p class="sub">막이 두꺼워지는 것이 아니라 분자 사이가 벌어지는 거예요.</p>
+<p class="sub">100%는 비교를 위한 극단적인 경우예요.</p>
+</div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{fluidEvents}}" as="e" hint-placeholder-count="2">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw ball" style="background: {{legend.head}}"></span>머리</div>
+<div><span class="sw" style="background: {{legend.sat}}"></span>포화 꼬리</div>
+<div><span class="sw" style="background: {{legend.unsat}}"></span>불포화 꼬리</div>
+<div><span class="sw ball" style="background: {{legend.water}}"></span>물</div>
+</div>
+</div>
+</div>
+</sc-if>
+<!-- /SLOT:right -->
+
+<div class="sec warn">
+<h3 class="sec-title">꼭 기억해요</h3>
+<sc-for list="{{mistakes}}" as="m" hint-placeholder-count="3">
+<div class="mistake"><b>{{m.title}}</b><span>{{m.text}}</span></div>
+</sc-for>
+</div>
+</div>
+</aside>
+</div>
+<div class="scrim {{scrimCls}}" aria-hidden="true" onClick="{{closePanels}}"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  // ================= 주제 훅: 주제마다 바꾸는 곳은 이 네 메서드뿐이에요 =================
+  // 계약은 bio-interactive/references/scene-api.md에 있어요.
+
+  topic() {
+    const selfPhase = (f) => f < 3 ? '물에 흩어짐' : f < 6 ? '머리는 물 쪽으로' : f < 9.2 ? '꼬리끼리 마주 봄' : '이중층 완성';
+    return {
+      MODES: [
+        { key: 'mol', label: '분자', cam: { yaw: -0.55, pitch: 0.32, zoom: 1 }, fit: [6.8, 6.6], D: 30,
+          autoSpin: true, rotatable: true, playback: null,
+          canvasLabel: () => '인지질 한 분자 3D 모형: 인산기 머리, 글리세롤, 지방산 꼬리 2개' + (this.state.compare ? '. 옆에 지방산 3개인 중성지질이 있어요.' : '. 끌어서 회전할 수 있어요.') },
+        { key: 'self', label: '이중층', cam: { yaw: -0.4, pitch: 0.25, zoom: 1 }, fit: [10.5, 7], D: 60,
+          autoSpin: false, rotatable: true,
+          playback: { fmax: 10, rate: 1, label: (f) => selfPhase(f) + ' · ' + f.toFixed(1) + ' / 10' },
+          canvasLabel: (f) => '물속 인지질 48개가 두 겹 층을 이루는 과정. 지금은 「' + selfPhase(f) + '」 단계예요.' },
+        { key: 'fluid', label: '유동성', cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [8.4, 6.6], D: 60,
+          autoSpin: false, rotatable: false, playback: null,
+          canvasLabel: () => '인지질 이중층 단면. 꼬리 16개 중 ' + Math.round(this.state.unsat * 16 / 100) + '개가 이중결합에서 꺾인 불포화 꼬리예요.' }
+      ],
+      STEPS: [
+        { mode: 'mol', c: '#8E6CDB', title: '인지질 구조', who: '글리세롤 + 지방산 2 + 인산기 1',
+          text: '글리세롤 탄소 3개 중 2개에 지방산 꼬리, 1개에 인산기가 붙어요. 중성지질에서 지방산 하나를 인산기로 바꾼 셈이에요. 「중성지질 비교」를 켜면 지방산 3개짜리와 나란히 보여요.' },
+        { mode: 'self', f: 1.5, phase: '물에 흩어짐', c: '#3D8BEA', title: '물에 넣음', who: '인지질 48개',
+          text: '인지질을 물에 넣으면 처음엔 이리저리 흩어져 있어요. 한 분자 안에 물을 좋아하는 머리와 물을 싫어하는 꼬리가 함께 있어요.' },
+        { mode: 'self', f: 5.8, phase: '머리는 물 쪽으로', c: '#E5604F', title: '머리는 물 쪽', who: '친수성 머리(인산기)',
+          text: '음전하를 띤 인산기 머리는 극성이라 물 쪽을 향해요. 비극성 꼬리는 물을 피하는 쪽으로 돌아서요.' },
+        { mode: 'self', f: 8, phase: '꼬리끼리 마주 봄', c: '#D99A1E', title: '꼬리끼리 마주 봄', who: '소수성 꼬리(지방산)',
+          text: '물을 피한 꼬리끼리 안쪽으로 다가가 서로 마주 봐요. 그래서 꼬리 사이에는 물이 들어오지 않아요.' },
+        { mode: 'self', f: 10, phase: '이중층 완성', c: '#1FA387', title: '이중층 완성', who: '모든 생물의 세포막',
+          text: '머리는 세포 밖·안의 물 쪽, 꼬리는 안쪽인 두 겹 층이 저절로 생겼어요. 이 인지질 이중층이 세균부터 동식물까지 모든 생물 세포막의 기본 구조예요.' },
+        { mode: 'fluid', c: '#1FA387', title: '불포화 꼬리의 꺾임과 틈', who: '이중결합',
+          text: '이중결합 자리에서 꼬리가 꺾이면 옆 분자와 딱 붙지 못해 틈이 생겨요. 틈이 생기면 움직일 여지가 커져 유동성이 커지고, 막이 잘 굳지 않아요. 왼쪽 비율 버튼으로 바꿔 보세요.' }
+      ],
+      MISTAKES: {
+        mol: [
+          { title: '중성지질 ≠ 인지질', text: '중성지질은 지방산 3개·인산기 없음, 인지질은 지방산 2개·인산기 1개예요. 「중성지질 비교」를 켜고 꼬리 수를 세어 보세요.' },
+          { title: '머리 = 극성, 꼬리 = 비극성', text: '음전하를 띤 인산기 머리는 극성·친수성, 지방산 꼬리는 비극성·소수성이에요. 한 분자 안에 둘 다 있어요.' },
+          { title: '인지질 꼬리가 늘 포화는 아니에요', text: '한쪽 꼬리가 이중결합에서 꺾인 불포화지방산인 경우가 흔해요. 「불포화 꼬리」를 끄고 켜며 곧은 꼬리와 비교해 보세요.' }
+        ],
+        self: [
+          { title: '머리는 바깥, 꼬리는 안쪽', text: '세포 밖과 안이 모두 물이라 머리가 양쪽 바깥을 향해요. 끝까지 재생해 꼬리끼리 가운데서 마주 보는지 확인해 보세요.' },
+          { title: '저절로 생겨요', text: '물에 넣기만 해도 머리는 물 쪽, 꼬리는 물을 피하는 성질 때문에 스스로 두 겹이 돼요.' },
+          { title: '이중층을 만드는 분자는 인지질', text: '중성지질(중성지방)·단백질은 이중층을 만들지 않아요. 콜레스테롤은 동물 세포막의 인지질 사이에 끼어 막을 안정화할 뿐이에요.' }
+        ],
+        fluid: [
+          { title: '인과 방향을 뒤집지 않기', text: '이중결합 → 꺾임 → 틈 → 유동성↑ → 액체 순서예요. 비율을 올리며 틈 표시가 늘어나는지 보세요.' },
+          { title: '식물성 = 불포화, 동물성 = 포화', text: '올리브유 같은 식물성 기름은 대개 불포화라 액체, 버터 같은 동물성 지방은 대개 포화라 고체예요.' },
+          { title: '추운 곳 생물은 불포화가 많아요', text: '막이 굳어 얼지 않도록 추운 지방 생물일수록 불포화지방산 비율이 높아요. 포화가 많다고 거꾸로 외우기 쉬워요.' }
+        ]
+      },
+      TOGGLES: {
+        mol: [['labels', '이름표'], ['compare', '중성지질 비교'], ['kinkMol', '불포화 꼬리']],
+        self: [['labels', '이름표'], ['water', '물 분자']],
+        fluid: [['labels', '이름표'], ['water', '물 분자'], ['gaps', '틈 표시']]
+      },
+      PAL: {
+        light: { bg: '#ffffff', labelBg: '#f7f8fa', ink: '#111111', ring: '#111111', blobAlpha: 0.30,
+          head: '#E5604F', oxy: '#F08A7C', glyc: '#8E6CDB', sat: '#D99A1E', unsat: '#1FA387', water: '#3D8BEA', bond: '#8A94A3', gap: '#1FA387' },
+        dark: { bg: '#17171c', labelBg: '#212128', ink: '#f2f4f6', ring: '#f2f4f6', blobAlpha: 0.42,
+          head: '#FF8A7A', oxy: '#FFB0A5', glyc: '#B69CFF', sat: '#F5C15C', unsat: '#5FD3B4', water: '#6EA4FF', bond: '#AEB7C4', gap: '#5FD3B4' }
+      }
+    };
+  }
+
+  // 장면 만들기: I(그리기 항목)와 O(라벨)에 push만 해요. 진행값은 this.sim.f를 써요.
+  buildScene(mode, I, O) {
+    const pal = this.pal(), st = this.state, md = this.modeDef(mode);
+    // 장면 단위 → 화면 픽셀(라벨 오프셋용)
+    const el = this.canvas, cw = (el && el.clientWidth) || 800, chh = (el && el.clientHeight) || 600;
+    const px = (u) => u * Math.min(cw / md.fit[0], chh / md.fit[1]) * (this.cam.zoom || 1);
+    const rod = (p, q, w, c, extra) => I.push(Object.assign({ k: 1, p: p, q: q, w: w, c: c, rod: true }, extra || {}));
+    const ball = (p, r, c, extra) => I.push(Object.assign({ k: 0, p: p, r: r, c: c }, extra || {}));
+    const ZIG = 0.11, STEP = 0.3, KINK = 32 * Math.PI / 180;
+
+    // 지방산 사슬: 탄소 9개 지그재그. kinked면 C5=C6 이중결합 뒤로 side(−1 왼쪽, +1 오른쪽) 바깥으로 꺾여요.
+    const chain = (x0, yTop, side, kinked) => {
+      const pts = [], a = [side * Math.sin(KINK), -Math.cos(KINK)], n = [Math.cos(KINK), side * Math.sin(KINK)];
+      for (let k = 0; k < 9; k++) {
+        const zg = k % 2 ? ZIG : -ZIG;
+        if (!kinked || k <= 5) pts.push([x0 + zg, yTop - STEP * k, 0]);
+        else {
+          const along = (k - 5) * STEP, bx = x0 + ZIG, by = yTop - STEP * 5;
+          pts.push([bx + a[0] * along + n[0] * (zg - ZIG), by + a[1] * along + n[1] * (zg - ZIG), 0]);
+        }
+      }
+      return pts;
+    };
+    const drawChain = (pts, kinked) => {
+      const c = kinked ? pal.unsat : pal.sat;
+      for (let k = 0; k < pts.length; k++) {
+        if (k > 0) {
+          const p = pts[k - 1], q = pts[k];
+          if (kinked && k === 5) {
+            // C=C 이중결합: 평행한 막대 두 개
+            const dx = q[0] - p[0], dy = q[1] - p[1], L = Math.hypot(dx, dy), nx = -dy / L * 0.05, ny = dx / L * 0.05;
+            rod([p[0] + nx, p[1] + ny, 0], [q[0] + nx, q[1] + ny, 0], 0.04, c);
+            rod([p[0] - nx, p[1] - ny, 0], [q[0] - nx, q[1] - ny, 0], 0.04, c);
+          } else rod(p, q, 0.07, c);
+        }
+        ball(pts[k], 0.12, c);
+      }
+    };
+
+    if (mode === 'mol') {
+      const yo = -0.25, x0 = st.compare ? -1.3 : 0, kink = !!st.kinkMol;
+      // 글리세롤: C1–C2–C3
+      const C1 = [x0 - 0.4, 1.2 + yo, 0], C2 = [x0 + 0.4, 1.2 + yo, 0], C3 = [x0 + 0.4, 1.7 + yo, 0];
+      rod(C1, C2, 0.09, pal.glyc); rod(C2, C3, 0.09, pal.glyc);
+      [C1, C2, C3].forEach((p) => ball(p, 0.17, pal.glyc));
+      // 지방산 꼬리 2개(C1, C2에 연결)
+      const tL = chain(x0 - 0.4, 0.85 + yo, -1, false), tR = chain(x0 + 0.4, 0.85 + yo, 1, kink);
+      rod(C1, tL[0], 0.05, pal.bond); rod(C2, tR[0], 0.05, pal.bond);
+      drawChain(tL, false); drawChain(tR, kink);
+      // 인산기(C3에 연결): P 1개 + O 4개, 음전하
+      const P = [x0, 2.5 + yo, 0], Ob = [x0 + 0.25, 2.12 + yo, 0];
+      const Os = [[x0 - 0.33, 2.62 + yo, 0.1], [x0 + 0.08, 2.88 + yo, 0.1], [x0 + 0.02, 2.48 + yo, -0.36]];
+      rod(C3, Ob, 0.06, pal.bond); rod(Ob, P, 0.07, pal.head);
+      Os.forEach((o) => rod(P, o, 0.07, pal.head));
+      ball(P, 0.24, pal.head); ball(Ob, 0.14, pal.oxy); Os.forEach((o) => ball(o, 0.14, pal.oxy));
+      I.push({ k: 3, p: [x0 - 0.58, 2.8 + yo, 0.1], text: '−', size: 16, c: this.textTone(pal.head) });
+
+      if (st.compare) {
+        // 중성지질: 글리세롤 + 지방산 3개, 인산기 없음
+        const xT = 1.75, G = [[xT - 0.5, 1.2 + yo, 0], [xT, 1.2 + yo, 0], [xT + 0.5, 1.2 + yo, 0]];
+        rod(G[0], G[1], 0.09, pal.glyc); rod(G[1], G[2], 0.09, pal.glyc);
+        G.forEach((g) => {
+          ball(g, 0.17, pal.glyc);
+          const t = chain(g[0], 0.85 + yo, 1, false);
+          rod(g, t[0], 0.05, pal.bond); drawChain(t, false);
+        });
+        if (st.labels) O.push({ p: G[1], text: '중성지질 (지방산 3개)', c: pal.glyc, dy: -30, lead: true });
+      }
+      if (st.labels) {
+        O.push({ p: P, text: '인산기 (극성·친수성)', c: pal.head, dx: px(1.3), lead: true });
+        O.push({ p: C3, text: '글리세롤', c: pal.glyc, dx: px(0.95), dy: 4, lead: true });
+        const low = Math.min(tL[8][1], tR[8][1]);
+        if (kink) {
+          const m = [(tR[4][0] + tR[5][0]) / 2, (tR[4][1] + tR[5][1]) / 2, 0];
+          O.push({ p: m, text: '이중결합 → 꺾임', c: pal.unsat, dx: 64, lead: true });
+        }
+        O.push({ p: tL[8], text: '지방산 꼬리 (비극성·소수성)', c: pal.sat, dy: px(tL[8][1] - low) + 26, lead: true });
+      }
+      return;
+    }
+
+    if (mode === 'self') {
+      if (!this._sd) {
+        let s = 20903;
+        const rnd = () => { s = (s * 16807) % 2147483647; return s / 2147483647; };
+        const lip = [];
+        for (let L = 0; L < 2; L++) for (let c = 0; c < 8; c++) for (let r = 0; r < 3; r++) {
+          let u = [rnd() * 2 - 1, rnd() * 2 - 1, rnd() * 2 - 1]; const ul = Math.hypot(u[0], u[1], u[2]) || 1; u = u.map((v) => v / ul);
+          lip.push({ top: L === 0, tp: [-2.8 + c * 0.8, L === 0 ? 1.55 : -1.55, -0.8 + r * 0.8], tu: [0, L === 0 ? -1 : 1, 0],
+            sp: [rnd() * 8 - 4, rnd() * 4.6 - 2.3, rnd() * 2.6 - 1.3], su: u });
+        }
+        const wat = [];
+        for (let i = 0; i < 44; i++) {
+          const p = [rnd() * 9.6 - 4.8, rnd() * 6 - 3, rnd() * 3 - 1.5], ay = Math.abs(p[1]);
+          wat.push({ p: p, q: [p[0], ay < 1.95 ? (p[1] < 0 ? -1 : 1) * (2.05 + ay * 0.5) : p[1], p[2]] });
+        }
+        this._sd = { lip: lip, wat: wat };
+      }
+      const f = this.sim.f, t1 = this.sm((f - 3) / 2.6), t2 = this.sm((f - 6) / 3.2);
+      const HR = 0.26, TL = 1.15;
+      this._sd.lip.forEach((l, i) => {
+        const p = this.lerp(l.sp, l.tp, 0.5 * t1 + 0.5 * t2);
+        const bend = Math.sin(Math.PI * t1) * 0.6;
+        let u = [l.su[0] * (1 - t1) + l.tu[0] * t1 + bend, l.su[1] * (1 - t1) + l.tu[1] * t1, l.su[2] * (1 - t1) + l.tu[2] * t1];
+        const ul = Math.hypot(u[0], u[1], u[2]) || 1; u = u.map((v) => v / ul);
+        // 꼬리 두 개를 벌릴 방향: u와 z축에 수직
+        let w = [u[1], -u[0], 0]; const wl = Math.hypot(w[0], w[1]); w = wl < 0.2 ? [1, 0, 0] : [w[0] / wl, w[1] / wl, 0];
+        for (const sg of [-1, 1]) {
+          const a = [p[0] + u[0] * HR + w[0] * 0.09 * sg, p[1] + u[1] * HR + w[1] * 0.09 * sg, p[2] + u[2] * HR];
+          const b = [a[0] + u[0] * TL, a[1] + u[1] * TL, a[2] + u[2] * TL];
+          rod(a, b, 0.07, pal.sat);
+        }
+        ball(p, HR, pal.head);
+        if (i === 0) l.now = p;
+      });
+      if (st.water) this._sd.wat.forEach((wd) => ball(this.lerp(wd.p, wd.q, t2), 0.08, pal.water, { flat: true, a: 0.75 }));
+      if (st.labels) {
+        if (f < 6) {
+          const fa = 1 - this.sm((f - 5.2) / 0.8);
+          O.push({ p: this._sd.lip[0].now, text: '인지질', c: pal.head, dy: -24, lead: true, a: fa });
+          if (st.water) O.push({ p: this._sd.wat[0].p, text: '물', c: pal.water, dy: -20, lead: true, a: fa });
+        }
+        if (t2 > 0.05) {
+          O.push({ p: [0, 2.65, 0], text: '세포 밖 (물)', c: pal.water, a: t2 });
+          O.push({ p: [0, -2.65, 0], text: '세포 안 (물)', c: pal.water, a: t2 });
+          O.push({ p: [2.8, 1.55 + HR, -0.8], text: '친수성 머리', c: pal.head, dy: -24, lead: true, a: t2 });
+          O.push({ p: [-2.8, 0.7, 0], text: '소수성 꼬리', c: pal.sat, dx: -12, a: t2 });
+        }
+      }
+      return;
+    }
+
+    // fluid: 2차원 단면. 인지질 8개 × 2층, 꼬리 16개 중 n개가 불포화
+    const lay = this.fluidLayout(st.unsat);
+    const yH = 1.95, HR = 0.24, SL = 1.6, S1 = 0.75, S2 = 0.8, KA = 18 * Math.PI / 180;
+    if (st.water) {
+      if (!this._fw) {
+        let s = 903; const rnd = () => { s = (s * 16807) % 2147483647; return s / 2147483647; };
+        this._fw = []; for (let i = 0; i < 32; i++) this._fw.push([rnd() * 8 - 4, (i % 2 ? 1 : -1) * (2.45 + rnd() * 0.75), 0]);
+      }
+      this._fw.forEach((p) => ball(p, 0.08, pal.water, { flat: true, a: 0.75 }));
+    }
+    let kinkPt = null, satPt = null, headPt = null;
+    for (const top of [true, false]) {
+      const sy = top ? 1 : -1;
+      lay.lipids.forEach((lp, i) => {
+        const hp = [lp.x, sy * yH, 0];
+        [[-1, lp.kL], [1, lp.kR]].forEach(([side, kk]) => {
+          const a = [lp.x + side * 0.13, sy * (yH - HR), 0];
+          if (!kk) {
+            const b = [a[0], a[1] - sy * SL, 0];
+            rod(a, b, 0.09, pal.sat);
+            if (!top) satPt = [a[0], (a[1] + b[1]) / 2, 0];
+          } else {
+            const m1 = [a[0], a[1] - sy * (S1 - 0.25), 0], m2 = [a[0], a[1] - sy * S1, 0];
+            const e = [m2[0] + side * Math.sin(KA) * S2, m2[1] - sy * Math.cos(KA) * S2, 0];
+            rod(a, m1, 0.09, pal.unsat);
+            rod([m1[0] - 0.045, m1[1], 0], [m2[0] - 0.045, m2[1], 0], 0.045, pal.unsat);
+            rod([m1[0] + 0.045, m1[1], 0], [m2[0] + 0.045, m2[1], 0], 0.045, pal.unsat);
+            rod(m2, e, 0.09, pal.unsat);
+            if (top && i >= 1 && !kinkPt) kinkPt = [m1[0], (m1[1] + m2[1]) / 2, 0];
+          }
+        });
+        ball(hp, HR, pal.head);
+        if (!top && i === 1) headPt = hp;
+      });
+      if (st.gaps) lay.gaps.forEach((g) => I.push({ k: 0, p: [g.x, sy * (yH - HR - 0.55), 0], r: 0.08 + 0.05 * g.n, c: pal.gap, flat: true, a: 0.22 }));
+    }
+    if (st.labels) {
+      const rowTop = 2.95, rowBot = -2.95;
+      if (kinkPt) O.push({ p: kinkPt, text: '이중결합 → 꺾임', c: pal.unsat, dy: -px(rowTop - kinkPt[1]), lead: true });
+      if (st.gaps && lay.gaps.length) {
+        const g = lay.gaps[lay.gaps.length - 1], gp = [g.x, yH - HR - 0.55, 0];
+        if (!kinkPt || g.x - kinkPt[0] > 2.2) O.push({ p: gp, text: '틈', c: pal.gap, dy: -px(rowTop - gp[1]), lead: true });
+      }
+      if (headPt) O.push({ p: headPt, text: '친수성 머리', c: pal.head, dy: px(headPt[1] - rowBot), lead: true });
+      if (satPt && satPt[0] - headPt[0] > 2.4) O.push({ p: satPt, text: '포화 꼬리 (곧음)', c: pal.sat, dy: px(satPt[1] - rowBot), lead: true });
+    }
+  }
+
+  // 주제 전용 상태(보기 옵션 키 등). 공통 상태에 합쳐져요.
+  extraState() {
+    // 유동성 모형: 인지질 8개, 꼬리 16개. 꺾인 꼬리 하나가 옆으로 0.45만큼 더 차지해요.
+      this.fluidLayout = (pct) => {
+        const n = Math.round(16 * pct / 100), order = [];
+        [0, 2, 4, 6, 1, 3, 5, 7].forEach((i) => order.push([i, 'kR']));
+        [0, 2, 4, 6, 1, 3, 5, 7].forEach((i) => order.push([i, 'kL']));
+        const lipids = []; for (let i = 0; i < 8; i++) lipids.push({ kL: false, kR: false, x: 0 });
+        order.slice(0, n).forEach(([i, k]) => { lipids[i][k] = true; });
+        const B = 0.28, X = 0.12;
+        const W = lipids.reduce((s, l) => s + 2 * B + (l.kL ? X : 0) + (l.kR ? X : 0), 0);
+        let cur = -W / 2; const gaps = [];
+        lipids.forEach((l, i) => {
+          l.x = cur + B + (l.kL ? X : 0); cur = l.x + B + (l.kR ? X : 0);
+          if (i < 7) { const g = (l.kR ? 1 : 0) + (lipids[i + 1].kL ? 1 : 0); if (g) gaps.push({ x: cur, n: g }); }
+        });
+        return { lipids: lipids, gaps: gaps, n: n, W: W, W0: 16 * B };
+      };
+    return { labels: true, compare: false, kinkMol: true, water: true, gaps: true, unsat: 50 };
+  }
+
+  // 주제 전용 마크업 값. renderVals() 결과에 합쳐져요.
+  extraVals(st) {
+    const pal = this.pal(), f = st.f;
+    const lay = this.fluidLayout(st.unsat);
+    const fState = lay.n === 0 ? '촘촘 · 단단' : st.unsat <= 25 ? '조금 느슨' : st.unsat <= 50 ? '느슨 · 잘 흐름' : '아주 잘 흐름';
+    const fEvents = lay.n === 0
+      ? [{ c: pal.sat, text: '꼬리가 모두 곧은 포화지방산이라 촘촘히 붙어요.' },
+        { c: pal.sat, text: '틈이 거의 없어 잘 굳어요. 버터처럼 고체 쪽이에요.' }]
+      : [{ c: pal.unsat, text: '이중결합 ' + lay.n + '곳에서 꼬리가 꺾여요.' },
+        { c: pal.gap, text: '꺾인 꼬리가 옆 분자와 딱 붙지 못해 틈이 ' + lay.gaps.length + '곳 생겨요.' },
+        { c: pal.head, text: '틈이 많을수록 유동성이 커져 액체가 되기 쉬워요.' }];
+    const ph = f < 3 ? 0 : f < 6 ? 1 : f < 9.2 ? 2 : 3;
+    const selfEvents = [
+      [{ c: pal.head, text: '인지질이 물속에 흩어져 있어요. 머리는 물을 좋아하고 꼬리는 물을 싫어해요.' }],
+      [{ c: pal.head, text: '친수성 머리는 물 쪽으로, 소수성 꼬리는 물을 피하는 쪽으로 돌아서요.' }],
+      [{ c: pal.sat, text: '꼬리끼리 안쪽에서 마주 봐요. 꼬리 사이에는 물이 들어오지 않아요.' }],
+      [{ c: pal.head, text: '머리는 세포 밖·안의 물 쪽, 꼬리는 안쪽인 두 겹 층이 됐어요.' },
+        { c: pal.water, text: '모든 생물 세포막의 기본 구조예요.' }]
+    ][ph];
+    return {
+      legend: { head: pal.head, glyc: pal.glyc, sat: pal.sat, unsat: pal.unsat, water: pal.water },
+      cmpOn: !!st.compare,
+      layerState: ['흩어짐', '머리 정렬', '꼬리 마주 봄', '2겹'][ph],
+      selfEvents: selfEvents,
+      fluidEvents: fEvents,
+      unsatPct: st.unsat + '%',
+      unsatCount: lay.n + ' / 16개',
+      gapCount: '틈 ' + lay.gaps.length + '곳',
+      fluidState: fState,
+      ratios: [0, 25, 50, 75, 100].map((v) => ({
+        label: v + '%', pressed: st.unsat === v ? 'true' : 'false',
+        pick: () => this.setState({ unsat: v, step: -1 })
+      }))
+    };
+  }
+
+  // ================= 공통 셸: 아래는 주제와 무관해요. 고치지 않아요 =================
+  constructor(...args) {
+    super(...args);
+    let reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    let narrow = false;
+    try { narrow = window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) {}
+    let saved = null;
+    try { saved = window.localStorage.getItem('od-theme'); } catch (e) {}
+    const PANEL_W = { left: { min: 220, max: 480 }, right: { min: 280, max: 720 } };
+    let widths = {};
+    try { widths = JSON.parse(window.localStorage.getItem('interactive-panel-w')) || {}; } catch (e) {}
+    const okW = (side) => { const v = widths[side]; return typeof v === 'number' && v >= PANEL_W[side].min && v <= PANEL_W[side].max ? v : null; };
+    this.T = this.topic();
+    this.state = Object.assign({
+      mode: this.T.MODES[0].key, f: 0, playing: false, speed: 1, step: -1, spin: !reduce,
+      theme: (saved === 'light' || saved === 'dark') ? saved : (this.systemDark() ? 'dark' : 'light'),
+      // leftOpen/rightOpen: docked panels on wide screens; drawer: the one open drawer on narrow screens
+      leftOpen: true, rightOpen: true, drawer: null, narrow: narrow,
+      // leftW/rightW: user-set docked widths in px (null = default); resizing: a handle is being dragged
+      leftW: okW('left'), rightW: okW('right'), resizing: false
+    }, this.extraState());
+    this.reduceMotion = reduce;
+    this.K = {
+      PANEL_W: PANEL_W, PANEL_W_KEY: 'interactive-panel-w', PANEL_DEFAULT: { left: 320, right: 400 },
+      THEMES: {
+        light: { bg: '#ffffff', surface: '#f7f8fa', ink: '#111111', ink2: '#6b7280', line: '#d9dee7', accent: '#1677ff', accentInk: '#1b64da', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#b54708', prof: '#6941c6', supp: '#067647', danger: '#d92d20', scroll: '#c9d0db', scrollHover: '#9aa3b2' },
+        dark: { bg: '#17171c', surface: '#212128', ink: '#f2f4f6', ink2: '#a3abb8', line: '#34353d', accent: '#3182f6', accentInk: '#6ea4ff', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#f5a15c', prof: '#b69cff', supp: '#5fd39a', danger: '#ff6b61', scroll: '#3f414b', scrollHover: '#5b5e6a' }
+      }
+    };
+    this.cam = Object.assign({}, this.modeDef().cam);
+    this.sim = { f: 0, cx: 0 };
+    this.pointer = { x: -1, y: -1, inside: false, drag: false, lx: 0, ly: 0 };
+    this.colorCache = {};
+    this._tick = (t) => this.tick(t);
+    this._canvasRef = (el) => this.attachCanvas(el);
+    this.handles = {};
+    this._handleRefL = (el) => this.attachHandle('left', el);
+    this._handleRefR = (el) => this.attachHandle('right', el);
+  }
+
+  componentWillUnmount() {
+    this.attachCanvas(null);
+    this.attachHandle('left', null);
+    this.attachHandle('right', null);
+  }
+
+  modeDef(key) {
+    const k = key || this.state.mode;
+    return this.T.MODES.find((m) => m.key === k) || this.T.MODES[0];
+  }
+  systemDark() {
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; }
+  }
+  isNarrow() {
+    try { return window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) { return false; }
+  }
+  syncBreakpoint() { this.setState({ narrow: this.isNarrow(), drawer: null }); }
+  // In drawer mode only one panel is open at a time.
+  togglePanel(side) {
+    const st = this.state;
+    if (st.narrow) this.setState({ drawer: st.drawer === side ? null : side });
+    else if (side === 'left') this.setState({ leftOpen: !st.leftOpen });
+    else this.setState({ rightOpen: !st.rightOpen });
+  }
+  // Docked panel width: the canvas column always keeps at least 400px.
+  panelMax(side) {
+    const lim = this.K.PANEL_W[side], other = side === 'left' ? 'right' : 'left', st = this.state;
+    const h = this.handles[other];
+    const otherOpen = other === 'left' ? st.leftOpen : st.rightOpen;
+    const otherW = !otherOpen ? 0 : h ? h.el.parentElement.getBoundingClientRect().width
+      : (st[other + 'W'] || this.K.PANEL_DEFAULT[other]);
+    return Math.max(lim.min, Math.min(lim.max, (window.innerWidth || 1440) - otherW - 400));
+  }
+  setPanelWidth(side, px, save) {
+    const v = Math.round(Math.min(Math.max(px, this.K.PANEL_W[side].min), this.panelMax(side)));
+    this.setState({ [side + 'W']: v });
+    if (save) this.savePanelWidths(side, v);
+  }
+  resetPanelWidth(side) {
+    this.setState({ [side + 'W']: null });
+    this.savePanelWidths(side, null);
+  }
+  savePanelWidths(side, v) {
+    try {
+      const key = this.K.PANEL_W_KEY;
+      let w = {};
+      try { w = JSON.parse(window.localStorage.getItem(key)) || {}; } catch (e) {}
+      if (v == null) delete w[side]; else w[side] = v;
+      window.localStorage.setItem(key, JSON.stringify(w));
+    } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ }
+  }
+  // Re-fit user widths when the window shrinks (not saved).
+  refitPanels() {
+    ['left', 'right'].forEach((side) => {
+      const w = this.state[side + 'W'];
+      if (w != null && w > this.panelMax(side)) this.setPanelWidth(side, w, false);
+    });
+  }
+  attachHandle(side, el) {
+    const old = this.handles[side];
+    if (old && old.el === el) return;
+    if (old) {
+      Object.keys(old.on).forEach((ev) => old.el.removeEventListener(ev, old.on[ev]));
+      delete this.handles[side];
+      if (!Object.keys(this.handles).length) window.removeEventListener('resize', this._refit);
+    }
+    if (!el) return;
+    const dir = side === 'left' ? 1 : -1;
+    const width = () => el.parentElement.getBoundingClientRect().width;
+    let drag = null;
+    const on = {
+      pointerdown: (e) => {
+        if (this.state.narrow || e.button !== 0) return;
+        e.preventDefault();
+        drag = { x: e.clientX, w: width() };
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        this.setState({ resizing: true });
+      },
+      pointermove: (e) => { if (drag) this.setPanelWidth(side, drag.w + dir * (e.clientX - drag.x), false); },
+      pointerup: () => {
+        if (!drag) return;
+        drag = null;
+        this.setState({ resizing: false });
+        this.setPanelWidth(side, width(), true);
+      },
+      dblclick: () => this.resetPanelWidth(side),
+      keydown: (e) => {
+        const step = e.shiftKey ? 64 : 16;
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          e.preventDefault(); e.stopPropagation();
+          this.setPanelWidth(side, width() + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+        } else if (e.key === 'Home') { e.preventDefault(); e.stopPropagation(); this.resetPanelWidth(side); }
+      }
+    };
+    on.pointercancel = on.pointerup;
+    Object.keys(on).forEach((ev) => el.addEventListener(ev, on[ev]));
+    if (!Object.keys(this.handles).length) {
+      this._refit = this._refit || (() => this.refitPanels());
+      window.addEventListener('resize', this._refit);
+    }
+    this.handles[side] = { el: el, on: on };
+  }
+  textTone(hex) { return this.state.theme === 'light' ? this.mix(hex, '#000000', 0.4) : hex; }
+  pal() { return this.T.PAL[this.state.theme] || this.T.PAL.dark; }
+  setTheme(t) {
+    this.setState({ theme: t });
+    try {
+      if ((t === 'dark') === this.systemDark()) window.localStorage.removeItem('od-theme');
+      else window.localStorage.setItem('od-theme', t);
+    } catch (e) {}
+  }
+
+  attachCanvas(el) {
+    if (this.canvas === el) return;
+    if (this.canvas) {
+      const c = this.canvas;
+      c.removeEventListener('pointerdown', this._pd);
+      c.removeEventListener('pointermove', this._pm);
+      c.removeEventListener('pointerup', this._pu);
+      c.removeEventListener('pointercancel', this._pu);
+      c.removeEventListener('pointerleave', this._pl);
+      cancelAnimationFrame(this.raf);
+      try { this._mq.removeEventListener('change', this._mqH); } catch (err) {}
+    }
+    this.canvas = el || null;
+    if (!el) return;
+    this.ctx = el.getContext('2d');
+    const p = this.pointer;
+    this._pd = (e) => {
+      if (!this.modeDef().rotatable) return;
+      p.drag = true; p.lx = e.clientX; p.ly = e.clientY;
+      try { el.setPointerCapture(e.pointerId); } catch (err) {}
+      el.style.cursor = 'grabbing';
+    };
+    this._pm = (e) => {
+      const r = el.getBoundingClientRect();
+      p.x = e.clientX - r.left; p.y = e.clientY - r.top; p.inside = true;
+      if (p.drag && this.modeDef().rotatable) {
+        this.cam.yaw += (e.clientX - p.lx) * 0.008;
+        this.cam.pitch = Math.max(-1.45, Math.min(1.45, this.cam.pitch + (e.clientY - p.ly) * 0.008));
+        p.lx = e.clientX; p.ly = e.clientY;
+      }
+    };
+    this._pu = () => { p.drag = false; el.style.cursor = ''; };
+    this._pl = () => { p.inside = false; };
+    el.addEventListener('pointerdown', this._pd);
+    el.addEventListener('pointermove', this._pm);
+    el.addEventListener('pointerup', this._pu);
+    el.addEventListener('pointercancel', this._pu);
+    el.addEventListener('pointerleave', this._pl);
+    try {
+      this._mq = window.matchMedia('(max-width: 1023.98px)');
+      this._mqH = () => this.syncBreakpoint();
+      this._mq.addEventListener('change', this._mqH);
+    } catch (err) {}
+    this.last = 0;
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  tick(t) {
+    if (!this.canvas) return;
+    const dt = this.last ? Math.min(0.05, (t - this.last) / 1000) : 0;
+    this.last = t;
+    const st = this.state, m = this.modeDef(), pb = m.playback;
+    if (m.autoSpin && st.spin && !this.pointer.drag) this.cam.yaw += dt * 0.3;
+    if (pb && st.playing) {
+      this.sim.f = Math.min(pb.fmax, this.sim.f + dt * pb.rate * st.speed);
+      if (this.sim.f >= pb.fmax) this.setState({ playing: false, f: this.sim.f });
+      else if (t - (this.lastPush || 0) > 120) { this.lastPush = t; this.setState({ f: this.sim.f }); }
+    }
+    // a broken scene keeps the page alive but is reported once for the browser check
+    try { this.draw(dt, t); } catch (err) { if (!this.drawErr) { this.drawErr = true; console.error(err); } }
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  // ---------- math helpers (장면에서 써도 돼요) ----------
+  lerp(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+  sm(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+  rgb(hex) { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  mix(hex, to, amt) {
+    const a = this.rgb(hex), b = this.rgb(to);
+    return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * amt) + ',' + Math.round(a[1] + (b[1] - a[1]) * amt) + ',' + Math.round(a[2] + (b[2] - a[2]) * amt) + ')';
+  }
+  rgba(hex, al) { const a = this.rgb(hex); return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + al + ')'; }
+  shades(hex) {
+    let s = this.colorCache[hex];
+    if (!s) { s = { hi: this.mix(hex, '#FFFFFF', 0.55), mid: hex, lo: this.mix(hex, '#000000', 0.55) }; this.colorCache[hex] = s; }
+    return s;
+  }
+  proj(p, V) {
+    const x = p[0] - V.cx, y = p[1], z = p[2];
+    const x1 = x * V.cy + z * V.sy, z1 = -x * V.sy + z * V.cy;
+    const y2 = y * V.cp - z1 * V.sp, z2 = y * V.sp + z1 * V.cp;
+    const s = V.F / Math.max(2, V.D - z2);
+    return [V.ox + x1 * s, V.oy - y2 * s, z2, s];
+  }
+
+  // ---------- drawing ----------
+  draw(dt, now) {
+    const el = this.canvas, ctx = this.ctx, st = this.state, m = this.modeDef();
+    const dpr = window.devicePixelRatio || 1;
+    const W = el.clientWidth, H = el.clientHeight;
+    if (!W || !H) return;
+    if (el.width !== Math.round(W * dpr) || el.height !== Math.round(H * dpr)) { el.width = Math.round(W * dpr); el.height = Math.round(H * dpr); }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const pal = this.pal();
+    ctx.fillStyle = pal.bg; ctx.fillRect(0, 0, W, H);
+
+    const I = [], O = [];
+    this.buildScene(st.mode, I, O);
+    const scale = Math.min(W / m.fit[0], H / m.fit[1]), D = m.D, z = this.cam.zoom;
+    const V = {
+      cx: this.sim.cx, cy: Math.cos(this.cam.yaw), sy: Math.sin(this.cam.yaw), cp: Math.cos(this.cam.pitch), sp: Math.sin(this.cam.pitch),
+      F: scale * z * D, D: D, ox: W / 2, oy: H / 2 - (m.playback ? 20 : 0)
+    };
+    let zmin = Infinity, zmax = -Infinity;
+    for (const it of I) {
+      it.A = this.proj(it.p, V);
+      if (it.q) { it.B = this.proj(it.q, V); it.z = (it.A[2] + it.B[2]) / 2; } else it.z = it.A[2];
+      if (it.z < zmin) zmin = it.z;
+      if (it.z > zmax) zmax = it.z;
+    }
+    I.sort((a, b) => a.z - b.z);
+    // depth fog; a flat scene (all items at one depth) is drawn without it
+    const span = zmax - zmin;
+    for (const it of I) {
+      const fog = span < 0.01 ? 1 : 0.42 + 0.58 * ((it.z - zmin) / span);
+      ctx.globalAlpha = Math.max(0, (it.a == null ? 1 : it.a) * fog);
+      if (ctx.globalAlpha < 0.01) continue;
+      const x = it.A[0], y = it.A[1], s = it.A[3];
+      if (it.k === 0) {
+        const R = it.r * s;
+        if (R < 0.4) continue;
+        if (it.flat) { ctx.fillStyle = it.c; ctx.beginPath(); ctx.arc(x, y, Math.max(1.3, R), 0, 6.2832); ctx.fill(); }
+        else {
+          const sh = this.shades(it.c);
+          const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+          g.addColorStop(0, sh.hi); g.addColorStop(0.5, sh.mid); g.addColorStop(1, sh.lo);
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        }
+      } else if (it.k === 1) {
+        const lw = Math.max(1, it.w * (s + it.B[3]) / 2);
+        ctx.lineCap = it.flat ? 'butt' : 'round';
+        if (it.rod) {
+          ctx.strokeStyle = this.shades(it.c).lo; ctx.lineWidth = lw + 2;
+          ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+        }
+        ctx.strokeStyle = it.c; ctx.lineWidth = lw;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+      } else if (it.k === 3) {
+        const fs = Math.max(8, Math.min(14, it.size * s / (scale * z) * 1.05));
+        ctx.font = '700 ' + fs + 'px "Pretendard", system-ui, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = it.c; ctx.fillText(it.text, x, y + 0.5);
+      } else if (it.k === 4) {
+        const ang = Math.atan2(it.B[1] - y, it.B[0] - x), mx = (x + it.B[0]) / 2, my = (y + it.B[1]) / 2, r = 6;
+        ctx.fillStyle = it.c; ctx.beginPath();
+        ctx.moveTo(mx + Math.cos(ang) * r, my + Math.sin(ang) * r);
+        ctx.lineTo(mx + Math.cos(ang + 2.5) * r, my + Math.sin(ang + 2.5) * r);
+        ctx.lineTo(mx + Math.cos(ang - 2.5) * r, my + Math.sin(ang - 2.5) * r);
+        ctx.closePath(); ctx.fill();
+      } else if (it.k === 5) {
+        // lit translucent sphere, highlight up-left like the solid spheres
+        const R = it.r * s, ba = pal.blobAlpha == null ? 0.3 : pal.blobAlpha;
+        const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+        g.addColorStop(0, 'rgba(255,255,255,0.55)'); g.addColorStop(0.3, this.rgba(it.c, Math.min(1, ba + 0.15))); g.addColorStop(1, this.rgba(it.c, 0.18));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        ctx.strokeStyle = it.c; ctx.lineWidth = it.focus ? 3 : 1.5; ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+    for (const o of O) this.drawOverlay(o, V, now);
+  }
+
+  drawOverlay(o, V, now) {
+    const ctx = this.ctx, A = this.proj(o.p, V), pal = this.pal();
+    if (o.t === 'ring') {
+      const r = Math.max(6, 0.32 * A[3]) * (1 + (this.reduceMotion ? 0 : 0.15 * Math.sin((now || 0) / 160)));
+      ctx.globalAlpha = 1; ctx.strokeStyle = pal.ring; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(A[0], A[1], r, 0, 6.2832); ctx.stroke();
+      ctx.font = '600 11px "Pretendard", system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = pal.ring; ctx.fillText(o.text, A[0], A[1] + r + 10);
+      return;
+    }
+    const size = o.size || 12, x = A[0] + (o.dx || 0), y = A[1] + (o.dy || 0);
+    ctx.font = '600 ' + size + 'px "Pretendard", system-ui, sans-serif';
+    const tw = ctx.measureText(o.text).width, w = tw + 14, h = size + 10;
+    ctx.globalAlpha = o.a == null ? 1 : o.a;
+    if (o.lead) {
+      ctx.strokeStyle = this.rgba(o.c, 0.6); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(x, y); ctx.stroke();
+    }
+    ctx.fillStyle = pal.labelBg;
+    ctx.strokeStyle = this.rgba(o.c, 0.55); ctx.lineWidth = 1;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x - w / 2, y - h / 2, w, h, 6); else ctx.rect(x - w / 2, y - h / 2, w, h);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = pal.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(o.text, x, y + 0.5);
+    ctx.globalAlpha = 1;
+  }
+
+  setMode(mode) {
+    this.cam = Object.assign({}, this.modeDef(mode).cam);
+    this.sim.f = 0;
+    this.pointer.drag = false;
+    this.setState({ mode: mode, f: 0, playing: false, step: -1 });
+  }
+
+  renderVals() {
+    const st = this.state, T = this.T, m = this.modeDef(), pb = m.playback;
+    const tg = T.TOGGLES ? (Array.isArray(T.TOGGLES) ? T.TOGGLES : (T.TOGGLES[st.mode] || [])) : [];
+    const togDefs = tg.concat(m.autoSpin ? [['spin', '자동 회전']] : []);
+    const toggles = togDefs.map((d) => ({
+      label: d[1], pressed: st[d[0]] ? 'true' : 'false',
+      toggle: () => { const o = {}; o[d[0]] = !st[d[0]]; this.setState(o); }
+    }));
+    const STEPS = T.STEPS || [];
+    const steps = STEPS.map((s, i) => ({
+      num: i + 1, title: s.title, who: s.who, c: s.c, pressed: st.step === i ? 'true' : 'false',
+      pick: () => {
+        if (s.mode !== this.state.mode) this.setMode(s.mode);
+        if (s.f != null) this.sim.f = s.f;
+        this.setState({ f: this.sim.f, playing: false, step: i });
+      }
+    }));
+    const speeds = [0.5, 1, 2].map((v) => ({
+      label: v + '×', pressed: st.speed === v ? 'true' : 'false',
+      pick: () => this.setState({ speed: v })
+    }));
+    const is = {};
+    T.MODES.forEach((d) => { is[d.key] = d.key === st.mode; });
+    const f = st.f;
+    const isDark = st.theme === 'dark';
+    const leftOn = st.narrow ? st.drawer === 'left' : st.leftOpen, rightOn = st.narrow ? st.drawer === 'right' : st.rightOpen;
+    return Object.assign({
+      th: this.K.THEMES[st.theme], isDark: isDark, isLight: !isDark,
+      themeLabel: isDark ? '라이트 모드로 전환' : '다크 모드로 전환',
+      toggleTheme: () => this.setTheme(isDark ? 'light' : 'dark'),
+      canvasRef: this._canvasRef, canvasCls: m.rotatable ? '' : 'is-fixed',
+      hasModes: T.MODES.length > 1, is: is,
+      modes: T.MODES.map((d) => ({ label: d.label, pressed: d.key === st.mode ? 'true' : 'false', pick: () => { if (d.key !== this.state.mode) this.setMode(d.key); } })),
+      leftCls: leftOn ? 'is-open' : '', rightCls: rightOn ? 'is-open' : '',
+      leftExpanded: leftOn ? 'true' : 'false', rightExpanded: rightOn ? 'true' : 'false',
+      scrimCls: (st.narrow && st.drawer) ? 'is-on' : '',
+      toggleLeft: () => this.togglePanel('left'),
+      toggleRight: () => this.togglePanel('right'),
+      closePanels: () => this.setState({ drawer: null }),
+      layoutStyle: ((st.leftW ? '--pl-user: ' + st.leftW + 'px; ' : '') + (st.rightW ? '--pr-user: ' + st.rightW + 'px;' : '')).trim(),
+      layoutCls: st.resizing ? 'is-resizing' : '',
+      leftWNow: st.leftW ? String(st.leftW) : '', rightWNow: st.rightW ? String(st.rightW) : '',
+      leftHandleRef: this._handleRefL, rightHandleRef: this._handleRefR,
+      onKey: (e) => { if (e.key === 'Escape' && this.state.narrow && this.state.drawer) this.setState({ drawer: null }); },
+      hasToggles: toggles.length > 0, toggles: toggles,
+      hasSteps: steps.length > 0, steps: steps,
+      hasStep: st.step >= 0 && st.step < STEPS.length, stepDetail: st.step >= 0 && STEPS[st.step] ? STEPS[st.step].text : '',
+      mistakes: (T.MISTAKES && T.MISTAKES[st.mode]) || [],
+      canvasLabel: m.canvasLabel(f),
+      zoomIn: () => { this.cam.zoom = Math.min(3, this.cam.zoom * 1.2); },
+      zoomOut: () => { this.cam.zoom = Math.max(0.5, this.cam.zoom / 1.2); },
+      resetView: () => { this.cam = Object.assign({}, m.cam); },
+      hasPlayback: !!pb, isPlaying: st.playing, notPlaying: !st.playing, playLabel: st.playing ? '일시정지' : '재생',
+      togglePlay: () => {
+        if (!pb) return;
+        if (!st.playing && this.sim.f >= pb.fmax) this.sim.f = 0;
+        this.setState({ playing: !st.playing, step: -1, f: this.sim.f });
+      },
+      fInt: Math.round(f * 10), fLabel: pb ? pb.label(f) : '', fMax10: pb ? Math.round(pb.fmax * 10) : 0,
+      onScrub: (e) => { const v = Number(e.target.value) / 10; this.sim.f = v; this.setState({ f: v, playing: false, step: -1 }); },
+      speeds: speeds
+    }, this.extraVals(st));
+  }
+}
+</script>
+</body>
+</html>
