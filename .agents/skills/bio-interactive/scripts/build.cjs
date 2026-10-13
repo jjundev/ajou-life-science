@@ -73,4 +73,4 @@ if (require.main === module) {
   console.log('wrote ' + outFile);
 }
 
-module.exports = { build, canvasJson, FONT_CSS };
+module.exports = { build, canvasJson, titleOf, FONT_CSS };

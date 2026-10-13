@@ -114,4 +114,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { resolve };
+module.exports = { resolve, nextNumber };
