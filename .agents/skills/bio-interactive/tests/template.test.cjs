@@ -172,3 +172,18 @@ test('picking the active mode keeps progress', () => {
   assert.equal(c.state.mode, 'a');
   assert.equal(c.state.f, 0);
 });
+
+test('theme tokens include scroll colors', () => {
+  const { c } = loadComponent(T);
+  const { light, dark } = c.K.THEMES;
+  for (const th of [light, dark]) for (const k of ['scroll', 'scrollHover']) assert.match(th[k] || '', /^#[0-9a-f]{6}$/i, k);
+  assert.notEqual(light.scroll, dark.scroll);
+  assert.notEqual(light.scrollHover, dark.scrollHover);
+});
+
+test('panel scrollbar uses theme tokens', () => {
+  const m = markupPart(T);
+  for (const s of ['--scroll: {{th.scroll}}', '--scroll-hover: {{th.scrollHover}}', 'scrollbar-color:var(--scroll) transparent',
+    '.panel-inner::-webkit-scrollbar-thumb{background:var(--scroll)', '.panel-inner::-webkit-scrollbar-thumb:hover{background:var(--scroll-hover)}'])
+    assert.ok(m.includes(s), s);
+});
