@@ -172,8 +172,8 @@ def test_forecast_source_info_is_not_labelled_past_exam_original(tmp_path):
     fragments = {p.id: fragment(p) for p in pack.problems}
     artifacts = build_explanation(pack, fragments, tmp_path/'info-stage', tmp_path/'repo')
     text = artifacts.html.read_text()
-    assert '<h4>원문·출처 정보</h4>' in text
-    assert '<h4>기출 원문</h4>' not in text
+    assert '<summary>원문·출처 정보 보기</summary>' in text
+    assert '기출 원문 보기' not in text
 
 
 def test_forecast_outputs_stay_beside_html(tmp_path):

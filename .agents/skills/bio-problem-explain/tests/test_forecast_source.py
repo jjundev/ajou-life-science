@@ -104,3 +104,11 @@ def test_ambiguous_answer_is_rejected(tmp_path, answer):
     source.write_text(source.read_text().replace('정답: A', answer, 1))
     with pytest.raises(ExplainError, match='정답'):
         load_source(source, tmp_path)
+
+
+def test_forecast_choice_model_letters(tmp_path):
+    source = forecast_source_file(tmp_path)
+    key = json.loads((source.parent / 'src/v5/pack.json').read_text())['answer_key']
+    choice = load_source(source, tmp_path).problems[0].choice
+    assert choice.option_ids == ('A', 'B', 'C', 'D', 'E')
+    assert choice.answer == key['p1']

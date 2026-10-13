@@ -212,7 +212,7 @@
     }
 
     /* ---------- 좌우 패널 (drawer) ---------- */
-    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 360px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
     body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
     .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
     .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
@@ -284,6 +284,48 @@
 
     @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
 
+    /* 문제해설: 오른쪽 문제 · 요약 탭, 좁은 화면은 해설 위 접힘 */
+    .panel-tabs { flex: 1 1 0; min-width: 0; display: flex; gap: var(--s1); border-bottom: 1px solid var(--line); }
+    .panel-tabs [role="tab"] { min-height: var(--tap); padding: 0 var(--s3); margin-bottom: -1px; border: 0; border-bottom: 2px solid transparent;
+      background: transparent; color: var(--ink-2); font: 700 var(--fs-panel)/1 var(--font); cursor: pointer; }
+    .panel-tabs [role="tab"][aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+    .probs, .sum-tab { padding-top: var(--s2); }
+    .problem-pane > .layer:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+    .problem-pane details.original { margin-top: var(--s4); padding-top: var(--s2); border-top: 1px solid var(--line); }
+    .problem-pane details.original > summary { display: flex; align-items: center; min-height: 44px; cursor: pointer; font-weight: 600; color: var(--ink-2); }
+    .problem-pane img { max-width: 100%; height: auto; }
+    .topic > .problem-pane { margin-top: var(--s3); padding: var(--s4); border: 1px solid var(--line); border-radius: var(--radius); }
+    .problem-toggle { display: flex; align-items: center; justify-content: center; width: 100%; min-height: var(--tap); margin-top: var(--s3); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .problem-toggle[aria-expanded="true"] { border-color: var(--accent); color: var(--accent-ink); }
+    @media (hover: hover) { .problem-toggle:hover, .panel-tabs [role="tab"]:hover { background: var(--surface); } }
+    .problem-pane img, .problem-pane svg.zoomable { cursor: zoom-in; }
+    .is-target { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: var(--radius); }
+    .figure-sheet { width: min(96vw, 1100px); max-height: 90dvh; margin: auto; border-radius: 16px; }
+    .figure-sheet img, .figure-sheet svg { display: block; width: 100%; max-width: 100%; height: auto; cursor: default; }
+
+    /* 클릭형 보기: bio-review-pack review-interaction.css의 보기 규칙 */
+    .review-ready .choices { list-style:none; padding:0; }
+    .review-ready .choices > li { margin:0 0 var(--s3); }
+    .review-choice {
+      display:block; width:100%; min-height:44px; text-align:left; font:inherit;
+      color:var(--ink); background:var(--surface); border:1px solid var(--line);
+      border-radius:8px; padding:12px 16px; cursor:pointer; overflow-wrap:anywhere;
+    }
+    .review-choice:hover { border-color:var(--accent); }
+    .review-choice:focus-visible, .review-reset:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+    .review-choice[data-result="correct"], .review-choice[data-result="intended"] { border:3px solid var(--accent); }
+    .review-choice[data-result="incorrect"] { border:3px solid var(--danger); }
+    .review-choice[aria-pressed="true"][data-result=""] { border:3px solid var(--ink-2); }
+    .review-badge { display:block; margin-top:6px; font-size:var(--fs-small); font-weight:700; color:var(--ink); }
+    .review-badge[hidden], .review-reset[hidden] { display:none; }
+    .review-status { margin:var(--s3) 0; font-weight:650; }
+    .review-status:empty { display:none; }
+    .review-reset { min-height:44px; margin:var(--s2) 0 var(--s4); }
+    .review-choice-content { padding:var(--s2) 0; }
+    .review-choice-content > :first-child { margin-top:0; }
+    .review-choice-content > :last-child { margin-bottom:0; }
+
     /* 넓은 화면: 본문 옆에 붙는 패널 */
     @media (min-width: 1024px) {
       .layout { --l: var(--panel-l-user, var(--panel-l)); }
@@ -350,13 +392,13 @@
     img, svg { max-width:100%; height:auto; }
   </style>
 </head>
-<body data-screens="article.topic" data-panels="note" data-range="bio-problem-explain-review-0908-Biomolecules_and_Cells">
+<body data-screens="article.topic" data-panels="explain" data-range="bio-problem-explain-review-0908-Biomolecules_and_Cells">
   <header class="topbar">
     <div class="topbar-inner">
       <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
       <strong class="brand">문제풀이 입문 설명</strong>
       <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
-      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>요약</span></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>문제</span></button>
     </div>
     <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
   </header>
@@ -377,10 +419,10 @@
   <main>
     <div class="hero">
       <h1>생명과학 복습 0908 문제설명</h1>
-      <p>주어진 조건을 읽고, 첫 줄을 쓰고, 이유를 따라가며 답을 확인해요.</p>
+      <p>왼쪽 목차로 문항을 고르고, 오른쪽 문제를 보며 해설을 따라가요.</p>
     </div>
-<section id="problems"><h2>문항별 설명</h2><article class="topic" id="p1"><h3>P1. 내막계에 속하지 않는 구조</h3><p class="panel-meta">웹과제 1장 q02 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p1">원 문제 보기</a></p><div class="layer formal" data-source-problem="p1"><h4>주어진 조건</h4><div data-source-field="conditions"><p>다음 중 진핵생물의 내막계를 구성하지 않는 것은?</p>
-    <ul class="choices"><li>A. 원형질막</li><li>B. 골지복합체</li><li>C. 소낭</li><li>D. 소포체</li><li>E. 리보솜</li></ul></div></div><div class="layer formal" data-original-problem="p1"><h4>기출 원문</h4>웹과제 1장 q02 (스크린샷 s02)</div><div class="layer eli5" data-explanation="understand">
+<section id="problems"><h2>문항별 설명</h2><article class="topic" id="p1"><h3>P1. 내막계에 속하지 않는 구조</h3><p class="panel-meta">웹과제 1장 q02 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p1">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p1"><div class="layer formal" data-source-problem="p1"><div data-source-field="conditions"><p>다음 중 진핵생물의 내막계를 구성하지 않는 것은?</p>
+    <ul class="choices"><li>A. 원형질막</li><li>B. 골지복합체</li><li>C. 소낭</li><li>D. 소포체</li><li>E. 리보솜</li></ul></div></div><details class="original" data-original-problem="p1"><summary>기출 원문 보기</summary>웹과제 1장 q02 (스크린샷 s02)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 진핵세포 안의 구조 다섯 개(원형질막, 골지복합체, 소낭, 소포체, 리보솜)가 보기로 나와 있어요.</p>
   <p>구할 것: 이 가운데 내막계(endomembrane system)를 <strong>구성하지 않는 것</strong> 하나를 골라요. 부정형 질문이에요.</p>
@@ -436,8 +478,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>리보솜은 막이 없는 입자라 구성원이 아니에요. 부정형이라 틀려요로 판정된 E가 답이에요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 1장 p.19 목록에 리보솜만 없고, p.17 원핵세포에도 리보솜이 있어요. 답 E.</p></div>
 </div>
-</article><article class="topic" id="p2"><h3>P2. 미토콘드리아와 엽록체에 대한 틀린 설명</h3><p class="panel-meta">웹과제 1장 q04 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p2">원 문제 보기</a></p><div class="layer formal" data-source-problem="p2"><h4>주어진 조건</h4><div data-source-field="conditions"><p>미토콘드리아와 엽록체에 대한 설명으로 잘못된 것은?</p>
-    <ul class="choices"><li>A. 고대 원핵생물로부터 유래되어 공생하는 것으로 여겨진다</li><li>B. 세포에서 독립적으로 성장하고 수를 늘려간다</li><li>C. 세포내막계의 일부분이다</li><li>D. 자체 리보솜과 원형 DNA를 가지고 있다</li><li>E. 이중막으로 둘러싸여 있다</li></ul></div></div><div class="layer formal" data-original-problem="p2"><h4>기출 원문</h4>웹과제 1장 q04 (스크린샷 s04)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p2"><h3>P2. 미토콘드리아와 엽록체에 대한 틀린 설명</h3><p class="panel-meta">웹과제 1장 q04 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p2">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p2"><div class="layer formal" data-source-problem="p2"><div data-source-field="conditions"><p>미토콘드리아와 엽록체에 대한 설명으로 잘못된 것은?</p>
+    <ul class="choices"><li>A. 고대 원핵생물로부터 유래되어 공생하는 것으로 여겨진다</li><li>B. 세포에서 독립적으로 성장하고 수를 늘려간다</li><li>C. 세포내막계의 일부분이다</li><li>D. 자체 리보솜과 원형 DNA를 가지고 있다</li><li>E. 이중막으로 둘러싸여 있다</li></ul></div></div><details class="original" data-original-problem="p2"><summary>기출 원문 보기</summary>웹과제 1장 q04 (스크린샷 s04)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 미토콘드리아(mitochondrion)와 엽록체(chloroplast)에 대한 설명 다섯 개예요. 기원, 증식, 내막계 소속, DNA·리보솜, 막의 수를 하나씩 다뤄요.</p>
   <p>구할 것: 이 가운데 <strong>잘못된 설명</strong> 하나를 골라요. 부정형 질문이므로 각 문장을 맞아요/틀려요로 판정한 뒤 <strong>틀려요</strong>인 문장을 답으로 골라요.</p>
@@ -493,8 +535,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>C ‘내막계의 일부’만 틀려요. 부정형이라 C가 답이에요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 1장 p.19 내막계 목록에 없고, p.20이 이중막·DNA·리보솜을 확인해 줘요. 답 C.</p></div>
 </div>
-</article><article class="topic" id="p3"><h3>P3. 리소좀을 연구하기 좋은 세포</h3><p class="panel-meta">웹과제 1장 q05 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p3">원 문제 보기</a></p><div class="layer formal" data-source-problem="p3"><h4>주어진 조건</h4><div data-source-field="conditions"><p>리소좀을 연구하기에 가장 좋은 세포 종류는?</p>
-    <ul class="choices"><li>A. 근육세포</li><li>B. 세균</li><li>C. 산소가 부족한 근육세포</li><li>D. 식물의 잎세포</li><li>E. 식균작용을 하는 백혈구</li></ul></div></div><div class="layer formal" data-original-problem="p3"><h4>기출 원문</h4>웹과제 1장 q05 (스크린샷 s05)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p3"><h3>P3. 리소좀을 연구하기 좋은 세포</h3><p class="panel-meta">웹과제 1장 q05 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p3">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p3"><div class="layer formal" data-source-problem="p3"><div data-source-field="conditions"><p>리소좀을 연구하기에 가장 좋은 세포 종류는?</p>
+    <ul class="choices"><li>A. 근육세포</li><li>B. 세균</li><li>C. 산소가 부족한 근육세포</li><li>D. 식물의 잎세포</li><li>E. 식균작용을 하는 백혈구</li></ul></div></div><details class="original" data-original-problem="p3"><summary>기출 원문 보기</summary>웹과제 1장 q05 (스크린샷 s05)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 다섯 종류의 세포(근육세포, 세균, 산소가 부족한 근육세포, 식물의 잎세포, 식균작용을 하는 백혈구)예요.</p>
   <p>구할 것: 리소좀(lysosome)을 연구하기에 <strong>가장 좋은</strong> 세포 하나를 골라요. ‘있느냐’가 아니라 ‘리소좀의 일을 가장 많이, 가장 뚜렷하게 하느냐’를 비교하는 문제예요.</p>
@@ -549,9 +591,9 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>세균을 삼켜 리소좀으로 녹이는 백혈구가 두 기준을 모두 만족해요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 1장 p.20의 식균작용 예가 백혈구예요. 세균을 지우고 소거하면 E만 남아요. 답 E.</p></div>
 </div>
-</article><article class="topic" id="p4"><h3>P4. 살아 있는 세포의 필수 조건</h3><p class="panel-meta">웹과제 1장 q06 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p4">원 문제 보기</a></p><div class="layer formal" data-source-problem="p4"><h4>주어진 조건</h4><div data-source-field="conditions"><p>과학자들이 "가생이"이라는 미지의 물질을 발견했다. 이 물질을 살아있는 세포로 판단하려면, 아래의 조건들 중 "가생이"가 반드시 가져야 할 필수 조건이 무엇인지 있는대로 모두 고른 것은?</p>
+</article><article class="topic" id="p4"><h3>P4. 살아 있는 세포의 필수 조건</h3><p class="panel-meta">웹과제 1장 q06 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p4">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p4"><div class="layer formal" data-source-problem="p4"><div data-source-field="conditions"><p>과학자들이 "가생이"이라는 미지의 물질을 발견했다. 이 물질을 살아있는 세포로 판단하려면, 아래의 조건들 중 "가생이"가 반드시 가져야 할 필수 조건이 무엇인지 있는대로 모두 고른 것은?</p>
     <ul><li>a. 외부와는 다른 자신만의 환경조성을 가지도록 막으로 둘러싸인다.</li><li>b. 유전물질이 있어서 증식을 할 수 있다.</li><li>c. 물질대사를 한다.</li><li>d. 핵 내부 물질이 섞이는 것을 방지하도록 핵막이 있다.</li></ul>
-    <ul class="choices"><li>A. b, c, d</li><li>B. a, b, c</li><li>C. a, b</li><li>D. c, d</li></ul></div></div><div class="layer formal" data-original-problem="p4"><h4>기출 원문</h4>웹과제 1장 q06 (스크린샷 s06)</div><div class="layer eli5" data-explanation="understand">
+    <ul class="choices"><li>A. b, c, d</li><li>B. a, b, c</li><li>C. a, b</li><li>D. c, d</li></ul></div></div><details class="original" data-original-problem="p4"><summary>기출 원문 보기</summary>웹과제 1장 q06 (스크린샷 s06)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 새로 발견한 물질 ‘가생이’가 살아 있는 세포인지 판단하려 해요. 후보 조건은 a(막으로 둘러싸여 자신만의 환경을 가짐), b(유전물질이 있어 증식함), c(물질대사를 함), d(핵막이 있음) 네 개예요.</p>
   <p>구할 것: <strong>모든 세포</strong>가 <strong>반드시</strong> 가져야 할 조건만 있는 대로 고른 조합이에요. ‘어떤 세포는 가진다’가 아니라 ‘가장 단순한 세포까지 다 가진다’여야 필수 조건이에요.</p>
@@ -610,8 +652,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>a, b, c는 ○, d는 ×. 조합 B가 일치해요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 1장 p.16–17의 세포 공통 특징과 원핵세포 구조로 확인해요. 답 B.</p></div>
 </div>
-</article><article class="topic" id="p5"><h3>P5. 세포 소기관에 대한 틀린 설명</h3><p class="panel-meta">웹과제 1장 q07 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p5">원 문제 보기</a></p><div class="layer formal" data-source-problem="p5"><h4>주어진 조건</h4><div data-source-field="conditions"><p>세포 소기관의 설명으로 옳지 않은 것은?</p>
-    <ul class="choices"><li>A. 활면소포체는 지질을 합성하는 장소이다</li><li>B. 핵에는 핵공이 있어 이를 통해 염색체가 자유로이 드나든다</li><li>C. 핵막은 이중막이다</li><li>D. 세포막은 인지질의 이중층으로 되어 있다</li><li>E. 미토콘드리아는 ATP를 만드는 전자전달사슬이 있다</li></ul></div></div><div class="layer formal" data-original-problem="p5"><h4>기출 원문</h4>웹과제 1장 q07 (스크린샷 s07)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p5"><h3>P5. 세포 소기관에 대한 틀린 설명</h3><p class="panel-meta">웹과제 1장 q07 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p5">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p5"><div class="layer formal" data-source-problem="p5"><div data-source-field="conditions"><p>세포 소기관의 설명으로 옳지 않은 것은?</p>
+    <ul class="choices"><li>A. 활면소포체는 지질을 합성하는 장소이다</li><li>B. 핵에는 핵공이 있어 이를 통해 염색체가 자유로이 드나든다</li><li>C. 핵막은 이중막이다</li><li>D. 세포막은 인지질의 이중층으로 되어 있다</li><li>E. 미토콘드리아는 ATP를 만드는 전자전달사슬이 있다</li></ul></div></div><details class="original" data-original-problem="p5"><summary>기출 원문 보기</summary>웹과제 1장 q07 (스크린샷 s07)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 활면소포체, 핵공, 핵막, 세포막, 미토콘드리아에 대한 설명 다섯 개예요.</p>
   <p>구할 것: 이 가운데 <strong>옳지 않은 설명</strong> 하나를 골라요. 부정형 질문이므로 각 문장을 맞아요/틀려요로 판정한 뒤 <strong>틀려요</strong>인 문장을 답으로 골라요.</p>
@@ -668,8 +710,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>B만 틀려요. 부정형이라 B가 답이에요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 1장 p.17 핵공 설명, 기출 1강 11번 인쇄 답 ④와 일치해요. 답 B.</p></div>
 </div>
-</article><article class="topic" id="p6"><h3>P6. 당과 핵산의 잘못된 연결</h3><p class="panel-meta">웹과제 1장 q16 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p6">원 문제 보기</a></p><div class="layer formal" data-source-problem="p6"><h4>주어진 조건</h4><div data-source-field="conditions"><p>탄수화물에 대한 다음 설명으로 바르지 않은 것은?</p>
-    <ul class="choices"><li>A. 뉴클레오티드 - 핵산의 구성 성분</li><li>B. 디옥시리보오스 - RNA의 구성 성분</li><li>C. 녹말 - 식물의 에너지 저장물질</li><li>D. 셀룰로오스 - 식물의 세포벽 성분</li><li>E. 설탕 - 포도당과 과당이 결합한 이당류</li></ul></div></div><div class="layer formal" data-original-problem="p6"><h4>기출 원문</h4>웹과제 1장 q16 (스크린샷 s18)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p6"><h3>P6. 당과 핵산의 잘못된 연결</h3><p class="panel-meta">웹과제 1장 q16 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p6">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p6"><div class="layer formal" data-source-problem="p6"><div data-source-field="conditions"><p>탄수화물에 대한 다음 설명으로 바르지 않은 것은?</p>
+    <ul class="choices"><li>A. 뉴클레오티드 - 핵산의 구성 성분</li><li>B. 디옥시리보오스 - RNA의 구성 성분</li><li>C. 녹말 - 식물의 에너지 저장물질</li><li>D. 셀룰로오스 - 식물의 세포벽 성분</li><li>E. 설탕 - 포도당과 과당이 결합한 이당류</li></ul></div></div><details class="original" data-original-problem="p6"><summary>기출 원문 보기</summary>웹과제 1장 q16 (스크린샷 s18)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: ‘물질 - 설명’ 짝 다섯 개예요. 뉴클레오티드, 디옥시리보오스, 녹말, 셀룰로오스, 설탕이 각각 어떤 역할·구성과 연결되어 있어요.</p>
   <p>구할 것: 이 가운데 <strong>바르지 않은 연결</strong> 하나를 골라요. 부정형 질문이므로 짝마다 맞아요/틀려요를 판정하고, <strong>틀려요</strong>인 짝을 답으로 골라요.</p>
@@ -724,8 +766,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>B의 짝만 틀려요. 부정형이라 B가 답이에요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 1장 p.15의 당 구분과 핵산 이름으로 확인해요. 답 B.</p></div>
 </div>
-</article><article class="topic" id="p7"><h3>P7. 핵양체를 가진 세포</h3><p class="panel-meta">웹과제 1장 q17 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p7">원 문제 보기</a></p><div class="layer formal" data-source-problem="p7"><h4>주어진 조건</h4><div data-source-field="conditions"><p>어떤 세포는 리보좀, 원형질막, 핵양체, 그리고 세포벽을 가지고 있다. 아래 예 중, 이 세포와 가장 가까운 것은?</p>
-    <ul class="choices"><li>A. 사람의 폐세포</li><li>B. 사람의 정자</li><li>C. 원생생물</li><li>D. 세균</li><li>E. 식물세포</li></ul></div></div><div class="layer formal" data-original-problem="p7"><h4>기출 원문</h4>웹과제 1장 q17 (스크린샷 s19)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p7"><h3>P7. 핵양체를 가진 세포</h3><p class="panel-meta">웹과제 1장 q17 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p7">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p7"><div class="layer formal" data-source-problem="p7"><div data-source-field="conditions"><p>어떤 세포는 리보좀, 원형질막, 핵양체, 그리고 세포벽을 가지고 있다. 아래 예 중, 이 세포와 가장 가까운 것은?</p>
+    <ul class="choices"><li>A. 사람의 폐세포</li><li>B. 사람의 정자</li><li>C. 원생생물</li><li>D. 세균</li><li>E. 식물세포</li></ul></div></div><details class="original" data-original-problem="p7"><summary>기출 원문 보기</summary>웹과제 1장 q17 (스크린샷 s19)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 어떤 세포가 리보좀, 원형질막, 핵양체, 세포벽 네 가지를 가지고 있어요.</p>
   <p>구할 것: 보기(사람의 폐세포, 사람의 정자, 원생생물, 세균, 식물세포) 가운데 이 세포와 <strong>가장 가까운</strong> 것 하나를 골라요.</p>
@@ -780,8 +822,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>핵양체가 있으니 원핵세포, 보기 중 원핵생물은 세균뿐이에요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 1장 p.17 그림 1.19 대장균 구조와 네 단서가 일치해요. 답 D.</p></div>
 </div>
-</article><article class="topic" id="p8"><h3>P8. 진핵세포 소기관에 대한 잘못된 설명</h3><p class="panel-meta">기출 1강 7 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p8">원 문제 보기</a></p><div class="layer formal" data-source-problem="p8"><h4>주어진 조건</h4><div data-source-field="conditions"><p>다음은 진핵세포의 세포소기관의 설명들이다. 잘못 설명한 것은?</p>
-    <ul class="choices"><li>(1) 리보솜은 식균작용의 기능을 수행한다.</li><li>(2) 미토콘드리아는 2개의 막으로 둘러싸여 있다.</li><li>(3) 리소좀은 많은 종류의 가수분해효소를 가지고 있다.</li><li>(4) 골지복합체에서는 단백질의 화학적 변형이 동반된다.</li><li>(5) 활면소포체는 원형질막의 구성성분인 지질을 합성한다.</li></ul></div></div><div class="layer formal" data-original-problem="p8"><h4>기출 원문</h4>기출 1강 합본 7번 (PDF 1쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p8"><h3>P8. 진핵세포 소기관에 대한 잘못된 설명</h3><p class="panel-meta">기출 1강 7 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p8">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p8"><div class="layer formal" data-source-problem="p8"><div data-source-field="conditions"><p>다음은 진핵세포의 세포소기관의 설명들이다. 잘못 설명한 것은?</p>
+    <ul class="choices"><li>(1) 리보솜은 식균작용의 기능을 수행한다.</li><li>(2) 미토콘드리아는 2개의 막으로 둘러싸여 있다.</li><li>(3) 리소좀은 많은 종류의 가수분해효소를 가지고 있다.</li><li>(4) 골지복합체에서는 단백질의 화학적 변형이 동반된다.</li><li>(5) 활면소포체는 원형질막의 구성성분인 지질을 합성한다.</li></ul></div></div><details class="original" data-original-problem="p8"><summary>기출 원문 보기</summary>기출 1강 합본 7번 (PDF 1쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 진핵세포 소기관(리보솜, 미토콘드리아, 리소좀, 골지복합체, 활면소포체)에 대한 설명 다섯 개예요.</p>
   <p>구할 것: 이 가운데 <strong>잘못 설명한 것</strong> 하나를 골라요. 부정형 질문이므로 각 문장을 맞아요/틀려요로 판정한 뒤 <strong>틀려요</strong>인 문장을 답으로 골라요.</p>
@@ -836,8 +878,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>(1)만 주어와 기능이 어긋나요. 부정형이라 (1)이 답이에요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>기출 1강 7번 인쇄 답 ①, 교과서 1장 p.19–20의 기능 설명과 일치해요. 답 (1).</p></div>
 </div>
-</article><article class="topic" id="p9"><h3>P9. 원핵세포와 진핵세포에 모두 있지는 않은 것</h3><p class="panel-meta">기출 1강 8 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p9">원 문제 보기</a></p><div class="layer formal" data-source-problem="p9"><h4>주어진 조건</h4><div data-source-field="conditions"><p>다음의 세포 구성 요소 중 원핵세포와 진핵세포 모두에서 발견되는 것이 아닌 것은?</p>
-    <ul class="choices"><li>(1) DNA</li><li>(2) 원형질막</li><li>(3) 리보솜</li><li>(4) 세포벽</li><li>(5) 소포체</li></ul></div></div><div class="layer formal" data-original-problem="p9"><h4>기출 원문</h4>기출 1강 합본 8번 (PDF 1쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p9"><h3>P9. 원핵세포와 진핵세포에 모두 있지는 않은 것</h3><p class="panel-meta">기출 1강 8 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p9">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p9"><div class="layer formal" data-source-problem="p9"><div data-source-field="conditions"><p>다음의 세포 구성 요소 중 원핵세포와 진핵세포 모두에서 발견되는 것이 아닌 것은?</p>
+    <ul class="choices"><li>(1) DNA</li><li>(2) 원형질막</li><li>(3) 리보솜</li><li>(4) 세포벽</li><li>(5) 소포체</li></ul></div></div><details class="original" data-original-problem="p9"><summary>기출 원문 보기</summary>기출 1강 합본 8번 (PDF 1쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>다섯 가지 세포 구성 요소 가운데 <strong>원핵세포와 진핵세포 모두에서 발견되는 것이 아닌 것</strong>을 골라요. 즉 두 세포 종류 중 한쪽에서만 볼 수 있는 구성 요소를 찾는 부정형 문제예요.</p>
   <p>‘진핵세포 모두’라는 말은 진핵세포라는 무리 안에서 그 구조가 발견되는지를 묻는 것이에요. 동물세포·식물세포 모두에 있어야 한다는 뜻으로 읽지 않아요.</p>
@@ -891,8 +933,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>소포체만 진핵세포에 한정돼요. 부정형이라 답 (5).</p></div>
   <div class="summary-group"><h4>검산</h4><p>교재 1장 p.17 그림 1.19, p.18 그림 1.20(b), 기출 표시 답 ⑤와 일치해요.</p></div>
 </div>
-</article><article class="topic" id="p10"><h3>P10. 핵공과 염색체</h3><p class="panel-meta">기출 1강 11 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p10">원 문제 보기</a></p><div class="layer formal" data-source-problem="p10"><h4>주어진 조건</h4><div data-source-field="conditions"><p>세포 소기관의 설명으로 옳지 않은 것은?</p>
-    <ul class="choices"><li>(1) 활면소포체는 지질을 합성하는 장소이다.</li><li>(2) 세포막은 인지질의 이중층으로 되어 있다.</li><li>(3) 핵막은 이중막이다.</li><li>(4) 핵에는 핵공이 있어 이를 통해 염색체가 자유로이 드나든다.</li><li>(5) 미토콘드리아는 ATP를 만드는 전자전달사슬이 있다.</li></ul></div></div><div class="layer formal" data-original-problem="p10"><h4>기출 원문</h4>기출 1강 합본 11번 (PDF 1쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p10"><h3>P10. 핵공과 염색체</h3><p class="panel-meta">기출 1강 11 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p10">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p10"><div class="layer formal" data-source-problem="p10"><div data-source-field="conditions"><p>세포 소기관의 설명으로 옳지 않은 것은?</p>
+    <ul class="choices"><li>(1) 활면소포체는 지질을 합성하는 장소이다.</li><li>(2) 세포막은 인지질의 이중층으로 되어 있다.</li><li>(3) 핵막은 이중막이다.</li><li>(4) 핵에는 핵공이 있어 이를 통해 염색체가 자유로이 드나든다.</li><li>(5) 미토콘드리아는 ATP를 만드는 전자전달사슬이 있다.</li></ul></div></div><details class="original" data-original-problem="p10"><summary>기출 원문 보기</summary>기출 1강 합본 11번 (PDF 1쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>세포 소기관에 관한 다섯 문장 가운데 <strong>옳지 않은 것</strong>을 골라요. 문장 하나하나가 맞는지 따져서, 틀린 문장 하나를 찾는 부정형 문제예요.</p>
   <p>다루는 구조는 활면소포체, 세포막, 핵막, 핵공, 미토콘드리아 다섯 가지예요. 각 문장에서 ‘무엇이’, ‘어떻게 되어 있다/무엇을 한다’를 짝지어 읽어요.</p>
@@ -945,8 +987,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>(1)(2)(3)(5) 맞아요, (4) 틀려요. 부정형이라 답 (4).</p></div>
   <div class="summary-group"><h4>검산</h4><p>교재 1장 p.17·p.19·p.20, 기출 표시 답 ④와 일치해요.</p></div>
 </div>
-</article><article class="topic" id="p11"><h3>P11. 당-인산 사슬을 가진 고분자</h3><p class="panel-meta">기출 1강 14 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p11">원 문제 보기</a></p><div class="layer formal" data-source-problem="p11"><h4>주어진 조건</h4><div data-source-field="conditions"><p>다음 중 연속된 당-인산 사슬을 포함하는 고분자는?</p>
-    <ul class="choices"><li>(1) 단백질</li><li>(2) 지질</li><li>(3) 핵산</li><li>(4) 다당류</li></ul></div></div><div class="layer formal" data-original-problem="p11"><h4>기출 원문</h4>기출 1강 합본 14번 (PDF 1쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p11"><h3>P11. 당-인산 사슬을 가진 고분자</h3><p class="panel-meta">기출 1강 14 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p11">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p11"><div class="layer formal" data-source-problem="p11"><div data-source-field="conditions"><p>다음 중 연속된 당-인산 사슬을 포함하는 고분자는?</p>
+    <ul class="choices"><li>(1) 단백질</li><li>(2) 지질</li><li>(3) 핵산</li><li>(4) 다당류</li></ul></div></div><details class="original" data-original-problem="p11"><summary>기출 원문 보기</summary>기출 1강 합본 14번 (PDF 1쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>네 가지 생체 분자 무리 가운데, 사슬의 뼈대가 <strong>당과 인산이 번갈아 이어진 ‘당-인산 사슬’</strong>인 고분자를 골라요.</p>
   <p>구할 것은 ‘무엇이 이어져 사슬을 이루는가’예요. 각 분자의 단위체(monomer)와 단위체끼리의 연결 방식을 떠올리면 풀려요.</p>
@@ -997,8 +1039,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>당과 인산을 함께 가진 단위체는 뉴클레오타이드뿐 → 답 (3).</p></div>
   <div class="summary-group"><h4>검산</h4><p>강의노트 1장 p4, 교재 1장 p.14, 기출 표시 답 ③과 일치해요.</p></div>
 </div>
-</article><article class="topic" id="p12"><h3>P12. 원핵세포와 진핵세포에 모두 있는 것</h3><p class="panel-meta">기출 1강 17 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p12">원 문제 보기</a></p><div class="layer formal" data-source-problem="p12"><h4>주어진 조건</h4><div data-source-field="conditions"><p>원핵세포와 진핵세포 모두에서 발견되는 특징은?</p>
-    <ul class="choices"><li>(1) 미토콘드리아</li><li>(2) 중심체</li><li>(3) DNA</li><li>(4) 조면소포체</li><li>(5) 골지복합체</li></ul></div></div><div class="layer formal" data-original-problem="p12"><h4>기출 원문</h4>기출 1강 합본 17번 (PDF 2쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p12"><h3>P12. 원핵세포와 진핵세포에 모두 있는 것</h3><p class="panel-meta">기출 1강 17 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p12">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p12"><div class="layer formal" data-source-problem="p12"><div data-source-field="conditions"><p>원핵세포와 진핵세포 모두에서 발견되는 특징은?</p>
+    <ul class="choices"><li>(1) 미토콘드리아</li><li>(2) 중심체</li><li>(3) DNA</li><li>(4) 조면소포체</li><li>(5) 골지복합체</li></ul></div></div><details class="original" data-original-problem="p12"><summary>기출 원문 보기</summary>기출 1강 합본 17번 (PDF 2쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>다섯 보기 가운데 <strong>원핵세포에도 있고 진핵세포에도 있는</strong> 것을 하나 골라요.</p>
   <p>원핵세포에 없는 것은 모두 지워야 해요. 그래서 ‘원핵세포에도 있는가’를 먼저 묻는 편이 빨라요.</p>
@@ -1051,8 +1093,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>원핵세포에 남는 것은 DNA뿐 → 답 (3).</p></div>
   <div class="summary-group"><h4>검산</h4><p>교재 1장 p.17 그림 1.19, p.18 그림 1.20(a), 기출 표시 답 ③과 일치해요.</p></div>
 </div>
-</article><article class="topic" id="p13"><h3>P13. 원핵세포가 가진 구조</h3><p class="panel-meta">기출 1강 30 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p13">원 문제 보기</a></p><div class="layer formal" data-source-problem="p13"><h4>주어진 조건</h4><div data-source-field="conditions"><p>원핵세포는 다음 중 어느 것을 가지고 있는가?</p>
-    <ul class="choices"><li>(1) 핵</li><li>(2) 골지체</li><li>(3) 소포체</li><li>(4) 세포벽</li><li>(5) 미토콘드리아</li></ul></div></div><div class="layer formal" data-original-problem="p13"><h4>기출 원문</h4>기출 1강 합본 30번 (PDF 2쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p13"><h3>P13. 원핵세포가 가진 구조</h3><p class="panel-meta">기출 1강 30 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p13">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p13"><div class="layer formal" data-source-problem="p13"><div data-source-field="conditions"><p>원핵세포는 다음 중 어느 것을 가지고 있는가?</p>
+    <ul class="choices"><li>(1) 핵</li><li>(2) 골지체</li><li>(3) 소포체</li><li>(4) 세포벽</li><li>(5) 미토콘드리아</li></ul></div></div><details class="original" data-original-problem="p13"><summary>기출 원문 보기</summary>기출 1강 합본 30번 (PDF 2쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 세포 구조 다섯 개, 핵·골지체·소포체·세포벽·미토콘드리아예요.</p>
   <p>구할 것: 이 가운데 원핵세포(세균)가 <strong>가지고 있는 것</strong> 하나예요.</p>
@@ -1111,8 +1153,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>막성 기관 넷을 지우면 세포벽만 남아요. 답 (4). 인쇄 정답 ③ 소포체는 오류예요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교과서 1장 p.17 그림 1.19 대장균에 세포벽 표시, 소포체 없음. 독립 재풀이도 (4).</p></div>
 </div>
-</article><article class="topic" id="p14"><h3>P14. 핵산을 이루는 단위체</h3><p class="panel-meta">기출 1강 33 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p14">원 문제 보기</a></p><div class="layer formal" data-source-problem="p14"><h4>주어진 조건</h4><div data-source-field="conditions"><p>다음 중 핵산을 구성하는 것은?</p>
-    <p>________</p></div></div><div class="layer formal" data-original-problem="p14"><h4>기출 원문</h4>기출 1강 합본 33번 (PDF 2쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p14"><h3>P14. 핵산을 이루는 단위체</h3><p class="panel-meta">기출 1강 33 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p14">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p14"><div class="layer formal" data-source-problem="p14"><div data-source-field="conditions"><p>다음 중 핵산을 구성하는 것은?</p>
+    <p>________</p></div></div><details class="original" data-original-problem="p14"><summary>기출 원문 보기</summary>기출 1강 합본 33번 (PDF 2쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>보기 없이 빈칸에 직접 쓰는 단답형이에요. 핵산(DNA와 RNA)을 <strong>이루는 단위</strong>, 즉 여러 개가 이어져 핵산이 되는 작은 분자의 이름을 써요.</p>
   <p>‘구성하는 것’은 염기·당 같은 부품 하나가 아니라, 반복해서 이어지는 단위체를 묻는 말로 읽어요.</p>
@@ -1162,8 +1204,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>염기·5탄당·인산기를 가진 단위체 → 뉴클레오타이드.</p></div>
   <div class="summary-group"><h4>검산</h4><p>교재 1장 p.14, 강의노트 1장 p4, 기출 28·29번 짝 문제와 33번 표시 답이 일치해요.</p></div>
 </div>
-</article><article class="topic" id="p15"><h3>P15. 진핵세포를 원핵세포와 가르는 기준</h3><p class="panel-meta">기출 1강 35 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p15">원 문제 보기</a></p><div class="layer formal" data-source-problem="p15"><h4>주어진 조건</h4><div data-source-field="conditions"><p>진핵세포는 __________점에서 원핵세포와 구별 된다.</p>
-    <ul class="choices"><li>(1) 진핵세포만이 원형질막을 가지고 있다는</li><li>(2) 진핵세포만이 DNA를 가지고 있다는</li><li>(3) 진핵세포만이 지구상에서 발견된다는</li><li>(4) 진핵세포만이 살아 있다고 생각된다는</li><li>(5) 진핵세포만이 핵을 가지고 있다는</li></ul></div></div><div class="layer formal" data-original-problem="p15"><h4>기출 원문</h4>기출 1강 합본 35번 (PDF 3쪽)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p15"><h3>P15. 진핵세포를 원핵세포와 가르는 기준</h3><p class="panel-meta">기출 1강 35 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p15">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p15"><div class="layer formal" data-source-problem="p15"><div data-source-field="conditions"><p>진핵세포는 __________점에서 원핵세포와 구별 된다.</p>
+    <ul class="choices"><li>(1) 진핵세포만이 원형질막을 가지고 있다는</li><li>(2) 진핵세포만이 DNA를 가지고 있다는</li><li>(3) 진핵세포만이 지구상에서 발견된다는</li><li>(4) 진핵세포만이 살아 있다고 생각된다는</li><li>(5) 진핵세포만이 핵을 가지고 있다는</li></ul></div></div><details class="original" data-original-problem="p15"><summary>기출 원문 보기</summary>기출 1강 합본 35번 (PDF 3쪽)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>빈칸에 들어갈 말을 보기에서 골라, 진핵세포가 원핵세포와 <strong>무엇으로 구별되는지</strong> 완성해요.</p>
   <p>보기는 모두 ‘진핵세포만이 ~’로 시작해요. 그래서 각 보기는 ‘그 특징이 진핵세포에만 있고 원핵세포에는 없다’는 주장이에요. 이 주장이 참인 보기를 찾아요.</p>
@@ -1215,8 +1257,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>원형질막·DNA·서식·생명은 둘 다 해당, 핵만 진핵에 한정 → 답 (5).</p></div>
   <div class="summary-group"><h4>검산</h4><p>교재 1장 p.17, 강의노트 1장 p5, 기출 표시 답 ⑤와 일치해요.</p></div>
 </div>
-</article><article class="topic" id="p16"><h3>P16. [변형] 폴리펩티드 한 가닥 단백질과 헤모글로빈</h3><p class="panel-meta">생성 변형 s0-quaternary · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p16">원 문제 보기</a></p><div class="layer formal" data-source-problem="p16"><h4>주어진 조건</h4><div data-source-field="conditions"><p>폴리펩티드 한 가닥으로만 이루어진 단백질 A와, 폴리펩티드 4개(α 2개, β 2개)로 이루어진 헤모글로빈을 비교했다. 이에 대한 설명으로 옳은 것은?</p>
-    <ul class="choices"><li>(1) 모든 단백질은 4차 구조를 가진다.</li><li>(2) 헤모글로빈은 폴리펩티드 한 가닥이 네 번 접혀서 만들어진 단백질이다.</li><li>(3) 단백질 A는 3차 구조가 가장 높은 수준의 구조이다.</li><li>(4) 헤모글로빈의 각 폴리펩티드는 3차 구조를 이루지 않은 채 바로 모여 4차 구조를 만든다.</li></ul></div></div><div class="layer formal" data-original-problem="p16"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 폴리펩티드와 단백질, 3차 구조와 4차 구조(모든 단백질이 4차 구조를 가진다는 착각). 근거 토픽: 단백질의 4차 구조(s0-quaternary)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p16"><h3>P16. [변형] 폴리펩티드 한 가닥 단백질과 헤모글로빈</h3><p class="panel-meta">생성 변형 s0-quaternary · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p16">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p16"><div class="layer formal" data-source-problem="p16"><div data-source-field="conditions"><p>폴리펩티드 한 가닥으로만 이루어진 단백질 A와, 폴리펩티드 4개(α 2개, β 2개)로 이루어진 헤모글로빈을 비교했다. 이에 대한 설명으로 옳은 것은?</p>
+    <ul class="choices"><li>(1) 모든 단백질은 4차 구조를 가진다.</li><li>(2) 헤모글로빈은 폴리펩티드 한 가닥이 네 번 접혀서 만들어진 단백질이다.</li><li>(3) 단백질 A는 3차 구조가 가장 높은 수준의 구조이다.</li><li>(4) 헤모글로빈의 각 폴리펩티드는 3차 구조를 이루지 않은 채 바로 모여 4차 구조를 만든다.</li></ul></div></div><details class="original" data-original-problem="p16"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 폴리펩티드와 단백질, 3차 구조와 4차 구조(모든 단백질이 4차 구조를 가진다는 착각). 근거 토픽: 단백질의 4차 구조(s0-quaternary)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>두 단백질을 비교해요. 단백질 A는 폴리펩티드가 <strong>한 가닥</strong>뿐이고, 헤모글로빈은 폴리펩티드가 <strong>4개</strong>(α 2개, β 2개)예요. 이 비교에 대한 설명 중 <strong>옳은 것</strong>을 하나 골라요.</p>
   <p>핵심 변수는 ‘폴리펩티드가 몇 가닥인가’예요. 가닥 수에 따라 단백질이 도달하는 가장 높은 구조 수준이 어떻게 달라지는지 판단해요.</p>
@@ -1268,8 +1310,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>(1) 반례 A, (2) 가닥 수와 접힘 혼동, (4) 순서 반대. 답 (3).</p></div>
   <div class="summary-group"><h4>검산</h4><p>교재 1장 p.13–14, 강의노트 1장 p4, variants.md 의도 정답 (3)과 일치해요.</p></div>
 </div>
-</article><article class="topic" id="p17"><h3>P17. [변형] 아데닌 비율로 구아닌 비율 구하기</h3><p class="panel-meta">생성 변형 s1-double-helix · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p17">원 문제 보기</a></p><div class="layer formal" data-source-problem="p17"><h4>주어진 조건</h4><div data-source-field="conditions"><p>이중 가닥 DNA를 분석했더니 아데닌(A)이 전체 염기의 20%였다. 이 DNA에서 구아닌(G)이 차지하는 비율은?</p>
-    <ul class="choices"><li>(1) 20%</li><li>(2) 30%</li><li>(3) 40%</li><li>(4) 60%</li></ul></div></div><div class="layer formal" data-original-problem="p17"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 상보적 염기쌍과 샤가프의 법칙(어떤 염기끼리 수가 같은지). 근거 토픽: 사슬의 뼈대와 이중 나선(s1-double-helix)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p17"><h3>P17. [변형] 아데닌 비율로 구아닌 비율 구하기</h3><p class="panel-meta">생성 변형 s1-double-helix · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p17">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p17"><div class="layer formal" data-source-problem="p17"><div data-source-field="conditions"><p>이중 가닥 DNA를 분석했더니 아데닌(A)이 전체 염기의 20%였다. 이 DNA에서 구아닌(G)이 차지하는 비율은?</p>
+    <ul class="choices"><li>(1) 20%</li><li>(2) 30%</li><li>(3) 40%</li><li>(4) 60%</li></ul></div></div><details class="original" data-original-problem="p17"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 상보적 염기쌍과 샤가프의 법칙(어떤 염기끼리 수가 같은지). 근거 토픽: 사슬의 뼈대와 이중 나선(s1-double-helix)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: <strong>이중 가닥</strong> DNA에서 아데닌(A)이 전체 염기의 20%예요.</p>
   <p>구할 것: 같은 DNA에서 구아닌(G)이 몇 %인지 골라요.</p>
@@ -1326,8 +1368,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>A + T = 40% → G + C = 60% → G = 30%.</p></div>
   <div class="summary-group"><h4>검산</h4><p>20 + 20 + 30 + 30 = 100%로 맞아요. 답 (2).</p></div>
 </div>
-</article><article class="topic" id="p18"><h3>P18. [변형] 2′ 탄소에 OH가 있고 염기가 유라실인 뉴클레오타이드</h3><p class="panel-meta">생성 변형 s1-dna-rna · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p18">원 문제 보기</a></p><div class="layer formal" data-source-problem="p18"><h4>주어진 조건</h4><div data-source-field="conditions"><p>어떤 뉴클레오타이드를 조사했더니 5탄당의 2′ 탄소에 OH가 붙어 있고, 염기는 유라실(U)이었다. 이 뉴클레오타이드에 대한 설명으로 옳은 것은?</p>
-    <ul class="choices"><li>(1) DNA를 이루는 단위체이다.</li><li>(2) RNA를 이루는 뉴클레오타이드이다.</li><li>(3) 이 당은 2′ 탄소에서 산소가 빠진 디옥시리보스이다.</li><li>(4) 유라실은 아데닌·구아닌과 같은 퓨린 계열 염기이다.</li></ul></div></div><div class="layer formal" data-original-problem="p18"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 리보스(2′-OH)와 디옥시리보스(2′-H), DNA 염기와 RNA 염기, 퓨린과 피리미딘. 근거 토픽: DNA와 RNA는 무엇이 다를까(s1-dna-rna)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p18"><h3>P18. [변형] 2′ 탄소에 OH가 있고 염기가 유라실인 뉴클레오타이드</h3><p class="panel-meta">생성 변형 s1-dna-rna · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p18">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p18"><div class="layer formal" data-source-problem="p18"><div data-source-field="conditions"><p>어떤 뉴클레오타이드를 조사했더니 5탄당의 2′ 탄소에 OH가 붙어 있고, 염기는 유라실(U)이었다. 이 뉴클레오타이드에 대한 설명으로 옳은 것은?</p>
+    <ul class="choices"><li>(1) DNA를 이루는 단위체이다.</li><li>(2) RNA를 이루는 뉴클레오타이드이다.</li><li>(3) 이 당은 2′ 탄소에서 산소가 빠진 디옥시리보스이다.</li><li>(4) 유라실은 아데닌·구아닌과 같은 퓨린 계열 염기이다.</li></ul></div></div><details class="original" data-original-problem="p18"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 리보스(2′-OH)와 디옥시리보스(2′-H), DNA 염기와 RNA 염기, 퓨린과 피리미딘. 근거 토픽: DNA와 RNA는 무엇이 다를까(s1-dna-rna)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 뉴클레오타이드 하나에 대한 단서 두 개예요. 5탄당의 2′ 탄소에 <strong>OH</strong>가 붙어 있고, 염기가 <strong>유라실(U)</strong>이에요.</p>
   <p>구할 것: 이 뉴클레오타이드에 대한 설명으로 <strong>옳은 것</strong> 하나를 골라요.</p>
@@ -1382,8 +1424,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>당과 염기가 모두 RNA를 가리켜요. (3)은 리보스를 디옥시리보스로, (4)는 피리미딘을 퓨린으로 바꿨어요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>단서를 하나씩 가려도 RNA. 교과서 1장 p.14–15와 일치. 답 (2).</p></div>
 </div>
-</article><article class="topic" id="p19"><h3>P19. [변형] 세포가 세 배 커질 때 표면적/부피 비</h3><p class="panel-meta">생성 변형 s2-cell-size · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p19">원 문제 보기</a></p><div class="layer formal" data-source-problem="p19"><h4>주어진 조건</h4><div data-source-field="conditions"><p>한 변이 2 μm인 정육면체 모양의 세포가 모양은 그대로인 채 한 변이 6 μm가 되도록 커졌다. 이때 세포의 표면적/부피 비는 어떻게 변하는가?</p>
-    <ul class="choices"><li>(1) 3배로 커진다.</li><li>(2) 변하지 않는다.</li><li>(3) 1/3로 줄어든다.</li><li>(4) 1/9로 줄어든다.</li></ul></div></div><div class="layer formal" data-original-problem="p19"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 세포가 커질 때 표면적 자체와 표면적/부피 비. 근거 토픽: 세포는 왜 작을까(s2-cell-size)</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p19"><h3>P19. [변형] 세포가 세 배 커질 때 표면적/부피 비</h3><p class="panel-meta">생성 변형 s2-cell-size · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p19">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p19"><div class="layer formal" data-source-problem="p19"><div data-source-field="conditions"><p>한 변이 2 μm인 정육면체 모양의 세포가 모양은 그대로인 채 한 변이 6 μm가 되도록 커졌다. 이때 세포의 표면적/부피 비는 어떻게 변하는가?</p>
+    <ul class="choices"><li>(1) 3배로 커진다.</li><li>(2) 변하지 않는다.</li><li>(3) 1/3로 줄어든다.</li><li>(4) 1/9로 줄어든다.</li></ul></div></div><details class="original" data-original-problem="p19"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 세포가 커질 때 표면적 자체와 표면적/부피 비. 근거 토픽: 세포는 왜 작을까(s2-cell-size)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 정육면체 모양 세포의 한 변이 2 μm에서 6 μm로 커졌고, 모양은 그대로예요. 한 변이 3배가 된 거예요.</p>
   <p>구할 것: 표면적 자체가 아니라 <strong>표면적/부피 비</strong>가 어떻게 변하는지 골라요.</p>
@@ -1440,9 +1482,9 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>표면적 9배, 부피 27배 → 비 3 → 1, 곧 1/3배.</p></div>
   <div class="summary-group"><h4>검산</h4><p>$\dfrac{6}{a}$ 공식과 교과서 1장 p.16 그림 1.18(6:1 → 2:1)이 일치. 답 (3).</p></div>
 </div>
-</article><article class="topic" id="p20"><h3>P20. [변형] 세균에 있는 것만 고르기</h3><p class="panel-meta">생성 변형 s2-prokaryote · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p20">원 문제 보기</a></p><div class="layer formal" data-source-problem="p20"><h4>주어진 조건</h4><div data-source-field="conditions"><p>다음 ㄱ~ㅁ 중 원핵세포(세균)에 있는 것만을 있는 대로 고른 것은?</p>
+</article><article class="topic" id="p20"><h3>P20. [변형] 세균에 있는 것만 고르기</h3><p class="panel-meta">생성 변형 s2-prokaryote · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p20">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p20"><div class="layer formal" data-source-problem="p20"><div data-source-field="conditions"><p>다음 ㄱ~ㅁ 중 원핵세포(세균)에 있는 것만을 있는 대로 고른 것은?</p>
     <ul><li>ㄱ. 리보솜</li><li>ㄴ. 핵막</li><li>ㄷ. 세포벽</li><li>ㄹ. 미토콘드리아</li><li>ㅁ. 핵양체</li></ul>
-    <ul class="choices"><li>(1) ㄱ, ㄷ, ㅁ</li><li>(2) ㄱ, ㄴ, ㄷ</li><li>(3) ㄴ, ㄹ, ㅁ</li><li>(4) ㄱ, ㄷ, ㄹ, ㅁ</li></ul></div></div><div class="layer formal" data-original-problem="p20"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 원핵세포에 있는 것과 없는 것(포함·제외를 함께 판단). 근거 토픽: 원핵세포와 진핵세포(s2-prokaryote)</div><div class="layer eli5" data-explanation="understand">
+    <ul class="choices"><li>(1) ㄱ, ㄷ, ㅁ</li><li>(2) ㄱ, ㄴ, ㄷ</li><li>(3) ㄴ, ㄹ, ㅁ</li><li>(4) ㄱ, ㄷ, ㄹ, ㅁ</li></ul></div></div><details class="original" data-original-problem="p20"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 원핵세포에 있는 것과 없는 것(포함·제외를 함께 판단). 근거 토픽: 원핵세포와 진핵세포(s2-prokaryote)</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 구조 다섯 개 ㄱ 리보솜, ㄴ 핵막, ㄷ 세포벽, ㄹ 미토콘드리아, ㅁ 핵양체예요.</p>
   <p>구할 것: 원핵세포(세균)에 <strong>있는 것만을 있는 대로</strong> 모두 고른 조합이에요. 하나라도 빠지거나, 없는 것이 하나라도 섞이면 틀린 조합이에요.</p>
@@ -1504,8 +1546,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>ㄱ○ ㄴ× ㄷ○ ㄹ× ㅁ○ → ㄱ, ㄷ, ㅁ.</p></div>
   <div class="summary-group"><h4>검산</h4><p>ㄴ·ㄹ이 든 보기를 지우면 (1)만 남아요. 교과서 1장 p.17, 9장 p.182와 일치. 답 (1).</p></div>
 </div>
-</article><article class="topic" id="p21"><h3>P21. [변형] 자유 리보솜에서 만들어지는 단백질</h3><p class="panel-meta">생성 변형 s3-er-golgi · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p21">원 문제 보기</a></p><div class="layer formal" data-source-problem="p21"><h4>주어진 조건</h4><div data-source-field="conditions"><p>진핵세포의 리보솜은 조면 소포체 막에 붙어 있는 것과 시토졸에 떠 있는 것 두 종류가 있다. 다음 단백질 중 조면 소포체에 붙은 리보솜이 아니라 자유 리보솜에서 만들어지는 것은?</p>
-    <ul class="choices"><li>(1) 이자 세포가 만들어 혈액으로 내보내는 인슐린</li><li>(2) 세포막에 박혀 포도당을 들여보내는 수송 단백질</li><li>(3) 핵 속에서 DNA가 감기는 실패 역할을 하는 히스톤</li><li>(4) 골지체 안에 남아 단백질을 변형하는 골지체 단백질</li></ul></div></div><div class="layer formal" data-original-problem="p21"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 부착 리보솜과 자유 리보솜이 각각 어느 목적지의 단백질을 만드는지. 근거 토픽: 소포체·골지체와 단백질이 가는 길 (s3-er-golgi).</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p21"><h3>P21. [변형] 자유 리보솜에서 만들어지는 단백질</h3><p class="panel-meta">생성 변형 s3-er-golgi · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p21">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p21"><div class="layer formal" data-source-problem="p21"><div data-source-field="conditions"><p>진핵세포의 리보솜은 조면 소포체 막에 붙어 있는 것과 시토졸에 떠 있는 것 두 종류가 있다. 다음 단백질 중 조면 소포체에 붙은 리보솜이 아니라 자유 리보솜에서 만들어지는 것은?</p>
+    <ul class="choices"><li>(1) 이자 세포가 만들어 혈액으로 내보내는 인슐린</li><li>(2) 세포막에 박혀 포도당을 들여보내는 수송 단백질</li><li>(3) 핵 속에서 DNA가 감기는 실패 역할을 하는 히스톤</li><li>(4) 골지체 안에 남아 단백질을 변형하는 골지체 단백질</li></ul></div></div><details class="original" data-original-problem="p21"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 부착 리보솜과 자유 리보솜이 각각 어느 목적지의 단백질을 만드는지. 근거 토픽: 소포체·골지체와 단백질이 가는 길 (s3-er-golgi).</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 진핵세포의 리보솜에는 조면 소포체 막에 붙은 것(부착 리보솜)과 시토졸에 떠 있는 것(자유 리보솜)이 있어요. 보기에는 단백질 네 개가 목적지와 함께 나와 있어요.</p>
   <p>구할 것: 부착 리보솜이 <strong>아니라 자유 리보솜</strong>에서 만들어지는 단백질 하나를 골라요.</p>
@@ -1560,8 +1602,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>히스톤은 핵으로 가서 핵공을 통과하므로 자유 리보솜이에요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>×는 핵 하나뿐. 교과서 1장 p.19와 일치. 답 (3).</p></div>
 </div>
-</article><article class="topic" id="p22"><h3>P22. [변형] 이중층과 이중막 구별하기</h3><p class="panel-meta">생성 변형 s3-nucleus · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p22">원 문제 보기</a></p><div class="layer formal" data-source-problem="p22"><h4>주어진 조건</h4><div data-source-field="conditions"><p>인지질로 된 막의 "이중층"과 "이중막"에 대한 설명으로 옳은 것은?</p>
-    <ul class="choices"><li>(1) 세포막은 인지질 이중층 두 개가 겹쳐진 이중막 구조이다.</li><li>(2) 이중층과 이중막은 같은 구조를 가리키는 두 가지 이름이다.</li><li>(3) 핵막은 인지질이 한 겹으로만 늘어선 막이라, 물을 싫어하는 소수성 꼬리가 물 쪽을 향한다.</li><li>(4) 핵막은 인지질 이중층 두 개로 되어 있어, 인지질 층으로 세면 4겹이다.</li></ul></div></div><div class="layer formal" data-original-problem="p22"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 이중층(인지질 두 겹, 일반 세포막)과 이중막(이중층이 두 개, 핵막). 근거 토픽: 핵: 이중막·핵공·염색질·인 (s3-nucleus).</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p22"><h3>P22. [변형] 이중층과 이중막 구별하기</h3><p class="panel-meta">생성 변형 s3-nucleus · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p22">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p22"><div class="layer formal" data-source-problem="p22"><div data-source-field="conditions"><p>인지질로 된 막의 "이중층"과 "이중막"에 대한 설명으로 옳은 것은?</p>
+    <ul class="choices"><li>(1) 세포막은 인지질 이중층 두 개가 겹쳐진 이중막 구조이다.</li><li>(2) 이중층과 이중막은 같은 구조를 가리키는 두 가지 이름이다.</li><li>(3) 핵막은 인지질이 한 겹으로만 늘어선 막이라, 물을 싫어하는 소수성 꼬리가 물 쪽을 향한다.</li><li>(4) 핵막은 인지질 이중층 두 개로 되어 있어, 인지질 층으로 세면 4겹이다.</li></ul></div></div><details class="original" data-original-problem="p22"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 이중층(인지질 두 겹, 일반 세포막)과 이중막(이중층이 두 개, 핵막). 근거 토픽: 핵: 이중막·핵공·염색질·인 (s3-nucleus).</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 인지질로 된 막을 부르는 두 말, ‘이중층’과 ‘이중막’이에요.</p>
   <p>구할 것: 두 말과 세포막·핵막의 구조에 대한 설명 중 <strong>옳은 것</strong> 하나를 골라요.</p>
@@ -1616,8 +1658,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>세포막은 이중층 하나, 핵막은 이중층 둘이라 4겹이에요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>겹 수 계산 2와 4로 (4)만 일치. 교과서 1장 p.17(핵막 2개의 막). 답 (4).</p></div>
 </div>
-</article><article class="topic" id="p23"><h3>P23. [변형] 망가진 미토콘드리아를 분해하는 작용</h3><p class="panel-meta">생성 변형 s3-endomembrane · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p23">원 문제 보기</a></p><div class="layer formal" data-source-problem="p23"><h4>주어진 조건</h4><div data-source-field="conditions"><p>어떤 세포가 기능을 잃은 자기 미토콘드리아를 리소좀으로 보내 분해하고, 나온 재료를 다시 쓴다. 이 작용의 이름과 설명을 옳게 짝지은 것은?</p>
-    <ul class="choices"><li>(1) 식균작용 — 세포가 자기 몸속의 낡은 구조를 골라 분해한다.</li><li>(2) 자가소화작용 — 리소좀이 자기 세포의 낡은 구조를 분해해 재활용한다.</li><li>(3) 자가소화작용 — 리보솜이 자기 세포의 낡은 구조를 잘게 분해한다.</li><li>(4) 식균작용 — 골지체가 바깥에서 들어온 세균을 직접 녹인다.</li></ul></div></div><div class="layer formal" data-original-problem="p23"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 자가소화작용(자기 것 분해)과 식균작용(바깥 것 분해), 그리고 분해를 맡는 소기관. 근거 토픽: 내막계와 리소좀 (s3-endomembrane).</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p23"><h3>P23. [변형] 망가진 미토콘드리아를 분해하는 작용</h3><p class="panel-meta">생성 변형 s3-endomembrane · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p23">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p23"><div class="layer formal" data-source-problem="p23"><div data-source-field="conditions"><p>어떤 세포가 기능을 잃은 자기 미토콘드리아를 리소좀으로 보내 분해하고, 나온 재료를 다시 쓴다. 이 작용의 이름과 설명을 옳게 짝지은 것은?</p>
+    <ul class="choices"><li>(1) 식균작용 — 세포가 자기 몸속의 낡은 구조를 골라 분해한다.</li><li>(2) 자가소화작용 — 리소좀이 자기 세포의 낡은 구조를 분해해 재활용한다.</li><li>(3) 자가소화작용 — 리보솜이 자기 세포의 낡은 구조를 잘게 분해한다.</li><li>(4) 식균작용 — 골지체가 바깥에서 들어온 세균을 직접 녹인다.</li></ul></div></div><details class="original" data-original-problem="p23"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 자가소화작용(자기 것 분해)과 식균작용(바깥 것 분해), 그리고 분해를 맡는 소기관. 근거 토픽: 내막계와 리소좀 (s3-endomembrane).</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 세포가 기능을 잃은 <strong>자기</strong> 미토콘드리아를 리소좀으로 보내 분해하고, 나온 재료를 다시 써요.</p>
   <p>구할 것: 이 작용의 <strong>이름</strong>과 <strong>설명</strong>이 둘 다 옳게 짝지어진 보기 하나를 골라요.</p>
@@ -1671,8 +1713,8 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>자기 미토콘드리아 + 리소좀 → 자가소화작용. (3)은 리보솜, (1)(4)는 식균작용이라 틀려요.</p></div>
   <div class="summary-group"><h4>검산</h4><p>두 기준으로 (2)만 남아요. 교과서 1장 p.19–20과 일치. 답 (2).</p></div>
 </div>
-</article><article class="topic" id="p24"><h3>P24. [변형] 세포 내 공생설의 근거가 아닌 것</h3><p class="panel-meta">생성 변형 s4-mito · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p24">원 문제 보기</a></p><div class="layer formal" data-source-problem="p24"><h4>주어진 조건</h4><div data-source-field="conditions"><p>미토콘드리아가 원래는 독립해 살던 세균이었는데, 큰 세포 안에 들어와 함께 살게 되었다는 세포 내 공생설이 있다. 이 설을 뒷받침하는 근거로 옳지 않은 것은?</p>
-    <ul class="choices"><li>(1) 미토콘드리아 DNA는 사람 핵 속 DNA처럼 선형이 아니라, 세균 DNA처럼 끝이 이어진 원형이다.</li><li>(2) 미토콘드리아 안의 리보솜은 진핵세포 세포질의 리보솜보다 작고, 세균의 리보솜과 크기가 같다.</li><li>(3) 오늘날에도 일부 동물의 세포질에는 조류나 남세균이 거주자로 들어와 살고 있어, 삼켜진 세포가 숙주 세포 안에서 살아남을 수 있음을 보여 준다.</li><li>(4) 미토콘드리아 막은 소낭을 통해 골지체 막과 끊임없이 섞이며, 골지체 막과 같은 막으로 이어진다.</li></ul></div></div><div class="layer formal" data-original-problem="p24"><h4>기출 원문</h4>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 세포 내 공생설의 근거가 되는 관찰과 근거가 아닌 진술(미토콘드리아를 내막계로 착각). 근거 토픽: 미토콘드리아와 세포 내 공생설 (s4-mito).</div><div class="layer eli5" data-explanation="understand">
+</article><article class="topic" id="p24"><h3>P24. [변형] 세포 내 공생설의 근거가 아닌 것</h3><p class="panel-meta">생성 변형 s4-mito · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_0908_Biomolecules_and_Cells.html#p24">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p24"><div class="layer formal" data-source-problem="p24"><div data-source-field="conditions"><p>미토콘드리아가 원래는 독립해 살던 세균이었는데, 큰 세포 안에 들어와 함께 살게 되었다는 세포 내 공생설이 있다. 이 설을 뒷받침하는 근거로 옳지 않은 것은?</p>
+    <ul class="choices"><li>(1) 미토콘드리아 DNA는 사람 핵 속 DNA처럼 선형이 아니라, 세균 DNA처럼 끝이 이어진 원형이다.</li><li>(2) 미토콘드리아 안의 리보솜은 진핵세포 세포질의 리보솜보다 작고, 세균의 리보솜과 크기가 같다.</li><li>(3) 오늘날에도 일부 동물의 세포질에는 조류나 남세균이 거주자로 들어와 살고 있어, 삼켜진 세포가 숙주 세포 안에서 살아남을 수 있음을 보여 준다.</li><li>(4) 미토콘드리아 막은 소낭을 통해 골지체 막과 끊임없이 섞이며, 골지체 막과 같은 막으로 이어진다.</li></ul></div></div><details class="original" data-original-problem="p24"><summary>기출 원문 보기</summary>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 세포 내 공생설의 근거가 되는 관찰과 근거가 아닌 진술(미토콘드리아를 내막계로 착각). 근거 토픽: 미토콘드리아와 세포 내 공생설 (s4-mito).</details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 미토콘드리아가 원래 따로 살던 세균이었다가 큰 세포 안에 들어와 함께 살게 되었다는 세포 내 공생설이에요.</p>
   <p>구할 것: 이 설을 뒷받침하는 근거로 <strong>옳지 않은 것</strong> 하나를 골라요. 부정형이라, 보기마다 맞아요/틀려요를 판정한 뒤 <strong>틀려요</strong>로 판정된 보기가 답이에요.</p>
@@ -1735,12 +1777,21 @@
       <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
       <div class="panel-inner">
         <div class="panel-head">
-          <h2 id="panel-right-title">페이지 요약</h2>
+          <h2 id="panel-right-title" class="sr-only">문제와 요약</h2>
+          <div class="panel-tabs" role="tablist" aria-labelledby="panel-right-title">
+            <button type="button" role="tab" id="tab-problem" data-tab="problem" aria-controls="tabpanel-problem" aria-selected="true">문제</button>
+            <button type="button" role="tab" id="tab-summary" data-tab="summary" aria-controls="tabpanel-summary" aria-selected="false" tabindex="-1">요약</button>
+          </div>
           <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
         </div>
-        <p class="panel-sub" id="sum-for">전체 흐름</p>
-        <p class="panel-empty" id="sum-empty">페이지를 넘기면 그 페이지의 핵심 식과 용어가 여기에 나옵니다.</p>
-        <div class="sums"></div>
+        <div class="probs" role="tabpanel" id="tabpanel-problem" aria-labelledby="tab-problem">
+          <p class="panel-empty" id="prob-empty">문항을 고르면 여기에 문제가 나와요.</p>
+        </div>
+        <div class="sum-tab" role="tabpanel" id="tabpanel-summary" aria-labelledby="tab-summary" hidden>
+          <p class="panel-sub" id="sum-for">전체 흐름</p>
+          <p class="panel-empty" id="sum-empty">페이지를 넘기면 그 페이지의 핵심 식과 용어가 여기에 나옵니다.</p>
+          <div class="sums"></div>
+        </div>
       </div>
     </aside>
   </div>
@@ -1753,7 +1804,7 @@
     </div>
   </nav>
   <p class="sr-only" id="pager-status" aria-live="polite"></p>
-
+<script type="application/json" id="explain-choice-model">{"p1": {"answer": "E", "mode": "single", "options": ["A", "B", "C", "D", "E"]}, "p2": {"answer": "C", "mode": "ambiguous", "options": ["A", "B", "C", "D", "E"]}, "p3": {"answer": "E", "mode": "single", "options": ["A", "B", "C", "D", "E"]}, "p4": {"answer": "B", "mode": "single", "options": ["A", "B", "C", "D"]}, "p5": {"answer": "B", "mode": "single", "options": ["A", "B", "C", "D", "E"]}, "p6": {"answer": "B", "mode": "single", "options": ["A", "B", "C", "D", "E"]}, "p7": {"answer": "D", "mode": "single", "options": ["A", "B", "C", "D", "E"]}, "p8": {"answer": "1", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p9": {"answer": "5", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p10": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p11": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4"]}, "p12": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p13": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p15": {"answer": "5", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p16": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4"]}, "p17": {"answer": "2", "mode": "single", "options": ["1", "2", "3", "4"]}, "p18": {"answer": "2", "mode": "single", "options": ["1", "2", "3", "4"]}, "p19": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4"]}, "p20": {"answer": "1", "mode": "single", "options": ["1", "2", "3", "4"]}, "p21": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4"]}, "p22": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4"]}, "p23": {"answer": "2", "mode": "single", "options": ["1", "2", "3", "4"]}, "p24": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4"]}}</script>
   <script id="theme-ui">
     (function () {
       const root = document.documentElement;
@@ -1807,6 +1858,8 @@
       // ---------- 열고 닫기 ----------
       function docked() {
         const pref = store.get(PREF, {});
+        // 문제해설은 문제가 오른쪽에 있으므로 오른쪽을 기본으로 연다
+        if (kind === 'explain') return { left: pref.left ?? roomyMq.matches, right: pref.right ?? true };
         return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
       }
       function sync() {
@@ -1999,38 +2052,247 @@
         });
       }
 
-      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
-      function setupNote() {
+      // ---------- 문제해설: 오른쪽 = [문제 | 요약] 탭, 좁은 화면은 해설 위 접힘 ----------
+      function setupExplain() {
         const KEY = 'od-note-read:' + RANGE;
+        const TAB = 'bio-problem-explain-tab';
         const topics = Array.from(document.querySelectorAll('main article.topic'));
         const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
-        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
         const box = panels.right.querySelector('.sums');
-        const sums = {};
-        topics.forEach((t) => {
-          const el = t.querySelector(':scope > .sum');
-          if (!el) return;
-          el.hidden = true;
-          box.appendChild(el);
-          sums[t.id] = el;
-        });
+        const probs = panels.right.querySelector('.probs');
+        const sumTab = panels.right.querySelector('.sum-tab');
+        const tabList = panels.right.querySelector('.panel-tabs');
+        const tabs = Array.from(tabList.querySelectorAll('[role="tab"]'));
+        const title = document.getElementById('panel-right-title');
+        const label = toggles.right.querySelector('span');
         const sub = document.getElementById('sum-for');
         const empty = document.getElementById('sum-empty');
+        const probEmpty = document.getElementById('prob-empty');
+        const sums = {};
+        const panes = {};
+        const opens = {};
+        const expanded = new Set();
+        let curId = null;
+        let tab = store.get(TAB, 'problem') === 'summary' ? 'summary' : 'problem';
+        topics.forEach((t) => {
+          // 조각의 <div class="sum" hidden> 을 요약 탭으로 옮긴다. 없으면 안내 문구만 보인다.
+          const el = t.querySelector(':scope > .sum');
+          if (el) { el.hidden = true; box.appendChild(el); sums[t.id] = el; }
+          const pane = t.querySelector(':scope > .problem-pane');
+          if (!pane) return;
+          pane.id = 'problem-' + t.id;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'problem-toggle';
+          btn.setAttribute('aria-controls', pane.id);
+          btn.addEventListener('click', () => {
+            if (expanded.has(t.id)) expanded.delete(t.id); else expanded.add(t.id);
+            paintToggle(t.id);
+            window.mlLayoutMath?.();
+          });
+          panes[t.id] = pane;
+          opens[t.id] = btn;
+        });
+        function paintToggle(id) {
+          const on = expanded.has(id);
+          opens[id].setAttribute('aria-expanded', String(on));
+          opens[id].textContent = on ? '문제 접기' : '문제 보기';
+          panes[id].hidden = !on;
+        }
+        function showTab(name, save) {
+          tabs.forEach((b) => { const on = b.dataset.tab === name; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; });
+          probs.hidden = name !== 'problem';
+          sumTab.hidden = name !== 'summary';
+          if (save) { tab = name; store.set(TAB, name); }
+          window.mlLayoutMath?.();
+        }
+        // 넓은 화면은 오른쪽 문제 탭, 좁은 화면은 각 문항 메타 줄 뒤 "문제 보기" 아래로 옮긴다
+        function mountPanes() {
+          const wide = wideMq.matches;
+          Object.keys(panes).forEach((id) => {
+            if (wide) { opens[id].remove(); probs.appendChild(panes[id]); panes[id].hidden = id !== curId; }
+            else {
+              const topic = document.getElementById(id);
+              (topic.querySelector(':scope > .panel-meta') || topic.querySelector('h3')).after(opens[id], panes[id]);
+              paintToggle(id);
+            }
+          });
+          tabList.hidden = !wide;
+          title.classList.toggle('sr-only', wide);
+          title.textContent = wide ? '문제와 요약' : '페이지 요약';
+          label.textContent = wide ? '문제' : '요약';
+          probEmpty.hidden = Boolean(curId && panes[curId]);
+          showTab(wide ? tab : 'summary', false);
+        }
+        // ---------- 보기 클릭: 판정 표시와 해설 판정 문단으로 이동 (선택은 메모리에만) ----------
+        let model = {};
+        try { model = JSON.parse((document.getElementById('explain-choice-model') || {}).textContent || '{}') || {}; } catch (e) { model = {}; }
+        const scroller = document.querySelector('.content');
+        const picks = new Map();
+        const ui = {};
+        let targetTimer = 0;
+        const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        function paint(id) {
+          const { m, status, reset } = ui[id];
+          const pick = picks.get(id);
+          const ambiguous = m.mode === 'ambiguous';
+          panes[id].querySelectorAll('.review-choice').forEach((b) => {
+            const cid = b.dataset.choiceId;
+            const mine = pick === cid;
+            const answer = pick !== undefined && cid === m.answer;
+            b.dataset.result = answer ? (ambiguous ? 'intended' : 'correct') : mine && !ambiguous ? 'incorrect' : '';
+            b.setAttribute('aria-pressed', String(mine));
+            const labels = [];
+            if (mine) labels.push('내 선택');
+            if (answer) labels.push(ambiguous ? '출제 의도상 답' : '정답');
+            const badge = b.querySelector('.review-badge');
+            badge.textContent = labels.join(' · ');
+            badge.hidden = !labels.length;
+          });
+          status.textContent = pick === undefined ? '' : ambiguous ? '출제 의도상 답을 표시했어요.'
+            : pick === m.answer ? '정답이에요.' : '정답이 아니에요. 해설에서 판정 이유를 확인해요.';
+          reset.hidden = pick === undefined;
+        }
+        function jump(id, cid) {
+          const solve = document.getElementById(id).querySelector('[data-explanation="solve"]');
+          if (!solve) return;
+          const re = new RegExp('^\\(?' + escapeRe(cid) + '(\\)|\\.|\\s)');
+          const target = Array.from(solve.querySelectorAll('p, li')).find((n) => re.test(n.textContent.trim())) || solve.querySelector('h4') || solve;
+          const top = scroller.scrollTop + target.getBoundingClientRect().top - scroller.getBoundingClientRect().top - scroller.clientHeight / 4;
+          scroller.scrollTo({ top: Math.max(0, top), behavior: 'auto' });
+          document.querySelectorAll('main .is-target').forEach((n) => n.classList.remove('is-target'));
+          target.classList.add('is-target');
+          clearTimeout(targetTimer);
+          targetTimer = setTimeout(() => target.classList.remove('is-target'), 1600);
+        }
+        Object.keys(panes).forEach((id) => {
+          const m = model[id];
+          const list = panes[id].querySelector('.choices');
+          if (!m || !list || !Array.isArray(m.options)) return;
+          const items = Array.from(list.children).filter((li) => li.tagName === 'LI');
+          // 모델과 보기 수가 다르면 정적 문제로 둔다
+          if (items.length !== m.options.length) return;
+          panes[id].classList.add('review-ready');
+          items.forEach((li, i) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'review-choice';
+            btn.dataset.choiceId = m.options[i];
+            btn.dataset.result = '';
+            btn.setAttribute('aria-pressed', 'false');
+            const content = document.createElement('div');
+            content.className = 'review-choice-content';
+            while (li.firstChild) content.appendChild(li.firstChild);
+            const badge = document.createElement('span');
+            badge.className = 'review-badge';
+            badge.hidden = true;
+            btn.append(content, badge);
+            li.appendChild(btn);
+            btn.addEventListener('click', () => { picks.set(id, m.options[i]); paint(id); jump(id, m.options[i]); });
+          });
+          const status = document.createElement('p');
+          status.className = 'review-status';
+          status.setAttribute('aria-live', 'polite');
+          const reset = document.createElement('button');
+          reset.type = 'button';
+          reset.className = 'review-reset text-btn';
+          reset.textContent = '다시 고르기';
+          reset.hidden = true;
+          reset.addEventListener('click', () => { picks.delete(id); paint(id); });
+          list.after(status, reset);
+          ui[id] = { m, status, reset };
+        });
+
+        // ---------- 문제 그림: 눌러서 크게 보기 ----------
+        let sheet = null;
+        // 확대본의 SVG id는 원본과 겹치지 않게 바꾸고, 내부 참조(url(#…), href)도 함께 바꾼다
+        function cloneSvg(svg) {
+          const copy = svg.cloneNode(true);
+          const nodes = [copy, ...copy.querySelectorAll('*')];
+          const ids = new Map();
+          nodes.forEach((n) => { if (n.id) { ids.set(n.id, n.id + '-zoom'); n.id += '-zoom'; } });
+          if (ids.size) nodes.forEach((n) => Array.from(n.attributes).forEach((a) => {
+            let v = a.value.replace(/url\(#([^)]*)\)/g, (m, id) => (ids.has(id) ? 'url(#' + ids.get(id) + ')' : m));
+            if (v.startsWith('#') && ids.has(v.slice(1))) v = '#' + ids.get(v.slice(1));
+            if (v !== a.value) n.setAttribute(a.name, v);
+          }));
+          copy.classList.remove('zoomable');
+          copy.style.width = '100%';
+          copy.style.maxWidth = '100%';
+          copy.style.height = 'auto';
+          return copy;
+        }
+        function zoom(fig) {
+          if (!sheet) {
+            sheet = document.createElement('dialog');
+            sheet.className = 'sheet figure-sheet';
+            sheet.setAttribute('aria-label', '그림 크게 보기');
+            sheet.innerHTML = '<div class="sheet-inner"><div class="sheet-head"><h2>그림</h2><button class="text-btn sheet-close" type="button">닫기</button></div><div class="figure-sheet-body"></div></div>';
+            sheet.querySelector('.sheet-close').addEventListener('click', () => sheet.close());
+            sheet.addEventListener('click', (e) => { if (e.target === sheet) sheet.close(); });
+            document.body.appendChild(sheet);
+          }
+          let big;
+          if (fig.tagName.toLowerCase() === 'img') {
+            big = document.createElement('img');
+            big.src = fig.currentSrc || fig.src;
+            big.alt = fig.alt;
+          } else big = cloneSvg(fig);
+          sheet.querySelector('.figure-sheet-body').replaceChildren(big);
+          sheet.showModal();
+        }
+        Object.values(panes).forEach((pane) => {
+          // 지금 있는 SVG는 모두 원본 그림이다(KaTeX는 나중에 렌더링된다). 중첩 SVG는 바깥 것만.
+          pane.querySelectorAll('svg').forEach((svg) => { if (!svg.parentElement.closest('svg')) svg.classList.add('zoomable'); });
+          pane.addEventListener('click', (e) => {
+            const fig = e.target.closest('img, svg.zoomable');
+            if (fig && !fig.closest('.review-choice')) zoom(fig);
+          });
+        });
+
+        // ---------- 인쇄: 문제를 모든 문항의 해설 위에 펼친다 ----------
+        function mountForPrint() {
+          Object.keys(panes).forEach((id) => {
+            const topic = document.getElementById(id);
+            opens[id].remove();
+            (topic.querySelector(':scope > .panel-meta') || topic.querySelector('h3')).after(panes[id]);
+            panes[id].hidden = false;
+          });
+        }
+        const printMq = matchMedia('print');
+        printMq.addEventListener('change', () => (printMq.matches ? mountForPrint() : mountPanes()));
+        window.addEventListener('beforeprint', mountForPrint);
+        window.addEventListener('afterprint', mountPanes);
+
+        tabs.forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab, true)));
+        tabList.addEventListener('keydown', (e) => {
+          if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+          e.preventDefault();
+          e.stopPropagation();
+          const next = tab === 'problem' ? 'summary' : 'problem';
+          showTab(next, true);
+          tabs.find((b) => b.dataset.tab === next).focus();
+        });
         document.addEventListener('od:screen', (e) => {
           const s = e.detail.screen;
           const key = s.matches('article.topic') ? s.id : 'intro';
+          curId = key === 'intro' ? null : key;
           Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
           empty.hidden = Boolean(sums[key]);
           sub.textContent = key === 'intro' ? '전체 흐름' : ((s.querySelector('h3') || {}).textContent || '').trim();
-          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          if (wideMq.matches) Object.keys(panes).forEach((id) => { panes[id].hidden = id !== curId; });
+          probEmpty.hidden = Boolean(curId && panes[curId]);
+          if (curId && !read.has(curId)) { read.add(curId); store.set(KEY, Array.from(read)); }
           panels.right.querySelector('.panel-inner').scrollTop = 0;
           markToc(read, topics.length, '읽음');
           revealCurrent();
         });
+        wideMq.addEventListener('change', mountPanes);
+        mountPanes();
       }
 
       if (kind === 'review') setupReview();
-      if (kind === 'note') setupNote();
+      if (kind === 'explain') setupExplain();
       sync();
     })();
   </script>
@@ -2126,7 +2388,7 @@
       window.addEventListener('popstate', fromUrl);
 
       document.addEventListener('keydown', (e) => {
-        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open') || document.querySelector('dialog[open]')) return;
         if (e.target.closest('input, select, textarea, [contenteditable="true"], .math-row')) return;
         if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
         if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
@@ -2165,7 +2427,7 @@
       }
       function layout() {
         queued = false;
-        document.querySelectorAll('main .katex, .sums .katex').forEach((math) => {
+        document.querySelectorAll('main .katex, .sums .katex, .probs .katex').forEach((math) => {
           if (!math.getClientRects().length) return;
           const tex = math.querySelector('annotation')?.textContent || '';
           const display = math.parentElement.classList.contains('katex-display');
@@ -2216,6 +2478,7 @@
       new ResizeObserver(schedule).observe(document.querySelector('.content'));
       new ResizeObserver(schedule).observe(document.querySelector('#panel-right .panel-inner'));
       new MutationObserver(schedule).observe(document.querySelector('.sums'), {subtree:true, attributes:true, attributeFilter:['hidden']});
+      new MutationObserver(schedule).observe(document.querySelector('.probs'), {subtree:true, attributes:true, attributeFilter:['hidden']});
       document.fonts.ready.then(schedule);
       schedule();
     })();

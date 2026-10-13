@@ -3,7 +3,7 @@ import unicodedata
 import pytest
 from mpe_source import load_source, resolve_sources, subparts
 from mpe_shared import parse
-from mpe_types import ExplainError
+from mpe_types import ChoiceModel, ExplainError
 from helpers import source_file, choice_source_file
 
 def test_legacy_problem_preserves_code(tmp_path):
@@ -132,3 +132,24 @@ def test_resolve_sources_nfd_repo_nfc_target(tmp_path):
     nfc_target = unicodedata.normalize('NFC', str(path))
     got = resolve_sources(Path(unicodedata.normalize('NFD', str(repo))), nfc_target)
     assert got[0].samefile(path)
+
+
+def test_choice_model_read_from_review_model(tmp_path):
+    model={'schema':1,'cards':{'p1':{'answer':'1','mode':'single','options':[{'id':'1','index':0,'diagnostic':0},{'id':'5','index':1,'diagnostic':1}],'version':'x'}}}
+    pack=load_source(choice_source_file(tmp_path/'repo',model=model),tmp_path/'repo')
+    assert pack.problems[0].choice==ChoiceModel('1','single',('1','5'))
+
+def test_choice_model_ambiguous_mode(tmp_path):
+    model={'schema':1,'cards':{'p1':{'answer':'5','mode':'ambiguous','options':[{'id':'1','index':0},{'id':'5','index':1}]}}}
+    assert load_source(choice_source_file(tmp_path/'repo',model=model),tmp_path/'repo').problems[0].choice.mode=='ambiguous'
+
+@pytest.mark.parametrize('options,answer',[
+    ([{'id':'1','index':0}],'1'),                                  # 옵션 수 ≠ li 수
+    ([{'id':'1','index':0},{'id':'5','index':1}],'3'),             # answer 없음
+    ([{'id':'1','index':0},{'id':'5','index':0}],'1')])            # index 중복
+def test_choice_model_mismatch_is_none(tmp_path,options,answer):
+    model={'schema':1,'cards':{'p1':{'answer':answer,'mode':'single','options':options}}}
+    assert load_source(choice_source_file(tmp_path/'repo',model=model),tmp_path/'repo').problems[0].choice is None
+
+def test_choice_model_absent_is_none(tmp_path):
+    assert load_source(choice_source_file(tmp_path/'repo'),tmp_path/'repo').problems[0].choice is None

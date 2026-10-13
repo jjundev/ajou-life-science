@@ -72,7 +72,7 @@ description: 생명과학 복습노트의 기존 복습문제 또는 명시 경�
    SKILL=…; RUN=…; python3 "$SKILL/scripts/mpe_cli.py" check --run "$RUN"
    ```
 
-6. [검토 기록](references/verification.md)을 읽고 실제 source_visual/content/independent/browser 결과를 `review.json`에 기록한다. 사용한 참조 파일의 절대 path와 SHA-256을 references에 기록한다. 구조 통과를 정답 검증으로 기록하지 않는다. 로컬 브라우저에서 1280×900/375×812, light/dark의 모든 문항·목차·이전/다음·요약·수식·그림·표를 확인한다. 콘솔·KaTeX 오류·누락 자원·외부 요청·문서 가로 넘침은 0이어야 한다. stage의 원 문제/개념 링크는 최종 발행 디렉터리 기준이므로 실제 원 파일과 anchor도 대조한다. 템플릿 결함은 근거를 보고하며 임의로 템플릿을 수정하지 않는다. 네 검토는 `lite`에서도 생략하지 않는다.
+6. [검토 기록](references/verification.md)을 읽고 실제 source_visual/content/independent/browser 결과를 `review.json`에 기록한다. 사용한 참조 파일의 절대 path와 SHA-256을 references에 기록한다. 구조 통과를 정답 검증으로 기록하지 않는다. 로컬 브라우저에서 1280×900/375×812, light/dark의 모든 문항·목차·이전/다음·요약·수식·그림·표를 확인한다. 콘솔·KaTeX 오류·누락 자원·외부 요청·문서 가로 넘침은 0이어야 한다. stage의 원 문제/개념 링크는 최종 발행 디렉터리 기준이므로 실제 원 파일과 anchor도 대조한다. 문제는 넓은 화면에서 오른쪽 문제 탭, 좁은 화면에서 해설 위 접힘 버튼으로 표시된다. 템플릿 결함은 근거를 보고하며 임의로 템플릿을 수정하지 않는다. 네 검토는 `lite`에서도 생략하지 않는다.
 7. 실제 검토 네 가지(source_visual·content·independent·browser)가 모두 pass이고 현재 해시가 일치하면 사용자 호출 범위에서 추가 확인 없이 발행한다. 미검토·변경·실패·disputed는 해당 팩의 발행을 막는다.
 
    ```sh
@@ -82,6 +82,14 @@ description: 생명과학 복습노트의 기존 복습문제 또는 명시 경�
 forecast 자동 연결에서 검토가 실패하면 [예상 스킬의 수정·재검토 계약](../bio-webquiz-forecast/references/explanation-handoff.md)을 따른다. 해설기는 원본 문제를 고치지 않고 컨트롤러가 이번 호출의 새 버전만 수정한다. build 후 네 검토는 다시 수행하며 미해결이면 발행을 보류한다.
 
 설명 소유 파일만 백업·교체하며 실패하면 복구한다. 다중 파일 교체는 OS 원자적 transaction이 아니다. 팩별 성공·보류 이유, HTML·MD와 백업 경로를 보고한다. `all`이나 기간 백필은 팩마다 한 행인 결과 표(range · slug · 문항 수 · 발행/보류 · 보류 이유 · HTML 경로)로 보고한다. 커밋·푸시는 별도 사용자 요청이 있을 때만 수행한다.
+
+### 레이아웃만 바뀐 기존 발행분 재발행
+
+템플릿·레이아웃만 바뀌고 원 복습문제와 설명 조각이 그대로이면 조각을 다시 쓰지 않는다. 팩마다 새 RUN으로 `rerender`를 실행하면 발행 자료 폴더의 `fragments/`·`evidence/`를 복사해 build하고, 발행된 `validation.json`의 input_hash가 현재 입력과 같을 때 references·content·independent 검토를 이식한다. 이어서 `check` → source_visual·browser 실제 검토 → `publish` 순서로 진행한다. "입력 변경: 네 검토 모두 다시 필요"가 나오면 1~7단계 전체를 따른다. `all`이면 최신 → 0901 순으로 팩마다 반복하고 위 결과 표로 보고한다.
+
+   ```sh
+   SKILL=…; RUN=…; python3 "$SKILL/scripts/mpe_cli.py" rerender --repo "$PWD" --target "$PWD/복습노트/1013/복습문제_1013_….html" --run "$RUN"
+   ```
 
 ## 산출 위치
 

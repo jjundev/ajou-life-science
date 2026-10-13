@@ -33,7 +33,10 @@ def forecast_source_file(repo: Path, chapter: int = 4, version: int = 5) -> Path
     for id_, card in zip(ids, cards):
         (src / 'cards' / f'{id_}.html').write_text(card)
     path = folder / f'복습문제_{chapter}장_웹과제예상_v{version}.html'
-    path.write_text('<html><body><section id="questions">' + ''.join(cards) + '</section></body></html>')
+    model = {'cards': {id_: {'answer': value, 'mode': 'single', 'options': [{'id': letter, 'index': i} for i, letter in enumerate('ABCDE')]}
+                       for id_, value in key.items()}, 'skipped': ['o1', 'o2']}
+    path.write_text('<html><body><section id="questions">' + ''.join(cards) + '</section>'
+                    '<script id="review-interaction-model" type="application/json">' + json.dumps(model) + '</script></body></html>')
     return path
 
 
