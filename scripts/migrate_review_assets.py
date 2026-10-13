@@ -30,11 +30,11 @@ if str(REVIEW_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(REVIEW_SCRIPTS))
 
 import review_interaction  # noqa: E402
-from assets_path import SIDE, moves, rebase_md, relocate  # noqa: E402
+from assets_path import SIDE, moves, relocate  # noqa: E402
+from assets_path import migrate_md as rewrite_md  # noqa: E402
 
 _ATTR = re.compile(r'(src|href)="([^"]*)"')
 _GENERATED = re.compile(r"(<!-- 생성 파일: )(\S+?)(을 고친 뒤)")
-_MD_TARGET = re.compile(r"(\]\()([^)\s]+)(\))")
 # 검사용: `](t)`, `](t "제목")`, `](<t>)` 모두에서 대상만 뽑는다.
 _MD_CHECK = re.compile(r"\]\(\s*<?([^)\s>]+)>?(?:\s+(?:\"[^\"]*\"|'[^']*'))?\s*\)")
 _DATE = re.compile(r"\d{4}(-\d{4})?")
@@ -49,11 +49,6 @@ def rewrite_html(text: str) -> str:
     """날짜 폴더 루트 HTML의 상대 src/href와 `생성 파일` 주석을 이전 뒤 위치로 고친다."""
     text = _ATTR.sub(lambda m: f'{m.group(1)}="{relocate(m.group(2))}"', text)
     return _GENERATED.sub(lambda m: m.group(1) + relocate(m.group(2)) + m.group(3), text)
-
-
-def rewrite_md(text: str) -> str:
-    """날짜 폴더 루트에 있던 MD를 `.assets/` 안 위치에 맞게 고친다(한 번만 적용)."""
-    return rebase_md(_MD_TARGET.sub(lambda m: m.group(1) + relocate(m.group(2)) + m.group(3), text))
 
 
 def _root_html(day: Path) -> list[Path]:

@@ -1,6 +1,6 @@
 """Extract → agent-authored fragments → build/check → reviewed publication."""
 import argparse
-from dataclasses import asdict, replace
+from dataclasses import asdict, fields, replace
 import hashlib
 import json
 import re
@@ -14,6 +14,7 @@ from mpe_contract import initial_reviews, payload_hash, validate_fragment
 from mpe_source import inside, load_source, resolve_sources, sha256
 from mpe_render import build_explanation, check_artifacts, artifact_hashes, dump, names
 from mpe_publish import publish_explanation
+from mpe_shared import SIDE, migrate_md, moves
 from mpe_types import Artifacts, ExplainError
 
 def serialized(pack):
@@ -121,18 +122,35 @@ def build(item, fragments):
     dump(folder / 'review.json', review)
     print('build:', artifacts.html)
 
-STYLE_RE = re.compile(r'<style\b[^>]*>.*?</style>', re.S | re.I)
+# Page code (CSS, executable scripts) is layout; JSON data scripts such as the answer model are content.
+CODE_RE = re.compile(r'<style\b[^>]*>.*?</style>|<script\b(?![^>]*application/json)[^>]*>.*?</script>', re.S | re.I)
+# The .assets migration prefixed relative src/href values in date-folder HTML; the targets are the same files.
+SIDE_URL_RE = re.compile(r'(\b(?:src|href)=["\']?)(?:\./)*(?:' + re.escape(SIDE) + '/)?', re.I)
+
+def unside(text):
+    """Drop a leading ./ and .assets/ from relative src/href values."""
+    return SIDE_URL_RE.sub(r'\1', text)
+
+def same_problems(old, new):
+    """Problems equal up to .assets-prefixed URLs."""
+    fix = lambda v: unside(v) if isinstance(v, str) else tuple(map(fix, v)) if isinstance(v, tuple) else v
+    norm = lambda p: replace(p, **{f.name: fix(getattr(p, f.name)) for f in fields(p)})
+    return tuple(map(norm, old)) == tuple(map(norm, new))
 
 def git_blob(path, digest):
-    """Bytes of the committed version of path whose SHA-256 is digest, or None."""
+    """Bytes of the committed version of path whose SHA-256 is digest, or None. path may since be deleted."""
+    git = lambda *args: subprocess.run(['git', *args], cwd=path.parent, capture_output=True, check=True).stdout
     try:
-        git = lambda *args: subprocess.run(['git', *args], cwd=path.parent, capture_output=True, check=True).stdout
-        for commit in git('log', '--format=%H', '--', path.name).decode().split():
-            data = git('show', f'{commit}:./{path.name}')
-            if hashlib.sha256(data).hexdigest() == digest:
-                return data
+        commits = git('log', '--format=%H', '--', path.name).decode().split()
     except (OSError, subprocess.CalledProcessError):
         return None
+    for commit in commits:
+        try:
+            data = git('show', f'{commit}:./{path.name}')
+        except (OSError, subprocess.CalledProcessError):
+            continue  # the commit that deleted or moved the file
+        if hashlib.sha256(data).hexdigest() == digest:
+            return data
     return None
 
 def published_source(pack, digest):
@@ -150,19 +168,32 @@ def published_source(pack, digest):
         return None
 
 def carried_references(references, old_repo, repo):
-    """Rebase reference paths onto this checkout; accept files changed only inside <style> blocks."""
+    """Rebase reference paths onto this checkout; accept files changed only in page code or by the .assets move."""
     carried, notes = [], []
-    strip = lambda data: STYLE_RE.sub('', data.decode('utf-8', 'replace'))
+    text = lambda data: data.decode('utf-8', 'replace')
+    strip = lambda data: unside(CODE_RE.sub('', text(data)))
     for reference in references:
         path = Path(reference['path'])
         if path.is_relative_to(old_repo):
             path = repo / path.relative_to(old_repo)
         reference = {**reference, 'path': str(path)}
-        if path.is_file() and sha256(path) != reference['sha256']:
+        side = path.parent / SIDE / path.name
+        if not path.exists() and moves(path.name) and side.is_file():
+            # A date-folder side file moved into .assets/; the move rewrote a moved MD's links once.
+            old = git_blob(path, reference['sha256'])
+            moved = old is not None and (migrate_md(text(old)) if path.suffix == '.md' else text(old)) == text(side.read_bytes())
+            if moved:
+                reference = {**reference, 'path': str(side), 'sha256': sha256(side)}
+                notes.append(f'참조 자료는 {SIDE}/로 옮겨졌을 뿐이에요: {path.name}')
+            else:
+                notes.append(f'참조 자료 변경: 검토를 다시 하세요: {SIDE}/{path.name}')
+        elif not path.is_file():
+            notes.append(f'참조 자료 없음: 검토를 다시 하세요: {path.name}')
+        elif sha256(path) != reference['sha256']:
             old = git_blob(path, reference['sha256'])
             if old is not None and strip(old) == strip(path.read_bytes()):
                 reference['sha256'] = sha256(path)
-                notes.append(f'참조 자료는 스타일만 바뀌었어요: {path.name}')
+                notes.append(f'참조 자료는 스타일·스크립트·자산 경로만 바뀌었어요: {path.name}')
             else:
                 notes.append(f'참조 자료 변경: 검토를 다시 하세요: {path.name}')
         carried.append(reference)
@@ -193,10 +224,10 @@ def rerender(repo, target, run):
             same = stored.get('input_hash') == payload_hash(pack, fragments)
             note = ''
             if not same and stored.get('input_hash'):
-                # A source edited only outside its cards (e.g. page CSS) keeps the same problems.
+                # A source edited only outside its cards (e.g. page CSS) or by the .assets move keeps the same problems.
                 digest = manifest.get('source_sha256', '')
                 old = published_source(pack, digest)
-                same = (old is not None and old.problems == pack.problems
+                same = (old is not None and same_problems(old.problems, pack.problems)
                         and payload_hash(replace(pack, sha256=digest), fragments) == stored['input_hash'])
                 note = '원본 파일은 바뀌었지만 문항 내용은 같아요: ' if same else ''
             if same:

@@ -129,11 +129,17 @@ def test_extract_warns_static_choices(tmp_path):
     assert 'p1: 보기 모델 없음/불일치 — 정적 표시' in result.stderr
 
 
-def published_pack(tmp_path, reference=None):
+PNG = __import__('base64').b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jJ1sAAAAASUVORK5CYII=')
+
+def published_pack(tmp_path, reference=None, name='참조.html', figure=False):
     repo = tmp_path / 'repo'
     source = source_file(repo)
+    if figure:
+        source.write_text(source.read_text().replace('</p><pre>', '</p><img src="figures_0917/p1.png" alt="문제 그림"><pre>'))
+        (source.parent / 'figures_0917').mkdir()
+        (source.parent / 'figures_0917/p1.png').write_bytes(PNG)
     if reference:
-        (repo / '참조.html').write_text(reference, encoding='utf-8')
+        (repo / name).write_text(reference, encoding='utf-8')
     run = tmp_path / 'run'
     assert call('extract', '--repo', repo, '--target', source, '--run', run).returncode == 0
     item = load_run(run)[0]
@@ -146,7 +152,7 @@ def published_pack(tmp_path, reference=None):
     reviews = approved(item['pack'], load_fragments(item), load_artifacts(item))
     if reference:
         import hashlib
-        ref = (repo / '참조.html').resolve()
+        ref = (repo / name).resolve()
         reviews['references'] = [{'path': str(ref), 'sha256': hashlib.sha256(ref.read_bytes()).hexdigest()}]
     (item['folder'] / 'review.json').write_text(json.dumps(reviews, ensure_ascii=False), encoding='utf-8')
     result = call('publish', '--run', run)
@@ -230,7 +236,7 @@ def test_rerender_reference_style_only_change_updates_hash(tmp_path):
     ref.write_text('<style>a{color:blue}</style><p>본문</p>', encoding='utf-8')
     review, result = rerendered_review(tmp_path, repo, source)
     assert review['references'][0]['sha256'] == hashlib.sha256(ref.read_bytes()).hexdigest()
-    assert '참조 자료는 스타일만 바뀌었어요: 참조.html' in result.stdout
+    assert '참조 자료는 스타일·스크립트·자산 경로만 바뀌었어요: 참조.html' in result.stdout
 
 def test_rerender_reference_content_change_keeps_old_hash(tmp_path):
     repo, source = published_pack(tmp_path, reference='<style>a{color:red}</style><p>본문</p>')
@@ -266,3 +272,127 @@ def test_rerender_review_keeps_side_files_under_assets(tmp_path):
     data = side / '자료_문제설명_0917_Recursion'
     assert (data / 'validation.json').is_file() and (data / 'fragments' / 'p1.html').is_file()
     assert any((data / 'evidence').iterdir())
+
+
+def assets_move(repo, figure=None, reference=None, text=None):
+    """Replay the .assets migration for one side folder or file of 복습노트/0917."""
+    day = repo / '복습노트/0917'
+    (day / '.assets').mkdir(exist_ok=True)
+    if figure:
+        (day / figure).rename(day / '.assets' / figure)
+    if reference:
+        (day / reference).rename(day / '.assets' / reference)
+        if text is not None:
+            (day / '.assets' / reference).write_text(text, encoding='utf-8')
+    return day
+
+def approve_and_publish(tmp_path, run):
+    from mpe_cli import load_artifacts, load_fragments
+    item = load_run(run)[0]
+    review = json.loads((item['folder'] / 'review.json').read_text())
+    fresh = approved(item['pack'], load_fragments(item), load_artifacts(item))
+    review.update(source_visual=fresh['source_visual'], browser=fresh['browser'])
+    (item['folder'] / 'review.json').write_text(json.dumps(review, ensure_ascii=False), encoding='utf-8')
+    assert call('check', '--run', run).returncode == 0
+    return call('publish', '--run', run)
+
+@pytest.mark.parametrize('prefix', ['.assets/', './.assets/'])
+def test_rerender_problem_figure_moved_to_assets_reuses_reviews(tmp_path, prefix):
+    repo, source = published_pack(tmp_path, figure=True)
+    git_commit_all(repo)
+    assets_move(repo, figure='figures_0917')
+    source.write_text(source.read_text().replace('src="figures_0917/', f'src="{prefix}figures_0917/'))
+    review, result = rerendered_review(tmp_path, repo, source)
+    assert review['content']['status'] == 'pass' and review['independent']['status'] == 'pass'
+    assert '문항 내용은 같아요' in result.stdout
+    result = approve_and_publish(tmp_path, tmp_path / 'run2')
+    assert result.returncode == 0, result.stderr
+
+def test_rerender_problem_figure_retargeted_keeps_reviews_unrun(tmp_path):
+    repo, source = published_pack(tmp_path, figure=True)
+    git_commit_all(repo)
+    (source.parent / 'figures_0917/p2.png').write_bytes(PNG)
+    source.write_text(source.read_text().replace('src="figures_0917/p1.png"', 'src=".assets/figures_0917/p2.png"'))
+    assets_move(repo, figure='figures_0917')
+    result = call('rerender', '--repo', repo, '--target', source, '--run', tmp_path / 'run2')
+    folder = next(p for p in (tmp_path / 'run2').iterdir() if p.is_dir())
+    assert json.loads((folder / 'review.json').read_text())['content']['status'] == 'not_run'
+    assert '입력 변경: 네 검토 모두 다시 필요' in result.stdout
+
+def test_rerender_reference_assets_href_only_change_updates_hash(tmp_path):
+    import hashlib
+    name = '복습노트/0917/정리노트_0917_Recursion.html'
+    repo, source = published_pack(tmp_path, reference='<a href="장마감_0917_1장.md">장마감</a><img src="./figures_0917/a.png">', name=name)
+    git_commit_all(repo)
+    ref = repo / name
+    ref.write_text('<a href=".assets/장마감_0917_1장.md">장마감</a><img src="./.assets/figures_0917/a.png">', encoding='utf-8')
+    review, result = rerendered_review(tmp_path, repo, source)
+    assert review['references'][0]['sha256'] == hashlib.sha256(ref.read_bytes()).hexdigest()
+    assert '자산 경로만 바뀌었어요: 정리노트_0917_Recursion.html' in result.stdout
+    assert approve_and_publish(tmp_path, tmp_path / 'run2').returncode == 0
+
+def test_rerender_reference_assets_text_outside_url_is_a_change(tmp_path):
+    name = '복습노트/0917/정리노트_0917_Recursion.html'
+    repo, source = published_pack(tmp_path, reference='<p>그림은 figures_0917에 있어요</p>', name=name)
+    git_commit_all(repo)
+    (repo / name).write_text('<p>그림은 .assets/figures_0917에 있어요</p>', encoding='utf-8')
+    _, result = rerendered_review(tmp_path, repo, source)
+    assert '참조 자료 변경: 검토를 다시 하세요: 정리노트_0917_Recursion.html' in result.stdout
+
+INTERACTION = ('<!-- review-interaction:start -->\n<style>.x{}</style>\n'
+               '<script id="review-interaction-model" type="application/json">{"cards": {"p1": {"answer": "%s"}}}</script>\n'
+               '<script>\nfunction resolveExportDir(root) { return child(root, %s); }\n</script>\n'
+               '<script>start();</script>\n<!-- review-interaction:end -->\n')
+
+def test_rerender_reference_interaction_script_only_change_updates_hash(tmp_path):
+    import hashlib
+    name = '복습노트/0917/복습문제_참조.html'
+    repo, source = published_pack(tmp_path, reference='<p>본문</p>' + INTERACTION % ('2', "'풀이기록'"), name=name)
+    git_commit_all(repo)
+    ref = repo / name
+    ref.write_text('<p>본문</p>' + INTERACTION % ('2', "'.assets', '풀이기록'"), encoding='utf-8')
+    review, result = rerendered_review(tmp_path, repo, source)
+    assert review['references'][0]['sha256'] == hashlib.sha256(ref.read_bytes()).hexdigest()
+    assert '스타일·스크립트·자산 경로만 바뀌었어요: 복습문제_참조.html' in result.stdout
+
+def test_rerender_reference_answer_model_change_keeps_old_hash(tmp_path):
+    name = '복습노트/0917/복습문제_참조.html'
+    repo, source = published_pack(tmp_path, reference='<p>본문</p>' + INTERACTION % ('2', "'풀이기록'"), name=name)
+    git_commit_all(repo)
+    (repo / name).write_text('<p>본문</p>' + INTERACTION % ('3', "'풀이기록'"), encoding='utf-8')
+    _, result = rerendered_review(tmp_path, repo, source)
+    assert '참조 자료 변경: 검토를 다시 하세요: 복습문제_참조.html' in result.stdout
+
+MD = '[정리노트](정리노트_0917_Recursion.html#s) ![그림](figures_0917/a.png) [다른 날](../0915/장마감_0915_2장.md)\n'
+
+def moved_md_pack(tmp_path):
+    name = '복습노트/0917/정리노트_0917_Recursion.md'
+    repo, source = published_pack(tmp_path, reference=MD, name=name)
+    git_commit_all(repo)
+    return repo, source, name
+
+def test_rerender_reference_md_moved_to_assets_follows_it(tmp_path):
+    import hashlib
+    from mpe_shared import migrate_md
+    repo, source, name = moved_md_pack(tmp_path)
+    moved = assets_move(repo, reference=Path(name).name, text=migrate_md(MD)) / '.assets' / Path(name).name
+    assert moved.read_text(encoding='utf-8') != MD
+    review, result = rerendered_review(tmp_path, repo, source)
+    assert review['references'] == [{'path': str(moved), 'sha256': hashlib.sha256(moved.read_bytes()).hexdigest()}]
+    assert '참조 자료는 .assets/로 옮겨졌을 뿐이에요: 정리노트_0917_Recursion.md' in result.stdout
+    result = approve_and_publish(tmp_path, tmp_path / 'run2')
+    assert result.returncode == 0, result.stderr
+
+def test_rerender_reference_md_moved_and_edited_needs_review(tmp_path):
+    from mpe_shared import migrate_md
+    repo, source, name = moved_md_pack(tmp_path)
+    assets_move(repo, reference=Path(name).name, text=migrate_md(MD) + '추가 문단\n')
+    review, result = rerendered_review(tmp_path, repo, source)
+    assert review['references'][0]['path'] == str(repo / name)
+    assert '참조 자료 변경: 검토를 다시 하세요: .assets/정리노트_0917_Recursion.md' in result.stdout
+
+def test_rerender_reference_missing_is_reported(tmp_path):
+    repo, source, name = moved_md_pack(tmp_path)
+    (repo / name).unlink()
+    _, result = rerendered_review(tmp_path, repo, source)
+    assert '참조 자료 없음: 검토를 다시 하세요: 정리노트_0917_Recursion.md' in result.stdout

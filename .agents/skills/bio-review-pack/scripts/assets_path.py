@@ -78,3 +78,8 @@ def rebase_md(text: str) -> str:
         return m.group(1) + target + m.group(3)
 
     return _MD_TARGET.sub(fix, text)
+
+
+def migrate_md(text: str) -> str:
+    """날짜 폴더 루트에 있던 MD를 `.assets/` 안 위치에 맞게 고친다(이전 때 한 번만 적용)."""
+    return rebase_md(_MD_TARGET.sub(lambda m: m.group(1) + relocate(m.group(2)) + m.group(3), text))
