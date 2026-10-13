@@ -121,24 +121,52 @@ def build(item, fragments):
     dump(folder / 'review.json', review)
     print('build:', artifacts.html)
 
-def published_source(pack, digest):
-    """The review source as it was when published: the git blob whose SHA-256 is the published one."""
-    if pack.profile != 'review':
-        return None
+STYLE_RE = re.compile(r'<style\b[^>]*>.*?</style>', re.S | re.I)
+
+def git_blob(path, digest):
+    """Bytes of the committed version of path whose SHA-256 is digest, or None."""
     try:
-        git = lambda *args: subprocess.run(['git', *args], cwd=pack.path.parent, capture_output=True, check=True).stdout
-        name = pack.path.name
-        for commit in git('log', '--format=%H', '--', name).decode().split():
-            data = git('show', f'{commit}:./{name}')
+        git = lambda *args: subprocess.run(['git', *args], cwd=path.parent, capture_output=True, check=True).stdout
+        for commit in git('log', '--format=%H', '--', path.name).decode().split():
+            data = git('show', f'{commit}:./{path.name}')
             if hashlib.sha256(data).hexdigest() == digest:
-                with tempfile.TemporaryDirectory() as tmp:
-                    path = Path(tmp) / pack.path.parent.name / name
-                    path.parent.mkdir()
-                    path.write_bytes(data)
-                    return load_source(path, Path(tmp))
-    except (OSError, subprocess.CalledProcessError, ExplainError):
+                return data
+    except (OSError, subprocess.CalledProcessError):
         return None
     return None
+
+def published_source(pack, digest):
+    """The review source as it was when published, loaded from its git blob."""
+    data = git_blob(pack.path, digest) if pack.profile == 'review' else None
+    if data is None:
+        return None
+    try:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / pack.path.parent.name / pack.path.name
+            path.parent.mkdir()
+            path.write_bytes(data)
+            return load_source(path, Path(tmp))
+    except (OSError, ExplainError):
+        return None
+
+def carried_references(references, old_repo, repo):
+    """Rebase reference paths onto this checkout; accept files changed only inside <style> blocks."""
+    carried, notes = [], []
+    strip = lambda data: STYLE_RE.sub('', data.decode('utf-8', 'replace'))
+    for reference in references:
+        path = Path(reference['path'])
+        if path.is_relative_to(old_repo):
+            path = repo / path.relative_to(old_repo)
+        reference = {**reference, 'path': str(path)}
+        if path.is_file() and sha256(path) != reference['sha256']:
+            old = git_blob(path, reference['sha256'])
+            if old is not None and strip(old) == strip(path.read_bytes()):
+                reference['sha256'] = sha256(path)
+                notes.append(f'참조 자료는 스타일만 바뀌었어요: {path.name}')
+            else:
+                notes.append(f'참조 자료 변경: 검토를 다시 하세요: {path.name}')
+        carried.append(reference)
+    return carried, notes
 
 def rerender(repo, target, run):
     """Rebuild published packs with the current template from their published fragments and evidence."""
@@ -160,21 +188,25 @@ def rerender(repo, target, run):
             build(item, fragments)
             stored = data / 'validation.json'
             stored = read_json(inside(stored, item['repo'])) if stored.is_file() else {}
+            manifest = read_json(inside(data / 'manifest.json', item['repo'])) if stored else {}
             # The payload hash covers source and fragments, not the template, so content reviews stay valid.
             same = stored.get('input_hash') == payload_hash(pack, fragments)
             note = ''
             if not same and stored.get('input_hash'):
                 # A source edited only outside its cards (e.g. page CSS) keeps the same problems.
-                digest = read_json(inside(data / 'manifest.json', item['repo'])).get('source_sha256', '')
+                digest = manifest.get('source_sha256', '')
                 old = published_source(pack, digest)
                 same = (old is not None and old.problems == pack.problems
                         and payload_hash(replace(pack, sha256=digest), fragments) == stored['input_hash'])
                 note = '원본 파일은 바뀌었지만 문항 내용은 같아요: ' if same else ''
             if same:
                 review = read_json(folder / 'review.json')
-                for key in ('references', 'content', 'independent'):
+                for key in ('content', 'independent'):
                     review[key] = stored[key]
+                review['references'], notes = carried_references(stored['references'], Path(manifest['repo']), item['repo'])
                 dump(folder / 'review.json', review)
+                for line in notes:
+                    print('rerender:', line)
                 print(f'rerender: {note}content·independent 재사용, source_visual·browser 재검토 필요')
             else:
                 print('rerender: 입력 변경: 네 검토 모두 다시 필요')
