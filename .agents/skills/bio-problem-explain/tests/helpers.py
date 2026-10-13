@@ -72,7 +72,7 @@ def acceptance_pack(repo):
     text=path.read_text().replace('<p>함수 결과를 구해요.</p><pre><code>printf("$%d", n);</code></pre>',
        '<pre><code>'+html.escape(code)+'</code></pre><ol><li>(a) 상태를 구하라</li><li>(b) 복잡도를 설명하라</li></ol>')
     card=text[text.index('<article'):text.index('</article>')+10]
-    text=text.replace('</section>',card.replace('id="p1"','id="p2"').replace('1001 기출','1002 기출')+'</section>')
+    text=text.replace('</section>',card.replace('id="p1"','id="p2"').replace('1001 기출','1002 기출').replace('<ol><li>(a)','<img src="그림.png" alt="문제 그림"><ol><li>(a)')+'</section>')
     text=text.replace('</section>',choice_card('p3',3,5)+choice_card('p4',4,3)+'</section>')
     model={'cards':{'p3':{'answer':'3','mode':'single','options':[{'id':str(i),'index':i-1} for i in range(1,6)]},
                     'p4':{'answer':'2','mode':'ambiguous','options':[{'id':str(i),'index':i-1} for i in range(1,4)]}},

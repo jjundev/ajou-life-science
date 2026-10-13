@@ -299,6 +299,32 @@
       border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
     .problem-toggle[aria-expanded="true"] { border-color: var(--accent); color: var(--accent-ink); }
     @media (hover: hover) { .problem-toggle:hover, .panel-tabs [role="tab"]:hover { background: var(--surface); } }
+    .problem-pane img { cursor: zoom-in; }
+    .is-target { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: var(--radius); }
+    .figure-sheet { width: min(96vw, 1100px); max-height: 90dvh; margin: auto; border-radius: 16px; }
+    .figure-sheet img { display: block; width: 100%; height: auto; cursor: default; }
+
+    /* 클릭형 보기: bio-review-pack review-interaction.css의 보기 규칙 */
+    .review-ready .choices { list-style:none; padding:0; }
+    .review-ready .choices > li { margin:0 0 var(--s3); }
+    .review-choice {
+      display:block; width:100%; min-height:44px; text-align:left; font:inherit;
+      color:var(--ink); background:var(--surface); border:1px solid var(--line);
+      border-radius:8px; padding:12px 16px; cursor:pointer; overflow-wrap:anywhere;
+    }
+    .review-choice:hover { border-color:var(--accent); }
+    .review-choice:focus-visible, .review-reset:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+    .review-choice[data-result="correct"], .review-choice[data-result="intended"] { border:3px solid var(--accent); }
+    .review-choice[data-result="incorrect"] { border:3px solid var(--danger); }
+    .review-choice[aria-pressed="true"][data-result=""] { border:3px solid var(--ink-2); }
+    .review-badge { display:block; margin-top:6px; font-size:var(--fs-small); font-weight:700; color:var(--ink); }
+    .review-badge[hidden], .review-reset[hidden] { display:none; }
+    .review-status { margin:var(--s3) 0; font-weight:650; }
+    .review-status:empty { display:none; }
+    .review-reset { min-height:44px; margin:var(--s2) 0 var(--s4); }
+    .review-choice-content { padding:var(--s2) 0; }
+    .review-choice-content > :first-child { margin-top:0; }
+    .review-choice-content > :last-child { margin-bottom:0; }
 
     /* 넓은 화면: 본문 옆에 붙는 패널 */
     @media (min-width: 1024px) {
@@ -750,6 +776,107 @@
           probEmpty.hidden = Boolean(curId && panes[curId]);
           showTab(wide ? tab : 'summary', false);
         }
+        // ---------- 보기 클릭: 판정 표시와 해설 판정 문단으로 이동 (선택은 메모리에만) ----------
+        let model = {};
+        try { model = JSON.parse((document.getElementById('explain-choice-model') || {}).textContent || '{}') || {}; } catch (e) { model = {}; }
+        const scroller = document.querySelector('.content');
+        const picks = new Map();
+        const ui = {};
+        let targetTimer = 0;
+        const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        function paint(id) {
+          const { m, status, reset } = ui[id];
+          const pick = picks.get(id);
+          const ambiguous = m.mode === 'ambiguous';
+          panes[id].querySelectorAll('.review-choice').forEach((b) => {
+            const cid = b.dataset.choiceId;
+            const mine = pick === cid;
+            const answer = pick !== undefined && cid === m.answer;
+            b.dataset.result = answer ? (ambiguous ? 'intended' : 'correct') : mine && !ambiguous ? 'incorrect' : '';
+            b.setAttribute('aria-pressed', String(mine));
+            const labels = [];
+            if (mine) labels.push('내 선택');
+            if (answer) labels.push(ambiguous ? '출제 의도상 답' : '정답');
+            const badge = b.querySelector('.review-badge');
+            badge.textContent = labels.join(' · ');
+            badge.hidden = !labels.length;
+          });
+          status.textContent = pick === undefined ? '' : ambiguous ? '출제 의도상 답을 표시했어요.'
+            : pick === m.answer ? '정답이에요.' : '정답이 아니에요. 해설에서 판정 이유를 확인해요.';
+          reset.hidden = pick === undefined;
+        }
+        function jump(id, cid) {
+          const solve = document.getElementById(id).querySelector('[data-explanation="solve"]');
+          if (!solve) return;
+          const re = new RegExp('^\\(?' + escapeRe(cid) + '(\\)|\\.|\\s)');
+          const target = Array.from(solve.querySelectorAll('p, li')).find((n) => re.test(n.textContent.trim())) || solve.querySelector('h4') || solve;
+          const top = scroller.scrollTop + target.getBoundingClientRect().top - scroller.getBoundingClientRect().top - scroller.clientHeight / 4;
+          scroller.scrollTo({ top: Math.max(0, top), behavior: 'auto' });
+          document.querySelectorAll('main .is-target').forEach((n) => n.classList.remove('is-target'));
+          target.classList.add('is-target');
+          clearTimeout(targetTimer);
+          targetTimer = setTimeout(() => target.classList.remove('is-target'), 1600);
+        }
+        Object.keys(panes).forEach((id) => {
+          const m = model[id];
+          const list = panes[id].querySelector('.choices');
+          if (!m || !list || !Array.isArray(m.options)) return;
+          const items = Array.from(list.children).filter((li) => li.tagName === 'LI');
+          // 모델과 보기 수가 다르면 정적 문제로 둔다
+          if (items.length !== m.options.length) return;
+          panes[id].classList.add('review-ready');
+          items.forEach((li, i) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'review-choice';
+            btn.dataset.choiceId = m.options[i];
+            btn.dataset.result = '';
+            btn.setAttribute('aria-pressed', 'false');
+            const content = document.createElement('div');
+            content.className = 'review-choice-content';
+            while (li.firstChild) content.appendChild(li.firstChild);
+            const badge = document.createElement('span');
+            badge.className = 'review-badge';
+            badge.hidden = true;
+            btn.append(content, badge);
+            li.appendChild(btn);
+            btn.addEventListener('click', () => { picks.set(id, m.options[i]); paint(id); jump(id, m.options[i]); });
+          });
+          const status = document.createElement('p');
+          status.className = 'review-status';
+          status.setAttribute('aria-live', 'polite');
+          const reset = document.createElement('button');
+          reset.type = 'button';
+          reset.className = 'review-reset text-btn';
+          reset.textContent = '다시 고르기';
+          reset.hidden = true;
+          reset.addEventListener('click', () => { picks.delete(id); paint(id); });
+          list.after(status, reset);
+          ui[id] = { m, status, reset };
+        });
+
+        // ---------- 문제 그림: 눌러서 크게 보기 ----------
+        let sheet = null;
+        function zoom(img) {
+          if (!sheet) {
+            sheet = document.createElement('dialog');
+            sheet.className = 'sheet figure-sheet';
+            sheet.setAttribute('aria-label', '그림 크게 보기');
+            sheet.innerHTML = '<div class="sheet-inner"><div class="sheet-head"><h2>그림</h2><button class="text-btn sheet-close" type="button">닫기</button></div><img alt=""></div>';
+            sheet.querySelector('.sheet-close').addEventListener('click', () => sheet.close());
+            sheet.addEventListener('click', (e) => { if (e.target === sheet) sheet.close(); });
+            document.body.appendChild(sheet);
+          }
+          const big = sheet.querySelector('img');
+          big.src = img.currentSrc || img.src;
+          big.alt = img.alt;
+          sheet.showModal();
+        }
+        Object.values(panes).forEach((pane) => pane.addEventListener('click', (e) => {
+          const img = e.target.closest('img');
+          if (img && !img.closest('.review-choice')) zoom(img);
+        }));
+
         tabs.forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab, true)));
         tabList.addEventListener('keydown', (e) => {
           if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
@@ -874,7 +1001,7 @@
       window.addEventListener('popstate', fromUrl);
 
       document.addEventListener('keydown', (e) => {
-        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open') || document.querySelector('dialog[open]')) return;
         if (e.target.closest('input, select, textarea, [contenteditable="true"], .math-row')) return;
         if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
         if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
