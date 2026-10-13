@@ -35,12 +35,13 @@ with sync_playwright() as pw:
    page.on('request',lambda r:external.append(r.url) if not r.url.startswith(f'http://127.0.0.1:{port}/') else None)
    page.goto(url+'#p3',wait_until='networkidle');page.wait_for_timeout(100)
    if width>=1024:
-    assert page.locator('#panel-right .probs [data-problem-for="p3"]').is_visible()
+    assert page.locator('#panel-prob .probs [data-problem-for="p3"]').is_visible()
     assert page.locator('#p3 > [data-problem-for]').count()==0
-    assert page.locator('#panel-right [role=tab][data-tab="problem"]').get_attribute('aria-selected')=='true'
-    page.locator('#panel-right [data-tab="summary"]').click()
-    assert page.locator('#panel-right .sums .summary-group:visible').count()==1
-    page.locator('#panel-right [data-tab="problem"]').click()
+    assert page.locator('#panel-prob [role=tab][data-tab="problem"]').get_attribute('aria-selected')=='true'
+    assert page.locator('#panel-right').is_hidden() and page.locator('#toggle-prob').get_attribute('aria-expanded')=='true'
+    L,P,C=[page.locator(s).bounding_box() for s in ('#panel-left','#panel-prob','.content')]
+    assert P['x']+P['width']<=C['x']+1 and (not page.locator('#panel-left').is_visible() or L['x']+L['width']<=P['x']+1)
+    assert page.locator('#panel-right-title').inner_text()=='페이지 요약' and page.locator('#toggle-right').inner_text()=='요약'
     assert page.locator('#tab-original').is_visible()
     page.locator('#tab-original').click()
     orig=page.locator('#tabpanel-original details.original[data-original-problem="p3"][open]')
@@ -57,8 +58,6 @@ with sync_playwright() as pw:
     page.goto(url+'#p3');page.wait_for_timeout(100)
     assert page.locator('#tab-original').get_attribute('aria-selected')=='true'
     page.locator('#tab-original').focus();page.keyboard.press('ArrowRight')
-    assert page.locator('#tab-summary').get_attribute('aria-selected')=='true'
-    page.keyboard.press('ArrowRight')
     assert page.locator('#tab-problem').get_attribute('aria-selected')=='true'
    else:
     toggle=page.locator('#p3 .problem-toggle')
@@ -66,6 +65,7 @@ with sync_playwright() as pw:
     toggle.click();assert page.locator('#p3 [data-problem-for="p3"]').is_visible() and toggle.inner_text()=='문제 접기'
     assert page.locator('#p3 [data-problem-for="p3"] details.original:not([open])').count()==1
     assert page.locator('#tab-original').is_hidden()
+    assert page.locator('#toggle-prob').is_hidden() and page.locator('#panel-prob').is_hidden()
    assert page.locator('#p3 [data-explanation="understand"]').is_visible()
    cards=page.locator('#p3 [data-explanation="solve"] p.verdict-card')
    assert cards.count()==5 and cards.first.inner_text().startswith('(1)')
@@ -141,7 +141,7 @@ with sync_playwright() as pw:
    assert page.locator('#p1 > [data-problem-for="p1"]').is_visible() and page.locator('.problem-toggle:visible').count()==0
    assert page.locator('#p3 > [data-problem-for="p3"] details.original[open]').is_visible()
    page.emulate_media(media='screen');page.wait_for_timeout(150)
-   if width>=1024:assert page.locator('#panel-right .probs [data-problem-for="p3"]').is_visible()
+   if width>=1024:assert page.locator('#panel-prob .probs [data-problem-for="p3"]').is_visible()
    else:assert page.locator('#p3 .problem-toggle').is_visible()
    page.goto(url,wait_until='networkidle')
    page.locator('#pager-next').click();page.wait_for_timeout(100)
@@ -150,7 +150,7 @@ with sync_playwright() as pw:
     assert page.locator(f'#p1 {token}, [data-problem-for="p1"] {token}').count()>0,token
    assert page.locator('#p1 .katex').count()>0
    assert page.locator('#p1 [data-explanation="start"] .katex').first.evaluate('(e)=>getComputedStyle(e).overflowX')=='visible'
-   if width<800 or not page.locator('#panel-right').is_visible(): page.locator('#toggle-right').click()
+   page.locator('#toggle-right').click()
    page.wait_for_timeout(250)
    assert page.locator('#panel-right').is_visible()
    assert page.locator('#panel-right .summary-group').count()>0
@@ -172,6 +172,34 @@ with sync_playwright() as pw:
    assert page.locator('#p2 img[alt="검증용 픽셀"]').evaluate('(e)=>e.complete && e.naturalWidth>0')
    page.screenshot(path=str(root/f'{width}-{theme}.png'),full_page=True)
    assert not logs and not failed and not external,(logs,failed,external)
+   if (width,theme)==(1280,'light'):
+    # cross: closed problem panel stays closed across the 1024 boundary
+    page.locator('#toggle-prob').click();assert page.locator('#panel-prob').is_hidden()
+    page.set_viewport_size({'width':900,'height':height});page.wait_for_timeout(150)
+    assert page.locator('#p2 .problem-toggle').count()==1 and page.locator('#toggle-prob').is_hidden()
+    page.set_viewport_size({'width':1280,'height':height});page.wait_for_timeout(150)
+    assert page.locator('#panel-prob').is_hidden();page.locator('#toggle-prob').click()
+    # grow: widening the problem panel leaves the content readable
+    if page.locator('#toggle-left').get_attribute('aria-expanded')=='false':page.locator('#toggle-left').click()
+    h=page.locator('#panel-prob .panel-resize');h.focus()
+    for _ in range(20):h.press('Shift+ArrowRight')
+    assert page.locator('.content').bounding_box()['width']>=380;h.press('Home')
+    # crowded: at 1024 three panels do not fit, so the TOC steps aside until there is room again
+    page.set_viewport_size({'width':1024,'height':768});page.wait_for_timeout(150)
+    if page.locator('#panel-right').is_hidden():page.locator('#toggle-right').click()
+    page.wait_for_timeout(250)
+    assert page.locator('#panel-prob').is_visible() and page.locator('#panel-right').is_visible()
+    assert page.locator('#panel-left').is_hidden() and page.locator('#toggle-left').get_attribute('aria-expanded')=='false'
+    assert page.evaluate('document.querySelector(".layout").scrollWidth<=innerWidth') and page.locator('.content').bounding_box()['width']>=320
+    page.set_viewport_size({'width':1280,'height':height});page.wait_for_timeout(250)
+    assert all(page.locator(s).is_visible() for s in ('#panel-left','#panel-prob','#panel-right'))
+    assert page.locator('.content').bounding_box()['width']>=320
+    # legacy: old saved panel state and a saved summary tab fall back to the problem panel
+    page.evaluate("localStorage.clear();localStorage.setItem('od-panels:explain','{\"right\":true}');localStorage.setItem('bio-problem-explain-tab','\"summary\"')")
+    page.goto(url+'#p3');page.reload();page.wait_for_timeout(150)
+    assert page.locator('#panel-right').is_hidden() and page.locator('#panel-prob').is_visible()
+    assert page.locator('#tab-problem').get_attribute('aria-selected')=='true'
+    assert not logs,logs
    results.append({'viewport':[width,height],'theme':theme,'console_errors':logs,'failed_resources':failed,'external_requests':external,'overflow':False,'interaction':'TOC, next/prev, summary, close, resize, theme pass'})
    page.close()
  browser.close()

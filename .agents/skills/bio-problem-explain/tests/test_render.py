@@ -234,3 +234,14 @@ def test_homework_names_unchanged(tmp_path):
     pack,_=make(tmp_path)
     hw=replace(pack,profile='homework',range='3')
     assert names(hw)==('과제3_문제설명_Recursion','figures_문제설명_hw3_Recursion','자료_문제설명_hw3_Recursion')
+
+def test_problem_panel_left_of_content():
+    t=(Path(__file__).resolve().parents[1]/'assets/note-template.html').read_text()
+    bar=t[t.index('<header class="topbar">'):t.index('</header>')]
+    assert bar.index('id="toggle-left"')<bar.index('id="toggle-prob"')<bar.index('class="brand"')<bar.index('id="toggle-right"')
+    assert t.index('id="panel-left"')<t.index('id="panel-prob"')<t.index('<div class="content">')<t.index('id="panel-right"')
+    right=t[t.index('id="panel-right"'):]
+    assert 'id="tab-problem"' not in right and 'id="tab-summary"' not in t
+    prob=t[t.index('id="panel-prob"'):t.index('<div class="content">')]
+    assert 'id="tab-original"' in prob and 'data-side="prob"' in prob
+    assert "'od-panels:' + kind + ':v2'" in t or "od-panels:explain:v2" in t
