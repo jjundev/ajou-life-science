@@ -28,7 +28,7 @@
 topic() {
   return {
     MODES: [Mode, ...],          // 1–3개. 첫 번째가 처음 화면. 2개 이상이면 상단 바에 모드 버튼이 생겨요
-    STEPS: [Step, ...],          // 선택. 있으면 왼쪽 「단계」 목록이 생겨요
+    STEPS: [Step, ...],          // 선택. 현재 모드의 단계만 왼쪽 「단계」 목록에 보여요(없으면 칸이 숨겨져요)
     MISTAKES: { a: [{ title, text }, ...], ... },   // 모드 key별 「꼭 기억해요」 3개
     TOGGLES: { a: [['labels', '이름표'], ...] },    // 선택. 모드 key별(또는 모든 모드 공통 배열) 보기 옵션
     PAL: { light: {...}, dark: {...} }               // 캔버스 색
@@ -58,6 +58,8 @@ topic() {
 `{ mode, f?, phase?, c, title, who, text }` — 누르면 그 `mode`로 바꾸고, `f`가 있으면 그 진행값으로 옮기고 재생을 멈춰요. `c`는 번호 테두리 색, `who`는 행위자(효소 이름 등), `text`는 아래 상세 칸 문장.
 
 `f`가 있으면 `phase`도 써요. 그 `f`에서 재생 바 글자(`playback.label(f)`)에서 ` · `로 나뉜 과정 이름 하나와 똑같이 써요(예: `2번째 코돈 · 펩티드 결합 · 3.0 / 16`이면 `펩티드 결합`). 이름 일부만 쓰면 다음 과정과 구별되지 않아요. 단계는 그 과정이 화면에 다 보이는 지점에 둬요(다음 과정의 시작점에 두지 않아요).
+
+목록에는 현재 모드의 단계만 `STEPS` 순서대로 나오고, 번호는 모드 안에서 1부터 세요. 검사 오류의 단계 번호는 `STEPS` 전체 순서예요.
 
 ### PAL
 
@@ -90,7 +92,9 @@ topic() {
 
 ## 공통 상태와 마크업 값
 
-상태: `mode, f, playing, speed, step, spin, theme, leftOpen, rightOpen, drawer, narrow, leftW, rightW, resizing` (+ `extraState()`)
+상태: `mode, f, playing, speed, step, spin, theme, leftOpen, rightOpen, drawer, narrow, leftW, rightW, resizing` (+ `extraState()`). `step`은 `STEPS` 전체 인덱스(없으면 -1)예요.
+
+메서드: `setMode(key)`는 모드를 바꾸고 `f`·고른 단계를 지워요. `pickStep(i)`는 `STEPS[i]`(전체 인덱스)를 골라요. 필요하면 모드를 바꾸고 `f`로 옮겨요.
 
 `renderVals()` 공통 키: `th, isDark, isLight, themeLabel, toggleTheme, canvasRef, canvasCls, hasModes, is, modes[{label, pressed, pick}], leftCls, rightCls, leftExpanded, rightExpanded, scrimCls, toggleLeft, toggleRight, closePanels, layoutStyle, layoutCls, leftWNow, rightWNow, leftHandleRef, rightHandleRef, onKey, hasToggles, toggles[{label, pressed, toggle}], hasSteps, steps[{num, title, who, c, pressed, pick}], hasStep, stepDetail, mistakes, canvasLabel, zoomIn, zoomOut, resetView, hasPlayback, isPlaying, notPlaying, playLabel, togglePlay, fInt, fLabel, fMax10, onScrub, speeds[{label, pressed, pick}]`
 

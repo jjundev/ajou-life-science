@@ -719,9 +719,9 @@ class Component extends DCLogic {
       toggle: () => { const o = {}; o[d[0]] = !st[d[0]]; this.setState(o); }
     }));
     const STEPS = T.STEPS || [];
-    const steps = STEPS.map((s, i) => ({
-      num: i + 1, title: s.title, who: s.who, c: s.c, pressed: st.step === i ? 'true' : 'false',
-      pick: () => this.pickStep(i)
+    const steps = STEPS.map((s, i) => ({ s: s, i: i })).filter((x) => x.s.mode === st.mode).map((x, k) => ({
+      num: k + 1, title: x.s.title, who: x.s.who, c: x.s.c, pressed: st.step === x.i ? 'true' : 'false',
+      pick: () => this.pickStep(x.i)
     }));
     const speeds = [0.5, 1, 2].map((v) => ({
       label: v + '×', pressed: st.speed === v ? 'true' : 'false',

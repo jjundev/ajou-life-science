@@ -1,9 +1,30 @@
 const test = require('node:test');
 const assert = require('node:assert');
+const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const { loadComponent, makeCtx, makeCanvas, markupPart } = require('../scripts/harness.cjs');
 
 const T = path.join(__dirname, '..', 'assets', 'template.dc.html');
+
+const MIXED = `STEPS: [
+        { mode: 'a', c: '#4A86E8', title: 'A1', who: '구조', text: 'a 첫째' },
+        { mode: 'b', f: 6, phase: '진행', c: '#E5604F', title: 'B1', who: '과정', text: 'b 첫째' },
+        { mode: 'a', c: '#4A86E8', title: 'A2', who: '구조', text: 'a 둘째' },
+        { mode: 'b', f: 8, phase: '진행', c: '#E5604F', title: 'B2', who: '과정', text: 'b 둘째' }
+      ],`;
+const ONLY_B = `STEPS: [
+        { mode: 'b', f: 6, phase: '진행', c: '#E5604F', title: '여섯 번째 구', who: '과정', text: '재생하면 구가 왼쪽부터 하나씩 나타나요. 여기서는 6개까지 나왔어요.' }
+      ],`;
+
+function withSteps(steps) {
+  const src = fs.readFileSync(T, 'utf8');
+  const out = src.replace(/STEPS: \[[\s\S]*?\n      \],/, steps);
+  assert.notEqual(out, src, 'mutation changed nothing');
+  const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'bi-tpl-')), 'Main.dc.html');
+  fs.writeFileSync(file, out);
+  return file;
+}
 
 function drawFrames(c, n, w, h) {
   const { ctx, calls } = makeCtx();
@@ -111,12 +132,12 @@ test('scrub and step pick move f', () => {
   c.setMode('a');
   c.setState({ playing: true });
   const S = c.topic().STEPS[1];
-  c.renderVals().steps[1].pick();
+  c.pickStep(1);
   assert.equal(c.state.mode, S.mode);
   assert.equal(c.state.f, S.f);
   assert.equal(c.state.playing, false);
   const v = c.renderVals();
-  assert.equal(v.steps[1].pressed, 'true');
+  assert.equal(v.steps[0].pressed, 'true');
   assert.equal(v.stepDetail, S.text);
 });
 
@@ -131,6 +152,33 @@ test('pickStep switches mode and moves f', () => {
   assert.equal(c.state.playing, false);
   assert.equal(c.state.step, 1);
   assert.equal(c.renderVals().stepDetail, S.text);
+});
+
+test('steps are filtered and renumbered per mode', () => {
+  const { c } = loadComponent(withSteps(MIXED));
+  assert.deepEqual(c.renderVals().steps.map((s) => [s.num, s.title]), [[1, 'A1'], [2, 'A2']]);
+  c.setMode('b');
+  assert.deepEqual(c.renderVals().steps.map((s) => [s.num, s.title]), [[1, 'B1'], [2, 'B2']]);
+  c.renderVals().steps[1].pick();
+  assert.equal(c.state.step, 3);
+  assert.equal(c.state.f, 8);
+});
+
+test('pressed follows the global step index', () => {
+  const { c } = loadComponent(T);
+  c.pickStep(1);
+  assert.deepEqual(c.renderVals().steps.map((s) => s.pressed), ['true']);
+  c.setMode('a');
+  assert.deepEqual(c.renderVals().steps.map((s) => s.pressed), ['false']);
+});
+
+test('mode without steps hides the section', () => {
+  const { c } = loadComponent(withSteps(ONLY_B));
+  c.setMode('a');
+  const v = c.renderVals();
+  assert.equal(v.hasSteps, false);
+  assert.equal(v.hasStep, false);
+  assert.deepEqual(v.steps, []);
 });
 
 test('placeholders and slots are present', () => {
