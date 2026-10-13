@@ -183,7 +183,14 @@ with sync_playwright() as pw:
     if page.locator('#toggle-left').get_attribute('aria-expanded')=='false':page.locator('#toggle-left').click()
     h=page.locator('#panel-prob .panel-resize');h.focus()
     for _ in range(20):h.press('Shift+ArrowRight')
-    assert page.locator('.content').bounding_box()['width']>=380;h.press('Home')
+    assert page.locator('.content').bounding_box()['width']>=380
+    # widened problem panel + summary: the problem panel narrows for now instead of disappearing
+    page.locator('#toggle-right').click();page.wait_for_timeout(250)
+    assert all(page.locator(s).is_visible() for s in ('#panel-left','#panel-prob','#panel-right'))
+    assert page.locator('.content').bounding_box()['width']>=320 and page.evaluate('document.querySelector(".layout").scrollWidth<=innerWidth')
+    page.locator('#toggle-right').click();page.wait_for_timeout(250)
+    assert page.locator('#panel-prob').bounding_box()['width']>=600
+    h.press('Home')
     # crowded: at 1024 three panels do not fit, so the TOC steps aside until there is room again
     page.set_viewport_size({'width':1024,'height':768});page.wait_for_timeout(150)
     if page.locator('#panel-right').is_hidden():page.locator('#toggle-right').click()
