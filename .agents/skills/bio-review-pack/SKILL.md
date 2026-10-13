@@ -100,6 +100,7 @@ EOF
 
 ### 3. 작성
 - 섹션마다 작성자 1명을 띄운다. 브리프는 `references/content-rules.md`, 위젯 규칙은 `references/widget-rules.md`에 있다.
+- 작성자 브리프에 `references/content-rules.md`의 「어려운 개념에 한정한 동기·인과 설명」 기준을 반영한다. 해당 토픽만 필요성·원리·시작 조건을 연결하고 단순 토픽의 과잉 설명은 피한다. 작성자 자기 검사에는 이 기준을 포함하며 `lite`에서도 수행한다.
 - 카드 작성자는 카드 10개당 1명이다(`p1`–`p10`, `p11`–`p20`, …). 브리프는 `references/card-rules.md`에 있다.
 - 모두 **한 메시지에서 병렬로** 띄운다. 모델은 opus, `lite`이면 sonnet이다.
 - 브리프의 `<…>` 자리는 실제 값으로 채운다: 경로, id, 금지어 목록(`<forbidden 목록>`), 예고 토픽 id(`<preview_topic>`), 섹션 작성자에게 필요한 교과서 쪽(`<쪽>`), manifest `links` 중 그 섹션 토픽에 속한 것(`<이 섹션의 links 목록>`), `question-audit.md`에서 anchor가 그 섹션 토픽인 포함 문항과 필요한 개념(`<이 섹션 토픽이 받쳐야 할 문항>`), 카드 작성자가 맡은 id(`<담당 카드 id>`).
