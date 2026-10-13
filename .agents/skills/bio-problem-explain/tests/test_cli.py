@@ -3,7 +3,7 @@ import subprocess
 import sys
 from pathlib import Path
 import pytest
-from helpers import fragment, approved, choice_source_file
+from helpers import fragment, approved, choice_source_file, source_file
 from mpe_source import load_source
 from mpe_cli import load_run
 
@@ -127,3 +127,49 @@ def test_extract_warns_static_choices(tmp_path):
     result = call('extract', '--repo', repo, '--target', source, '--run', tmp_path / 'run')
     assert result.returncode == 0, result.stderr
     assert 'p1: 보기 모델 없음/불일치 — 정적 표시' in result.stderr
+
+
+def published_pack(tmp_path):
+    repo = tmp_path / 'repo'
+    source = source_file(repo)
+    run = tmp_path / 'run'
+    assert call('extract', '--repo', repo, '--target', source, '--run', run).returncode == 0
+    item = load_run(run)[0]
+    for p in item['pack'].problems:
+        (item['folder'] / 'explanations' / f'{p.id}.html').write_text(fragment(p), encoding='utf-8')
+    (item['folder'] / 'evidence' / 'note.txt').write_text('검산 근거', encoding='utf-8')
+    assert call('build', '--run', run).returncode == 0
+    from mpe_cli import load_artifacts, load_fragments
+    item = load_run(run)[0]
+    reviews = approved(item['pack'], load_fragments(item), load_artifacts(item))
+    (item['folder'] / 'review.json').write_text(json.dumps(reviews, ensure_ascii=False), encoding='utf-8')
+    result = call('publish', '--run', run)
+    assert result.returncode == 0, result.stderr
+    return repo, source
+
+def test_rerender_reuses_content_reviews(tmp_path):
+    repo, source = published_pack(tmp_path)
+    result = call('rerender', '--repo', repo, '--target', source, '--run', tmp_path / 'run2')
+    assert result.returncode == 0, result.stderr
+    folder = next(p for p in (tmp_path / 'run2').iterdir() if p.is_dir())
+    review = json.loads((folder / 'review.json').read_text())
+    assert review['content']['status'] == 'pass' and review['independent']['status'] == 'pass'
+    assert review['source_visual']['status'] == 'not_run' and review['browser']['status'] == 'not_run'
+    assert {p.name for p in (folder / 'explanations').glob('*.html')} == {'p1.html'}
+    assert (folder / 'evidence').is_dir() and any((folder / 'evidence').iterdir())
+    assert 'source_visual·browser 재검토 필요' in result.stdout
+
+def test_rerender_changed_source_keeps_reviews_unrun(tmp_path):
+    repo, source = published_pack(tmp_path)
+    source.write_text(source.read_text().replace('함수 결과를 구해요.', '함수 결과를 다시 구해요.'))
+    result = call('rerender', '--repo', repo, '--target', source, '--run', tmp_path / 'run2')
+    folder = next(p for p in (tmp_path / 'run2').iterdir() if p.is_dir())
+    review = json.loads((folder / 'review.json').read_text())
+    assert review['content']['status'] == 'not_run'
+    assert '입력 변경: 네 검토 모두 다시 필요' in result.stdout
+
+def test_rerender_without_published_fragments_fails(tmp_path):
+    repo = tmp_path / 'repo'
+    source = source_file(repo)
+    result = call('rerender', '--repo', repo, '--target', source, '--run', tmp_path / 'run')
+    assert result.returncode == 1 and '발행된 조각 없음' in result.stderr

@@ -9,7 +9,7 @@ import sys
 import uuid
 from mpe_contract import initial_reviews, payload_hash, validate_fragment
 from mpe_source import inside, load_source, resolve_sources, sha256
-from mpe_render import build_explanation, check_artifacts, artifact_hashes, dump
+from mpe_render import build_explanation, check_artifacts, artifact_hashes, dump, names
 from mpe_publish import publish_explanation
 from mpe_types import Artifacts, ExplainError
 
@@ -118,6 +118,40 @@ def build(item, fragments):
     dump(folder / 'review.json', review)
     print('build:', artifacts.html)
 
+def rerender(repo, target, run):
+    """Rebuild published packs with the current template from their published fragments and evidence."""
+    if extract(repo, target, run):
+        return 1
+    failed = False
+    for item in load_run(run):
+        try:
+            pack, folder = item['pack'], item['folder']
+            data = pack.path.parent / names(pack)[2]
+            published = data / 'fragments'
+            if not published.is_dir() or {p.stem for p in published.glob('*.html')} != {p.id for p in pack.problems}:
+                raise ExplainError('발행된 조각 없음/불일치: 정상 저작 절차를 쓰세요')
+            for p in pack.problems:
+                shutil.copy2(inside(published / f'{p.id}.html', item['repo']), folder / 'explanations' / f'{p.id}.html')
+            if (data / 'evidence').is_dir():
+                shutil.copytree(inside(data / 'evidence', item['repo']), folder / 'evidence', dirs_exist_ok=True)
+            fragments = load_fragments(item)
+            build(item, fragments)
+            stored = data / 'validation.json'
+            stored = read_json(inside(stored, item['repo'])) if stored.is_file() else {}
+            # The payload hash covers source and fragments, not the template, so content reviews stay valid.
+            if stored.get('input_hash') == payload_hash(pack, fragments):
+                review = read_json(folder / 'review.json')
+                for key in ('references', 'content', 'independent'):
+                    review[key] = stored[key]
+                dump(folder / 'review.json', review)
+                print('rerender: content·independent 재사용, source_visual·browser 재검토 필요')
+            else:
+                print('rerender: 입력 변경: 네 검토 모두 다시 필요')
+        except (ExplainError, OSError, ValueError, KeyError, TypeError) as exc:
+            failed = True
+            print(f'{folder.name}: {exc}', file=sys.stderr)
+    return int(failed)
+
 def main(argv=None):
     if hasattr(sys.stdout, 'reconfigure'):
         sys.stdout.reconfigure(encoding='utf-8')
@@ -128,12 +162,18 @@ def main(argv=None):
     extraction.add_argument('--repo', type=Path, required=True)
     extraction.add_argument('--target')
     extraction.add_argument('--run', type=Path, required=True)
+    rerendering = commands.add_parser('rerender')
+    rerendering.add_argument('--repo', type=Path, required=True)
+    rerendering.add_argument('--target', required=True)
+    rerendering.add_argument('--run', type=Path, required=True)
     for name in ('build', 'check', 'publish'):
         commands.add_parser(name).add_argument('--run', type=Path, required=True)
     args = parser.parse_args(argv)
     try:
         if args.command == 'extract':
             return extract(args.repo, args.target, args.run)
+        if args.command == 'rerender':
+            return rerender(args.repo, args.target, args.run)
         load_errors = []
         items = load_run(args.run, errors=load_errors)
         failed = bool(load_errors)

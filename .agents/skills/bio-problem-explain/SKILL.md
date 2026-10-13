@@ -83,6 +83,14 @@ forecast 자동 연결에서 검토가 실패하면 [예상 스킬의 수정·�
 
 설명 소유 파일만 백업·교체하며 실패하면 복구한다. 다중 파일 교체는 OS 원자적 transaction이 아니다. 팩별 성공·보류 이유, HTML·MD와 백업 경로를 보고한다. `all`이나 기간 백필은 팩마다 한 행인 결과 표(range · slug · 문항 수 · 발행/보류 · 보류 이유 · HTML 경로)로 보고한다. 커밋·푸시는 별도 사용자 요청이 있을 때만 수행한다.
 
+### 레이아웃만 바뀐 기존 발행분 재발행
+
+템플릿·레이아웃만 바뀌고 원 복습문제와 설명 조각이 그대로이면 조각을 다시 쓰지 않는다. 팩마다 새 RUN으로 `rerender`를 실행하면 발행 자료 폴더의 `fragments/`·`evidence/`를 복사해 build하고, 발행된 `validation.json`의 input_hash가 현재 입력과 같을 때 references·content·independent 검토를 이식한다. 이어서 `check` → source_visual·browser 실제 검토 → `publish` 순서로 진행한다. "입력 변경: 네 검토 모두 다시 필요"가 나오면 1~7단계 전체를 따른다. `all`이면 최신 → 0901 순으로 팩마다 반복하고 위 결과 표로 보고한다.
+
+   ```sh
+   SKILL=…; RUN=…; python3 "$SKILL/scripts/mpe_cli.py" rerender --repo "$PWD" --target "$PWD/복습노트/1013/복습문제_1013_….html" --run "$RUN"
+   ```
+
 ## 산출 위치
 
 입력과 같은 날짜 폴더 `복습노트/<range>/`에 `문제설명_<range>_<slug>.html/.md`, `figures_문제설명_<range>_<slug>/`, `자료_문제설명_<range>_<slug>/`를 저장한다. 자료 폴더에는 생성 기록·검토·설명 조각·검산·로컬 자원이 들어간다. 정리노트·복습문제에 링크를 자동 삽입하지 않는다. 읽음 상태 키는 `bio-problem-explain-review-<range>-<slug>`다.
