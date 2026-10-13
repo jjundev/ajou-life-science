@@ -210,12 +210,17 @@ with sync_playwright() as pw:
     def drag(a,b,steps=8):page.mouse.move(*a);page.mouse.down();page.mouse.move(*b,steps=steps);page.mouse.up();page.wait_for_timeout(150)
     def headgap():T,G=box('#panel-prob .panel-tabs'),box('#panel-prob .prob-dock');return ((T['x']+T['width']+G['x'])/2,T['y']+T['height']/2)
     page.evaluate('localStorage.clear()');page.goto(url+'#p3');page.reload();page.wait_for_timeout(150)
-    assert page.locator('#panel-prob [data-dock="left"]').get_attribute('aria-pressed')=='true'
+    assert page.locator('#panel-prob [data-dock="left"]').get_attribute('aria-checked')=='true'
+    # radios: arrows pick the next position without turning the page
+    page.locator('#panel-prob [data-dock="left"]').focus();page.keyboard.press('ArrowRight');page.wait_for_timeout(150)
+    assert page.locator('.layout').get_attribute('data-prob-dock')=='right' and page.evaluate('document.activeElement.dataset.dock')=='right' and page.locator('#p3').is_visible()
+    page.keyboard.press('ArrowLeft');page.wait_for_timeout(150);assert page.locator('.layout').get_attribute('data-prob-dock')=='left'
+    assert page.evaluate("[...document.querySelectorAll('.prob-dock [role=radio]')].map(b=>b.tabIndex)")==[0,-1,-1]
     # tab-no-drag: clicking a tab in the docked head does not undock
     page.locator('#tab-original').click();assert page.locator('.layout').get_attribute('data-prob-dock')=='left';page.locator('#tab-problem').click()
     # right: content | prob | summary, toggle sits before 요약, both open independently
     page.locator('#panel-prob [data-dock="right"]').click();page.wait_for_timeout(150)
-    assert page.locator('.layout').get_attribute('data-prob-dock')=='right' and page.locator('#panel-prob [data-dock="right"]').get_attribute('aria-pressed')=='true'
+    assert page.locator('.layout').get_attribute('data-prob-dock')=='right' and page.locator('#panel-prob [data-dock="right"]').get_attribute('aria-checked')=='true'
     assert box('#panel-prob')['x']>=box('.content')['x']+box('.content')['width']-1
     assert abs(box('#panel-prob')['y']-box('.content')['y'])<=1 and page.evaluate('document.querySelector(".layout").scrollHeight<=document.querySelector(".layout").clientHeight+1')  # one row
     assert page.evaluate("document.getElementById('toggle-prob').nextElementSibling.id")=='toggle-right'
@@ -240,17 +245,35 @@ with sync_playwright() as pw:
     R=box('#panel-prob .float-resize');drag((R['x']+R['width']/2,R['y']+R['height']/2),(R['x']-600,R['y']-600))
     F3=box('#panel-prob');assert abs(F3['width']-280)<=1 and abs(F3['height']-200)<=1
     page.locator('#panel-prob .float-move').focus();page.keyboard.press('ArrowRight');assert abs(box('#panel-prob')['x']-(F3['x']+16))<=1
+    # at the minimum size the tabs stay on one line and the head does not overflow
+    assert page.evaluate("['tab-problem','tab-original'].every(id=>{const r=document.createRange();r.selectNodeContents(document.getElementById(id));return new Set([...r.getClientRects()].map(c=>Math.round(c.top))).size===1})") and page.evaluate("(h=>h.scrollWidth<=h.clientWidth)(document.querySelector('#panel-prob .panel-head'))")
+    # corner drag shows the diagonal cursor
+    R=box('#panel-prob .float-resize');page.mouse.move(R['x']+8,R['y']+8);page.mouse.down();page.mouse.move(R['x']+30,R['y']+30,steps=3)
+    assert page.evaluate('getComputedStyle(document.body).cursor')=='nwse-resize';page.mouse.up();page.wait_for_timeout(100)
+    # Enter on the corner restores the default size
+    page.locator('#panel-prob .float-resize').focus();page.keyboard.press('Enter');assert abs(box('#panel-prob')['width']-420)<=1
+    # the window stays above the 이전/다음 bar
+    M=box('#panel-prob .float-move');drag((M['x']+M['width']/2,M['y']+M['height']/2),(M['x']+M['width']/2,M['y']+2000))
+    assert box('#panel-prob')['y']+box('#panel-prob')['height']<=box('.pager')['y']+1
     # choice click still marks inside the floating panel
     page.locator('[data-problem-for="p3"] .review-choice[data-choice-id="5"]').click();page.wait_for_timeout(100)
     assert page.locator('[data-problem-for="p3"] [data-choice-id="5"]').get_attribute('data-result')
     # reload keeps float + geometry
     F4=box('#panel-prob');page.reload();page.wait_for_timeout(150)
     assert page.locator('.layout').get_attribute('data-prob-dock')=='float' and abs(box('#panel-prob')['x']-F4['x'])<=1
-    # float-cross: narrow screen hides it, coming back restores it
+    # float-cross: narrow screen hides it, coming back restores it; focus moves to the inline toggle
+    page.locator('#panel-prob .float-move').focus()
     page.set_viewport_size({'width':900,'height':height});page.wait_for_timeout(150)
     assert page.locator('#panel-prob').is_hidden() and page.locator('#p3 .problem-toggle').count()==1
+    assert page.evaluate("document.activeElement===document.querySelector('#p3 .problem-toggle')")
     page.set_viewport_size({'width':1280,'height':height});page.wait_for_timeout(150)
     assert page.locator('#panel-prob').is_visible() and abs(box('#panel-prob')['x']-F4['x'])<=1
+    # a drag cut off by the screen narrowing below 1024 ends cleanly
+    M=box('#panel-prob .float-move');page.mouse.move(M['x']+5,M['y']+5);page.mouse.down();page.mouse.move(M['x']-40,M['y']+40,steps=4)
+    page.set_viewport_size({'width':900,'height':height});page.wait_for_timeout(150)
+    assert page.evaluate("!document.body.classList.contains('is-dragging')&&getComputedStyle(document.body).cursor!=='grabbing'")
+    page.set_viewport_size({'width':1280,'height':height});page.wait_for_timeout(150);page.mouse.up();page.wait_for_timeout(100)
+    assert page.locator('.layout').get_attribute('data-prob-dock')=='float';F4=box('#panel-prob')
     # snap: dragging to the right edge shows the preview, dropping docks right
     M=box('#panel-prob .float-move');page.mouse.move(M['x']+5,M['y']+5);page.mouse.down();page.mouse.move(1270,M['y']+5,steps=8)
     assert page.locator('.dock-preview').is_visible();page.mouse.up();page.wait_for_timeout(150)
@@ -279,8 +302,8 @@ with sync_playwright() as pw:
   for i in range(1,11):cdp.send('Input.dispatchTouchEvent',{'type':'touchMove','touchPoints':[{'x':x+dx*i/10,'y':y+dy*i/10}]});page.wait_for_timeout(16)
   cdp.send('Input.dispatchTouchEvent',{'type':'touchEnd','touchPoints':[]});page.wait_for_timeout(150)
  B0=page.locator('#panel-prob').bounding_box();M=page.locator('#panel-prob .float-move').bounding_box()
- touchdrag(M['x']+M['width']/2,M['y']+M['height']/2,-150,120);B1=page.locator('#panel-prob').bounding_box()
- assert abs(B1['x']-(B0['x']-150))<=2 and abs(B1['y']-(B0['y']+120))<=2,(B0,B1)
+ touchdrag(M['x']+M['width']/2,M['y']+M['height']/2,-150,60);B1=page.locator('#panel-prob').bounding_box()
+ assert abs(B1['x']-(B0['x']-150))<=2 and abs(B1['y']-(B0['y']+60))<=2,(B0,B1)
  page.locator('#panel-prob [data-dock="left"]').click();page.wait_for_timeout(150)
  T,G=[page.locator(s).bounding_box() for s in ('#panel-prob .panel-tabs','#panel-prob .prob-dock')]
  touchdrag((T['x']+T['width']+G['x'])/2,T['y']+T['height']/2,300,200)

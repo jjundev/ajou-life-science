@@ -252,7 +252,7 @@ def test_problem_panel_dock_controls():
     assert '<div class="layout" data-left="open" data-prob="open" data-right="closed" data-prob-dock="left">' in t
     prob=t[t.index('id="panel-prob"'):t.index('<div class="content">')]
     group=prob[prob.index('class="prob-dock"'):]
-    assert 'role="group"' in group and 'aria-label="문제 패널 위치"' in group
+    assert 'role="radiogroup"' in group and 'aria-label="문제 패널 위치"' in group and group.count('role="radio"')==3
     assert [d for d in ('left','right','float') if f'data-dock="{d}"' in group]==['left','right','float']
     assert group.index('data-dock="left"')<group.index('data-dock="right"')<group.index('data-dock="float"')
     assert 'class="float-move"' in prob and 'class="float-resize"' in prob and 'aria-label="문제 창 이동. 화살표로 이동"' in prob
