@@ -207,7 +207,7 @@ python3 "$SKILL/scripts/html2md.py" "$REPO/복습노트/<range>/<정리노트>.h
 
 실행 폴더 경로(`RUN`)도 적는다. 수정이 필요하면 조각을 고쳐 4단계부터 다시 돌리면 된다. 커밋 제안 전에 `git status`로 `*.zip`이 섞이지 않았는지 확인한다.
 
-`references/webquiz-style.md` 1절에 없는 장의 `웹과제/<N>장/questions.json`이 있으면 그 파일 5절대로 세어 보고서 끝에 "webquiz-style.md 갱신 제안"을 적는다. 같은 range의 팩을 다시 만들면 기존 카드 번호를 유지한다(새 문항은 기존 최대 번호 다음부터). `references/interactive-overrides.json`의 애매함 공지와 `복습노트/<range>/풀이기록/`이 카드 id로 문항을 가리키기 때문이다. 번호가 바뀌었다면 overrides 키를 새 번호에 맞게 고치고, 예전 풀이기록은 git 기록의 예전 HTML 기준이라고 보고서에 적는다. 끝나면 `풀이기록/`이 그대로인지 확인한다.
+`references/webquiz-style.md` 1절에 없는 장의 `웹과제/<N>장/questions.json`이 있으면 그 파일 5절대로 세어 보고서 끝에 "webquiz-style.md 갱신 제안"을 적는다. 같은 range의 팩을 다시 만들면 기존 카드 번호를 유지한다(새 문항은 기존 최대 번호 다음부터). `references/interactive-overrides.json`의 애매함 공지와 `복습노트/<range>/.assets/풀이기록/`이 카드 id로 문항을 가리키기 때문이다. 번호가 바뀌었다면 overrides 키를 새 번호에 맞게 고치고, 예전 풀이기록은 git 기록의 예전 HTML 기준이라고 보고서에 적는다. 끝나면 `.assets/풀이기록/`이 그대로인지 확인한다.
 
 **장 마감** (이번 범위에서 한 장이 끝났을 때만 — 요약의 끊긴 지점이 장 끝이거나 다음 장으로 넘어갔을 때):
 그 장을 다룬 모든 회차(`복습노트/*/`)를 모아 다음을 검토하고 `복습노트/<range>/.assets/장마감_<range>_<N>장.md`에 쓴다. 보고서에는 요약만 싣는다.
@@ -221,7 +221,7 @@ python3 "$SKILL/scripts/html2md.py" "$REPO/복습노트/<range>/<정리노트>.h
 
 ## 보강 모드
 
-웹과제 bank는 그 장 응시 뒤에 생긴다. 이미 만든 팩을 다시 만들면 카드 번호가 바뀌어 `references/interactive-overrides.json`(카드 id 키)과 `복습노트/<range>/풀이기록/`이 엉뚱한 문항에 붙는다. 그래서 보강은 **기존 카드 번호를 그대로 두고** 복습문제만 다시 쓴다. 정리노트 HTML·MD와 `풀이기록/`은 건드리지 않는다. `RUN` 경로 약속은 위와 같다(`<scratchpad>/review-pack/<range>-augment/`).
+웹과제 bank는 그 장 응시 뒤에 생긴다. 이미 만든 팩을 다시 만들면 카드 번호가 바뀌어 `references/interactive-overrides.json`(카드 id 키)과 `복습노트/<range>/.assets/풀이기록/`이 엉뚱한 문항에 붙는다. 그래서 보강은 **기존 카드 번호를 그대로 두고** 복습문제만 다시 쓴다. 정리노트 HTML·MD와 `.assets/풀이기록/`은 건드리지 않는다. `RUN` 경로 약속은 위와 같다(`<scratchpad>/review-pack/<range>-augment/`).
 
 **A1. 추출**
 ```bash
@@ -263,7 +263,7 @@ python3 "$SKILL/scripts/html2md.py" "$REPO/복습노트/<range>/<정리노트>.h
 
 **A6. 보고**
 - 문제설명 줄(발행/보류)도 넣는다.
-- 9단계 형식에 `보강:`을 앞에 붙이고 `추가 pX–pY`를 더한다. `git status 복습노트/<range>/풀이기록`이 비어 있는지 확인해 적는다. 기존 카드 번호를 바꾸지 않았음을 확인하는 줄을 넣는다.
+- 9단계 형식에 `보강:`을 앞에 붙이고 `추가 pX–pY`를 더한다. `git status 복습노트/<range>/.assets/풀이기록`이 비어 있는지 확인해 적는다. 기존 카드 번호를 바꾸지 않았음을 확인하는 줄을 넣는다.
 - 커밋 제안: `git add 복습노트/<range> && git commit -m "docs(notes): augment review pack <range> with <N>장 webquiz"`
 
 ## 오류 처리

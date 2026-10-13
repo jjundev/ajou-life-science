@@ -24,14 +24,14 @@ class TestCollect(unittest.TestCase):
         make(self.down, name)
         result = cs.collect(self.down, self.root)
         self.assertEqual([r[2] for r in result], ['moved'])
-        self.assertTrue((self.root / '0929' / '풀이기록' / name).exists())
+        self.assertTrue((self.root / '0929' / '.assets' / '풀이기록' / name).exists())
         self.assertFalse((self.down / name).exists())
 
     def test_handles_browser_duplicate_suffix(self):
         name = '복습문제_0929_Heredity_풀이기록_20261001-1200 (1).json'
         make(self.down, name)
         self.assertEqual([r[2] for r in cs.collect(self.down, self.root)], ['moved'])
-        self.assertTrue((self.root / '0929' / '풀이기록' / name).exists())
+        self.assertTrue((self.root / '0929' / '.assets' / '풀이기록' / name).exists())
 
     def test_ignores_unrelated_and_foreign_files(self):
         (self.down / 'notes.json').write_text('{}', encoding='utf-8')
@@ -51,8 +51,8 @@ class TestCollect(unittest.TestCase):
     def test_existing_target_is_not_overwritten(self):
         name = '복습문제_0929_Heredity_풀이기록_20261001-1200.json'
         make(self.down, name)
-        out = self.root / '0929' / '풀이기록'
-        out.mkdir()
+        out = self.root / '0929' / '.assets' / '풀이기록'
+        out.mkdir(parents=True)
         (out / name).write_text('old', encoding='utf-8')
         self.assertEqual([r[2] for r in cs.collect(self.down, self.root)], ['skipped'])
         self.assertEqual((out / name).read_text(encoding='utf-8'), 'old')
@@ -65,14 +65,24 @@ class TestCollect(unittest.TestCase):
         name = '복습문제_0929_Heredity_풀이기록_20261001-1200.json'
         make(self.down, name)
         self.assertEqual([r[2] for r in cs.collect(self.down, self.root)], ['moved'])
-        self.assertTrue((self.root / '0929' / '풀이기록' / name).exists())
+        self.assertTrue((self.root / '0929' / '.assets' / '풀이기록' / name).exists())
 
     def test_dry_run_moves_nothing(self):
         name = '복습문제_0929_Heredity_풀이기록_20261001-1200.json'
         make(self.down, name)
         self.assertEqual([r[2] for r in cs.collect(self.down, self.root, dry_run=True)], ['would-move'])
         self.assertTrue((self.down / name).exists())
-        self.assertFalse((self.root / '0929' / '풀이기록').exists())
+        self.assertFalse((self.root / '0929' / '.assets' / '풀이기록').exists())
+
+    def test_moves_json_into_range_folder_assets(self):
+        rng = self.root / '0922-0924'
+        rng.mkdir()
+        (rng / '복습문제_0922-0924_X.html').write_text('x', encoding='utf-8')
+        name = '복습문제_0922-0924_X_풀이기록_20261001-1200.json'
+        make(self.down, name, document_id='복습문제_0922-0924_X.html', range_='0922-0924')
+        self.assertEqual([r[2] for r in cs.collect(self.down, self.root)], ['moved'])
+        self.assertTrue((rng / '.assets' / '풀이기록' / name).is_file())
+        self.assertFalse((rng / '풀이기록').exists())
 
     def test_missing_downloads_folder(self):
         self.assertEqual(cs.collect(self.tmp / 'nope', self.root), [])
