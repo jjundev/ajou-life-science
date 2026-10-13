@@ -1,0 +1,1157 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>번역과 tRNA</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+.app{--radius:8px;--tap:48px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--dur:220ms;--dur-exit:150ms;--ease-out:cubic-bezier(.2,.8,.2,1);--scrim:rgba(0,0,0,.4);
+  height:100vh;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;box-sizing:border-box;
+  background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;font-size:16px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.app *,.app *::before,.app *::after{box-sizing:border-box}
+.app button{font-family:inherit;color:inherit}
+.app :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.num{font-variant-numeric:tabular-nums}
+
+.topbar{display:flex;align-items:center;gap:var(--s2);min-height:56px;padding:var(--s2) var(--s3);background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:17px;font-weight:700;white-space:nowrap}
+.text-btn{flex:none;min-height:44px;min-width:44px;padding:0 var(--s3);border:0;border-radius:var(--radius);background:transparent;color:var(--ink);font:600 14px/1 'Pretendard',system-ui,sans-serif;cursor:pointer}
+.panel-toggle{display:inline-flex;align-items:center;gap:var(--s1);padding:0 var(--s2)}
+.panel-toggle svg,.theme-toggle svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.panel-toggle .strip{fill:transparent;stroke:none;transition:fill 150ms ease-out}
+.panel-toggle[aria-expanded="true"]{color:var(--accent-ink)}
+.panel-toggle[aria-expanded="true"] .strip{fill:currentColor}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;padding:0}
+.seg{flex:none;display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.seg button{min-height:40px;padding:0 var(--s3);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+.layout{display:grid;grid-template-columns:auto minmax(320px,1fr) auto;min-height:0}
+.panel{position:relative;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--bg);color:var(--ink)}
+.panel-left{grid-column:1;width:clamp(260px,20vw,320px);border-right:1px solid var(--line)}
+.panel-right{grid-column:3;width:clamp(320px,24vw,400px);border-left:1px solid var(--line)}
+.panel-inner{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--s4) var(--s4) var(--s6)}
+.panel-head{display:flex;align-items:center;gap:var(--s2);min-height:44px;margin-bottom:var(--s2)}
+.panel-head h2{flex:1 1 0;min-width:0;margin:0;font-size:22px;line-height:1.4}
+.stage{grid-column:2;position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--bg)}
+.scrim{display:none}
+.panel-resize{display:none}
+
+.sec{margin-top:var(--s5);padding-top:var(--s5);border-top:1px solid var(--line)}
+.sec:first-child{margin-top:0;padding-top:0;border-top:0}
+.sec-title{display:block;margin:0 0 var(--s3);font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-0.01em}
+.sub{margin:var(--s3) 0 0;font-size:14px;line-height:1.6;color:var(--ink-2)}
+
+.opt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.btn{display:flex;align-items:center;gap:var(--s2);width:100%;min-height:var(--tap);padding:0 var(--s3);border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font-size:14px;font-weight:600;line-height:1.3;text-align:left;cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.btn .box{flex:none;width:12px;height:12px;border-radius:3px;border:1.5px solid currentColor}
+.btn[aria-pressed="true"] .box{background:currentColor}
+.steps{display:flex;flex-direction:column;gap:var(--s2)}
+.steps .btn{padding:var(--s2) var(--s3);gap:var(--s3)}
+.step-num{flex:none;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid;font-size:12px;font-weight:700;color:var(--ink)}
+.step-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.step-txt b{font-size:15px;font-weight:700}
+.step-txt span{font-size:13px;font-weight:500;color:var(--ink-2)}
+.detail{margin-top:var(--s3);padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+
+
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.tiles.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tile{padding:var(--s3);border-radius:var(--radius);background:var(--surface)}
+.tile b{display:block;font-size:20px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}
+.tile span{display:block;font-size:13px;line-height:1.4;color:var(--ink-2)}
+.events{display:flex;flex-direction:column;gap:var(--s2)}
+.event{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.6}
+.dot{flex:none;width:10px;height:10px;margin-top:7px;border-radius:50%}
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2) var(--s3);font-size:13px;color:var(--ink-2)}
+.legend div{display:flex;align-items:center;gap:var(--s2)}
+.sw{flex:none;width:16px;height:6px;border-radius:3px}
+.sw.ball{width:12px;height:12px;border-radius:50%}
+.sec.warn{border-top:0;padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+.warn .sec-title{color:var(--warn);font-size:17px}
+.mistake{margin-top:var(--s3)}
+.mistake b{display:block;font-weight:700}
+.mistake span{color:var(--ink-2)}
+.source{margin:var(--s5) 0 0;font-size:13px;line-height:1.6;color:var(--ink-2)}
+
+.canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.canvas.is-fixed{cursor:default}
+.view-btns{position:absolute;top:var(--s3);right:var(--s3);display:flex;gap:6px}
+.icon-btn{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);cursor:pointer}
+.icon-btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.icon-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.float{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius)}
+.hover-card{position:absolute;left:var(--s3);bottom:var(--s3);display:flex;flex-direction:column;gap:2px;padding:var(--s3) var(--s4);pointer-events:none}
+.hover-card .k{font-size:13px;color:var(--ink-2)}
+.hover-card .v{font-size:18px;font-weight:700}
+.playbar{position:absolute;left:var(--s3);right:var(--s3);bottom:var(--s3);display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3)}
+.play{flex:none;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--radius);background:var(--btn-bg);color:var(--on-btn) !important;cursor:pointer}
+.play svg{width:18px;height:18px;fill:currentColor}
+.scrub{flex:1 1 200px;min-width:160px;display:flex;flex-direction:column;gap:2px}
+.scrub span{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.scrub input{width:100%;height:24px;margin:0;accent-color:var(--accent)}
+.speeds{display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.speeds button{min-width:48px;height:40px;padding:0 var(--s2);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
+.speeds button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+@media (hover:hover){.btn:hover,.icon-btn:hover{background:var(--surface)}.text-btn:hover{background:var(--surface)}}
+@media (min-width:1024px){
+  .panel-head{display:none}
+  .layout{--pl:var(--pl-user,clamp(260px,20vw,320px));--pr:var(--pr-user,clamp(320px,24vw,400px))}
+  .panel{width:0;border-width:0;visibility:hidden;transition:width var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left.is-open{width:var(--pl)}
+  .panel-right.is-open{width:var(--pr)}
+  .panel.is-open{visibility:visible;border-width:1px;transition:width var(--dur) var(--ease-out)}
+  .panel-left .panel-inner{width:var(--pl)}
+  .panel-right .panel-inner{width:var(--pr);align-self:flex-end}
+  .layout.is-resizing .panel{transition:none}
+  .layout.is-resizing{cursor:col-resize;user-select:none}
+  .panel-resize{display:block;position:absolute;top:0;bottom:0;z-index:2;width:12px;padding:0;border:0;background:transparent;cursor:col-resize;touch-action:none}
+  .panel-left .panel-resize{right:0}
+  .panel-right .panel-resize{left:0}
+  .panel-resize::after{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--accent);opacity:0;transition:opacity 150ms ease-out}
+  .panel-left .panel-resize::after{right:0}
+  .panel-right .panel-resize::after{left:0}
+  .panel-resize:focus-visible{outline:none}
+  .panel-resize:focus-visible::after,.is-resizing .panel-resize:active::after{opacity:1}
+  @media (hover:hover){.panel-resize:hover::after{opacity:1}}
+}
+@media (max-width: 1023.98px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .stage{grid-column:1}
+  .panel{position:fixed;top:0;bottom:0;z-index:40;visibility:hidden;transition:transform var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left{left:0;width:min(304px,88vw);transform:translateX(-100%)}
+  .panel-right{right:0;width:min(360px,88vw);transform:translateX(100%)}
+  .panel.is-open{visibility:visible;transform:none;transition:transform var(--dur) var(--ease-out)}
+  .panel-inner{padding-top:calc(var(--s3) + env(safe-area-inset-top));padding-bottom:calc(var(--s6) + env(safe-area-inset-bottom))}
+  .scrim{display:block;position:fixed;inset:0;z-index:35;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .scrim.is-on{opacity:1;visibility:visible;transition:opacity var(--dur) var(--ease-out)}
+}
+@media (max-width:640px){.brand{display:none}.topbar{justify-content:space-between}}
+@media (max-width:480px){.panel-toggle span{display:none}.seg button{padding:0 var(--s2)}}
+@media (prefers-reduced-motion:reduce){.panel,.panel.is-open,.scrim,.scrim.is-on,.panel-toggle .strip,.panel-resize::after{transition:none}}
+</style>
+</helmet>
+<div class="app" onKeyDown="{{onKey}}" style="--bg: {{th.bg}}; --surface: {{th.surface}}; --ink: {{th.ink}}; --ink-2: {{th.ink2}}; --line: {{th.line}}; --accent: {{th.accent}}; --accent-ink: {{th.accentInk}}; --btn-bg: {{th.btnBg}}; --on-btn: {{th.onBtn}}; --warn: {{th.warn}}; --prof: {{th.prof}}; --supp: {{th.supp}}; --danger: {{th.danger}}">
+<header class="topbar">
+<button class="text-btn panel-toggle" type="button" aria-label="조작 패널" aria-expanded="{{leftExpanded}}" onClick="{{toggleLeft}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M9 4v16"></path></svg><span>조작</span></button>
+<strong class="brand">번역과 tRNA</strong>
+<sc-if value="{{hasModes}}" hint-placeholder-val="{{ true }}">
+<div class="seg" role="group" aria-label="보기 선택">
+<sc-for list="{{modes}}" as="md" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{md.pressed}}" onClick="{{md.pick}}">{{md.label}}</button>
+</sc-for>
+</div>
+</sc-if>
+<button class="text-btn theme-toggle" type="button" aria-label="{{themeLabel}}" title="{{themeLabel}}" onClick="{{toggleTheme}}">
+<sc-if value="{{isDark}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+<sc-if value="{{isLight}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></sc-if>
+</button>
+<button class="text-btn panel-toggle" type="button" aria-label="설명 패널" aria-expanded="{{rightExpanded}}" onClick="{{toggleRight}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M15 4v16"></path></svg><span>설명</span></button>
+</header>
+
+<div class="layout {{layoutCls}}" style="{{layoutStyle}}">
+<aside class="panel panel-left {{leftCls}}" aria-label="조작">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="220" aria-valuemax="480" aria-valuenow="{{leftWNow}}" ref="{{leftHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>조작</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<sc-if value="{{hasToggles}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">보기 옵션</h3>
+<div class="opt">
+<sc-for list="{{toggles}}" as="t" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{t.pressed}}" onClick="{{t.toggle}}"><span class="box" aria-hidden="true"></span>{{t.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<!-- SLOT:left -->
+<sc-if value="{{is.trna}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">코돈 고르기</h3>
+<div class="opt">
+<sc-for list="{{picks}}" as="pc" hint-placeholder-count="5">
+<button class="btn" type="button" aria-pressed="{{pc.pressed}}" onClick="{{pc.pick}}">{{pc.label}}</button>
+</sc-for>
+</div>
+<p class="sub">고른 mRNA 코돈에 맞는 tRNA로 바뀌어요. 안티코돈과 아미노산이 함께 바뀌는 걸 보세요.</p>
+</div>
+</sc-if>
+<sc-if value="{{is.tl}}" hint-placeholder-val="{{ false }}">
+<div class="sec">
+<h3 class="sec-title">읽는 mRNA</h3>
+<p class="num" style="margin: 0; font-size: 15px; font-weight: 700">5′-AUG ACG UUU GGU UCA UAA-3′</p>
+<p class="sub">보기 좋게 세 염기씩 띄어 썼어요. 실제로는 띄어쓰기 없이 이어 읽어요(연속성).</p>
+</div>
+</sc-if>
+<!-- /SLOT:left -->
+
+<sc-if value="{{hasSteps}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">단계</h3>
+<div class="steps">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}"><span class="step-num num" style="border-color: {{s.c}}">{{s.num}}</span><span class="step-txt"><b>{{s.title}}</b><span>{{s.who}}</span></span></button>
+</sc-for>
+</div>
+<sc-if value="{{hasStep}}" hint-placeholder-val="{{ false }}">
+<div class="detail" aria-live="polite">{{stepDetail}}</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</aside>
+
+<section class="stage" aria-label="모형 보기">
+<canvas class="canvas {{canvasCls}}" ref="{{canvasRef}}" role="img" aria-label="{{canvasLabel}}"></canvas>
+<div class="view-btns">
+<button class="icon-btn" type="button" aria-label="확대" onClick="{{zoomIn}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="축소" onClick="{{zoomOut}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="시점 처음으로" onClick="{{resetView}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v5h5"></path></svg></button>
+</div>
+
+<sc-if value="{{hasPlayback}}" hint-placeholder-val="{{ false }}">
+<div class="playbar float">
+<button class="play" type="button" aria-label="{{playLabel}}" onClick="{{togglePlay}}">
+<sc-if value="{{isPlaying}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></sc-if>
+<sc-if value="{{notPlaying}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5l12 7-12 7z"></path></svg></sc-if>
+</button>
+<label class="scrub">
+<span>{{fLabel}}</span>
+<input type="range" min="0" max="{{fMax10}}" step="1" value="{{fInt}}" onChange="{{onScrub}}">
+</label>
+<div class="speeds" role="group" aria-label="재생 속도">
+<sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{sp.pressed}}" onClick="{{sp.pick}}">{{sp.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</section>
+
+<aside class="panel panel-right {{rightCls}}" aria-label="설명">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="280" aria-valuemax="720" aria-valuenow="{{rightWNow}}" ref="{{rightHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>설명</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<!-- SLOT:right -->
+<sc-if value="{{is.trna}}" hint-placeholder-val="{{ true }}">
+<div>
+<div class="sec">
+<h3 class="sec-title">지금 짝지은 세 염기</h3>
+<div class="tiles three">
+<div class="tile"><b class="num">{{pk.codon}}</b><span>mRNA 코돈 (5′→3′)</span></div>
+<div class="tile"><b class="num">{{pk.anti}}</b><span>안티코돈 (3′→5′로 맞춤)</span></div>
+<div class="tile"><b>{{pk.ab}}</b><span>{{pk.aa}}</span></div>
+</div>
+<sc-if value="{{pk.ccaNote}}" hint-placeholder-val="{{ false }}">
+<p class="sub">안티코돈 3′-CCA-5′는 3′ 말단 CCA와 글자만 같은 다른 부분이에요.</p>
+</sc-if>
+</div>
+<div class="sec">
+<h3 class="sec-title">가닥마다 방향 맞추기</h3>
+<div style="display: flex; flex-direction: column; gap: 4px; font-size: 14px">
+<sc-for list="{{pk.rows}}" as="r" hint-placeholder-count="5">
+<div style="display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; border-bottom: 1px solid var(--line)"><span style="color: var(--ink-2)">{{r.k}}</span><b class="num">{{r.v}}</b></div>
+</sc-for>
+</div>
+<p class="sub">코돈표에는 mRNA 코돈을 5′부터 넣어요. 안티코돈이나 DNA 주형가닥을 넣지 않아요.</p>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw ball" style="background: {{legend.trna}}"></span>tRNA 뉴클레오타이드</div>
+<div><span class="sw ball" style="background: {{legend.anti}}"></span>안티코돈</div>
+<div><span class="sw" style="background: {{legend.mrna}}"></span>mRNA</div>
+<div><span class="sw ball" style="background: {{legend.aa}}"></span>아미노산</div>
+<div><span class="sw" style="background: {{legend.cov}}"></span>공유결합</div>
+<div><span class="sw" style="background: {{legend.hb}}"></span>수소결합</div>
+<div><span class="sw" style="background: {{legend.dir}}"></span>화살표: 5′→3′</div>
+</div>
+<p class="sub">한 가닥 RNA가 자기 안의 상보적 부분끼리 수소결합해 세잎클로버로 접혀요. 아미노산은 3′ 말단 CCA의 A에, 안티코돈은 반대쪽 고리에 있어요.</p>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{is.tl}}" hint-placeholder-val="{{ false }}">
+<div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{events}}" as="e" hint-placeholder-count="2">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<div class="tiles">
+<div class="tile"><b class="num">{{now.codon}}</b><span>이번 코돈 (5′→3′)</span></div>
+<div class="tile"><b class="num">{{now.anti}}</b><span>안티코돈 (3′→5′로 맞춤)</span></div>
+<div class="tile"><b>{{now.aa}}</b><span>실어 오는 아미노산</span></div>
+<div class="tile"><b class="num">{{now.len}}개</b><span>사슬의 아미노산</span></div>
+</div>
+<p class="sub">지금까지 사슬: <b style="color: var(--ink)">{{now.chain}}</b></p>
+</div>
+<div class="sec">
+<h3 class="sec-title">코돈 · 안티코돈 · 아미노산</h3>
+<div style="display: flex; flex-direction: column; gap: 2px; font-size: 14px">
+<div style="display: grid; grid-template-columns: 4.6em 6.2em 1fr; gap: 8px; padding: 2px 8px; font-size: 13px; color: var(--ink-2)"><span>mRNA 코돈</span><span>안티코돈</span><span>아미노산</span></div>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+<div class="num" style="display: grid; grid-template-columns: 4.6em 6.2em 1fr; gap: 8px; padding: 4px 8px; border-radius: 6px; {{r.style}}"><span>{{r.codon}}</span><span>{{r.anti}}</span><span>{{r.aa}}</span></div>
+</sc-for>
+</div>
+<p class="sub">UAA는 종결 코돈이라 맞는 tRNA도, 아미노산도 없어요.</p>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw" style="background: {{legend.mrna}}"></span>mRNA (정보)</div>
+<div><span class="sw" style="background: {{legend.trna}}"></span>tRNA (배달)</div>
+<div><span class="sw ball" style="background: {{legend.ribo}}"></span>리보솜 (조립)</div>
+<div><span class="sw ball" style="background: {{legend.anti}}"></span>안티코돈</div>
+<div><span class="sw ball" style="background: {{legend.aa}}"></span>아미노산</div>
+<div><span class="sw" style="background: {{legend.pep}}"></span>펩티드 결합</div>
+<div><span class="sw" style="background: {{legend.cov}}"></span>공유결합</div>
+<div><span class="sw" style="background: {{legend.hb}}"></span>수소결합</div>
+</div>
+<sc-if value="{{showApe}}" hint-placeholder-val="{{ false }}">
+<p class="sub">(교과서 보충) A 자리는 새 tRNA가 들어오는 자리, P 자리는 사슬을 단 tRNA의 자리, E 자리는 빈 tRNA가 나가는 자리예요.</p>
+</sc-if>
+</div>
+</div>
+</sc-if>
+<!-- /SLOT:right -->
+
+<div class="sec warn">
+<h3 class="sec-title">꼭 기억해요</h3>
+<sc-for list="{{mistakes}}" as="m" hint-placeholder-count="3">
+<div class="mistake"><b>{{m.title}}</b><span>{{m.text}}</span></div>
+</sc-for>
+</div>
+<p class="source">출처: 1006 정리노트 2절(번역의 시작과 끝)·3절(번역의 도구) · 강의노트 5장 p3–6 · 교과서 5장 p.105–108. mRNA는 코돈 6개로 줄였어요. tRNA는 평면 세잎클로버를 살짝 입체로 그렸고(실제 3차원 모양은 L자), 뉴클레오타이드 수와 줄기 염기쌍 서열은 단순화했어요. 번역 장면의 tRNA 모양도 단순화했고, 리보솜 크기와 이동 속도는 실제 비율과 달라요. 빈 tRNA는 E 자리에 머무르는 장면 없이 이동하면서 바로 떠나게 그렸어요.</p>
+</div>
+</aside>
+</div>
+<div class="scrim {{scrimCls}}" aria-hidden="true" onClick="{{closePanels}}"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  // ================= 주제 훅: 주제마다 바꾸는 곳은 이 네 메서드뿐이에요 =================
+  // 계약은 bio-interactive/references/scene-api.md에 있어요.
+
+  topic() {
+    // 코돈 5′→3′, 안티코돈은 코돈 아래에 맞춰 3′→5′로(왼쪽부터) 적어요. a5 = 안티코돈을 5′부터 쓴 것.
+    const C = [
+      { codon: 'AUG', anti: 'UAC', a5: 'CAU', aa: '메티오닌', ab: 'Met', coding: 'ATG', templ: 'TAC' },
+      { codon: 'ACG', anti: 'UGC', a5: 'CGU', aa: '트레오닌', ab: 'Thr', coding: 'ACG', templ: 'TGC' },
+      { codon: 'UUU', anti: 'AAA', a5: 'AAA', aa: '페닐알라닌', ab: 'Phe', coding: 'TTT', templ: 'AAA' },
+      { codon: 'GGU', anti: 'CCA', a5: 'ACC', aa: '글리신', ab: 'Gly', coding: 'GGT', templ: 'CCA' },
+      { codon: 'UCA', anti: 'AGU', a5: 'UGA', aa: '세린', ab: 'Ser', coding: 'TCA', templ: 'AGT' },
+      { codon: 'UAA', anti: null, a5: null, aa: null, ab: null, coding: 'TAA', templ: 'ATT' }
+    ];
+    // 번역 타임라인: 0–1 개시, 이후 코돈 1–4마다 [도착, 펩티드 결합, 이동] 3칸, 13–14 종결 코돈, 14–15 방출, 15–16 해체
+    const phase = (f) => {
+      if (f < 1) return { name: 'init', k: 0, t: f };
+      if (f < 13) {
+        const k = 1 + Math.min(3, Math.floor((f - 1) / 3)), uu = f - (1 + 3 * (k - 1));
+        return uu < 1 ? { name: 'arrive', k: k, t: uu } : uu < 2 ? { name: 'bond', k: k, t: uu - 1 } : { name: 'move', k: k, t: uu - 2 };
+      }
+      if (f < 14) return { name: 'stop', k: 5, t: f - 13 };
+      if (f < 15) return { name: 'release', k: 5, t: f - 14 };
+      return { name: 'apart', k: 5, t: Math.min(1, f - 15) };
+    };
+    const chainOf = (n) => n > 0 ? C.slice(0, n).map((c) => c.ab).join('–') : '아직 없음';
+    const tlInfo = (f, pal) => {
+      const ph = phase(f), k = ph.k;
+      let cur = k, len = 0, ev = [];
+      if (ph.name === 'init') {
+        len = ph.t >= 0.55 ? 1 : 0;
+        ev = f < 0.05 ? [{ c: pal.ribo, text: '▶를 눌러 번역을 시작해 보세요.' }]
+          : ph.t < 0.55 ? [{ c: pal.ribo, text: '(교과서 보충) 작은 단위체가 먼저 mRNA에 붙고, 메티오닌 tRNA가 AUG에 짝지어요.' }]
+            : [{ c: pal.ribo, text: '큰 단위체가 합쳐져 리보솜이 완성돼요.' }];
+      } else if (ph.name === 'arrive') {
+        len = k;
+        ev = [{ c: pal.trna, text: '안티코돈 3′-' + C[k].anti + '-5′ tRNA가 ' + C[k].aa + '을 싣고 ' + C[k].codon + '에 와요.' }];
+      } else if (ph.name === 'bond') {
+        len = k + (ph.t >= 0.5 ? 1 : 0);
+        ev = [{ c: pal.pep, text: C[k - 1].ab + '–' + C[k].ab + ' 사이에 펩티드 결합이 생겨요.' },
+          { c: pal.trna, text: '앞 tRNA는 사슬을 넘겨주고 빈 tRNA가 돼요.' }];
+      } else if (ph.name === 'move') {
+        len = k + 1;
+        ev = [{ c: pal.ribo, text: '리보솜이 코돈 하나(염기 3개)만큼 3′ 쪽으로 움직여요.' },
+          { c: pal.trna, text: '빈 tRNA는 리보솜을 떠나요.' }];
+      } else {
+        len = 5;
+        ev = ph.name === 'stop' ? [{ c: pal.stop, text: 'UAA는 종결 코돈이에요. 맞는 tRNA가 없어 아미노산이 더 붙지 않아요.' }]
+          : ph.name === 'release' ? [{ c: pal.aa, text: '폴리펩티드(' + chainOf(5) + ')가 풀려나요.' }]
+            : [{ c: pal.ribo, text: '리보솜 큰·작은 단위체가 다시 흩어져요.' }];
+      }
+      return { ph: ph, cur: cur, len: len, events: ev, chain: chainOf(len) };
+    };
+    // tRNA 76개 뉴클레오타이드의 세잎클로버(5′ → 받개 줄기 → 고리 셋 → 3′ CCA). 위가 3′ 말단, 아래가 안티코돈 고리.
+    let geom = null;
+    const trnaGeom = () => {
+      if (geom) return geom;
+      const pts = [], pairs = [], h = 0.45, S = 0.5;
+      const push = (x, y, z) => { pts.push([x, y, z || 0]); return pts.length - 1; };
+      const arm = (bx, by, dx, dy, nStem, nLoop, R, tilt, loop) => {
+        const nx = -dy, ny = dx, s0 = pts.length;
+        const zf = (x, y) => tilt * ((x - bx) * dx + (y - by) * dy);
+        const put = (x, y) => push(x, y, zf(x, y));
+        for (let i = 0; i < nStem; i++) put(bx + dx * i * S + nx * h, by + dy * i * S + ny * h);
+        const L = (nStem - 1) * S, ex = bx + dx * L, ey = by + dy * L;
+        if (loop) loop.forEach((q) => put(q[0], q[1]));
+        else {
+          const off = Math.sqrt(R * R - h * h), cx = ex + dx * off, cy = ey + dy * off;
+          const a1 = Math.atan2(ey + ny * h - cy, ex + nx * h - cx), a2 = Math.atan2(ey - ny * h - cy, ex - nx * h - cx);
+          const TAU = Math.PI * 2, md = (v) => ((v % TAU) + TAU) % TAU;
+          const ccw = md(a2 - a1), sw = md(Math.atan2(dy, dx) - a1) < ccw ? ccw : ccw - TAU;
+          for (let i = 1; i <= nLoop; i++) { const a = a1 + sw * i / (nLoop + 1); put(cx + R * Math.cos(a), cy + R * Math.sin(a)); }
+        }
+        for (let i = nStem - 1; i >= 0; i--) put(bx + dx * i * S - nx * h, by + dy * i * S - ny * h);
+        for (let i = 0; i < nStem; i++) pairs.push([s0 + i, s0 + 2 * nStem + nLoop - 1 - i]);
+      };
+      for (let i = 0; i < 7; i++) push(h, 4.4 - i * S);                       // 0–6 받개 줄기 5′ 쪽
+      for (let i = 1; i <= 2; i++) push(h + (1.6 - h) * i / 3, 1.4 - 0.35 * i / 3); // 7–8
+      arm(1.6, 0.6, 1, 0, 4, 8, 0.72, 0.25);                                     // 9–24 오른쪽 팔
+      push(1.02, -0.1);                                                          // 25
+      arm(0, -0.35, 0, -1, 5, 7, 0, 0, [[0.85, -2.75], [0.95, -3.2], [0.5, -3.45], [0, -3.45], [-0.5, -3.45], [-0.95, -3.2], [-0.85, -2.75]]); // 26–42, 안티코돈 33–35
+      for (let i = 1; i <= 5; i++) {                                             // 43–47 가변 고리
+        const t = i / 6, a = (1 - t) * (1 - t), b = 2 * t * (1 - t), c = t * t;
+        push(a * -0.45 + b * -1.45 + c * -1.2, a * -0.35 + b * -1.15 + c * 0.15);
+      }
+      arm(-1.2, 0.6, -1, 0, 5, 7, 0.64, -0.25);                                  // 48–64 왼쪽 팔
+      for (let i = 0; i < 7; i++) push(-h, 1.4 + i * S);                         // 65–71 받개 줄기 3′ 쪽
+      [[-0.5, 4.9], [-0.6, 5.4], [-0.72, 5.88], [-0.85, 6.35]].forEach((q) => push(q[0], q[1])); // 72, CCA 73–75
+      for (let i = 0; i < 7; i++) pairs.push([i, 71 - i]);
+      geom = { pts: pts, pairs: pairs };
+      return geom;
+    };
+    const STAGE = (f) => {
+      const ph = phase(f);
+      return ph.name === 'init' ? '개시' : ph.name === 'arrive' ? (ph.k + 1) + '번째 코돈 · tRNA 도착'
+        : ph.name === 'bond' ? (ph.k + 1) + '번째 코돈 · 펩티드 결합' : ph.name === 'move' ? (ph.k + 1) + '번째 코돈 · 리보솜 이동'
+          : ph.name === 'stop' ? '종결 코돈 UAA' : ph.name === 'release' ? '폴리펩티드 방출' : '리보솜 해체';
+    };
+    return {
+      CODONS: C, phase: phase, tlInfo: tlInfo, trnaGeom: trnaGeom,
+      MODES: [
+        { key: 'trna', label: 'tRNA', cam: { yaw: -0.55, pitch: 0.2, zoom: 1 }, fit: [10.5, 14], D: 30,
+          autoSpin: true, rotatable: true, playback: null,
+          canvasLabel: () => {
+            const pk = C[this.state.pick] || C[0];
+            return 'tRNA 3D 모형. 위쪽 3′ 말단 CCA의 A에 ' + pk.aa + '이 공유결합해 있고, 아래 고리의 안티코돈 3′-' + pk.anti + '-5′가 mRNA 코돈 5′-' + pk.codon + '-3′와 수소결합해요. 끌어서 돌릴 수 있어요.';
+          } },
+        { key: 'tl', label: '번역', cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [11, 10.5], D: 60,
+          autoSpin: false, rotatable: false,
+          playback: { fmax: 16, rate: 0.8, label: (f) => STAGE(f) + ' · ' + f.toFixed(1) + ' / 16' },
+          canvasLabel: (f) => {
+            const info = tlInfo(f, this.pal());
+            return 'mRNA 5′-AUG ACG UUU GGU UCA UAA-3′ 위의 번역 장면. ' + STAGE(f) + ': ' + info.events[0].text + ' 지금 사슬: ' + info.chain + '.';
+          } }
+      ],
+      STEPS: [
+        { mode: 'tl', f: 0.99, c: '#4A86E8', title: '개시: AUG와 메티오닌', who: '리보솜 · 메티오닌 tRNA',
+          text: '흩어져 있던 리보솜의 작은 단위체와 큰 단위체가 mRNA에서 합쳐져요. 안티코돈 3′-UAC-5′인 tRNA가 개시 코돈 AUG에 짝지어 첫 아미노산 메티오닌(Met)을 가져와요. 이 첫 메티오닌은 나중에 가공에서 제거될 수도 있어요.' },
+        { mode: 'tl', f: 1.99, c: '#7B61D9', title: '코돈 읽기 · tRNA 도착', who: 'tRNA (안티코돈 3′-UGC-5′)',
+          text: '리보솜이 다음 코돈 ACG를 읽어요. 안티코돈 3′-UGC-5′인 tRNA가 3′ 말단에 트레오닌(Thr)을 싣고 와요. 코돈과 안티코돈은 역평행으로 수소결합해요.' },
+        { mode: 'tl', f: 2.99, c: '#0B7A55', title: '펩티드 결합', who: '리보솜',
+          text: '리보솜에서 Met와 Thr 사이에 펩티드 결합이 생겨요. 사슬은 앞 tRNA에서 떨어져 새 tRNA의 아미노산에 이어져요. (교과서 보충) 이 결합은 큰 단위체의 rRNA가 촉매해요.' },
+        { mode: 'tl', f: 3.99, c: '#4A86E8', title: '리보솜 이동', who: '리보솜',
+          text: '리보솜이 mRNA를 따라 5′→3′ 방향으로 코돈 하나(염기 3개)만큼 움직여요. 사슬을 넘겨준 빈 tRNA는 리보솜을 떠나요. 이제 다음 코돈 UUU를 읽을 차례예요.' },
+        { mode: 'tl', f: 12.99, c: '#D6457F', title: '반복: 사슬이 자라요', who: 'tRNA · 리보솜',
+          text: '도착 → 펩티드 결합 → 이동을 되풀이해요. UUU에 Phe, GGU에 Gly, UCA에 Ser가 차례로 이어져 Met–Thr–Phe–Gly–Ser가 돼요. 사슬의 Met 쪽 끝이 먼저 만들어진 쪽이에요.' },
+        { mode: 'tl', f: 16, c: '#D9412F', title: '종결 코돈 UAA에서 끝', who: '종결 코돈',
+          text: 'UAA에 맞는 tRNA가 없어 아미노산이 더 붙지 않아요. 폴리펩티드가 풀려나고 리보솜 단위체가 흩어져요. (교과서 보충) 종결 코돈 자리에는 tRNA 대신 방출인자가 결합해요.' }
+      ],
+      MISTAKES: {
+        trna: [
+          { title: '아미노산 자리 ≠ 안티코돈', text: '아미노산은 3′ 말단 CCA의 마지막 A에 공유결합해요. 안티코돈은 그 반대쪽 고리예요. 돌려 보면 위아래 양 끝에 따로 있어요.' },
+          { title: '3′-UAC-5′ = 5′-CAU-3′', text: 'AUG 아래에 맞추면 3′-UAC-5′, 5′부터 쓰면 5′-CAU-3′예요. 방향 없이 글자만 외우면 틀려요. 위 ‘가닥마다 방향 맞추기’ 표에서 3′·5′ 표시를 비교해 보세요.' },
+          { title: '공유결합 · 수소결합 · 펩티드 결합', text: 'tRNA–아미노산은 공유결합, 코돈–안티코돈과 tRNA 내부 염기쌍은 수소결합이에요. 아미노산끼리는 펩티드 결합이에요(‘번역’ 모드에서 보여요). ‘결합 종류’를 켜 보세요.' }
+        ],
+        tl: [
+          { title: '코돈표는 mRNA 코돈으로', text: '코돈표에는 mRNA 코돈을 5′→3′로 넣어요. DNA 주형가닥이나 tRNA 안티코돈을 넣지 않아요. 위 표의 ‘코돈’ 열이 찾는 값이에요.' },
+          { title: '종결 코돈 ≠ 정지 아미노산', text: 'UAA·UAG·UGA는 아미노산을 지정하지 않는 종료 신호예요. 끝까지 재생하면 UAA 위에는 tRNA도 아미노산도 오지 않아요.' },
+          { title: '정보 · 배달 · 조립', text: 'mRNA는 정보, tRNA는 배달, 리보솜은 조립을 맡아요. DNA는 리보솜이 읽는 직접 입력이 아니에요. 화면에 DNA가 없는 이유예요.' }
+        ]
+      },
+      TOGGLES: {
+        trna: [['labels', '이름표'], ['bonds', '결합 종류']],
+        tl: [['labels', '이름표'], ['bonds', '결합 종류'], ['ape', 'A·P·E 자리 (교과서 보충)']]
+      },
+      PAL: {
+        light: { bg: '#ffffff', labelBg: '#f7f8fa', ink: '#111111', ring: '#111111', blobAlpha: 0.28,
+          mrna: '#D6457F', trna: '#7B61D9', anti: '#E07A1F', aa: '#2E9E63', cov: '#B7791F', hb: '#2F8FCB', pep: '#0B7A55',
+          ribo: '#4A86E8', stop: '#D9412F', dir: '#8A94A3', onNt: '#ffffff' },
+        dark: { bg: '#17171c', labelBg: '#212128', ink: '#f2f4f6', ring: '#f2f4f6', blobAlpha: 0.4,
+          mrna: '#FF7FB0', trna: '#A996FF', anti: '#FFA552', aa: '#5FD39A', cov: '#F2C14E', hb: '#6CC4F5', pep: '#3FE0A6',
+          ribo: '#6EA4FF', stop: '#FF7A6B', dir: '#AEB7C4', onNt: '#17171c' }
+      }
+    };
+  }
+
+  // 장면 만들기: I(그리기 항목)와 O(라벨)에 push만 해요. 진행값은 this.sim.f를 써요.
+  buildScene(mode, I, O) {
+    const pal = this.pal(), st = this.state, T = this.T, C = T.CODONS;
+    const mid = (a, b) => this.lerp(a, b, 0.5);
+    if (mode === 'trna') {
+      const g = T.trnaGeom(), Y = -1.3, pk = C[st.pick] || C[0];
+      const P = g.pts.map((q) => [q[0], q[1] + Y, q[2]]);
+      // tRNA 내부 염기쌍(수소결합)
+      g.pairs.forEach((pr) => I.push({ k: 1, p: this.lerp(P[pr[0]], P[pr[1]], 0.24), q: this.lerp(P[pr[0]], P[pr[1]], 0.76), w: 0.05, c: pal.hb, a: 0.85 }));
+      // 한 가닥 골격 5′→3′
+      for (let i = 0; i < P.length - 1; i++) I.push({ k: 1, p: P[i], q: P[i + 1], w: 0.1, c: pal.trna, rod: true });
+      P.forEach((p, i) => {
+        if (i >= 33 && i <= 35) {
+          I.push({ k: 0, p: p, r: 0.24, c: pal.anti });
+          I.push({ k: 3, p: [p[0], p[1], p[2] + 0.26], text: pk.anti[35 - i], size: 0.24, c: pal.onNt });
+        } else if (i >= 73) {
+          I.push({ k: 0, p: p, r: 0.22, c: pal.trna });
+          I.push({ k: 3, p: [p[0], p[1], p[2] + 0.24], text: 'CCA'[i - 73], size: 0.22, c: pal.onNt });
+        } else I.push({ k: 0, p: p, r: 0.17, c: pal.trna });
+      });
+      // 3′ 말단 A에 공유결합한 아미노산
+      const tip = P[75], aa = [tip[0] - 0.15, tip[1] + 0.78, tip[2]];
+      I.push({ k: 1, p: tip, q: aa, w: 0.12, c: pal.cov, rod: true });
+      I.push({ k: 0, p: aa, r: 0.4, c: pal.aa });
+      I.push({ k: 3, p: [aa[0], aa[1], aa[2] + 0.42], text: pk.ab, size: 0.26, c: pal.onNt });
+      // mRNA: 고른 코돈이 안티코돈 바로 아래(5′ 왼쪽 → 3′ 오른쪽)
+      const yM = -4.45 + Y, yA = -3.45 + Y;
+      I.push({ k: 1, p: [-2.75, yM, 0], q: [2.75, yM, 0], w: 0.1, c: pal.mrna, rod: true });
+      for (let j = -5; j <= 5; j++) {
+        const x = j * 0.5, ci = j + 1;
+        if (ci >= 0 && ci <= 2) {
+          I.push({ k: 0, p: [x, yM, 0], r: 0.24, c: pal.mrna });
+          I.push({ k: 3, p: [x, yM, 0.26], text: pk.codon[ci], size: 0.24, c: pal.onNt });
+        } else I.push({ k: 0, p: [x, yM, 0], r: 0.15, c: pal.mrna, a: 0.75 });
+      }
+      // 코돈–안티코돈 수소결합(A–U 2개, G–C 3개)
+      for (let ci = 0; ci < 3; ci++) {
+        const x = (ci - 1) * 0.5, b = pk.codon[ci], n = (b === 'G' || b === 'C') ? 3 : 2;
+        for (let m = 0; m < n; m++) {
+          const ox = (m - (n - 1) / 2) * 0.1;
+          I.push({ k: 1, p: [x + ox, yA - 0.28, 0], q: [x + ox, yM + 0.28, 0], w: 0.035, c: pal.hb });
+        }
+      }
+      // 5′→3′ 방향 화살표와 끝 표시
+      [[0.95, 4.2, 2.2], [-0.95, 2.2, 4.2]].forEach((d) => {
+        I.push({ k: 1, p: [d[0], d[1] + Y, 0], q: [d[0], d[2] + Y, 0], w: 0.04, c: pal.dir, a: 0.8 });
+        I.push({ k: 4, p: [d[0], d[2] + Y + (d[2] > d[1] ? -0.3 : 0.3), 0], q: [d[0], d[2] + Y, 0], c: pal.dir });
+      });
+      I.push({ k: 1, p: [-2, yM - 0.7, 0], q: [2, yM - 0.7, 0], w: 0.04, c: pal.dir, a: 0.8 });
+      I.push({ k: 4, p: [1.7, yM - 0.7, 0], q: [2, yM - 0.7, 0], c: pal.dir });
+      I.push({ k: 3, p: [P[0][0] + 0.45, P[0][1] + 0.2, 0], text: '5′', size: 0.3, c: pal.ink });
+      I.push({ k: 3, p: [tip[0] - 0.45, tip[1], 0], text: '3′', size: 0.3, c: pal.ink });
+      I.push({ k: 3, p: [-3.15, yM, 0], text: '5′', size: 0.3, c: pal.ink });
+      I.push({ k: 3, p: [3.15, yM, 0], text: '3′', size: 0.3, c: pal.ink });
+      if (st.labels) {
+        O.push({ p: aa, text: '아미노산 (' + pk.aa + ')', c: pal.aa, dx: 100, dy: 0, lead: true });
+        O.push({ p: P[34], text: '안티코돈 3′-' + pk.anti + '-5′', c: pal.anti, dx: -130, dy: -8, lead: true });
+        O.push({ p: [0, yM, 0], text: 'mRNA 코돈 5′-' + pk.codon + '-3′', c: pal.mrna, dy: 34 });
+      }
+      if (st.bonds) {
+        O.push({ p: mid(tip, aa), text: '공유결합', c: pal.cov, dx: -78, dy: 0, lead: true });
+        O.push({ p: [0.5, (yA + yM) / 2, 0], text: '수소결합', c: pal.hb, dx: 105, dy: 0, lead: true });
+        O.push({ p: mid(P[3], P[68]), text: '수소결합 (내부 염기쌍)', c: pal.hb, dx: 125, dy: 0, lead: true });
+      }
+      return;
+    }
+
+    // ---------- 번역(tl): 평면 장면, 모든 항목 z = 0 ----------
+    const f = this.sim.f, ph = T.phase(f), u = 0.42, yM = -2.0;
+    const ntX = (j) => (j - 11.5) * u, cX = (k) => ntX(4 + 3 * k);
+    const cyc = ph.name === 'arrive' || ph.name === 'bond' || ph.name === 'move';
+    const pIdx = ph.name === 'init' ? 0 : cyc ? (ph.k - 1 + (ph.name === 'move' ? this.sm(ph.t) : 0)) : 4;
+    const xP = cX(0) + pIdx * 3 * u, xR = xP + 1.5 * u;
+    // 리보솜(먼저 넣어 뒤에 그려져요)
+    let smA = 1, lgA = 1, lgDy = 0, lgDx = 0, smDy = 0;
+    if (ph.name === 'init') { smA = this.sm(ph.t / 0.25); lgA = this.sm((ph.t - 0.55) / 0.4); lgDy = 1.2 * (1 - lgA); }
+    if (ph.name === 'apart') { const w = this.sm(ph.t); lgDx = -1.6 * w; lgDy = 0.3 * w; smDy = -0.3 * w; }
+    const busy = ph.name === 'bond' || ph.name === 'move';
+    [-0.65, 0.65].forEach((o) => I.push({ k: 5, p: [xR + o, yM - 0.7 + smDy, 0], r: 1.0, c: pal.ribo, a: smA }));
+    [-0.7, 0.7].forEach((o) => I.push({ k: 5, p: [xR + o + lgDx, yM + 2.0 + lgDy, 0], r: 1.25, c: pal.ribo, a: lgA, focus: busy }));
+    // mRNA: 앞뒤 3개는 번역하지 않는 부분(글자 없음), 가운데 18개가 코돈 6개
+    const seq = C.map((c) => c.codon).join('');
+    I.push({ k: 1, p: [ntX(0), yM, 0], q: [ntX(23), yM, 0], w: 0.07, c: pal.mrna, rod: true });
+    for (let j = 0; j < 24; j++) {
+      const inCds = j >= 3 && j < 21;
+      I.push({ k: 0, p: [ntX(j), yM, 0], r: inCds ? 0.15 : 0.11, c: pal.mrna, a: inCds ? 1 : 0.6 });
+      if (inCds) I.push({ k: 3, p: [ntX(j), yM - 0.42, 0], text: seq[j - 3], size: 0.28, c: pal.ink });
+    }
+    for (let k = 0; k < 6; k++) I.push({ k: 1, p: [cX(k) - 0.55, yM - 0.72, 0], q: [cX(k) + 0.55, yM - 0.72, 0], w: 0.05, c: k === 5 ? pal.stop : pal.mrna, flat: true, a: k === 5 ? 1 : 0.55 });
+    I.push({ k: 3, p: [ntX(0) - 0.45, yM, 0], text: '5′', size: 0.3, c: pal.ink });
+    I.push({ k: 3, p: [ntX(23) + 0.45, yM, 0], text: '3′', size: 0.3, c: pal.ink });
+
+    // tRNA 위치: null이면 안 보여요
+    const tr = (j) => {
+      if (ph.name === 'init') { if (j !== 0) return null; const a = this.sm((ph.t - 0.15) / 0.4); return a <= 0 ? null : { dx: 0.8 * (1 - a), dy: 2.0 * (1 - a), a: a }; }
+      if (cyc) {
+        if (j === ph.k && ph.name === 'arrive') { const a = this.sm(ph.t); return a <= 0 ? null : { dx: 1.0 * (1 - a), dy: 2.2 * (1 - a), a: a }; }
+        if (j === ph.k - 1 && ph.name === 'move') { const w = this.sm(ph.t); return w >= 1 ? null : { dx: -1.1 * w, dy: 1.8 * w, a: 1 - w }; }
+        return (j === ph.k || j === ph.k - 1) ? { dx: 0, dy: 0, a: 1 } : null;
+      }
+      if (j !== 4) return null;
+      if (ph.name === 'apart') { const w = this.sm(ph.t); return w >= 1 ? null : { dx: -1.1 * w, dy: 1.8 * w, a: 1 - w }; }
+      return { dx: 0, dy: 0, a: 1 };
+    };
+    const top = (j, s) => [cX(j) + s.dx, yM + s.dy + 3.5, 0];
+    const drawT = (j, s) => {
+      const bx = cX(j) + s.dx, by = yM + s.dy, a = s.a, an = C[j].anti;
+      const ac = [-1, 0, 1].map((q) => [bx + q * u, by + 0.55, 0]);
+      I.push({ k: 1, p: ac[0], q: [bx - 0.13, by + 1.0, 0], w: 0.08, c: pal.trna, a: a });
+      I.push({ k: 1, p: ac[2], q: [bx + 0.13, by + 1.0, 0], w: 0.08, c: pal.trna, a: a });
+      I.push({ k: 1, p: ac[0], q: ac[2], w: 0.08, c: pal.trna, a: a });
+      [-0.13, 0.13].forEach((o) => I.push({ k: 1, p: [bx + o, by + 1.0, 0], q: [bx + o, by + 2.85, 0], w: 0.08, c: pal.trna, a: a }));
+      [-1, 1].forEach((sg) => {
+        I.push({ k: 1, p: [bx + sg * 0.13, by + 1.9, 0], q: [bx + sg * 0.36, by + 2.0, 0], w: 0.08, c: pal.trna, a: a });
+        I.push({ k: 0, p: [bx + sg * 0.42, by + 2.0, 0], r: 0.15, c: pal.trna, a: a });
+      });
+      I.push({ k: 1, p: [bx - 0.13, by + 2.85, 0], q: [bx, by + 3.0, 0], w: 0.08, c: pal.trna, a: a });
+      ac.forEach((p, q) => {
+        I.push({ k: 0, p: p, r: 0.17, c: pal.anti, a: a });
+        I.push({ k: 3, p: p, text: an[q], size: 0.2, c: pal.onNt, a: a });
+      });
+      if (s.dy < 0.02 && s.dx > -0.02) {
+        for (let q = 0; q < 3; q++) {
+          const b = C[j].codon[q], n = (b === 'G' || b === 'C') ? 3 : 2;
+          for (let m = 0; m < n; m++) {
+            const ox = (m - (n - 1) / 2) * 0.07, x = cX(j) + (q - 1) * u + ox;
+            I.push({ k: 1, p: [x, yM + 0.16, 0], q: [x, yM + 0.37, 0], w: 0.03, c: pal.hb, a: a });
+          }
+        }
+      }
+    };
+    const T0 = [0, 1, 2, 3, 4].map(tr);
+    T0.forEach((s, j) => { if (s) drawT(j, s); });
+
+    // 아미노산과 사슬: 마지막(C 쪽) 아미노산이 tRNA 3′ 끝에, Met(N 쪽)이 사슬 맨 끝
+    const step = [-0.3, 0.55, 0];
+    const add = (p, n) => [p[0] + step[0] * n, p[1] + step[1] * n, 0];
+    const AA = [], covs = [];  // AA[i] = {p, a}; covs = {j, aaIdx, a}
+    let pepA = [];             // pepA[i] = i-1과 i 사이 결합 진하기
+    if (ph.name === 'init') {
+      if (T0[0]) { AA[0] = { p: top(0, T0[0]), a: T0[0].a }; covs.push({ j: 0, i: 0, a: T0[0].a }); }
+    } else if (cyc) {
+      const k = ph.k, held = T0[k - 1] || { dx: 0, dy: 0, a: 1 }, Ak1 = top(k - 1, { dx: 0, dy: 0 }), Ak = top(k, T0[k] || { dx: 0, dy: 0 });
+      if (ph.name === 'arrive') {
+        for (let i = 0; i < k; i++) AA[i] = { p: add(Ak1, k - 1 - i), a: 1 };
+        AA[k] = { p: Ak, a: T0[k] ? T0[k].a : 0 };
+        covs.push({ j: k - 1, i: k - 1, a: held.a }, { j: k, i: k, a: T0[k] ? T0[k].a : 0 });
+        for (let i = 1; i < k; i++) pepA[i] = 1;
+      } else if (ph.name === 'bond') {
+        const w = this.sm(ph.t);
+        for (let i = 0; i < k; i++) AA[i] = { p: this.lerp(add(Ak1, k - 1 - i), add(Ak, k - i), w), a: 1 };
+        AA[k] = { p: Ak, a: 1 };
+        covs.push({ j: k - 1, i: k - 1, a: 1 - w }, { j: k, i: k, a: 1 });
+        for (let i = 1; i < k; i++) pepA[i] = 1;
+        pepA[k] = w;
+      } else {
+        for (let i = 0; i <= k; i++) AA[i] = { p: add(Ak, k - i), a: 1 };
+        covs.push({ j: k, i: k, a: 1 });
+        for (let i = 1; i <= k; i++) pepA[i] = 1;
+      }
+    } else {
+      const w = ph.name === 'stop' ? 0 : ph.name === 'release' ? this.sm(ph.t) : 1;
+      const A4 = top(4, { dx: 0, dy: 0 }), anc = [A4[0] + 1.2 * w, A4[1] + 0.5 * w, 0];
+      for (let i = 0; i <= 4; i++) AA[i] = { p: add(anc, 4 - i), a: 1 };
+      if (T0[4] && w < 1) covs.push({ j: 4, i: 4, a: 1 - w });
+      for (let i = 1; i <= 4; i++) pepA[i] = 1;
+    }
+    let lastPep = -1;
+    for (let i = 1; i < AA.length; i++) if (pepA[i] > 0.01 && AA[i] && AA[i - 1]) {
+      I.push({ k: 1, p: AA[i - 1].p, q: AA[i].p, w: 0.1, c: pal.pep, rod: true, a: pepA[i] });
+      if (pepA[i] > 0.5) lastPep = i;
+    }
+    let covShow = null;
+    covs.forEach((cv) => {
+      const s = T0[cv.j] || { dx: 0, dy: 0 }, from = [cX(cv.j) + s.dx, yM + s.dy + 3.0, 0];
+      if (cv.a > 0.01 && AA[cv.i]) {
+        I.push({ k: 1, p: from, q: AA[cv.i].p, w: 0.09, c: pal.cov, rod: true, a: cv.a });
+        if (cv.a > 0.5 && !covShow) covShow = mid(from, AA[cv.i].p);
+      }
+    });
+    AA.forEach((x, i) => {
+      if (!x || x.a <= 0.01) return;
+      I.push({ k: 0, p: x.p, r: 0.3, c: pal.aa, a: x.a });
+      I.push({ k: 3, p: x.p, text: C[i].ab, size: 0.22, c: pal.onNt, a: x.a });
+    });
+
+    // 표시들
+    const ready = lgA > 0.5 && ph.name !== 'apart';
+    if (st.ape && ready) ['E', 'P', 'A'].forEach((t, q) => I.push({ k: 3, p: [xP + (q - 1) * 3 * u, yM - 1.3, 0], text: t, size: 0.32, c: this.textTone(pal.ribo) }));
+    if (ph.name === 'stop') O.push({ t: 'ring', p: [cX(5), yM + 0.9, 0], text: '맞는 tRNA 없음' });
+    if (st.labels) {
+      if (lgA > 0.5) O.push({ p: [xR + 1.55 + lgDx, yM + 2.3 + lgDy, 0], text: '리보솜 큰 단위체', c: pal.ribo });
+      if (smA > 0.5) O.push({ p: [xR + 0.65, yM - 1.7 + smDy, 0], text: '작은 단위체', c: pal.ribo, dy: 12 });
+      if (AA.filter((x) => x && x.a > 0.5).length >= 2 && AA[0]) O.push({ p: AA[0].p, text: '폴리펩티드', c: pal.aa, dx: -72, dy: -22, lead: true });
+    }
+    if (st.bonds) {
+      if (lastPep > 0) O.push({ p: mid(AA[lastPep - 1].p, AA[lastPep].p), text: '펩티드 결합', c: pal.pep, dx: -84, dy: -6, lead: true });
+      if (covShow) O.push({ p: covShow, text: '공유결합', c: pal.cov, dx: -84, dy: 26, lead: true });
+      const pj = Math.round(pIdx);
+      if (T0[pj] && T0[pj].dy < 0.02 && (cyc || ph.name === 'init' || ph.name === 'stop' || ph.name === 'release')) O.push({ p: [cX(pj) - u, yM + 0.27, 0], text: '수소결합', c: pal.hb, dx: -70, dy: 0, lead: true });
+    }
+  }
+
+  // 주제 전용 상태(보기 옵션 키 등). 공통 상태에 합쳐져요.
+  extraState() {
+    return { labels: true, bonds: false, ape: false, pick: 0 };
+  }
+
+  // 주제 전용 마크업 값. renderVals() 결과에 합쳐져요.
+  extraVals(st) {
+    const pal = this.pal(), T = this.T, C = T.CODONS, pk = C[st.pick] || C[0];
+    const info = T.tlInfo(st.f, pal);
+    const cur = info.cur;
+    return {
+      legend: { mrna: pal.mrna, trna: pal.trna, anti: pal.anti, aa: pal.aa, ribo: pal.ribo, cov: pal.cov, hb: pal.hb, pep: pal.pep, dir: pal.dir },
+      picks: C.slice(0, 5).map((c, i) => ({ label: c.codon + ' · ' + c.ab, pressed: st.pick === i ? 'true' : 'false', pick: () => this.setState({ pick: i }) })),
+      pk: {
+        codon: pk.codon, anti: pk.anti, ab: pk.ab, aa: pk.aa, ccaNote: pk.anti === 'CCA',
+        rows: [
+          { k: 'DNA 주형가닥', v: '3′-' + pk.templ + '-5′' },
+          { k: 'DNA 암호화가닥', v: '5′-' + pk.coding + '-3′' },
+          { k: 'mRNA 코돈', v: '5′-' + pk.codon + '-3′' },
+          { k: '맞춰 놓은 안티코돈', v: '3′-' + pk.anti + '-5′' },
+          { k: '안티코돈을 5′부터 쓰면', v: '5′-' + pk.a5 + '-3′' }
+        ]
+      },
+      events: info.events,
+      now: {
+        codon: C[cur].codon, anti: C[cur].anti || '없음', aa: C[cur].ab ? C[cur].aa + ' ' + C[cur].ab : '없음 (종결)',
+        len: String(info.len), chain: info.chain
+      },
+      rows: C.map((c, i) => ({
+        codon: c.codon, anti: c.anti ? '3′-' + c.anti + '-5′' : '없음', aa: c.ab ? c.aa + ' (' + c.ab + ')' : '종결 신호',
+        style: i === cur ? 'background: var(--surface); color: var(--ink); font-weight: 700' : 'color: var(--ink-2)'
+      })),
+      showApe: !!st.ape
+    };
+  }
+
+  // ================= 공통 셸: 아래는 주제와 무관해요. 고치지 않아요 =================
+  constructor(...args) {
+    super(...args);
+    let reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    let narrow = false;
+    try { narrow = window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) {}
+    let saved = null;
+    try { saved = window.localStorage.getItem('od-theme'); } catch (e) {}
+    const PANEL_W = { left: { min: 220, max: 480 }, right: { min: 280, max: 720 } };
+    let widths = {};
+    try { widths = JSON.parse(window.localStorage.getItem('interactive-panel-w')) || {}; } catch (e) {}
+    const okW = (side) => { const v = widths[side]; return typeof v === 'number' && v >= PANEL_W[side].min && v <= PANEL_W[side].max ? v : null; };
+    this.T = this.topic();
+    this.state = Object.assign({
+      mode: this.T.MODES[0].key, f: 0, playing: false, speed: 1, step: -1, spin: !reduce,
+      theme: (saved === 'light' || saved === 'dark') ? saved : (this.systemDark() ? 'dark' : 'light'),
+      // leftOpen/rightOpen: docked panels on wide screens; drawer: the one open drawer on narrow screens
+      leftOpen: true, rightOpen: true, drawer: null, narrow: narrow,
+      // leftW/rightW: user-set docked widths in px (null = default); resizing: a handle is being dragged
+      leftW: okW('left'), rightW: okW('right'), resizing: false
+    }, this.extraState());
+    this.reduceMotion = reduce;
+    this.K = {
+      PANEL_W: PANEL_W, PANEL_W_KEY: 'interactive-panel-w', PANEL_DEFAULT: { left: 320, right: 400 },
+      THEMES: {
+        light: { bg: '#ffffff', surface: '#f7f8fa', ink: '#111111', ink2: '#6b7280', line: '#d9dee7', accent: '#1677ff', accentInk: '#1b64da', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#b54708', prof: '#6941c6', supp: '#067647', danger: '#d92d20' },
+        dark: { bg: '#17171c', surface: '#212128', ink: '#f2f4f6', ink2: '#a3abb8', line: '#34353d', accent: '#3182f6', accentInk: '#6ea4ff', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#f5a15c', prof: '#b69cff', supp: '#5fd39a', danger: '#ff6b61' }
+      }
+    };
+    this.cam = Object.assign({}, this.modeDef().cam);
+    this.sim = { f: 0, cx: 0 };
+    this.pointer = { x: -1, y: -1, inside: false, drag: false, lx: 0, ly: 0 };
+    this.colorCache = {};
+    this._tick = (t) => this.tick(t);
+    this._canvasRef = (el) => this.attachCanvas(el);
+    this.handles = {};
+    this._handleRefL = (el) => this.attachHandle('left', el);
+    this._handleRefR = (el) => this.attachHandle('right', el);
+  }
+
+  componentWillUnmount() {
+    this.attachCanvas(null);
+    this.attachHandle('left', null);
+    this.attachHandle('right', null);
+  }
+
+  modeDef(key) {
+    const k = key || this.state.mode;
+    return this.T.MODES.find((m) => m.key === k) || this.T.MODES[0];
+  }
+  systemDark() {
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; }
+  }
+  isNarrow() {
+    try { return window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) { return false; }
+  }
+  syncBreakpoint() { this.setState({ narrow: this.isNarrow(), drawer: null }); }
+  // In drawer mode only one panel is open at a time.
+  togglePanel(side) {
+    const st = this.state;
+    if (st.narrow) this.setState({ drawer: st.drawer === side ? null : side });
+    else if (side === 'left') this.setState({ leftOpen: !st.leftOpen });
+    else this.setState({ rightOpen: !st.rightOpen });
+  }
+  // Docked panel width: the canvas column always keeps at least 400px.
+  panelMax(side) {
+    const lim = this.K.PANEL_W[side], other = side === 'left' ? 'right' : 'left', st = this.state;
+    const h = this.handles[other];
+    const otherOpen = other === 'left' ? st.leftOpen : st.rightOpen;
+    const otherW = !otherOpen ? 0 : h ? h.el.parentElement.getBoundingClientRect().width
+      : (st[other + 'W'] || this.K.PANEL_DEFAULT[other]);
+    return Math.max(lim.min, Math.min(lim.max, (window.innerWidth || 1440) - otherW - 400));
+  }
+  setPanelWidth(side, px, save) {
+    const v = Math.round(Math.min(Math.max(px, this.K.PANEL_W[side].min), this.panelMax(side)));
+    this.setState({ [side + 'W']: v });
+    if (save) this.savePanelWidths(side, v);
+  }
+  resetPanelWidth(side) {
+    this.setState({ [side + 'W']: null });
+    this.savePanelWidths(side, null);
+  }
+  savePanelWidths(side, v) {
+    try {
+      const key = this.K.PANEL_W_KEY;
+      let w = {};
+      try { w = JSON.parse(window.localStorage.getItem(key)) || {}; } catch (e) {}
+      if (v == null) delete w[side]; else w[side] = v;
+      window.localStorage.setItem(key, JSON.stringify(w));
+    } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ }
+  }
+  // Re-fit user widths when the window shrinks (not saved).
+  refitPanels() {
+    ['left', 'right'].forEach((side) => {
+      const w = this.state[side + 'W'];
+      if (w != null && w > this.panelMax(side)) this.setPanelWidth(side, w, false);
+    });
+  }
+  attachHandle(side, el) {
+    const old = this.handles[side];
+    if (old && old.el === el) return;
+    if (old) {
+      Object.keys(old.on).forEach((ev) => old.el.removeEventListener(ev, old.on[ev]));
+      delete this.handles[side];
+      if (!Object.keys(this.handles).length) window.removeEventListener('resize', this._refit);
+    }
+    if (!el) return;
+    const dir = side === 'left' ? 1 : -1;
+    const width = () => el.parentElement.getBoundingClientRect().width;
+    let drag = null;
+    const on = {
+      pointerdown: (e) => {
+        if (this.state.narrow || e.button !== 0) return;
+        e.preventDefault();
+        drag = { x: e.clientX, w: width() };
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        this.setState({ resizing: true });
+      },
+      pointermove: (e) => { if (drag) this.setPanelWidth(side, drag.w + dir * (e.clientX - drag.x), false); },
+      pointerup: () => {
+        if (!drag) return;
+        drag = null;
+        this.setState({ resizing: false });
+        this.setPanelWidth(side, width(), true);
+      },
+      dblclick: () => this.resetPanelWidth(side),
+      keydown: (e) => {
+        const step = e.shiftKey ? 64 : 16;
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          e.preventDefault(); e.stopPropagation();
+          this.setPanelWidth(side, width() + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+        } else if (e.key === 'Home') { e.preventDefault(); e.stopPropagation(); this.resetPanelWidth(side); }
+      }
+    };
+    on.pointercancel = on.pointerup;
+    Object.keys(on).forEach((ev) => el.addEventListener(ev, on[ev]));
+    if (!Object.keys(this.handles).length) {
+      this._refit = this._refit || (() => this.refitPanels());
+      window.addEventListener('resize', this._refit);
+    }
+    this.handles[side] = { el: el, on: on };
+  }
+  textTone(hex) { return this.state.theme === 'light' ? this.mix(hex, '#000000', 0.4) : hex; }
+  pal() { return this.T.PAL[this.state.theme] || this.T.PAL.dark; }
+  setTheme(t) {
+    this.setState({ theme: t });
+    try {
+      if ((t === 'dark') === this.systemDark()) window.localStorage.removeItem('od-theme');
+      else window.localStorage.setItem('od-theme', t);
+    } catch (e) {}
+  }
+
+  attachCanvas(el) {
+    if (this.canvas === el) return;
+    if (this.canvas) {
+      const c = this.canvas;
+      c.removeEventListener('pointerdown', this._pd);
+      c.removeEventListener('pointermove', this._pm);
+      c.removeEventListener('pointerup', this._pu);
+      c.removeEventListener('pointercancel', this._pu);
+      c.removeEventListener('pointerleave', this._pl);
+      cancelAnimationFrame(this.raf);
+      try { this._mq.removeEventListener('change', this._mqH); } catch (err) {}
+    }
+    this.canvas = el || null;
+    if (!el) return;
+    this.ctx = el.getContext('2d');
+    const p = this.pointer;
+    this._pd = (e) => {
+      if (!this.modeDef().rotatable) return;
+      p.drag = true; p.lx = e.clientX; p.ly = e.clientY;
+      try { el.setPointerCapture(e.pointerId); } catch (err) {}
+      el.style.cursor = 'grabbing';
+    };
+    this._pm = (e) => {
+      const r = el.getBoundingClientRect();
+      p.x = e.clientX - r.left; p.y = e.clientY - r.top; p.inside = true;
+      if (p.drag && this.modeDef().rotatable) {
+        this.cam.yaw += (e.clientX - p.lx) * 0.008;
+        this.cam.pitch = Math.max(-1.45, Math.min(1.45, this.cam.pitch + (e.clientY - p.ly) * 0.008));
+        p.lx = e.clientX; p.ly = e.clientY;
+      }
+    };
+    this._pu = () => { p.drag = false; el.style.cursor = ''; };
+    this._pl = () => { p.inside = false; };
+    el.addEventListener('pointerdown', this._pd);
+    el.addEventListener('pointermove', this._pm);
+    el.addEventListener('pointerup', this._pu);
+    el.addEventListener('pointercancel', this._pu);
+    el.addEventListener('pointerleave', this._pl);
+    try {
+      this._mq = window.matchMedia('(max-width: 1023.98px)');
+      this._mqH = () => this.syncBreakpoint();
+      this._mq.addEventListener('change', this._mqH);
+    } catch (err) {}
+    this.last = 0;
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  tick(t) {
+    if (!this.canvas) return;
+    const dt = this.last ? Math.min(0.05, (t - this.last) / 1000) : 0;
+    this.last = t;
+    const st = this.state, m = this.modeDef(), pb = m.playback;
+    if (m.autoSpin && st.spin && !this.pointer.drag) this.cam.yaw += dt * 0.3;
+    if (pb && st.playing) {
+      this.sim.f = Math.min(pb.fmax, this.sim.f + dt * pb.rate * st.speed);
+      if (this.sim.f >= pb.fmax) this.setState({ playing: false, f: this.sim.f });
+      else if (t - (this.lastPush || 0) > 120) { this.lastPush = t; this.setState({ f: this.sim.f }); }
+    }
+    // a broken scene keeps the page alive but is reported once for the browser check
+    try { this.draw(dt, t); } catch (err) { if (!this.drawErr) { this.drawErr = true; console.error(err); } }
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  // ---------- math helpers (장면에서 써도 돼요) ----------
+  lerp(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+  sm(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+  rgb(hex) { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  mix(hex, to, amt) {
+    const a = this.rgb(hex), b = this.rgb(to);
+    return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * amt) + ',' + Math.round(a[1] + (b[1] - a[1]) * amt) + ',' + Math.round(a[2] + (b[2] - a[2]) * amt) + ')';
+  }
+  rgba(hex, al) { const a = this.rgb(hex); return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + al + ')'; }
+  shades(hex) {
+    let s = this.colorCache[hex];
+    if (!s) { s = { hi: this.mix(hex, '#FFFFFF', 0.55), mid: hex, lo: this.mix(hex, '#000000', 0.55) }; this.colorCache[hex] = s; }
+    return s;
+  }
+  proj(p, V) {
+    const x = p[0] - V.cx, y = p[1], z = p[2];
+    const x1 = x * V.cy + z * V.sy, z1 = -x * V.sy + z * V.cy;
+    const y2 = y * V.cp - z1 * V.sp, z2 = y * V.sp + z1 * V.cp;
+    const s = V.F / Math.max(2, V.D - z2);
+    return [V.ox + x1 * s, V.oy - y2 * s, z2, s];
+  }
+
+  // ---------- drawing ----------
+  draw(dt, now) {
+    const el = this.canvas, ctx = this.ctx, st = this.state, m = this.modeDef();
+    const dpr = window.devicePixelRatio || 1;
+    const W = el.clientWidth, H = el.clientHeight;
+    if (!W || !H) return;
+    if (el.width !== Math.round(W * dpr) || el.height !== Math.round(H * dpr)) { el.width = Math.round(W * dpr); el.height = Math.round(H * dpr); }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const pal = this.pal();
+    ctx.fillStyle = pal.bg; ctx.fillRect(0, 0, W, H);
+
+    const I = [], O = [];
+    this.buildScene(st.mode, I, O);
+    const scale = Math.min(W / m.fit[0], H / m.fit[1]), D = m.D, z = this.cam.zoom;
+    const V = {
+      cx: this.sim.cx, cy: Math.cos(this.cam.yaw), sy: Math.sin(this.cam.yaw), cp: Math.cos(this.cam.pitch), sp: Math.sin(this.cam.pitch),
+      F: scale * z * D, D: D, ox: W / 2, oy: H / 2 - (m.playback ? 20 : 0)
+    };
+    let zmin = Infinity, zmax = -Infinity;
+    for (const it of I) {
+      it.A = this.proj(it.p, V);
+      if (it.q) { it.B = this.proj(it.q, V); it.z = (it.A[2] + it.B[2]) / 2; } else it.z = it.A[2];
+      if (it.z < zmin) zmin = it.z;
+      if (it.z > zmax) zmax = it.z;
+    }
+    I.sort((a, b) => a.z - b.z);
+    // depth fog; a flat scene (all items at one depth) is drawn without it
+    const span = zmax - zmin;
+    for (const it of I) {
+      const fog = span < 0.01 ? 1 : 0.42 + 0.58 * ((it.z - zmin) / span);
+      ctx.globalAlpha = Math.max(0, (it.a == null ? 1 : it.a) * fog);
+      if (ctx.globalAlpha < 0.01) continue;
+      const x = it.A[0], y = it.A[1], s = it.A[3];
+      if (it.k === 0) {
+        const R = it.r * s;
+        if (R < 0.4) continue;
+        if (it.flat) { ctx.fillStyle = it.c; ctx.beginPath(); ctx.arc(x, y, Math.max(1.3, R), 0, 6.2832); ctx.fill(); }
+        else {
+          const sh = this.shades(it.c);
+          const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+          g.addColorStop(0, sh.hi); g.addColorStop(0.5, sh.mid); g.addColorStop(1, sh.lo);
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        }
+      } else if (it.k === 1) {
+        const lw = Math.max(1, it.w * (s + it.B[3]) / 2);
+        ctx.lineCap = it.flat ? 'butt' : 'round';
+        if (it.rod) {
+          ctx.strokeStyle = this.shades(it.c).lo; ctx.lineWidth = lw + 2;
+          ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+        }
+        ctx.strokeStyle = it.c; ctx.lineWidth = lw;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+      } else if (it.k === 3) {
+        const fs = Math.max(8, Math.min(14, it.size * s / (scale * z) * 1.05));
+        ctx.font = '700 ' + fs + 'px "Pretendard", system-ui, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = it.c; ctx.fillText(it.text, x, y + 0.5);
+      } else if (it.k === 4) {
+        const ang = Math.atan2(it.B[1] - y, it.B[0] - x), mx = (x + it.B[0]) / 2, my = (y + it.B[1]) / 2, r = 6;
+        ctx.fillStyle = it.c; ctx.beginPath();
+        ctx.moveTo(mx + Math.cos(ang) * r, my + Math.sin(ang) * r);
+        ctx.lineTo(mx + Math.cos(ang + 2.5) * r, my + Math.sin(ang + 2.5) * r);
+        ctx.lineTo(mx + Math.cos(ang - 2.5) * r, my + Math.sin(ang - 2.5) * r);
+        ctx.closePath(); ctx.fill();
+      } else if (it.k === 5) {
+        // lit translucent sphere, highlight up-left like the solid spheres
+        const R = it.r * s, ba = pal.blobAlpha == null ? 0.3 : pal.blobAlpha;
+        const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+        g.addColorStop(0, 'rgba(255,255,255,0.55)'); g.addColorStop(0.3, this.rgba(it.c, Math.min(1, ba + 0.15))); g.addColorStop(1, this.rgba(it.c, 0.18));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        ctx.strokeStyle = it.c; ctx.lineWidth = it.focus ? 3 : 1.5; ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+    for (const o of O) this.drawOverlay(o, V, now);
+  }
+
+  drawOverlay(o, V, now) {
+    const ctx = this.ctx, A = this.proj(o.p, V), pal = this.pal();
+    if (o.t === 'ring') {
+      const r = Math.max(6, 0.32 * A[3]) * (1 + (this.reduceMotion ? 0 : 0.15 * Math.sin((now || 0) / 160)));
+      ctx.globalAlpha = 1; ctx.strokeStyle = pal.ring; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(A[0], A[1], r, 0, 6.2832); ctx.stroke();
+      ctx.font = '600 11px "Pretendard", system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = pal.ring; ctx.fillText(o.text, A[0], A[1] + r + 10);
+      return;
+    }
+    const size = o.size || 12, x = A[0] + (o.dx || 0), y = A[1] + (o.dy || 0);
+    ctx.font = '600 ' + size + 'px "Pretendard", system-ui, sans-serif';
+    const tw = ctx.measureText(o.text).width, w = tw + 14, h = size + 10;
+    ctx.globalAlpha = o.a == null ? 1 : o.a;
+    if (o.lead) {
+      ctx.strokeStyle = this.rgba(o.c, 0.6); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(x, y); ctx.stroke();
+    }
+    ctx.fillStyle = pal.labelBg;
+    ctx.strokeStyle = this.rgba(o.c, 0.55); ctx.lineWidth = 1;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x - w / 2, y - h / 2, w, h, 6); else ctx.rect(x - w / 2, y - h / 2, w, h);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = pal.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(o.text, x, y + 0.5);
+    ctx.globalAlpha = 1;
+  }
+
+  setMode(mode) {
+    this.cam = Object.assign({}, this.modeDef(mode).cam);
+    this.sim.f = 0;
+    this.pointer.drag = false;
+    this.setState({ mode: mode, f: 0, playing: false, step: -1 });
+  }
+
+  renderVals() {
+    const st = this.state, T = this.T, m = this.modeDef(), pb = m.playback;
+    const tg = T.TOGGLES ? (Array.isArray(T.TOGGLES) ? T.TOGGLES : (T.TOGGLES[st.mode] || [])) : [];
+    const togDefs = tg.concat(m.autoSpin ? [['spin', '자동 회전']] : []);
+    const toggles = togDefs.map((d) => ({
+      label: d[1], pressed: st[d[0]] ? 'true' : 'false',
+      toggle: () => { const o = {}; o[d[0]] = !st[d[0]]; this.setState(o); }
+    }));
+    const STEPS = T.STEPS || [];
+    const steps = STEPS.map((s, i) => ({
+      num: i + 1, title: s.title, who: s.who, c: s.c, pressed: st.step === i ? 'true' : 'false',
+      pick: () => {
+        if (s.mode !== this.state.mode) this.setMode(s.mode);
+        if (s.f != null) this.sim.f = s.f;
+        this.setState({ f: this.sim.f, playing: false, step: i });
+      }
+    }));
+    const speeds = [0.5, 1, 2].map((v) => ({
+      label: v + '×', pressed: st.speed === v ? 'true' : 'false',
+      pick: () => this.setState({ speed: v })
+    }));
+    const is = {};
+    T.MODES.forEach((d) => { is[d.key] = d.key === st.mode; });
+    const f = st.f;
+    const isDark = st.theme === 'dark';
+    const leftOn = st.narrow ? st.drawer === 'left' : st.leftOpen, rightOn = st.narrow ? st.drawer === 'right' : st.rightOpen;
+    return Object.assign({
+      th: this.K.THEMES[st.theme], isDark: isDark, isLight: !isDark,
+      themeLabel: isDark ? '라이트 모드로 전환' : '다크 모드로 전환',
+      toggleTheme: () => this.setTheme(isDark ? 'light' : 'dark'),
+      canvasRef: this._canvasRef, canvasCls: m.rotatable ? '' : 'is-fixed',
+      hasModes: T.MODES.length > 1, is: is,
+      modes: T.MODES.map((d) => ({ label: d.label, pressed: d.key === st.mode ? 'true' : 'false', pick: () => { if (d.key !== this.state.mode) this.setMode(d.key); } })),
+      leftCls: leftOn ? 'is-open' : '', rightCls: rightOn ? 'is-open' : '',
+      leftExpanded: leftOn ? 'true' : 'false', rightExpanded: rightOn ? 'true' : 'false',
+      scrimCls: (st.narrow && st.drawer) ? 'is-on' : '',
+      toggleLeft: () => this.togglePanel('left'),
+      toggleRight: () => this.togglePanel('right'),
+      closePanels: () => this.setState({ drawer: null }),
+      layoutStyle: ((st.leftW ? '--pl-user: ' + st.leftW + 'px; ' : '') + (st.rightW ? '--pr-user: ' + st.rightW + 'px;' : '')).trim(),
+      layoutCls: st.resizing ? 'is-resizing' : '',
+      leftWNow: st.leftW ? String(st.leftW) : '', rightWNow: st.rightW ? String(st.rightW) : '',
+      leftHandleRef: this._handleRefL, rightHandleRef: this._handleRefR,
+      onKey: (e) => { if (e.key === 'Escape' && st.narrow && st.drawer) this.setState({ drawer: null }); },
+      hasToggles: toggles.length > 0, toggles: toggles,
+      hasSteps: steps.length > 0, steps: steps,
+      hasStep: st.step >= 0 && st.step < STEPS.length, stepDetail: st.step >= 0 && STEPS[st.step] ? STEPS[st.step].text : '',
+      mistakes: (T.MISTAKES && T.MISTAKES[st.mode]) || [],
+      canvasLabel: m.canvasLabel(f),
+      zoomIn: () => { this.cam.zoom = Math.min(3, this.cam.zoom * 1.2); },
+      zoomOut: () => { this.cam.zoom = Math.max(0.5, this.cam.zoom / 1.2); },
+      resetView: () => { this.cam = Object.assign({}, m.cam); },
+      hasPlayback: !!pb, isPlaying: st.playing, notPlaying: !st.playing, playLabel: st.playing ? '일시정지' : '재생',
+      togglePlay: () => {
+        if (!pb) return;
+        if (!st.playing && this.sim.f >= pb.fmax) this.sim.f = 0;
+        this.setState({ playing: !st.playing, step: -1, f: this.sim.f });
+      },
+      fInt: Math.round(f * 10), fLabel: pb ? pb.label(f) : '', fMax10: pb ? Math.round(pb.fmax * 10) : 0,
+      onScrub: (e) => { const v = Number(e.target.value) / 10; this.sim.f = v; this.setState({ f: v, playing: false, step: -1 }); },
+      speeds: speeds
+    }, this.extraVals(st));
+  }
+}
+</script>
+</body>
+</html>
