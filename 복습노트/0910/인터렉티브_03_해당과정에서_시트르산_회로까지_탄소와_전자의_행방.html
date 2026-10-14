@@ -1,0 +1,1110 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>포도당 분해 여정</title>
+<!-- 생성 파일: .assets/자료_인터렉티브_03_해당과정에서_시트르산_회로까지_탄소와_전자의_행방/Main.dc.html을 고친 뒤 bio-interactive/scripts/build.cjs로 다시 만드세요. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+<style>
+body{margin:0}
+.app{--radius:8px;--tap:48px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--dur:220ms;--dur-exit:150ms;--ease-out:cubic-bezier(.2,.8,.2,1);--scrim:rgba(0,0,0,.4);
+  height:100vh;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;box-sizing:border-box;
+  background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;font-size:16px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.app *,.app *::before,.app *::after{box-sizing:border-box}
+.app button{font-family:inherit;color:inherit}
+.app :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.num{font-variant-numeric:tabular-nums}
+
+.topbar{display:flex;align-items:center;gap:var(--s2);min-height:56px;padding:var(--s2) var(--s3);background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:17px;font-weight:700;white-space:nowrap}
+.text-btn{flex:none;min-height:44px;min-width:44px;padding:0 var(--s3);border:0;border-radius:var(--radius);background:transparent;color:var(--ink);font:600 14px/1 'Pretendard',system-ui,sans-serif;cursor:pointer}
+.panel-toggle{display:inline-flex;align-items:center;gap:var(--s1);padding:0 var(--s2)}
+.panel-toggle svg,.theme-toggle svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.panel-toggle .strip{fill:transparent;stroke:none;transition:fill 150ms ease-out}
+.panel-toggle[aria-expanded="true"]{color:var(--accent-ink)}
+.panel-toggle[aria-expanded="true"] .strip{fill:currentColor}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;padding:0}
+.seg{flex:none;display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.seg button{min-height:40px;padding:0 var(--s3);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+.layout{display:grid;grid-template-columns:auto minmax(320px,1fr) auto;min-height:0}
+.panel{position:relative;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--bg);color:var(--ink)}
+.panel-left{grid-column:1;width:clamp(260px,20vw,320px);border-right:1px solid var(--line)}
+.panel-right{grid-column:3;width:clamp(320px,24vw,400px);border-left:1px solid var(--line)}
+.panel-inner{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--s4) var(--s4) var(--s6)}
+.panel-inner::-webkit-scrollbar{width:8px}
+.panel-inner::-webkit-scrollbar-track{background:transparent}
+.panel-inner::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:8px;border:2px solid var(--bg)}
+.panel-inner::-webkit-scrollbar-thumb:hover{background:var(--scroll-hover)}
+@supports (scrollbar-color:auto){.panel-inner{scrollbar-width:thin;scrollbar-color:var(--scroll) transparent}}
+.panel-head{display:flex;align-items:center;gap:var(--s2);min-height:44px;margin-bottom:var(--s2)}
+.panel-head h2{flex:1 1 0;min-width:0;margin:0;font-size:22px;line-height:1.4}
+.stage{grid-column:2;position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--bg)}
+.scrim{display:none}
+.panel-resize{display:none}
+
+.sec{margin-top:var(--s5);padding-top:var(--s5);border-top:1px solid var(--line)}
+.panel-head + .sec,.panel-head + div > .sec:first-child{margin-top:0;padding-top:0;border-top:0}
+.sec-title{display:block;margin:0 0 var(--s3);font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-0.01em}
+.sub{margin:var(--s3) 0 0;font-size:14px;line-height:1.6;color:var(--ink-2)}
+
+.opt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.btn{display:flex;align-items:center;gap:var(--s2);width:100%;min-height:var(--tap);padding:0 var(--s3);border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font-size:14px;font-weight:600;line-height:1.3;text-align:left;cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.btn .box{flex:none;width:12px;height:12px;border-radius:3px;border:1.5px solid currentColor}
+.btn[aria-pressed="true"] .box{background:currentColor}
+.steps{display:flex;flex-direction:column;gap:var(--s2)}
+.steps .btn{padding:var(--s2) var(--s3);gap:var(--s3)}
+.step-num{flex:none;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid;font-size:12px;font-weight:700;color:var(--ink)}
+.step-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.step-txt b{font-size:15px;font-weight:700}
+.step-txt span{font-size:13px;font-weight:500;color:var(--ink-2)}
+.detail{margin-top:var(--s3);padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+
+
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.tiles.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tile{padding:var(--s3);border-radius:var(--radius);background:var(--surface)}
+.tile b{display:block;font-size:20px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}
+.tile span{display:block;font-size:13px;line-height:1.4;color:var(--ink-2)}
+.events{display:flex;flex-direction:column;gap:var(--s2)}
+.event{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.6}
+.dot{flex:none;width:10px;height:10px;margin-top:7px;border-radius:50%}
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2) var(--s3);font-size:13px;color:var(--ink-2)}
+.legend div{display:flex;align-items:center;gap:var(--s2)}
+.sw{flex:none;width:16px;height:6px;border-radius:3px}
+.sw.ball{width:12px;height:12px;border-radius:50%}
+.sec.warn{border-top:0;padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+.warn .sec-title{color:var(--warn);font-size:17px}
+.mistake{margin-top:var(--s3)}
+.mistake b{display:block;font-weight:700}
+.mistake span{color:var(--ink-2)}
+
+.canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.canvas.is-fixed{cursor:default}
+.view-btns{position:absolute;top:var(--s3);right:var(--s3);display:flex;gap:6px}
+.icon-btn{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);cursor:pointer}
+.icon-btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.icon-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.float{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius)}
+.hover-card{position:absolute;left:var(--s3);bottom:var(--s3);display:flex;flex-direction:column;gap:2px;padding:var(--s3) var(--s4);pointer-events:none}
+.hover-card .k{font-size:13px;color:var(--ink-2)}
+.hover-card .v{font-size:18px;font-weight:700}
+.playbar{position:absolute;left:var(--s3);right:var(--s3);bottom:var(--s3);display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3)}
+.play{flex:none;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--radius);background:var(--btn-bg);color:var(--on-btn) !important;cursor:pointer}
+.play svg{width:18px;height:18px;fill:currentColor}
+.scrub{flex:1 1 200px;min-width:160px;display:flex;flex-direction:column;gap:2px}
+.scrub span{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.scrub input{width:100%;height:24px;margin:0;accent-color:var(--accent)}
+.speeds{display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.speeds button{min-width:48px;height:40px;padding:0 var(--s2);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
+.speeds button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+@media (hover:hover){.btn:hover,.icon-btn:hover{background:var(--surface)}.text-btn:hover{background:var(--surface)}}
+@media (min-width:1024px){
+  .panel-head{display:none}
+  .layout{--pl:var(--pl-user,clamp(260px,20vw,320px));--pr:var(--pr-user,clamp(320px,24vw,400px))}
+  .panel{width:0;border-width:0;visibility:hidden;transition:width var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left.is-open{width:var(--pl)}
+  .panel-right.is-open{width:var(--pr)}
+  .panel.is-open{visibility:visible;border-width:1px;transition:width var(--dur) var(--ease-out)}
+  .panel-left .panel-inner{width:var(--pl)}
+  .panel-right .panel-inner{width:var(--pr);align-self:flex-end}
+  .layout.is-resizing .panel{transition:none}
+  .layout.is-resizing{cursor:col-resize;user-select:none}
+  .panel-resize{display:block;position:absolute;top:0;bottom:0;z-index:2;width:12px;padding:0;border:0;background:transparent;cursor:col-resize;touch-action:none}
+  .panel-left .panel-resize{right:0}
+  .panel-right .panel-resize{left:0}
+  .panel-resize::after{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--accent);opacity:0;transition:opacity 150ms ease-out}
+  .panel-left .panel-resize::after{right:0}
+  .panel-right .panel-resize::after{left:0}
+  .panel-resize:focus-visible{outline:none}
+  .panel-resize:focus-visible::after,.is-resizing .panel-resize:active::after{opacity:1}
+  @media (hover:hover){.panel-resize:hover::after{opacity:1}}
+}
+@media (max-width: 1023.98px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .stage{grid-column:1}
+  .panel{position:fixed;top:0;bottom:0;z-index:40;visibility:hidden;transition:transform var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left{left:0;width:min(304px,88vw);transform:translateX(-100%)}
+  .panel-right{right:0;width:min(360px,88vw);transform:translateX(100%)}
+  .panel.is-open{visibility:visible;transform:none;transition:transform var(--dur) var(--ease-out)}
+  .panel-inner{padding-top:calc(var(--s3) + env(safe-area-inset-top));padding-bottom:calc(var(--s6) + env(safe-area-inset-bottom))}
+  .scrim{display:block;position:fixed;inset:0;z-index:35;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .scrim.is-on{opacity:1;visibility:visible;transition:opacity var(--dur) var(--ease-out)}
+}
+@media (max-width:640px){.brand{display:none}.topbar{justify-content:space-between}}
+@media (max-width:480px){.panel-toggle span{display:none}.seg button{padding:0 var(--s2)}}
+@media (prefers-reduced-motion:reduce){.panel,.panel.is-open,.scrim,.scrim.is-on,.panel-toggle .strip,.panel-resize::after{transition:none}}
+</style>
+</head>
+<body>
+<div id="dc-root"></div>
+<template id="dc-template">
+<div class="app" onKeyDown="{{onKey}}" style="--bg: {{th.bg}}; --surface: {{th.surface}}; --ink: {{th.ink}}; --ink-2: {{th.ink2}}; --line: {{th.line}}; --accent: {{th.accent}}; --accent-ink: {{th.accentInk}}; --btn-bg: {{th.btnBg}}; --on-btn: {{th.onBtn}}; --warn: {{th.warn}}; --prof: {{th.prof}}; --supp: {{th.supp}}; --danger: {{th.danger}}; --scroll: {{th.scroll}}; --scroll-hover: {{th.scrollHover}}">
+<header class="topbar">
+<button class="text-btn panel-toggle" type="button" aria-label="조작 패널" aria-expanded="{{leftExpanded}}" onClick="{{toggleLeft}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M9 4v16"></path></svg><span>조작</span></button>
+<strong class="brand">포도당 분해 여정</strong>
+<sc-if value="{{hasModes}}" hint-placeholder-val="{{ true }}">
+<div class="seg" role="group" aria-label="보기 선택">
+<sc-for list="{{modes}}" as="md" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{md.pressed}}" onClick="{{md.pick}}">{{md.label}}</button>
+</sc-for>
+</div>
+</sc-if>
+<button class="text-btn theme-toggle" type="button" aria-label="{{themeLabel}}" title="{{themeLabel}}" onClick="{{toggleTheme}}">
+<sc-if value="{{isDark}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+<sc-if value="{{isLight}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></sc-if>
+</button>
+<button class="text-btn panel-toggle" type="button" aria-label="설명 패널" aria-expanded="{{rightExpanded}}" onClick="{{toggleRight}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M15 4v16"></path></svg><span>설명</span></button>
+</header>
+
+<div class="layout {{layoutCls}}" style="{{layoutStyle}}">
+<aside class="panel panel-left {{leftCls}}" aria-label="조작">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="220" aria-valuemax="480" aria-valuenow="{{leftWNow}}" ref="{{leftHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>조작</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<sc-if value="{{hasToggles}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">보기 옵션</h3>
+<div class="opt">
+<sc-for list="{{toggles}}" as="t" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{t.pressed}}" onClick="{{t.toggle}}"><span class="box" aria-hidden="true"></span>{{t.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<!-- SLOT:left -->
+<!-- /SLOT:left -->
+
+<sc-if value="{{hasSteps}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">단계</h3>
+<div class="steps">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}"><span class="step-num num" style="border-color: {{s.c}}">{{s.num}}</span><span class="step-txt"><b>{{s.title}}</b><span>{{s.who}}</span></span></button>
+</sc-for>
+</div>
+<sc-if value="{{hasStep}}" hint-placeholder-val="{{ false }}">
+<div class="detail" aria-live="polite">{{stepDetail}}</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</aside>
+
+<section class="stage" aria-label="모형 보기">
+<canvas class="canvas {{canvasCls}}" ref="{{canvasRef}}" role="img" aria-label="{{canvasLabel}}"></canvas>
+<div class="view-btns">
+<button class="icon-btn" type="button" aria-label="확대" onClick="{{zoomIn}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="축소" onClick="{{zoomOut}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="시점 처음으로" onClick="{{resetView}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v5h5"></path></svg></button>
+</div>
+
+<sc-if value="{{hasPlayback}}" hint-placeholder-val="{{ false }}">
+<div class="playbar float">
+<button class="play" type="button" aria-label="{{playLabel}}" onClick="{{togglePlay}}">
+<sc-if value="{{isPlaying}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></sc-if>
+<sc-if value="{{notPlaying}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5l12 7-12 7z"></path></svg></sc-if>
+</button>
+<label class="scrub">
+<span>{{fLabel}}</span>
+<input type="range" min="0" max="{{fMax10}}" step="1" value="{{fInt}}" onChange="{{onScrub}}">
+</label>
+<div class="speeds" role="group" aria-label="재생 속도">
+<sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{sp.pressed}}" onClick="{{sp.pick}}">{{sp.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</section>
+
+<aside class="panel panel-right {{rightCls}}" aria-label="설명">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="280" aria-valuemax="720" aria-valuenow="{{rightWNow}}" ref="{{rightHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>설명</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<!-- SLOT:right -->
+<div class="sec">
+<h3 class="sec-title">{{tileTitle}}</h3>
+<div class="tiles">
+<sc-for list="{{tiles}}" as="t" hint-placeholder-count="4">
+<div class="tile"><b class="num">{{t.v}}</b><span>{{t.name}}</span></div>
+</sc-for>
+</div>
+<p class="sub">{{tileNote}}</p>
+</div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{events}}" as="e" hint-placeholder-count="1">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<sc-for list="{{legendItems}}" as="l" hint-placeholder-count="6">
+<div><span class="sw ball" style="background: {{l.c}}"></span>{{l.name}}</div>
+</sc-for>
+</div>
+<p class="sub">{{scaleNote}}</p>
+</div>
+<!-- /SLOT:right -->
+
+<div class="sec warn">
+<h3 class="sec-title">꼭 기억해요</h3>
+<sc-for list="{{mistakes}}" as="m" hint-placeholder-count="3">
+<div class="mistake"><b>{{m.title}}</b><span>{{m.text}}</span></div>
+</sc-for>
+</div>
+</div>
+</aside>
+</div>
+<div class="scrim {{scrimCls}}" aria-hidden="true" onClick="{{closePanels}}"></div>
+</div>
+</template>
+<script>
+// Minimal x-dc runtime for opening the canvas component as a plain HTML page.
+// Supports what Main.dc.html uses: {{dotted.path}} holes in text and attributes,
+// event attributes (onClick, onKeyDown, onMouseEnter, onMouseLeave, onChange),
+// callback ref, <sc-if value> and <sc-for list as>.
+const DC_EVENTS = { onclick: 'click', onkeydown: 'keydown', onmouseenter: 'mouseenter', onmouseleave: 'mouseleave', onchange: 'input' };
+const DC_HOLE = /\{\{\s*([\w.$]+)\s*\}\}/g;
+let dcSchedule = () => {};
+
+class DCLogic {
+  constructor(props) { this.props = props || {}; this.state = {}; }
+  setState(u) {
+    this.state = Object.assign({}, this.state, typeof u === 'function' ? u(this.state) : u);
+    dcSchedule();
+  }
+}
+
+function dcGet(scope, path) {
+  let o = scope;
+  for (const k of path.split('.')) { if (o == null) return undefined; o = o[k]; }
+  return o;
+}
+function dcInterp(str, scope) {
+  return str.replace(DC_HOLE, (_, p) => { const v = dcGet(scope, p); return v == null ? '' : String(v); });
+}
+function dcSingle(str) {
+  const m = str.match(/^\s*\{\{\s*([\w.$]+)\s*\}\}\s*$/);
+  return m ? m[1] : null;
+}
+
+// Compiles one node in place; pushes updaters that take the current scope.
+function dcCompile(node, ups) {
+  if (node.nodeType === 3) {
+    if (!node.data.includes('{{')) return;
+    const src = node.data;
+    let last;
+    ups.push((s) => { const v = dcInterp(src, s); if (v !== last) { node.data = v; last = v; } });
+    return;
+  }
+  if (node.nodeType !== 1) return;
+  const tag = node.tagName.toLowerCase();
+  if (tag === 'sc-if' || tag === 'sc-for') { dcBlock(node, tag, ups); return; }
+  for (const a of [...node.attributes]) {
+    const name = a.name, val = a.value;
+    if (name.startsWith('hint-')) { node.removeAttribute(name); continue; }
+    if (!val.includes('{{')) continue;
+    node.removeAttribute(name);
+    if (DC_EVENTS[name]) {
+      const p = dcSingle(val);
+      let cur;
+      node.addEventListener(DC_EVENTS[name], (e) => { const f = dcGet(cur, p); if (typeof f === 'function') f(e); });
+      ups.push((s) => { cur = s; });
+    } else if (name === 'ref') {
+      const p = dcSingle(val);
+      let done = false;
+      ups.push((s) => { if (!done) { done = true; const f = dcGet(s, p); if (typeof f === 'function') f(node); } });
+    } else {
+      let last;
+      ups.push((s) => {
+        const v = dcInterp(val, s);
+        if (v === last) return;
+        last = v;
+        if (name === 'value' && 'value' in node) node.value = v; else node.setAttribute(name, v);
+      });
+    }
+  }
+  for (const c of [...node.childNodes]) dcCompile(c, ups);
+}
+
+function dcBlock(el, tag, ups) {
+  const anchor = document.createComment(tag);
+  el.parentNode.replaceChild(anchor, el);
+  const tpl = document.createDocumentFragment();
+  while (el.firstChild) tpl.appendChild(el.firstChild);
+  const make = () => {
+    const frag = tpl.cloneNode(true), u = [];
+    for (const c of [...frag.childNodes]) dcCompile(c, u);
+    return { frag: frag, nodes: [...frag.childNodes], u: u };
+  };
+  if (tag === 'sc-if') {
+    const p = dcSingle(el.getAttribute('value') || '');
+    let inst = null;
+    ups.push((s) => {
+      const on = !!dcGet(s, p);
+      if (!on) { if (inst) { inst.nodes.forEach((n) => n.remove()); inst = null; } return; }
+      if (!inst) { inst = make(); anchor.parentNode.insertBefore(inst.frag, anchor); }
+      inst.u.forEach((f) => f(s));
+    });
+  } else {
+    const p = dcSingle(el.getAttribute('list') || ''), as = el.getAttribute('as');
+    const insts = [];
+    ups.push((s) => {
+      const list = dcGet(s, p) || [];
+      while (insts.length > list.length) insts.pop().nodes.forEach((n) => n.remove());
+      while (insts.length < list.length) { const i = make(); anchor.parentNode.insertBefore(i.frag, anchor); insts.push(i); }
+      list.forEach((item, k) => { const sc = Object.create(s); sc[as] = item; insts[k].u.forEach((f) => f(sc)); });
+    });
+  }
+}
+
+function mountDC(Component) {
+  const comp = new Component({});
+  const frag = document.getElementById('dc-template').content.cloneNode(true), ups = [];
+  for (const c of [...frag.childNodes]) dcCompile(c, ups);
+  const root = document.getElementById('dc-root');
+  let pending = false;
+  const render = () => { pending = false; const v = comp.renderVals(); ups.forEach((f) => f(v)); };
+  dcSchedule = () => { if (!pending) { pending = true; queueMicrotask(render); } };
+  root.appendChild(frag);
+  render();
+  window.addEventListener('pagehide', () => { if (comp.componentWillUnmount) comp.componentWillUnmount(); });
+}
+class Component extends DCLogic {
+  // ================= 주제 훅: 주제마다 바꾸는 곳은 이 네 메서드뿐이에요 =================
+  // 계약은 bio-interactive/references/scene-api.md에 있어요.
+
+  topic() {
+    const sm = (f, a, b) => this.sm((f - a) / (b - a));
+    // 포도당 1분자 기준 누계(path). 숫자는 정리노트 「직접 해 보기」 표와 같아요.
+    const pathCount = (f) => {
+      const used = f >= 2.6 ? 2 : 0;
+      const made = [8.6, 9.1, 9.6, 10.1].filter((t) => f >= t).length + (f >= 21.1 ? 2 : 0);
+      const co2 = (f >= 16.6 ? 2 : 0) + [20.2, 20.4, 20.6, 20.8].filter((t) => f >= t).length;
+      const nadh = (f >= 8.4 ? 2 : 0) + (f >= 15.4 ? 2 : 0) + (f >= 20.9 ? 6 : 0);
+      const fadh = f >= 21.0 ? 2 : 0;
+      return { co2: co2, nadh: nadh, fadh: fadh, atp: made - used, used: used, made: made, carbon: 6 - co2 };
+    };
+    const PATH_PH = [[4, '세포질', '에너지 요구 단계'], [7, '세포질', '포도당 쪼개기'], [11, '세포질', '에너지 방출 단계'],
+      [14, '세포질 → 기질', '미토콘드리아로 이동'], [18, '미토콘드리아 기질', '피루브산 산화'], [99, '미토콘드리아 기질', '시트르산 회로']];
+    const pathPhase = (f) => PATH_PH.find((p) => f < p[0]);
+    // 시트르산 회로(cycle): 한 바퀴 10, 두 바퀴 20. 사건 시각은 바퀴 안 시각이에요.
+    const EV = [['co2', 3.3], ['nadh', 3.3], ['co2', 4.9], ['nadh', 4.9], ['atp', 6.3], ['fadh', 6.9], ['nadh', 7.5]];
+    const turnOf = (f) => Math.min(1, Math.floor(f / 10));
+    const cyclePh = (t) => (t < 2.5 ? '아세틸기 받기' : t < 6 ? 'CO₂ 방출' : t < 8.5 ? '전자 싣기' : '옥살아세트산 재생');
+    const cycleCount = (f) => {
+      const c = { co2: 0, nadh: 0, fadh: 0, atp: 0 };
+      for (let k = 0; k < 2; k++) EV.forEach((e) => { if (f >= 10 * k + e[1]) c[e[0]]++; });
+      return c;
+    };
+    const molName = (t) => (t < 1.6 ? '옥살아세트산 (C4)' : t < 3.3 ? '시트르산 (C6)' : t < 4.9 ? 'C5 화합물' : t < 9.4 ? 'C4 화합물' : '옥살아세트산 (C4)');
+    return {
+      H: { sm: sm, pathCount: pathCount, pathPhase: pathPhase, EV: EV, turnOf: turnOf, cyclePh: cyclePh, cycleCount: cycleCount, molName: molName },
+      MODES: [
+        { key: 'path', label: '장소·순서', cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [18, 10.4], D: 60,
+          autoSpin: false, rotatable: false,
+          playback: { fmax: 22, rate: 1.1, label: (f) => { const p = pathPhase(f); return p[1] + ' · ' + p[2] + ' · ' + f.toFixed(1) + ' / 22'; } },
+          canvasLabel: (f) => { const p = pathPhase(f), c = pathCount(f);
+            return '왼쪽 세포질과 오른쪽 미토콘드리아. 지금 ' + p[2] + ' 중이고, 포도당 1분자 기준 누계는 CO₂ ' + c.co2 + '개, NADH ' + c.nadh + '개, FADH₂ ' + c.fadh + '개, 순 ATP ' + (c.atp < 0 ? '−' + (-c.atp) : c.atp) + '개예요.'; } },
+        { key: 'cycle', label: '회로', cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [11.4, 8.8], D: 60,
+          autoSpin: false, rotatable: false,
+          playback: { fmax: 20, rate: 1.0, label: (f) => { const k = turnOf(f), t = f - 10 * k; return (k + 1) + '바퀴째 · ' + cyclePh(t) + ' · ' + f.toFixed(1) + ' / 20'; } },
+          canvasLabel: (f) => { const k = turnOf(f), t = f - 10 * k, c = cycleCount(f);
+            return '시트르산 회로 ' + (k + 1) + '바퀴째, ' + cyclePh(t) + ' 중이에요. 회로를 도는 분자는 ' + molName(t) + '이고, 누계는 CO₂ ' + c.co2 + ', NADH ' + c.nadh + ', FADH₂ ' + c.fadh + ', ATP ' + c.atp + '개예요.'; } }
+      ],
+      STEPS: [
+        { mode: 'path', f: 3.9, phase: '에너지 요구 단계', c: '#F08A24', title: '에너지 요구 단계', who: '해당과정 · 세포질',
+          text: '세포질에서 ATP 2개를 먼저 써서 포도당(C6)에 인산기를 붙여요. 투자하는 단계라 지금 순 ATP는 −2예요. 미토콘드리아는 아직 쓰지 않아요.' },
+        { mode: 'path', f: 6.9, phase: '포도당 쪼개기', c: '#8A94A3', title: '반으로 쪼개기', who: '해당과정 · 세포질',
+          text: '인산기가 붙은 포도당(C6)이 반으로 쪼개져 C3 두 개가 돼요. 탄소 6개가 3개씩 그대로 나뉘었고, CO₂는 하나도 생기지 않았어요.' },
+        { mode: 'path', f: 10.9, phase: '에너지 방출 단계', c: '#4A86E8', title: '에너지 방출 단계', who: '해당과정 · 세포질',
+          text: '전자쌍 하나씩이 NAD⁺로 가서 NADH 2개가 되고, ATP 4개가 생겨요. 2개 쓰고 4개 얻었으니 순 ATP는 2개예요. 남은 C3 두 개가 피루브산이에요.' },
+        { mode: 'path', f: 13.9, phase: '미토콘드리아로 이동', c: '#C77B4A', title: '미토콘드리아로', who: '피루브산 2개',
+          text: '피루브산 2개가 외막과 내막을 지나 미토콘드리아 기질로 들어가요. 피루브산에는 떨어질 전자가 아직 많이 남아 있어요(노란 점 5쌍씩).' },
+        { mode: 'path', f: 17.9, phase: '피루브산 산화', c: '#E5604F', title: '피루브산 산화', who: '미토콘드리아 기질',
+          text: '피루브산마다 탄소 1개가 CO₂로 떨어져요. 세포호흡에서 CO₂가 처음 생기는 곳이에요. 전자는 NADH 1개로 가고, 남은 C2(아세틸기)는 CoA와 붙어 아세틸-CoA가 돼요.' },
+        { mode: 'path', f: 21.9, phase: '시트르산 회로', c: '#2FA37A', title: '시트르산 회로로', who: '아세틸-CoA 2개',
+          text: '아세틸-CoA 2개가 시트르산 회로에 들어가 남은 탄소 4개가 모두 CO₂로 나가요. 전자는 NADH 6·FADH₂ 2에 실리고 ATP 2개가 생겨요. 포도당 1분자 누계는 CO₂ 6, NADH 10, FADH₂ 2, ATP 4예요.' },
+        { mode: 'cycle', f: 2.3, phase: '아세틸기 받기', c: '#D0609C', title: '아세틸기 받기', who: '옥살아세트산 (C4)',
+          text: '옥살아세트산(C4)이 아세틸-CoA의 아세틸기(C2)를 받아 시트르산(C6)이 돼요. CoA는 탄소만 넘겨주고 떨어져 나가요.' },
+        { mode: 'cycle', f: 5.8, phase: 'CO₂ 방출', c: '#E5604F', title: 'CO₂ 두 개', who: '시트르산 → C4',
+          text: '시트르산(C6)이 여러 번 바뀌며 탄소 2개가 CO₂ 2개로 떨어져요(C6 → C5 → C4, 교과서 보충). 이 CO₂가 날숨으로 나가요. CO₂가 떨어질 때 전자도 NADH로 옮겨 가요(교과서 보충).' },
+        { mode: 'cycle', f: 8.4, phase: '전자 싣기', c: '#4A86E8', title: '전자 싣기', who: 'NADH · FADH₂',
+          text: 'ATP 1개가 생기고, 남은 전자쌍이 FADH₂와 NADH에 실려요. 한 바퀴 합계는 NADH 3, FADH₂ 1, ATP 1이에요. 이 ATP는 기질 수준 인산화로 만들어요.' },
+        { mode: 'cycle', f: 19.9, phase: '옥살아세트산 재생', c: '#2FA37A', title: '다시 C4, 두 바퀴', who: '옥살아세트산 재생',
+          text: '탄소 2개를 잃은 C4가 다시 옥살아세트산이 되어 다음 아세틸-CoA를 받아요. 포도당 1분자는 아세틸-CoA 2개라 회로가 두 바퀴 돌아요. 두 바퀴 합계는 CO₂ 4, NADH 6, FADH₂ 2, ATP 2예요.' }
+      ],
+      MISTAKES: {
+        path: [
+          { title: '순 2 ATP ≠ 4 ATP', text: '에너지 요구 단계에서 2개 쓰고 에너지 방출 단계에서 4개 얻어 순 2개예요. 재생하며 ATP 타일이 −2 → 2로 바뀌는 걸 보세요.' },
+          { title: '해당과정은 미토콘드리아 밖', text: '해당과정은 세포질에서 일어나고 CO₂가 생기지 않아요. 피루브산이 막을 지나기 전까지 CO₂ 타일은 0이에요.' },
+          { title: 'CO₂ 첫 등장 · NADH의 역할', text: 'CO₂가 처음 생기는 곳은 피루브산 산화예요. NADH는 만드는 게 목적이 아니라 전자를 잠시 보관하는 택시예요.' }
+        ],
+        cycle: [
+          { title: '아세틸-CoA 1개 ≠ 포도당 1분자', text: '한 바퀴(아세틸-CoA 1개)는 CO₂ 2, NADH 3, FADH₂ 1, ATP 1이에요. 포도당 1분자는 ×2라 두 바퀴째 끝까지 재생해 보세요.' },
+          { title: '나오는 기체는 CO₂, 산소 아님', text: '시트르산 회로에서 나오는 기체는 이산화탄소예요. 산소는 생기지 않고, 전자전달계 끝에서 쓰이는 쪽이에요.' },
+          { title: '탄소 행방 ≠ 전자 행방', text: '탄소는 CO₂가 되어 날숨으로 나가고, 전자(노란 점)는 NADH·FADH₂에 실려요. 회로를 도는 분자에서 무엇이 어디로 가는지 보세요.' }
+        ]
+      },
+      TOGGLES: [['labels', '이름표'], ['electrons', '전자 (노란 점)']],
+      PAL: {
+        light: { bg: '#ffffff', labelBg: '#f7f8fa', ink: '#111111', ring: '#111111', blobAlpha: 0.30,
+          carbon: '#4B5563', oxy: '#E5604F', phos: '#9B6BDB', elec: '#E8A800', nad: '#4A86E8', fad: '#2FA37A', atp: '#F08A24',
+          coa: '#D0609C', mem: '#C77B4A', cell: '#8A94A3', wheel: '#8A94A3', soft: '#6B7280' },
+        dark: { bg: '#17171c', labelBg: '#212128', ink: '#f2f4f6', ring: '#f2f4f6', blobAlpha: 0.42,
+          carbon: '#B8C0CC', oxy: '#FF8A7A', phos: '#C3A0FF', elec: '#FFD43B', nad: '#6EA4FF', fad: '#5FD3A6', atp: '#FFAA5C',
+          coa: '#F08CC4', mem: '#F0A877', cell: '#AEB7C4', wheel: '#AEB7C4', soft: '#AEB7C4' }
+      }
+    };
+  }
+
+  // 장면 만들기: I(그리기 항목)와 O(라벨)에 push만 해요. 진행값은 this.sim.f를 써요.
+  buildScene(mode, I, O) {
+    const pal = this.pal(), st = this.state, H = this.T.H, f = this.sim.f;
+    const sm = (a, b) => H.sm(f, a, b), L = (a, b, t) => this.lerp(a, b, t);
+    const add = (a, b) => [a[0] + b[0], a[1] + b[1], 0];
+    const tc = (c) => (c === '#ffffff' ? c : this.textTone(c));
+    const md = this.modeDef(mode), el = this.canvas, cw = el && el.clientWidth ? el.clientWidth : 720, ch = el && el.clientHeight ? el.clientHeight - 40 : 760;
+    const PX = Math.max(8, Math.min(cw / md.fit[0], ch / md.fit[1]) * ((this.cam && this.cam.zoom) || 1)), small = PX < 30, u = (n) => n / PX;
+    const text = (p, s, c, size, a) => I.push({ k: 3, p: p, text: s, size: size || 11, c: tc(c), a: a });
+    const poly = (pts, c, w, closed, a) => { const n = pts.length; for (let i = 0; i < (closed ? n : n - 1); i++) I.push({ k: 1, p: pts[i], q: pts[(i + 1) % n], w: w, c: c, a: a }); };
+    const ellipse = (cx, cy, rx, ry, n) => { const r = []; for (let i = 0; i < n; i++) { const t = i / n * 6.2832; r.push([cx + rx * Math.cos(t), cy + ry * Math.sin(t), 0]); } return r; };
+    // 탄소 사슬: 막대 + 탄소 공
+    const chain = (pts, a) => {
+      for (let i = 0; i < pts.length - 1; i++) I.push({ k: 1, p: pts[i], q: pts[i + 1], w: 0.08, c: pal.carbon, rod: true, a: a });
+      pts.forEach((p) => I.push({ k: 0, p: p, r: 0.2, c: pal.carbon, a: a }));
+    };
+    // 전자쌍(2e⁻) 하나 = 노란 점 두 개
+    const pair = (p, a) => { if (!st.electrons) return; I.push({ k: 0, p: add(p, [-0.075, 0]), r: 0.065, c: pal.elec, flat: true, a: a }); I.push({ k: 0, p: add(p, [0.075, 0]), r: 0.065, c: pal.elec, flat: true, a: a }); };
+    // 분자의 전자쌍 m개를 오른쪽 탄소부터 위·아래로 배치(dir = 바깥쪽 방향 1/-1)
+    const pairsOn = (pts, m, dir, a, nx, ny) => {
+      nx = nx || 0; ny = ny == null ? 1 : ny;
+      for (let k = 0; k < m; k++) { const c = pts[pts.length - 1 - Math.floor(k / 2)], s = (k % 2 ? -1 : 1) * dir * 0.34; pair([c[0] + nx * s, c[1] + ny * s, 0], a); }
+    };
+    const co2 = (p, a) => { I.push({ k: 0, p: add(p, [-0.28, 0]), r: 0.13, c: pal.oxy, a: a }); I.push({ k: 0, p: add(p, [0.28, 0]), r: 0.13, c: pal.oxy, a: a }); I.push({ k: 0, p: p, r: 0.19, c: pal.carbon, a: a }); };
+    const taxi = (p, c, name, loaded, a, r) => { I.push({ k: 5, p: p, r: r || 0.34, c: c, focus: false, a: a }); if (loaded) pair(p, a); text(add(p, [0, (p[1] < 0 ? -1 : 1) * ((r || 0.34) + u(10))]), name, c, 11, a); };
+
+    if (mode === 'path') {
+      // ---- 세포와 미토콘드리아 ----
+      const cell = [[-8.4, -4.1, 0], [8.7, -4.1, 0], [8.7, 4.1, 0], [-8.4, 4.1, 0]];
+      poly(cell, pal.cell, 0.07, true, 0.8);
+      const M = [4.4, 0];
+      poly(ellipse(M[0], M[1], 3.7, 3.0, 72), pal.mem, 0.09, true);
+      poly(ellipse(M[0], M[1], 3.25, 2.55, 72), pal.mem, 0.07, true);
+      [3.4, 4.3].forEach((x) => { const y = 2.55 * Math.sqrt(1 - Math.pow((x - M[0]) / 3.25, 2));
+        I.push({ k: 1, p: [x, y, 0], q: [x, y - 0.5, 0], w: 0.16, c: pal.mem }); I.push({ k: 1, p: [x, -y, 0], q: [x, -y + 0.5, 0], w: 0.16, c: pal.mem }); });
+      if (st.labels) { if (!small) { text([7.95, -2.15, 0], "외막", pal.mem, 11); text([7.05, 0.45, 0], "내막", pal.mem, 11); } text([3.7, 0.0, 0], "기질", pal.mem, 12); }
+      // 시트르산 회로 바퀴(기질)
+      const WC = [5.7, 0.35, 0], WR = 0.75, wa = 0.35 + 0.65 * sm(17.6, 18.2);
+      poly(ellipse(WC[0], WC[1], WR, WR, 40), pal.wheel, 0.06, true, wa);
+      I.push({ k: 4, p: [WC[0] + WR, WC[1] + 0.05, 0], q: [WC[0] + WR, WC[1] - 0.05, 0], c: pal.wheel, a: wa });
+      I.push({ k: 4, p: [WC[0] - WR, WC[1] - 0.05, 0], q: [WC[0] - WR, WC[1] + 0.05, 0], c: pal.wheel, a: wa });
+      text([WC[0], WC[1] - WR - u(10), 0], "시트르산 회로", pal.soft, 11, wa * (1 - sm(20.1, 20.4)));
+
+      // ---- 해당과정(세포질) ----
+      const G = [0, 1, 2, 3, 4, 5].map((i) => [-6.9 + i * 0.6, 1.5, 0]);
+      const PA = [0, 1, 2].map((j) => [-6.6 + j * 0.6, 2.4, 0]), PB = [0, 1, 2].map((j) => [-6.6 + j * 0.6, 0.4, 0]);
+      const MA = [0, 1, 2].map((j) => [1.9 + j * 0.55, 0.9, 0]), MB = [0, 1, 2].map((j) => [1.9 + j * 0.55, -0.9, 0]);
+      const split = sm(4.3, 6.3), move = sm(11.3, 13.5), toWheel = sm(18.1, 19.2);
+      const EA = [5.15, 0.95, 0], EB = [5.15, -0.25, 0];
+      const posA = (j) => { let p = L(L(G[j], PA[j], split), MA[j], move); const d = [(EA[0] - MA[1][0]) * toWheel, (EA[1] - MA[1][1]) * toWheel, 0]; return add(p, d); };
+      const posB = (j) => { let p = L(L(G[3 + j], PB[j], split), MB[j], move); const d = [(EB[0] - MB[1][0]) * toWheel, (EB[1] - MB[1][1]) * toWheel, 0]; return add(p, d); };
+      const A = [0, 1, 2].map(posA), B = [0, 1, 2].map(posB);
+      const ctr = (P) => [(P[0][0] + P[P.length - 1][0]) / 2, P[0][1], 0];
+
+      // ATP 투자 2개와 생산 4개(세포질 아래쪽)
+      const inv = [[-7.2, -2.2, 0], [-6.5, -2.2, 0]];
+      inv.forEach((p, i) => { const used = f >= 2.6; I.push({ k: 0, p: p, r: 0.2, c: used ? pal.cell : pal.atp, a: used ? 0.55 : 1 }); });
+      [-5.4, -4.7, -4.0, -3.3].forEach((x, i) => { const g = sm(8.6 + 0.5 * i - 0.4, 8.6 + 0.5 * i); if (g <= 0) return;
+        I.push({ k: 0, p: [x, -2.2, 0], r: 0.2 * g, c: pal.atp }); });
+      text([-6.85, -2.2 - 0.2 - u(10), 0], f >= 2.6 ? "ADP ×2" : "ATP ×2", f >= 2.6 ? pal.cell : pal.atp, 12); text([-4.35, -2.2 - 0.2 - u(10), 0], "ATP ×4", pal.atp, 12, sm(8.2, 8.6));
+      // 인산기(P): ATP에서 포도당 양 끝으로, 에너지 방출 단계에서 빠져요
+      const pFade = 1 - sm(7.2, 7.8);
+      if (f >= 0.4 && pFade > 0) {
+        const endL = f < 4.3 ? add(G[0], [-0.42, 0]) : add(A[0], [-0.42, 0]);
+        const endR = f < 4.3 ? add(G[5], [0.42, 0]) : add(B[2], [0.42, 0]);
+        const t = sm(0.4, 2.6);
+        [[inv[0], endL], [inv[1], endR]].forEach((e) => { const p = L(e[0], e[1], t); I.push({ k: 0, p: p, r: 0.16, c: pal.phos, a: pFade }); if (0.16 * PX >= 7) text(p, "P", "#ffffff", 9, pFade); });
+      }
+      // 해당과정 NAD⁺ 택시 2개
+      const tA = [-3.6, 2.4, 0], tB = [-3.6, 0.4, 0], ta = sm(7.0, 7.4), gl = f >= 8.4;
+      if (ta > 0) { taxi(tA, pal.nad, gl ? 'NADH' : 'NAD⁺', gl, ta); taxi(tB, pal.nad, gl ? 'NADH' : 'NAD⁺', gl, ta); }
+      // 피루브산 산화 NAD⁺ 택시 2개(기질)
+      const nA = [2.75, 1.75, 0], nB = [2.75, -1.75, 0], na = sm(13.6, 14.2), po = f >= 15.4;
+      if (na > 0) { taxi(nA, pal.nad, po ? 'NADH' : 'NAD⁺', po, na); taxi(nB, pal.nad, po ? 'NADH' : 'NAD⁺', po, na); }
+
+      // 분자: 탄소 사슬과 전자쌍
+      const fly = (from, to, a, b) => { const t = sm(a, b); if (t > 0 && t < 1) pair(L(from, to, t)); };
+      const intoWheel = 1 - sm(19.0, 19.5);
+      if (f < 4.3) {
+        chain(G); pairsOn(G, 12, 1);
+      } else {
+        const gone = f >= 15.0;                 // 탄소 0이 CO₂로 떠남
+        const aC = gone ? A.slice(1) : A, bC = gone ? B.slice(1) : B;
+        if (intoWheel > 0) { chain(aC, intoWheel); chain(bC, intoWheel); }
+        const m = f < 7.4 ? 6 : f < 14.2 ? 5 : 4;
+        if (intoWheel > 0) { pairsOn(A, m, 1, intoWheel); pairsOn(B, m, -1, intoWheel); }
+        fly(add(A[0], [0, -0.34]), tA, 7.4, 8.4); fly(add(B[0], [0, 0.34]), tB, 7.4, 8.4);
+        fly(add(A[0], [0, 0.34]), nA, 14.2, 15.4); fly(add(B[0], [0, -0.34]), nB, 14.2, 15.4);
+        // 피루브산 산화의 CO₂: 탄소 0이 산소를 달고 막 밖으로
+        if (gone) { const t = sm(15.0, 16.6); co2(L(MA[0], [2.3, 3.5, 0], t)); co2(L(MB[0], [2.3, -3.5, 0], t)); }
+        // CoA가 C2에 붙어 아세틸-CoA
+        const ca = sm(16.0, 16.4) * (1 - sm(19.2, 19.8));
+        if (ca > 0) {
+          const t = sm(16.2, 17.4);
+          [[A, [4.3, 1.55, 0]], [B, [4.3, -1.55, 0]]].forEach((e) => { const p = L(e[1], add(e[0][2], [0.5, 0]), t); I.push({ k: 0, p: p, r: 0.24, c: pal.coa, a: ca }); if (0.24 * PX >= 10) text(p, "CoA", "#ffffff", 8, ca); });
+        }
+      }
+      // 시트르산 회로의 CO₂ 4개와 산물
+      [[2.9, 3.5], [2.9, -3.5], [3.5, 3.5], [3.5, -3.5]].forEach((s, i) => { const t0 = 19.6 + 0.2 * i; if (f < t0) return; co2(L([WC[0], WC[1] + (s[1] > 0 ? 0.75 : -0.75), 0], [s[0], s[1], 0], sm(t0, t0 + 0.6))); });
+      const pr = sm(20.4, 21.2);
+      if (pr > 0) O.push({ p: [WC[0], WC[1] - WR, 0], text: "+ NADH 6 · FADH₂ 2 · ATP 2", c: pal.nad, dy: small ? 8 : 18, dx: small ? -24 : 0, size: 11, a: pr });
+
+      // 이름표(칩)
+      if (st.labels) {
+        O.push({ p: [-1.0, -3.55, 0], text: "세포질", c: pal.cell });
+        O.push({ p: [6.6, 3.0, 0], text: "미토콘드리아", c: pal.mem, dy: -12 });
+        if (f < 4.3) O.push({ p: ctr(G), text: '포도당 (C6)', c: pal.carbon, dy: -38 });
+        else if (f < 11.3) { const nm = f < 10.2 ? "C3 화합물" : "피루브산 (C3)"; O.push({ p: ctr(A), text: nm, c: pal.carbon, dy: -36 }); O.push({ p: ctr(B), text: nm, c: pal.carbon, dy: 32 }); }
+        else if (f < 17.4) { O.push({ p: A[0], text: '피루브산', c: pal.carbon, dx: -64 }); O.push({ p: B[0], text: '피루브산', c: pal.carbon, dx: -64 }); }
+        else if (f < 18.4) { O.push({ p: A[1], text: "아세틸-CoA", c: pal.coa, dx: small ? -50 : -78 }); O.push({ p: B[1], text: "아세틸-CoA", c: pal.coa, dx: small ? -50 : -78 }); }
+        if (f >= 16.6) O.push({ p: [2.3, 3.5, 0], text: 'CO₂ → 날숨', c: pal.oxy, dx: -66 });
+      }
+      return;
+    }
+
+    // ================= cycle: 시트르산 회로 =================
+    const C = [-2.0, -0.3], R = 2.3, k = H.turnOf(f), t = f - 10 * k;
+    const pos = (deg) => { const r = deg * Math.PI / 180; return [C[0] + R * Math.sin(r), C[1] + R * Math.cos(r), 0]; };
+    const thetaOf = (t) => (t < 2.5 ? 0 : t < 6 ? 150 * (t - 2.5) / 3.5 : t < 8.5 ? 150 + 150 * (t - 6) / 2.5 : Math.min(360, 300 + 60 * (t - 8.5) / 1.5));
+    const ring = []; for (let i = 0; i < 72; i++) ring.push(pos(i * 5));
+    poly(ring, pal.wheel, 0.07, true, 0.7);
+    [75, 165, 255, 345].forEach((d) => I.push({ k: 4, p: pos(d - 4), q: pos(d + 4), c: pal.wheel }));
+    // 분자: 탄소 수 n과 전자쌍 m
+    const n = t < 1.6 ? 4 : t < 3.3 ? 6 : t < 4.9 ? 5 : 4;
+    const carriersDone = H.EV.filter((e) => (e[0] === 'nadh' || e[0] === 'fadh') && t >= e[1]).length;
+    const m = t < 1.6 ? 0 : 4 - carriersDone;
+    const th = thetaOf(t) * Math.PI / 180, mc = pos(thetaOf(t));
+    const tx = Math.cos(th), ty = -Math.sin(th), nx = Math.sin(th), ny = Math.cos(th);
+    const mol = []; for (let i = 0; i < n; i++) { const s = (i - (n - 1) / 2) * 0.42; mol.push([mc[0] + tx * s, mc[1] + ty * s, 0]); }
+    chain(mol); pairsOn(mol, m, 1, 1, nx, ny);
+    text([C[0], C[1] + u(12), 0], H.molName(t), pal.ink, 14);
+    text([C[0], C[1] - u(12), 0], (k + 1) + "바퀴째 · 아세틸-CoA " + (k + 1) + "/2", pal.soft, 12);
+    // 아세틸-CoA(C2 + CoA)가 들어와요
+    const S = [-4.3, 3.4, 0], E = [C[0] - 0.95, C[1] + R + 0.5, 0];
+    const acetyl = (base, a) => {
+      const tt = f - base; let p, al = a;
+      if (tt < 0) p = S; else if (tt < 1.6) p = L(S, E, H.sm(tt, 0, 1.6)); else return;
+      const c2 = [add(p, [-0.21, 0]), add(p, [0.21, 0])];
+      chain(c2, al); pairsOn(c2, 4, 1, al);
+      I.push({ k: 0, p: add(p, [0.68, 0]), r: 0.26, c: pal.coa, a: al }); if (0.26 * PX >= 10) text(add(p, [0.68, 0]), "CoA", "#ffffff", 9, al);
+      if (st.labels) O.push({ p: p, text: "아세틸-CoA", c: pal.coa, dy: -36, dx: 12, a: al });
+    };
+    acetyl(0, 1);
+    if (f >= 8.5 && f < 11.6) acetyl(10, H.sm(f, 8.5, 9.3));
+    // CoA가 떨어져 나가요
+    [0, 10].forEach((b) => { const tt = f - b; if (tt < 1.6 || tt > 2.6) return; const a = 1 - H.sm(tt, 1.6, 2.6);
+      const p = L(add(E, [0.68, 0]), [-4.6, 3.9, 0], H.sm(tt, 1.6, 2.6)); I.push({ k: 0, p: p, r: 0.26, c: pal.coa, a: a }); if (0.26 * PX >= 10) text(p, "CoA", "#ffffff", 9, a); });
+    // 산물 칸(오른쪽): CO₂ / NADH / FADH₂ / ATP
+    const rows = { co2: 2.2, nadh: 1.0, fadh: -0.2, atp: -1.4 }, names = { co2: 'CO₂', nadh: 'NADH', fadh: 'FADH₂', atp: 'ATP' };
+    const cols = { co2: pal.oxy, nadh: pal.nad, fadh: pal.fad, atp: pal.atp };
+    Object.keys(rows).forEach((key) => text([1.35, rows[key], 0], names[key], cols[key], 13));
+    if (st.labels && f >= 3.3) O.push({ p: [2.5, rows.co2, 0], text: "CO₂ → 날숨", c: pal.oxy, dy: -24, dx: 20 });
+    const idx = { co2: 0, nadh: 0, fadh: 0, atp: 0 };
+    for (let kk = 0; kk < 2; kk++) H.EV.forEach((e) => {
+      const T0 = 10 * kk + e[1], j = idx[e[0]]++;
+      if (f < T0) return;
+      const src = pos(thetaOf(e[1])), dst = [2.65 + j * (e[0] === 'co2' ? 0.62 : 0.45), rows[e[0]], 0], p = L(src, dst, H.sm(f, T0, T0 + 0.7));
+      if (e[0] === 'co2') { I.push({ k: 0, p: add(p, [-0.2, 0]), r: 0.1, c: pal.oxy }); I.push({ k: 0, p: add(p, [0.2, 0]), r: 0.1, c: pal.oxy }); I.push({ k: 0, p: p, r: 0.15, c: pal.carbon }); }
+      else if (e[0] === 'atp') I.push({ k: 0, p: p, r: 0.17, c: pal.atp });
+      else { I.push({ k: 5, p: p, r: 0.19, c: cols[e[0]] }); pair(p); }
+    });
+    if (st.labels) {
+      O.push({ p: [C[0], C[1] - R, 0], text: '미토콘드리아 기질', c: pal.mem, dy: 22 });
+    }
+  }
+
+  // 주제 전용 상태(보기 옵션 키 등). 공통 상태에 합쳐져요.
+  extraState() {
+    return { labels: true, electrons: true };
+  }
+
+  // 주제 전용 마크업 값. renderVals() 결과에 합쳐져요.
+  extraVals(st) {
+    const pal = this.pal(), H = this.T.H, f = st.f;
+    const sgn = (v) => (v < 0 ? '−' + Math.abs(v) : String(v));
+    const legendItems = [
+      { c: pal.carbon, name: '탄소 (C)' }, { c: pal.elec, name: '전자쌍 (2e⁻)' }, { c: pal.oxy, name: 'CO₂의 산소' },
+      { c: pal.nad, name: 'NAD⁺ / NADH' }, { c: pal.fad, name: 'FADH₂' }, { c: pal.atp, name: 'ATP' },
+      { c: pal.phos, name: '인산기 (P)' }, { c: pal.coa, name: 'CoA' }
+    ];
+    if (st.mode === 'path') {
+      const c = H.pathCount(f), p = H.pathPhase(f);
+      const ev = {
+        '에너지 요구 단계': [pal.atp, 'ATP 2개가 포도당에 인산기를 붙여요(투자).'],
+        '포도당 쪼개기': [pal.carbon, '포도당 C6이 C3 두 개로 쪼개져요. CO₂는 없어요.'],
+        '에너지 방출 단계': [pal.nad, 'NAD⁺ 2개가 NADH 2개가 되고, ATP 4개가 생겨요.'],
+        '미토콘드리아로 이동': [pal.mem, '피루브산 2개가 미토콘드리아 기질로 들어가요.'],
+        '피루브산 산화': [pal.oxy, '탄소 1개씩 CO₂로, 전자쌍은 NADH로, C2는 CoA와 붙어요.'],
+        '시트르산 회로': [pal.fad, '아세틸-CoA 2개가 회로에 들어가 탄소가 모두 CO₂로 나가요.']
+      }[p[2]];
+      return {
+        tileTitle: '포도당 1분자 기준 누계',
+        tiles: [{ v: c.co2, name: 'CO₂' }, { v: c.nadh, name: 'NADH' }, { v: c.fadh, name: 'FADH₂' }, { v: sgn(c.atp), name: 'ATP (순)' }],
+        tileNote: '남은 포도당 탄소 ' + c.carbon + '개 · 쓴 ATP ' + c.used + ' · 만든 ATP ' + c.made + '. 해당과정·회로의 ATP는 기질 수준 인산화로 만들어요.',
+        events: [{ c: ev[0], text: p[1] + ': ' + ev[1] }],
+        legendItems: legendItems,
+        scaleNote: '노란 점 한 쌍 = 전자 2개예요. 포도당 1분자의 전자쌍 12개가 NADH 10개와 FADH₂ 2개에 실려요. 해당과정 중간물질은 생략했어요.'
+      };
+    }
+    const k = H.turnOf(f), t = f - 10 * k, c = H.cycleCount(f);
+    const cev = {
+      '아세틸기 받기': [pal.coa, '옥살아세트산(C4) + 아세틸기(C2) → 시트르산(C6)'],
+      'CO₂ 방출': [pal.oxy, '탄소 2개가 CO₂로 떨어지며 C6 → C5 → C4가 돼요(교과서 보충).'],
+      '전자 싣기': [pal.nad, 'ATP 1개가 생기고, 남은 전자가 FADH₂·NADH에 실려요.'],
+      '옥살아세트산 재생': [pal.fad, '옥살아세트산(C4)이 다시 만들어져 다음 아세틸기를 받아요.']
+    }[H.cyclePh(t)];
+    return {
+      tileTitle: '회로 누계 (' + (k + 1) + '바퀴째)',
+      tiles: [{ v: c.co2, name: 'CO₂' }, { v: c.nadh, name: 'NADH' }, { v: c.fadh, name: 'FADH₂' }, { v: c.atp, name: 'ATP' }],
+      tileNote: '한 바퀴 = CO₂ 2, NADH 3, FADH₂ 1, ATP 1이에요. 포도당 1분자는 두 바퀴라 CO₂ 4, NADH 6, FADH₂ 2, ATP 2이고, 해당과정(NADH 2, ATP 2)과 피루브산 산화(CO₂ 2, NADH 2)까지 더하면 CO₂ 6, NADH 10, FADH₂ 2, ATP 4예요.',
+      events: [{ c: cev[0], text: cev[1] }],
+      legendItems: legendItems,
+      scaleNote: '노란 점은 아세틸기의 전자쌍만 그렸어요(4쌍 → NADH 3 + FADH₂ 1). 회로 중간물질 이름은 수업 범위가 아니라 C5·C4 화합물로만 적었어요.'
+    };
+  }
+
+  // ================= 공통 셸: 아래는 주제와 무관해요. 고치지 않아요 =================
+  constructor(...args) {
+    super(...args);
+    let reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    let narrow = false;
+    try { narrow = window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) {}
+    let saved = null;
+    try { saved = window.localStorage.getItem('od-theme'); } catch (e) {}
+    const PANEL_W = { left: { min: 220, max: 480 }, right: { min: 280, max: 720 } };
+    let widths = {};
+    try { widths = JSON.parse(window.localStorage.getItem('interactive-panel-w')) || {}; } catch (e) {}
+    const okW = (side) => { const v = widths[side]; return typeof v === 'number' && v >= PANEL_W[side].min && v <= PANEL_W[side].max ? v : null; };
+    this.T = this.topic();
+    this.state = Object.assign({
+      mode: this.T.MODES[0].key, f: 0, playing: false, speed: 1, step: -1, spin: !reduce,
+      theme: (saved === 'light' || saved === 'dark') ? saved : (this.systemDark() ? 'dark' : 'light'),
+      // leftOpen/rightOpen: docked panels on wide screens; drawer: the one open drawer on narrow screens
+      leftOpen: true, rightOpen: true, drawer: null, narrow: narrow,
+      // leftW/rightW: user-set docked widths in px (null = default); resizing: a handle is being dragged
+      leftW: okW('left'), rightW: okW('right'), resizing: false
+    }, this.extraState());
+    this.reduceMotion = reduce;
+    this.K = {
+      PANEL_W: PANEL_W, PANEL_W_KEY: 'interactive-panel-w', PANEL_DEFAULT: { left: 320, right: 400 },
+      THEMES: {
+        light: { bg: '#ffffff', surface: '#f7f8fa', ink: '#111111', ink2: '#6b7280', line: '#d9dee7', accent: '#1677ff', accentInk: '#1b64da', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#b54708', prof: '#6941c6', supp: '#067647', danger: '#d92d20', scroll: '#c9d0db', scrollHover: '#9aa3b2' },
+        dark: { bg: '#17171c', surface: '#212128', ink: '#f2f4f6', ink2: '#a3abb8', line: '#34353d', accent: '#3182f6', accentInk: '#6ea4ff', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#f5a15c', prof: '#b69cff', supp: '#5fd39a', danger: '#ff6b61', scroll: '#3f414b', scrollHover: '#5b5e6a' }
+      }
+    };
+    this.cam = Object.assign({}, this.modeDef().cam);
+    this.sim = { f: 0, cx: 0 };
+    this.pointer = { x: -1, y: -1, inside: false, drag: false, lx: 0, ly: 0 };
+    this.colorCache = {};
+    this._tick = (t) => this.tick(t);
+    this._canvasRef = (el) => this.attachCanvas(el);
+    this.handles = {};
+    this._handleRefL = (el) => this.attachHandle('left', el);
+    this._handleRefR = (el) => this.attachHandle('right', el);
+  }
+
+  componentWillUnmount() {
+    this.attachCanvas(null);
+    this.attachHandle('left', null);
+    this.attachHandle('right', null);
+  }
+
+  modeDef(key) {
+    const k = key || this.state.mode;
+    return this.T.MODES.find((m) => m.key === k) || this.T.MODES[0];
+  }
+  systemDark() {
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; }
+  }
+  isNarrow() {
+    try { return window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) { return false; }
+  }
+  syncBreakpoint() { this.setState({ narrow: this.isNarrow(), drawer: null }); }
+  // In drawer mode only one panel is open at a time.
+  togglePanel(side) {
+    const st = this.state;
+    if (st.narrow) this.setState({ drawer: st.drawer === side ? null : side });
+    else if (side === 'left') this.setState({ leftOpen: !st.leftOpen });
+    else this.setState({ rightOpen: !st.rightOpen });
+  }
+  // Docked panel width: the canvas column always keeps at least 400px.
+  panelMax(side) {
+    const lim = this.K.PANEL_W[side], other = side === 'left' ? 'right' : 'left', st = this.state;
+    const h = this.handles[other];
+    const otherOpen = other === 'left' ? st.leftOpen : st.rightOpen;
+    const otherW = !otherOpen ? 0 : h ? h.el.parentElement.getBoundingClientRect().width
+      : (st[other + 'W'] || this.K.PANEL_DEFAULT[other]);
+    return Math.max(lim.min, Math.min(lim.max, (window.innerWidth || 1440) - otherW - 400));
+  }
+  setPanelWidth(side, px, save) {
+    const v = Math.round(Math.min(Math.max(px, this.K.PANEL_W[side].min), this.panelMax(side)));
+    this.setState({ [side + 'W']: v });
+    if (save) this.savePanelWidths(side, v);
+  }
+  resetPanelWidth(side) {
+    this.setState({ [side + 'W']: null });
+    this.savePanelWidths(side, null);
+  }
+  savePanelWidths(side, v) {
+    try {
+      const key = this.K.PANEL_W_KEY;
+      let w = {};
+      try { w = JSON.parse(window.localStorage.getItem(key)) || {}; } catch (e) {}
+      if (v == null) delete w[side]; else w[side] = v;
+      window.localStorage.setItem(key, JSON.stringify(w));
+    } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ }
+  }
+  // Re-fit user widths when the window shrinks (not saved).
+  refitPanels() {
+    ['left', 'right'].forEach((side) => {
+      const w = this.state[side + 'W'];
+      if (w != null && w > this.panelMax(side)) this.setPanelWidth(side, w, false);
+    });
+  }
+  attachHandle(side, el) {
+    const old = this.handles[side];
+    if (old && old.el === el) return;
+    if (old) {
+      Object.keys(old.on).forEach((ev) => old.el.removeEventListener(ev, old.on[ev]));
+      delete this.handles[side];
+      if (!Object.keys(this.handles).length) window.removeEventListener('resize', this._refit);
+    }
+    if (!el) return;
+    const dir = side === 'left' ? 1 : -1;
+    const width = () => el.parentElement.getBoundingClientRect().width;
+    let drag = null;
+    const on = {
+      pointerdown: (e) => {
+        if (this.state.narrow || e.button !== 0) return;
+        e.preventDefault();
+        drag = { x: e.clientX, w: width() };
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        this.setState({ resizing: true });
+      },
+      pointermove: (e) => { if (drag) this.setPanelWidth(side, drag.w + dir * (e.clientX - drag.x), false); },
+      pointerup: () => {
+        if (!drag) return;
+        drag = null;
+        this.setState({ resizing: false });
+        this.setPanelWidth(side, width(), true);
+      },
+      dblclick: () => this.resetPanelWidth(side),
+      keydown: (e) => {
+        const step = e.shiftKey ? 64 : 16;
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          e.preventDefault(); e.stopPropagation();
+          this.setPanelWidth(side, width() + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+        } else if (e.key === 'Home') { e.preventDefault(); e.stopPropagation(); this.resetPanelWidth(side); }
+      }
+    };
+    on.pointercancel = on.pointerup;
+    Object.keys(on).forEach((ev) => el.addEventListener(ev, on[ev]));
+    if (!Object.keys(this.handles).length) {
+      this._refit = this._refit || (() => this.refitPanels());
+      window.addEventListener('resize', this._refit);
+    }
+    this.handles[side] = { el: el, on: on };
+  }
+  textTone(hex) { return this.state.theme === 'light' ? this.mix(hex, '#000000', 0.4) : hex; }
+  pal() { return this.T.PAL[this.state.theme] || this.T.PAL.dark; }
+  setTheme(t) {
+    this.setState({ theme: t });
+    try {
+      if ((t === 'dark') === this.systemDark()) window.localStorage.removeItem('od-theme');
+      else window.localStorage.setItem('od-theme', t);
+    } catch (e) {}
+  }
+
+  attachCanvas(el) {
+    if (this.canvas === el) return;
+    if (this.canvas) {
+      const c = this.canvas;
+      c.removeEventListener('pointerdown', this._pd);
+      c.removeEventListener('pointermove', this._pm);
+      c.removeEventListener('pointerup', this._pu);
+      c.removeEventListener('pointercancel', this._pu);
+      c.removeEventListener('pointerleave', this._pl);
+      cancelAnimationFrame(this.raf);
+      try { this._mq.removeEventListener('change', this._mqH); } catch (err) {}
+    }
+    this.canvas = el || null;
+    if (!el) return;
+    this.ctx = el.getContext('2d');
+    const p = this.pointer;
+    this._pd = (e) => {
+      if (!this.modeDef().rotatable) return;
+      p.drag = true; p.lx = e.clientX; p.ly = e.clientY;
+      try { el.setPointerCapture(e.pointerId); } catch (err) {}
+      el.style.cursor = 'grabbing';
+    };
+    this._pm = (e) => {
+      const r = el.getBoundingClientRect();
+      p.x = e.clientX - r.left; p.y = e.clientY - r.top; p.inside = true;
+      if (p.drag && this.modeDef().rotatable) {
+        this.cam.yaw += (e.clientX - p.lx) * 0.008;
+        this.cam.pitch = Math.max(-1.45, Math.min(1.45, this.cam.pitch + (e.clientY - p.ly) * 0.008));
+        p.lx = e.clientX; p.ly = e.clientY;
+      }
+    };
+    this._pu = () => { p.drag = false; el.style.cursor = ''; };
+    this._pl = () => { p.inside = false; };
+    el.addEventListener('pointerdown', this._pd);
+    el.addEventListener('pointermove', this._pm);
+    el.addEventListener('pointerup', this._pu);
+    el.addEventListener('pointercancel', this._pu);
+    el.addEventListener('pointerleave', this._pl);
+    try {
+      this._mq = window.matchMedia('(max-width: 1023.98px)');
+      this._mqH = () => this.syncBreakpoint();
+      this._mq.addEventListener('change', this._mqH);
+    } catch (err) {}
+    this.last = 0;
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  tick(t) {
+    if (!this.canvas) return;
+    const dt = this.last ? Math.min(0.05, (t - this.last) / 1000) : 0;
+    this.last = t;
+    const st = this.state, m = this.modeDef(), pb = m.playback;
+    if (m.autoSpin && st.spin && !this.pointer.drag) this.cam.yaw += dt * 0.3;
+    if (pb && st.playing) {
+      this.sim.f = Math.min(pb.fmax, this.sim.f + dt * pb.rate * st.speed);
+      if (this.sim.f >= pb.fmax) this.setState({ playing: false, f: this.sim.f });
+      else if (t - (this.lastPush || 0) > 120) { this.lastPush = t; this.setState({ f: this.sim.f }); }
+    }
+    // a broken scene keeps the page alive but is reported once for the browser check
+    try { this.draw(dt, t); } catch (err) { if (!this.drawErr) { this.drawErr = true; console.error(err); } }
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  // ---------- math helpers (장면에서 써도 돼요) ----------
+  lerp(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+  sm(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+  rgb(hex) { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  mix(hex, to, amt) {
+    const a = this.rgb(hex), b = this.rgb(to);
+    return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * amt) + ',' + Math.round(a[1] + (b[1] - a[1]) * amt) + ',' + Math.round(a[2] + (b[2] - a[2]) * amt) + ')';
+  }
+  rgba(hex, al) { const a = this.rgb(hex); return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + al + ')'; }
+  shades(hex) {
+    let s = this.colorCache[hex];
+    if (!s) { s = { hi: this.mix(hex, '#FFFFFF', 0.55), mid: hex, lo: this.mix(hex, '#000000', 0.55) }; this.colorCache[hex] = s; }
+    return s;
+  }
+  proj(p, V) {
+    const x = p[0] - V.cx, y = p[1], z = p[2];
+    const x1 = x * V.cy + z * V.sy, z1 = -x * V.sy + z * V.cy;
+    const y2 = y * V.cp - z1 * V.sp, z2 = y * V.sp + z1 * V.cp;
+    const s = V.F / Math.max(2, V.D - z2);
+    return [V.ox + x1 * s, V.oy - y2 * s, z2, s];
+  }
+
+  // ---------- drawing ----------
+  draw(dt, now) {
+    const el = this.canvas, ctx = this.ctx, st = this.state, m = this.modeDef();
+    const dpr = window.devicePixelRatio || 1;
+    const W = el.clientWidth, H = el.clientHeight;
+    if (!W || !H) return;
+    if (el.width !== Math.round(W * dpr) || el.height !== Math.round(H * dpr)) { el.width = Math.round(W * dpr); el.height = Math.round(H * dpr); }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const pal = this.pal();
+    ctx.fillStyle = pal.bg; ctx.fillRect(0, 0, W, H);
+
+    const I = [], O = [];
+    this.buildScene(st.mode, I, O);
+    const scale = Math.min(W / m.fit[0], H / m.fit[1]), D = m.D, z = this.cam.zoom;
+    const V = {
+      cx: this.sim.cx, cy: Math.cos(this.cam.yaw), sy: Math.sin(this.cam.yaw), cp: Math.cos(this.cam.pitch), sp: Math.sin(this.cam.pitch),
+      F: scale * z * D, D: D, ox: W / 2, oy: H / 2 - (m.playback ? 20 : 0)
+    };
+    let zmin = Infinity, zmax = -Infinity;
+    for (const it of I) {
+      it.A = this.proj(it.p, V);
+      if (it.q) { it.B = this.proj(it.q, V); it.z = (it.A[2] + it.B[2]) / 2; } else it.z = it.A[2];
+      if (it.z < zmin) zmin = it.z;
+      if (it.z > zmax) zmax = it.z;
+    }
+    I.sort((a, b) => a.z - b.z);
+    // depth fog; a flat scene (all items at one depth) is drawn without it
+    const span = zmax - zmin;
+    for (const it of I) {
+      const fog = span < 0.01 ? 1 : 0.42 + 0.58 * ((it.z - zmin) / span);
+      ctx.globalAlpha = Math.max(0, (it.a == null ? 1 : it.a) * fog);
+      if (ctx.globalAlpha < 0.01) continue;
+      const x = it.A[0], y = it.A[1], s = it.A[3];
+      if (it.k === 0) {
+        const R = it.r * s;
+        if (R < 0.4) continue;
+        if (it.flat) { ctx.fillStyle = it.c; ctx.beginPath(); ctx.arc(x, y, Math.max(1.3, R), 0, 6.2832); ctx.fill(); }
+        else {
+          const sh = this.shades(it.c);
+          const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+          g.addColorStop(0, sh.hi); g.addColorStop(0.5, sh.mid); g.addColorStop(1, sh.lo);
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        }
+      } else if (it.k === 1) {
+        const lw = Math.max(1, it.w * (s + it.B[3]) / 2);
+        ctx.lineCap = it.flat ? 'butt' : 'round';
+        if (it.rod) {
+          ctx.strokeStyle = this.shades(it.c).lo; ctx.lineWidth = lw + 2;
+          ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+        }
+        ctx.strokeStyle = it.c; ctx.lineWidth = lw;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+      } else if (it.k === 3) {
+        const fs = Math.max(8, Math.min(14, it.size * s / (scale * z) * 1.05));
+        ctx.font = '700 ' + fs + 'px "Pretendard", system-ui, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = it.c; ctx.fillText(it.text, x, y + 0.5);
+      } else if (it.k === 4) {
+        const ang = Math.atan2(it.B[1] - y, it.B[0] - x), mx = (x + it.B[0]) / 2, my = (y + it.B[1]) / 2, r = 6;
+        ctx.fillStyle = it.c; ctx.beginPath();
+        ctx.moveTo(mx + Math.cos(ang) * r, my + Math.sin(ang) * r);
+        ctx.lineTo(mx + Math.cos(ang + 2.5) * r, my + Math.sin(ang + 2.5) * r);
+        ctx.lineTo(mx + Math.cos(ang - 2.5) * r, my + Math.sin(ang - 2.5) * r);
+        ctx.closePath(); ctx.fill();
+      } else if (it.k === 5) {
+        // lit translucent sphere, highlight up-left like the solid spheres
+        const R = it.r * s, ba = pal.blobAlpha == null ? 0.3 : pal.blobAlpha;
+        const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+        g.addColorStop(0, 'rgba(255,255,255,0.55)'); g.addColorStop(0.3, this.rgba(it.c, Math.min(1, ba + 0.15))); g.addColorStop(1, this.rgba(it.c, 0.18));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        ctx.strokeStyle = it.c; ctx.lineWidth = it.focus ? 3 : 1.5; ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+    for (const o of O) this.drawOverlay(o, V, now);
+  }
+
+  drawOverlay(o, V, now) {
+    const ctx = this.ctx, A = this.proj(o.p, V), pal = this.pal();
+    if (o.t === 'ring') {
+      const r = Math.max(6, 0.32 * A[3]) * (1 + (this.reduceMotion ? 0 : 0.15 * Math.sin((now || 0) / 160)));
+      ctx.globalAlpha = 1; ctx.strokeStyle = pal.ring; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(A[0], A[1], r, 0, 6.2832); ctx.stroke();
+      ctx.font = '600 11px "Pretendard", system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = pal.ring; ctx.fillText(o.text, A[0], A[1] + r + 10);
+      return;
+    }
+    const size = o.size || 12, x = A[0] + (o.dx || 0), y = A[1] + (o.dy || 0);
+    ctx.font = '600 ' + size + 'px "Pretendard", system-ui, sans-serif';
+    const tw = ctx.measureText(o.text).width, w = tw + 14, h = size + 10;
+    ctx.globalAlpha = o.a == null ? 1 : o.a;
+    if (o.lead) {
+      ctx.strokeStyle = this.rgba(o.c, 0.6); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(x, y); ctx.stroke();
+    }
+    ctx.fillStyle = pal.labelBg;
+    ctx.strokeStyle = this.rgba(o.c, 0.55); ctx.lineWidth = 1;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x - w / 2, y - h / 2, w, h, 6); else ctx.rect(x - w / 2, y - h / 2, w, h);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = pal.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(o.text, x, y + 0.5);
+    ctx.globalAlpha = 1;
+  }
+
+  setMode(mode) {
+    this.cam = Object.assign({}, this.modeDef(mode).cam);
+    this.sim.f = 0;
+    this.pointer.drag = false;
+    this.setState({ mode: mode, f: 0, playing: false, step: -1 });
+  }
+
+  pickStep(i) {
+    const s = (this.T.STEPS || [])[i];
+    if (!s) return;
+    if (s.mode !== this.state.mode) this.setMode(s.mode);
+    if (s.f != null) this.sim.f = s.f;
+    this.setState({ f: this.sim.f, playing: false, step: i });
+  }
+
+  renderVals() {
+    const st = this.state, T = this.T, m = this.modeDef(), pb = m.playback;
+    const tg = T.TOGGLES ? (Array.isArray(T.TOGGLES) ? T.TOGGLES : (T.TOGGLES[st.mode] || [])) : [];
+    const togDefs = tg.concat(m.autoSpin ? [['spin', '자동 회전']] : []);
+    const toggles = togDefs.map((d) => ({
+      label: d[1], pressed: st[d[0]] ? 'true' : 'false',
+      toggle: () => { const o = {}; o[d[0]] = !st[d[0]]; this.setState(o); }
+    }));
+    const STEPS = T.STEPS || [];
+    const steps = STEPS.map((s, i) => ({ s: s, i: i })).filter((x) => x.s.mode === st.mode).map((x, k) => ({
+      num: k + 1, title: x.s.title, who: x.s.who, c: x.s.c, pressed: st.step === x.i ? 'true' : 'false',
+      pick: () => this.pickStep(x.i)
+    }));
+    const speeds = [0.5, 1, 2].map((v) => ({
+      label: v + '×', pressed: st.speed === v ? 'true' : 'false',
+      pick: () => this.setState({ speed: v })
+    }));
+    const is = {};
+    T.MODES.forEach((d) => { is[d.key] = d.key === st.mode; });
+    const f = st.f;
+    const isDark = st.theme === 'dark';
+    const leftOn = st.narrow ? st.drawer === 'left' : st.leftOpen, rightOn = st.narrow ? st.drawer === 'right' : st.rightOpen;
+    return Object.assign({
+      th: this.K.THEMES[st.theme], isDark: isDark, isLight: !isDark,
+      themeLabel: isDark ? '라이트 모드로 전환' : '다크 모드로 전환',
+      toggleTheme: () => this.setTheme(isDark ? 'light' : 'dark'),
+      canvasRef: this._canvasRef, canvasCls: m.rotatable ? '' : 'is-fixed',
+      hasModes: T.MODES.length > 1, is: is,
+      modes: T.MODES.map((d) => ({ label: d.label, pressed: d.key === st.mode ? 'true' : 'false', pick: () => { if (d.key !== this.state.mode) this.setMode(d.key); } })),
+      leftCls: leftOn ? 'is-open' : '', rightCls: rightOn ? 'is-open' : '',
+      leftExpanded: leftOn ? 'true' : 'false', rightExpanded: rightOn ? 'true' : 'false',
+      scrimCls: (st.narrow && st.drawer) ? 'is-on' : '',
+      toggleLeft: () => this.togglePanel('left'),
+      toggleRight: () => this.togglePanel('right'),
+      closePanels: () => this.setState({ drawer: null }),
+      layoutStyle: ((st.leftW ? '--pl-user: ' + st.leftW + 'px; ' : '') + (st.rightW ? '--pr-user: ' + st.rightW + 'px;' : '')).trim(),
+      layoutCls: st.resizing ? 'is-resizing' : '',
+      leftWNow: st.leftW ? String(st.leftW) : '', rightWNow: st.rightW ? String(st.rightW) : '',
+      leftHandleRef: this._handleRefL, rightHandleRef: this._handleRefR,
+      onKey: (e) => { if (e.key === 'Escape' && this.state.narrow && this.state.drawer) this.setState({ drawer: null }); },
+      hasToggles: toggles.length > 0, toggles: toggles,
+      hasSteps: steps.length > 0, steps: steps,
+      hasStep: st.step >= 0 && st.step < STEPS.length, stepDetail: st.step >= 0 && STEPS[st.step] ? STEPS[st.step].text : '',
+      mistakes: (T.MISTAKES && T.MISTAKES[st.mode]) || [],
+      canvasLabel: m.canvasLabel(f),
+      zoomIn: () => { this.cam.zoom = Math.min(3, this.cam.zoom * 1.2); },
+      zoomOut: () => { this.cam.zoom = Math.max(0.5, this.cam.zoom / 1.2); },
+      resetView: () => { this.cam = Object.assign({}, m.cam); },
+      hasPlayback: !!pb, isPlaying: st.playing, notPlaying: !st.playing, playLabel: st.playing ? '일시정지' : '재생',
+      togglePlay: () => {
+        if (!pb) return;
+        if (!st.playing && this.sim.f >= pb.fmax) this.sim.f = 0;
+        this.setState({ playing: !st.playing, step: -1, f: this.sim.f });
+      },
+      fInt: Math.round(f * 10), fLabel: pb ? pb.label(f) : '', fMax10: pb ? Math.round(pb.fmax * 10) : 0,
+      onScrub: (e) => { const v = Number(e.target.value) / 10; this.sim.f = v; this.setState({ f: v, playing: false, step: -1 }); },
+      speeds: speeds
+    }, this.extraVals(st));
+  }
+}
+mountDC(Component);
+</script>
+</body>
+</html>
