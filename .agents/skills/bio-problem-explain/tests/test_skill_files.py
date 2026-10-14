@@ -101,3 +101,7 @@ def test_skill_documents_forecast_pack_layout():
     for needle in ('웹과제예상/<N>장/.pack/v<K>/pack.json','.pack/문제해설_<N>장_웹과제예상_v<K>.md',
                    '.pack/figures_문제해설_<N>장_웹과제예상_v<K>/','.pack/자료_문제해설_<N>장_웹과제예상_v<K>/'):
         assert needle in text,needle
+
+def test_references_use_forecast_pack_layout():
+    for p in sorted((S/'references').glob('*.md')):
+        assert 'src/v<K>' not in p.read_text(encoding='utf-8'),p.name
