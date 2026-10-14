@@ -128,7 +128,8 @@ def copy_figures(run_dir: Path, out_dir: Path, range_: str) -> int:
     return count
 
 
-PACK_RECORDS = ("manifest.json", "question-audit.md", "key-check.md", "variants.md", "problem-pages.txt")
+PACK_RECORDS = ("manifest.json", "question-audit.md", "key-check.md", "variants.md", "problem-pages.txt",
+                "note-feedback-audit.md")
 APPEND_ON_AUGMENT = ("question-audit.md", "key-check.md", "variants.md")
 
 
@@ -149,6 +150,8 @@ def save_pack_records(run_dir: Path | str, out_dir: Path | str, mode: str, added
     pack.mkdir(parents=True, exist_ok=True)
     today = today or date.today().isoformat()
     for name in PACK_RECORDS:
+        if mode == "augment" and name == "note-feedback-audit.md":
+            continue  # augment는 본문을 바꾸지 않으므로 새 본문 검토로 덮어쓰지 않는다.
         src, dst = run_dir / name, pack / name
         if not src.is_file():
             continue

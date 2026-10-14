@@ -32,6 +32,7 @@ EOF
   ```
   전용 venv가 없으면 `python3 -m venv --system-site-packages .venv-question-bank && .venv-question-bank/bin/python -m pip install 'jsonschema>=4.18,<5'`로 만든다. 검증이 실패해도 멈추지 않는다. 실패한 필드와 source를 보고서 "미해결"에 적고 문항은 그대로 쓴다.
 - `questions.json`은 없고 `웹과제/N장/raw/` 캡처만 있으면 **등록되지 않은 자료**다. 보고서에 그렇게 적는다("웹 자료 없음"이라고 쓰지 않는다). 이 경우 partA는 없다.
+- partA 제외는 본문 피드백 제외가 아니다. `웹과제/N장/note-feedback.md`가 있으면 `references/note-feedback.md`대로 실제 문항의 판별 기준을 범위·토픽에 연결한다. 공식 답 미확인과 정본 미등록 상태는 유지한다.
 - 목록 보기(`CH`는 장 번호 하나):
 ```bash
 REPO=… CH="1" python3 - <<'EOF'

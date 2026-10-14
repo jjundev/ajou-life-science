@@ -87,6 +87,7 @@ EOF
    - `<MMDD 생명.md>`: 0단계에서 찾은 실제 STT 파일 이름(`0903_생명.md`처럼 밑줄인 것도 있다).
    - `<YYYY-MM-DD>`: 연도는 이번 학기 연도(오늘 날짜 기준), 월·일은 `<MMDD>`.
 3. 에이전트가 도는 동안 메인 에이전트는 `references/problem-selection.md`의 1절(기출 합본 렌더링)과 2절(웹과제 bank 확인·검증)을 한다.
+4. `references/note-feedback.md`대로 이번 장의 `웹과제/<N>장/note-feedback.md`를 읽고 실제 문항별 판별 기준을 확인한다. bank 미등록·partA 제외여도 본문 피드백을 건너뛰지 않는다. 자료가 없으면 미작성 상태를 보고한다.
 
 ### 2. manifest
 - 요약들의 슬라이드 대조표, 용어 목록, 혼동 지점으로 `RUN/manifest.json`을 쓴다. 규칙은 `references/manifest-guide.md`에 있다.
@@ -94,6 +95,7 @@ EOF
   - 장의 모든 문항 분류는 `RUN/question-audit.md`, 정답 대조는 `RUN/key-check.md`, 문항별 원문 위치는 `RUN/problem-pages.txt`에 적는다.
   - 포함 문항은 **전부** manifest `problems`에 넣는다.
   - 변형 연습(partC)은 `references/problem-selection.md` 6절과 `references/webquiz-style.md`의 유형 할당으로 설계해 포함 문항 뒤에 넣는다(`RUN/variants.md`).
+- 본문 피드백은 `references/note-feedback.md`대로 `RUN/note-feedback-audit.md`에 **카드 포함 여부와 독립적으로** 모든 ID의 범위·토픽·계획 레이어를 적는다. 판별 용어는 관련 토픽에, 추가 사실은 출처 있는 supp에 연결한다. 이전 수업 링크·미학습·불확실도 행을 남긴다.
 - 검증: `python3 "$SKILL/scripts/manifest.py" "$RUN/manifest.json"` 결과가 `OK`여야 한다.
 
 설계표의 기본/심화 목표와 실개수를 `review_intro`에 짧게 적는다(예: “변형 연습은 기본 8개·심화 2개예요.”). 기존 카드 번호와 part 순서는 유지하고 난이도 배지는 추가하지 않는다. 보강에서는 기존 partC와 새 변형을 합쳐 실개수를 집계하되, 기존 문항을 배합 때문에 고치거나 제거하지 않는다. 새 문항 블라인드 검사만으로 기존 미검토 난이도가 검증됐다고 쓰지 않는다.
@@ -101,6 +103,7 @@ EOF
 ### 3. 작성
 - 섹션마다 작성자 1명을 띄운다. 브리프는 `references/content-rules.md`, 위젯 규칙은 `references/widget-rules.md`에 있다.
 - 작성자 브리프에 `references/content-rules.md`의 「어려운 개념에 한정한 동기·인과 설명」 기준을 반영한다. 해당 토픽만 필요성·원리·시작 조건을 연결하고 단순 토픽의 과잉 설명은 피한다. 작성자 자기 검사에는 이 기준을 포함하며 `lite`에서도 수행한다.
+- 섹션 작성자에게 `RUN/note-feedback-audit.md` 중 해당 토픽의 행과 원천 피드백·근거를 전달한다. 포함 문항 목록에 없어도 필요한 판별 기준을 가르친다. 작성 후 실제 본문 문장·토픽·적용 상태를 표에 채운다(`references/note-feedback.md`).
 - 카드 작성자는 카드 10개당 1명이다(`p1`–`p10`, `p11`–`p20`, …). 브리프는 `references/card-rules.md`에 있다.
 - 모두 **한 메시지에서 병렬로** 띄운다. 모델은 opus, `lite`이면 sonnet이다.
 - 브리프의 `<…>` 자리는 실제 값으로 채운다: 경로, id, 금지어 목록(`<forbidden 목록>`), 예고 토픽 id(`<preview_topic>`), 섹션 작성자에게 필요한 교과서 쪽(`<쪽>`), manifest `links` 중 그 섹션 토픽에 속한 것(`<이 섹션의 links 목록>`), `question-audit.md`에서 anchor가 그 섹션 토픽인 포함 문항과 필요한 개념(`<이 섹션 토픽이 받쳐야 할 문항>`), 카드 작성자가 맡은 id(`<담당 카드 id>`).
@@ -144,6 +147,7 @@ python3 "$SKILL/scripts/assemble.py" --run "$RUN" --out "$REPO/복습노트/<ran
 ```
 조립기는 `RUN/figures/`의 카드 그림을 `복습노트/<range>/.assets/figures_<range>/`로 복사한다. 카드의 `<img src>`는 `.assets/figures_<range>/pN.png`다.
 조립기는 `RUN`의 `manifest.json`·`question-audit.md`·`key-check.md`·`variants.md`·`problem-pages.txt`를 `복습노트/<range>/.pack/`에 복사하고 `.pack/log.md`에 실행 한 줄을 더한다. `.pack/`은 git으로 추적한다(금지어 목록과 감사표를 다음 보강에서 다시 쓴다). 내부 기록이라 STT 시각이 있어도 된다.
+full 조립에서는 `RUN/note-feedback-audit.md`가 있으면 `.pack/`에 함께 복사한다. 검토 후 최종 표를 저장하고 마지막 조립을 다시 수행하여 실제 적용·보류 결과를 보존한다.
 
 ### 5. 기계 검사
 객관식은 `references/content-rules.md`의 보기·해설 식별자 규칙을 따른다. 조립 시 채점 모델이 자동 내장되며 연결 오류는 카드 원본에서 해결한다. 아래 검사기는 내장 채점 데이터와 원본의 일치도 검사한다. 브라우저 검증 때 정답·오답 선택, 내 선택·정답만 자동 펼침, 모든 보기별 해설의 개별 접기·펼치기, 다시 풀기와 선택 복원을 함께 확인한다. 선택·푼 기록은 `sessionStorage`라 새로고침·뒤로가기엔 남고 새 탭에서 다시 열면 초기화돼야 한다(`localStorage` 사용 금지). 마지막 문제 화면의 **JSON 내보내기** 버튼(폴더 선택창 저장, 취소·거부 처리)과 화면을 벗어날 때의 스냅샷 갱신, 풀이 패널의 **애매함으로 표시** 토글(JSON `unsure`)도 함께 확인한다. 이 토글은 정답을 고른 뒤에만 보이고 오답·출제 모호 문항에서는 숨겨져야 한다.
@@ -157,6 +161,7 @@ python3 "$SKILL/scripts/check_html.py" --manifest "$RUN/manifest.json" --note "$
 - 고친 뒤 4단계부터 다시 한다. 최대 2회까지이며, 그래도 남으면 "미해결"로 보고한다.
 
 ### 6. 리뷰
+- 카드 검사와 별도로 `references/review-prompt.md`의 **본문 피드백 검토 (항상, lite 포함)**를 수행한다. `RUN/note-feedback-audit.md`의 전체 ID를 본문 문장과 대조하고, 누락은 섹션을 고쳐 재조립·재검사한다. 완료 후 최종 감사표를 `.pack/`에 저장한다. 원본 채점 미확인은 그대로 유지한다.
 - 브리프는 `references/review-prompt.md`에 있다. 두 리뷰어를 한 메시지에서 병렬로 띄운다.
   - **블라인드 풀이 검사**(항상, `lite` 포함): `references/review-prompt.md`의 "블라인드 풀이 검사" 스니펫으로 `RUN/work/blind-<range>.md`를 만든 뒤 리뷰어 1명에게 정리노트와 이 사본만 준다.
   - **일반 리뷰**(`lite`면 생략): 리뷰어 1명.
@@ -199,6 +204,7 @@ python3 "$SKILL/scripts/html2md.py" "$REPO/복습노트/<range>/<정리노트>.h
 - 보류·범위 밖 문항: 번호와 사유를 한 줄씩(보고서만 읽어도 분류를 알 수 있게; RUN은 세션이 끝나면 사라질 수 있다)
 - 답안지 오류: 기출 3강 12 (인쇄 (2) → 판단 (3)) … (없으면 "없음")
 - 블라인드 검사: N/N 풀림 (고친 토픽: …)
+- 본문 피드백: 대상 N · 본문 반영 N · 기존 설명 충분 N · 이전 노트 연결 N · 미학습 보류 N · 판독/근거 불확실 N — .pack/note-feedback-audit.md (피드백 미작성은 별도 보고)
 - 스킬이 정한 사항: slug, 섹션 구성, 위젯, 뺀 내용과 이유
 - 장 마감: N장 — 보류 재분류 요약 (장이 끝나지 않았으면 "해당 없음")
 - 문제설명: 발행/보류 · N문항 · HTML·MD · EXPLAIN_RUN · 백업 · 네 검토 결과 · 보류 이유
@@ -217,12 +223,14 @@ python3 "$SKILL/scripts/html2md.py" "$REPO/복습노트/<range>/<정리노트>.h
 3. 그 장의 **남은 보류 문항 전부**를 다시 분류한다: `시험 범위 확인됨 / 보충 학습 권장 / 제외 근거 있음 / 범위 불명`. 사유와 근거(강의계획서, 수업 발언 요지)를 함께 적되 학생용 장 마감 파일에 STT 녹음 시각은 넣지 않는다. 내부 감사 기록에는 타임스탬프를 남겨 대조한다. 생략을 곧바로 시험 제외로 바꾸지 않는다.
 4. 시험 범위가 확인됐는지, 불명인지.
 5. 변형 연습의 풀이 점검 결과(블라인드 검사에서 틀렸거나 근거 없던 변형).
+6. `웹과제/<N>장/note-feedback.md`의 전체 ID를 회차별 `.pack/note-feedback-audit.md`와 대조해 실제 문항의 판별 기준이 어디서 설명되는지, 남은 보류가 무엇인지 확인한다. 등록 여부와 별개이며 카드 검사 수로 대신하지 않는다.
 
 장 마감 파일은 새 장 요약 노트가 아니다. 본문을 복제하지 않고 원천 노트의 토픽으로 링크한다.
 
 ## 보강 모드
 
 웹과제 bank는 그 장 응시 뒤에 생긴다. 이미 만든 팩을 다시 만들면 카드 번호가 바뀌어 `references/interactive-overrides.json`(카드 id 키)과 `복습노트/<range>/.assets/풀이기록/`이 엉뚱한 문항에 붙는다. 그래서 보강은 **기존 카드 번호를 그대로 두고** 복습문제만 다시 쓴다. 정리노트 HTML·MD와 `.assets/풀이기록/`은 건드리지 않는다. `RUN` 경로 약속은 위와 같다(`<scratchpad>/review-pack/<range>-augment/`).
+새 문항별 피드백을 읽어도 이 모드에서는 본문 적용 완료로 세지 않는다. 기존 `.pack/note-feedback-audit.md`를 보존하고, 본문 변경이 필요하면 전체 재생성(augment 아님) 대상으로 보고한다.
 
 **A1. 추출**
 ```bash
