@@ -63,7 +63,7 @@ def check(html_path: Path | str) -> list[str]:
     m = re.search(r"_v(\d+)\.html$", html_path.name)
     if not m:
         return [f"[checker] {html_path.name}: 파일명에 _v<K>가 없음"]
-    src = html_path.parent / "src" / f"v{m.group(1)}"
+    src = html_path.parent / build.PACK / f"v{m.group(1)}"
     repo = html_path.parents[2]
     pack = build.load_pack(src)
     source = html_path.read_text(encoding="utf-8")
@@ -71,7 +71,7 @@ def check(html_path: Path | str) -> list[str]:
 
     name, fresh = build.render(src)
     if name != html_path.name or fresh != source:
-        probs.append(f"[stale] {html_path.name}: src로 다시 빌드한 결과와 다름")
+        probs.append(f"[stale] {html_path.name}: .pack/v{pack['version']}로 다시 빌드한 결과와 다름")
 
     parsed = cards.parse_cards(source)
     graded = {cid: c for cid, c in parsed.items() if c["options"]}

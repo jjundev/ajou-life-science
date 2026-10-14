@@ -18,23 +18,23 @@ description: 생명과학 다음 웹과제(장별 퀴즈)를 예상해 복습문
 ### 1. 버전 잡기
 > `.assets/`는 숨김 폴더라 Glob·Grep 도구가 건너뛴다(0건이어도 없는 게 아니다). 안의 파일은 `복습노트/*/.assets/…`처럼 경로를 글자 그대로 쓰고, 찾을 때는 Bash의 `ls`·`find`나 Python `pathlib`를 쓴다.
 
-`python "$SKILL/scripts/build.py" --init "$REPO" <N>` → 새 `웹과제예상/<N>장/src/v<K>/`가 생긴다. 이 명령만 버전 폴더를 만든다. 기존 버전은 고치지 않는다(덮어쓰기 금지). `REPO`에 `복습노트/`가 없으면 "생명과학 저장소에서만 동작합니다"라고 알리고 멈춘다. `복습노트/*/.assets/정리노트_*.md` 중 N장을 다룬 파일이 없으면 "N장 정리노트가 없어 예상할 근거가 없습니다"라고 알리고 멈춘다(만든 빈 폴더는 지운다).
+`python "$SKILL/scripts/build.py" --init "$REPO" <N>` → 새 `웹과제예상/<N>장/.pack/v<K>/`가 생긴다. 이 명령만 버전 폴더를 만든다. 기존 버전은 고치지 않는다(덮어쓰기 금지). `REPO`에 `복습노트/`가 없으면 "생명과학 저장소에서만 동작합니다"라고 알리고 멈춘다. `복습노트/*/.assets/정리노트_*.md` 중 N장을 다룬 파일이 없으면 "N장 정리노트가 없어 예상할 근거가 없습니다"라고 알리고 멈춘다(만든 빈 폴더는 지운다).
 
 ### 2. 원천 모으기
 - 출제 패턴: `.agents/skills/bio-review-pack/references/webquiz-style.md`, 이전 장 `웹과제/*/questions.json`.
 - 이 장 범위: `복습노트/*/.assets/장마감_*_<N>장.md`(있으면), 그 장을 다룬 정리노트 MD(`복습노트/*/.assets/정리노트_*.md`), STT(`STT/*.md`)의 "시험"·"중요" 발언.
 - 기출 풀: `python "$SKILL/scripts/exam_pool.py" "$REPO" <N> --out "$RUN/pool.json"`. `--out`이 `RUN` 폴더도 만든다. 셸 리디렉션(`>`)은 PowerShell에서 한글 인코딩을 바꿀 수 있어 쓰지 않는다.
-- 이전 세트: `웹과제예상/<N>장/src/v*/blueprint.md`와 `pack.json`(쓴 기출 번호·주제).
+- 이전 세트: `웹과제예상/<N>장/.pack/v*/blueprint.md`와 `pack.json`(쓴 기출 번호·주제). `.pack`은 숨김 폴더라 Glob/Grep이 건너뛰므로 이 경로를 직접 연다.
 - 실제 웹과제가 이미 있으면(`웹과제/<N>장/questions.json`) 그 발문은 피하고, 실제 경향을 개요에 반영한다.
 - raw/intake만 있으면 공통 출제 기준의 별도 원본 관찰을 참고할 수 있다. 정본 bank 미등록과 공식 답 미확인을 공개하고 확정 집계에 합산하지 않는다. raw를 정본 원문 bank로 사용하지 않고 발문을 복사하지 않는다.
 
 이번 장의 `웹과제/<N>장/note-feedback.md`가 있으면 [공통 본문 피드백](../bio-review-pack/references/note-feedback.md)에 따라 출제 관찰·문항별 판별 기준을 읽고 실제 근거 파일을 대조한다. 개인 학습 가설은 미확인 상태를 유지하며 출제 사실로 쓰지 않는다. 피드백이 없으면 미작성, 근거가 부족하면 보류로 보고한다. bank 존재만으로 응시 완료를 단정하지 않는다.
 
 ### 3. 개요 카드 o1·o2
-`references/forecast-rules.md`대로 메인 에이전트가 `src/v<K>/cards/o1.html`, `o2.html`을 쓴다. o2에는 재출제 유력 기출 10개(번호·핵심 한 줄·정답)를 넣는다.
+`references/forecast-rules.md`대로 메인 에이전트가 `.pack/v<K>/cards/o1.html`, `o2.html`을 쓴다. o2에는 재출제 유력 기출 10개(번호·핵심 한 줄·정답)를 넣는다.
 
 ### 4. 설계표
-`references/question-blueprint.md`의 장별 근거를 우선한 유형·기본/심화 목표(근거 부족 시에만 기본 12/심화 3 참고 정책)와 최소 풀이 단계를 정하고 `src/v<K>/blueprint.md`와 `pack.json`(`answer_key`, `exam_sources`, `types_required`, `forbidden` 포함)을 쓴다.
+`references/question-blueprint.md`의 장별 근거를 우선한 유형·기본/심화 목표(근거 부족 시에만 기본 12/심화 3 참고 정책)와 최소 풀이 단계를 정하고 `.pack/v<K>/blueprint.md`와 `pack.json`(`answer_key`, `exam_sources`, `types_required`, `forbidden` 포함)을 쓴다.
 
 설계표 뒤에 `question-blueprint.md`의 `## 회상·비교 연습` 목록을 두고 적용 가능한 새 문항 p6~p15의 명칭·단위 변형을 근거와 연결한다. 고정 의무 개수를 만들거나 기존 버전을 소급 수정하지 않는다.
 
@@ -43,7 +43,7 @@ description: 생명과학 다음 웹과제(장별 퀴즈)를 예상해 복습문
 
 ### 6. 빌드와 검사
 ```bash
-python "$SKILL/scripts/build.py" "$REPO/웹과제예상/<N>장/src/v<K>"
+python "$SKILL/scripts/build.py" "$REPO/웹과제예상/<N>장/.pack/v<K>"
 python "$SKILL/scripts/check.py" "$REPO/웹과제예상/<N>장/복습문제_<N>장_웹과제예상_v<K>.html"
 ```
 `OK`가 나와야 한다. 문제 줄의 카드 id로 담당 작성자를 찾아 한 번에 모아 되돌린다(최대 2회). 남으면 "미해결"로 보고한다.
@@ -64,8 +64,9 @@ python "$SKILL/scripts/check.py" "$REPO/웹과제예상/<N>장/복습문제_<N>�
 
 ```
 ## 웹과제 예상 <N>장 v<K> 완료
-- 예상문제 파일: 웹과제예상/<N>장/복습문제_<N>장_웹과제예상_v<K>.html (+ src/v<K>/)
-- 해설 파일: 웹과제예상/<N>장/문제해설_<N>장_웹과제예상_v<K>.html (+ MD·그림·자료 폴더)
+- 예상문제 파일: 웹과제예상/<N>장/복습문제_<N>장_웹과제예상_v<K>.html (소스는 .pack/v<K>/)
+- 해설 파일: 웹과제예상/<N>장/문제해설_<N>장_웹과제예상_v<K>.html (MD·그림·자료 폴더는 .pack/)
+- 장 폴더 맨 위에는 HTML과 `.pack/`만 둔다.
 - 해설 검토: source_visual/content/independent/browser · 수정 n/2 · 발행/보류 이유
 - 구성: 개요 2 · 기출 5 (그대로 2 · 쌍둥이 2 · 숫자 1: 기출 <N>강 …) · 새 문제 10
 - 정답 분포: A3 B3 C3 D3 E3 · 유형: 부정형 n · 계산 n · 그림 n · 표 n · ㄱㄴㄷ n · 장섞기 n

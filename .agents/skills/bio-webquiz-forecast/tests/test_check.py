@@ -41,7 +41,7 @@ class TestCheck(unittest.TestCase):
 
     def test_stale(self):
         out = self.built()
-        (out.parent / "src" / "v1" / "cards" / "p1.html").write_text(
+        (out.parent / ".pack" / "v1" / "cards" / "p1.html").write_text(
             card_html(1, "A", stem="바뀐 발문?"), encoding="utf-8")
         self.assertIn("stale", codes(check.check(out)))
 

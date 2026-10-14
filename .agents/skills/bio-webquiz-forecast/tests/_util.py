@@ -48,7 +48,7 @@ def make_repo(tmp: Path) -> Path:
 
 def make_set(repo: Path, chapter: int, version: int, cards: dict[str, str],
              pack_extra: dict | None = None) -> Path:
-    src = repo / "웹과제예상" / f"{chapter}장" / "src" / f"v{version}"
+    src = repo / "웹과제예상" / f"{chapter}장" / ".pack" / f"v{version}"
     (src / "cards").mkdir(parents=True, exist_ok=True)
     for cid, html in cards.items():
         (src / "cards" / f"{cid}.html").write_text(html, encoding="utf-8")

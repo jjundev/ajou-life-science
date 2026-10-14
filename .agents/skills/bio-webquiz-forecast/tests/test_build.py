@@ -41,20 +41,39 @@ class TestBuild(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t:
             d = Path(t) / "웹과제예상" / "9장"
             self.assertEqual(build.next_version(d), 1)
-            (d / "src" / "v1").mkdir(parents=True)
+            (d / ".pack" / "v1").mkdir(parents=True)
             (d / "복습문제_9장_웹과제예상_v3.html").write_text("x", encoding="utf-8")
             self.assertEqual(build.next_version(d), 4)
+
+    def test_next_version_ignores_pack_side_files(self):
+        with tempfile.TemporaryDirectory() as t:
+            d = Path(t) / "웹과제예상" / "9장"
+            (d / ".pack" / "v2").mkdir(parents=True)
+            (d / ".pack" / "figures_문제해설_9장_웹과제예상_v9").mkdir()
+            (d / ".pack" / "자료_문제해설_9장_웹과제예상_v9").mkdir()
+            (d / ".pack" / "문제해설_9장_웹과제예상_v9.md").write_text("x", encoding="utf-8")
+            (d / "src" / "v7").mkdir(parents=True)  # 옛 위치는 보지 않는다
+            self.assertEqual(build.next_version(d), 3)
 
     def test_init_refuses_existing(self):
         with tempfile.TemporaryDirectory() as t:
             repo = Path(t)
             src = build.init_version(repo, 9)
-            self.assertEqual(src, repo / "웹과제예상" / "9장" / "src" / "v1")
+            self.assertEqual(src, repo / "웹과제예상" / "9장" / ".pack" / "v1")
             self.assertTrue((src / "cards").is_dir())
             self.assertEqual(build.init_version(repo, 9).name, "v2")
-            (repo / "웹과제예상" / "9장" / "src" / "v3").mkdir()
+            (repo / "웹과제예상" / "9장" / ".pack" / "v3").mkdir()
             with self.assertRaises(build.BuildError):
                 build.init_version(repo, 9, version=3)
+
+    def test_old_src_layout_rejected(self):
+        with tempfile.TemporaryDirectory() as t:
+            src = make_set(make_repo(Path(t)), 9, 1, five())
+            old = src.parents[1] / "src" / "v1"
+            old.parent.mkdir()
+            src.rename(old)
+            with self.assertRaises(build.BuildError):
+                build.render(old)
 
 
 if __name__ == "__main__":

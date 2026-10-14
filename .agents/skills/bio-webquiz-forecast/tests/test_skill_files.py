@@ -51,6 +51,13 @@ class TestSkillFiles(unittest.TestCase):
         brief = (SKILL / "references" / "card-brief.md").read_text(encoding="utf-8")
         self.assertIn("이 브리프가 우선", brief)
 
+    def test_docs_use_pack_layout(self):
+        docs = [SKILL / "SKILL.md", *sorted((SKILL / "references").glob("*.md"))]
+        for p in docs:
+            self.assertNotIn("src/v", p.read_text(encoding="utf-8"), p.name)
+        for needle in ("웹과제예상/<N>장/.pack/v<K>", ".pack/v*/blueprint.md", "HTML과 `.pack/`만"):
+            self.assertIn(needle, self.md, needle)
+
 if __name__ == "__main__":
     unittest.main()
 

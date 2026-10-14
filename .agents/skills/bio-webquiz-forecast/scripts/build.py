@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""웹과제 예상 세트(src/v<K>) → 복습문제 형식 HTML, 그리고 버전 관리.
+"""웹과제 예상 세트(.pack/v<K>) → 복습문제 형식 HTML, 그리고 버전 관리.
 
 조립은 bio-review-pack assemble.build_review를 그대로 쓴다. 치환 3개(정리노트 링크, data-range, 내보내기 숨김)는
-각각 정확히 1회여야 한다.
+각각 정확히 1회여야 한다. 장 폴더 루트에는 HTML만 두고 소스는 숨김 폴더 `.pack/v<K>/`에 둔다.
 CLI:
-  build.py <src>              src/v<K> → 웹과제예상/<N>장/복습문제_<N>장_웹과제예상_v<K>.html
+  build.py <src>              .pack/v<K> → 웹과제예상/<N>장/복습문제_<N>장_웹과제예상_v<K>.html
   build.py --next <repo> <N>  다음 버전 번호 출력
-  build.py --init <repo> <N>  다음 버전 폴더(src/v<K>/cards) 생성 후 경로 출력
+  build.py --init <repo> <N>  다음 버전 폴더(.pack/v<K>/cards) 생성 후 경로 출력
 """
 from __future__ import annotations
 
@@ -21,6 +21,7 @@ import assemble  # noqa: E402
 import manifest as manifest_mod  # noqa: E402
 
 OVERRIDE_STYLE = '<style id="forecast-overrides">.review-export-bar { display: none !important; }</style>'
+PACK = ".pack"  # 장 폴더의 숨김 소스 폴더(해설 부속 파일도 여기에 둔다)
 VERSION_RE = re.compile(r"v(\d+)")
 HTML_VERSION_RE = re.compile(r"_v(\d+)\.html$")
 
@@ -33,7 +34,7 @@ def load_pack(src: Path | str) -> dict:
     src = Path(src)
     m = json.loads((src / "pack.json").read_text(encoding="utf-8"))
     n, k = m["chapter"], m["version"]
-    if src.name != f"v{k}" or src.parent.name != "src" or src.parent.parent.name != f"{n}장":
+    if src.name != f"v{k}" or src.parent.name != PACK or src.parent.parent.name != f"{n}장":
         raise BuildError(f"폴더({src})가 pack.json(chapter={n}, version={k})과 맞지 않음")
     m["range"], m["slug"] = f"{n}장", f"웹과제예상_v{k}"
     return m
@@ -69,8 +70,9 @@ def build(src: Path | str) -> Path:
 def next_version(chapter_dir: Path | str) -> int:
     d = Path(chapter_dir)
     nums = [0]
-    if (d / "src").is_dir():
-        nums += [int(m.group(1)) for p in (d / "src").iterdir() if (m := VERSION_RE.fullmatch(p.name))]
+    if (d / PACK).is_dir():
+        nums += [int(m.group(1)) for p in (d / PACK).iterdir()
+                 if p.is_dir() and (m := VERSION_RE.fullmatch(p.name))]
     if d.is_dir():
         nums += [int(m.group(1)) for p in d.iterdir() if (m := HTML_VERSION_RE.search(p.name))]
     return max(nums) + 1
@@ -79,7 +81,7 @@ def next_version(chapter_dir: Path | str) -> int:
 def init_version(repo: Path | str, chapter: int, version: int | None = None) -> Path:
     d = Path(repo) / "웹과제예상" / f"{chapter}장"
     k = version or next_version(d)
-    src = d / "src" / f"v{k}"
+    src = d / PACK / f"v{k}"
     if src.exists():
         raise BuildError(f"이미 있는 버전: {src}")
     (src / "cards").mkdir(parents=True)
