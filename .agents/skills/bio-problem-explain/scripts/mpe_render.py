@@ -9,22 +9,27 @@ from collections import Counter
 from pathlib import Path
 from urllib.parse import unquote, urlsplit, quote
 from mpe_contract import validate_fragment, payload_hash, markup_errors
-from mpe_shared import Node, parse, inner, outer, compact, Ctx, convert, check_md, SIDE, rebase_md
+from mpe_shared import Node, parse, inner, outer, compact, Ctx, convert, check_md, SIDE, PACK, rebase_md
 from mpe_source import sha256, inside, existing_path
 from mpe_types import ExplainError, Artifacts
 
 ASSETS = Path(__file__).resolve().parents[1] / 'assets'
 
+SIDES = {'review': SIDE, 'forecast': PACK}  # profile → hidden folder for side files (homework: none)
+
+def side_of(pack):
+    return SIDES.get(pack.profile)
+
 def names(pack):
     if pack.profile == 'forecast':
         stem = f'문제해설_{pack.range}_{pack.slug}'
-        return stem, f'figures_{stem}', f'자료_{stem}'
-    stem = f'과제{pack.range}_문제설명_{pack.slug}' if pack.profile == 'homework' else f'문제설명_{pack.range}_{pack.slug}'
-    range_ = f'hw{pack.range}' if pack.profile == 'homework' else pack.range
-    fig, data = f'figures_문제설명_{range_}_{pack.slug}', f'자료_문제설명_{range_}_{pack.slug}'
-    if pack.profile == 'review':  # review side files live under the date folder's hidden .assets
-        return stem, f'{SIDE}/{fig}', f'{SIDE}/{data}'
-    return stem, fig, data
+        fig, data = f'figures_{stem}', f'자료_{stem}'
+    else:
+        stem = f'과제{pack.range}_문제설명_{pack.slug}' if pack.profile == 'homework' else f'문제설명_{pack.range}_{pack.slug}'
+        range_ = f'hw{pack.range}' if pack.profile == 'homework' else pack.range
+        fig, data = f'figures_문제설명_{range_}_{pack.slug}', f'자료_문제설명_{range_}_{pack.slug}'
+    side = side_of(pack)
+    return (stem, f'{side}/{fig}', f'{side}/{data}') if side else (stem, fig, data)
 
 def dump(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -141,9 +146,9 @@ def build_explanation(pack, fragments, stage: Path, repo: Path) -> Artifacts:
         raise ExplainError(' / '.join(errors))
     stage.mkdir(parents=True, exist_ok=True)
     stem, fig_name, data_name = names(pack)
-    review = pack.profile == 'review'
+    side = side_of(pack)
     html_path = stage / f'{stem}.html'
-    md_path = (stage / SIDE if review else stage) / f'{stem}.md'
+    md_path = (stage / side if side else stage) / f'{stem}.md'
     data_dir = stage / data_name
     data_dir.mkdir(parents=True)
     (stage / fig_name).mkdir(parents=True)
@@ -192,11 +197,11 @@ def build_explanation(pack, fragments, stage: Path, repo: Path) -> Artifacts:
     if re.search(r'\{\{[A-Z_]+\}\}', text):
         raise ExplainError('미치환 템플릿 슬롯')
     html_path.write_text(text, encoding='utf-8')
-    md_ref = f'{SIDE}/{md_path.name}' if review else md_path.name
+    md_ref = f'{side}/{md_path.name}' if side else md_path.name
     ctx = Ctx([(html_path.name, md_ref)], str(stage / fig_name), fig_name, prefix='explain')
     convert_markdown(html_path, md_path, ctx)
-    if review:  # MD was written relative to the date folder; it lives in .assets/, so rebase once
-        md_path.write_text(rebase_md(md_path.read_text(encoding='utf-8')), encoding='utf-8')
+    if side:  # MD was written relative to the HTML folder; it lives in the side folder, so rebase once
+        md_path.write_text(rebase_md(md_path.read_text(encoding='utf-8'), side), encoding='utf-8')
     manifest_path = data_dir / 'manifest.json'
     files = tuple(sorted(p for p in stage.rglob('*') if p.is_file()))
     dump(manifest_path, {'version': 1, 'profile': pack.profile, 'range': pack.range, 'slug': pack.slug,
@@ -232,9 +237,10 @@ def check_artifacts(pack, artifacts):
                 errors.append('생성 파일 변경/누락: ' + name)
         document = parse(artifacts.html.read_text(encoding='utf-8'))
         main = next(document.find_all(lambda n: n.tag == 'main'))
-        # Review MD lives in .assets/, so its image paths drop that prefix.
-        side = SIDE + '/' if pack.profile == 'review' else ''
-        wanted_images = Counter(unquote(n.attrs.get('src', '')).removeprefix(side) for n in main.find_all(lambda n: n.tag == 'img'))
+        # Side-folder MD (review .assets, forecast .pack) drops that prefix from image paths.
+        side = side_of(pack)
+        prefix = side + '/' if side else ''
+        wanted_images = Counter(unquote(n.attrs.get('src', '')).removeprefix(prefix) for n in main.find_all(lambda n: n.tag == 'img'))
         markdown = artifacts.md.read_text(encoding='utf-8')
         md_images = Counter(unquote(path) for path in re.findall(r'!\[[^\]]*\]\(([^)]+)\)', markdown))
         for image, count in wanted_images.items():

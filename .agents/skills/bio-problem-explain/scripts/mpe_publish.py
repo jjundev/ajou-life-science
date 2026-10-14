@@ -38,7 +38,7 @@ def publish_explanation(pack, artifacts, fragments, reviews, destination, backup
                 raise ExplainError('참조 자료 변경: ' + str(path))
         stage_root = artifacts.html.parent.resolve()
         stem, fig_name, data_name = names(pack)
-        md_rel = (Path(fig_name).parent / (stem + '.md')).as_posix()  # .assets/<stem>.md for review, <stem>.md otherwise
+        md_rel = (Path(fig_name).parent / (stem + '.md')).as_posix()  # <side>/<stem>.md for review/forecast, <stem>.md for homework
         allowed_roots = {fig_name, data_name}
         mapping = {}
         for src in artifacts.files:

@@ -40,7 +40,7 @@ description: 생명과학 복습노트의 기존 복습문제 또는 명시 경�
 - 웹과제: `웹과제/N장/questions.json` (응시한 장만 있다)
 - 정리노트: `복습노트/<range>/정리노트_<range>_<slug>.html`
 - 팩 검토 기록: `복습노트/<range>/.pack/key-check.md`(정답 대조), `복습노트/<range>/.pack/question-audit.md`(문항 감사), `복습노트/<range>/.pack/variants.md`(생성 변형 설계). key-check.md·question-audit.md는 일부 팩에만 있다. 없으면 카드 정답과 variants.md의 `의도한 정답과 이유` 열로 대조하고 evidence에 "key-check 없음"을 적는다. 파일이 없다는 것만으로는 disputed가 아니다.
-- forecast 근거: 해당 `웹과제예상/<N>장/src/v<K>/pack.json`과 `blueprint.md`(정답키·기출 모드·노트 앵커). key-check/variants가 없다는 것을 오류로 보지 않고 이 두 파일과 실제 관련 자료를 대조한다. 문맥 해시가 달라지면 새 RUN에서 재추출한다.
+- forecast 근거: 해당 `웹과제예상/<N>장/.pack/v<K>/pack.json`과 `blueprint.md`(정답키·기출 모드·노트 앵커). key-check/variants가 없다는 것을 오류로 보지 않고 이 두 파일과 실제 관련 자료를 대조한다. 문맥 해시가 달라지면 새 RUN에서 재추출한다.
 - STT(`STT/MMDD 생명.md`)는 필요한 경우 보조로만 쓴다. 수업 밖 보충은 표시한다.
 
 ## 저작과 독립 검산 분담
@@ -59,7 +59,7 @@ description: 생명과학 복습노트의 기존 복습문제 또는 명시 경�
    ```
 
 2. 대상 디렉터리의 `source.json`을 읽는다. 문항 ID·전체 문제·소문항·보기·원문·그림·참고 풀이를 확인한다. 카드의 출처(기출 합본 쪽, 웹과제 questions.json 항목), 교과서·강의노트의 해당 장, 관련 정리노트를 필요한 범위에서 실제로 읽고 원 페이지와 대조한다. `.pack/key-check.md`와 `.pack/question-audit.md`에서 그 문항의 정답 대조·보류 기록을 확인한다(없는 팩이면 건너뛴다). `data-source="생성 변형 …"` 카드는 `.pack/variants.md`에서 같은 id 행(근거 토픽, 형태 열의 교재 쪽, 의도한 정답과 이유)을 읽는다. STT는 필요한 경우 보조로 사용한다. 수업 밖 보충은 표시한다. `source.json`을 수동 수정하면 재추출 검사가 거부한다.
-   forecast는 위 `.pack/` 대신 해당 버전 pack.json/blueprint.md를 읽고 원문 그대로와 변형·새 예상문항을 구분한다. 기존 실제 기출로 표시하지 않는다.
+   forecast는 복습노트 `.pack/`의 key-check·variants 대신 `웹과제예상/<N>장/.pack/v<K>/`의 pack.json/blueprint.md를 읽고 원문 그대로와 변형·새 예상문항을 구분한다. 기존 실제 기출로 표시하지 않는다.
 3. [저작 규칙](references/authoring.md)을 읽고 `explanations/pN.html`을 작성한다(위 분담대로 병렬 저작). 일곱 직계 구역 `understand → recall → start → solve → verify → pitfall → retry`, 모든 소문항의 solve/verify 표지, 펼친 답과 우측 요약이 필요하다. recall은 문제의 어떤 단서에서 개념을 떠올렸는지, 정의·원리·조건·선택 이유를 연결한다. solve는 보기마다 판정과 근거 개념을 쓴다. CLI는 설명을 자동 저작하지 않는다.
 4. 정답을 보지 않은 별도 에이전트의 재풀이, 교과서 쪽 대조, 교배표 재계산 등으로 답을 확인하고 `evidence/`에 근거를 보관한다. 원문 충돌과 문항 결함은 구분한다.
    - (A) 충돌: (C)에 해당하지 않으면서 카드 정답이 인쇄 답안지·기출·웹과제·key-check 판단 답 또는 독립 재풀이 답과 다르면 몰래 수정하거나 정상 답으로 승인하지 않고 disputed로 남기며, 그 팩은 발행을 보류한다.
@@ -95,6 +95,6 @@ forecast 자동 연결에서 검토가 실패하면 [예상 스킬의 수정·�
 
 입력과 같은 날짜 폴더 `복습노트/<range>/`에는 `문제설명_<range>_<slug>.html`만 두고, 나머지는 숨김 폴더 `복습노트/<range>/.assets/` 안에 `.assets/문제설명_<range>_<slug>.md`, `.assets/figures_문제설명_<range>_<slug>/`, `.assets/자료_문제설명_<range>_<slug>/`로 저장한다. MD 안의 링크는 `.assets/` 기준이라 원 문제 보기는 `../복습문제_….html`이다. 자료 폴더에는 생성 기록·검토·설명 조각·검산·로컬 자원이 들어간다. 정리노트·복습문제에 링크를 자동 삽입하지 않는다. 읽음 상태 키는 `bio-problem-explain-review-<range>-<slug>`다.
 
-forecast 출력은 같은 `웹과제예상/<N>장/` 폴더의 `문제해설_<N>장_웹과제예상_v<K>.html/.md`, `figures_문제해설_<N>장_웹과제예상_v<K>/`, `자료_문제해설_<N>장_웹과제예상_v<K>/`다. 제목은 `생명과학 <N>장 웹과제 예상 v<K> 문제해설`, 읽음 상태 키는 `bio-problem-explain-forecast-<N>장-웹과제예상_v<K>`다. 기존 예상문제에 링크를 자동 삽입하지 않는다.
+forecast 출력은 같은 `웹과제예상/<N>장/` 폴더의 `문제해설_<N>장_웹과제예상_v<K>.html`과, 숨김 폴더의 `.pack/문제해설_<N>장_웹과제예상_v<K>.md`, `.pack/figures_문제해설_<N>장_웹과제예상_v<K>/`, `.pack/자료_문제해설_<N>장_웹과제예상_v<K>/`다. 장 폴더 루트에는 HTML과 `.pack/`만 둔다. 제목은 `생명과학 <N>장 웹과제 예상 v<K> 문제해설`, 읽음 상태 키는 `bio-problem-explain-forecast-<N>장-웹과제예상_v<K>`다. 기존 예상문제에 링크를 자동 삽입하지 않는다.
 
 원본 고정 커밋과 바이트 해시는 [이식 기록](assets/port-provenance.json)에 있다. 실행 중 원본 저장소나 머신러닝기초 checkout을 참조하지 않는다.

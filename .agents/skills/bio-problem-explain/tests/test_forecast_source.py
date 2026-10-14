@@ -37,7 +37,7 @@ def test_missing_question_rejected(tmp_path):
 @pytest.mark.parametrize('field,value', [('chapter', 3), ('version', 6), ('chapter', True), ('version', '5'), ('problems', [{'id': 'p1'}]), ('answer_key', {'p1': 'A'})])
 def test_manifest_identity_and_key_mismatch_rejected(tmp_path, field, value):
     source = forecast_source_file(tmp_path)
-    path = source.parent / 'src/v5/pack.json'
+    path = source.parent / '.pack/v5/pack.json'
     manifest = json.loads(path.read_text())
     manifest[field] = value
     path.write_text(json.dumps(manifest))
@@ -79,7 +79,7 @@ def test_forecast_preserves_choices_original_svg_and_table(tmp_path):
 @pytest.mark.parametrize('name', ['pack.json', 'blueprint.md'])
 def test_missing_manifest_or_blueprint_rejected(tmp_path, name):
     source = forecast_source_file(tmp_path)
-    (source.parent/'src/v5'/name).unlink()
+    (source.parent/'.pack/v5'/name).unlink()
     with pytest.raises(ExplainError):
         load_source(source, tmp_path)
 
@@ -108,7 +108,16 @@ def test_ambiguous_answer_is_rejected(tmp_path, answer):
 
 def test_forecast_choice_model_letters(tmp_path):
     source = forecast_source_file(tmp_path)
-    key = json.loads((source.parent / 'src/v5/pack.json').read_text())['answer_key']
+    key = json.loads((source.parent / '.pack/v5/pack.json').read_text())['answer_key']
     choice = load_source(source, tmp_path).problems[0].choice
     assert choice.option_ids == ('A', 'B', 'C', 'D', 'E')
     assert choice.answer == key['p1']
+
+
+def test_old_src_layout_rejected(tmp_path):
+    source = forecast_source_file(tmp_path)
+    old = source.parent / 'src'
+    old.mkdir()
+    (source.parent / '.pack' / 'v5').rename(old / 'v5')
+    with pytest.raises(ExplainError):
+        load_source(source, tmp_path)

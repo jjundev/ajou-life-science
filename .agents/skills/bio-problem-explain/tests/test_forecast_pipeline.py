@@ -1,4 +1,6 @@
 import json
+import re
+from urllib.parse import unquote
 from dataclasses import replace
 import pytest
 from forecast_helpers import forecast_source_file
@@ -35,7 +37,7 @@ def approve(item):
 def test_forecast_cli_round_trip(tmp_path):
     source, run, item = build_run(tmp_path)
     before = source.read_bytes()
-    assert names(item['pack']) == ('문제해설_4장_웹과제예상_v5', 'figures_문제해설_4장_웹과제예상_v5', '자료_문제해설_4장_웹과제예상_v5')
+    assert names(item['pack']) == ('문제해설_4장_웹과제예상_v5', '.pack/figures_문제해설_4장_웹과제예상_v5', '.pack/자료_문제해설_4장_웹과제예상_v5')
     artifacts = load_artifacts(item)
     text = artifacts.html.read_text()
     assert '생명과학 4장 웹과제 예상 v5 문제해설' in text
@@ -45,7 +47,7 @@ def test_forecast_cli_round_trip(tmp_path):
     approve(item)
     result = call('publish', '--run', run)
     assert result.returncode == 0, result.stderr
-    for name in ('문제해설_4장_웹과제예상_v5.html', '문제해설_4장_웹과제예상_v5.md', '자료_문제해설_4장_웹과제예상_v5/validation.json'):
+    for name in ('문제해설_4장_웹과제예상_v5.html', '.pack/문제해설_4장_웹과제예상_v5.md', '.pack/자료_문제해설_4장_웹과제예상_v5/validation.json'):
         assert (source.parent/name).is_file()
     assert source.read_bytes() == before
 
@@ -54,7 +56,7 @@ def test_forecast_cli_round_trip(tmp_path):
 def test_changed_forecast_context_requires_reextract(tmp_path, name):
     source, run, item = build_run(tmp_path)
     approve(item)
-    path = source.parent/'src/v5'/name
+    path = source.parent/'.pack/v5'/name
     path.write_text(path.read_text()+'\n')
     for command in ('check', 'publish'):
         result = call(command, '--run', run)
@@ -66,7 +68,7 @@ def test_direct_publish_rejects_changed_context(tmp_path, name):
     source, run, item = build_run(tmp_path)
     artifacts, fragments = load_artifacts(item), load_fragments(item)
     reviews = approve(item)
-    path = source.parent/'src/v5'/name
+    path = source.parent/'.pack/v5'/name
     path.write_text(path.read_text()+'\n')
     with pytest.raises(ExplainError, match='문맥'):
         publish_explanation(item['pack'], artifacts, fragments, reviews, source.parent, tmp_path/'backup')
@@ -126,7 +128,7 @@ def test_real_forecast_build_check_repair_and_reextract(tmp_path):
     from forecast_helpers import forecast_acceptance_source
     source = forecast_acceptance_source(tmp_path/'repo')
     forecast = Path(__file__).resolve().parents[2]/'bio-webquiz-forecast/scripts'
-    src = source.parent/'src/v5'
+    src = source.parent/'.pack/v5'
     for script, target in [('build.py', src), ('check.py', source)]:
         result = subprocess.run([sys.executable, str(forecast/script), str(target)], capture_output=True, text=True)
         assert result.returncode == 0, result.stdout+result.stderr
@@ -176,8 +178,31 @@ def test_forecast_source_info_is_not_labelled_past_exam_original(tmp_path):
     assert '기출 원문 보기' not in text
 
 
-def test_forecast_outputs_stay_beside_html(tmp_path):
+def test_forecast_side_files_live_in_pack(tmp_path):
     source, run, item = build_run(tmp_path)
     artifacts = load_artifacts(item)
-    assert artifacts.md.parent == artifacts.html.parent
-    assert not (artifacts.html.parent / '.assets').exists()
+    root = artifacts.html.parent
+    assert artifacts.md.parent == root / '.pack'
+    assert not (root / '.assets').exists()
+    html = artifacts.html.read_text(encoding='utf-8')
+    assert 'href=".pack/자료_문제해설_4장_웹과제예상_v5/vendor/katex/katex.min.css"' in html
+    md = artifacts.md.read_text(encoding='utf-8')
+    assert '](.pack/' not in md
+    for target in re.findall(r'\]\((\.\./[^)]+)\)', md):
+        if target.startswith('../../'):  # 장 폴더 밖 링크는 .pack 기준으로 한 단계 더 올라간다
+            assert target.startswith('../../../'), target
+        else:  # 같은 장 폴더의 HTML
+            path = unquote(target.split('#')[0])
+            assert '/' not in path[3:] and (source.parent / path[3:]).is_file(), target
+
+
+def test_forecast_publish_keeps_root_clean_and_sources_intact(tmp_path):
+    source, run, item = build_run(tmp_path)
+    pack_json = source.parent / '.pack' / 'v5' / 'pack.json'
+    before = pack_json.read_bytes()
+    approve(item)
+    result = call('publish', '--run', run)
+    assert result.returncode == 0, result.stderr
+    root = sorted(p.name for p in source.parent.iterdir())
+    assert all(n == '.pack' or n.endswith('.html') for n in root), root
+    assert pack_json.read_bytes() == before

@@ -2,7 +2,7 @@
 import json
 import re
 from pathlib import Path
-from mpe_shared import Node, parse, inner, compact, math_delimiter_errors, prose_text
+from mpe_shared import Node, parse, inner, compact, math_delimiter_errors, prose_text, PACK
 from mpe_source import inside, existing_path, nfc, sha256, subparts, with_choices
 from mpe_types import ExplainError, Problem, SourcePack
 
@@ -31,7 +31,7 @@ def load_forecast_source(path: Path, repo: Path) -> SourcePack:
     if nfc(path.parent.resolve()) != nfc(expected.resolve()):
         raise ExplainError('예상문제 장 폴더 불일치')
     try:
-        src = path.parent / 'src' / f'v{version}'
+        src = path.parent / PACK / f'v{version}'
         contexts = [inside(existing_path(src / name), repo) for name in ('pack.json', 'blueprint.md')]
         manifest = json.loads(contexts[0].read_text(encoding='utf-8'))
         if not isinstance(manifest, dict) or any(type(manifest.get(k)) is not int or manifest[k] != value

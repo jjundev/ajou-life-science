@@ -94,3 +94,10 @@ def test_skill_documents_review_assets_layout():
     text=(S/'SKILL.md').read_text(encoding='utf-8')
     for needle in ('.assets/문제설명_<range>_<slug>.md','.assets/figures_문제설명_<range>_<slug>/','.assets/자료_문제설명_<range>_<slug>/'):
         assert needle in text,needle
+
+def test_skill_documents_forecast_pack_layout():
+    text=(S/'SKILL.md').read_text(encoding='utf-8')
+    assert 'src/v<K>' not in text
+    for needle in ('웹과제예상/<N>장/.pack/v<K>/pack.json','.pack/문제해설_<N>장_웹과제예상_v<K>.md',
+                   '.pack/figures_문제해설_<N>장_웹과제예상_v<K>/','.pack/자료_문제해설_<N>장_웹과제예상_v<K>/'):
+        assert needle in text,needle

@@ -5,7 +5,7 @@ from pathlib import Path
 
 def forecast_source_file(repo: Path, chapter: int = 4, version: int = 5) -> Path:
     folder = repo / '웹과제예상' / f'{chapter}장'
-    src = folder / 'src' / f'v{version}'
+    src = folder / '.pack' / f'v{version}'
     (src / 'cards').mkdir(parents=True, exist_ok=True)
     note = repo / '복습노트/0922/정리노트_0922_Test.html'
     note.parent.mkdir(parents=True, exist_ok=True)
@@ -44,7 +44,7 @@ def forecast_acceptance_source(repo: Path, chapter: int = 4, version: int = 5) -
     """Buildable synthetic cards for both skill checkers, not an academic set."""
     import base64
     path = forecast_source_file(repo, chapter, version)
-    src = path.parent/'src'/f'v{version}'
+    src = path.parent/'.pack'/f'v{version}'
     manifest = json.loads((src/'pack.json').read_text())
     manifest.update(review_title='합성 연동 검증', review_intro='학술 검토가 아닌 테스트 세트예요.',
                     footer_review='합성 테스트', legacy=True)
