@@ -17,7 +17,7 @@ function fixture(t, source) {
   return { dir, note, html, link };
 }
 
-test('adds a contextual new-tab link after the full nested explanation, preserving surrounding bytes', t => {
+test('adds a contextual current-tab link after the full nested explanation, preserving surrounding bytes', t => {
   const f = fixture(t);
   const original = fs.readFileSync(f.note, 'utf8');
   const r = linkNotes({ note: f.note, links: [f.link] });
@@ -25,7 +25,8 @@ test('adds a contextual new-tab link after the full nested explanation, preservi
   assert.equal(r.results[0].status, 'added');
   const changed = fs.readFileSync(f.note, 'utf8');
   assert.match(changed, /<\/p><\/div><\/div>\s*<p class="interactive-note"/);
-  assert.match(changed, /target="_blank" rel="noopener noreferrer"/);
+  assert.match(changed, /target="_self"/);
+  assert.doesNotMatch(changed, /rel="noopener noreferrer"/);
   assert.match(changed, /PCR &amp; 모형/);
   assert.doesNotMatch(changed, /\(새 탭\)/);
   assert.equal(changed.replace(/\n?<p class="interactive-note"[^>]*>[\s\S]*?<\/p>\n?/, ''), original);
@@ -67,14 +68,15 @@ test('missing note, missing target, missing section and duplicate IDs skip witho
 test('existing destination link in the same section is upgraded without duplicate text', t => {
   const f = fixture(t);
   const href = path.basename(f.html).split('/').map(encodeURIComponent).join('/');
-  const original = `<article id='pcr'><h3>PCR</h3><p><a class='old' href='${href}' target='_self' rel='nofollow'>기존 자료</a></p></article>`;
+  const original = `<article id='pcr'><h3>PCR</h3><p><a class='old' href='${href}' target='_blank' rel='nofollow'>기존 자료</a></p></article>`;
   fs.writeFileSync(f.note, original);
   const r = linkNotes({ note: f.note, links: [f.link] });
   assert.equal(r.results[0].status, 'updated');
   const result = fs.readFileSync(f.note, 'utf8');
   assert.equal((result.match(/<a\b/g) || []).length, 1);
   assert.match(result, /class='old'/);
-  assert.match(result, /rel="nofollow noopener noreferrer"/);
+  assert.match(result, /rel='nofollow'/);
+  assert.match(result, /target="_self"/);
   assert.equal(linkNotes({ note: f.note, links: [f.link] }).changed, false);
 });
 
@@ -84,15 +86,15 @@ test('a link outside the target section does not suppress a contextual link', t 
   assert.equal(linkNotes({ note: f.note, links: [f.link] }).results[0].status, 'added');
 });
 
-test('new-tab repair preserves target/rel words inside unrelated quoted attributes', t => {
+test('current-tab repair preserves target/rel words inside unrelated quoted attributes', t => {
   const f = fixture(t);
   const title = 'read target=_self and rel=nofollow here';
-  fs.writeFileSync(f.note, `<article id="pcr"><h3>PCR</h3><a href="${encodeURIComponent(path.basename(f.html))}" title="${title}" target="_self">자료</a></article>`);
+  fs.writeFileSync(f.note, `<article id="pcr"><h3>PCR</h3><a href="${encodeURIComponent(path.basename(f.html))}" title="${title}" target="_blank">자료</a></article>`);
   assert.equal(linkNotes({ note: f.note, links: [f.link] }).results[0].status, 'updated');
   assert.ok(fs.readFileSync(f.note, 'utf8').includes(`title="${title}"`));
 });
 
-test('valueless or duplicate target/rel attributes do not suppress new-tab repair', t => {
+test('valueless or duplicate target/rel attributes do not suppress current-tab repair', t => {
   const f = fixture(t);
   for (const attrs of ['target rel', 'target="_self" target="_blank" rel="noopener noreferrer"']) {
     fs.writeFileSync(f.note, `<article id="pcr"><h3>PCR</h3><a href="${encodeURIComponent(path.basename(f.html))}" ${attrs}>자료</a></article>`);
@@ -100,7 +102,8 @@ test('valueless or duplicate target/rel attributes do not suppress new-tab repai
     const tag = fs.readFileSync(f.note, 'utf8').match(/<a\b[^>]*>/)[0];
     assert.equal((tag.match(/\btarget\b/g) || []).length, 1);
     assert.equal((tag.match(/\brel\b/g) || []).length, 1);
-    assert.match(tag, /target="_blank" rel="noopener noreferrer"/);
+    assert.match(tag, /target="_self"/);
+    assert.equal(linkNotes({ note: f.note, links: [f.link] }).changed, false);
   }
 });
 

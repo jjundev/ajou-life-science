@@ -12,7 +12,7 @@ test('note-link workflow and contextual brief contract are stated', () => {
   for (const s of ['noteHtml', 'scripts/link-notes.cjs', 'references/note-links.md', '### 8. 정리노트 연결', '### 9. 보고'])
     assert.ok(md.includes(s), s);
   const refs = read('references/note-links.md');
-  for (const s of ['target="_blank"', 'noopener noreferrer', 'sectionId', 'anchorId', '새 탭', '기존 자료', 'skipped'])
+  for (const s of ['target="_self"', '현재 탭', 'sectionId', 'anchorId', '새 탭', '기존 자료', 'skipped'])
     assert.ok(refs.includes(s), s);
   assert.ok(read('references/topic-selection.md').includes('정리노트 연결'));
   assert.ok(md.includes('`(새 탭)` 같은 표시 문구는 붙이지 않는다'));
