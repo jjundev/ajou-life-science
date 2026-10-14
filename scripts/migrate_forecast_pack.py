@@ -138,6 +138,8 @@ def migrate_chapter(chapter: Path, apply: bool) -> list[str]:
                 new = rewrite_record(old, digests)
                 if new != old:
                     records.append((Path(p.name) / name, new))
+                    # validation.json records manifest.json's hash; RECORDS order rewrites manifest first.
+                    digests[_nfc(f"{p.name}/{name}")] = _sha(new)
 
     actions = [f"move {SRC}/{v.name} -> {PACK}/{v.name}" for v in versions]
     actions += [f"move {_nfc(p.name)} -> {PACK}/{_nfc(p.name)}" for p in movers]

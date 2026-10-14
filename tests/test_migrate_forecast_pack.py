@@ -113,6 +113,15 @@ class TestMigrateForecast(unittest.TestCase):
         self.assertEqual(validation["artifact_hashes"][f".pack/{STEM}.md"], sha((pack / f"{STEM}.md").read_bytes()))
         self.assertEqual(validation["artifact_hashes"][f"{STEM}.html"], sha((self.ch / f"{STEM}.html").read_bytes()))
 
+    def test_validation_tracks_rewritten_manifest_hash(self):
+        validation = json.loads((self.ch / DATA / "validation.json").read_bytes())
+        validation["artifact_hashes"][f"{DATA}/manifest.json"] = sha((self.ch / DATA / "manifest.json").read_bytes())
+        put(self.ch / DATA / "validation.json", crlf(json.dumps(validation, ensure_ascii=False, indent=2) + "\n"))
+        migrate_chapter(self.ch, apply=True)
+        pack = self.ch / ".pack"
+        hashes = json.loads((pack / DATA / "validation.json").read_bytes())["artifact_hashes"]
+        self.assertEqual(hashes[f".pack/{DATA}/manifest.json"], sha((pack / DATA / "manifest.json").read_bytes()))
+
     def test_idempotent(self):
         migrate_chapter(self.ch, apply=True)
         after = snapshot(self.root)
