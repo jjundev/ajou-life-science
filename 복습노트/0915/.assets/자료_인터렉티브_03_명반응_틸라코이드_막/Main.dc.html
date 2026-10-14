@@ -1,0 +1,1193 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>명반응 틸라코이드 막</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+.app{--radius:8px;--tap:48px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--dur:220ms;--dur-exit:150ms;--ease-out:cubic-bezier(.2,.8,.2,1);--scrim:rgba(0,0,0,.4);
+  height:100vh;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;box-sizing:border-box;
+  background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;font-size:16px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.app *,.app *::before,.app *::after{box-sizing:border-box}
+.app button{font-family:inherit;color:inherit}
+.app :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.num{font-variant-numeric:tabular-nums}
+
+.topbar{display:flex;align-items:center;gap:var(--s2);min-height:56px;padding:var(--s2) var(--s3);background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:17px;font-weight:700;white-space:nowrap}
+.text-btn{flex:none;min-height:44px;min-width:44px;padding:0 var(--s3);border:0;border-radius:var(--radius);background:transparent;color:var(--ink);font:600 14px/1 'Pretendard',system-ui,sans-serif;cursor:pointer}
+.panel-toggle{display:inline-flex;align-items:center;gap:var(--s1);padding:0 var(--s2)}
+.panel-toggle svg,.theme-toggle svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.panel-toggle .strip{fill:transparent;stroke:none;transition:fill 150ms ease-out}
+.panel-toggle[aria-expanded="true"]{color:var(--accent-ink)}
+.panel-toggle[aria-expanded="true"] .strip{fill:currentColor}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;padding:0}
+.seg{flex:none;display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.seg button{min-height:40px;padding:0 var(--s3);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+.layout{display:grid;grid-template-columns:auto minmax(320px,1fr) auto;min-height:0}
+.panel{position:relative;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--bg);color:var(--ink)}
+.panel-left{grid-column:1;width:clamp(260px,20vw,320px);border-right:1px solid var(--line)}
+.panel-right{grid-column:3;width:clamp(320px,24vw,400px);border-left:1px solid var(--line)}
+.panel-inner{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--s4) var(--s4) var(--s6)}
+.panel-inner::-webkit-scrollbar{width:8px}
+.panel-inner::-webkit-scrollbar-track{background:transparent}
+.panel-inner::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:8px;border:2px solid var(--bg)}
+.panel-inner::-webkit-scrollbar-thumb:hover{background:var(--scroll-hover)}
+@supports (scrollbar-color:auto){.panel-inner{scrollbar-width:thin;scrollbar-color:var(--scroll) transparent}}
+.panel-head{display:flex;align-items:center;gap:var(--s2);min-height:44px;margin-bottom:var(--s2)}
+.panel-head h2{flex:1 1 0;min-width:0;margin:0;font-size:22px;line-height:1.4}
+.stage{grid-column:2;position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--bg)}
+.scrim{display:none}
+.panel-resize{display:none}
+
+.sec{margin-top:var(--s5);padding-top:var(--s5);border-top:1px solid var(--line)}
+.panel-head + .sec,.panel-head + div > .sec:first-child{margin-top:0;padding-top:0;border-top:0}
+.sec-title{display:block;margin:0 0 var(--s3);font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-0.01em}
+.sub{margin:var(--s3) 0 0;font-size:14px;line-height:1.6;color:var(--ink-2)}
+
+.opt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.btn{display:flex;align-items:center;gap:var(--s2);width:100%;min-height:var(--tap);padding:0 var(--s3);border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font-size:14px;font-weight:600;line-height:1.3;text-align:left;cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.btn .box{flex:none;width:12px;height:12px;border-radius:3px;border:1.5px solid currentColor}
+.btn[aria-pressed="true"] .box{background:currentColor}
+.steps{display:flex;flex-direction:column;gap:var(--s2)}
+.steps .btn{padding:var(--s2) var(--s3);gap:var(--s3)}
+.step-num{flex:none;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid;font-size:12px;font-weight:700;color:var(--ink)}
+.step-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.step-txt b{font-size:15px;font-weight:700}
+.step-txt span{font-size:13px;font-weight:500;color:var(--ink-2)}
+.detail{margin-top:var(--s3);padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+
+
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.tiles.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tile{padding:var(--s3);border-radius:var(--radius);background:var(--surface)}
+.tile b{display:block;font-size:20px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}
+.tile span{display:block;font-size:13px;line-height:1.4;color:var(--ink-2)}
+.events{display:flex;flex-direction:column;gap:var(--s2)}
+.event{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.6}
+.dot{flex:none;width:10px;height:10px;margin-top:7px;border-radius:50%}
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2) var(--s3);font-size:13px;color:var(--ink-2)}
+.legend div{display:flex;align-items:center;gap:var(--s2)}
+.sw{flex:none;width:16px;height:6px;border-radius:3px}
+.sw.ball{width:12px;height:12px;border-radius:50%}
+.sec.warn{border-top:0;padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+.warn .sec-title{color:var(--warn);font-size:17px}
+.mistake{margin-top:var(--s3)}
+.mistake b{display:block;font-weight:700}
+.mistake span{color:var(--ink-2)}
+
+.canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.canvas.is-fixed{cursor:default}
+.view-btns{position:absolute;top:var(--s3);right:var(--s3);display:flex;gap:6px}
+.icon-btn{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);cursor:pointer}
+.icon-btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.icon-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.float{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius)}
+.hover-card{position:absolute;left:var(--s3);bottom:var(--s3);display:flex;flex-direction:column;gap:2px;padding:var(--s3) var(--s4);pointer-events:none}
+.hover-card .k{font-size:13px;color:var(--ink-2)}
+.hover-card .v{font-size:18px;font-weight:700}
+.playbar{position:absolute;left:var(--s3);right:var(--s3);bottom:var(--s3);display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3)}
+.play{flex:none;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--radius);background:var(--btn-bg);color:var(--on-btn) !important;cursor:pointer}
+.play svg{width:18px;height:18px;fill:currentColor}
+.scrub{flex:1 1 200px;min-width:160px;display:flex;flex-direction:column;gap:2px}
+.scrub span{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.scrub input{width:100%;height:24px;margin:0;accent-color:var(--accent)}
+.speeds{display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.speeds button{min-width:48px;height:40px;padding:0 var(--s2);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
+.speeds button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+@media (hover:hover){.btn:hover,.icon-btn:hover{background:var(--surface)}.text-btn:hover{background:var(--surface)}}
+@media (min-width:1024px){
+  .panel-head{display:none}
+  .layout{--pl:var(--pl-user,clamp(260px,20vw,320px));--pr:var(--pr-user,clamp(320px,24vw,400px))}
+  .panel{width:0;border-width:0;visibility:hidden;transition:width var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left.is-open{width:var(--pl)}
+  .panel-right.is-open{width:var(--pr)}
+  .panel.is-open{visibility:visible;border-width:1px;transition:width var(--dur) var(--ease-out)}
+  .panel-left .panel-inner{width:var(--pl)}
+  .panel-right .panel-inner{width:var(--pr);align-self:flex-end}
+  .layout.is-resizing .panel{transition:none}
+  .layout.is-resizing{cursor:col-resize;user-select:none}
+  .panel-resize{display:block;position:absolute;top:0;bottom:0;z-index:2;width:12px;padding:0;border:0;background:transparent;cursor:col-resize;touch-action:none}
+  .panel-left .panel-resize{right:0}
+  .panel-right .panel-resize{left:0}
+  .panel-resize::after{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--accent);opacity:0;transition:opacity 150ms ease-out}
+  .panel-left .panel-resize::after{right:0}
+  .panel-right .panel-resize::after{left:0}
+  .panel-resize:focus-visible{outline:none}
+  .panel-resize:focus-visible::after,.is-resizing .panel-resize:active::after{opacity:1}
+  @media (hover:hover){.panel-resize:hover::after{opacity:1}}
+}
+@media (max-width: 1023.98px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .stage{grid-column:1}
+  .panel{position:fixed;top:0;bottom:0;z-index:40;visibility:hidden;transition:transform var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left{left:0;width:min(304px,88vw);transform:translateX(-100%)}
+  .panel-right{right:0;width:min(360px,88vw);transform:translateX(100%)}
+  .panel.is-open{visibility:visible;transform:none;transition:transform var(--dur) var(--ease-out)}
+  .panel-inner{padding-top:calc(var(--s3) + env(safe-area-inset-top));padding-bottom:calc(var(--s6) + env(safe-area-inset-bottom))}
+  .scrim{display:block;position:fixed;inset:0;z-index:35;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .scrim.is-on{opacity:1;visibility:visible;transition:opacity var(--dur) var(--ease-out)}
+}
+@media (max-width:640px){.brand{display:none}.topbar{justify-content:space-between}}
+@media (max-width:480px){.panel-toggle span{display:none}.seg button{padding:0 var(--s2)}}
+@media (prefers-reduced-motion:reduce){.panel,.panel.is-open,.scrim,.scrim.is-on,.panel-toggle .strip,.panel-resize::after{transition:none}}
+</style>
+</helmet>
+<div class="app" onKeyDown="{{onKey}}" style="--bg: {{th.bg}}; --surface: {{th.surface}}; --ink: {{th.ink}}; --ink-2: {{th.ink2}}; --line: {{th.line}}; --accent: {{th.accent}}; --accent-ink: {{th.accentInk}}; --btn-bg: {{th.btnBg}}; --on-btn: {{th.onBtn}}; --warn: {{th.warn}}; --prof: {{th.prof}}; --supp: {{th.supp}}; --danger: {{th.danger}}; --scroll: {{th.scroll}}; --scroll-hover: {{th.scrollHover}}">
+<header class="topbar">
+<button class="text-btn panel-toggle" type="button" aria-label="조작 패널" aria-expanded="{{leftExpanded}}" onClick="{{toggleLeft}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M9 4v16"></path></svg><span>조작</span></button>
+<strong class="brand">명반응 틸라코이드 막</strong>
+<sc-if value="{{hasModes}}" hint-placeholder-val="{{ true }}">
+<div class="seg" role="group" aria-label="보기 선택">
+<sc-for list="{{modes}}" as="md" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{md.pressed}}" onClick="{{md.pick}}">{{md.label}}</button>
+</sc-for>
+</div>
+</sc-if>
+<button class="text-btn theme-toggle" type="button" aria-label="{{themeLabel}}" title="{{themeLabel}}" onClick="{{toggleTheme}}">
+<sc-if value="{{isDark}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+<sc-if value="{{isLight}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></sc-if>
+</button>
+<button class="text-btn panel-toggle" type="button" aria-label="설명 패널" aria-expanded="{{rightExpanded}}" onClick="{{toggleRight}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M15 4v16"></path></svg><span>설명</span></button>
+</header>
+
+<div class="layout {{layoutCls}}" style="{{layoutStyle}}">
+<aside class="panel panel-left {{leftCls}}" aria-label="조작">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="220" aria-valuemax="480" aria-valuenow="{{leftWNow}}" ref="{{leftHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>조작</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<sc-if value="{{hasToggles}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">보기 옵션</h3>
+<div class="opt">
+<sc-for list="{{toggles}}" as="t" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{t.pressed}}" onClick="{{t.toggle}}"><span class="box" aria-hidden="true"></span>{{t.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<!-- SLOT:left -->
+<sc-if value="{{notA}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">방향 보기</h3>
+<p class="sub">위쪽이 틸라코이드 안쪽, 아래쪽이 스트로마예요. 교수님도 영상에서 「지금 위쪽이 안쪽이에요」라고 짚으셨어요. 교과서 그림 2.20은 위아래가 반대(스트로마가 위)로 그려져 있어요.</p>
+<p class="sub">전자는 왼쪽 광계 2에서 오른쪽 광계 1 쪽으로 흘러요.</p>
+</div>
+</sc-if>
+<sc-if value="{{is.a}}" hint-placeholder-val="{{ false }}">
+<div class="sec">
+<h3 class="sec-title">확대한 곳</h3>
+<p class="sub">광계 2 하나를 크게 확대한 그림이에요. 다른 모드처럼 위쪽이 틸라코이드 안쪽(물이 있는 쪽)이에요. 색소 오른쪽의 짧은 두 선이 바닥 상태와 들뜬 상태예요.</p>
+</div>
+</sc-if>
+<!-- /SLOT:left -->
+
+<sc-if value="{{hasSteps}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">단계</h3>
+<div class="steps">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}"><span class="step-num num" style="border-color: {{s.c}}">{{s.num}}</span><span class="step-txt"><b>{{s.title}}</b><span>{{s.who}}</span></span></button>
+</sc-for>
+</div>
+<sc-if value="{{hasStep}}" hint-placeholder-val="{{ false }}">
+<div class="detail" aria-live="polite">{{stepDetail}}</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</aside>
+
+<section class="stage" aria-label="모형 보기">
+<canvas class="canvas {{canvasCls}}" ref="{{canvasRef}}" role="img" aria-label="{{canvasLabel}}"></canvas>
+<div class="view-btns">
+<button class="icon-btn" type="button" aria-label="확대" onClick="{{zoomIn}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="축소" onClick="{{zoomOut}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="시점 처음으로" onClick="{{resetView}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v5h5"></path></svg></button>
+</div>
+
+<sc-if value="{{hasPlayback}}" hint-placeholder-val="{{ false }}">
+<div class="playbar float">
+<button class="play" type="button" aria-label="{{playLabel}}" onClick="{{togglePlay}}">
+<sc-if value="{{isPlaying}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></sc-if>
+<sc-if value="{{notPlaying}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5l12 7-12 7z"></path></svg></sc-if>
+</button>
+<label class="scrub">
+<span>{{fLabel}}</span>
+<input type="range" min="0" max="{{fMax10}}" step="1" value="{{fInt}}" onChange="{{onScrub}}">
+</label>
+<div class="speeds" role="group" aria-label="재생 속도">
+<sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{sp.pressed}}" onClick="{{sp.pick}}">{{sp.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</section>
+
+<aside class="panel panel-right {{rightCls}}" aria-label="설명">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="280" aria-valuemax="720" aria-valuenow="{{rightWNow}}" ref="{{rightHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>설명</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<!-- SLOT:right -->
+<sc-if value="{{is.s}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">숫자로 보는 틸라코이드 막</h3>
+<div class="tiles">
+<div class="tile"><b>2종류</b><span>광계 2와 광계 1</span></div>
+<div class="tile"><b>2 → 1</b><span>전자가 지나는 광계 순서</span></div>
+<div class="tile"><b>16 : 4</b><span>모형 속 H+ (안쪽 : 스트로마)</span></div>
+<div class="tile"><b>스트로마</b><span>ATP·NADPH가 생기는 쪽</span></div>
+</div>
+<p class="sub">틸라코이드 막에 광계, 전자전달계, ATP 합성효소가 모두 박혀 있어요.</p>
+</div>
+</sc-if>
+<sc-if value="{{is.f}}" hint-placeholder-val="{{ false }}">
+<div>
+<div class="sec">
+<h3 class="sec-title">지금까지 모인 것</h3>
+<div class="tiles three">
+<div class="tile"><b>{{fx.hIn}}</b><span>안쪽 H+</span></div>
+<div class="tile"><b>{{fx.hOut}}</b><span>스트로마 H+</span></div>
+<div class="tile"><b>{{fx.o2}}</b><span>발생한 O₂</span></div>
+</div>
+<div class="tiles" style="margin-top: var(--s2)">
+<div class="tile"><b>{{fx.nadph}}</b><span>만든 NADPH</span></div>
+<div class="tile"><b>{{fx.atp}}</b><span>만든 ATP</span></div>
+</div>
+<p class="sub">모형 속 개수예요. 모형은 전자 1개만 따라가요. 실제로는 물 1분자가 전자 2개를 내고, NADPH 하나에 전자 2개가 들어가요. ATP 하나에 H+ 2개도 모형 숫자예요.</p>
+</div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{events}}" as="e" hint-placeholder-count="2">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{notA}}" hint-placeholder-val="{{ true }}">
+<div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw" style="background: {{legend.ps2}}"></span>광계 2</div>
+<div><span class="sw" style="background: {{legend.ps1}}"></span>광계 1</div>
+<div><span class="sw ball" style="background: {{legend.rc}}"></span>반응 중심 엽록소</div>
+<div><span class="sw ball" style="background: {{legend.pig}}"></span>안테나 색소</div>
+<div><span class="sw ball" style="background: {{legend.pq}}"></span>플라스토퀴논(PQ)</div>
+<div><span class="sw" style="background: {{legend.cyt}}"></span>전자전달계</div>
+<div><span class="sw ball" style="background: {{legend.nadp}}"></span>NADP+ · NADPH</div>
+<div><span class="sw" style="background: {{legend.syn}}"></span>ATP 합성효소</div>
+<div><span class="sw ball" style="background: {{legend.e}}"></span>전자(e⁻)</div>
+<div><span class="sw ball" style="background: {{legend.h}}"></span>H+</div>
+<div><span class="sw" style="background: {{legend.light}}"></span>빛</div>
+<div><span class="sw ball" style="background: {{legend.water}}"></span>물 · 산소</div>
+</div>
+<p class="sub">전자전달계의 단백질 덩어리는 교과서에서 시토크롬 복합체라고 불러요 (교과서 보충).</p>
+</div>
+<div class="sec">
+<h3 class="sec-title">미토콘드리아와 비교</h3>
+<table style="width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.5">
+<thead><tr><th style="text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--line); color: var(--ink-2)">구분</th><th style="text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--line); color: var(--ink-2)">미토콘드리아</th><th style="text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--line); color: var(--ink-2)">엽록체</th></tr></thead>
+<tbody>
+<tr><td style="padding: 6px 4px; border-bottom: 1px solid var(--line); font-weight: 700">H+ 퍼내기</td><td style="padding: 6px 4px; border-bottom: 1px solid var(--line)">기질 → 막 바깥쪽(내막과 외막 사이)</td><td style="padding: 6px 4px; border-bottom: 1px solid var(--line)">스트로마 → 틸라코이드 안쪽</td></tr>
+<tr><td style="padding: 6px 4px; border-bottom: 1px solid var(--line); font-weight: 700">ATP 생기는 곳</td><td style="padding: 6px 4px; border-bottom: 1px solid var(--line)">H+가 기질(안)로 돌아올 때</td><td style="padding: 6px 4px; border-bottom: 1px solid var(--line)">H+가 스트로마(밖)로 나갈 때</td></tr>
+<tr><td style="padding: 6px 4px; font-weight: 700">전자 출발 → 끝</td><td style="padding: 6px 4px">NADH → 산소</td><td style="padding: 6px 4px">물 → NADP+</td></tr>
+</tbody>
+</table>
+<p class="sub">교수님 말씀처럼 「방향만 반대」예요. 원리는 똑같아요.</p>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{is.a}}" hint-placeholder-val="{{ false }}">
+<div>
+<div class="sec">
+<h3 class="sec-title">누가 무엇을 넘기나</h3>
+<div class="tiles">
+<div class="tile"><b>{{ax.passed}}개</b><span>에너지만 넘긴 안테나 색소</span></div>
+<div class="tile"><b>{{ax.gave}}개</b><span>전자 자체를 준 색소(반응 중심)</span></div>
+</div>
+</div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{events}}" as="e" hint-placeholder-count="2">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw ball" style="background: {{legend.pig}}"></span>안테나 색소</div>
+<div><span class="sw ball" style="background: {{legend.rc}}"></span>반응 중심 P680</div>
+<div><span class="sw ball" style="background: {{legend.e}}"></span>전자(e⁻)</div>
+<div><span class="sw" style="background: {{legend.light}}"></span>빛 · 에너지</div>
+<div><span class="sw ball" style="background: {{legend.acc}}"></span>최초 수용체</div>
+<div><span class="sw ball" style="background: {{legend.water}}"></span>물 · 산소</div>
+</div>
+<p class="sub">파도타기 응원처럼 색소는 제자리, 에너지만 옆으로 가요.</p>
+</div>
+</div>
+</sc-if>
+<!-- /SLOT:right -->
+
+<div class="sec warn">
+<h3 class="sec-title">꼭 기억해요</h3>
+<sc-for list="{{mistakes}}" as="m" hint-placeholder-count="3">
+<div class="mistake"><b>{{m.title}}</b><span>{{m.text}}</span></div>
+</sc-for>
+</div>
+</div>
+</aside>
+</div>
+<div class="scrim {{scrimCls}}" aria-hidden="true" onClick="{{closePanels}}"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  // ================= 주제 훅: 주제마다 바꾸는 곳은 이 네 메서드뿐이에요 =================
+  // 계약은 bio-interactive/references/scene-api.md에 있어요.
+
+  topic() {
+    const sm = (x) => { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
+    const ph = (P, f) => { let n = P[0][1]; for (const x of P) if (f >= x[0]) n = x[1]; return n; };
+    // 흐름 모드 과정 구간(시작 f, 이름)
+    const PHF = [[0, '빛 흡수'], [2, '전자 내보내기'], [4.0, '물의 광분해'], [5.5, 'H+ 퍼내기'], [8, '광계 1'], [10.5, 'NADPH 생성'], [12.5, 'ATP 합성']];
+    // 안테나 모드 과정 구간
+    const PHA = [[0, '빛 흡수'], [1.2, '에너지 전달'], [6, '전자 내보내기'], [8, '빈자리 채우기']];
+    const P3 = (x, y) => [x, y, 0];
+    // 흐름 모드 자리(평면, 위 = 틸라코이드 안쪽, 아래 = 스트로마)
+    const X = {
+      p680: P3(-5, 0), a2: P3(-4.3, -0.42), pq: P3(-3.1, -0.1), cyt: P3(-1.3, 0.1), p700: P3(1.4, 0), a1: P3(2.1, -0.42),
+      nadp: P3(3.1, -1.85), water: P3(-5.4, 1.85), adp: P3(4.3, -2.6), syn: P3(5.4, 0)
+    };
+    // 움직이는 알갱이: e = 전자, h = H+, o = 산소. keys = [[f, 자리], ...], on/off = 보이는 구간
+    const PARTS = [
+      { id: 'e1', k: 'e', on: 0, keys: [[2.0, X.p680], [2.9, X.a2], [5.6, X.a2], [6.2, X.pq], [6.5, X.pq], [7.2, X.cyt], [9.4, X.cyt], [10.2, X.p700]] },
+      { id: 'ew', k: 'e', on: 4.2, keys: [[4.3, X.water], [5.2, X.p680]] },
+      { id: 'e2', k: 'e', on: 0, off: 11.8, keys: [[8.8, X.p700], [9.4, X.a1], [10.6, X.a1], [11.4, X.nadp]] },
+      { id: 'L1', k: 'h', on: 0, keys: [[0, P3(-6.5, 2.5)]] },
+      { id: 'L2', k: 'h', on: 0, keys: [[0, P3(0.2, 2.6)]] },
+      { id: 'L5', k: 'h', on: 0, keys: [[0, P3(-3.3, 2.3)]] },
+      { id: 'L3', k: 'h', on: 0, keys: [[12.6, P3(4.3, 2.1)], [13.1, P3(5.4, 0.8)], [13.5, P3(5.4, -0.6)], [14.0, P3(6.5, -2.5)]] },
+      { id: 'L4', k: 'h', on: 0, keys: [[13.0, P3(4.9, 2.7)], [13.5, P3(5.4, 0.8)], [13.9, P3(5.4, -0.6)], [14.4, P3(6.2, -3.05)]] },
+      { id: 'W1', k: 'h', on: 4.2, keys: [[4.25, X.water], [4.9, P3(-6.3, 2.75)]] },
+      { id: 'W2', k: 'h', on: 4.2, keys: [[4.25, X.water], [4.9, P3(-4.3, 2.6)]] },
+      { id: 'S1', k: 'h', on: 0, keys: [[0, P3(-6.3, -2.4)]] },
+      { id: 'S2', k: 'h', on: 0, keys: [[6.4, P3(-1.8, -2.3)], [6.8, P3(-1.5, -0.9)], [7.1, P3(-1.4, 0.9)], [7.5, P3(-2.0, 2.4)]] },
+      { id: 'S3', k: 'h', on: 0, keys: [[6.8, P3(-0.8, -2.7)], [7.2, P3(-1.15, -0.9)], [7.45, P3(-1.2, 0.9)], [7.8, P3(-0.6, 2.2)]] },
+      { id: 'S4', k: 'h', on: 0, off: 11.8, keys: [[11.0, P3(2.4, -2.8)], [11.7, P3(2.85, -2.05)]] },
+      { id: 'O2', k: 'o', on: 4.2, keys: [[4.3, X.water], [5.2, P3(-5.0, 3.15)]] }
+    ];
+    const track = (keys, f) => {
+      if (f <= keys[0][0]) return keys[0][1];
+      for (let i = 1; i < keys.length; i++) {
+        const t0 = keys[i - 1][0], p0 = keys[i - 1][1], t1 = keys[i][0], p1 = keys[i][1];
+        if (f <= t1) { const u = t1 > t0 ? sm((f - t0) / (t1 - t0)) : 1; return [p0[0] + (p1[0] - p0[0]) * u, p0[1] + (p1[1] - p0[1]) * u, 0]; }
+      }
+      return keys[keys.length - 1][1];
+    };
+    const FX = (f) => PARTS.filter((q) => f >= q.on && (q.off == null || f < q.off)).map((q) => ({ id: q.id, k: q.k, p: track(q.keys, f) }));
+    return {
+      PH: { f: (f) => ph(PHF, f), a: (f) => ph(PHA, f) }, X: X, FX: FX,
+      MODES: [
+        { key: 's', label: '구조', cam: { yaw: -0.55, pitch: 0.32, zoom: 1 }, fit: [16.5, 8], D: 30,
+          autoSpin: true, rotatable: true, playback: null,
+          canvasLabel: () => '틸라코이드 막 한 조각 3D 모형. 위가 틸라코이드 안쪽, 아래가 스트로마이고 막에 왼쪽부터 광계 2, PQ, 전자전달계, 광계 1, NADP+ 자리, ATP 합성효소가 박혀 있어요. 끌어서 돌릴 수 있어요.' },
+        { key: 'f', label: '흐름', cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [15.4, 8.6], D: 60,
+          autoSpin: false, rotatable: false,
+          playback: { fmax: 15, rate: 1.1, label: (f) => ph(PHF, f) + ' · ' + f.toFixed(1) + ' / 15' },
+          canvasLabel: (f) => '틸라코이드 막 단면에서 물의 전자가 광계 2 → PQ → 전자전달계 → 광계 1 → NADP+로 흐르는 과정이에요. 지금은 「' + ph(PHF, f) + '」 과정이에요.' },
+        { key: 'a', label: '안테나', cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [14.6, 8.4], D: 60,
+          autoSpin: false, rotatable: false,
+          playback: { fmax: 10, rate: 1, label: (f) => ph(PHA, f) + ' · ' + f.toFixed(1) + ' / 10' },
+          canvasLabel: (f) => '광계 2를 크게 확대한 그림이에요. 안테나 색소가 에너지만 옆으로 넘기고 반응 중심 P680만 전자를 내보내요. 지금은 「' + ph(PHA, f) + '」 과정이에요.' }
+      ],
+      STEPS: [
+        { mode: 'f', f: 1.6, phase: '빛 흡수', c: '#E8B100', title: '빛 흡수', who: '안테나 복합체',
+          text: '빛이 광계 2의 안테나 복합체에 닿아요. 엽록소·카로티노이드 같은 색소가 빛을 흡수하고 그 에너지를 가운데 반응 중심으로 모아요. 자세한 전달은 「안테나」 모드에서 볼 수 있어요.' },
+        { mode: 'f', f: 3.0, phase: '전자 내보내기', c: '#E5484D', title: '전자 내보내기', who: 'P680 (광계 2 반응 중심)',
+          text: '에너지를 받은 반응 중심 엽록소 P680의 전자가 들떠요. 이 전자는 제자리로 돌아오지 않고 최초 수용체에게 아예 넘어가요. P680에는 빈자리가 남아요(고리 표시).' },
+        { mode: 'f', f: 5.3, phase: '물의 광분해', c: '#2F9BD6', title: '물의 광분해', who: '광계 2',
+          text: 'P680은 빈자리를 물의 전자로 채워요. 전자를 빼앗긴 물은 H2O → 2H+ + 2e⁻ + ½O2로 갈라져요. H+와 산소는 틸라코이드 안쪽에 남아요. 산소는 CO2가 아니라 물에서 나와요.' },
+        { mode: 'f', f: 7.8, phase: 'H+ 퍼내기', c: '#F08A24', title: 'H+ 퍼내기', who: 'PQ · 전자전달계',
+          text: '전자는 플라스토퀴논(PQ)을 거쳐 전자전달계로 가요. 전자를 더 좋아하는 쪽으로 넘어가며 떨어진 에너지로 H+를 스트로마에서 틸라코이드 안쪽으로 퍼내요. 그래서 안쪽 H+가 많아져요.' },
+        { mode: 'f', f: 10.3, phase: '광계 1', c: '#1E9C8C', title: '광계 1', who: 'P700 (광계 1 반응 중심)',
+          text: '광계 1도 빛을 받아 반응 중심 P700의 전자가 들떠 밖으로 나가요. P700의 빈자리는 광계 2에서 전자전달계를 거쳐 온 전자, 곧 원래 물의 전자가 채워요.' },
+        { mode: 'f', f: 12.2, phase: 'NADPH 생성', c: '#D9488A', title: 'NADPH 생성', who: 'NADP+ (마지막 전자수용체)',
+          text: '광계 1에서 나간 전자는 마지막 전자수용체 NADP+에 가요. NADP+가 전자 2개와 H+를 받아 스트로마에서 NADPH가 돼요(화면은 전자 1개만 따라가요). NADPH는 이 전자를 캘빈 회로로 실어 가요.' },
+        { mode: 'f', f: 14.8, phase: 'ATP 합성', c: '#4A7FD8', title: 'ATP 합성', who: 'ATP 합성효소',
+          text: '틸라코이드 안쪽에 쌓인 H+가 ATP 합성효소를 지나 스트로마로 빠져나와요. 이때 ADP와 인산(Pi)이 ATP가 돼요. 그래서 ATP는 스트로마 쪽에서 생기고, 스트로마의 캘빈 회로에서 쓰여요.' },
+        { mode: 'a', f: 1.0, phase: '빛 흡수', c: '#E8B100', title: '빛 받기', who: '안테나 색소',
+          text: '안테나가 전파를 받듯 안테나 복합체는 빛을 받아요. 엽록소, 카로티노이드 같은 색소가 잔뜩 모여 있고, 빛이 그중 한 색소에 닿았어요.' },
+        { mode: 'a', f: 4.5, phase: '에너지 전달', c: '#7DBE3C', title: '에너지만 옆으로', who: '안테나 색소 (유도공명)',
+          text: '빛을 받은 색소의 전자가 들떴다가 바닥 상태로 떨어지며 내놓은 에너지를 옆 색소에 넘겨요. 옆 색소의 전자가 다시 들떠요. 옆으로 가는 것은 에너지뿐이고 전자는 제자리로 돌아와요.' },
+        { mode: 'a', f: 7.6, phase: '전자 내보내기', c: '#E5484D', title: '전자 자체를 주기', who: '반응 중심 (P680)',
+          text: '에너지가 반응 중심 엽록소에 모이면 그 전자가 들떠요. 반응 중심은 전자를 바닥 상태로 떨어뜨리지 않고 전자 자체를 최초 수용체에게 줘 버려요. 최초 수용체 이름은 몰라도 돼요.' },
+        { mode: 'a', f: 9.8, phase: '빈자리 채우기', c: '#2F9BD6', title: '빈자리는 물에서', who: '광계 2 · 물',
+          text: 'P680은 잃은 전자를 물에서 빼 와 채워요. 전자를 빼앗긴 물은 H+와 산소로 갈라져요. 이 물의 광분해는 광계 2에서 일어나요.' }
+      ],
+      MISTAKES: {
+        s: [
+          { title: '광계 2 → 광계 1', text: '전자는 번호와 거꾸로 광계 2에서 광계 1로 흘러요. 광계 1이 먼저 발견돼 번호가 붙었을 뿐이에요. 「전자 경로」의 빨간 선이 물에서 시작해 광계 2를 먼저 지나요.' },
+          { title: 'H+는 안쪽, ATP는 스트로마', text: 'H+는 위쪽 틸라코이드 안쪽에 쌓이지만 ATP는 아래 스트로마 쪽 ATP 합성효소 머리에서 생겨요. 「H+ 농도」를 켜고 위아래 주황 알갱이 수를 비교해 보세요.' },
+          { title: '반응 중심은 엽록소', text: '반응 중심에 있는 것은 엽록체가 아니라 엽록소(P680·P700)예요. 광계 가운데 진한 초록 구가 반응 중심 엽록소, 둘레 연두 구가 안테나 색소예요.' }
+        ],
+        f: [
+          { title: '물의 광분해는 광계 2', text: '물은 광계 2 옆 틸라코이드 안쪽에서 쪼개져요. 광합성의 산소는 CO2가 아니라 물에서 나와요. 3단계에서 물 분자가 갈라지는 자리를 보세요.' },
+          { title: '미토콘드리아와 방향 반대', text: '엽록체는 H+를 안쪽으로 퍼냈다가 밖(스트로마)으로 나갈 때 ATP를 만들어요. 미토콘드리아는 막 바깥쪽으로 퍼냈다가 기질(안)로 돌아올 때 만들어요.' },
+          { title: '넘기는 것은 ATP와 NADPH', text: '명반응이 캘빈 회로에 넘기는 두 가지는 ATP와 NADPH예요. 산소는 물에서 나온 부산물이고, 포도당은 캘빈 회로에서 만들어요.' }
+        ],
+        a: [
+          { title: '에너지만 ≠ 전자 자체', text: '안테나 색소는 전자가 바닥 상태로 돌아오며 에너지만 옆으로 넘겨요. 전자 자체를 최초 수용체에 주는 것은 반응 중심 엽록소뿐이에요.' },
+          { title: '파도타기 응원처럼', text: '사람(색소)은 제자리에 있고 동작(에너지)만 옆으로 전해져요. 화면에서 색소 옆 빨간 전자는 올라갔다가 제자리로 내려와요.' },
+          { title: '빈자리는 물로 채워요', text: '전자를 내준 P680은 물에서 전자를 빼 와 채워요. 이때 물이 갈라져 H+와 산소가 생겨요. 물의 광분해는 광계 2에서 일어나요.' }
+        ]
+      },
+      TOGGLES: {
+        s: [['labels', '이름표'], ['hions', 'H+ 농도'], ['epath', '전자 경로']],
+        f: [['labels', '이름표'], ['trail', '전자 지나간 길']],
+        a: [['labels', '이름표'], ['levels', '에너지 준위']]
+      },
+      PAL: {
+        light: { bg: '#ffffff', labelBg: '#f7f8fa', ink: '#111111', ring: '#111111', blobAlpha: 0.30,
+          lipid: '#B7C0CC', tail: '#D5DBE3', ps2: '#3E9E5B', ps1: '#1E9C8C', pig: '#7DBE3C', rc: '#2E7D32', acc: '#8A94A3',
+          pq: '#B07A3E', cyt: '#A65BC4', nadp: '#D9488A', syn: '#4A7FD8', atp: '#2C5FC0', pi: '#7C8BA6', e: '#E5484D',
+          h: '#F08A24', light: '#E8B100', water: '#2F9BD6', hText: '#ffffff' },
+        dark: { bg: '#17171c', labelBg: '#212128', ink: '#f2f4f6', ring: '#f2f4f6', blobAlpha: 0.42,
+          lipid: '#6B7482', tail: '#3E4450', ps2: '#6CCB86', ps1: '#4FD1BE', pig: '#A5DC6A', rc: '#7BD67F', acc: '#AEB7C4',
+          pq: '#D9A56A', cyt: '#CC8AE6', nadp: '#FF7EB3', syn: '#7FA8FF', atp: '#9DB9FF', pi: '#AEB7C4', e: '#FF7A7E',
+          h: '#FFAD5C', light: '#FFD54A', water: '#6CC4F5', hText: '#17171c' }
+      }
+    };
+  }
+
+  // 장면 만들기: I(그리기 항목)와 O(라벨)에 push만 해요. 진행값은 this.sim.f를 써요.
+  buildScene(mode, I, O) {
+    const pal = this.pal(), st = this.state, f = this.sim.f, T = this.T;
+    const txt = (p, text, size, c) => I.push({ k: 3, p: p, text: text, size: size, c: c });
+    const bump = (x, c, w) => Math.max(0, 1 - Math.abs(x - c) / w);
+    const glow = (c, g) => this.mix(c, pal.light, Math.min(1, g) * 0.7);
+    const seg = (a, b) => this.sm((f - a) / (b - a));
+    const hion = (p, a) => { I.push({ k: 0, p: p, r: 0.17, c: pal.h, a: a }); I.push({ k: 3, p: p, text: '+', size: 11, c: pal.hText }); };
+    const water = (p, a) => {
+      I.push({ k: 0, p: p, r: 0.21, c: pal.water, a: a });
+      I.push({ k: 0, p: [p[0] - 0.2, p[1] + 0.14, p[2]], r: 0.11, c: pal.acc, a: a });
+      I.push({ k: 0, p: [p[0] + 0.2, p[1] + 0.14, p[2]], r: 0.11, c: pal.acc, a: a });
+    };
+    const arrowLine = (p, q, c, w) => { I.push({ k: 1, p: p, q: q, w: w, c: c }); I.push({ k: 4, p: p, q: q, c: c }); };
+    // 빛: 물결선이 from에서 to로 u만큼 자라요
+    const wave = (from, to, u, a) => {
+      if (u <= 0 || a <= 0) return;
+      const dx = to[0] - from[0], dy = to[1] - from[1], L = Math.hypot(dx, dy), nx = -dy / L, ny = dx / L, N = 28;
+      let prev = from;
+      for (let i = 1; i <= N; i++) {
+        const s = i / N * u, off = 0.13 * Math.sin(s * L * 7);
+        const p = [from[0] + dx * s + nx * off, from[1] + dy * s + ny * off, 0];
+        I.push({ k: 1, p: prev, q: p, w: 0.06, c: pal.light, a: a });
+        prev = p;
+      }
+      const tip = [from[0] + dx * u, from[1] + dy * u, 0], back = [from[0] + dx * (u - 0.08), from[1] + dy * (u - 0.08), 0];
+      I.push({ k: 4, p: back, q: tip, c: pal.light, a: a });
+    };
+
+    if (mode === 's') {
+      // 막: 인지질 머리 두 층(위 = 틸라코이드 안쪽 면, 아래 = 스트로마 면). 단백질 자리는 비워요
+      const foot = [[-5, 1.1], [-1.3, 0.85], [1.4, 1.1], [5.4, 0.62]];
+      for (let x = -7; x <= 7.001; x += 0.45) for (let z = -2.25; z <= 2.251; z += 0.45) {
+        if (foot.some((c) => Math.hypot(x - c[0], z) < c[1])) continue;
+        I.push({ k: 0, p: [x, 0.5, z], r: 0.15, c: pal.lipid });
+        I.push({ k: 0, p: [x, -0.5, z], r: 0.15, c: pal.lipid });
+      }
+      // 광계 2, 광계 1: 안테나 색소 고리 + 가운데 반응 중심 엽록소
+      [[-5, pal.ps2], [1.4, pal.ps1]].forEach((d) => {
+        I.push({ k: 5, p: [d[0], 0, 0], r: 1.1, c: d[1] });
+        for (let i = 0; i < 8; i++) {
+          const a = i / 8 * Math.PI * 2;
+          I.push({ k: 0, p: [d[0] + 0.72 * Math.cos(a), 0.18 * Math.sin(a * 2), 0.72 * Math.sin(a)], r: 0.16, c: pal.pig });
+        }
+        I.push({ k: 0, p: [d[0], 0, 0], r: 0.27, c: pal.rc });
+      });
+      // PQ: 막 속을 오가는 작은 운반체
+      [[-3.3, 0, 0.75], [-2.9, 0.05, -0.65], [-3.05, -0.05, 0.05]].forEach((p) => I.push({ k: 0, p: p, r: 0.2, c: pal.pq }));
+      I.push({ k: 5, p: [-1.3, 0, 0], r: 0.85, c: pal.cyt });
+      // NADP+ 환원 자리(스트로마 쪽)
+      I.push({ k: 5, p: [3.1, -0.95, 0], r: 0.42, c: pal.nadp });
+      I.push({ k: 0, p: [3.1, -1.85, 0.25], r: 0.26, c: pal.nadp });
+      // ATP 합성효소: 막 속 통로 + 스트로마 쪽 머리
+      I.push({ k: 5, p: [5.4, 0, 0], r: 0.62, c: pal.syn });
+      I.push({ k: 1, p: [5.4, -0.6, 0], q: [5.4, -1.0, 0], w: 0.2, c: pal.syn, rod: true });
+      I.push({ k: 5, p: [5.4, -1.65, 0], r: 0.75, c: pal.syn });
+      water([-5.7, 1.7, 0.8], 1);
+      if (st.hions) {
+        const fr = (v) => v - Math.floor(v);
+        for (let i = 0; i < 16; i++) {
+          hion([-6.6 + 13.2 * fr(Math.sin(i * 12.9898 + 1) * 43758.5453), 1.05 + 1.1 * fr(Math.sin(i * 4.1414 + 2) * 23421.631), -2 + 4 * fr(Math.sin(i * 78.233 + 3) * 12345.678)], 1);
+        }
+        [[-6, -1.6, 1.2], [-2.6, -2.2, -1.1], [0.6, -1.5, 1.4], [2.2, -2.4, -1.2]].forEach((p) => hion(p, 1));
+      }
+      if (st.epath) {
+        const path = [[-5.7, 1.7, 0.8], [-5, 0, 0], [-4.4, -0.4, 0], [-3.05, -0.05, 0.05], [-1.3, 0, 0], [1.4, 0, 0], [2.1, -0.4, 0], [3.1, -1.85, 0.25]];
+        for (let i = 1; i < path.length; i++) arrowLine(path[i - 1], path[i], pal.e, 0.06);
+        // H+ 방향: 전자전달계는 스트로마 → 안쪽, ATP 합성효소는 안쪽 → 스트로마
+        I.push({ k: 1, p: [-1.3, -2.0, 1.0], q: [-1.3, 1.7, 1.0], w: 0.05, c: pal.h });
+        I.push({ k: 4, p: [-1.3, 1.1, 1.0], q: [-1.3, 1.7, 1.0], c: pal.h });
+        I.push({ k: 1, p: [5.4, 1.8, 0.85], q: [5.4, -2.5, 0.85], w: 0.05, c: pal.h });
+        I.push({ k: 4, p: [5.4, -1.9, 0.85], q: [5.4, -2.5, 0.85], c: pal.h });
+      }
+      txt([0, 3.3, 0], '틸라코이드 안쪽 (위)', 13, pal.ink);
+      txt([0, -3.5, 0], '스트로마 (아래, 틸라코이드 바깥)', 13, pal.ink);
+      if (st.labels) {
+        txt([-5, -1.35, 0], 'P680', 12, this.textTone(pal.rc));
+        txt([1.4, -1.35, 0], 'P700', 12, this.textTone(pal.rc));
+        O.push({ p: [-5, 1.1, 0], text: '광계 2', c: pal.ps2, dy: -22, lead: true });
+        O.push({ p: [-3.05, 0, 0.05], text: 'PQ', c: pal.pq, dy: 40, lead: true });
+        O.push({ p: [-1.3, 0.85, 0], text: '전자전달계', c: pal.cyt, dy: -24, lead: true });
+        O.push({ p: [1.4, 1.1, 0], text: '광계 1', c: pal.ps1, dy: -22, lead: true });
+        O.push({ p: [3.1, -1.85, 0.25], text: 'NADP+', c: pal.nadp, dy: 28, lead: true });
+        O.push({ p: [5.4, 0.62, 0], text: 'ATP 합성효소', c: pal.syn, dy: -26, lead: true });
+      }
+      return;
+    }
+
+    if (mode === 'f') {
+      const X = T.X, phase = T.PH.f(f);
+      txt([1.8, 3.55, 0], '틸라코이드 안쪽 · H+가 쌓이는 곳', 13, pal.ink);
+      txt([-3.2, -3.35, 0], '스트로마 (틸라코이드 바깥)', 13, pal.ink);
+      // 막(단면): 인지질 머리 + 꼬리
+      const foot = [[-5, 1.0], [-1.3, 0.78], [1.4, 1.0], [5.4, 0.55]];
+      for (let x = -7.2; x <= 7.201; x += 0.3) {
+        if (foot.some((c) => Math.abs(x - c[0]) < c[1])) continue;
+        [1, -1].forEach((s) => {
+          I.push({ k: 1, p: [x - 0.05, s * 0.4, 0], q: [x - 0.05, s * 0.08, 0], w: 0.025, c: pal.tail });
+          I.push({ k: 1, p: [x + 0.05, s * 0.4, 0], q: [x + 0.05, s * 0.08, 0], w: 0.025, c: pal.tail });
+          I.push({ k: 0, p: [x, s * 0.5, 0], r: 0.12, c: pal.lipid });
+        });
+      }
+      // 빛 두 번: 광계 2, 광계 1
+      wave([-7.2, 3.7, 0], [-5.5, 0.6, 0], seg(0.1, 1.0), 1 - seg(2.0, 2.6));
+      wave([3.6, 3.7, 0], [1.8, 0.6, 0], seg(8.0, 8.7), 1 - seg(9.6, 10.2));
+      // 광계 2 · 광계 1
+      const ps = [
+        { x: -5, c: pal.ps2, foc: f < 5.5, t: 0.9, rc: 1.9 },
+        { x: 1.4, c: pal.ps1, foc: f >= 8 && f < 10.5, t: 8.7, rc: 9.0 }
+      ];
+      ps.forEach((d) => {
+        I.push({ k: 5, p: [d.x, 0, 0], r: 1.05, c: d.c, focus: d.foc });
+        for (let i = 0; i < 6; i++) {
+          const a = Math.PI * 0.75 - i / 6 * Math.PI * 2, g = bump(f, d.t + 0.14 * i, 0.35);
+          I.push({ k: 0, p: [d.x + 0.68 * Math.cos(a), 0.62 * Math.sin(a), 0], r: 0.16 + 0.05 * g, c: glow(pal.pig, g) });
+        }
+        const g = bump(f, d.rc, 0.5);
+        I.push({ k: 0, p: [d.x, 0, 0], r: 0.25 + 0.05 * g, c: glow(pal.rc, g) });
+      });
+      I.push({ k: 0, p: X.a2, r: 0.12, c: pal.acc });
+      I.push({ k: 0, p: X.a1, r: 0.12, c: pal.acc });
+      I.push({ k: 0, p: X.pq, r: 0.22, c: pal.pq });
+      I.push({ k: 5, p: [-1.3, 0, 0], r: 0.8, c: pal.cyt, focus: phase === 'H+ 퍼내기' });
+      I.push({ k: 5, p: [3.1, -0.95, 0], r: 0.42, c: pal.nadp, focus: phase === 'NADPH 생성' });
+      I.push({ k: 5, p: [5.4, 0, 0], r: 0.55, c: pal.syn, focus: phase === 'ATP 합성' });
+      I.push({ k: 1, p: [5.4, -0.55, 0], q: [5.4, -0.95, 0], w: 0.2, c: pal.syn, rod: true });
+      I.push({ k: 5, p: [5.4, -1.6, 0], r: 0.72, c: pal.syn, focus: phase === 'ATP 합성' });
+      // 물(쪼개지기 전)
+      if (f < 4.4) water(X.water, 1 - seg(4.0, 4.4));
+      // NADP+ → NADPH
+      const made = f >= 11.8;
+      I.push({ k: 0, p: X.nadp, r: made ? 0.3 : 0.26, c: made ? this.mix(pal.nadp, pal.ink, 0.15) : pal.nadp });
+      // ADP + Pi → ATP
+      const pIn = this.lerp([4.5, -3.35, 0], [4.97, -2.6, 0], seg(13.8, 14.4));
+      I.push({ k: 0, p: X.adp, r: 0.22, c: pal.atp });
+      I.push({ k: 0, p: [4.55, -2.6, 0], r: 0.1, c: pal.pi });
+      I.push({ k: 0, p: [4.76, -2.6, 0], r: 0.1, c: pal.pi });
+      I.push({ k: 0, p: pIn, r: 0.1, c: pal.pi });
+      // 전자 지나간 길
+      if (st.trail) {
+        [[4.3, 5.2, X.water, X.p680], [2.0, 2.9, X.p680, X.a2], [5.6, 6.2, X.a2, X.pq], [6.5, 7.2, X.pq, X.cyt],
+          [8.8, 9.4, X.p700, X.a1], [9.4, 10.2, X.cyt, X.p700], [10.6, 11.4, X.a1, X.nadp]].forEach((s) => {
+          const u = Math.max(0, Math.min(1, (f - s[0]) / (s[1] - s[0])));
+          if (u <= 0) return;
+          const q = this.lerp(s[2], s[3], u);
+          I.push({ k: 1, p: s[2], q: q, w: 0.05, c: pal.e, a: 0.45 });
+          if (u >= 1) I.push({ k: 4, p: s[2], q: s[3], c: pal.e, a: 0.7 });
+        });
+      }
+      // 움직이는 알갱이
+      T.FX(f).forEach((q) => {
+        if (q.k === 'h') hion(q.p, 1);
+        else if (q.k === 'e') I.push({ k: 0, p: q.p, r: 0.13, c: pal.e });
+        else if (q.k === 'o') { I.push({ k: 0, p: q.p, r: 0.2, c: pal.water }); O.push({ p: q.p, text: '½O₂', c: pal.water, dx: 34, a: seg(4.3, 4.7) }); }
+      });
+      if (st.labels) {
+        txt([-5, -1.35, 0], '광계 2', 12, this.textTone(pal.ps2));
+        txt([-5, -1.95, 0], 'P680', 11, this.textTone(pal.rc));
+        txt([-3.1, -0.85, 0], 'PQ', 12, this.textTone(pal.pq));
+        txt([-1.3, -1.2, 0], '전자전달계', 12, this.textTone(pal.cyt));
+        txt([1.4, -1.35, 0], '광계 1', 12, this.textTone(pal.ps1));
+        txt([1.4, -1.95, 0], 'P700', 11, this.textTone(pal.rc));
+        txt([5.4, 1.2, 0], 'ATP 합성효소', 12, this.textTone(pal.syn));
+      }
+      if (f < 4.2) O.push({ p: X.water, text: 'H₂O', c: pal.water, dy: -26 });
+      O.push({ p: X.nadp, text: made ? 'NADPH' : 'NADP+', c: pal.nadp, dx: -12, dy: 24 });
+      O.push({ p: X.adp, text: f >= 14.4 ? 'ATP' : 'ADP + Pi', c: pal.atp, dx: 16, dy: 30 });
+      if (f >= 2.9 && f < 5.2) O.push({ t: 'ring', p: X.p680, text: '빈자리' });
+      if (f >= 9.4 && f < 10.2) O.push({ t: 'ring', p: X.p700, text: '빈자리' });
+      return;
+    }
+
+    // 안테나 모드: 광계 2 확대. 색소마다 오른쪽에 바닥·들뜬 준위와 전자
+    const P = [[-4.6, -1.0], [-3.2, -0.1], [-1.8, -1.0], [-0.4, -0.1]], RC = [1.2, -0.7], ACC = [3.7, -2.1], W = [1.2, 2.5];
+    const idle = [[-5.6, 0.9], [-4.3, -2.5], [-2.6, 1.3], [-1.0, -2.4], [-1.2, 1.4], [-3.4, -2.2]];
+    const tI = (i) => 1.2 + 1.2 * i;
+    // 들뜬 정도: 색소 i는 tI(i)에 올라가고 tI(i)+0.9에 내려와요. 반응 중심은 6.0에 올라가요
+    const ex = (i) => seg(tI(i), tI(i) + 0.3) * (1 - seg(tI(i) + 0.9, tI(i) + 1.2));
+    I.push({ k: 5, p: [-2.6, -0.55, 0], r: 3.0, c: pal.ps2 });
+    I.push({ k: 5, p: [RC[0], RC[1], 0], r: 0.95, c: pal.rc, focus: f >= 6 && f < 10.01 });
+    idle.forEach((p) => I.push({ k: 0, p: [p[0], p[1], 0], r: 0.3, c: pal.pig, a: 0.55 }));
+    // 빛
+    wave([-6.6, -3.0, 0], [-4.85, -1.25, 0], seg(0.1, 1.0), 1 - seg(1.6, 2.2));
+    const lv = (x, y) => ({ g: [x + 0.55, y - 0.5, 0], e: [x + 0.55, y + 0.5, 0] });
+    const drawLevels = (x, y) => {
+      if (!st.levels) return;
+      const L = lv(x, y);
+      I.push({ k: 1, p: [x + 0.32, L.g[1], 0], q: [x + 0.78, L.g[1], 0], w: 0.05, c: pal.acc, flat: true });
+      I.push({ k: 1, p: [x + 0.32, L.e[1], 0], q: [x + 0.78, L.e[1], 0], w: 0.05, c: pal.acc, flat: true });
+      I.push({ k: 1, p: [x + 0.55, L.g[1], 0], q: [x + 0.55, L.e[1], 0], w: 0.02, c: pal.acc, a: 0.4 });
+    };
+    P.forEach((p, i) => {
+      const e = ex(i);
+      I.push({ k: 0, p: [p[0], p[1], 0], r: 0.32 + 0.06 * e, c: glow(pal.pig, e) });
+      drawLevels(p[0], p[1]);
+      const L = lv(p[0], p[1]);
+      I.push({ k: 0, p: this.lerp(L.g, L.e, e), r: 0.11, c: pal.e });
+      // 에너지 화살표: 다음 색소(또는 반응 중심)로
+      const nx = i < 3 ? P[i + 1] : RC, a0 = tI(i) + 0.6, a1 = tI(i) + 1.4;
+      const u = seg(a0, a0 + 0.5), al = 1 - seg(a1, a1 + 0.3);
+      if (u > 0 && al > 0) {
+        const from = [p[0] + 0.3 * Math.sign(nx[0] - p[0]), p[1] + 0.25 * Math.sign(nx[1] - p[1]), 0];
+        const to = this.lerp(from, [nx[0] - 0.35, nx[1] + 0.2 * Math.sign(p[1] - nx[1]), 0], u);
+        I.push({ k: 1, p: from, q: to, w: 0.1, c: pal.light, a: al });
+        I.push({ k: 4, p: from, q: to, c: pal.light, a: al });
+      }
+    });
+    // 반응 중심
+    const eRC = seg(6.0, 6.3), gRC = eRC * (1 - seg(7.6, 8.2));
+    I.push({ k: 0, p: [RC[0], RC[1], 0], r: 0.36 + 0.06 * gRC, c: glow(pal.rc, gRC) });
+    drawLevels(RC[0], RC[1]);
+    const LR = lv(RC[0], RC[1]);
+    // 반응 중심 전자: 들뜬 뒤 최초 수용체로 떠나요
+    const eOut = seg(6.6, 7.6);
+    const pe = eOut > 0 ? this.lerp(LR.e, [ACC[0], ACC[1], 0], eOut) : this.lerp(LR.g, LR.e, eRC);
+    I.push({ k: 0, p: [ACC[0], ACC[1], 0], r: 0.24, c: pal.acc });
+    if (eOut > 0) I.push({ k: 1, p: LR.e, q: pe, w: 0.05, c: pal.e, a: 0.5 });
+    I.push({ k: 0, p: pe, r: 0.12, c: pal.e });
+    // 물의 광분해: 물 전자가 반응 중심 바닥 준위를 채워요
+    if (f < 8.4) water([W[0], W[1], 0], 1 - seg(8.1, 8.4));
+    if (f >= 8.2) {
+      const pw = this.lerp([W[0], W[1], 0], LR.g, seg(8.4, 9.4));
+      I.push({ k: 1, p: [W[0], W[1], 0], q: pw, w: 0.05, c: pal.e, a: 0.5 });
+      I.push({ k: 0, p: pw, r: 0.12, c: pal.e });
+      const sp = seg(8.2, 8.9);
+      hion(this.lerp([W[0], W[1], 0], [W[0] - 1.1, W[1] + 0.6, 0], sp), sp);
+      hion(this.lerp([W[0], W[1], 0], [W[0] - 0.4, W[1] + 1.0, 0], sp), sp);
+      I.push({ k: 0, p: this.lerp([W[0], W[1], 0], [W[0] + 1.1, W[1] + 0.7, 0], sp), r: 0.2, c: pal.water, a: sp });
+    }
+    txt([-2.6, -3.75, 0], '안테나 복합체', 13, this.textTone(pal.ps2));
+    txt([-4.4, 3.6, 0], '위: 틸라코이드 안쪽', 11, pal.ink);
+    txt([4.2, -3.6, 0], '아래: 스트로마', 11, pal.ink);
+    if (st.levels) {
+      txt([P[0][0] - 1.15, P[0][1] + 0.5, 0], '들뜬 상태', 11, this.textTone(pal.acc));
+      txt([P[0][0] - 1.15, P[0][1] - 0.5, 0], '바닥 상태', 11, this.textTone(pal.acc));
+    }
+    if (st.labels) {
+      O.push({ p: [RC[0], RC[1] + 0.4, 0], text: '반응 중심 P680', c: pal.rc, dy: -44 });
+      O.push({ p: [ACC[0], ACC[1], 0], text: '최초 수용체', c: pal.acc, dy: -26 });
+      if (f < 2.2) O.push({ p: [-6.6, -3.0, 0], text: '빛', c: pal.light, dx: 4, dy: -16 });
+      if (f >= 1.2 && f < 6) O.push({ p: [P[1][0], P[1][1] - 0.4, 0], text: '에너지만 옆으로', c: pal.light, dy: 30 });
+      if (f >= 6.6 && f < 8) O.push({ p: pe, text: '전자 자체', c: pal.e, dx: 44, dy: 4 });
+    }
+    if (f < 8.2) O.push({ p: [W[0], W[1], 0], text: 'H₂O', c: pal.water, dx: 40 });
+    else if (f >= 8.6) O.push({ p: [W[0] + 1.1, W[1] + 0.7, 0], text: '½O₂', c: pal.water, dx: 30 });
+    if (f >= 7.6 && f < 9.4) O.push({ t: 'ring', p: LR.g, text: '빈자리' });
+  }
+
+  // 주제 전용 상태(보기 옵션 키 등). 공통 상태에 합쳐져요.
+  extraState() {
+    return { labels: true, hions: true, epath: true, trail: true, levels: true };
+  }
+
+  // 주제 전용 마크업 값. renderVals() 결과에 합쳐져요.
+  extraVals(st) {
+    const pal = this.pal(), T = this.T, f = st.f, m = st.mode;
+    const fs = m === 'f' ? f : 0, fa = m === 'a' ? f : 0;
+    const parts = T.FX(fs);
+    const hIn = parts.filter((q) => q.k === 'h' && q.p[1] > 0.55).length;
+    const hOut = parts.filter((q) => q.k === 'h' && q.p[1] < -0.55).length;
+    const ev = (c, text) => ({ c: c, text: text });
+    let events;
+    if (m === 'a') {
+      const p = T.PH.a(fa);
+      events = fa < 0.05 ? [ev(pal.light, '▶를 누르면 빛이 색소 하나에 닿아요.')]
+        : p === '빛 흡수' ? [ev(pal.light, '빛이 안테나 색소 하나에 닿아요.')]
+          : p === '에너지 전달' ? [ev(pal.light, '에너지가 색소에서 색소로 넘어가요(유도공명).'), ev(pal.e, '각 색소의 전자는 들떴다가 제자리로 돌아와요.')]
+            : p === '전자 내보내기' ? [ev(pal.rc, '반응 중심 P680에 에너지가 모였어요.'), ev(pal.e, '들뜬 전자 자체가 최초 수용체로 가요.')]
+              : [ev(pal.water, '물이 전자를 내주고 H+와 산소로 갈라져요.'), ev(pal.e, '물의 전자가 P680의 빈자리를 채워요.')];
+    } else {
+      const p = T.PH.f(fs);
+      events = fs < 0.05 ? [ev(pal.light, '▶를 누르면 빛이 광계 2에 들어와요.')]
+        : p === '빛 흡수' ? [ev(pal.light, '빛이 광계 2의 안테나 복합체에 닿아요.'), ev(pal.pig, '색소가 에너지를 반응 중심 P680으로 모아요.')]
+          : p === '전자 내보내기' ? [ev(pal.e, '들뜬 P680의 전자가 최초 수용체로 가요.'), ev(pal.ink, 'P680에 전자 빈자리가 생겨요.')]
+            : p === '물의 광분해' ? [ev(pal.water, 'H2O → 2H+ + 2e⁻ + ½O2 (광계 2)'), ev(pal.h, 'H+와 산소는 틸라코이드 안쪽에 남아요.')]
+              : p === 'H+ 퍼내기' ? [ev(pal.e, '전자가 PQ → 전자전달계로 가요.'), ev(pal.h, 'H+를 스트로마에서 안쪽으로 퍼내요.')]
+                : p === '광계 1' ? [ev(pal.light, '광계 1이 빛을 받아 P700의 전자가 나가요.'), ev(pal.e, '빈자리는 광계 2에서 온 전자가 채워요.')]
+                  : p === 'NADPH 생성' ? [ev(pal.nadp, 'NADP+ + 2e⁻ + H+ → NADPH'), ev(pal.ink, 'NADP+가 마지막 전자수용체예요.')]
+                    : [ev(pal.h, '안쪽 H+가 ATP 합성효소를 지나 스트로마로 나가요.'), ev(pal.atp, 'ADP + Pi → ATP, 스트로마 쪽에서 생겨요.')];
+      if (fs >= 15) events.push(ev(pal.ink, '명반응 끝: ATP와 NADPH가 캘빈 회로로 가요.'));
+    }
+    let passed = 0;
+    for (let i = 0; i < 4; i++) if (fa >= 1.2 + 1.2 * i + 1.2) passed++;
+    return {
+      notA: m !== 'a',
+      legend: { ps2: pal.ps2, ps1: pal.ps1, pig: pal.pig, rc: pal.rc, pq: pal.pq, cyt: pal.cyt, nadp: pal.nadp, syn: pal.syn,
+        e: pal.e, h: pal.h, light: pal.light, water: pal.water, acc: pal.acc },
+      fx: { hIn: hIn, hOut: hOut, o2: fs >= 4.3 ? '½' : '0', nadph: fs >= 11.8 ? 1 : 0, atp: fs >= 14.4 ? 1 : 0 },
+      ax: { passed: passed, gave: fa >= 7.6 ? 1 : 0 },
+      events: events
+    };
+  }
+
+  // ================= 공통 셸: 아래는 주제와 무관해요. 고치지 않아요 =================
+  constructor(...args) {
+    super(...args);
+    let reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    let narrow = false;
+    try { narrow = window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) {}
+    let saved = null;
+    try { saved = window.localStorage.getItem('od-theme'); } catch (e) {}
+    const PANEL_W = { left: { min: 220, max: 480 }, right: { min: 280, max: 720 } };
+    let widths = {};
+    try { widths = JSON.parse(window.localStorage.getItem('interactive-panel-w')) || {}; } catch (e) {}
+    const okW = (side) => { const v = widths[side]; return typeof v === 'number' && v >= PANEL_W[side].min && v <= PANEL_W[side].max ? v : null; };
+    this.T = this.topic();
+    this.state = Object.assign({
+      mode: this.T.MODES[0].key, f: 0, playing: false, speed: 1, step: -1, spin: !reduce,
+      theme: (saved === 'light' || saved === 'dark') ? saved : (this.systemDark() ? 'dark' : 'light'),
+      // leftOpen/rightOpen: docked panels on wide screens; drawer: the one open drawer on narrow screens
+      leftOpen: true, rightOpen: true, drawer: null, narrow: narrow,
+      // leftW/rightW: user-set docked widths in px (null = default); resizing: a handle is being dragged
+      leftW: okW('left'), rightW: okW('right'), resizing: false
+    }, this.extraState());
+    this.reduceMotion = reduce;
+    this.K = {
+      PANEL_W: PANEL_W, PANEL_W_KEY: 'interactive-panel-w', PANEL_DEFAULT: { left: 320, right: 400 },
+      THEMES: {
+        light: { bg: '#ffffff', surface: '#f7f8fa', ink: '#111111', ink2: '#6b7280', line: '#d9dee7', accent: '#1677ff', accentInk: '#1b64da', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#b54708', prof: '#6941c6', supp: '#067647', danger: '#d92d20', scroll: '#c9d0db', scrollHover: '#9aa3b2' },
+        dark: { bg: '#17171c', surface: '#212128', ink: '#f2f4f6', ink2: '#a3abb8', line: '#34353d', accent: '#3182f6', accentInk: '#6ea4ff', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#f5a15c', prof: '#b69cff', supp: '#5fd39a', danger: '#ff6b61', scroll: '#3f414b', scrollHover: '#5b5e6a' }
+      }
+    };
+    this.cam = Object.assign({}, this.modeDef().cam);
+    this.sim = { f: 0, cx: 0 };
+    this.pointer = { x: -1, y: -1, inside: false, drag: false, lx: 0, ly: 0 };
+    this.colorCache = {};
+    this._tick = (t) => this.tick(t);
+    this._canvasRef = (el) => this.attachCanvas(el);
+    this.handles = {};
+    this._handleRefL = (el) => this.attachHandle('left', el);
+    this._handleRefR = (el) => this.attachHandle('right', el);
+  }
+
+  componentWillUnmount() {
+    this.attachCanvas(null);
+    this.attachHandle('left', null);
+    this.attachHandle('right', null);
+  }
+
+  modeDef(key) {
+    const k = key || this.state.mode;
+    return this.T.MODES.find((m) => m.key === k) || this.T.MODES[0];
+  }
+  systemDark() {
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; }
+  }
+  isNarrow() {
+    try { return window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) { return false; }
+  }
+  syncBreakpoint() { this.setState({ narrow: this.isNarrow(), drawer: null }); }
+  // In drawer mode only one panel is open at a time.
+  togglePanel(side) {
+    const st = this.state;
+    if (st.narrow) this.setState({ drawer: st.drawer === side ? null : side });
+    else if (side === 'left') this.setState({ leftOpen: !st.leftOpen });
+    else this.setState({ rightOpen: !st.rightOpen });
+  }
+  // Docked panel width: the canvas column always keeps at least 400px.
+  panelMax(side) {
+    const lim = this.K.PANEL_W[side], other = side === 'left' ? 'right' : 'left', st = this.state;
+    const h = this.handles[other];
+    const otherOpen = other === 'left' ? st.leftOpen : st.rightOpen;
+    const otherW = !otherOpen ? 0 : h ? h.el.parentElement.getBoundingClientRect().width
+      : (st[other + 'W'] || this.K.PANEL_DEFAULT[other]);
+    return Math.max(lim.min, Math.min(lim.max, (window.innerWidth || 1440) - otherW - 400));
+  }
+  setPanelWidth(side, px, save) {
+    const v = Math.round(Math.min(Math.max(px, this.K.PANEL_W[side].min), this.panelMax(side)));
+    this.setState({ [side + 'W']: v });
+    if (save) this.savePanelWidths(side, v);
+  }
+  resetPanelWidth(side) {
+    this.setState({ [side + 'W']: null });
+    this.savePanelWidths(side, null);
+  }
+  savePanelWidths(side, v) {
+    try {
+      const key = this.K.PANEL_W_KEY;
+      let w = {};
+      try { w = JSON.parse(window.localStorage.getItem(key)) || {}; } catch (e) {}
+      if (v == null) delete w[side]; else w[side] = v;
+      window.localStorage.setItem(key, JSON.stringify(w));
+    } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ }
+  }
+  // Re-fit user widths when the window shrinks (not saved).
+  refitPanels() {
+    ['left', 'right'].forEach((side) => {
+      const w = this.state[side + 'W'];
+      if (w != null && w > this.panelMax(side)) this.setPanelWidth(side, w, false);
+    });
+  }
+  attachHandle(side, el) {
+    const old = this.handles[side];
+    if (old && old.el === el) return;
+    if (old) {
+      Object.keys(old.on).forEach((ev) => old.el.removeEventListener(ev, old.on[ev]));
+      delete this.handles[side];
+      if (!Object.keys(this.handles).length) window.removeEventListener('resize', this._refit);
+    }
+    if (!el) return;
+    const dir = side === 'left' ? 1 : -1;
+    const width = () => el.parentElement.getBoundingClientRect().width;
+    let drag = null;
+    const on = {
+      pointerdown: (e) => {
+        if (this.state.narrow || e.button !== 0) return;
+        e.preventDefault();
+        drag = { x: e.clientX, w: width() };
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        this.setState({ resizing: true });
+      },
+      pointermove: (e) => { if (drag) this.setPanelWidth(side, drag.w + dir * (e.clientX - drag.x), false); },
+      pointerup: () => {
+        if (!drag) return;
+        drag = null;
+        this.setState({ resizing: false });
+        this.setPanelWidth(side, width(), true);
+      },
+      dblclick: () => this.resetPanelWidth(side),
+      keydown: (e) => {
+        const step = e.shiftKey ? 64 : 16;
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          e.preventDefault(); e.stopPropagation();
+          this.setPanelWidth(side, width() + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+        } else if (e.key === 'Home') { e.preventDefault(); e.stopPropagation(); this.resetPanelWidth(side); }
+      }
+    };
+    on.pointercancel = on.pointerup;
+    Object.keys(on).forEach((ev) => el.addEventListener(ev, on[ev]));
+    if (!Object.keys(this.handles).length) {
+      this._refit = this._refit || (() => this.refitPanels());
+      window.addEventListener('resize', this._refit);
+    }
+    this.handles[side] = { el: el, on: on };
+  }
+  textTone(hex) { return this.state.theme === 'light' ? this.mix(hex, '#000000', 0.4) : hex; }
+  pal() { return this.T.PAL[this.state.theme] || this.T.PAL.dark; }
+  setTheme(t) {
+    this.setState({ theme: t });
+    try {
+      if ((t === 'dark') === this.systemDark()) window.localStorage.removeItem('od-theme');
+      else window.localStorage.setItem('od-theme', t);
+    } catch (e) {}
+  }
+
+  attachCanvas(el) {
+    if (this.canvas === el) return;
+    if (this.canvas) {
+      const c = this.canvas;
+      c.removeEventListener('pointerdown', this._pd);
+      c.removeEventListener('pointermove', this._pm);
+      c.removeEventListener('pointerup', this._pu);
+      c.removeEventListener('pointercancel', this._pu);
+      c.removeEventListener('pointerleave', this._pl);
+      cancelAnimationFrame(this.raf);
+      try { this._mq.removeEventListener('change', this._mqH); } catch (err) {}
+    }
+    this.canvas = el || null;
+    if (!el) return;
+    this.ctx = el.getContext('2d');
+    const p = this.pointer;
+    this._pd = (e) => {
+      if (!this.modeDef().rotatable) return;
+      p.drag = true; p.lx = e.clientX; p.ly = e.clientY;
+      try { el.setPointerCapture(e.pointerId); } catch (err) {}
+      el.style.cursor = 'grabbing';
+    };
+    this._pm = (e) => {
+      const r = el.getBoundingClientRect();
+      p.x = e.clientX - r.left; p.y = e.clientY - r.top; p.inside = true;
+      if (p.drag && this.modeDef().rotatable) {
+        this.cam.yaw += (e.clientX - p.lx) * 0.008;
+        this.cam.pitch = Math.max(-1.45, Math.min(1.45, this.cam.pitch + (e.clientY - p.ly) * 0.008));
+        p.lx = e.clientX; p.ly = e.clientY;
+      }
+    };
+    this._pu = () => { p.drag = false; el.style.cursor = ''; };
+    this._pl = () => { p.inside = false; };
+    el.addEventListener('pointerdown', this._pd);
+    el.addEventListener('pointermove', this._pm);
+    el.addEventListener('pointerup', this._pu);
+    el.addEventListener('pointercancel', this._pu);
+    el.addEventListener('pointerleave', this._pl);
+    try {
+      this._mq = window.matchMedia('(max-width: 1023.98px)');
+      this._mqH = () => this.syncBreakpoint();
+      this._mq.addEventListener('change', this._mqH);
+    } catch (err) {}
+    this.last = 0;
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  tick(t) {
+    if (!this.canvas) return;
+    const dt = this.last ? Math.min(0.05, (t - this.last) / 1000) : 0;
+    this.last = t;
+    const st = this.state, m = this.modeDef(), pb = m.playback;
+    if (m.autoSpin && st.spin && !this.pointer.drag) this.cam.yaw += dt * 0.3;
+    if (pb && st.playing) {
+      this.sim.f = Math.min(pb.fmax, this.sim.f + dt * pb.rate * st.speed);
+      if (this.sim.f >= pb.fmax) this.setState({ playing: false, f: this.sim.f });
+      else if (t - (this.lastPush || 0) > 120) { this.lastPush = t; this.setState({ f: this.sim.f }); }
+    }
+    // a broken scene keeps the page alive but is reported once for the browser check
+    try { this.draw(dt, t); } catch (err) { if (!this.drawErr) { this.drawErr = true; console.error(err); } }
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  // ---------- math helpers (장면에서 써도 돼요) ----------
+  lerp(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+  sm(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+  rgb(hex) { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  mix(hex, to, amt) {
+    const a = this.rgb(hex), b = this.rgb(to);
+    return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * amt) + ',' + Math.round(a[1] + (b[1] - a[1]) * amt) + ',' + Math.round(a[2] + (b[2] - a[2]) * amt) + ')';
+  }
+  rgba(hex, al) { const a = this.rgb(hex); return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + al + ')'; }
+  shades(hex) {
+    let s = this.colorCache[hex];
+    if (!s) { s = { hi: this.mix(hex, '#FFFFFF', 0.55), mid: hex, lo: this.mix(hex, '#000000', 0.55) }; this.colorCache[hex] = s; }
+    return s;
+  }
+  proj(p, V) {
+    const x = p[0] - V.cx, y = p[1], z = p[2];
+    const x1 = x * V.cy + z * V.sy, z1 = -x * V.sy + z * V.cy;
+    const y2 = y * V.cp - z1 * V.sp, z2 = y * V.sp + z1 * V.cp;
+    const s = V.F / Math.max(2, V.D - z2);
+    return [V.ox + x1 * s, V.oy - y2 * s, z2, s];
+  }
+
+  // ---------- drawing ----------
+  draw(dt, now) {
+    const el = this.canvas, ctx = this.ctx, st = this.state, m = this.modeDef();
+    const dpr = window.devicePixelRatio || 1;
+    const W = el.clientWidth, H = el.clientHeight;
+    if (!W || !H) return;
+    if (el.width !== Math.round(W * dpr) || el.height !== Math.round(H * dpr)) { el.width = Math.round(W * dpr); el.height = Math.round(H * dpr); }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const pal = this.pal();
+    ctx.fillStyle = pal.bg; ctx.fillRect(0, 0, W, H);
+
+    const I = [], O = [];
+    this.buildScene(st.mode, I, O);
+    const scale = Math.min(W / m.fit[0], H / m.fit[1]), D = m.D, z = this.cam.zoom;
+    const V = {
+      cx: this.sim.cx, cy: Math.cos(this.cam.yaw), sy: Math.sin(this.cam.yaw), cp: Math.cos(this.cam.pitch), sp: Math.sin(this.cam.pitch),
+      F: scale * z * D, D: D, ox: W / 2, oy: H / 2 - (m.playback ? 20 : 0)
+    };
+    let zmin = Infinity, zmax = -Infinity;
+    for (const it of I) {
+      it.A = this.proj(it.p, V);
+      if (it.q) { it.B = this.proj(it.q, V); it.z = (it.A[2] + it.B[2]) / 2; } else it.z = it.A[2];
+      if (it.z < zmin) zmin = it.z;
+      if (it.z > zmax) zmax = it.z;
+    }
+    I.sort((a, b) => a.z - b.z);
+    // depth fog; a flat scene (all items at one depth) is drawn without it
+    const span = zmax - zmin;
+    for (const it of I) {
+      const fog = span < 0.01 ? 1 : 0.42 + 0.58 * ((it.z - zmin) / span);
+      ctx.globalAlpha = Math.max(0, (it.a == null ? 1 : it.a) * fog);
+      if (ctx.globalAlpha < 0.01) continue;
+      const x = it.A[0], y = it.A[1], s = it.A[3];
+      if (it.k === 0) {
+        const R = it.r * s;
+        if (R < 0.4) continue;
+        if (it.flat) { ctx.fillStyle = it.c; ctx.beginPath(); ctx.arc(x, y, Math.max(1.3, R), 0, 6.2832); ctx.fill(); }
+        else {
+          const sh = this.shades(it.c);
+          const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+          g.addColorStop(0, sh.hi); g.addColorStop(0.5, sh.mid); g.addColorStop(1, sh.lo);
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        }
+      } else if (it.k === 1) {
+        const lw = Math.max(1, it.w * (s + it.B[3]) / 2);
+        ctx.lineCap = it.flat ? 'butt' : 'round';
+        if (it.rod) {
+          ctx.strokeStyle = this.shades(it.c).lo; ctx.lineWidth = lw + 2;
+          ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+        }
+        ctx.strokeStyle = it.c; ctx.lineWidth = lw;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+      } else if (it.k === 3) {
+        const fs = Math.max(8, Math.min(14, it.size * s / (scale * z) * 1.05));
+        ctx.font = '700 ' + fs + 'px "Pretendard", system-ui, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = it.c; ctx.fillText(it.text, x, y + 0.5);
+      } else if (it.k === 4) {
+        const ang = Math.atan2(it.B[1] - y, it.B[0] - x), mx = (x + it.B[0]) / 2, my = (y + it.B[1]) / 2, r = 6;
+        ctx.fillStyle = it.c; ctx.beginPath();
+        ctx.moveTo(mx + Math.cos(ang) * r, my + Math.sin(ang) * r);
+        ctx.lineTo(mx + Math.cos(ang + 2.5) * r, my + Math.sin(ang + 2.5) * r);
+        ctx.lineTo(mx + Math.cos(ang - 2.5) * r, my + Math.sin(ang - 2.5) * r);
+        ctx.closePath(); ctx.fill();
+      } else if (it.k === 5) {
+        // lit translucent sphere, highlight up-left like the solid spheres
+        const R = it.r * s, ba = pal.blobAlpha == null ? 0.3 : pal.blobAlpha;
+        const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+        g.addColorStop(0, 'rgba(255,255,255,0.55)'); g.addColorStop(0.3, this.rgba(it.c, Math.min(1, ba + 0.15))); g.addColorStop(1, this.rgba(it.c, 0.18));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        ctx.strokeStyle = it.c; ctx.lineWidth = it.focus ? 3 : 1.5; ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+    for (const o of O) this.drawOverlay(o, V, now);
+  }
+
+  drawOverlay(o, V, now) {
+    const ctx = this.ctx, A = this.proj(o.p, V), pal = this.pal();
+    if (o.t === 'ring') {
+      const r = Math.max(6, 0.32 * A[3]) * (1 + (this.reduceMotion ? 0 : 0.15 * Math.sin((now || 0) / 160)));
+      ctx.globalAlpha = 1; ctx.strokeStyle = pal.ring; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(A[0], A[1], r, 0, 6.2832); ctx.stroke();
+      ctx.font = '600 11px "Pretendard", system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = pal.ring; ctx.fillText(o.text, A[0], A[1] + r + 10);
+      return;
+    }
+    const size = o.size || 12, x = A[0] + (o.dx || 0), y = A[1] + (o.dy || 0);
+    ctx.font = '600 ' + size + 'px "Pretendard", system-ui, sans-serif';
+    const tw = ctx.measureText(o.text).width, w = tw + 14, h = size + 10;
+    ctx.globalAlpha = o.a == null ? 1 : o.a;
+    if (o.lead) {
+      ctx.strokeStyle = this.rgba(o.c, 0.6); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(x, y); ctx.stroke();
+    }
+    ctx.fillStyle = pal.labelBg;
+    ctx.strokeStyle = this.rgba(o.c, 0.55); ctx.lineWidth = 1;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x - w / 2, y - h / 2, w, h, 6); else ctx.rect(x - w / 2, y - h / 2, w, h);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = pal.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(o.text, x, y + 0.5);
+    ctx.globalAlpha = 1;
+  }
+
+  setMode(mode) {
+    this.cam = Object.assign({}, this.modeDef(mode).cam);
+    this.sim.f = 0;
+    this.pointer.drag = false;
+    this.setState({ mode: mode, f: 0, playing: false, step: -1 });
+  }
+
+  pickStep(i) {
+    const s = (this.T.STEPS || [])[i];
+    if (!s) return;
+    if (s.mode !== this.state.mode) this.setMode(s.mode);
+    if (s.f != null) this.sim.f = s.f;
+    this.setState({ f: this.sim.f, playing: false, step: i });
+  }
+
+  renderVals() {
+    const st = this.state, T = this.T, m = this.modeDef(), pb = m.playback;
+    const tg = T.TOGGLES ? (Array.isArray(T.TOGGLES) ? T.TOGGLES : (T.TOGGLES[st.mode] || [])) : [];
+    const togDefs = tg.concat(m.autoSpin ? [['spin', '자동 회전']] : []);
+    const toggles = togDefs.map((d) => ({
+      label: d[1], pressed: st[d[0]] ? 'true' : 'false',
+      toggle: () => { const o = {}; o[d[0]] = !st[d[0]]; this.setState(o); }
+    }));
+    const STEPS = T.STEPS || [];
+    const steps = STEPS.map((s, i) => ({ s: s, i: i })).filter((x) => x.s.mode === st.mode).map((x, k) => ({
+      num: k + 1, title: x.s.title, who: x.s.who, c: x.s.c, pressed: st.step === x.i ? 'true' : 'false',
+      pick: () => this.pickStep(x.i)
+    }));
+    const speeds = [0.5, 1, 2].map((v) => ({
+      label: v + '×', pressed: st.speed === v ? 'true' : 'false',
+      pick: () => this.setState({ speed: v })
+    }));
+    const is = {};
+    T.MODES.forEach((d) => { is[d.key] = d.key === st.mode; });
+    const f = st.f;
+    const isDark = st.theme === 'dark';
+    const leftOn = st.narrow ? st.drawer === 'left' : st.leftOpen, rightOn = st.narrow ? st.drawer === 'right' : st.rightOpen;
+    return Object.assign({
+      th: this.K.THEMES[st.theme], isDark: isDark, isLight: !isDark,
+      themeLabel: isDark ? '라이트 모드로 전환' : '다크 모드로 전환',
+      toggleTheme: () => this.setTheme(isDark ? 'light' : 'dark'),
+      canvasRef: this._canvasRef, canvasCls: m.rotatable ? '' : 'is-fixed',
+      hasModes: T.MODES.length > 1, is: is,
+      modes: T.MODES.map((d) => ({ label: d.label, pressed: d.key === st.mode ? 'true' : 'false', pick: () => { if (d.key !== this.state.mode) this.setMode(d.key); } })),
+      leftCls: leftOn ? 'is-open' : '', rightCls: rightOn ? 'is-open' : '',
+      leftExpanded: leftOn ? 'true' : 'false', rightExpanded: rightOn ? 'true' : 'false',
+      scrimCls: (st.narrow && st.drawer) ? 'is-on' : '',
+      toggleLeft: () => this.togglePanel('left'),
+      toggleRight: () => this.togglePanel('right'),
+      closePanels: () => this.setState({ drawer: null }),
+      layoutStyle: ((st.leftW ? '--pl-user: ' + st.leftW + 'px; ' : '') + (st.rightW ? '--pr-user: ' + st.rightW + 'px;' : '')).trim(),
+      layoutCls: st.resizing ? 'is-resizing' : '',
+      leftWNow: st.leftW ? String(st.leftW) : '', rightWNow: st.rightW ? String(st.rightW) : '',
+      leftHandleRef: this._handleRefL, rightHandleRef: this._handleRefR,
+      onKey: (e) => { if (e.key === 'Escape' && this.state.narrow && this.state.drawer) this.setState({ drawer: null }); },
+      hasToggles: toggles.length > 0, toggles: toggles,
+      hasSteps: steps.length > 0, steps: steps,
+      hasStep: st.step >= 0 && st.step < STEPS.length, stepDetail: st.step >= 0 && STEPS[st.step] ? STEPS[st.step].text : '',
+      mistakes: (T.MISTAKES && T.MISTAKES[st.mode]) || [],
+      canvasLabel: m.canvasLabel(f),
+      zoomIn: () => { this.cam.zoom = Math.min(3, this.cam.zoom * 1.2); },
+      zoomOut: () => { this.cam.zoom = Math.max(0.5, this.cam.zoom / 1.2); },
+      resetView: () => { this.cam = Object.assign({}, m.cam); },
+      hasPlayback: !!pb, isPlaying: st.playing, notPlaying: !st.playing, playLabel: st.playing ? '일시정지' : '재생',
+      togglePlay: () => {
+        if (!pb) return;
+        if (!st.playing && this.sim.f >= pb.fmax) this.sim.f = 0;
+        this.setState({ playing: !st.playing, step: -1, f: this.sim.f });
+      },
+      fInt: Math.round(f * 10), fLabel: pb ? pb.label(f) : '', fMax10: pb ? Math.round(pb.fmax * 10) : 0,
+      onScrub: (e) => { const v = Number(e.target.value) / 10; this.sim.f = v; this.setState({ f: v, playing: false, step: -1 }); },
+      speeds: speeds
+    }, this.extraVals(st));
+  }
+}
+</script>
+</body>
+</html>
