@@ -5,7 +5,19 @@ const path = require('node:path');
 
 const SKILL = path.join(__dirname, '..');
 const REPO = path.join(SKILL, '..', '..', '..');
-const read = (rel) => fs.readFileSync(path.join(SKILL, rel), 'utf8');
+const read = (rel) => fs.readFileSync(path.join(SKILL, rel), 'utf8').replace(/\r\n/g, '\n');
+
+test('note-link workflow and contextual brief contract are stated', () => {
+  const md = read('SKILL.md');
+  for (const s of ['noteHtml', 'scripts/link-notes.cjs', 'references/note-links.md', '### 8. 정리노트 연결', '### 9. 보고'])
+    assert.ok(md.includes(s), s);
+  const refs = read('references/note-links.md');
+  for (const s of ['target="_blank"', 'noopener noreferrer', 'sectionId', 'anchorId', '새 탭', '기존 자료', 'skipped'])
+    assert.ok(refs.includes(s), s);
+  assert.ok(read('references/topic-selection.md').includes('정리노트 연결'));
+  assert.ok(md.includes('`(새 탭)` 같은 표시 문구는 붙이지 않는다'));
+  assert.ok(!md.includes('**하지 않는 것**: 정리노트·복습문제 수정'));
+});
 
 test('frontmatter names the skill', () => {
   const md = read('SKILL.md');
@@ -40,7 +52,7 @@ test('.claude link resolves to the skill', (t) => {
   try { fs.lstatSync(link); } catch { installed = false; }
   if (!installed) return t.skip('no install link (standalone copy)');
   assert.ok(fs.lstatSync(link).isSymbolicLink());
-  assert.equal(fs.readlinkSync(link), '../../.agents/skills/bio-interactive');
+  assert.equal(fs.readlinkSync(link).replace(/\\/g, '/'), '../../.agents/skills/bio-interactive');
   assert.equal(fs.realpathSync(link), fs.realpathSync(SKILL));
 });
 

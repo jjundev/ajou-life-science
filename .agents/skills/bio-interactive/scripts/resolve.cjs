@@ -100,6 +100,7 @@ function resolve({ repo, arg }) {
   return {
     kind, folder, exists, date,
     notes: exists ? notesIn(folder) : [],
+    noteHtml: exists ? list(folder).filter((d) => d.isFile() && /^정리노트_.*\.html$/.test(nfc(d.name))).map((d) => path.join(folder, d.name)) : [],
     stt: sttFor(repo, date),
     existing: exists ? existingIn(folder) : [],
     next: exists ? nextNumber(folder) : '01',

@@ -1,6 +1,6 @@
 ---
 name: bio-interactive
-description: '생명과학 복습노트 날짜(MMDD)나 주제로 DNA 3D 모형과 같은 디자인의 인터렉티브 HTML(인터렉티브_NN_<이름>.html)을 만든다. "인터렉티브", "인터랙티브", "3D 모형", "움직이는 자료", /bio-interactive [MMDD|주제]에 사용한다. 정리노트·복습문제 생성(bio-review-pack)에는 사용하지 않는다.'
+description: '생명과학 복습노트 날짜(MMDD)나 주제로 DNA 3D 모형과 같은 디자인의 인터렉티브 HTML(인터렉티브_NN_<이름>.html)을 만들고 기존 정리노트의 관련 설명에 새 탭 링크를 연결한다. "인터렉티브", "인터랙티브", "3D 모형", "움직이는 자료", "기존 인터렉티브 링크 연결", /bio-interactive [MMDD|주제]에 사용한다. 정리노트·복습문제 생성(bio-review-pack)에는 사용하지 않는다.'
 ---
 
 # 생명과학 인터렉티브 자료
@@ -14,6 +14,7 @@ description: '생명과학 복습노트 날짜(MMDD)나 주제로 DNA 3D 모형�
 **산출물** (`DEST` 폴더, 번호 `NN`은 두 자리, `<이름>`은 내용을 나타내는 한국어 이름):
 - `인터렉티브_NN_<이름>.html` — 브라우저에서 바로 여는 단독 파일
 - `.assets/자료_인터렉티브_NN_<이름>/` — 원본 `Main.dc.html`과 `canvas.json`(나중에 Design 캔버스로 올릴 때 쓰는 매니페스트)
+- 기존 `정리노트_*.html` — 해당 자료를 보며 이해할 수 있도록 관련 설명 바로 뒤에 안내·새 탭 링크를 추가한다.
 
 **진행 표시**: 단계마다 한 줄만 쓴다. 예: `3/8 작성 중: 주제 3개 (병렬)`
 
@@ -27,7 +28,9 @@ description: '생명과학 복습노트 날짜(MMDD)나 주제로 DNA 3D 모형�
 - 셸 상태는 Bash 호출 사이에 이어지지 않는다. `$SKILL`, `$RUN`, `$REPO`, `$DEST`는 실행할 때마다 실제 절대 경로로 바꿔 쓰거나 같은 Bash 호출 맨 앞에 세미콜론으로 먼저 설정한다(`SKILL=…; RUN=…; node "$SKILL/scripts/check.cjs" …`). `cd`는 쓰지 않고 파일도 절대 경로로 넘긴다.
 - 파일명은 macOS에서 NFD로 저장된다. 경로를 손으로 짓지 말고 `resolve.cjs`가 돌려준 경로를 쓴다.
 
-**하지 않는 것**: 정리노트·복습문제 수정, 기존 `인터렉티브_*`·`3D모형_*` 덮어쓰기, Design 캔버스 게시, 커밋.
+**하지 않는 것**: 링크 안내 외 정리노트 본문·위젯·스타일·스크립트 수정, 정리노트 MD·PDF 및 복습문제 수정, 기존 `인터렉티브_*`·`3D모형_*` 덮어쓰기, Design 캔버스 게시, 커밋.
+
+**기존 자료 연결만 요청한 경우**: 자료를 새로 생성하지 않는다. 요청한 범위의 정리노트 HTML과 기존 `인터렉티브_*`·`3D모형_*`를 읽고 `references/note-links.md`대로 연결 명세를 만든 뒤 8–9단계만 실행한다. `전체`는 `복습노트/`의 기존 자료 전체를 뜻한다. 자료가 이미 있어 생성 후보가 0개인 상황과 연결 작업을 구분한다.
 
 ## 절차
 
@@ -39,7 +42,7 @@ description: '생명과학 복습노트 날짜(MMDD)나 주제로 DNA 3D 모형�
 SKILL=…; REPO=…; RUN=…; mkdir -p "$RUN" && node "$SKILL/scripts/resolve.cjs" "$REPO" "<인자>" | tee "$RUN/target.json"
 ```
 - 인자 `MMDD-MMDD`는 그 이름의 범위 폴더가 있을 때만 날짜로 쓴다(없으면 `NO_TARGET`).
-- 출력: `kind`(date|topic), `folder`(= `DEST`), `exists`, `date`, `notes`(`.assets/`의 정리노트 `.md`), `stt`, `existing`(같은 폴더 `인터렉티브_*`·`3D모형_*`와 `<title>`), `next`(다음 번호).
+- 출력: `kind`(date|topic), `folder`(= `DEST`), `exists`, `date`, `notes`(`.assets/`의 정리노트 `.md`), `noteHtml`(같은 폴더의 기존 정리노트 HTML 실제 경로 목록), `stt`, `existing`(같은 폴더 `인터렉티브_*`·`3D모형_*`와 `<title>`), `next`(다음 번호).
 - 날짜가 `0922-0924` 같은 범위 폴더 안이면 그 폴더가 나온다. 폴더는 없고 STT만 있으면 `exists: false`로 새 폴더 자리가 나온다.
 - 주제는 정리노트 본문(링크 글자 제외)에서 찾고, H2·H3 제목에 나온 폴더를 먼저, 그다음 가장 최근 폴더를 고른다. 어느 정리노트에도 없으면 `복습노트/주제별/`이 나온다(교과서·강의노트로 만든다).
 - `{"error":"NO_TARGET"}` → 「대상 없음: <인자>의 복습노트 폴더와 STT가 없어요」라고 보고하고 멈춘다. `NO_ARG` → 사용법을 보여 주고 멈춘다.
@@ -50,6 +53,7 @@ SKILL=…; REPO=…; RUN=…; mkdir -p "$RUN" && node "$SKILL/scripts/resolve.cj
 - 주제: 인자 그대로 1개. 정리노트에서 그 주제가 나온 절을 근거로 쓴다.
 - 후보가 0개면 「후보 없음」과 이유를 보고하고 멈춘다.
 - 주제마다 브리프를 `RUN/<n>/brief.md`에 쓴다(항목은 `references/topic-selection.md`).
+- `noteHtml` 본문에서 연결할 절과 관찰 포인트를 골라 브리프의 「정리노트 연결」에 기록한다. 대응 절이 없으면 이유를 기록하고 생성은 계속한다.
 
 ### 3. 작성 (주제당 opus 에이전트 1명, 한 메시지에서 병렬)
 먼저 주제마다 템플릿을 복사한다.
@@ -99,7 +103,17 @@ SKILL=…; RUN=…; DEST=…; node "$SKILL/scripts/save.cjs" "$RUN/<n>/Main.dc.h
 ```
 출력 JSON(`{"nn", "html", "dir"}`)의 `dir`에 `Main.dc.html`과 `canvas.json`이 생긴다. `html`을 내장 브라우저로 한 번 열어 콘솔 오류가 없는지만 다시 본다.
 
-### 8. 보고
+### 8. 정리노트 연결
+`references/note-links.md`대로 저장에 성공한 실제 `html` 경로와 브리프를 대조하여 `RUN/note-links.json`을 만든다. 관련 설명 바로 뒤에 관찰·조작할 포인트를 담은 자연스러운 한 문장과 새 탭 링크를 넣는다. 노트별 연결을 모아 한 번씩 수정한다.
+```bash
+node "$SKILL/scripts/link-notes.cjs" "$RUN/note-links.json" --dry-run
+node "$SKILL/scripts/link-notes.cjs" "$RUN/note-links.json"
+```
+- 새 링크는 상대 경로와 `target="_blank" rel="noopener noreferrer"`를 쓴다. 안내 문장은 자연스럽게 마무리하고 `(새 탭)` 같은 표시 문구는 붙이지 않는다. 기존 같은 목적지 링크는 중복하지 않고 새 탭 속성만 보정한다.
+- `skipped`는 이유를 보고하고 다른 연결을 계속한다. 저장된 자료를 삭제하거나 다른 절에 임의로 연결하지 않는다.
+- 수정한 노트의 연결 문맥을 브라우저에서 읽고 대표 링크를 눌러 새 탭·올바른 자료·원래 노트 유지 확인. 링크 경로는 모두 실제 파일 존재를 검사한다. 재실행 결과 노트별 `changed: false`여야 한다.
+
+### 9. 보고
 ```
 ## 인터렉티브 <인자> 완료
 - 파일: <DEST 상대 경로>/인터렉티브_NN_<이름>.html — <제목> (모드: …, 단계 N개)
@@ -107,8 +121,9 @@ SKILL=…; RUN=…; DEST=…; node "$SKILL/scripts/save.cjs" "$RUN/<n>/Main.dc.h
 - 보류: <주제> — <어느 단계에서 무엇 때문에> (없으면 "없음")
 - 단순화·교과서 보충: …
 - 검토에서 고친 것: …
+- 정리노트 연결: <노트 경로 · 절 · 자료> (added/updated/unchanged), skipped와 이유
 - 실행 폴더: RUN 경로
-- 커밋 제안: git add "<DEST>/인터렉티브_NN_<이름>.html" "<DEST>/.assets/자료_인터렉티브_NN_<이름>" && git commit -m "docs(notes): add <MMDD> interactives"
+- 커밋 제안: git add "<DEST>/인터렉티브_NN_<이름>.html" "<DEST>/.assets/자료_인터렉티브_NN_<이름>" "<수정한 정리노트 HTML>" && git commit -m "docs(notes): add <MMDD> interactives"
 ```
 
 ## 실패 처리
@@ -119,6 +134,7 @@ SKILL=…; RUN=…; DEST=…; node "$SKILL/scripts/save.cjs" "$RUN/<n>/Main.dc.h
 | 검사·내용 검토·브라우저 확인 실패(수정 1회 후에도) | 그 주제만 저장하지 않고 「보류」, 나머지는 계속 |
 | 모든 주제 보류 | 파일 없이 보고만 |
 | 번호 자리에 이미 파일이나 자료 폴더가 있음 | `save.cjs`가 다음 빈 번호로 넘긴다(덮어쓰지 않음) |
+| 연결할 노트·절·자료 누락 또는 모호함 | 해당 연결만 skipped와 이유 보고, 저장된 자료와 다른 연결은 유지 |
 
 ## 템플릿 고치기
 셸(패널·테마·재생 바·그리기)을 바꿔야 하면 `assets/template.dc.html`을 고치고 `references/scene-api.md`를 맞춘 뒤 테스트를 돌린다.

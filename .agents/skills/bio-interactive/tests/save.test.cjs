@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const nfc = (p) => p.normalize('NFC');
+const nfc = (p) => p.normalize('NFC').replace(/\\/g, '/');
 const { save } = require('../scripts/save.cjs');
 
 const SKILL = path.join(__dirname, '..');

@@ -17,7 +17,7 @@ function fixture(tree) {
   }
   return repo;
 }
-const nfc = (p) => p.normalize('NFC');
+const nfc = (p) => p.normalize('NFC').replace(/\\/g, '/');
 
 test('date folder with notes and stt', () => {
   const repo = fixture({ '복습노트/1006/.assets/정리노트_1006_X.md': '# 전사', '복습노트/1006/정리노트_1006_X.html': '', 'STT/1006 생명.md': '...' });
@@ -27,6 +27,9 @@ test('date folder with notes and stt', () => {
   assert.equal(r.exists, true);
   assert.ok(nfc(r.folder).endsWith('복습노트/1006'));
   assert.equal(r.notes.length, 1);
+  assert.equal(r.noteHtml.length, 1);
+  assert.ok(fs.existsSync(r.noteHtml[0]));
+  assert.ok(nfc(r.noteHtml[0]).endsWith('정리노트_1006_X.html'));
   assert.ok(nfc(r.notes[0]).endsWith('1006/.assets/정리노트_1006_X.md'));
   assert.ok(r.stt && nfc(r.stt).endsWith('STT/1006 생명.md'));
   assert.ok(fs.existsSync(r.stt));
@@ -60,6 +63,7 @@ test('stt only date points to a new folder', () => {
   assert.equal(r.exists, false);
   assert.ok(nfc(r.folder).endsWith('복습노트/1013'));
   assert.deepEqual(r.notes, []);
+  assert.deepEqual(r.noteHtml, []);
   assert.ok(r.stt);
   assert.equal(r.next, '01');
 });
@@ -162,12 +166,12 @@ test('a heading with every word of a multi-word topic counts as a heading match'
 
 test('nextNumber counts .assets data folders in a range folder', () => {
   const repo = fixture({ '복습노트/0922-0924/.assets/자료_인터렉티브_03_x/Main.dc.html': '' });
-  assert.equal(nextNumber(path.join(repo, '복습노트/0922-0924')), '04');
+  assert.equal(nextNumber(resolve({ repo, arg: '0922-0924' }).folder), '04');
 });
 
 test('nextNumber still counts legacy root data folders and tolerates a missing .assets', () => {
   const repo = fixture({ '복습노트/1001/자료_인터렉티브_02_old': null, '복습노트/1001/인터렉티브_01.html': '' });
-  assert.equal(nextNumber(path.join(repo, '복습노트/1001')), '03');
+  assert.equal(nextNumber(resolve({ repo, arg: '1001' }).folder), '03');
 });
 
 test('notes at the date-folder root are not read any more', () => {
