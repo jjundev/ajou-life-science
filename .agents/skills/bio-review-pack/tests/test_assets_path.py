@@ -4,7 +4,7 @@ from urllib.parse import quote
 
 import _util  # noqa: F401  (scripts/ 를 sys.path에 올린다)
 
-from assets_path import moves, rebase_md, relocate
+from assets_path import PACK, migrate_md, moves, rebase_md, relocate
 
 
 class TestAssetsPath(unittest.TestCase):
@@ -50,6 +50,35 @@ class TestAssetsPath(unittest.TestCase):
     def test_rebase_keeps_encoding(self):
         t = "[원 문제 보기](%EB%B3%B5%EC%8A%B5.html#p1)"
         self.assertEqual(rebase_md(t), "[원 문제 보기](../%EB%B3%B5%EC%8A%B5.html#p1)")
+
+    def test_pack_constant(self):
+        self.assertEqual(PACK, ".pack")
+
+    def test_pack_moves(self):
+        for n in ("문제해설_5장_웹과제예상_v1.md", "figures_문제해설_5장_웹과제예상_v1", "자료_문제해설_5장_웹과제예상_v1"):
+            self.assertTrue(moves(n, PACK), n)
+        for n in ("복습문제_5장_웹과제예상_v1.html", ".pack", ".assets", ".DS_Store", ""):
+            self.assertFalse(moves(n, PACK), n)
+
+    def test_pack_relocate(self):
+        enc = quote("figures_문제해설_5장_웹과제예상_v1") + "/explain-fig-1.svg"
+        self.assertEqual(relocate(enc, PACK), ".pack/" + enc)
+        self.assertEqual(relocate("자료_문제해설_5장_웹과제예상_v1/vendor/katex/katex.min.css", PACK),
+                         ".pack/자료_문제해설_5장_웹과제예상_v1/vendor/katex/katex.min.css")
+        for u in ("../../복습노트/1001/정리노트_1001_X.html#s1", "#p1", ".pack/figures_x/a.svg", "복습문제_5장_웹과제예상_v1.html"):
+            self.assertEqual(relocate(u, PACK), u)
+
+    def test_pack_rebase_outside_link(self):
+        t = "[a](../../%EB%B3%B5%EC%8A%B5/1001/x.html#s4) ![b](.pack/figures_x/a.svg) [c](#p1)"
+        self.assertEqual(rebase_md(t, PACK), "[a](../../../%EB%B3%B5%EC%8A%B5/1001/x.html#s4) ![b](figures_x/a.svg) [c](#p1)")
+
+    def test_pack_migrate_md(self):
+        t = "![f](figures_x/a.svg)\r\n[n](../../%EB%B3%B5/1001/x.html#s1)\r\n"
+        self.assertEqual(migrate_md(t, PACK), "![f](figures_x/a.svg)\r\n[n](../../../%EB%B3%B5/1001/x.html#s1)\r\n")
+
+    def test_default_side_unchanged(self):
+        self.assertEqual(relocate("figures_0922/p37.png"), relocate("figures_0922/p37.png", ".assets"))
+        self.assertEqual(rebase_md("[b](정리노트_1001_X.html)"), "[b](../정리노트_1001_X.html)")
 
 
 if __name__ == "__main__":
