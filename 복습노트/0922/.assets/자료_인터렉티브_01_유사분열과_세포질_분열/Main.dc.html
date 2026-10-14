@@ -1,0 +1,1116 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>유사분열 한눈에</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+.app{--radius:8px;--tap:48px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--dur:220ms;--dur-exit:150ms;--ease-out:cubic-bezier(.2,.8,.2,1);--scrim:rgba(0,0,0,.4);
+  height:100vh;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;box-sizing:border-box;
+  background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;font-size:16px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.app *,.app *::before,.app *::after{box-sizing:border-box}
+.app button{font-family:inherit;color:inherit}
+.app :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.num{font-variant-numeric:tabular-nums}
+
+.topbar{display:flex;align-items:center;gap:var(--s2);min-height:56px;padding:var(--s2) var(--s3);background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:17px;font-weight:700;white-space:nowrap}
+.text-btn{flex:none;min-height:44px;min-width:44px;padding:0 var(--s3);border:0;border-radius:var(--radius);background:transparent;color:var(--ink);font:600 14px/1 'Pretendard',system-ui,sans-serif;cursor:pointer}
+.panel-toggle{display:inline-flex;align-items:center;gap:var(--s1);padding:0 var(--s2)}
+.panel-toggle svg,.theme-toggle svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.panel-toggle .strip{fill:transparent;stroke:none;transition:fill 150ms ease-out}
+.panel-toggle[aria-expanded="true"]{color:var(--accent-ink)}
+.panel-toggle[aria-expanded="true"] .strip{fill:currentColor}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;padding:0}
+.seg{flex:none;display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.seg button{min-height:40px;padding:0 var(--s3);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+.layout{display:grid;grid-template-columns:auto minmax(320px,1fr) auto;min-height:0}
+.panel{position:relative;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--bg);color:var(--ink)}
+.panel-left{grid-column:1;width:clamp(260px,20vw,320px);border-right:1px solid var(--line)}
+.panel-right{grid-column:3;width:clamp(320px,24vw,400px);border-left:1px solid var(--line)}
+.panel-inner{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--s4) var(--s4) var(--s6)}
+.panel-inner::-webkit-scrollbar{width:8px}
+.panel-inner::-webkit-scrollbar-track{background:transparent}
+.panel-inner::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:8px;border:2px solid var(--bg)}
+.panel-inner::-webkit-scrollbar-thumb:hover{background:var(--scroll-hover)}
+@supports (scrollbar-color:auto){.panel-inner{scrollbar-width:thin;scrollbar-color:var(--scroll) transparent}}
+.panel-head{display:flex;align-items:center;gap:var(--s2);min-height:44px;margin-bottom:var(--s2)}
+.panel-head h2{flex:1 1 0;min-width:0;margin:0;font-size:22px;line-height:1.4}
+.stage{grid-column:2;position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--bg)}
+.scrim{display:none}
+.panel-resize{display:none}
+
+.sec{margin-top:var(--s5);padding-top:var(--s5);border-top:1px solid var(--line)}
+.panel-head + .sec,.panel-head + div > .sec:first-child{margin-top:0;padding-top:0;border-top:0}
+.sec-title{display:block;margin:0 0 var(--s3);font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-0.01em}
+.sub{margin:var(--s3) 0 0;font-size:14px;line-height:1.6;color:var(--ink-2)}
+
+.opt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.btn{display:flex;align-items:center;gap:var(--s2);width:100%;min-height:var(--tap);padding:0 var(--s3);border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font-size:14px;font-weight:600;line-height:1.3;text-align:left;cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.btn .box{flex:none;width:12px;height:12px;border-radius:3px;border:1.5px solid currentColor}
+.btn[aria-pressed="true"] .box{background:currentColor}
+.steps{display:flex;flex-direction:column;gap:var(--s2)}
+.steps .btn{padding:var(--s2) var(--s3);gap:var(--s3)}
+.step-num{flex:none;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid;font-size:12px;font-weight:700;color:var(--ink)}
+.step-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.step-txt b{font-size:15px;font-weight:700}
+.step-txt span{font-size:13px;font-weight:500;color:var(--ink-2)}
+.detail{margin-top:var(--s3);padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+
+
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.tiles.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tile{padding:var(--s3);border-radius:var(--radius);background:var(--surface)}
+.tile b{display:block;font-size:20px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}
+.tile span{display:block;font-size:13px;line-height:1.4;color:var(--ink-2)}
+.events{display:flex;flex-direction:column;gap:var(--s2)}
+.event{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.6}
+.dot{flex:none;width:10px;height:10px;margin-top:7px;border-radius:50%}
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2) var(--s3);font-size:13px;color:var(--ink-2)}
+.legend div{display:flex;align-items:center;gap:var(--s2)}
+.sw{flex:none;width:16px;height:6px;border-radius:3px}
+.sw.ball{width:12px;height:12px;border-radius:50%}
+.sec.warn{border-top:0;padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+.warn .sec-title{color:var(--warn);font-size:17px}
+.mistake{margin-top:var(--s3)}
+.mistake b{display:block;font-weight:700}
+.mistake span{color:var(--ink-2)}
+
+.canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.canvas.is-fixed{cursor:default}
+.view-btns{position:absolute;top:var(--s3);right:var(--s3);display:flex;gap:6px}
+.icon-btn{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);cursor:pointer}
+.icon-btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.icon-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.float{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius)}
+.hover-card{position:absolute;left:var(--s3);bottom:var(--s3);display:flex;flex-direction:column;gap:2px;padding:var(--s3) var(--s4);pointer-events:none}
+.hover-card .k{font-size:13px;color:var(--ink-2)}
+.hover-card .v{font-size:18px;font-weight:700}
+.playbar{position:absolute;left:var(--s3);right:var(--s3);bottom:var(--s3);display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3)}
+.play{flex:none;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--radius);background:var(--btn-bg);color:var(--on-btn) !important;cursor:pointer}
+.play svg{width:18px;height:18px;fill:currentColor}
+.scrub{flex:1 1 200px;min-width:160px;display:flex;flex-direction:column;gap:2px}
+.scrub span{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.scrub input{width:100%;height:24px;margin:0;accent-color:var(--accent)}
+.speeds{display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.speeds button{min-width:48px;height:40px;padding:0 var(--s2);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
+.speeds button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+@media (hover:hover){.btn:hover,.icon-btn:hover{background:var(--surface)}.text-btn:hover{background:var(--surface)}}
+@media (min-width:1024px){
+  .panel-head{display:none}
+  .layout{--pl:var(--pl-user,clamp(260px,20vw,320px));--pr:var(--pr-user,clamp(320px,24vw,400px))}
+  .panel{width:0;border-width:0;visibility:hidden;transition:width var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left.is-open{width:var(--pl)}
+  .panel-right.is-open{width:var(--pr)}
+  .panel.is-open{visibility:visible;border-width:1px;transition:width var(--dur) var(--ease-out)}
+  .panel-left .panel-inner{width:var(--pl)}
+  .panel-right .panel-inner{width:var(--pr);align-self:flex-end}
+  .layout.is-resizing .panel{transition:none}
+  .layout.is-resizing{cursor:col-resize;user-select:none}
+  .panel-resize{display:block;position:absolute;top:0;bottom:0;z-index:2;width:12px;padding:0;border:0;background:transparent;cursor:col-resize;touch-action:none}
+  .panel-left .panel-resize{right:0}
+  .panel-right .panel-resize{left:0}
+  .panel-resize::after{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--accent);opacity:0;transition:opacity 150ms ease-out}
+  .panel-left .panel-resize::after{right:0}
+  .panel-right .panel-resize::after{left:0}
+  .panel-resize:focus-visible{outline:none}
+  .panel-resize:focus-visible::after,.is-resizing .panel-resize:active::after{opacity:1}
+  @media (hover:hover){.panel-resize:hover::after{opacity:1}}
+}
+@media (max-width: 1023.98px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .stage{grid-column:1}
+  .panel{position:fixed;top:0;bottom:0;z-index:40;visibility:hidden;transition:transform var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left{left:0;width:min(304px,88vw);transform:translateX(-100%)}
+  .panel-right{right:0;width:min(360px,88vw);transform:translateX(100%)}
+  .panel.is-open{visibility:visible;transform:none;transition:transform var(--dur) var(--ease-out)}
+  .panel-inner{padding-top:calc(var(--s3) + env(safe-area-inset-top));padding-bottom:calc(var(--s6) + env(safe-area-inset-bottom))}
+  .scrim{display:block;position:fixed;inset:0;z-index:35;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .scrim.is-on{opacity:1;visibility:visible;transition:opacity var(--dur) var(--ease-out)}
+}
+@media (max-width:640px){.brand{display:none}.topbar{justify-content:space-between}}
+@media (max-width:480px){.panel-toggle span{display:none}.seg button{padding:0 var(--s2)}}
+@media (prefers-reduced-motion:reduce){.panel,.panel.is-open,.scrim,.scrim.is-on,.panel-toggle .strip,.panel-resize::after{transition:none}}
+</style>
+</helmet>
+<div class="app" onKeyDown="{{onKey}}" style="--bg: {{th.bg}}; --surface: {{th.surface}}; --ink: {{th.ink}}; --ink-2: {{th.ink2}}; --line: {{th.line}}; --accent: {{th.accent}}; --accent-ink: {{th.accentInk}}; --btn-bg: {{th.btnBg}}; --on-btn: {{th.onBtn}}; --warn: {{th.warn}}; --prof: {{th.prof}}; --supp: {{th.supp}}; --danger: {{th.danger}}; --scroll: {{th.scroll}}; --scroll-hover: {{th.scrollHover}}">
+<header class="topbar">
+<button class="text-btn panel-toggle" type="button" aria-label="조작 패널" aria-expanded="{{leftExpanded}}" onClick="{{toggleLeft}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M9 4v16"></path></svg><span>조작</span></button>
+<strong class="brand">유사분열 한눈에</strong>
+<sc-if value="{{hasModes}}" hint-placeholder-val="{{ true }}">
+<div class="seg" role="group" aria-label="보기 선택">
+<sc-for list="{{modes}}" as="md" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{md.pressed}}" onClick="{{md.pick}}">{{md.label}}</button>
+</sc-for>
+</div>
+</sc-if>
+<button class="text-btn theme-toggle" type="button" aria-label="{{themeLabel}}" title="{{themeLabel}}" onClick="{{toggleTheme}}">
+<sc-if value="{{isDark}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+<sc-if value="{{isLight}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></sc-if>
+</button>
+<button class="text-btn panel-toggle" type="button" aria-label="설명 패널" aria-expanded="{{rightExpanded}}" onClick="{{toggleRight}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M15 4v16"></path></svg><span>설명</span></button>
+</header>
+
+<div class="layout {{layoutCls}}" style="{{layoutStyle}}">
+<aside class="panel panel-left {{leftCls}}" aria-label="조작">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="220" aria-valuemax="480" aria-valuenow="{{leftWNow}}" ref="{{leftHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>조작</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<sc-if value="{{hasToggles}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">보기 옵션</h3>
+<div class="opt">
+<sc-for list="{{toggles}}" as="t" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{t.pressed}}" onClick="{{t.toggle}}"><span class="box" aria-hidden="true"></span>{{t.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<!-- SLOT:left -->
+<!-- /SLOT:left -->
+
+<sc-if value="{{hasSteps}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">단계</h3>
+<div class="steps">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}"><span class="step-num num" style="border-color: {{s.c}}">{{s.num}}</span><span class="step-txt"><b>{{s.title}}</b><span>{{s.who}}</span></span></button>
+</sc-for>
+</div>
+<sc-if value="{{hasStep}}" hint-placeholder-val="{{ false }}">
+<div class="detail" aria-live="polite">{{stepDetail}}</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</aside>
+
+<section class="stage" aria-label="모형 보기">
+<canvas class="canvas {{canvasCls}}" ref="{{canvasRef}}" role="img" aria-label="{{canvasLabel}}"></canvas>
+<div class="view-btns">
+<button class="icon-btn" type="button" aria-label="확대" onClick="{{zoomIn}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="축소" onClick="{{zoomOut}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="시점 처음으로" onClick="{{resetView}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v5h5"></path></svg></button>
+</div>
+
+<sc-if value="{{hasPlayback}}" hint-placeholder-val="{{ false }}">
+<div class="playbar float">
+<button class="play" type="button" aria-label="{{playLabel}}" onClick="{{togglePlay}}">
+<sc-if value="{{isPlaying}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></sc-if>
+<sc-if value="{{notPlaying}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5l12 7-12 7z"></path></svg></sc-if>
+</button>
+<label class="scrub">
+<span>{{fLabel}}</span>
+<input type="range" min="0" max="{{fMax10}}" step="1" value="{{fInt}}" onChange="{{onScrub}}">
+</label>
+<div class="speeds" role="group" aria-label="재생 속도">
+<sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{sp.pressed}}" onClick="{{sp.pick}}">{{sp.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</section>
+
+<aside class="panel panel-right {{rightCls}}" aria-label="설명">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="280" aria-valuemax="720" aria-valuenow="{{rightWNow}}" ref="{{rightHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>설명</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<!-- SLOT:right -->
+<sc-if value="{{is.cycle}}" hint-placeholder-val="{{ true }}">
+<div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 세포 상태</h3>
+<div class="tiles">
+<div class="tile"><b>{{cy.env}}</b><span>핵막</span></div>
+<div class="tile"><b>{{cy.spindle}}</b><span>방추사</span></div>
+<div class="tile"><b>{{cy.cells}}</b><span>세포 수 · 핵 수</span></div>
+<div class="tile"><b>{{cy.chromo}}</b><span>{{cy.chromoSub}}</span></div>
+</div>
+<p class="sub">염색체: {{cy.state}}</p>
+</div>
+<div class="sec">
+<h3 class="sec-title">지금 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{events}}" as="e" hint-placeholder-count="2">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+<p class="sub">{{cy.note}}</p>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw" style="background: {{legend.mom}}"></span>엄마 유래 염색체</div>
+<div><span class="sw" style="background: {{legend.dad}}"></span>아빠 유래 염색체</div>
+<div><span class="sw ball" style="background: {{legend.cent}}"></span>중심체 (중심립 2개)</div>
+<div><span class="sw" style="background: {{legend.spindle}}"></span>방추사 (미세소관)</div>
+<div><span class="sw ball" style="background: {{legend.env}}"></span>핵막</div>
+<div><span class="sw ball" style="background: {{legend.cm}}"></span>동원체</div>
+</div>
+<p class="sub">긴 것 한 쌍, 짧은 것 한 쌍이 상동염색체예요(2n = 4).</p>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{is.cyto}}" hint-placeholder-val="{{ false }}">
+<div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 세포 상태</h3>
+<div class="tiles">
+<div class="tile"><b>{{cz.cells}}</b><span>{{cz.cellsSub}}</span></div>
+<div class="tile"><b>{{cz.nuclei}}</b><span>{{cz.nucleiSub}}</span></div>
+<div class="tile"><b>밖 → 안</b><span>동물: 수축환이 조여요</span></div>
+<div class="tile"><b>안 → 밖</b><span>식물: 세포판이 자라요</span></div>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">지금 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{events}}" as="e" hint-placeholder-count="2">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+<p class="sub">세포질 분열은 말기에 시작해요(수업 모형). 핵분열 뒤에 세포질이 나뉘어야 세포가 둘이 돼요.</p>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw" style="background: {{legend.mf}}"></span>수축환 (미세섬유)</div>
+<div><span class="sw" style="background: {{legend.membrane}}"></span>세포막</div>
+<div><span class="sw" style="background: {{legend.wall}}"></span>세포벽</div>
+<div><span class="sw" style="background: {{legend.plate}}"></span>세포판</div>
+<div><span class="sw ball" style="background: {{legend.env}}"></span>핵막</div>
+<div><span class="sw ball" style="background: {{legend.cent}}"></span>중심체 (동물세포)</div>
+</div>
+</div>
+</div>
+</sc-if>
+<!-- /SLOT:right -->
+
+<div class="sec warn">
+<h3 class="sec-title">꼭 기억해요</h3>
+<sc-for list="{{mistakes}}" as="m" hint-placeholder-count="3">
+<div class="mistake"><b>{{m.title}}</b><span>{{m.text}}</span></div>
+</sc-for>
+</div>
+</div>
+</aside>
+</div>
+<div class="scrim {{scrimCls}}" aria-hidden="true" onClick="{{closePanels}}"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  // ================= 주제 훅: 주제마다 바꾸는 곳은 이 네 메서드뿐이에요 =================
+  // 계약은 bio-interactive/references/scene-api.md에 있어요.
+
+  topic() {
+    // 분열 모드 과정 경계(f). 수업 방식대로 전중기는 전기에 넣고, 세포질 분열은 말기에 시작해요.
+    const PH = [[0, '간기 · G1기'], [1.6, '간기 · S기'], [5, '간기 · G2기'], [6.5, '전기'], [12.8, '중기'], [16, '후기'], [21, '말기'], [23.6, '말기 · 세포질 분열 시작']];
+    const CT = [[0, '핵분열 끝'], [1.5, '분열 시작'], [4, '세포질 나뉨'], [8.5, '딸세포 2개']];
+    const at = (T, f) => { let n = T[0][1]; for (const p of T) if (f >= p[0]) n = p[1]; return n; };
+    return {
+      MODES: [
+        { key: 'cycle', label: '분열', cam: { yaw: -0.32, pitch: 0.24, zoom: 1 }, fit: [10.6, 9.2], D: 60,
+          autoSpin: false, rotatable: true,
+          playback: { fmax: 27, rate: 1.3, label: (f) => at(PH, f) + ' · ' + f.toFixed(1) + ' / 27' },
+          canvasLabel: (f) => f < 1.6 ? '간기 G1기 동물세포. 핵막 안에 풀린 염색질 4가닥과 중심체 1개가 있어요.'
+            : f < 5 ? '간기 S기. DNA가 복제되어 염색질마다 같은 가닥이 하나 더 생기고 중심체도 2개가 돼요.'
+            : f < 6.5 ? '간기 G2기. 복제된 염색질과 중심체 2개가 분열을 기다려요.'
+            : f < 12.8 ? '전기. 염색체가 응축되고 핵막이 사라지며, 양극의 중심체에서 방추사가 뻗어 동원체에 붙어요.'
+            : f < 16 ? '중기. 염색체 4개가 세포 가운데 중기판에 한 줄로 서 있어요.'
+            : f < 21 ? '후기. 자매염색분체가 갈라져 반대쪽 극으로 끌려가요.'
+            : f < 23.6 ? '말기. 양극에 핵막이 다시 생기고 염색체가 풀리며 방추사가 사라져요.'
+            : '말기. 핵 2개가 생겼고 세포 허리가 잘록해지며 세포질 분열이 시작돼요.' },
+        { key: 'cyto', label: '세포질', cam: { yaw: -0.42, pitch: 0.26, zoom: 1 }, fit: [8.8, 11.4], D: 60,
+          autoSpin: false, rotatable: true,
+          playback: { fmax: 10, rate: 1, label: (f) => at(CT, f) + ' · ' + f.toFixed(1) + ' / 10' },
+          canvasLabel: (f) => f < 1.5 ? '위는 동물세포, 아래는 식물세포. 둘 다 핵은 2개지만 세포는 아직 1개예요.'
+            : f < 4 ? '동물세포 허리에 수축환이 생기고, 식물세포 가운데에 세포판이 생기기 시작해요.'
+            : f < 8.5 ? '동물세포는 수축환이 밖에서 조여 분열홈이 깊어지고, 식물세포는 세포판이 양옆 세포벽 쪽으로 자라요.'
+            : '두 세포 모두 딸세포 2개로 나뉘었어요. 식물세포의 세포판은 새 세포벽이 됐어요.' }
+      ],
+      STEPS: [
+        { mode: 'cycle', f: 4.5, phase: 'S기', c: '#D9483B', title: 'S기: DNA·중심체 복제', who: 'DNA · 중심체',
+          text: 'S기에 DNA가 복제되어 염색질 실마다 같은 가닥이 하나씩 더 생겨요. 이때 중심체도 같이 복제돼 2개가 돼요. 아직 풀린 염색질이라 막대 모양 염색체는 보이지 않아요.' },
+        { mode: 'cycle', f: 11.3, phase: '전기', c: '#1E9E5A', title: '전기: 응축·핵막 소실·방추사', who: '중심체 · 방추사(미세소관)',
+          text: '세 가지가 일어나요. DNA가 응축돼 자매염색분체 2가닥짜리 염색체가 보이고, 핵막이 사라지고, 양극으로 간 중심체에서 방추사가 뻗어 동원체에 붙어요. 수업에서는 전중기를 따로 두지 않고 전기에 넣어요.' },
+        { mode: 'cycle', f: 15, phase: '중기', c: '#7C6CD6', title: '중기: 가운데 한 줄', who: '방추사 · 동원체',
+          text: '염색체 4개가 세포 가운데 면(중기판)에 한 줄로 서요. 상동염색체끼리 짝짓지 않고 하나씩 따로 서요. 염색체마다 아직 자매염색분체가 2가닥이에요.' },
+        { mode: 'cycle', f: 19, phase: '후기', c: '#2F6FDB', title: '후기: 자매염색분체 분리', who: '방추사 · 동원체',
+          text: '동원체가 갈라지며 같은 색 두 가닥, 곧 자매염색분체가 반대쪽 극으로 끌려가요. 떨어진 염색분체 하나하나가 이제 염색체라서 극마다 염색체 4개(2n)가 모여요. 갈라지는 것은 상동염색체가 아니에요.' },
+        { mode: 'cycle', f: 23.2, phase: '말기', c: '#D99A1E', title: '말기: 전기의 반대', who: '핵막 · 방추사',
+          text: '양극의 염색체 주위로 핵막이 다시 생기고, 염색체가 풀리고, 방추사가 사라져요. 핵이 2개가 되면 핵분열이 끝나요. 하지만 세포는 아직 1개예요.' },
+        { mode: 'cycle', f: 26.6, phase: '세포질 분열 시작', c: '#E0702A', title: '세포질 분열 시작', who: '수축환(미세섬유)',
+          text: '말기에 세포 허리가 잘록해지며 세포질 분열이 시작돼요(수업 모형). 핵은 2개지만 세포는 아직 1개예요. 끝까지 나뉘는 모습은 「세포질」 모드에서 봐요.' },
+        { mode: 'cyto', f: 3.6, phase: '분열 시작', c: '#E0702A', title: '수축환 생김', who: '미세섬유 (동물세포)',
+          text: '동물세포는 세포막 밑의 미세섬유가 막을 안쪽으로 잡아당겨 허리에 고리를 만들어요. 이 고리가 수축환이에요. 신발 끈 주머니의 끈을 당기듯 조여요.' },
+        { mode: 'cyto', f: 7, phase: '세포질 나뉨', c: '#D9483B', title: '분열홈이 깊어짐', who: '수축환 (동물세포)',
+          text: '수축환이 좁아지면서 세포 허리가 밖에서 안으로 파여요. 이렇게 파인 곳이 분열홈이에요. 끝까지 조이면 2n 딸세포 2개가 돼요.' },
+        { mode: 'cyto', f: 8.2, phase: '세포질 나뉨', c: '#5B8C2A', title: '세포판이 양옆으로', who: '세포판 (식물세포)',
+          text: '식물세포는 단단한 세포벽 때문에 밖에서 조일 수 없어요. 그래서 세포 안쪽 가운데에서 세포벽 성분으로 세포판을 만들어요. 세포판이 양옆으로 자라 세포벽에 닿으면 새 세포벽이 돼요.' }
+      ],
+      MISTAKES: {
+        cycle: [
+          { title: '중심체 ≠ 동원체', text: '중심체는 방추사가 뻗어 나오는 곳(초록, 직각 원통 2개 = 중심립 2개), 동원체는 방추사가 가서 붙는 염색체 부위(자매염색분체가 붙은 곳)예요. 방향은 늘 「중심체 → 동원체」예요.' },
+          { title: '후기에 갈라지는 건 자매염색분체', text: '같은 길이 빨강·파랑 쌍(상동염색체)이 갈라지는 게 아니에요. 동원체로 붙어 있던 같은 색 두 가닥이 양쪽 극으로 가요. 후기에서 색을 따라가 보세요.' },
+          { title: '방추사가 사라지는 건 말기', text: '교수님이 요약에서 「후기」라고 한 건 말실수예요. 후기에는 방추사가 염색분체를 극으로 끌고, 말기에 핵막이 다시 생기며 방추사가 사라져요. 오른쪽 「방추사」 칸으로 확인해요.' }
+        ],
+        cyto: [
+          { title: '핵분열 끝 ≠ 세포 둘', text: '말기가 끝나면 핵이 2개(핵분열 끝)일 뿐 세포는 아직 1개예요. 세포질 분열이 끝나야 2n 딸세포 2개가 돼요. 「세포 수」 칸이 2개로 바뀌는 때를 보세요.' },
+          { title: '동물은 밖에서, 식물은 안에서', text: '동물은 수축환이 허리를 밖에서 조이고(분열홈), 식물은 세포벽 때문에 가운데 세포판이 안에서 양옆으로 자라요. 화면의 화살표 방향이 서로 반대예요.' },
+          { title: '수축환은 미세섬유, 방추사는 미세소관', text: '둘 다 세포골격이지만 다른 섬유예요. 염색체를 끄는 방추사는 미세소관, 세포 허리를 조이는 수축환은 미세섬유예요.' }
+        ]
+      },
+      TOGGLES: { cycle: [['labels', '이름표'], ['spindle', '방추사'], ['plate', '중기판 표시']], cyto: [['labels', '이름표']] },
+      PAL: {
+        light: { bg: '#ffffff', labelBg: '#f7f8fa', ink: '#111111', ring: '#111111', blobAlpha: 0.22,
+          mom: '#D9483B', dad: '#2F6FDB', cent: '#1E9E5A', spindle: '#7C6CD6', env: '#D99A1E', cm: '#3A3F48',
+          membrane: '#7D8796', mf: '#E0702A', wall: '#5B8C2A', plate: '#93BF4E', plateLine: '#8A94A3' },
+        dark: { bg: '#17171c', labelBg: '#212128', ink: '#f2f4f6', ring: '#f2f4f6', blobAlpha: 0.3,
+          mom: '#FF7A6E', dad: '#6EA4FF', cent: '#4FD08A', spindle: '#A99BFF', env: '#F2BE5C', cm: '#E6E9EE',
+          membrane: '#AEB7C4', mf: '#FF9A5A', wall: '#8DC25A', plate: '#C5E38E', plateLine: '#AEB7C4' }
+      }
+    };
+  }
+
+  // 장면 만들기: I(그리기 항목)와 O(라벨)에 push만 해요. 진행값은 this.sim.f를 써요.
+  buildScene(mode, I, O) {
+    const pal = this.pal(), st = this.state, f = this.sim.f, sm = (x) => this.sm(x);
+    const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+    const mul = (a, s) => [a[0] * s, a[1] * s, a[2] * s];
+    const nrm = (a) => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
+    const lerp = (a, b, t) => this.lerp(a, b, t);
+    const TAU = Math.PI * 2, N = 26;
+    // 염색질 실: 풀린 DNA를 구불구불한 실로 그려요
+    const wig = (ph, n, amp) => {
+      const t = n / (N - 1) * TAU;
+      return [amp * Math.sin(t * 2.1 + ph), amp * Math.sin(t * 1.7 + ph * 1.3 + 1), amp * Math.sin(t * 2.6 + ph * 0.7 + 2)];
+    };
+    const line = (P, upto, w, c, a, rod) => {
+      const m = Math.min(P.length - 1, upto);
+      for (let n = 0; n < m; n++) I.push({ k: 1, p: P[n], q: P[n + 1], w: w, c: c, a: a, rod: rod });
+    };
+    // 중심체 = 서로 직각인 중심립 2개
+    const centro = (p, a, s) => {
+      s = s || 1;
+      if (a <= 0.01) return;
+      I.push({ k: 5, p: p, r: 0.34 * s, c: pal.cent, a: 0.45 * a });
+      I.push({ k: 1, p: add(p, [-0.08 * s, -0.17 * s, 0]), q: add(p, [-0.08 * s, 0.17 * s, 0]), w: 0.13 * s, c: pal.cent, rod: true, a: a });
+      I.push({ k: 1, p: add(p, [0.08 * s, 0, -0.17 * s]), q: add(p, [0.08 * s, 0, 0.17 * s]), w: 0.13 * s, c: pal.cent, rod: true, a: a });
+    };
+    // 세포막 선(윤곽): rho(u)는 가운데에서 u만큼 떨어진 곳의 반지름, 반쪽(h=-1,1)마다 gap만큼 벌려요
+    const membrane = (y0, Lx, rho, gap, ringsAt) => {
+      const M = 30;
+      for (const h of [-1, 1]) {
+        for (let i = 0; i < M; i++) {
+          const u0 = Lx * i / M, u1 = Lx * (i + 1) / M, r0 = rho(u0), r1 = rho(u1);
+          if (r0 < 0.005 && r1 < 0.005) continue;
+          const x0 = h * (u0 + gap), x1 = h * (u1 + gap);
+          I.push({ k: 1, p: [x0, y0 + r0, 0], q: [x1, y0 + r1, 0], w: 0.06, c: pal.membrane, a: 0.95 });
+          I.push({ k: 1, p: [x0, y0 - r0, 0], q: [x1, y0 - r1, 0], w: 0.06, c: pal.membrane, a: 0.95 });
+          I.push({ k: 1, p: [x0, y0, r0], q: [x1, y0, r1], w: 0.04, c: pal.membrane, a: 0.4 });
+          I.push({ k: 1, p: [x0, y0, -r0], q: [x1, y0, -r1], w: 0.04, c: pal.membrane, a: 0.4 });
+        }
+        for (const u of ringsAt) {
+          const r = rho(u);
+          if (r < 0.05) continue;
+          circleYZ(h * (u + gap), y0, r, pal.membrane, 0.04, 0.3, false);
+        }
+      }
+    };
+    const circleYZ = (x, y0, r, c, w, a, dashed) => {
+      const M = 40;
+      for (let i = 0; i < M; i++) {
+        if (dashed && i % 2) continue;
+        const t0 = i / M * TAU, t1 = (i + 1) / M * TAU;
+        I.push({ k: 1, p: [x, y0 + r * Math.cos(t0), r * Math.sin(t0)], q: [x, y0 + r * Math.cos(t1), r * Math.sin(t1)], w: w, c: c, a: a });
+      }
+    };
+    const lab = (o) => { if (st.labels) O.push(o); };
+
+    if (mode === 'cycle') {
+      // ---------- 진행값 ----------
+      const rep = sm((f - 1.8) / 2.6);        // S기 DNA 복제
+      const cd = sm((f - 3.0) / 1.4);         // S기 중심체 복제
+      const c = sm((f - 6.6) / 2.2);          // 전기 응축
+      const env = 1 - sm((f - 8.2) / 1.3);    // 전기 핵막 소실
+      const mg = sm((f - 7.0) / 2.8);         // 전기 중심체 양극 이동
+      const g = sm((f - 9.4) / 1.6);          // 전기 방추사 → 동원체
+      const al = sm((f - 11.4) / 1.4);        // 가운데 배열
+      const sp = sm((f - 16.0) / 0.6);        // 후기 동원체 갈라짐
+      const a = sm((f - 16.5) / 3.8);         // 후기 극으로 이동
+      const el = sm((f - 16.5) / 4.5);        // 세포 길어짐
+      const sf = 1 - sm((f - 21) / 1.4);      // 말기 방추사 사라짐
+      const ne = sm((f - 21) / 1.6);          // 말기 핵막 다시 생김
+      const dc = sm((f - 21.3) / 1.7);        // 말기 염색체 풀림
+      const fr = sm((f - 23.6) / 3.4);        // 세포질 분열 시작(분열홈)
+
+      // ---------- 세포막 ----------
+      const Lx = 3.4 + 0.55 * el, Ry = 3.4 - 0.25 * el;
+      const rho = (u) => Ry * Math.sqrt(Math.max(0, 1 - (u / Lx) * (u / Lx))) * (1 - 0.3 * fr * Math.exp(-(u / 1.1) * (u / 1.1)));
+      membrane(0, Lx, rho, 0, [Lx * 0.55]);
+      if (fr > 0.01) {
+        const r0 = rho(0) * 0.97;
+        circleYZ(0, 0, r0, pal.mf, 0.1, fr, false);
+        I.push({ k: 4, p: [0, r0 + 0.7, 0], q: [0, r0 + 0.1, 0], c: pal.mf, a: fr });
+        I.push({ k: 4, p: [0, -r0 - 0.7, 0], q: [0, -r0 - 0.1, 0], c: pal.mf, a: fr });
+      }
+
+      // ---------- 핵막 ----------
+      if (env > 0.01) I.push({ k: 5, p: [0, 0, 0], r: 2.05, c: pal.env, a: 0.95 * env });
+      const DX = 2.05;
+      // 새 핵막은 극에 모인 염색체를 감싸며 생기고, 염색체가 풀리는 만큼 작아져요
+      if (ne > 0.01) for (const s of [-1, 1]) I.push({ k: 5, p: [s * (DX + 0.1 * (1 - dc)), 0, 0], r: 0.95 + 0.4 * (1 - dc), c: pal.env, a: 0.95 * ne });
+
+      // ---------- 중심체 ----------
+      const ang1 = (100 + 8 * cd + (180 - 108) * mg) * Math.PI / 180;
+      const ang2 = (100 - 8 * cd - 92 * mg) * Math.PI / 180;
+      const cr = 2.6 + 0.3 * mg, cz = 0.3 * (1 - mg), poleX = 2.9 + 0.55 * el;
+      const C1 = mg >= 1 ? [-poleX, 0, 0] : [cr * Math.cos(ang1), cr * Math.sin(ang1), cz];
+      const C2 = mg >= 1 ? [poleX, 0, 0] : [cr * Math.cos(ang2), cr * Math.sin(ang2), cz];
+      centro(C1, 1);
+      centro(C2, cd);
+      const POLE = [C1, C2];
+
+      // ---------- 염색체 2n=4: 긴 것 한 쌍, 짧은 것 한 쌍 (엄마 빨강, 아빠 파랑) ----------
+      const CH = [
+        { L: 1.3, col: pal.mom, pro: [-0.7, 0.55, 0.3], ax: [0.75, 0.55, 0.35], meta: 1.95, cIn: [-0.55, 0.45, 0.2], ph: 0.3 },
+        { L: 1.3, col: pal.dad, pro: [0.6, 0.7, -0.35], ax: [-0.35, 0.85, 0.4], meta: -0.65, cIn: [0.5, 0.45, -0.3], ph: 1.7 },
+        { L: 0.8, col: pal.mom, pro: [-0.35, -0.75, -0.3], ax: [0.55, -0.25, 0.8], meta: -1.95, cIn: [-0.4, -0.55, -0.25], ph: 2.9 },
+        { L: 0.8, col: pal.dad, pro: [0.7, -0.45, 0.4], ax: [0.25, 0.6, -0.75], meta: 0.65, cIn: [0.45, -0.5, 0.3], ph: 4.4 }
+      ];
+      const AXM = nrm([0, 0.75, 0.66]), VM = [1, 0, 0];
+      const KP = []; // 라벨용 동원체 위치 [i][j]
+      CH.forEach((ch, i) => {
+        const ax = nrm(ch.ax);
+        let vp = nrm([ax[1], -ax[0], 0]);
+        if (vp[0] < 0) vp = mul(vp, -1);
+        const u = nrm(lerp(ax, AXM, al)), v = nrm(lerp(vp, VM, al));
+        const cm = lerp(ch.pro, [0, ch.meta, 0], al);
+        KP.push([]);
+        for (let j = 0; j < 2; j++) {
+          const sg = j === 0 ? -1 : 1;           // j=0은 왼쪽 극, j=1은 오른쪽 극으로 가는 자매염색분체
+          const dir = [sg, 0, 0];
+          const tgt = [sg * (2.05 + 0.2 * el), ch.meta * 0.34, [0.3, -0.3, -0.3, 0.3][i]];
+          const K = lerp(add(cm, mul(v, sg * (0.1 + 0.14 * sp))), tgt, a);
+          KP[i].push(K);
+          const tr = 0.75 * sm(a * 4) * (1 - 0.45 * sm((a - 0.75) * 4));   // 끌려갈 때 팔이 뒤로 처져요
+          const Dc = add([sg * DX, 0, 0], mul(ch.cIn, 0.5));
+          const P = [];
+          for (let n = 0; n < N; n++) {
+            const s = -1 + 2 * n / (N - 1);
+            // 응축된 막대: 동원체에서 축 방향으로 뻗고, 끝으로 갈수록 자매 사이가 조금 벌어져요
+            let rodP = add(K, mul(u, s * ch.L / 2 * (1 - 0.3 * tr)));
+            rodP = add(rodP, mul(v, sg * 0.09 * s * s * (1 - sp)));
+            rodP = add(rodP, mul(dir, -Math.abs(s) * ch.L / 2 * 0.55 * tr));
+            // 간기 염색질 실
+            let thr = add(ch.cIn, wig(ch.ph, n, 0.6));
+            if (j === 1) thr = add(thr, [0.07, 0.06, 0.05]);
+            let p = lerp(thr, rodP, c);
+            if (dc > 0) p = lerp(p, add(Dc, wig(ch.ph + j * 2.2 + (sg > 0 ? 1.1 : 0), n, 0.3)), dc);
+            P.push(p);
+          }
+          const w = 0.045 + 0.13 * c - 0.13 * dc;
+          const al2 = 0.7 + 0.3 * c - 0.25 * dc;
+          if (j === 0) line(P, N - 1, w, ch.col, al2, c > 0.5 && dc < 0.5);
+          else line(P, c > 0 ? N - 1 : Math.floor(rep * (N - 1)), w, ch.col, al2, c > 0.5 && dc < 0.5);
+        }
+        // 동원체: 갈라지기 전엔 하나, 후기부터 염색분체마다 하나
+        const cc = sm((c - 0.4) / 0.4) * (1 - dc);
+        if (cc > 0.01) {
+          if (sp < 0.5) I.push({ k: 0, p: lerp(KP[i][0], KP[i][1], 0.5), r: 0.17, c: pal.cm, a: cc });
+          else for (const K of KP[i]) I.push({ k: 0, p: K, r: 0.13, c: pal.cm, a: cc });
+        }
+        // 방추사(미세소관): 중심체에서 나와 동원체에 붙어요
+        if (st.spindle && g > 0 && sf > 0) {
+          for (let j = 0; j < 2; j++) {
+            const P0 = POLE[j];
+            I.push({ k: 1, p: P0, q: lerp(P0, KP[i][j], g), w: 0.035, c: pal.spindle, a: 0.85 * sf });
+          }
+        }
+      });
+
+      // ---------- 중기판 ----------
+      const pa = sm((f - 12.3) / 0.5) * (1 - sm((f - 16) / 0.6));
+      if (st.plate && pa > 0.01) circleYZ(0, 0, 2.95, pal.ink, 0.03, 0.4 * pa, true);
+
+      // ---------- 이름표 ----------
+      if (f < 6.5) {
+        lab({ p: [1.45, 1.45, 0], text: '핵막', c: pal.env, dx: 46, dy: -24, lead: true });
+        lab({ p: add(CH[2].cIn, wig(CH[2].ph, 13, 0.6)), text: '염색질 (풀린 DNA)', c: pal.mom, dx: -40, dy: 64, lead: true });
+        lab({ p: C1, text: f < 4.4 ? '중심체' : '중심체 2개 (복제됨)', c: pal.cent, dx: -70, dy: -14, lead: true });
+      } else if (f < 12.8) {
+        lab({ p: C1, text: '중심체', c: pal.cent, dy: -30, lead: true });
+        if (f > 7.8 && f < 9.6) lab({ p: [1.45, 1.45, 0], text: '핵막 사라지는 중', c: pal.env, dx: 50, dy: -26, lead: true });
+        if (c > 0.6) lab({ p: lerp(KP[3][0], KP[3][1], 0.5), text: '염색체 (자매염색분체 2가닥)', c: pal.dad, dx: 40, dy: 70, lead: true });
+        if (g > 0.3 && st.spindle) lab({ p: lerp(C2, KP[1][1], 0.5 * g), text: '방추사 (미세소관)', c: pal.spindle, dx: 30, dy: -44, lead: true });
+        if (g > 0.8) lab({ p: lerp(KP[0][0], KP[0][1], 0.5), text: '동원체', c: pal.ink, dx: -52, dy: -40, lead: true });
+      } else if (f < 16) {
+        lab({ p: C1, text: '중심체', c: pal.cent, dy: -30, lead: true });
+        lab({ p: [0, 2.95, 0], text: '중기판 (가운데 한 줄)', c: pal.ink, dy: -18 });
+        lab({ p: lerp(KP[0][0], KP[0][1], 0.5), text: '동원체', c: pal.ink, dx: 62, dy: -8, lead: true });
+        if (st.spindle) lab({ p: lerp(C2, KP[2][1], 0.5), text: '방추사', c: pal.spindle, dx: 24, dy: 34, lead: true });
+      } else if (f < 21) {
+        lab({ p: C1, text: '중심체', c: pal.cent, dy: -30, lead: true });
+        if (a > 0.05) lab({ p: KP[0][1], text: '자매염색분체 → 반대 극', c: pal.mom, dx: 40, dy: -44, lead: true });
+        if (st.spindle) lab({ p: lerp(C1, KP[2][0], 0.5), text: '방추사가 끌어요', c: pal.spindle, dx: -10, dy: 40, lead: true });
+      } else {
+        lab({ p: C1, text: '중심체', c: pal.cent, dy: -30, lead: true });
+        lab({ p: [DX + 0.6, 0.6, 0], text: '핵막 다시 생김', c: pal.env, dx: 20, dy: -40, lead: true });
+        if (sf > 0.15 && st.spindle) lab({ p: lerp(C1, KP[2][0], 0.5), text: '방추사 사라지는 중', c: pal.spindle, dx: -10, dy: 40, lead: true });
+        if (fr > 0.05) lab({ p: [0, -rho(0), 0], text: '분열홈 · 세포질 분열 시작', c: pal.mf, dy: 28, lead: true });
+      }
+      return;
+    }
+
+    // ================= 세포질 분열: 위 동물세포, 아래 식물세포 =================
+    const fs = sm((f - 1.5) / 2.5);     // 수축환·세포판 생김
+    const pr = sm((f - 4) / 4.5);       // 조임·세포판 자람
+    const sepr = sm((f - 8.5) / 1.2);   // 딸세포로 떨어짐
+    const nucleus = (p, s, ph0) => {
+      I.push({ k: 5, p: p, r: 0.62, c: pal.env, a: 0.9 });
+      [pal.mom, pal.dad, pal.mom, pal.dad].forEach((col, i) => {
+        const P = [], off = [[-0.18, 0.15, 0.1], [0.18, 0.15, -0.1], [-0.15, -0.18, -0.1], [0.15, -0.15, 0.12]][i];
+        for (let n = 0; n < N; n++) P.push(add(add(p, off), wig(ph0 + i * 1.3 + s, n, 0.22)));
+        line(P, N - 1, 0.035, col, 0.75, false);
+      });
+    };
+
+    // --- 동물세포 ---
+    const yA = 2.75, LA = 3.1, RA = 1.7, c2 = 1.55, gapA = 0.18 * sepr;
+    const rhoA = (u) => {
+      const ell = RA * Math.sqrt(Math.max(0, 1 - (u / LA) * (u / LA))) * (1 - 0.3 * Math.exp(-(u / 1.0) * (u / 1.0)));   // 분열 모드 끝처럼 허리가 조금 잘록한 채 시작
+      const d = (u - c2) / c2, two = c2 * Math.sqrt(Math.max(0, 1 - d * d));
+      return (1 - pr) * ell + pr * two;
+    };
+    membrane(yA, LA, rhoA, gapA, [c2]);
+    for (const s of [-1, 1]) {
+      nucleus([s * (1.55 + gapA), yA, 0], s, 0.4);
+      centro([s * (2.35 + gapA), yA + 0.45, 0.2], 1, 0.7);
+    }
+    const ringA = (0.55 + 0.45 * fs) * (1 - sm((pr - 0.9) / 0.1));
+    const r0 = rhoA(0) * 0.96;
+    if (ringA > 0.01 && r0 > 0.03) {
+      for (const dx of [-0.06, 0, 0.06]) circleYZ(dx, yA, r0, pal.mf, 0.06, ringA, false);
+    }
+    if (f < 8.5) {
+      I.push({ k: 4, p: [0, yA + r0 + 0.75, 0], q: [0, yA + r0 + 0.12, 0], c: pal.mf, a: 0.55 + 0.45 * fs });
+      I.push({ k: 4, p: [0, yA - r0 - 0.75, 0], q: [0, yA - r0 - 0.12, 0], c: pal.mf, a: 0.55 + 0.45 * fs });
+    }
+
+    // --- 식물세포 ---
+    const yP = -2.75, BX = 3.0, BY = 1.45, BZ = 1.45;
+    const corner = (sx, sy, sz) => [sx * BX, yP + sy * BY, sz * BZ];
+    for (const sy of [-1, 1]) for (const sz of [-1, 1]) I.push({ k: 1, p: corner(-1, sy, sz), q: corner(1, sy, sz), w: 0.12, c: pal.wall, rod: true });
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) I.push({ k: 1, p: corner(sx, -1, sz), q: corner(sx, 1, sz), w: 0.12, c: pal.wall, rod: true });
+    for (const sx of [-1, 1]) for (const sy of [-1, 1]) I.push({ k: 1, p: corner(sx, sy, -1), q: corner(sx, sy, 1), w: 0.12, c: pal.wall, rod: true });
+    for (const s of [-1, 1]) nucleus([s * 1.55, yP, 0], s, 2.1);
+    const h = BY * (0.12 * fs + 0.88 * pr);
+    if (fs > 0.01) {
+      const done = sepr > 0.5, pc = done ? pal.wall : pal.plate, hz = BZ * (h / BY);
+      for (let z = -hz; z <= hz + 1e-6; z += 0.18) I.push({ k: 1, p: [0, yP - h, z], q: [0, yP + h, z], w: 0.05, c: pc, a: 0.85 * fs, flat: true });
+      const E = [[-h, -hz], [h, -hz], [h, hz], [-h, hz]];
+      for (let i = 0; i < 4; i++) I.push({ k: 1, p: [0, yP + E[i][0], E[i][1]], q: [0, yP + E[(i + 1) % 4][0], E[(i + 1) % 4][1]], w: done ? 0.12 : 0.08, c: pc, a: fs, rod: done });
+      if (f < 8.5) {
+        I.push({ k: 4, p: [0, yP + h - 0.05, 0], q: [0, yP + h + 0.55, 0], c: pal.plate, a: fs });
+        I.push({ k: 4, p: [0, yP - h + 0.05, 0], q: [0, yP - h - 0.55, 0], c: pal.plate, a: fs });
+      }
+    }
+
+    // --- 이름표 ---
+    lab({ p: [-2.0, yA + rhoA(2.0), 0], text: '동물세포', c: pal.ink, dx: -10, dy: -22, lead: false });
+    if (ringA > 0.2) lab({ p: [0, yA + r0, 0], text: '수축환 (미세섬유)', c: pal.mf, dx: 74, dy: -30, lead: true });
+    if (f >= 4 && f < 9.2) lab({ p: [0, yA - r0, 0], text: '분열홈', c: pal.mf, dx: 46, dy: 30, lead: true });
+    lab({ p: corner(-0.67, 1, 0), text: '식물세포', c: pal.ink, dy: -20 });
+    lab({ p: corner(-1, -1, 0), text: '세포벽', c: pal.wall, dx: 10, dy: 24, lead: true });
+    if (fs > 0.2) lab({ p: [0, yP - h, 0], text: sepr > 0.5 ? '세포판 → 새 세포벽' : '세포판', c: pal.wall, dx: 44, dy: 30, lead: true });
+  }
+
+  // 주제 전용 상태(보기 옵션 키 등). 공통 상태에 합쳐져요.
+  extraState() {
+    return { labels: true, spindle: true, plate: true };
+  }
+
+  // 주제 전용 마크업 값. renderVals() 결과에 합쳐져요.
+  extraVals(st) {
+    const pal = this.pal(), f = st.f;
+    const legend = { mom: pal.mom, dad: pal.dad, cent: pal.cent, spindle: pal.spindle, env: pal.env, cm: pal.cm,
+      mf: pal.mf, membrane: pal.membrane, wall: pal.wall, plate: pal.plate };
+    // 분열 모드 패널
+    const cy = {
+      env: f < 8.2 ? '있음' : f < 9.5 ? '사라지는 중' : f < 21 ? '없음' : f < 22.6 ? '다시 생기는 중' : '있음 (2개)',
+      spindle: f < 9.4 ? '없음' : f < 11 ? '뻗는 중' : f < 16.5 ? '동원체에 붙음' : f < 21 ? '극으로 당김' : f < 22.4 ? '사라지는 중' : '없음',
+      cells: f < 9.5 ? '1개 · 1개' : f < 22.6 ? '1개 · 없음' : '1개 · 2개',
+      chromo: f < 16.3 ? '4개' : '4 + 4개',
+      chromoSub: f < 16.3 ? '염색체 수 (2n = 4)' : f < 22.6 ? '염색체 수 (극마다 2n = 4)' : '염색체 수 (핵마다 2n = 4)',
+      state: f < 1.8 ? '풀린 염색질 · 염색체마다 DNA 1가닥 (복제 전)'
+        : f < 4.4 ? 'DNA 복제 중 · 실마다 같은 가닥이 하나씩 생겨요'
+        : f < 6.6 ? '풀린 염색질 · 복제 끝 (자매염색분체 2가닥, 아직 안 보여요)'
+        : f < 8.8 ? '응축 중 · 막대 모양이 보이기 시작해요'
+        : f < 16.3 ? '응축 · 자매염색분체 2가닥이 동원체로 붙어 있어요'
+        : f < 21.3 ? '자매염색분체가 갈라짐 · 염색분체 1가닥 = 염색체 1개'
+        : f < 23 ? '다시 풀리는 중'
+        : '풀린 염색질 · 핵마다 4개 (1가닥씩)',
+      note: f < 5 ? '간기 = G1기 + S기 + G2기예요. 막대 염색체는 전기에야 보여요.'
+        : f < 6.5 ? 'G2기는 분열을 준비하는 때예요. (교과서 보충) 교과서 그림 3.3은 G2 칸에 복제된 중심립 쌍을 그려요.'
+        : f < 12.8 ? '수업에서는 전중기(핵막 소실, 방추사 부착)를 전기에 넣어요.'
+        : f < 16 ? '외울 때는 「중기 = 가운데(中) 배열」이에요.'
+        : f < 21 ? '후기 끝에 극마다 염색체 4개(2n)가 모여요.'
+        : '수업 모형: 세포질 분열은 말기에 시작해요. (교과서 보충) 교과서는 유사분열 도중 시작한다고도 해서 후기 끝 무렵 분열홈을 그리는 자료도 있어요.'
+    };
+    const cyEvents = f < 1.6 ? [{ c: pal.mom, text: 'G1기: 세포가 자라요.' }]
+      : f < 5 ? [{ c: pal.mom, text: 'S기: DNA가 복제돼요.' }, { c: pal.cent, text: '중심체도 함께 복제돼 2개가 돼요.' }]
+      : f < 6.5 ? [{ c: pal.cent, text: 'G2기: 중심체 2개, 복제된 DNA로 분열을 준비해요.' }]
+      : f < 12.8 ? [{ c: pal.dad, text: '① DNA가 응축돼 염색체가 보여요.' }, { c: pal.env, text: '② 핵막이 사라져요.' }, { c: pal.spindle, text: '③ 중심체가 양극으로 가고, 방추사가 동원체에 붙어요.' }]
+      : f < 16 ? [{ c: pal.ink, text: '염색체 4개가 짝 없이 가운데에 한 줄로 서요.' }, { c: pal.spindle, text: '양쪽 극의 방추사가 자매염색분체 하나씩에 붙어 있어요.' }]
+      : f < 21 ? [{ c: pal.cm, text: '동원체가 갈라져요.' }, { c: pal.mom, text: '자매염색분체가 반대 극으로 끌려가요.' }]
+      : f < 23.6 ? [{ c: pal.env, text: '핵막이 다시 생겨요.' }, { c: pal.dad, text: '염색체가 풀려요.' }, { c: pal.spindle, text: '방추사가 사라져요.' }]
+      : [{ c: pal.env, text: '핵 2개 → 핵분열 끝.' }, { c: pal.mf, text: '허리가 잘록해지며 세포질 분열이 시작돼요.' }];
+    // 세포질 모드 패널
+    const cz = {
+      cells: f < 8.5 ? '1개' : '2개',
+      cellsSub: f < 8.5 ? '세포 수 (핵분열만 끝)' : '세포 수 (2n 딸세포)',
+      nuclei: f < 8.5 ? '2개' : '1개씩',
+      nucleiSub: f < 8.5 ? '핵 수 (한 세포 안)' : '핵 수 (딸세포마다)'
+    };
+    const czEvents = f < 1.5 ? [{ c: pal.env, text: '핵은 2개, 세포는 아직 1개예요.' }]
+      : f < 4 ? [{ c: pal.mf, text: '동물: 미세섬유가 막을 당겨 수축환이 생겨요.' }, { c: pal.wall, text: '식물: 가운데에 세포판이 생겨요.' }]
+      : f < 8.5 ? [{ c: pal.mf, text: '동물: 수축환이 조여 분열홈이 깊어져요 (밖 → 안).' }, { c: pal.wall, text: '식물: 세포판이 양옆 세포벽으로 자라요 (안 → 밖).' }]
+      : [{ c: pal.ink, text: '두 세포 모두 2n 딸세포 2개가 됐어요.' }, { c: pal.wall, text: '식물: 세포판이 새 세포벽이 됐어요.' }];
+    return { legend: legend, cy: cy, cz: cz, events: st.mode === 'cycle' ? cyEvents : czEvents };
+  }
+
+  // ================= 공통 셸: 아래는 주제와 무관해요. 고치지 않아요 =================
+  constructor(...args) {
+    super(...args);
+    let reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    let narrow = false;
+    try { narrow = window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) {}
+    let saved = null;
+    try { saved = window.localStorage.getItem('od-theme'); } catch (e) {}
+    const PANEL_W = { left: { min: 220, max: 480 }, right: { min: 280, max: 720 } };
+    let widths = {};
+    try { widths = JSON.parse(window.localStorage.getItem('interactive-panel-w')) || {}; } catch (e) {}
+    const okW = (side) => { const v = widths[side]; return typeof v === 'number' && v >= PANEL_W[side].min && v <= PANEL_W[side].max ? v : null; };
+    this.T = this.topic();
+    this.state = Object.assign({
+      mode: this.T.MODES[0].key, f: 0, playing: false, speed: 1, step: -1, spin: !reduce,
+      theme: (saved === 'light' || saved === 'dark') ? saved : (this.systemDark() ? 'dark' : 'light'),
+      // leftOpen/rightOpen: docked panels on wide screens; drawer: the one open drawer on narrow screens
+      leftOpen: true, rightOpen: true, drawer: null, narrow: narrow,
+      // leftW/rightW: user-set docked widths in px (null = default); resizing: a handle is being dragged
+      leftW: okW('left'), rightW: okW('right'), resizing: false
+    }, this.extraState());
+    this.reduceMotion = reduce;
+    this.K = {
+      PANEL_W: PANEL_W, PANEL_W_KEY: 'interactive-panel-w', PANEL_DEFAULT: { left: 320, right: 400 },
+      THEMES: {
+        light: { bg: '#ffffff', surface: '#f7f8fa', ink: '#111111', ink2: '#6b7280', line: '#d9dee7', accent: '#1677ff', accentInk: '#1b64da', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#b54708', prof: '#6941c6', supp: '#067647', danger: '#d92d20', scroll: '#c9d0db', scrollHover: '#9aa3b2' },
+        dark: { bg: '#17171c', surface: '#212128', ink: '#f2f4f6', ink2: '#a3abb8', line: '#34353d', accent: '#3182f6', accentInk: '#6ea4ff', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#f5a15c', prof: '#b69cff', supp: '#5fd39a', danger: '#ff6b61', scroll: '#3f414b', scrollHover: '#5b5e6a' }
+      }
+    };
+    this.cam = Object.assign({}, this.modeDef().cam);
+    this.sim = { f: 0, cx: 0 };
+    this.pointer = { x: -1, y: -1, inside: false, drag: false, lx: 0, ly: 0 };
+    this.colorCache = {};
+    this._tick = (t) => this.tick(t);
+    this._canvasRef = (el) => this.attachCanvas(el);
+    this.handles = {};
+    this._handleRefL = (el) => this.attachHandle('left', el);
+    this._handleRefR = (el) => this.attachHandle('right', el);
+  }
+
+  componentWillUnmount() {
+    this.attachCanvas(null);
+    this.attachHandle('left', null);
+    this.attachHandle('right', null);
+  }
+
+  modeDef(key) {
+    const k = key || this.state.mode;
+    return this.T.MODES.find((m) => m.key === k) || this.T.MODES[0];
+  }
+  systemDark() {
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; }
+  }
+  isNarrow() {
+    try { return window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) { return false; }
+  }
+  syncBreakpoint() { this.setState({ narrow: this.isNarrow(), drawer: null }); }
+  // In drawer mode only one panel is open at a time.
+  togglePanel(side) {
+    const st = this.state;
+    if (st.narrow) this.setState({ drawer: st.drawer === side ? null : side });
+    else if (side === 'left') this.setState({ leftOpen: !st.leftOpen });
+    else this.setState({ rightOpen: !st.rightOpen });
+  }
+  // Docked panel width: the canvas column always keeps at least 400px.
+  panelMax(side) {
+    const lim = this.K.PANEL_W[side], other = side === 'left' ? 'right' : 'left', st = this.state;
+    const h = this.handles[other];
+    const otherOpen = other === 'left' ? st.leftOpen : st.rightOpen;
+    const otherW = !otherOpen ? 0 : h ? h.el.parentElement.getBoundingClientRect().width
+      : (st[other + 'W'] || this.K.PANEL_DEFAULT[other]);
+    return Math.max(lim.min, Math.min(lim.max, (window.innerWidth || 1440) - otherW - 400));
+  }
+  setPanelWidth(side, px, save) {
+    const v = Math.round(Math.min(Math.max(px, this.K.PANEL_W[side].min), this.panelMax(side)));
+    this.setState({ [side + 'W']: v });
+    if (save) this.savePanelWidths(side, v);
+  }
+  resetPanelWidth(side) {
+    this.setState({ [side + 'W']: null });
+    this.savePanelWidths(side, null);
+  }
+  savePanelWidths(side, v) {
+    try {
+      const key = this.K.PANEL_W_KEY;
+      let w = {};
+      try { w = JSON.parse(window.localStorage.getItem(key)) || {}; } catch (e) {}
+      if (v == null) delete w[side]; else w[side] = v;
+      window.localStorage.setItem(key, JSON.stringify(w));
+    } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ }
+  }
+  // Re-fit user widths when the window shrinks (not saved).
+  refitPanels() {
+    ['left', 'right'].forEach((side) => {
+      const w = this.state[side + 'W'];
+      if (w != null && w > this.panelMax(side)) this.setPanelWidth(side, w, false);
+    });
+  }
+  attachHandle(side, el) {
+    const old = this.handles[side];
+    if (old && old.el === el) return;
+    if (old) {
+      Object.keys(old.on).forEach((ev) => old.el.removeEventListener(ev, old.on[ev]));
+      delete this.handles[side];
+      if (!Object.keys(this.handles).length) window.removeEventListener('resize', this._refit);
+    }
+    if (!el) return;
+    const dir = side === 'left' ? 1 : -1;
+    const width = () => el.parentElement.getBoundingClientRect().width;
+    let drag = null;
+    const on = {
+      pointerdown: (e) => {
+        if (this.state.narrow || e.button !== 0) return;
+        e.preventDefault();
+        drag = { x: e.clientX, w: width() };
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        this.setState({ resizing: true });
+      },
+      pointermove: (e) => { if (drag) this.setPanelWidth(side, drag.w + dir * (e.clientX - drag.x), false); },
+      pointerup: () => {
+        if (!drag) return;
+        drag = null;
+        this.setState({ resizing: false });
+        this.setPanelWidth(side, width(), true);
+      },
+      dblclick: () => this.resetPanelWidth(side),
+      keydown: (e) => {
+        const step = e.shiftKey ? 64 : 16;
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          e.preventDefault(); e.stopPropagation();
+          this.setPanelWidth(side, width() + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+        } else if (e.key === 'Home') { e.preventDefault(); e.stopPropagation(); this.resetPanelWidth(side); }
+      }
+    };
+    on.pointercancel = on.pointerup;
+    Object.keys(on).forEach((ev) => el.addEventListener(ev, on[ev]));
+    if (!Object.keys(this.handles).length) {
+      this._refit = this._refit || (() => this.refitPanels());
+      window.addEventListener('resize', this._refit);
+    }
+    this.handles[side] = { el: el, on: on };
+  }
+  textTone(hex) { return this.state.theme === 'light' ? this.mix(hex, '#000000', 0.4) : hex; }
+  pal() { return this.T.PAL[this.state.theme] || this.T.PAL.dark; }
+  setTheme(t) {
+    this.setState({ theme: t });
+    try {
+      if ((t === 'dark') === this.systemDark()) window.localStorage.removeItem('od-theme');
+      else window.localStorage.setItem('od-theme', t);
+    } catch (e) {}
+  }
+
+  attachCanvas(el) {
+    if (this.canvas === el) return;
+    if (this.canvas) {
+      const c = this.canvas;
+      c.removeEventListener('pointerdown', this._pd);
+      c.removeEventListener('pointermove', this._pm);
+      c.removeEventListener('pointerup', this._pu);
+      c.removeEventListener('pointercancel', this._pu);
+      c.removeEventListener('pointerleave', this._pl);
+      cancelAnimationFrame(this.raf);
+      try { this._mq.removeEventListener('change', this._mqH); } catch (err) {}
+    }
+    this.canvas = el || null;
+    if (!el) return;
+    this.ctx = el.getContext('2d');
+    const p = this.pointer;
+    this._pd = (e) => {
+      if (!this.modeDef().rotatable) return;
+      p.drag = true; p.lx = e.clientX; p.ly = e.clientY;
+      try { el.setPointerCapture(e.pointerId); } catch (err) {}
+      el.style.cursor = 'grabbing';
+    };
+    this._pm = (e) => {
+      const r = el.getBoundingClientRect();
+      p.x = e.clientX - r.left; p.y = e.clientY - r.top; p.inside = true;
+      if (p.drag && this.modeDef().rotatable) {
+        this.cam.yaw += (e.clientX - p.lx) * 0.008;
+        this.cam.pitch = Math.max(-1.45, Math.min(1.45, this.cam.pitch + (e.clientY - p.ly) * 0.008));
+        p.lx = e.clientX; p.ly = e.clientY;
+      }
+    };
+    this._pu = () => { p.drag = false; el.style.cursor = ''; };
+    this._pl = () => { p.inside = false; };
+    el.addEventListener('pointerdown', this._pd);
+    el.addEventListener('pointermove', this._pm);
+    el.addEventListener('pointerup', this._pu);
+    el.addEventListener('pointercancel', this._pu);
+    el.addEventListener('pointerleave', this._pl);
+    try {
+      this._mq = window.matchMedia('(max-width: 1023.98px)');
+      this._mqH = () => this.syncBreakpoint();
+      this._mq.addEventListener('change', this._mqH);
+    } catch (err) {}
+    this.last = 0;
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  tick(t) {
+    if (!this.canvas) return;
+    const dt = this.last ? Math.min(0.05, (t - this.last) / 1000) : 0;
+    this.last = t;
+    const st = this.state, m = this.modeDef(), pb = m.playback;
+    if (m.autoSpin && st.spin && !this.pointer.drag) this.cam.yaw += dt * 0.3;
+    if (pb && st.playing) {
+      this.sim.f = Math.min(pb.fmax, this.sim.f + dt * pb.rate * st.speed);
+      if (this.sim.f >= pb.fmax) this.setState({ playing: false, f: this.sim.f });
+      else if (t - (this.lastPush || 0) > 120) { this.lastPush = t; this.setState({ f: this.sim.f }); }
+    }
+    // a broken scene keeps the page alive but is reported once for the browser check
+    try { this.draw(dt, t); } catch (err) { if (!this.drawErr) { this.drawErr = true; console.error(err); } }
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  // ---------- math helpers (장면에서 써도 돼요) ----------
+  lerp(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+  sm(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+  rgb(hex) { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  mix(hex, to, amt) {
+    const a = this.rgb(hex), b = this.rgb(to);
+    return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * amt) + ',' + Math.round(a[1] + (b[1] - a[1]) * amt) + ',' + Math.round(a[2] + (b[2] - a[2]) * amt) + ')';
+  }
+  rgba(hex, al) { const a = this.rgb(hex); return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + al + ')'; }
+  shades(hex) {
+    let s = this.colorCache[hex];
+    if (!s) { s = { hi: this.mix(hex, '#FFFFFF', 0.55), mid: hex, lo: this.mix(hex, '#000000', 0.55) }; this.colorCache[hex] = s; }
+    return s;
+  }
+  proj(p, V) {
+    const x = p[0] - V.cx, y = p[1], z = p[2];
+    const x1 = x * V.cy + z * V.sy, z1 = -x * V.sy + z * V.cy;
+    const y2 = y * V.cp - z1 * V.sp, z2 = y * V.sp + z1 * V.cp;
+    const s = V.F / Math.max(2, V.D - z2);
+    return [V.ox + x1 * s, V.oy - y2 * s, z2, s];
+  }
+
+  // ---------- drawing ----------
+  draw(dt, now) {
+    const el = this.canvas, ctx = this.ctx, st = this.state, m = this.modeDef();
+    const dpr = window.devicePixelRatio || 1;
+    const W = el.clientWidth, H = el.clientHeight;
+    if (!W || !H) return;
+    if (el.width !== Math.round(W * dpr) || el.height !== Math.round(H * dpr)) { el.width = Math.round(W * dpr); el.height = Math.round(H * dpr); }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const pal = this.pal();
+    ctx.fillStyle = pal.bg; ctx.fillRect(0, 0, W, H);
+
+    const I = [], O = [];
+    this.buildScene(st.mode, I, O);
+    const scale = Math.min(W / m.fit[0], H / m.fit[1]), D = m.D, z = this.cam.zoom;
+    const V = {
+      cx: this.sim.cx, cy: Math.cos(this.cam.yaw), sy: Math.sin(this.cam.yaw), cp: Math.cos(this.cam.pitch), sp: Math.sin(this.cam.pitch),
+      F: scale * z * D, D: D, ox: W / 2, oy: H / 2 - (m.playback ? 20 : 0)
+    };
+    let zmin = Infinity, zmax = -Infinity;
+    for (const it of I) {
+      it.A = this.proj(it.p, V);
+      if (it.q) { it.B = this.proj(it.q, V); it.z = (it.A[2] + it.B[2]) / 2; } else it.z = it.A[2];
+      if (it.z < zmin) zmin = it.z;
+      if (it.z > zmax) zmax = it.z;
+    }
+    I.sort((a, b) => a.z - b.z);
+    // depth fog; a flat scene (all items at one depth) is drawn without it
+    const span = zmax - zmin;
+    for (const it of I) {
+      const fog = span < 0.01 ? 1 : 0.42 + 0.58 * ((it.z - zmin) / span);
+      ctx.globalAlpha = Math.max(0, (it.a == null ? 1 : it.a) * fog);
+      if (ctx.globalAlpha < 0.01) continue;
+      const x = it.A[0], y = it.A[1], s = it.A[3];
+      if (it.k === 0) {
+        const R = it.r * s;
+        if (R < 0.4) continue;
+        if (it.flat) { ctx.fillStyle = it.c; ctx.beginPath(); ctx.arc(x, y, Math.max(1.3, R), 0, 6.2832); ctx.fill(); }
+        else {
+          const sh = this.shades(it.c);
+          const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+          g.addColorStop(0, sh.hi); g.addColorStop(0.5, sh.mid); g.addColorStop(1, sh.lo);
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        }
+      } else if (it.k === 1) {
+        const lw = Math.max(1, it.w * (s + it.B[3]) / 2);
+        ctx.lineCap = it.flat ? 'butt' : 'round';
+        if (it.rod) {
+          ctx.strokeStyle = this.shades(it.c).lo; ctx.lineWidth = lw + 2;
+          ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+        }
+        ctx.strokeStyle = it.c; ctx.lineWidth = lw;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+      } else if (it.k === 3) {
+        const fs = Math.max(8, Math.min(14, it.size * s / (scale * z) * 1.05));
+        ctx.font = '700 ' + fs + 'px "Pretendard", system-ui, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = it.c; ctx.fillText(it.text, x, y + 0.5);
+      } else if (it.k === 4) {
+        const ang = Math.atan2(it.B[1] - y, it.B[0] - x), mx = (x + it.B[0]) / 2, my = (y + it.B[1]) / 2, r = 6;
+        ctx.fillStyle = it.c; ctx.beginPath();
+        ctx.moveTo(mx + Math.cos(ang) * r, my + Math.sin(ang) * r);
+        ctx.lineTo(mx + Math.cos(ang + 2.5) * r, my + Math.sin(ang + 2.5) * r);
+        ctx.lineTo(mx + Math.cos(ang - 2.5) * r, my + Math.sin(ang - 2.5) * r);
+        ctx.closePath(); ctx.fill();
+      } else if (it.k === 5) {
+        // lit translucent sphere, highlight up-left like the solid spheres
+        const R = it.r * s, ba = pal.blobAlpha == null ? 0.3 : pal.blobAlpha;
+        const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+        g.addColorStop(0, 'rgba(255,255,255,0.55)'); g.addColorStop(0.3, this.rgba(it.c, Math.min(1, ba + 0.15))); g.addColorStop(1, this.rgba(it.c, 0.18));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        ctx.strokeStyle = it.c; ctx.lineWidth = it.focus ? 3 : 1.5; ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+    for (const o of O) this.drawOverlay(o, V, now);
+  }
+
+  drawOverlay(o, V, now) {
+    const ctx = this.ctx, A = this.proj(o.p, V), pal = this.pal();
+    if (o.t === 'ring') {
+      const r = Math.max(6, 0.32 * A[3]) * (1 + (this.reduceMotion ? 0 : 0.15 * Math.sin((now || 0) / 160)));
+      ctx.globalAlpha = 1; ctx.strokeStyle = pal.ring; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(A[0], A[1], r, 0, 6.2832); ctx.stroke();
+      ctx.font = '600 11px "Pretendard", system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = pal.ring; ctx.fillText(o.text, A[0], A[1] + r + 10);
+      return;
+    }
+    const size = o.size || 12, x = A[0] + (o.dx || 0), y = A[1] + (o.dy || 0);
+    ctx.font = '600 ' + size + 'px "Pretendard", system-ui, sans-serif';
+    const tw = ctx.measureText(o.text).width, w = tw + 14, h = size + 10;
+    ctx.globalAlpha = o.a == null ? 1 : o.a;
+    if (o.lead) {
+      ctx.strokeStyle = this.rgba(o.c, 0.6); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(x, y); ctx.stroke();
+    }
+    ctx.fillStyle = pal.labelBg;
+    ctx.strokeStyle = this.rgba(o.c, 0.55); ctx.lineWidth = 1;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x - w / 2, y - h / 2, w, h, 6); else ctx.rect(x - w / 2, y - h / 2, w, h);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = pal.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(o.text, x, y + 0.5);
+    ctx.globalAlpha = 1;
+  }
+
+  setMode(mode) {
+    this.cam = Object.assign({}, this.modeDef(mode).cam);
+    this.sim.f = 0;
+    this.pointer.drag = false;
+    this.setState({ mode: mode, f: 0, playing: false, step: -1 });
+  }
+
+  pickStep(i) {
+    const s = (this.T.STEPS || [])[i];
+    if (!s) return;
+    if (s.mode !== this.state.mode) this.setMode(s.mode);
+    if (s.f != null) this.sim.f = s.f;
+    this.setState({ f: this.sim.f, playing: false, step: i });
+  }
+
+  renderVals() {
+    const st = this.state, T = this.T, m = this.modeDef(), pb = m.playback;
+    const tg = T.TOGGLES ? (Array.isArray(T.TOGGLES) ? T.TOGGLES : (T.TOGGLES[st.mode] || [])) : [];
+    const togDefs = tg.concat(m.autoSpin ? [['spin', '자동 회전']] : []);
+    const toggles = togDefs.map((d) => ({
+      label: d[1], pressed: st[d[0]] ? 'true' : 'false',
+      toggle: () => { const o = {}; o[d[0]] = !st[d[0]]; this.setState(o); }
+    }));
+    const STEPS = T.STEPS || [];
+    const steps = STEPS.map((s, i) => ({ s: s, i: i })).filter((x) => x.s.mode === st.mode).map((x, k) => ({
+      num: k + 1, title: x.s.title, who: x.s.who, c: x.s.c, pressed: st.step === x.i ? 'true' : 'false',
+      pick: () => this.pickStep(x.i)
+    }));
+    const speeds = [0.5, 1, 2].map((v) => ({
+      label: v + '×', pressed: st.speed === v ? 'true' : 'false',
+      pick: () => this.setState({ speed: v })
+    }));
+    const is = {};
+    T.MODES.forEach((d) => { is[d.key] = d.key === st.mode; });
+    const f = st.f;
+    const isDark = st.theme === 'dark';
+    const leftOn = st.narrow ? st.drawer === 'left' : st.leftOpen, rightOn = st.narrow ? st.drawer === 'right' : st.rightOpen;
+    return Object.assign({
+      th: this.K.THEMES[st.theme], isDark: isDark, isLight: !isDark,
+      themeLabel: isDark ? '라이트 모드로 전환' : '다크 모드로 전환',
+      toggleTheme: () => this.setTheme(isDark ? 'light' : 'dark'),
+      canvasRef: this._canvasRef, canvasCls: m.rotatable ? '' : 'is-fixed',
+      hasModes: T.MODES.length > 1, is: is,
+      modes: T.MODES.map((d) => ({ label: d.label, pressed: d.key === st.mode ? 'true' : 'false', pick: () => { if (d.key !== this.state.mode) this.setMode(d.key); } })),
+      leftCls: leftOn ? 'is-open' : '', rightCls: rightOn ? 'is-open' : '',
+      leftExpanded: leftOn ? 'true' : 'false', rightExpanded: rightOn ? 'true' : 'false',
+      scrimCls: (st.narrow && st.drawer) ? 'is-on' : '',
+      toggleLeft: () => this.togglePanel('left'),
+      toggleRight: () => this.togglePanel('right'),
+      closePanels: () => this.setState({ drawer: null }),
+      layoutStyle: ((st.leftW ? '--pl-user: ' + st.leftW + 'px; ' : '') + (st.rightW ? '--pr-user: ' + st.rightW + 'px;' : '')).trim(),
+      layoutCls: st.resizing ? 'is-resizing' : '',
+      leftWNow: st.leftW ? String(st.leftW) : '', rightWNow: st.rightW ? String(st.rightW) : '',
+      leftHandleRef: this._handleRefL, rightHandleRef: this._handleRefR,
+      onKey: (e) => { if (e.key === 'Escape' && this.state.narrow && this.state.drawer) this.setState({ drawer: null }); },
+      hasToggles: toggles.length > 0, toggles: toggles,
+      hasSteps: steps.length > 0, steps: steps,
+      hasStep: st.step >= 0 && st.step < STEPS.length, stepDetail: st.step >= 0 && STEPS[st.step] ? STEPS[st.step].text : '',
+      mistakes: (T.MISTAKES && T.MISTAKES[st.mode]) || [],
+      canvasLabel: m.canvasLabel(f),
+      zoomIn: () => { this.cam.zoom = Math.min(3, this.cam.zoom * 1.2); },
+      zoomOut: () => { this.cam.zoom = Math.max(0.5, this.cam.zoom / 1.2); },
+      resetView: () => { this.cam = Object.assign({}, m.cam); },
+      hasPlayback: !!pb, isPlaying: st.playing, notPlaying: !st.playing, playLabel: st.playing ? '일시정지' : '재생',
+      togglePlay: () => {
+        if (!pb) return;
+        if (!st.playing && this.sim.f >= pb.fmax) this.sim.f = 0;
+        this.setState({ playing: !st.playing, step: -1, f: this.sim.f });
+      },
+      fInt: Math.round(f * 10), fLabel: pb ? pb.label(f) : '', fMax10: pb ? Math.round(pb.fmax * 10) : 0,
+      onScrub: (e) => { const v = Number(e.target.value) / 10; this.sim.f = v; this.setState({ f: v, playing: false, step: -1 }); },
+      speeds: speeds
+    }, this.extraVals(st));
+  }
+}
+</script>
+</body>
+</html>

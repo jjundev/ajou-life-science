@@ -1,0 +1,1096 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>감수분열 두 번 나누기</title>
+<!-- 생성 파일: .assets/자료_인터렉티브_02_감수분열_두_번의_분열/Main.dc.html을 고친 뒤 bio-interactive/scripts/build.cjs로 다시 만드세요. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+<style>
+body{margin:0}
+.app{--radius:8px;--tap:48px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--dur:220ms;--dur-exit:150ms;--ease-out:cubic-bezier(.2,.8,.2,1);--scrim:rgba(0,0,0,.4);
+  height:100vh;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;box-sizing:border-box;
+  background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;font-size:16px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.app *,.app *::before,.app *::after{box-sizing:border-box}
+.app button{font-family:inherit;color:inherit}
+.app :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.num{font-variant-numeric:tabular-nums}
+
+.topbar{display:flex;align-items:center;gap:var(--s2);min-height:56px;padding:var(--s2) var(--s3);background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:17px;font-weight:700;white-space:nowrap}
+.text-btn{flex:none;min-height:44px;min-width:44px;padding:0 var(--s3);border:0;border-radius:var(--radius);background:transparent;color:var(--ink);font:600 14px/1 'Pretendard',system-ui,sans-serif;cursor:pointer}
+.panel-toggle{display:inline-flex;align-items:center;gap:var(--s1);padding:0 var(--s2)}
+.panel-toggle svg,.theme-toggle svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.panel-toggle .strip{fill:transparent;stroke:none;transition:fill 150ms ease-out}
+.panel-toggle[aria-expanded="true"]{color:var(--accent-ink)}
+.panel-toggle[aria-expanded="true"] .strip{fill:currentColor}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;padding:0}
+.seg{flex:none;display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.seg button{min-height:40px;padding:0 var(--s3);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+.layout{display:grid;grid-template-columns:auto minmax(320px,1fr) auto;min-height:0}
+.panel{position:relative;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--bg);color:var(--ink)}
+.panel-left{grid-column:1;width:clamp(260px,20vw,320px);border-right:1px solid var(--line)}
+.panel-right{grid-column:3;width:clamp(320px,24vw,400px);border-left:1px solid var(--line)}
+.panel-inner{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--s4) var(--s4) var(--s6)}
+.panel-inner::-webkit-scrollbar{width:8px}
+.panel-inner::-webkit-scrollbar-track{background:transparent}
+.panel-inner::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:8px;border:2px solid var(--bg)}
+.panel-inner::-webkit-scrollbar-thumb:hover{background:var(--scroll-hover)}
+@supports (scrollbar-color:auto){.panel-inner{scrollbar-width:thin;scrollbar-color:var(--scroll) transparent}}
+.panel-head{display:flex;align-items:center;gap:var(--s2);min-height:44px;margin-bottom:var(--s2)}
+.panel-head h2{flex:1 1 0;min-width:0;margin:0;font-size:22px;line-height:1.4}
+.stage{grid-column:2;position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--bg)}
+.scrim{display:none}
+.panel-resize{display:none}
+
+.sec{margin-top:var(--s5);padding-top:var(--s5);border-top:1px solid var(--line)}
+.panel-head + .sec,.panel-head + div > .sec:first-child{margin-top:0;padding-top:0;border-top:0}
+.sec-title{display:block;margin:0 0 var(--s3);font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-0.01em}
+.sub{margin:var(--s3) 0 0;font-size:14px;line-height:1.6;color:var(--ink-2)}
+
+.opt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.btn{display:flex;align-items:center;gap:var(--s2);width:100%;min-height:var(--tap);padding:0 var(--s3);border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font-size:14px;font-weight:600;line-height:1.3;text-align:left;cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.btn .box{flex:none;width:12px;height:12px;border-radius:3px;border:1.5px solid currentColor}
+.btn[aria-pressed="true"] .box{background:currentColor}
+.steps{display:flex;flex-direction:column;gap:var(--s2)}
+.steps .btn{padding:var(--s2) var(--s3);gap:var(--s3)}
+.step-num{flex:none;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid;font-size:12px;font-weight:700;color:var(--ink)}
+.step-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.step-txt b{font-size:15px;font-weight:700}
+.step-txt span{font-size:13px;font-weight:500;color:var(--ink-2)}
+.detail{margin-top:var(--s3);padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+
+
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.tiles.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tile{padding:var(--s3);border-radius:var(--radius);background:var(--surface)}
+.tile b{display:block;font-size:20px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}
+.tile span{display:block;font-size:13px;line-height:1.4;color:var(--ink-2)}
+.events{display:flex;flex-direction:column;gap:var(--s2)}
+.event{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.6}
+.dot{flex:none;width:10px;height:10px;margin-top:7px;border-radius:50%}
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2) var(--s3);font-size:13px;color:var(--ink-2)}
+.legend div{display:flex;align-items:center;gap:var(--s2)}
+.sw{flex:none;width:16px;height:6px;border-radius:3px}
+.sw.ball{width:12px;height:12px;border-radius:50%}
+.sec.warn{border-top:0;padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+.warn .sec-title{color:var(--warn);font-size:17px}
+.mistake{margin-top:var(--s3)}
+.mistake b{display:block;font-weight:700}
+.mistake span{color:var(--ink-2)}
+
+.canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.canvas.is-fixed{cursor:default}
+.view-btns{position:absolute;top:var(--s3);right:var(--s3);display:flex;gap:6px}
+.icon-btn{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);cursor:pointer}
+.icon-btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.icon-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.float{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius)}
+.hover-card{position:absolute;left:var(--s3);bottom:var(--s3);display:flex;flex-direction:column;gap:2px;padding:var(--s3) var(--s4);pointer-events:none}
+.hover-card .k{font-size:13px;color:var(--ink-2)}
+.hover-card .v{font-size:18px;font-weight:700}
+.playbar{position:absolute;left:var(--s3);right:var(--s3);bottom:var(--s3);display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3)}
+.play{flex:none;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--radius);background:var(--btn-bg);color:var(--on-btn) !important;cursor:pointer}
+.play svg{width:18px;height:18px;fill:currentColor}
+.scrub{flex:1 1 200px;min-width:160px;display:flex;flex-direction:column;gap:2px}
+.scrub span{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.scrub input{width:100%;height:24px;margin:0;accent-color:var(--accent)}
+.speeds{display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.speeds button{min-width:48px;height:40px;padding:0 var(--s2);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
+.speeds button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+@media (hover:hover){.btn:hover,.icon-btn:hover{background:var(--surface)}.text-btn:hover{background:var(--surface)}}
+@media (min-width:1024px){
+  .panel-head{display:none}
+  .layout{--pl:var(--pl-user,clamp(260px,20vw,320px));--pr:var(--pr-user,clamp(320px,24vw,400px))}
+  .panel{width:0;border-width:0;visibility:hidden;transition:width var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left.is-open{width:var(--pl)}
+  .panel-right.is-open{width:var(--pr)}
+  .panel.is-open{visibility:visible;border-width:1px;transition:width var(--dur) var(--ease-out)}
+  .panel-left .panel-inner{width:var(--pl)}
+  .panel-right .panel-inner{width:var(--pr);align-self:flex-end}
+  .layout.is-resizing .panel{transition:none}
+  .layout.is-resizing{cursor:col-resize;user-select:none}
+  .panel-resize{display:block;position:absolute;top:0;bottom:0;z-index:2;width:12px;padding:0;border:0;background:transparent;cursor:col-resize;touch-action:none}
+  .panel-left .panel-resize{right:0}
+  .panel-right .panel-resize{left:0}
+  .panel-resize::after{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--accent);opacity:0;transition:opacity 150ms ease-out}
+  .panel-left .panel-resize::after{right:0}
+  .panel-right .panel-resize::after{left:0}
+  .panel-resize:focus-visible{outline:none}
+  .panel-resize:focus-visible::after,.is-resizing .panel-resize:active::after{opacity:1}
+  @media (hover:hover){.panel-resize:hover::after{opacity:1}}
+}
+@media (max-width: 1023.98px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .stage{grid-column:1}
+  .panel{position:fixed;top:0;bottom:0;z-index:40;visibility:hidden;transition:transform var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left{left:0;width:min(304px,88vw);transform:translateX(-100%)}
+  .panel-right{right:0;width:min(360px,88vw);transform:translateX(100%)}
+  .panel.is-open{visibility:visible;transform:none;transition:transform var(--dur) var(--ease-out)}
+  .panel-inner{padding-top:calc(var(--s3) + env(safe-area-inset-top));padding-bottom:calc(var(--s6) + env(safe-area-inset-bottom))}
+  .scrim{display:block;position:fixed;inset:0;z-index:35;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .scrim.is-on{opacity:1;visibility:visible;transition:opacity var(--dur) var(--ease-out)}
+}
+@media (max-width:640px){.brand{display:none}.topbar{justify-content:space-between}}
+@media (max-width:480px){.panel-toggle span{display:none}.seg button{padding:0 var(--s2)}}
+@media (prefers-reduced-motion:reduce){.panel,.panel.is-open,.scrim,.scrim.is-on,.panel-toggle .strip,.panel-resize::after{transition:none}}
+</style>
+</head>
+<body>
+<div id="dc-root"></div>
+<template id="dc-template">
+<div class="app" onKeyDown="{{onKey}}" style="--bg: {{th.bg}}; --surface: {{th.surface}}; --ink: {{th.ink}}; --ink-2: {{th.ink2}}; --line: {{th.line}}; --accent: {{th.accent}}; --accent-ink: {{th.accentInk}}; --btn-bg: {{th.btnBg}}; --on-btn: {{th.onBtn}}; --warn: {{th.warn}}; --prof: {{th.prof}}; --supp: {{th.supp}}; --danger: {{th.danger}}; --scroll: {{th.scroll}}; --scroll-hover: {{th.scrollHover}}">
+<header class="topbar">
+<button class="text-btn panel-toggle" type="button" aria-label="조작 패널" aria-expanded="{{leftExpanded}}" onClick="{{toggleLeft}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M9 4v16"></path></svg><span>조작</span></button>
+<strong class="brand">감수분열 두 번 나누기</strong>
+<sc-if value="{{hasModes}}" hint-placeholder-val="{{ true }}">
+<div class="seg" role="group" aria-label="보기 선택">
+<sc-for list="{{modes}}" as="md" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{md.pressed}}" onClick="{{md.pick}}">{{md.label}}</button>
+</sc-for>
+</div>
+</sc-if>
+<button class="text-btn theme-toggle" type="button" aria-label="{{themeLabel}}" title="{{themeLabel}}" onClick="{{toggleTheme}}">
+<sc-if value="{{isDark}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+<sc-if value="{{isLight}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></sc-if>
+</button>
+<button class="text-btn panel-toggle" type="button" aria-label="설명 패널" aria-expanded="{{rightExpanded}}" onClick="{{toggleRight}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M15 4v16"></path></svg><span>설명</span></button>
+</header>
+
+<div class="layout {{layoutCls}}" style="{{layoutStyle}}">
+<aside class="panel panel-left {{leftCls}}" aria-label="조작">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="220" aria-valuemax="480" aria-valuenow="{{leftWNow}}" ref="{{leftHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>조작</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<sc-if value="{{hasToggles}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">보기 옵션</h3>
+<div class="opt">
+<sc-for list="{{toggles}}" as="t" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{t.pressed}}" onClick="{{t.toggle}}"><span class="box" aria-hidden="true"></span>{{t.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<!-- SLOT:left -->
+<!-- /SLOT:left -->
+
+<sc-if value="{{hasSteps}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">단계</h3>
+<div class="steps">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}"><span class="step-num num" style="border-color: {{s.c}}">{{s.num}}</span><span class="step-txt"><b>{{s.title}}</b><span>{{s.who}}</span></span></button>
+</sc-for>
+</div>
+<sc-if value="{{hasStep}}" hint-placeholder-val="{{ false }}">
+<div class="detail" aria-live="polite">{{stepDetail}}</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</aside>
+
+<section class="stage" aria-label="모형 보기">
+<canvas class="canvas {{canvasCls}}" ref="{{canvasRef}}" role="img" aria-label="{{canvasLabel}}"></canvas>
+<div class="view-btns">
+<button class="icon-btn" type="button" aria-label="확대" onClick="{{zoomIn}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="축소" onClick="{{zoomOut}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="시점 처음으로" onClick="{{resetView}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v5h5"></path></svg></button>
+</div>
+
+<sc-if value="{{hasPlayback}}" hint-placeholder-val="{{ false }}">
+<div class="playbar float">
+<button class="play" type="button" aria-label="{{playLabel}}" onClick="{{togglePlay}}">
+<sc-if value="{{isPlaying}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></sc-if>
+<sc-if value="{{notPlaying}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5l12 7-12 7z"></path></svg></sc-if>
+</button>
+<label class="scrub">
+<span>{{fLabel}}</span>
+<input type="range" min="0" max="{{fMax10}}" step="1" value="{{fInt}}" onChange="{{onScrub}}">
+</label>
+<div class="speeds" role="group" aria-label="재생 속도">
+<sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{sp.pressed}}" onClick="{{sp.pick}}">{{sp.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</section>
+
+<aside class="panel panel-right {{rightCls}}" aria-label="설명">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="280" aria-valuemax="720" aria-valuenow="{{rightWNow}}" ref="{{rightHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>설명</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<!-- SLOT:right -->
+<div>
+<div class="sec">
+<h3 class="sec-title">숫자로 보기</h3>
+<div class="tiles">
+<sc-for list="{{tiles}}" as="t" hint-placeholder-count="4">
+<div class="tile"><b>{{t.v}}</b><span>{{t.k}}</span></div>
+</sc-for>
+</div>
+<sc-if value="{{is.meio}}" hint-placeholder-val="{{ true }}">
+<p class="sub">DNA 양은 G2기 세포를 X로 두고 센 값이에요 (교과서 보충). 염색체 수는 붙은 자매염색분체는 하나로, 갈라지면 가닥마다 하나로 세요.</p>
+</sc-if>
+</div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{events}}" as="e" hint-placeholder-count="1">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw" style="background: {{legend.mat}}"></span>엄마 유래 염색체</div>
+<div><span class="sw" style="background: {{legend.pat}}"></span>아빠 유래 염색체</div>
+<div><span class="sw ball" style="background: {{legend.cen}}"></span>동원체</div>
+<div><span class="sw" style="background: {{legend.spindle}}"></span>방추사</div>
+<div><span class="sw" style="background: {{legend.mem}}"></span>세포막</div>
+</div>
+<p class="sub">긴 쌍과 짧은 쌍, 2n=4로 줄였어요. 막대 한 줄이 염색분체 한 가닥이에요.</p>
+</div>
+</div>
+<!-- /SLOT:right -->
+
+<div class="sec warn">
+<h3 class="sec-title">꼭 기억해요</h3>
+<sc-for list="{{mistakes}}" as="m" hint-placeholder-count="3">
+<div class="mistake"><b>{{m.title}}</b><span>{{m.text}}</span></div>
+</sc-for>
+</div>
+</div>
+</aside>
+</div>
+<div class="scrim {{scrimCls}}" aria-hidden="true" onClick="{{closePanels}}"></div>
+</div>
+</template>
+<script>
+// Minimal x-dc runtime for opening the canvas component as a plain HTML page.
+// Supports what Main.dc.html uses: {{dotted.path}} holes in text and attributes,
+// event attributes (onClick, onKeyDown, onMouseEnter, onMouseLeave, onChange),
+// callback ref, <sc-if value> and <sc-for list as>.
+const DC_EVENTS = { onclick: 'click', onkeydown: 'keydown', onmouseenter: 'mouseenter', onmouseleave: 'mouseleave', onchange: 'input' };
+const DC_HOLE = /\{\{\s*([\w.$]+)\s*\}\}/g;
+let dcSchedule = () => {};
+
+class DCLogic {
+  constructor(props) { this.props = props || {}; this.state = {}; }
+  setState(u) {
+    this.state = Object.assign({}, this.state, typeof u === 'function' ? u(this.state) : u);
+    dcSchedule();
+  }
+}
+
+function dcGet(scope, path) {
+  let o = scope;
+  for (const k of path.split('.')) { if (o == null) return undefined; o = o[k]; }
+  return o;
+}
+function dcInterp(str, scope) {
+  return str.replace(DC_HOLE, (_, p) => { const v = dcGet(scope, p); return v == null ? '' : String(v); });
+}
+function dcSingle(str) {
+  const m = str.match(/^\s*\{\{\s*([\w.$]+)\s*\}\}\s*$/);
+  return m ? m[1] : null;
+}
+
+// Compiles one node in place; pushes updaters that take the current scope.
+function dcCompile(node, ups) {
+  if (node.nodeType === 3) {
+    if (!node.data.includes('{{')) return;
+    const src = node.data;
+    let last;
+    ups.push((s) => { const v = dcInterp(src, s); if (v !== last) { node.data = v; last = v; } });
+    return;
+  }
+  if (node.nodeType !== 1) return;
+  const tag = node.tagName.toLowerCase();
+  if (tag === 'sc-if' || tag === 'sc-for') { dcBlock(node, tag, ups); return; }
+  for (const a of [...node.attributes]) {
+    const name = a.name, val = a.value;
+    if (name.startsWith('hint-')) { node.removeAttribute(name); continue; }
+    if (!val.includes('{{')) continue;
+    node.removeAttribute(name);
+    if (DC_EVENTS[name]) {
+      const p = dcSingle(val);
+      let cur;
+      node.addEventListener(DC_EVENTS[name], (e) => { const f = dcGet(cur, p); if (typeof f === 'function') f(e); });
+      ups.push((s) => { cur = s; });
+    } else if (name === 'ref') {
+      const p = dcSingle(val);
+      let done = false;
+      ups.push((s) => { if (!done) { done = true; const f = dcGet(s, p); if (typeof f === 'function') f(node); } });
+    } else {
+      let last;
+      ups.push((s) => {
+        const v = dcInterp(val, s);
+        if (v === last) return;
+        last = v;
+        if (name === 'value' && 'value' in node) node.value = v; else node.setAttribute(name, v);
+      });
+    }
+  }
+  for (const c of [...node.childNodes]) dcCompile(c, ups);
+}
+
+function dcBlock(el, tag, ups) {
+  const anchor = document.createComment(tag);
+  el.parentNode.replaceChild(anchor, el);
+  const tpl = document.createDocumentFragment();
+  while (el.firstChild) tpl.appendChild(el.firstChild);
+  const make = () => {
+    const frag = tpl.cloneNode(true), u = [];
+    for (const c of [...frag.childNodes]) dcCompile(c, u);
+    return { frag: frag, nodes: [...frag.childNodes], u: u };
+  };
+  if (tag === 'sc-if') {
+    const p = dcSingle(el.getAttribute('value') || '');
+    let inst = null;
+    ups.push((s) => {
+      const on = !!dcGet(s, p);
+      if (!on) { if (inst) { inst.nodes.forEach((n) => n.remove()); inst = null; } return; }
+      if (!inst) { inst = make(); anchor.parentNode.insertBefore(inst.frag, anchor); }
+      inst.u.forEach((f) => f(s));
+    });
+  } else {
+    const p = dcSingle(el.getAttribute('list') || ''), as = el.getAttribute('as');
+    const insts = [];
+    ups.push((s) => {
+      const list = dcGet(s, p) || [];
+      while (insts.length > list.length) insts.pop().nodes.forEach((n) => n.remove());
+      while (insts.length < list.length) { const i = make(); anchor.parentNode.insertBefore(i.frag, anchor); insts.push(i); }
+      list.forEach((item, k) => { const sc = Object.create(s); sc[as] = item; insts[k].u.forEach((f) => f(sc)); });
+    });
+  }
+}
+
+function mountDC(Component) {
+  const comp = new Component({});
+  const frag = document.getElementById('dc-template').content.cloneNode(true), ups = [];
+  for (const c of [...frag.childNodes]) dcCompile(c, ups);
+  const root = document.getElementById('dc-root');
+  let pending = false;
+  const render = () => { pending = false; const v = comp.renderVals(); ups.forEach((f) => f(v)); };
+  dcSchedule = () => { if (!pending) { pending = true; queueMicrotask(render); } };
+  root.appendChild(frag);
+  render();
+  window.addEventListener('pagehide', () => { if (comp.componentWillUnmount) comp.componentWillUnmount(); });
+}
+class Component extends DCLogic {
+  // ================= 주제 훅: 주제마다 바꾸는 곳은 이 네 메서드뿐이에요 =================
+  // 계약은 bio-interactive/references/scene-api.md에 있어요.
+
+  topic() {
+    const meioPhase = (f) => f < 2 ? '간기 · S기 복제'
+      : f < 4 ? '제1감수분열 · 전기 I' : f < 6 ? '제1감수분열 · 중기 I' : f < 8 ? '제1감수분열 · 후기 I'
+      : f < 10 ? '제1감수분열 · 말기 I' : f < 12 ? '제2감수분열 · 중기 II' : f < 14 ? '제2감수분열 · 후기 II'
+      : '제2감수분열 · 말기 II';
+    const meioSay = (f) => f < 0.6 ? '간기 G1기 2n=4 세포예요. 염색체 4개가 모두 1가닥이에요.'
+      : f < 2 ? 'S기에 DNA가 복제돼 염색체마다 자매염색분체 2가닥이 생겨요.'
+      : f < 4 ? '전기 I. 상동염색체가 짝을 지어 4분염색체 2개가 생겨요.'
+      : f < 6 ? '중기 I. 4분염색체 2개가 중기판에 네 가닥씩 옆으로 나란히 서요.'
+      : f < 8 ? '후기 I. 상동염색체가 양 극으로 갈라지고 자매염색분체는 붙어 있어요.'
+      : f < 10 ? '말기 I. 세포가 둘로 나뉘어 n=2, 2가닥 염색체를 가진 세포 2개가 돼요.'
+      : f < 12 ? '중기 II. 곧바로 2분열이 시작돼 두 세포에서 염색체 2개씩 한 줄로 서요.'
+      : f < 14 ? '후기 II. 자매염색분체가 양 극으로 갈라져요.'
+      : '말기 II. 핵막이 다시 생기고 n=2, 1가닥 염색체를 가진 딸세포 4개가 돼요.';
+    return {
+      MODES: [
+        { key: 'meio', label: '감수분열', cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [9.4, 9.6], D: 60,
+          autoSpin: false, rotatable: false,
+          playback: { fmax: 16, rate: 0.9, label: (f) => meioPhase(f) + ' · ' + f.toFixed(1) + ' / 16' },
+          canvasLabel: (f) => '2n=4 세포의 감수분열 평면 모형. ' + meioSay(f) },
+        { key: 'cmp', label: '비교', cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [10.8, 6.6], D: 60,
+          autoSpin: false, rotatable: false,
+          playback: { fmax: 6, rate: 0.8, label: (f) => (f < 3 ? '중기에 늘어서기' : '후기에 갈라지기') + ' · ' + f.toFixed(1) + ' / 6' },
+          canvasLabel: (f) => f < 3
+            ? '왼쪽 유사분열 중기는 염색체 4개가 위아래 한 줄, 오른쪽 감수분열 중기 I은 4분염색체 2개가 옆으로 나란히 선 평면 모형.'
+            : '왼쪽 유사분열 후기는 자매염색분체가, 오른쪽 감수분열 후기 I은 상동염색체가 양 극으로 갈라지는 평면 모형.' }
+      ],
+      STEPS: [
+        { mode: 'meio', f: 3.7, phase: '전기 I', c: '#7A5AF8', title: '전기 I · 4분염색체', who: '상동염색체 접합',
+          text: '간기 S기에 복제돼 염색체마다 동원체로 붙은 자매염색분체 2가닥이 있어요. 전기 I에 엄마 것(빨강)과 아빠 것(파랑) 상동염색체가 짝을 지어 네 가닥이 옆으로 붙어요. 이것이 4분염색체(2가염색체)예요. 염색체로 세면 2개, 염색분체로 세면 4가닥이에요(교과서 보충).' },
+        { mode: 'meio', f: 5.7, phase: '중기 I', c: '#1677FF', title: '중기 I · 옆으로 나란히', who: '4분염색체 · 방추사',
+          text: '4분염색체 2개가 짝을 지은 그대로 중기판에 옆으로 나란히 서요. 짝의 한쪽은 왼쪽 극, 다른 쪽은 오른쪽 극의 방추사에 붙어요. 자매염색분체 두 가닥은 같은 극으로 가요. 유사분열 중기처럼 하나씩 위아래 한 줄로 서지 않아요.' },
+        { mode: 'meio', f: 7.7, phase: '후기 I', c: '#E5604F', title: '후기 I · 상동염색체 분리', who: '방추사',
+          text: '방추사가 짝을 이룬 상동염색체를 양쪽 극으로 끌어가요. 1분열에서 갈라지는 것은 상동염색체예요. 각 염색체의 자매염색분체 2가닥은 아직 붙어 있어요.' },
+        { mode: 'meio', f: 9.7, phase: '말기 I', c: '#F79009', title: '말기 I · n인데 2가닥', who: '세포질 분열',
+          text: '세포가 둘로 나뉘어 딸세포 2개가 돼요. 각 세포는 짝마다 하나씩만 받아 이미 반수체(n=2)예요. 염색체 수가 절반이 되는 것은 이때예요. 하지만 염색체는 아직 2가닥이에요.' },
+        { mode: 'meio', f: 11.7, phase: '중기 II', c: '#12B76A', title: '중기 II · 한 줄', who: '곧바로 2분열',
+          text: '1분열이 끝나면 곧바로 2분열이 시작돼요. 그 사이에 DNA 복제는 없어요(교과서 보충). 두 세포에서 각각 염색체 2개가 가운데에 한 줄로 서요. 그림은 중기판 방향만 돌렸어요. 유사분열처럼 하나씩 한 줄이에요. 자매염색분체 두 가닥은 양쪽 극의 방추사에 하나씩 붙어요.' },
+        { mode: 'meio', f: 13.7, phase: '후기 II', c: '#DD2590', title: '후기 II · 자매염색분체 분리', who: '방추사',
+          text: '동원체가 갈라지며 자매염색분체가 양쪽 극으로 가요. 이제 각 염색체는 1가닥이에요. 염색체 세트는 n에서 n 그대로예요.' },
+        { mode: 'meio', f: 15.8, phase: '말기 II', c: '#0E9384', title: '말기 II · n 딸세포 4개', who: '세포질 분열',
+          text: '두 세포가 다시 나뉘고 핵막이 다시 생겨 n인 딸세포 4개가 돼요. 세포마다 긴 염색체 1개와 짧은 염색체 1개가 있고, 모두 1가닥이에요. 유사분열은 2n 딸세포 2개라서 결과가 달라요.' },
+        { mode: 'cmp', f: 2.5, phase: '중기에 늘어서기', c: '#1677FF', title: '중기 배열 비교', who: '위아래 vs 옆으로',
+          text: '왼쪽 유사분열 중기에는 상동염색체가 짝을 짓지 않고 하나씩 위아래로 한 줄로 서요. 오른쪽 감수분열 중기 I에는 4분염색체가 네 가닥씩 옆으로 나란히 서요. "유사분열에서는 아래위로, 감수분열에서는 옆으로."' },
+        { mode: 'cmp', f: 5.6, phase: '후기에 갈라지기', c: '#E5604F', title: '다음에 갈라지는 것', who: '자매염색분체 vs 상동염색체',
+          text: '왼쪽은 자매염색분체가 갈라져 양 극이 똑같이 1가닥 염색체 4개(2n)를 받아요. 오른쪽은 상동염색체가 갈라져 양 극이 짝마다 하나씩, 2가닥 염색체 2개(n)를 받아요.' }
+      ],
+      MISTAKES: {
+        meio: [
+          { title: '1분열 뒤 = n, 그래도 2가닥', text: '상동염색체가 갈라졌으니 말기 I 세포는 이미 반수체(n)예요. 단계 4에서 세포마다 염색체가 2개뿐이지만 각각 두 가닥인 것을 확인하세요.' },
+          { title: '절반이 되는 건 1분열', text: '염색체 수는 1분열에서 2n→n으로 줄고, 2분열은 n→n이에요. 2분열에서는 가닥 수만 2→1로 줄어요.' },
+          { title: '1분열 → 곧바로 2분열', text: '1분열이 끝나면 곧바로 2분열이 시작돼요. 그 사이에 DNA 복제가 없어서 중기 II 염색체는 새로 늘지 않은 2가닥이에요(교과서 보충).' }
+        ],
+        cmp: [
+          { title: '유사분열 위아래, 감수분열 옆으로', text: '유사분열 중기는 염색체가 짝 없이 하나씩 위아래 한 줄, 감수분열 중기 I은 4분염색체가 네 가닥씩 옆으로 나란히 서요.' },
+          { title: '4분염색체 = 2가염색체', text: '같은 구조의 두 이름이고, 감수분열에서만 생겨요. "4분"은 염색분체 4가닥, "2가"는 염색체 2개를 센 이름이에요(교과서 보충).' },
+          { title: '2n 2개 vs n 4개', text: '유사분열은 자매염색분체가 갈라져 2n 딸세포 2개, 감수분열은 두 번 나뉘어 n 딸세포 4개가 돼요.' }
+        ]
+      },
+      TOGGLES: [['labels', '이름표'], ['spindle', '방추사']],
+      PAL: {
+        light: { bg: '#ffffff', labelBg: '#f7f8fa', ink: '#111111', ring: '#111111', blobAlpha: 0.30,
+          mat: '#D64545', pat: '#2F6FD6', cen: '#2B2F36', mem: '#7D8796', nuc: '#AEB6C2', spindle: '#8E99AB', plate: '#9AA3B2' },
+        dark: { bg: '#17171c', labelBg: '#212128', ink: '#f2f4f6', ring: '#f2f4f6', blobAlpha: 0.42,
+          mat: '#FF7B72', pat: '#6EA8FF', cen: '#F2F4F6', mem: '#AEB7C4', nuc: '#5B6170', spindle: '#7E889A', plate: '#7D8594' }
+      }
+    };
+  }
+
+  // 막·핵막처럼 둥근 윤곽: 원 여러 개의 합집합 테두리(다른 원 안쪽 조각은 생략). dash면 점선.
+  pushOutline(I, circles, c, w, a, dash) {
+    const N = 96;
+    circles.forEach((C, ci) => {
+      for (let i = 0; i < N; i++) {
+        if (dash && i % 2) continue;
+        const t0 = i / N * 6.2832, t1 = (i + 1) / N * 6.2832, tm = (t0 + t1) / 2;
+        const mx = C[0] + C[2] * Math.cos(tm), my = C[1] + C[2] * Math.sin(tm);
+        let inside = false;
+        circles.forEach((D, di) => { if (di !== ci && Math.hypot(mx - D[0], my - D[1]) < D[2] - 0.01) inside = true; });
+        if (inside) continue;
+        I.push({ k: 1, p: [C[0] + C[2] * Math.cos(t0), C[1] + C[2] * Math.sin(t0), 0], q: [C[0] + C[2] * Math.cos(t1), C[1] + C[2] * Math.sin(t1), 0], w: w, c: c, a: a });
+      }
+    });
+  }
+
+  // 염색체 하나: 중심 c, 각도 ang(0이면 세로), 길이 len, 자매 간격 off(0이면 1가닥), 둘째 가닥 투명도 a2.
+  // 돌려주는 값: 각 염색분체의 동원체 위치와 부호(s) — 방추사를 이을 때 써요.
+  pushChromosome(I, ch, pal, w) {
+    const u = [Math.sin(ch.ang), Math.cos(ch.ang)], v = [Math.cos(ch.ang), -Math.sin(ch.ang)];
+    const h = ch.len / 2, off = ch.off, j = Math.max(0, Math.min(1, (0.25 - off) / 0.16));
+    const single = ch.a2 <= 0.01 && off < 0.01;
+    const sides = single ? [0] : [-1, 1];
+    const kin = [];
+    sides.forEach((s) => {
+      const a = s === 1 ? ch.a2 : 1;
+      if (a <= 0.01) return;
+      const oe = s * off, om = s * Math.max(0, off - 0.05 * j);
+      const P = (along, o) => [ch.c[0] + u[0] * along + v[0] * o, ch.c[1] + u[1] * along + v[1] * o, 0];
+      const top = P(h, oe), mid = P(0, om), bot = P(-h, oe);
+      I.push({ k: 1, p: top, q: mid, w: w, c: ch.col, rod: true, a: a });
+      I.push({ k: 1, p: mid, q: bot, w: w, c: ch.col, rod: true, a: a });
+      kin.push({ p: mid, s: s, a: a });
+    });
+    // 동원체: 붙어 있으면 가운데 하나, 갈라지면 가닥마다 하나
+    if (single || j < 0.5) kin.forEach((k) => I.push({ k: 0, p: k.p, r: w * 0.62, c: pal.cen, a: k.a }));
+    else I.push({ k: 0, p: [ch.c[0], ch.c[1], 0], r: w * 0.7, c: pal.cen });
+    return kin;
+  }
+
+  buildScene(mode, I, O) {
+    const pal = this.pal(), st = this.state, f = this.sim.f;
+    const sm = (a, b) => this.sm((f - a) / (b - a));
+    const L = (a, b, t) => a + (b - a) * t;
+    const P2 = (a, b, t) => [L(a[0], b[0], t), L(a[1], b[1], t)];
+    const fiber = (p, q, a) => I.push({ k: 1, p: p, q: q, w: 0.025, c: pal.spindle, a: 0.75 * a });
+    const pole = (p, a) => I.push({ k: 0, p: [p[0], p[1], 0], r: 0.08, c: pal.spindle, flat: true, a: a });
+
+    if (mode === 'cmp') {
+      const LEN = { L: 1.1, S: 0.65 }, W = 0.13, SO = 0.075, CX = 2.75, R = 2.45;
+      const t = sm(3.1, 4.6), plateA = 1 - sm(3, 3.6), spA = st.spindle ? 1 : 0;
+      this.pushOutline(I, [[-CX, 0, R]], pal.mem, 0.05, 1);
+      this.pushOutline(I, [[CX, 0, R]], pal.mem, 0.05, 1);
+      if (plateA > 0.01) [-CX, CX].forEach((x) => {
+        for (let y = -2.2; y < 2.2; y += 0.3) I.push({ k: 1, p: [x, y, 0], q: [x, y + 0.15, 0], w: 0.03, c: pal.plate, flat: true, a: 0.8 * plateA });
+      });
+      const PO = 1.95;
+      // 왼쪽: 유사분열 — 염색체 4개가 하나씩 위아래 한 줄(긴 쌍 위, 짧은 쌍 아래), 다음에 자매염색분체가 갈라져요
+      const mit = [['L', pal.mat, 1.5], ['L', pal.pat, 0.2], ['S', pal.mat, -0.875], ['S', pal.pat, -1.725]];
+      mit.forEach((m) => {
+        const kin = this.pushChromosome(I, { c: [-CX, m[2]], ang: 0, len: LEN[m[0]], col: m[1], off: L(SO, 1.1, t), a2: 1 }, pal, W);
+        if (spA) kin.forEach((k) => fiber(k.p, [-CX + k.s * PO, 0, 0], spA));
+      });
+      // 오른쪽: 감수분열 중기 I — 4분염색체 2개, 짝의 한쪽은 왼쪽 극, 다른 쪽은 오른쪽 극으로
+      const mei = [['L', pal.mat, -1, 0.85], ['L', pal.pat, 1, 0.85], ['S', pal.pat, -1, -0.85], ['S', pal.mat, 1, -0.85]];
+      mei.forEach((m) => {
+        const cx = CX + m[2] * L(0.19, 1.1, t);
+        const kin = this.pushChromosome(I, { c: [cx, m[3]], ang: 0, len: LEN[m[0]], col: m[1], off: SO, a2: 1 }, pal, W);
+        if (spA) fiber([cx, m[3], 0], [CX + m[2] * PO, 0, 0], spA);
+        void kin;
+      });
+      if (spA) [-CX - PO, -CX + PO, CX - PO, CX + PO].forEach((x) => pole([x, 0], spA));
+      if (st.labels) {
+        O.push({ p: [-CX, R, 0], text: f < 3 ? '유사분열 중기' : '유사분열 후기', c: pal.ink, dy: -16, size: 13 });
+        O.push({ p: [CX, R, 0], text: f < 3 ? '감수분열 중기 I' : '감수분열 후기 I', c: pal.ink, dy: -16, size: 13 });
+        O.push({ p: [-CX, -R, 0], text: f < 3 ? '짝 없이 위아래 한 줄' : '자매염색분체 분리', c: pal.mat, dy: 16 });
+        O.push({ p: [CX, -R, 0], text: f < 3 ? '4가닥 옆으로 나란히' : '상동염색체 분리', c: pal.pat, dy: 16 });
+      }
+      return;
+    }
+
+    // ---------- 감수분열: 2n=4 (긴 쌍 L, 짧은 쌍 S), 엄마 유래 빨강·아빠 유래 파랑 ----------
+    const LEN = { L: 1.5, S: 0.85 }, W = 0.15, SO = 0.09, HALF = Math.PI / 2;
+    // side: 중기 I에서 그 상동염색체가 놓이는 쪽(-1 왼쪽, +1 오른쪽) = 1분열 뒤 들어갈 세포
+    const H = [
+      { pair: 'L', col: pal.mat, side: -1, g1: [-1.0, 0.9, 0.35] },
+      { pair: 'L', col: pal.pat, side: 1, g1: [1.05, -0.45, -0.5] },
+      { pair: 'S', col: pal.mat, side: 1, g1: [0.85, 1.2, 1.0] },
+      { pair: 'S', col: pal.pat, side: -1, g1: [-0.8, -1.15, -0.9] }
+    ];
+    const proT = { L: [-0.5, 0.75, 0.25], S: [0.6, -0.9, -0.3] };
+    const rep = sm(0.6, 1.6);
+    const CXI = 2.3, CYII = 2.15;
+    const tet = (T, side) => { const a = T[2]; return [T[0] + side * 0.22 * Math.cos(a), T[1] - side * 0.22 * Math.sin(a)]; };
+    const chrom = H.map((h) => {
+      let c = [h.g1[0], h.g1[1]], ang = h.g1[2];
+      const go = (a, b, tc, ta) => { const t = sm(a, b); c = P2(c, tc, t); ang = L(ang, ta, t); };
+      const xc = h.side * CXI;
+      go(2.2, 3.3, tet(proT[h.pair], h.side), proT[h.pair][2]);
+      go(4.0, 5.2, [h.side * 0.22, h.pair === 'L' ? 1.0 : -1.0], 0);
+      go(6.0, 7.4, [h.side * 1.9, h.pair === 'L' ? 1.0 : -1.0], 0);
+      go(8.0, 9.3, [xc + (h.pair === 'L' ? -0.3 : 0.3), h.pair === 'L' ? 0.6 : -0.6], 0);
+      go(10.0, 11.3, [xc + (h.pair === 'L' ? -0.575 : 0.9), 0], HALF);
+      let off = SO * rep;
+      off = L(off, 1.0, sm(12.0, 13.3));
+      off = L(off, CYII, sm(14.0, 15.2));
+      return { h: h, xc: xc, c: c, ang: ang, len: LEN[h.pair], col: h.col, off: off, a2: rep };
+    });
+
+    // 세포막: 1개 → 말기 I에 좌우로 2개 → 말기 II에 위아래로 4개
+    const t1 = sm(8.0, 9.3), t2 = sm(14.0, 15.2);
+    let cells;
+    if (f < 8) cells = [[0, 0, 3.2]];
+    else if (f < 14) { const d = L(0, CXI, t1), r = L(3.2, 1.95, t1); cells = [[-d, 0, r], [d, 0, r]]; }
+    else { const d = L(0, CYII, t2), r = L(1.95, 1.6, t2); cells = [[-CXI, -d, r], [-CXI, d, r], [CXI, -d, r], [CXI, d, r]]; }
+    if (f < 14) this.pushOutline(I, cells, pal.mem, 0.05, 1);
+    else { this.pushOutline(I, cells.slice(0, 2), pal.mem, 0.05, 1); this.pushOutline(I, cells.slice(2), pal.mem, 0.05, 1); }
+    // 핵막: 전기 I에 사라져요
+    const nucA = 1 - sm(2.6, 3.4);
+    if (nucA > 0.01) this.pushOutline(I, [[0, 0, 2.5]], pal.nuc, 0.04, nucA, true);
+
+    // 말기 II: 네 세포마다 핵막이 다시 생겨요
+    const nucII = sm(15.0, 15.6);
+    if (nucII > 0.01) cells.forEach((C) => this.pushOutline(I, [[C[0], C[1], 1.42]], pal.nuc, 0.04, nucII, true));
+
+    // 중기판(점선)
+    const plateI = sm(4.6, 5.2) * (1 - sm(6.0, 6.5)), plateII = sm(10.7, 11.3) * (1 - sm(12.0, 12.5));
+    if (plateI > 0.01) for (let y = -2.6; y < 2.6; y += 0.3) I.push({ k: 1, p: [0, y, 0], q: [0, y + 0.15, 0], w: 0.03, c: pal.plate, flat: true, a: 0.8 * plateI });
+    if (plateII > 0.01) [-CXI, CXI].forEach((x) => { for (let dx = -1.7; dx < 1.7; dx += 0.3) I.push({ k: 1, p: [x + dx, 0, 0], q: [x + dx + 0.15, 0, 0], w: 0.03, c: pal.plate, flat: true, a: 0.8 * plateII }); });
+
+    // 방추사 극 위치
+    const spI = st.spindle ? sm(3.4, 4.0) * (1 - sm(8.2, 9.0)) : 0;
+    const spII = st.spindle ? sm(9.8, 10.4) * (1 - sm(14.2, 15.0)) : 0;
+    const PI1 = 2.75, PII = 1.75;
+    chrom.forEach((ch) => {
+      const kin = this.pushChromosome(I, ch, pal, W);
+      if (spI > 0.01) fiber([ch.c[0], ch.c[1], 0], [ch.h.side * PI1, 0, 0], spI);
+      // 2분열: v = (0, -1)이라 부호 s=+1 가닥은 아래 극, -1은 위 극으로
+      if (spII > 0.01) kin.forEach((k) => fiber(k.p, [ch.xc, -k.s * PII, 0], spII));
+    });
+    if (spI > 0.01) [-PI1, PI1].forEach((x) => pole([x, 0], spI));
+    if (spII > 0.01) [-CXI, CXI].forEach((x) => { pole([x, PII], spII); pole([x, -PII], spII); });
+
+    if (!st.labels) return;
+    const Lm = chrom[0];
+    if (f < 0.6) O.push({ p: [Lm.c[0], Lm.c[1], 0], text: '염색체 1가닥 (G1기)', c: pal.mat, dx: -20, dy: -62, lead: true });
+    else if (f < 2) {
+      if (f > 1.4) O.push({ p: [Lm.c[0], Lm.c[1], 0], text: '자매염색분체 2가닥 · 동원체', c: pal.mat, dx: -10, dy: -62, lead: true });
+      O.push({ p: [1.77, -1.77, 0], text: '핵막', c: pal.ink, dx: 30, dy: 26, lead: true });
+    } else if (f < 4) {
+      if (f > 3.0) O.push({ p: [proT.L[0], proT.L[1], 0], text: '4분염색체 (2가염색체)', c: pal.ink, dx: -70, dy: -100, lead: true });
+    } else if (f < 6) {
+      if (f > 4.9) {
+        O.push({ p: [0, 1.75, 0], text: '4분염색체 = 4가닥 옆으로', c: pal.ink, dy: -30 });
+        O.push({ p: [0, -2.6, 0], text: '중기판', c: pal.ink, dy: 14 });
+      }
+    } else if (f < 8) {
+      if (f > 6.8) {
+        O.push({ p: [0, 0, 0], text: '상동염색체 분리', c: pal.ink });
+        O.push({ p: [1.9, 1.75, 0], text: '자매염색분체는 붙은 채', c: pal.pat, dy: -30 });
+      }
+    } else if (f < 10) {
+      if (f > 9.0) [-CXI, CXI].forEach((x) => O.push({ p: [x, -1.95, 0], text: 'n=2 · 염색체 2가닥', c: pal.ink, dy: 18 }));
+    } else if (f < 12) {
+      O.push({ p: [0, -2.4, 0], text: '곧바로 2분열', c: pal.ink });
+    } else if (f < 14) {
+      if (f > 12.6) O.push({ p: [CXI, 0, 0], text: '자매염색분체 분리', c: pal.ink });
+    } else if (f > 15.0) {
+      [-CXI, CXI].forEach((x) => {
+        O.push({ p: [x, CYII + 1.6, 0], text: 'n=2 · 1가닥', c: pal.ink, dy: -14 });
+        O.push({ p: [x, -CYII - 1.6, 0], text: 'n=2 · 1가닥', c: pal.ink, dy: 14 });
+      });
+    }
+  }
+
+  extraState() {
+    return { labels: true, spindle: true };
+  }
+
+  extraVals(st) {
+    const pal = this.pal(), f = st.f;
+    const legend = { mat: pal.mat, pat: pal.pat, cen: pal.cen, spindle: pal.spindle, mem: pal.mem };
+    if (st.mode === 'cmp') {
+      return {
+        legend: legend,
+        tiles: [{ v: '2n 2개', k: '유사분열 결과' }, { v: 'n 4개', k: '감수분열 결과' }, { v: '자매염색분체', k: '유사분열에서 갈라지는 것' }, { v: '상동염색체', k: '감수분열 1분열에서 갈라지는 것' }],
+        events: f < 3
+          ? [{ c: pal.mat, text: '유사분열 중기: 염색체 4개가 짝 없이 하나씩 위아래 한 줄로 서요.' },
+            { c: pal.pat, text: '감수분열 중기 I: 4분염색체 2개가 네 가닥씩 옆으로 나란히 서요.' }]
+          : [{ c: pal.mat, text: '유사분열: 자매염색분체가 갈라져요. 양 극이 같은 염색체 4개(2n)를 받아요.' },
+            { c: pal.pat, text: '감수분열 1분열: 상동염색체가 갈라져요. 양 극이 2가닥 염색체 2개(n)를 받아요.' }]
+      };
+    }
+    // 세포 수, 세포당 염색체 수, 염색체 하나의 가닥 수, 세포당 DNA 양(G2기 = X)
+    let cells, chr, strand, dna, now;
+    if (f < 0.6) { cells = '1개'; chr = '4 (2n)'; strand = '1가닥'; dna = '0.5X'; now = 'G1기예요. 아직 갈라지는 것은 없어요.'; }
+    else if (f < 1.6) { cells = '1개'; chr = '4 (2n)'; strand = '1→2가닥'; dna = '0.5X→X'; now = 'S기 DNA 복제 중이에요. 갈라지는 것은 없어요.'; }
+    else if (f < 6) { cells = '1개'; chr = '4 (2n)'; strand = '2가닥'; dna = 'X'; now = f < 4 ? '상동염색체가 짝을 지어요(접합). 갈라지는 것은 없어요.' : '4분염색체가 중기판에 옆으로 서요. 다음에 상동염색체가 갈라져요.'; }
+    else if (f < 8) { cells = '1개'; chr = '4 (양 극에 2씩)'; strand = '2가닥'; dna = 'X'; now = '상동염색체가 갈라져요. 자매염색분체는 붙어 있어요.'; }
+    else if (f < 9.3) { cells = '1→2개'; chr = '2 (n)'; strand = '2가닥'; dna = 'X→0.5X'; now = '세포질이 나뉘어요.'; }
+    else if (f < 12) { cells = '2개'; chr = '2 (n)'; strand = '2가닥'; dna = '0.5X'; now = f < 10 ? '말기 I. 이미 n이지만 2가닥이에요.' : '곧바로 2분열이 시작돼요(복제 없음, 교과서 보충). 다음에 자매염색분체가 갈라져요.'; }
+    else if (f < 14) { cells = '2개'; chr = '4 (양 극에 2씩)'; strand = '1가닥'; dna = '0.5X'; now = '자매염색분체가 갈라져요. 염색체 세트는 n 그대로예요.'; }
+    else if (f < 15.2) { cells = '2→4개'; chr = '2 (n)'; strand = '1가닥'; dna = '0.5X→0.25X'; now = '세포질이 나뉘어요.'; }
+    else { cells = '4개'; chr = '2 (n)'; strand = '1가닥'; dna = '0.25X'; now = '끝. 핵막이 다시 생기고 n=2, 1가닥 염색체를 가진 딸세포 4개예요.'; }
+    return {
+      legend: legend,
+      tiles: [{ v: cells, k: '세포 수' }, { v: chr, k: '세포당 염색체 수' }, { v: strand, k: '염색체 하나의 가닥' }, { v: dna, k: '세포당 DNA 양' }],
+      events: [{ c: pal.mat, text: now }]
+    };
+  }
+
+  // ================= 공통 셸: 아래는 주제와 무관해요. 고치지 않아요 =================
+  constructor(...args) {
+    super(...args);
+    let reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    let narrow = false;
+    try { narrow = window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) {}
+    let saved = null;
+    try { saved = window.localStorage.getItem('od-theme'); } catch (e) {}
+    const PANEL_W = { left: { min: 220, max: 480 }, right: { min: 280, max: 720 } };
+    let widths = {};
+    try { widths = JSON.parse(window.localStorage.getItem('interactive-panel-w')) || {}; } catch (e) {}
+    const okW = (side) => { const v = widths[side]; return typeof v === 'number' && v >= PANEL_W[side].min && v <= PANEL_W[side].max ? v : null; };
+    this.T = this.topic();
+    this.state = Object.assign({
+      mode: this.T.MODES[0].key, f: 0, playing: false, speed: 1, step: -1, spin: !reduce,
+      theme: (saved === 'light' || saved === 'dark') ? saved : (this.systemDark() ? 'dark' : 'light'),
+      // leftOpen/rightOpen: docked panels on wide screens; drawer: the one open drawer on narrow screens
+      leftOpen: true, rightOpen: true, drawer: null, narrow: narrow,
+      // leftW/rightW: user-set docked widths in px (null = default); resizing: a handle is being dragged
+      leftW: okW('left'), rightW: okW('right'), resizing: false
+    }, this.extraState());
+    this.reduceMotion = reduce;
+    this.K = {
+      PANEL_W: PANEL_W, PANEL_W_KEY: 'interactive-panel-w', PANEL_DEFAULT: { left: 320, right: 400 },
+      THEMES: {
+        light: { bg: '#ffffff', surface: '#f7f8fa', ink: '#111111', ink2: '#6b7280', line: '#d9dee7', accent: '#1677ff', accentInk: '#1b64da', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#b54708', prof: '#6941c6', supp: '#067647', danger: '#d92d20', scroll: '#c9d0db', scrollHover: '#9aa3b2' },
+        dark: { bg: '#17171c', surface: '#212128', ink: '#f2f4f6', ink2: '#a3abb8', line: '#34353d', accent: '#3182f6', accentInk: '#6ea4ff', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#f5a15c', prof: '#b69cff', supp: '#5fd39a', danger: '#ff6b61', scroll: '#3f414b', scrollHover: '#5b5e6a' }
+      }
+    };
+    this.cam = Object.assign({}, this.modeDef().cam);
+    this.sim = { f: 0, cx: 0 };
+    this.pointer = { x: -1, y: -1, inside: false, drag: false, lx: 0, ly: 0 };
+    this.colorCache = {};
+    this._tick = (t) => this.tick(t);
+    this._canvasRef = (el) => this.attachCanvas(el);
+    this.handles = {};
+    this._handleRefL = (el) => this.attachHandle('left', el);
+    this._handleRefR = (el) => this.attachHandle('right', el);
+  }
+
+  componentWillUnmount() {
+    this.attachCanvas(null);
+    this.attachHandle('left', null);
+    this.attachHandle('right', null);
+  }
+
+  modeDef(key) {
+    const k = key || this.state.mode;
+    return this.T.MODES.find((m) => m.key === k) || this.T.MODES[0];
+  }
+  systemDark() {
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; }
+  }
+  isNarrow() {
+    try { return window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) { return false; }
+  }
+  syncBreakpoint() { this.setState({ narrow: this.isNarrow(), drawer: null }); }
+  // In drawer mode only one panel is open at a time.
+  togglePanel(side) {
+    const st = this.state;
+    if (st.narrow) this.setState({ drawer: st.drawer === side ? null : side });
+    else if (side === 'left') this.setState({ leftOpen: !st.leftOpen });
+    else this.setState({ rightOpen: !st.rightOpen });
+  }
+  // Docked panel width: the canvas column always keeps at least 400px.
+  panelMax(side) {
+    const lim = this.K.PANEL_W[side], other = side === 'left' ? 'right' : 'left', st = this.state;
+    const h = this.handles[other];
+    const otherOpen = other === 'left' ? st.leftOpen : st.rightOpen;
+    const otherW = !otherOpen ? 0 : h ? h.el.parentElement.getBoundingClientRect().width
+      : (st[other + 'W'] || this.K.PANEL_DEFAULT[other]);
+    return Math.max(lim.min, Math.min(lim.max, (window.innerWidth || 1440) - otherW - 400));
+  }
+  setPanelWidth(side, px, save) {
+    const v = Math.round(Math.min(Math.max(px, this.K.PANEL_W[side].min), this.panelMax(side)));
+    this.setState({ [side + 'W']: v });
+    if (save) this.savePanelWidths(side, v);
+  }
+  resetPanelWidth(side) {
+    this.setState({ [side + 'W']: null });
+    this.savePanelWidths(side, null);
+  }
+  savePanelWidths(side, v) {
+    try {
+      const key = this.K.PANEL_W_KEY;
+      let w = {};
+      try { w = JSON.parse(window.localStorage.getItem(key)) || {}; } catch (e) {}
+      if (v == null) delete w[side]; else w[side] = v;
+      window.localStorage.setItem(key, JSON.stringify(w));
+    } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ }
+  }
+  // Re-fit user widths when the window shrinks (not saved).
+  refitPanels() {
+    ['left', 'right'].forEach((side) => {
+      const w = this.state[side + 'W'];
+      if (w != null && w > this.panelMax(side)) this.setPanelWidth(side, w, false);
+    });
+  }
+  attachHandle(side, el) {
+    const old = this.handles[side];
+    if (old && old.el === el) return;
+    if (old) {
+      Object.keys(old.on).forEach((ev) => old.el.removeEventListener(ev, old.on[ev]));
+      delete this.handles[side];
+      if (!Object.keys(this.handles).length) window.removeEventListener('resize', this._refit);
+    }
+    if (!el) return;
+    const dir = side === 'left' ? 1 : -1;
+    const width = () => el.parentElement.getBoundingClientRect().width;
+    let drag = null;
+    const on = {
+      pointerdown: (e) => {
+        if (this.state.narrow || e.button !== 0) return;
+        e.preventDefault();
+        drag = { x: e.clientX, w: width() };
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        this.setState({ resizing: true });
+      },
+      pointermove: (e) => { if (drag) this.setPanelWidth(side, drag.w + dir * (e.clientX - drag.x), false); },
+      pointerup: () => {
+        if (!drag) return;
+        drag = null;
+        this.setState({ resizing: false });
+        this.setPanelWidth(side, width(), true);
+      },
+      dblclick: () => this.resetPanelWidth(side),
+      keydown: (e) => {
+        const step = e.shiftKey ? 64 : 16;
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          e.preventDefault(); e.stopPropagation();
+          this.setPanelWidth(side, width() + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+        } else if (e.key === 'Home') { e.preventDefault(); e.stopPropagation(); this.resetPanelWidth(side); }
+      }
+    };
+    on.pointercancel = on.pointerup;
+    Object.keys(on).forEach((ev) => el.addEventListener(ev, on[ev]));
+    if (!Object.keys(this.handles).length) {
+      this._refit = this._refit || (() => this.refitPanels());
+      window.addEventListener('resize', this._refit);
+    }
+    this.handles[side] = { el: el, on: on };
+  }
+  textTone(hex) { return this.state.theme === 'light' ? this.mix(hex, '#000000', 0.4) : hex; }
+  pal() { return this.T.PAL[this.state.theme] || this.T.PAL.dark; }
+  setTheme(t) {
+    this.setState({ theme: t });
+    try {
+      if ((t === 'dark') === this.systemDark()) window.localStorage.removeItem('od-theme');
+      else window.localStorage.setItem('od-theme', t);
+    } catch (e) {}
+  }
+
+  attachCanvas(el) {
+    if (this.canvas === el) return;
+    if (this.canvas) {
+      const c = this.canvas;
+      c.removeEventListener('pointerdown', this._pd);
+      c.removeEventListener('pointermove', this._pm);
+      c.removeEventListener('pointerup', this._pu);
+      c.removeEventListener('pointercancel', this._pu);
+      c.removeEventListener('pointerleave', this._pl);
+      cancelAnimationFrame(this.raf);
+      try { this._mq.removeEventListener('change', this._mqH); } catch (err) {}
+    }
+    this.canvas = el || null;
+    if (!el) return;
+    this.ctx = el.getContext('2d');
+    const p = this.pointer;
+    this._pd = (e) => {
+      if (!this.modeDef().rotatable) return;
+      p.drag = true; p.lx = e.clientX; p.ly = e.clientY;
+      try { el.setPointerCapture(e.pointerId); } catch (err) {}
+      el.style.cursor = 'grabbing';
+    };
+    this._pm = (e) => {
+      const r = el.getBoundingClientRect();
+      p.x = e.clientX - r.left; p.y = e.clientY - r.top; p.inside = true;
+      if (p.drag && this.modeDef().rotatable) {
+        this.cam.yaw += (e.clientX - p.lx) * 0.008;
+        this.cam.pitch = Math.max(-1.45, Math.min(1.45, this.cam.pitch + (e.clientY - p.ly) * 0.008));
+        p.lx = e.clientX; p.ly = e.clientY;
+      }
+    };
+    this._pu = () => { p.drag = false; el.style.cursor = ''; };
+    this._pl = () => { p.inside = false; };
+    el.addEventListener('pointerdown', this._pd);
+    el.addEventListener('pointermove', this._pm);
+    el.addEventListener('pointerup', this._pu);
+    el.addEventListener('pointercancel', this._pu);
+    el.addEventListener('pointerleave', this._pl);
+    try {
+      this._mq = window.matchMedia('(max-width: 1023.98px)');
+      this._mqH = () => this.syncBreakpoint();
+      this._mq.addEventListener('change', this._mqH);
+    } catch (err) {}
+    this.last = 0;
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  tick(t) {
+    if (!this.canvas) return;
+    const dt = this.last ? Math.min(0.05, (t - this.last) / 1000) : 0;
+    this.last = t;
+    const st = this.state, m = this.modeDef(), pb = m.playback;
+    if (m.autoSpin && st.spin && !this.pointer.drag) this.cam.yaw += dt * 0.3;
+    if (pb && st.playing) {
+      this.sim.f = Math.min(pb.fmax, this.sim.f + dt * pb.rate * st.speed);
+      if (this.sim.f >= pb.fmax) this.setState({ playing: false, f: this.sim.f });
+      else if (t - (this.lastPush || 0) > 120) { this.lastPush = t; this.setState({ f: this.sim.f }); }
+    }
+    // a broken scene keeps the page alive but is reported once for the browser check
+    try { this.draw(dt, t); } catch (err) { if (!this.drawErr) { this.drawErr = true; console.error(err); } }
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  // ---------- math helpers (장면에서 써도 돼요) ----------
+  lerp(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+  sm(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+  rgb(hex) { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  mix(hex, to, amt) {
+    const a = this.rgb(hex), b = this.rgb(to);
+    return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * amt) + ',' + Math.round(a[1] + (b[1] - a[1]) * amt) + ',' + Math.round(a[2] + (b[2] - a[2]) * amt) + ')';
+  }
+  rgba(hex, al) { const a = this.rgb(hex); return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + al + ')'; }
+  shades(hex) {
+    let s = this.colorCache[hex];
+    if (!s) { s = { hi: this.mix(hex, '#FFFFFF', 0.55), mid: hex, lo: this.mix(hex, '#000000', 0.55) }; this.colorCache[hex] = s; }
+    return s;
+  }
+  proj(p, V) {
+    const x = p[0] - V.cx, y = p[1], z = p[2];
+    const x1 = x * V.cy + z * V.sy, z1 = -x * V.sy + z * V.cy;
+    const y2 = y * V.cp - z1 * V.sp, z2 = y * V.sp + z1 * V.cp;
+    const s = V.F / Math.max(2, V.D - z2);
+    return [V.ox + x1 * s, V.oy - y2 * s, z2, s];
+  }
+
+  // ---------- drawing ----------
+  draw(dt, now) {
+    const el = this.canvas, ctx = this.ctx, st = this.state, m = this.modeDef();
+    const dpr = window.devicePixelRatio || 1;
+    const W = el.clientWidth, H = el.clientHeight;
+    if (!W || !H) return;
+    if (el.width !== Math.round(W * dpr) || el.height !== Math.round(H * dpr)) { el.width = Math.round(W * dpr); el.height = Math.round(H * dpr); }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const pal = this.pal();
+    ctx.fillStyle = pal.bg; ctx.fillRect(0, 0, W, H);
+
+    const I = [], O = [];
+    this.buildScene(st.mode, I, O);
+    const scale = Math.min(W / m.fit[0], H / m.fit[1]), D = m.D, z = this.cam.zoom;
+    const V = {
+      cx: this.sim.cx, cy: Math.cos(this.cam.yaw), sy: Math.sin(this.cam.yaw), cp: Math.cos(this.cam.pitch), sp: Math.sin(this.cam.pitch),
+      F: scale * z * D, D: D, ox: W / 2, oy: H / 2 - (m.playback ? 20 : 0)
+    };
+    let zmin = Infinity, zmax = -Infinity;
+    for (const it of I) {
+      it.A = this.proj(it.p, V);
+      if (it.q) { it.B = this.proj(it.q, V); it.z = (it.A[2] + it.B[2]) / 2; } else it.z = it.A[2];
+      if (it.z < zmin) zmin = it.z;
+      if (it.z > zmax) zmax = it.z;
+    }
+    I.sort((a, b) => a.z - b.z);
+    // depth fog; a flat scene (all items at one depth) is drawn without it
+    const span = zmax - zmin;
+    for (const it of I) {
+      const fog = span < 0.01 ? 1 : 0.42 + 0.58 * ((it.z - zmin) / span);
+      ctx.globalAlpha = Math.max(0, (it.a == null ? 1 : it.a) * fog);
+      if (ctx.globalAlpha < 0.01) continue;
+      const x = it.A[0], y = it.A[1], s = it.A[3];
+      if (it.k === 0) {
+        const R = it.r * s;
+        if (R < 0.4) continue;
+        if (it.flat) { ctx.fillStyle = it.c; ctx.beginPath(); ctx.arc(x, y, Math.max(1.3, R), 0, 6.2832); ctx.fill(); }
+        else {
+          const sh = this.shades(it.c);
+          const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+          g.addColorStop(0, sh.hi); g.addColorStop(0.5, sh.mid); g.addColorStop(1, sh.lo);
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        }
+      } else if (it.k === 1) {
+        const lw = Math.max(1, it.w * (s + it.B[3]) / 2);
+        ctx.lineCap = it.flat ? 'butt' : 'round';
+        if (it.rod) {
+          ctx.strokeStyle = this.shades(it.c).lo; ctx.lineWidth = lw + 2;
+          ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+        }
+        ctx.strokeStyle = it.c; ctx.lineWidth = lw;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+      } else if (it.k === 3) {
+        const fs = Math.max(8, Math.min(14, it.size * s / (scale * z) * 1.05));
+        ctx.font = '700 ' + fs + 'px "Pretendard", system-ui, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = it.c; ctx.fillText(it.text, x, y + 0.5);
+      } else if (it.k === 4) {
+        const ang = Math.atan2(it.B[1] - y, it.B[0] - x), mx = (x + it.B[0]) / 2, my = (y + it.B[1]) / 2, r = 6;
+        ctx.fillStyle = it.c; ctx.beginPath();
+        ctx.moveTo(mx + Math.cos(ang) * r, my + Math.sin(ang) * r);
+        ctx.lineTo(mx + Math.cos(ang + 2.5) * r, my + Math.sin(ang + 2.5) * r);
+        ctx.lineTo(mx + Math.cos(ang - 2.5) * r, my + Math.sin(ang - 2.5) * r);
+        ctx.closePath(); ctx.fill();
+      } else if (it.k === 5) {
+        // lit translucent sphere, highlight up-left like the solid spheres
+        const R = it.r * s, ba = pal.blobAlpha == null ? 0.3 : pal.blobAlpha;
+        const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+        g.addColorStop(0, 'rgba(255,255,255,0.55)'); g.addColorStop(0.3, this.rgba(it.c, Math.min(1, ba + 0.15))); g.addColorStop(1, this.rgba(it.c, 0.18));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        ctx.strokeStyle = it.c; ctx.lineWidth = it.focus ? 3 : 1.5; ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+    for (const o of O) this.drawOverlay(o, V, now);
+  }
+
+  drawOverlay(o, V, now) {
+    const ctx = this.ctx, A = this.proj(o.p, V), pal = this.pal();
+    if (o.t === 'ring') {
+      const r = Math.max(6, 0.32 * A[3]) * (1 + (this.reduceMotion ? 0 : 0.15 * Math.sin((now || 0) / 160)));
+      ctx.globalAlpha = 1; ctx.strokeStyle = pal.ring; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(A[0], A[1], r, 0, 6.2832); ctx.stroke();
+      ctx.font = '600 11px "Pretendard", system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = pal.ring; ctx.fillText(o.text, A[0], A[1] + r + 10);
+      return;
+    }
+    const size = o.size || 12, x = A[0] + (o.dx || 0), y = A[1] + (o.dy || 0);
+    ctx.font = '600 ' + size + 'px "Pretendard", system-ui, sans-serif';
+    const tw = ctx.measureText(o.text).width, w = tw + 14, h = size + 10;
+    ctx.globalAlpha = o.a == null ? 1 : o.a;
+    if (o.lead) {
+      ctx.strokeStyle = this.rgba(o.c, 0.6); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(x, y); ctx.stroke();
+    }
+    ctx.fillStyle = pal.labelBg;
+    ctx.strokeStyle = this.rgba(o.c, 0.55); ctx.lineWidth = 1;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x - w / 2, y - h / 2, w, h, 6); else ctx.rect(x - w / 2, y - h / 2, w, h);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = pal.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(o.text, x, y + 0.5);
+    ctx.globalAlpha = 1;
+  }
+
+  setMode(mode) {
+    this.cam = Object.assign({}, this.modeDef(mode).cam);
+    this.sim.f = 0;
+    this.pointer.drag = false;
+    this.setState({ mode: mode, f: 0, playing: false, step: -1 });
+  }
+
+  pickStep(i) {
+    const s = (this.T.STEPS || [])[i];
+    if (!s) return;
+    if (s.mode !== this.state.mode) this.setMode(s.mode);
+    if (s.f != null) this.sim.f = s.f;
+    this.setState({ f: this.sim.f, playing: false, step: i });
+  }
+
+  renderVals() {
+    const st = this.state, T = this.T, m = this.modeDef(), pb = m.playback;
+    const tg = T.TOGGLES ? (Array.isArray(T.TOGGLES) ? T.TOGGLES : (T.TOGGLES[st.mode] || [])) : [];
+    const togDefs = tg.concat(m.autoSpin ? [['spin', '자동 회전']] : []);
+    const toggles = togDefs.map((d) => ({
+      label: d[1], pressed: st[d[0]] ? 'true' : 'false',
+      toggle: () => { const o = {}; o[d[0]] = !st[d[0]]; this.setState(o); }
+    }));
+    const STEPS = T.STEPS || [];
+    const steps = STEPS.map((s, i) => ({ s: s, i: i })).filter((x) => x.s.mode === st.mode).map((x, k) => ({
+      num: k + 1, title: x.s.title, who: x.s.who, c: x.s.c, pressed: st.step === x.i ? 'true' : 'false',
+      pick: () => this.pickStep(x.i)
+    }));
+    const speeds = [0.5, 1, 2].map((v) => ({
+      label: v + '×', pressed: st.speed === v ? 'true' : 'false',
+      pick: () => this.setState({ speed: v })
+    }));
+    const is = {};
+    T.MODES.forEach((d) => { is[d.key] = d.key === st.mode; });
+    const f = st.f;
+    const isDark = st.theme === 'dark';
+    const leftOn = st.narrow ? st.drawer === 'left' : st.leftOpen, rightOn = st.narrow ? st.drawer === 'right' : st.rightOpen;
+    return Object.assign({
+      th: this.K.THEMES[st.theme], isDark: isDark, isLight: !isDark,
+      themeLabel: isDark ? '라이트 모드로 전환' : '다크 모드로 전환',
+      toggleTheme: () => this.setTheme(isDark ? 'light' : 'dark'),
+      canvasRef: this._canvasRef, canvasCls: m.rotatable ? '' : 'is-fixed',
+      hasModes: T.MODES.length > 1, is: is,
+      modes: T.MODES.map((d) => ({ label: d.label, pressed: d.key === st.mode ? 'true' : 'false', pick: () => { if (d.key !== this.state.mode) this.setMode(d.key); } })),
+      leftCls: leftOn ? 'is-open' : '', rightCls: rightOn ? 'is-open' : '',
+      leftExpanded: leftOn ? 'true' : 'false', rightExpanded: rightOn ? 'true' : 'false',
+      scrimCls: (st.narrow && st.drawer) ? 'is-on' : '',
+      toggleLeft: () => this.togglePanel('left'),
+      toggleRight: () => this.togglePanel('right'),
+      closePanels: () => this.setState({ drawer: null }),
+      layoutStyle: ((st.leftW ? '--pl-user: ' + st.leftW + 'px; ' : '') + (st.rightW ? '--pr-user: ' + st.rightW + 'px;' : '')).trim(),
+      layoutCls: st.resizing ? 'is-resizing' : '',
+      leftWNow: st.leftW ? String(st.leftW) : '', rightWNow: st.rightW ? String(st.rightW) : '',
+      leftHandleRef: this._handleRefL, rightHandleRef: this._handleRefR,
+      onKey: (e) => { if (e.key === 'Escape' && this.state.narrow && this.state.drawer) this.setState({ drawer: null }); },
+      hasToggles: toggles.length > 0, toggles: toggles,
+      hasSteps: steps.length > 0, steps: steps,
+      hasStep: st.step >= 0 && st.step < STEPS.length, stepDetail: st.step >= 0 && STEPS[st.step] ? STEPS[st.step].text : '',
+      mistakes: (T.MISTAKES && T.MISTAKES[st.mode]) || [],
+      canvasLabel: m.canvasLabel(f),
+      zoomIn: () => { this.cam.zoom = Math.min(3, this.cam.zoom * 1.2); },
+      zoomOut: () => { this.cam.zoom = Math.max(0.5, this.cam.zoom / 1.2); },
+      resetView: () => { this.cam = Object.assign({}, m.cam); },
+      hasPlayback: !!pb, isPlaying: st.playing, notPlaying: !st.playing, playLabel: st.playing ? '일시정지' : '재생',
+      togglePlay: () => {
+        if (!pb) return;
+        if (!st.playing && this.sim.f >= pb.fmax) this.sim.f = 0;
+        this.setState({ playing: !st.playing, step: -1, f: this.sim.f });
+      },
+      fInt: Math.round(f * 10), fLabel: pb ? pb.label(f) : '', fMax10: pb ? Math.round(pb.fmax * 10) : 0,
+      onScrub: (e) => { const v = Number(e.target.value) / 10; this.sim.f = v; this.setState({ f: v, playing: false, step: -1 }); },
+      speeds: speeds
+    }, this.extraVals(st));
+  }
+}
+mountDC(Component);
+</script>
+</body>
+</html>

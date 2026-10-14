@@ -1,0 +1,1148 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>배우자는 왜 다 다를까</title>
+<!-- 생성 파일: .assets/자료_인터렉티브_03_교차와_무작위_분배/Main.dc.html을 고친 뒤 bio-interactive/scripts/build.cjs로 다시 만드세요. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+<style>
+body{margin:0}
+.app{--radius:8px;--tap:48px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--dur:220ms;--dur-exit:150ms;--ease-out:cubic-bezier(.2,.8,.2,1);--scrim:rgba(0,0,0,.4);
+  height:100vh;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;box-sizing:border-box;
+  background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;font-size:16px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.app *,.app *::before,.app *::after{box-sizing:border-box}
+.app button{font-family:inherit;color:inherit}
+.app :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.num{font-variant-numeric:tabular-nums}
+
+.topbar{display:flex;align-items:center;gap:var(--s2);min-height:56px;padding:var(--s2) var(--s3);background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:17px;font-weight:700;white-space:nowrap}
+.text-btn{flex:none;min-height:44px;min-width:44px;padding:0 var(--s3);border:0;border-radius:var(--radius);background:transparent;color:var(--ink);font:600 14px/1 'Pretendard',system-ui,sans-serif;cursor:pointer}
+.panel-toggle{display:inline-flex;align-items:center;gap:var(--s1);padding:0 var(--s2)}
+.panel-toggle svg,.theme-toggle svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.panel-toggle .strip{fill:transparent;stroke:none;transition:fill 150ms ease-out}
+.panel-toggle[aria-expanded="true"]{color:var(--accent-ink)}
+.panel-toggle[aria-expanded="true"] .strip{fill:currentColor}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;padding:0}
+.seg{flex:none;display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.seg button{min-height:40px;padding:0 var(--s3);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+.layout{display:grid;grid-template-columns:auto minmax(320px,1fr) auto;min-height:0}
+.panel{position:relative;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--bg);color:var(--ink)}
+.panel-left{grid-column:1;width:clamp(260px,20vw,320px);border-right:1px solid var(--line)}
+.panel-right{grid-column:3;width:clamp(320px,24vw,400px);border-left:1px solid var(--line)}
+.panel-inner{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--s4) var(--s4) var(--s6)}
+.panel-inner::-webkit-scrollbar{width:8px}
+.panel-inner::-webkit-scrollbar-track{background:transparent}
+.panel-inner::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:8px;border:2px solid var(--bg)}
+.panel-inner::-webkit-scrollbar-thumb:hover{background:var(--scroll-hover)}
+@supports (scrollbar-color:auto){.panel-inner{scrollbar-width:thin;scrollbar-color:var(--scroll) transparent}}
+.panel-head{display:flex;align-items:center;gap:var(--s2);min-height:44px;margin-bottom:var(--s2)}
+.panel-head h2{flex:1 1 0;min-width:0;margin:0;font-size:22px;line-height:1.4}
+.stage{grid-column:2;position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--bg)}
+.scrim{display:none}
+.panel-resize{display:none}
+
+.sec{margin-top:var(--s5);padding-top:var(--s5);border-top:1px solid var(--line)}
+.panel-head + .sec,.panel-head + div > .sec:first-child{margin-top:0;padding-top:0;border-top:0}
+.sec-title{display:block;margin:0 0 var(--s3);font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-0.01em}
+.sub{margin:var(--s3) 0 0;font-size:14px;line-height:1.6;color:var(--ink-2)}
+
+.opt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.btn{display:flex;align-items:center;gap:var(--s2);width:100%;min-height:var(--tap);padding:0 var(--s3);border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font-size:14px;font-weight:600;line-height:1.3;text-align:left;cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.btn .box{flex:none;width:12px;height:12px;border-radius:3px;border:1.5px solid currentColor}
+.btn[aria-pressed="true"] .box{background:currentColor}
+.steps{display:flex;flex-direction:column;gap:var(--s2)}
+.steps .btn{padding:var(--s2) var(--s3);gap:var(--s3)}
+.step-num{flex:none;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid;font-size:12px;font-weight:700;color:var(--ink)}
+.step-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.step-txt b{font-size:15px;font-weight:700}
+.step-txt span{font-size:13px;font-weight:500;color:var(--ink-2)}
+.detail{margin-top:var(--s3);padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+
+
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.tiles.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tile{padding:var(--s3);border-radius:var(--radius);background:var(--surface)}
+.tile b{display:block;font-size:20px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}
+.tile span{display:block;font-size:13px;line-height:1.4;color:var(--ink-2)}
+.events{display:flex;flex-direction:column;gap:var(--s2)}
+.event{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.6}
+.dot{flex:none;width:10px;height:10px;margin-top:7px;border-radius:50%}
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2) var(--s3);font-size:13px;color:var(--ink-2)}
+.legend div{display:flex;align-items:center;gap:var(--s2)}
+.sw{flex:none;width:16px;height:6px;border-radius:3px}
+.sw.ball{width:12px;height:12px;border-radius:50%}
+.sec.warn{border-top:0;padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+.warn .sec-title{color:var(--warn);font-size:17px}
+.mistake{margin-top:var(--s3)}
+.mistake b{display:block;font-weight:700}
+.mistake span{color:var(--ink-2)}
+
+.canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.canvas.is-fixed{cursor:default}
+.view-btns{position:absolute;top:var(--s3);right:var(--s3);display:flex;gap:6px}
+.icon-btn{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);cursor:pointer}
+.icon-btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.icon-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.float{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius)}
+.hover-card{position:absolute;left:var(--s3);bottom:var(--s3);display:flex;flex-direction:column;gap:2px;padding:var(--s3) var(--s4);pointer-events:none}
+.hover-card .k{font-size:13px;color:var(--ink-2)}
+.hover-card .v{font-size:18px;font-weight:700}
+.playbar{position:absolute;left:var(--s3);right:var(--s3);bottom:var(--s3);display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3)}
+.play{flex:none;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--radius);background:var(--btn-bg);color:var(--on-btn) !important;cursor:pointer}
+.play svg{width:18px;height:18px;fill:currentColor}
+.scrub{flex:1 1 200px;min-width:160px;display:flex;flex-direction:column;gap:2px}
+.scrub span{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.scrub input{width:100%;height:24px;margin:0;accent-color:var(--accent)}
+.speeds{display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.speeds button{min-width:48px;height:40px;padding:0 var(--s2);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
+.speeds button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+@media (hover:hover){.btn:hover,.icon-btn:hover{background:var(--surface)}.text-btn:hover{background:var(--surface)}}
+@media (min-width:1024px){
+  .panel-head{display:none}
+  .layout{--pl:var(--pl-user,clamp(260px,20vw,320px));--pr:var(--pr-user,clamp(320px,24vw,400px))}
+  .panel{width:0;border-width:0;visibility:hidden;transition:width var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left.is-open{width:var(--pl)}
+  .panel-right.is-open{width:var(--pr)}
+  .panel.is-open{visibility:visible;border-width:1px;transition:width var(--dur) var(--ease-out)}
+  .panel-left .panel-inner{width:var(--pl)}
+  .panel-right .panel-inner{width:var(--pr);align-self:flex-end}
+  .layout.is-resizing .panel{transition:none}
+  .layout.is-resizing{cursor:col-resize;user-select:none}
+  .panel-resize{display:block;position:absolute;top:0;bottom:0;z-index:2;width:12px;padding:0;border:0;background:transparent;cursor:col-resize;touch-action:none}
+  .panel-left .panel-resize{right:0}
+  .panel-right .panel-resize{left:0}
+  .panel-resize::after{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--accent);opacity:0;transition:opacity 150ms ease-out}
+  .panel-left .panel-resize::after{right:0}
+  .panel-right .panel-resize::after{left:0}
+  .panel-resize:focus-visible{outline:none}
+  .panel-resize:focus-visible::after,.is-resizing .panel-resize:active::after{opacity:1}
+  @media (hover:hover){.panel-resize:hover::after{opacity:1}}
+}
+@media (max-width: 1023.98px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .stage{grid-column:1}
+  .panel{position:fixed;top:0;bottom:0;z-index:40;visibility:hidden;transition:transform var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left{left:0;width:min(304px,88vw);transform:translateX(-100%)}
+  .panel-right{right:0;width:min(360px,88vw);transform:translateX(100%)}
+  .panel.is-open{visibility:visible;transform:none;transition:transform var(--dur) var(--ease-out)}
+  .panel-inner{padding-top:calc(var(--s3) + env(safe-area-inset-top));padding-bottom:calc(var(--s6) + env(safe-area-inset-bottom))}
+  .scrim{display:block;position:fixed;inset:0;z-index:35;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .scrim.is-on{opacity:1;visibility:visible;transition:opacity var(--dur) var(--ease-out)}
+}
+@media (max-width:640px){.brand{display:none}.topbar{justify-content:space-between}}
+@media (max-width:480px){.panel-toggle span{display:none}.seg button{padding:0 var(--s2)}}
+@media (prefers-reduced-motion:reduce){.panel,.panel.is-open,.scrim,.scrim.is-on,.panel-toggle .strip,.panel-resize::after{transition:none}}
+</style>
+</head>
+<body>
+<div id="dc-root"></div>
+<template id="dc-template">
+<div class="app" onKeyDown="{{onKey}}" style="--bg: {{th.bg}}; --surface: {{th.surface}}; --ink: {{th.ink}}; --ink-2: {{th.ink2}}; --line: {{th.line}}; --accent: {{th.accent}}; --accent-ink: {{th.accentInk}}; --btn-bg: {{th.btnBg}}; --on-btn: {{th.onBtn}}; --warn: {{th.warn}}; --prof: {{th.prof}}; --supp: {{th.supp}}; --danger: {{th.danger}}; --scroll: {{th.scroll}}; --scroll-hover: {{th.scrollHover}}">
+<header class="topbar">
+<button class="text-btn panel-toggle" type="button" aria-label="조작 패널" aria-expanded="{{leftExpanded}}" onClick="{{toggleLeft}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M9 4v16"></path></svg><span>조작</span></button>
+<strong class="brand">배우자는 왜 다 다를까</strong>
+<sc-if value="{{hasModes}}" hint-placeholder-val="{{ true }}">
+<div class="seg" role="group" aria-label="보기 선택">
+<sc-for list="{{modes}}" as="md" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{md.pressed}}" onClick="{{md.pick}}">{{md.label}}</button>
+</sc-for>
+</div>
+</sc-if>
+<button class="text-btn theme-toggle" type="button" aria-label="{{themeLabel}}" title="{{themeLabel}}" onClick="{{toggleTheme}}">
+<sc-if value="{{isDark}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+<sc-if value="{{isLight}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></sc-if>
+</button>
+<button class="text-btn panel-toggle" type="button" aria-label="설명 패널" aria-expanded="{{rightExpanded}}" onClick="{{toggleRight}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M15 4v16"></path></svg><span>설명</span></button>
+</header>
+
+<div class="layout {{layoutCls}}" style="{{layoutStyle}}">
+<aside class="panel panel-left {{leftCls}}" aria-label="조작">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="220" aria-valuemax="480" aria-valuenow="{{leftWNow}}" ref="{{leftHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>조작</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<sc-if value="{{hasToggles}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">보기 옵션</h3>
+<div class="opt">
+<sc-for list="{{toggles}}" as="t" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{t.pressed}}" onClick="{{t.toggle}}"><span class="box" aria-hidden="true"></span>{{t.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<!-- SLOT:left -->
+<sc-if value="{{is.sort}}" hint-placeholder-val="{{ false }}">
+<div>
+<div class="sec">
+<h3 class="sec-title">상동염색체 쌍 수 n</h3>
+<div class="opt" role="group" aria-label="상동염색체 쌍 수">
+<sc-for list="{{nOpts}}" as="o" hint-placeholder-count="4">
+<button class="btn" type="button" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}">{{o.label}}</button>
+</sc-for>
+</div>
+<p class="sub">2n = 2·4·6인 생물과 사람(2n = 46)이에요. n은 염색체 개수가 아니라 쌍의 수예요.</p>
+</div>
+<sc-if value="{{canListAll}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">보기</h3>
+<div class="opt" role="group" aria-label="보기">
+<sc-for list="{{viewOpts}}" as="v" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{v.pressed}}" onClick="{{v.pick}}">{{v.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<div class="sec">
+<h3 class="sec-title">중기 I 배열 바꾸기</h3>
+<div class="opt">
+<sc-for list="{{flipBtns}}" as="b" hint-placeholder-count="3">
+<button class="btn" type="button" onClick="{{b.pick}}">{{b.label}}</button>
+</sc-for>
+<button class="btn" type="button" onClick="{{shuffle}}">무작위로 다시 배열</button>
+</div>
+<p class="sub">쌍마다 엄마 것(빨강)이 위 극으로 갈지 아래 극으로 갈지는 아무도 정하지 않아요. 할 때마다 달라요.</p>
+</div>
+</div>
+</sc-if>
+<!-- /SLOT:left -->
+
+<sc-if value="{{hasSteps}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">단계</h3>
+<div class="steps">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}"><span class="step-num num" style="border-color: {{s.c}}">{{s.num}}</span><span class="step-txt"><b>{{s.title}}</b><span>{{s.who}}</span></span></button>
+</sc-for>
+</div>
+<sc-if value="{{hasStep}}" hint-placeholder-val="{{ false }}">
+<div class="detail" aria-live="polite">{{stepDetail}}</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</aside>
+
+<section class="stage" aria-label="모형 보기">
+<canvas class="canvas {{canvasCls}}" ref="{{canvasRef}}" role="img" aria-label="{{canvasLabel}}"></canvas>
+<div class="view-btns">
+<button class="icon-btn" type="button" aria-label="확대" onClick="{{zoomIn}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="축소" onClick="{{zoomOut}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="시점 처음으로" onClick="{{resetView}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v5h5"></path></svg></button>
+</div>
+
+<sc-if value="{{hasPlayback}}" hint-placeholder-val="{{ false }}">
+<div class="playbar float">
+<button class="play" type="button" aria-label="{{playLabel}}" onClick="{{togglePlay}}">
+<sc-if value="{{isPlaying}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></sc-if>
+<sc-if value="{{notPlaying}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5l12 7-12 7z"></path></svg></sc-if>
+</button>
+<label class="scrub">
+<span>{{fLabel}}</span>
+<input type="range" min="0" max="{{fMax10}}" step="1" value="{{fInt}}" onChange="{{onScrub}}">
+</label>
+<div class="speeds" role="group" aria-label="재생 속도">
+<sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{sp.pressed}}" onClick="{{sp.pick}}">{{sp.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</section>
+
+<aside class="panel panel-right {{rightCls}}" aria-label="설명">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="280" aria-valuemax="720" aria-valuenow="{{rightWNow}}" ref="{{rightHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>설명</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<!-- SLOT:right -->
+<sc-if value="{{is.cross}}" hint-placeholder-val="{{ true }}">
+<div>
+<div class="sec">
+<h3 class="sec-title">숫자로 보는 교차</h3>
+<div class="tiles three">
+<div class="tile"><b class="num">4가닥</b><span>엄마 유래 2 + 아빠 유래 2</span></div>
+<div class="tile"><b class="num">{{xTile.swap}}</b><span>교환하는 가닥(안쪽)</span></div>
+<div class="tile"><b class="num">{{xTile.kinds}}</b><span>배우자 염색체 종류</span></div>
+</div>
+</div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{events}}" as="e" hint-placeholder-count="2">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw" style="background: {{legend.mat}}"></span>엄마 유래 염색분체</div>
+<div><span class="sw" style="background: {{legend.pat}}"></span>아빠 유래 염색분체</div>
+<div><span class="sw" style="background: {{legend.locA}}"></span>A/a 자리(대립유전자)</div>
+<div><span class="sw" style="background: {{legend.locB}}"></span>B/b 자리(다른 유전자)</div>
+<div><span class="sw ball" style="background: {{legend.cen}}"></span>동원체</div>
+</div>
+<p class="sub">교차 1번, 유전자 2개만 그렸어요. 실제로 교차는 확률은 낮지만 염색체 어디서든 일어날 수 있어요.</p>
+<p class="sub">교과서 그림 3.10은 A 쪽 조각이 바뀌지만 결과(Ab, aB)는 같아요.</p>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{is.sort}}" hint-placeholder-val="{{ false }}">
+<div>
+<div class="sec">
+<h3 class="sec-title">숫자로 보는 분배</h3>
+<div class="tiles three">
+<div class="tile"><b class="num">{{sTile.n}}</b><span>상동염색체 쌍 수 n</span></div>
+<div class="tile"><b class="num">{{sTile.kinds}}</b><span>{{sTile.pow}}, 개체 전체의 배우자 종류</span></div>
+<div class="tile"><b class="num">2종</b><span>배열 한 번에서 나오는 배우자</span></div>
+</div>
+</div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 배열</h3>
+<div class="events">
+<sc-for list="{{sortEvents}}" as="e" hint-placeholder-count="2">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">사람과 수정</h3>
+<div class="events">
+<div class="event"><span class="dot" style="background: {{legend.mat}}"></span><span class="num">사람 23쌍: 2²³ = 8,388,608가지(약 840만)예요. 한 사람이 만드는 정자나 난자의 종류예요.</span></div>
+<div class="event"><span class="dot" style="background: {{legend.pat}}"></span><span class="num">수정: 2²³ × 2²³ = 2²³⁺²³ = 2⁴⁶ = 70,368,744,177,664가지(약 70조)예요. 한 부모 쌍의 자녀 조합이에요.</span></div>
+<div class="event"><span class="dot" style="background: {{legend.cen}}"></span><span>70조는 교차와 돌연변이를 뺀 값이에요. 교차까지 넣으면 사실상 무한대예요.</span></div>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw" style="background: {{legend.mat}}"></span>엄마 유래 염색체</div>
+<div><span class="sw" style="background: {{legend.pat}}"></span>아빠 유래 염색체</div>
+</div>
+<p class="sub">교차는 빼고 쌍마다 길이만 다르게 그렸어요.</p>
+</div>
+</div>
+</sc-if>
+<!-- /SLOT:right -->
+
+<div class="sec warn">
+<h3 class="sec-title">꼭 기억해요</h3>
+<sc-for list="{{mistakes}}" as="m" hint-placeholder-count="3">
+<div class="mistake"><b>{{m.title}}</b><span>{{m.text}}</span></div>
+</sc-for>
+</div>
+</div>
+</aside>
+</div>
+<div class="scrim {{scrimCls}}" aria-hidden="true" onClick="{{closePanels}}"></div>
+</div>
+</template>
+<script>
+// Minimal x-dc runtime for opening the canvas component as a plain HTML page.
+// Supports what Main.dc.html uses: {{dotted.path}} holes in text and attributes,
+// event attributes (onClick, onKeyDown, onMouseEnter, onMouseLeave, onChange),
+// callback ref, <sc-if value> and <sc-for list as>.
+const DC_EVENTS = { onclick: 'click', onkeydown: 'keydown', onmouseenter: 'mouseenter', onmouseleave: 'mouseleave', onchange: 'input' };
+const DC_HOLE = /\{\{\s*([\w.$]+)\s*\}\}/g;
+let dcSchedule = () => {};
+
+class DCLogic {
+  constructor(props) { this.props = props || {}; this.state = {}; }
+  setState(u) {
+    this.state = Object.assign({}, this.state, typeof u === 'function' ? u(this.state) : u);
+    dcSchedule();
+  }
+}
+
+function dcGet(scope, path) {
+  let o = scope;
+  for (const k of path.split('.')) { if (o == null) return undefined; o = o[k]; }
+  return o;
+}
+function dcInterp(str, scope) {
+  return str.replace(DC_HOLE, (_, p) => { const v = dcGet(scope, p); return v == null ? '' : String(v); });
+}
+function dcSingle(str) {
+  const m = str.match(/^\s*\{\{\s*([\w.$]+)\s*\}\}\s*$/);
+  return m ? m[1] : null;
+}
+
+// Compiles one node in place; pushes updaters that take the current scope.
+function dcCompile(node, ups) {
+  if (node.nodeType === 3) {
+    if (!node.data.includes('{{')) return;
+    const src = node.data;
+    let last;
+    ups.push((s) => { const v = dcInterp(src, s); if (v !== last) { node.data = v; last = v; } });
+    return;
+  }
+  if (node.nodeType !== 1) return;
+  const tag = node.tagName.toLowerCase();
+  if (tag === 'sc-if' || tag === 'sc-for') { dcBlock(node, tag, ups); return; }
+  for (const a of [...node.attributes]) {
+    const name = a.name, val = a.value;
+    if (name.startsWith('hint-')) { node.removeAttribute(name); continue; }
+    if (!val.includes('{{')) continue;
+    node.removeAttribute(name);
+    if (DC_EVENTS[name]) {
+      const p = dcSingle(val);
+      let cur;
+      node.addEventListener(DC_EVENTS[name], (e) => { const f = dcGet(cur, p); if (typeof f === 'function') f(e); });
+      ups.push((s) => { cur = s; });
+    } else if (name === 'ref') {
+      const p = dcSingle(val);
+      let done = false;
+      ups.push((s) => { if (!done) { done = true; const f = dcGet(s, p); if (typeof f === 'function') f(node); } });
+    } else {
+      let last;
+      ups.push((s) => {
+        const v = dcInterp(val, s);
+        if (v === last) return;
+        last = v;
+        if (name === 'value' && 'value' in node) node.value = v; else node.setAttribute(name, v);
+      });
+    }
+  }
+  for (const c of [...node.childNodes]) dcCompile(c, ups);
+}
+
+function dcBlock(el, tag, ups) {
+  const anchor = document.createComment(tag);
+  el.parentNode.replaceChild(anchor, el);
+  const tpl = document.createDocumentFragment();
+  while (el.firstChild) tpl.appendChild(el.firstChild);
+  const make = () => {
+    const frag = tpl.cloneNode(true), u = [];
+    for (const c of [...frag.childNodes]) dcCompile(c, u);
+    return { frag: frag, nodes: [...frag.childNodes], u: u };
+  };
+  if (tag === 'sc-if') {
+    const p = dcSingle(el.getAttribute('value') || '');
+    let inst = null;
+    ups.push((s) => {
+      const on = !!dcGet(s, p);
+      if (!on) { if (inst) { inst.nodes.forEach((n) => n.remove()); inst = null; } return; }
+      if (!inst) { inst = make(); anchor.parentNode.insertBefore(inst.frag, anchor); }
+      inst.u.forEach((f) => f(s));
+    });
+  } else {
+    const p = dcSingle(el.getAttribute('list') || ''), as = el.getAttribute('as');
+    const insts = [];
+    ups.push((s) => {
+      const list = dcGet(s, p) || [];
+      while (insts.length > list.length) insts.pop().nodes.forEach((n) => n.remove());
+      while (insts.length < list.length) { const i = make(); anchor.parentNode.insertBefore(i.frag, anchor); insts.push(i); }
+      list.forEach((item, k) => { const sc = Object.create(s); sc[as] = item; insts[k].u.forEach((f) => f(sc)); });
+    });
+  }
+}
+
+function mountDC(Component) {
+  const comp = new Component({});
+  const frag = document.getElementById('dc-template').content.cloneNode(true), ups = [];
+  for (const c of [...frag.childNodes]) dcCompile(c, ups);
+  const root = document.getElementById('dc-root');
+  let pending = false;
+  const render = () => { pending = false; const v = comp.renderVals(); ups.forEach((f) => f(v)); };
+  dcSchedule = () => { if (!pending) { pending = true; queueMicrotask(render); } };
+  root.appendChild(frag);
+  render();
+  window.addEventListener('pagehide', () => { if (comp.componentWillUnmount) comp.componentWillUnmount(); });
+}
+class Component extends DCLogic {
+  // ================= 주제 훅: 주제마다 바꾸는 곳은 이 네 메서드뿐이에요 =================
+  // 계약은 bio-interactive/references/scene-api.md에 있어요.
+
+  topic() {
+    const self = this;
+    const crossOn = () => !self.state || self.crossEff(self.state);
+    // 교차 재생의 과정 이름: [시기, 과정]
+    const crossPhase = (f) => {
+      if (f < 2.5) return ['전기 I', '짝짓기'];
+      if (f < 8) {
+        if (!crossOn()) return ['전기 I', '교차 없음'];
+        return ['전기 I', f < 4 ? '절단' : f < 6.5 ? '교환' : '재조합 결과'];
+      }
+      return ['후기 I·II', crossOn() ? '배우자 4종' : '배우자 2종'];
+    };
+    this.crossPhase = crossPhase;
+    return {
+      MODES: [
+        { key: 'cross', label: '교차', cam: { yaw: -0.35, pitch: 0.18, zoom: 1 }, fit: [9.4, 8.2], D: 40,
+          autoSpin: false, rotatable: true,
+          playback: { fmax: 10, rate: 0.8, label: (f) => crossPhase(f).join(' · ') + ' · ' + f.toFixed(1) + ' / 10' },
+          canvasLabel: (f) => {
+            const p = crossPhase(f)[1];
+            if (p === '짝짓기') return '제1감수분열 전기에 엄마 유래 두 가닥(A·B)과 아빠 유래 두 가닥(a·b)이 옆으로 나란히 붙어 4분염색체가 되는 3D 모형이에요.';
+            if (p === '절단') return '4가닥 중 안쪽 두 가닥(엄마 1·아빠 1)이 A와 B 사이 같은 위치에서 잘린 모습이에요.';
+            if (p === '교환') return '잘린 아래 조각(B와 b)이 안쪽 두 가닥 사이에서 서로 자리를 바꿔 옮겨 간 모습이에요.';
+            if (p === '재조합 결과') return '조각이 다시 붙어 4가닥이 AB, Ab, aB, ab가 됐어요. Ab와 aB가 새 조합이에요.';
+            if (p === '교차 없음') return '교차가 없어서 4가닥이 그대로 AB, AB, ab, ab예요.';
+            return crossOn() ? '후기 I·II를 거쳐 4가닥이 하나씩 갈라져 배우자 4개가 AB, Ab, aB, ab를 하나씩 받은 모습이에요.'
+              : '교차 없이 갈라져 배우자 4개가 AB 2개, ab 2개뿐인 모습이에요.';
+          } },
+        { key: 'sort', label: '분배', cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [10.8, 10.6], D: 60,
+          autoSpin: false, rotatable: false, playback: null,
+          canvasLabel: () => {
+            const st = self.state || {}, n = st.sortN || 3;
+            if (n <= 3 && st.sortView === 'all') return '상동염색체 ' + n + '쌍에서 나올 수 있는 배우자 ' + Math.pow(2, n) + '가지를 모두 나열한 그림이에요. 지금 배열에서 나온 두 가지가 강조돼 있어요.';
+            return '중기 I에 상동염색체 ' + n + '쌍이 중기판 위아래로 배열된 그림이에요. 위쪽 염색체는 극 1, 아래쪽은 극 2 쪽 배우자로 가요.';
+          } }
+      ],
+      STEPS: [
+        { mode: 'cross', f: 2.2, phase: '짝짓기', c: '#E5484D', title: '짝짓기(4분염색체)', who: '전기 I · 상동염색체',
+          text: '제1감수분열 전기에 상동염색체가 짝을 지어 4가닥이 옆으로 나란히 붙어요(4분염색체, 2가염색체). 왼쪽 두 가닥은 엄마 유래 자매염색분체(A·B), 오른쪽 두 가닥은 아빠 유래(a·b)예요. 끌어서 돌려 보면 4가닥이 한 줄로 서 있어요.' },
+        { mode: 'cross', f: 3.8, phase: '절단', c: '#D97706', title: '안쪽 두 가닥 절단', who: '엄마 1가닥 · 아빠 1가닥',
+          text: 'DNA 조각을 바꾸려면 먼저 DNA가 잘려야 해요. 안쪽 두 가닥, 즉 엄마 유래 한 가닥과 아빠 유래 한 가닥이 A와 B 사이 같은 위치에서 잘려요(고리 표시). 바깥 두 가닥은 잘리지 않아요.' },
+        { mode: 'cross', f: 6.2, phase: '교환', c: '#3B7BEA', title: '조각 맞바꾸기', who: '교차',
+          text: '잘린 아래 조각이 상대 가닥으로 가서 자리를 바꿔요. 엄마 가닥의 B 조각은 아빠 가닥으로, 아빠 가닥의 b 조각은 엄마 가닥으로 옮겨 갔어요. 이 물리적 교환이 교차예요.' },
+        { mode: 'cross', f: 7.8, phase: '재조합 결과', c: '#2F9E6A', title: '재조합 결과 Ab · aB', who: '재조합',
+          text: '조각이 다시 붙자 4가닥이 AB, Ab, aB, ab가 됐어요. 원래 없던 Ab와 aB가 새로 생겼으니 재조합이에요. 「교차 일어남」을 끄면 AB, AB, ab, ab로 그대로 남아요.' },
+        { mode: 'cross', f: 10, phase: '배우자 4종', c: '#8B5CF6', title: '배우자 4개, 4종류', who: '후기 I · 후기 II',
+          text: '후기 I에 상동염색체가, 후기 II에 자매염색분체가 갈라져 배우자 4개가 한 가닥씩 받아요. 교차가 없으면 AB와 ab 2종류뿐인데, 교차로 4종류가 됐어요. 배우자 4개가 한 가닥씩 받아서, 2개는 그대로이고 2개는 재조합된 가닥을 받아요(교과서 보충).' }
+      ],
+      MISTAKES: {
+        cross: [
+          { title: '교차(원인) → 재조합(결과)', text: '교차는 조각을 맞바꾸는 물리적 교환, 재조합은 그 결과 생긴 새 조합(Ab·aB)이에요. 둘 다 제1감수분열 전기의 일이에요. 재생 바의 「전기 I」 글자를 확인해 보세요.' },
+          { title: '안쪽 두 가닥 ≠ 자매끼리', text: '교환은 안쪽 두 가닥, 엄마 유래 1가닥과 아빠 유래 1가닥 사이에서 일어나요. 자매염색분체끼리는 똑같은 복사본이라 바꿔도 AB는 AB예요. 바깥 두 가닥은 끝까지 그대로예요.' },
+          { title: 'A와 a ≠ A와 B', text: 'A와 a는 같은 자리의 대립유전자, A와 B는 서로 다른 자리의 다른 유전자예요. A·a는 초록 띠, B·b는 보라 띠에 있어요. 그래서 엄마 쪽 염색체는 A·B, 아빠 쪽은 a·b예요.' }
+        ],
+        sort: [
+          { title: '지수 n = 상동염색체 쌍의 수', text: '2ⁿ의 n은 염색체 개수가 아니라 쌍의 수예요. 사람은 46개가 아니라 23쌍이라 2²³이에요. 2n = 4인 생물은 2쌍이라 2² = 4가지예요(2⁴ = 16이 아니에요).' },
+          { title: '세포 하나 ≠ 개체 전체', text: '생식모세포 하나가 감수분열 한 번 하면(교차가 없을 때) 배우자는 많아야 2종류예요(극 1 쪽, 극 2 쪽). 2ⁿ은 한 개체가 여러 번 감수분열해서 만드는 종류예요. 「모든 경우」에서 강조된 두 칸을 보세요.' },
+          { title: '2²³ vs 2⁴⁶', text: '2²³은 한 사람이 만드는 정자나 난자의 종류, 2⁴⁶은 한 부모 쌍의 자녀 조합이에요. 2²³ × 2²³ = 2²³⁺²³, 곱하기는 지수 더하기예요. 약 70조는 교차·돌연변이를 뺀 값이에요.' }
+        ]
+      },
+      TOGGLES: { cross: [['cross', '교차 일어남'], ['labels', '유전자 글자']], sort: [] },
+      PAL: {
+        light: { bg: '#ffffff', labelBg: '#f7f8fa', ink: '#111111', ring: '#111111', blobAlpha: 0.16,
+          mat: '#E5484D', pat: '#3B7BEA', locA: '#8FD9A8', locB: '#C8B0F2', bandInk: '#14161A',
+          cen: '#6B7280', link: '#9AA3B2', newc: '#C2410C', cell: '#8A94A3' },
+        dark: { bg: '#17171c', labelBg: '#212128', ink: '#f2f4f6', ring: '#f2f4f6', blobAlpha: 0.24,
+          mat: '#FF6B6E', pat: '#6EA8FF', locA: '#9BE3B4', locB: '#D5C2F7', bandInk: '#14161A',
+          cen: '#AEB7C4', link: '#6B7484', newc: '#FBBF24', cell: '#AEB7C4' }
+      }
+    };
+  }
+
+  // 교차 단계(2–5)를 고른 동안은 「교차 일어남」이 꺼져 있어도 교차가 일어난 모습으로 그려요(단계 글과 화면을 맞춤)
+  crossEff(st) {
+    return st.cross !== false || this.crossForced(st);
+  }
+  crossForced(st) {
+    return st.cross === false && st.step >= 1 && st.step <= 4;
+  }
+
+  // 교차 장면의 가닥 위치(0: 엄마 바깥, 1: 엄마 안쪽, 2: 아빠 안쪽, 3: 아빠 바깥)
+  crossGeom(f) {
+    const on = this.crossEff(this.state);
+    const pair = this.sm((f - 0.2) / 1.8);
+    const gap = on ? 0.34 * (this.sm((f - 2.7) / 1.0) - this.sm((f - 6.6) / 0.9)) : 0;
+    const ex = on ? this.sm((f - 4.1) / 1.8) : 0;
+    const a1 = this.sm((f - 8.05) / 0.85), a2 = this.sm((f - 9.05) / 0.85);
+    const X0 = [-1.6, -0.6, 0.6, 1.6], XI = [-2.8, -1.8, 1.8, 2.8], XII = [-3.7, -1.25, 1.25, 3.7];
+    const xs = X0.map((x, i) => x + (i < 2 ? -1.6 : 1.6) * (1 - pair) + (XI[i] - x) * a1 + (XII[i] - XI[i]) * a2);
+    // 아래 조각 j가 붙어 있는 가닥(교차가 끝나면 1↔2)
+    const lower = [0, 1, 2, 3].map((j) => {
+      if (j === 1) return { x: xs[1] + (xs[2] - xs[1]) * ex, z: 0.6 * Math.sin(Math.PI * ex), host: ex > 0.5 ? 2 : 1 };
+      if (j === 2) return { x: xs[2] + (xs[1] - xs[2]) * ex, z: -0.6 * Math.sin(Math.PI * ex), host: ex > 0.5 ? 1 : 2 };
+      return { x: xs[j], z: 0, host: j };
+    });
+    const geno = [0, 1, 2, 3].map((i) => {
+      const up = i < 2 ? 'A' : 'a';
+      const seg = lower.findIndex((l) => l.host === i);
+      return up + (seg < 2 ? 'B' : 'b');
+    });
+    return { on: on, pair: pair, gap: gap, ex: ex, a1: a1, a2: a2, xs: xs, lower: lower, geno: geno };
+  }
+
+  buildScene(mode, I, O) {
+    const pal = this.pal(), st = this.state, f = this.sim.f;
+    if (mode === 'cross') {
+      const G = this.crossGeom(f);
+      const yS = 0.3, yT = 2.6 + yS, yC = 1.95 + yS, yA = 0.75 + yS, yX = -0.35 + yS, yB = -1.45 + yS, yBot = -2.6 + yS;
+      const w = 0.36, h = 0.2, bw = 0.44;
+      const col = (i) => (i < 2 ? pal.mat : pal.pat);
+      // 보이지 않는 기준점을 시선 뒤쪽에 두어 깊이 안개를 약하게(앞뒤 가닥 색이 모두 또렷하게)
+      const cy = Math.cos(this.cam.yaw), sy = Math.sin(this.cam.yaw), cp = Math.cos(this.cam.pitch), sp = Math.sin(this.cam.pitch);
+      I.push({ k: 0, p: [8 * sy * cp, -8 * sp, -8 * cy * cp], r: 0.01, c: pal.cen, a: 0 });
+      const rod = (x, y1, y2, z, c, ww) => I.push({ k: 1, p: [x, y1, z], q: [x, y2, z], w: ww || w, c: c, rod: true, flat: true });
+      // 위 조각(동원체 + A/a 자리): 각 가닥에 고정
+      for (let i = 0; i < 4; i++) {
+        const x = G.xs[i], c = col(i);
+        I.push({ k: 0, p: [x, yT, 0], r: w / 2, c: c });
+        rod(x, yT, yA + h, 0, c);
+        rod(x, yA + h, yA - h, 0, pal.locA, bw);
+        if (st.labels) I.push({ k: 3, p: [x, yA, 0], text: i < 2 ? 'A' : 'a', size: 12, c: pal.bandInk });
+        rod(x, yA - h, yX, 0, c);
+        I.push({ k: 0, p: [x, yC, 0], r: 0.25, c: pal.cen });
+      }
+      // 아래 조각(B/b 자리): 교차하면 안쪽 두 조각이 자리를 바꿔요
+      for (let j = 0; j < 4; j++) {
+        const L = G.lower[j], c = col(j), x = L.x, z = L.z, g = (j === 1 || j === 2) ? G.gap : 0;
+        rod(x, yX - g, yB + h - g, z, c);
+        rod(x, yB + h - g, yB - h - g, z, pal.locB, bw);
+        if (st.labels) I.push({ k: 3, p: [x, yB - g, z], text: j < 2 ? 'B' : 'b', size: 12, c: pal.bandInk });
+        rod(x, yB - h - g, yBot - g, z, c);
+        I.push({ k: 0, p: [x, yBot - g, z], r: w / 2, c: c });
+      }
+      // 자매염색분체를 잇는 동원체(후기 II에 갈라져요)
+      const join = 1 - this.sm(G.a2 * 4);
+      if (join > 0.02) {
+        I.push({ k: 1, p: [G.xs[0], yC, 0], q: [G.xs[1], yC, 0], w: 0.22, c: pal.cen, a: join });
+        I.push({ k: 1, p: [G.xs[2], yC, 0], q: [G.xs[3], yC, 0], w: 0.22, c: pal.cen, a: join });
+      }
+      const ph = this.crossPhase(f)[1];
+      if (f < 6.5) {
+        O.push({ p: [(G.xs[0] + G.xs[1]) / 2, yT, 0], text: '엄마 유래', c: pal.mat, dy: -20 });
+        O.push({ p: [(G.xs[2] + G.xs[3]) / 2, yT, 0], text: '아빠 유래', c: pal.pat, dy: -20 });
+      }
+      if (G.on && f >= 2.6 && f < 4.3) {
+        O.push({ t: 'ring', p: [G.xs[1], yX - G.gap / 2, 0], text: '절단' });
+        O.push({ t: 'ring', p: [G.xs[2], yX - G.gap / 2, 0], text: '절단' });
+      }
+      if (ph === '교환') O.push({ p: [0, yBot - G.gap, 0], text: '안쪽 두 가닥끼리 교환', c: pal.newc, dy: 28 });
+      if (f >= 6.5 || (!G.on && f >= 2.5)) {
+        for (let i = 0; i < 4; i++) {
+          const fresh = G.geno[i] === 'Ab' || G.geno[i] === 'aB';
+          O.push({ p: [G.xs[i], yBot - ((i === 1 || i === 2) ? G.gap : 0), 0], text: G.geno[i], c: fresh ? pal.newc : col(i), dy: 22 });
+        }
+        O.push({ p: [0, yBot, 0], text: G.on ? '새 조합: Ab · aB' : '교차 없음: AB · ab뿐', c: G.on ? pal.newc : pal.cen, dy: 52 });
+      }
+      return;
+    }
+
+    // ---------- 분배: 중기 I 배열 ----------
+    const n = st.sortN, flips = st.flips;
+    const lens = (i) => (n <= 3 ? [1.5, 1.1, 0.75][i] : 1.4 - i * 0.04);
+    if (n <= 3 && st.sortView === 'all') {
+      const count = Math.pow(2, n), cols = Math.min(count, 4), rows = Math.ceil(count / cols);
+      const p1 = flips.slice(0, n).map((m) => !m), p2 = flips.slice(0, n).map((m) => m); // true = 아빠 것
+      for (let k = 0; k < count; k++) {
+        const r = Math.floor(k / cols), cIdx = k % cols;
+        const cx = (cIdx - (cols - 1) / 2) * 2.55, cy = ((rows - 1) / 2 - r) * 3.3 + 0.2;
+        const pat = []; for (let j = 0; j < n; j++) pat.push(!!((k >> (n - 1 - j)) & 1));
+        const is1 = pat.every((v, j) => v === p1[j]), is2 = pat.every((v, j) => v === p2[j]);
+        I.push({ k: 5, p: [cx, cy, 0], r: 1.15, c: is1 || is2 ? pal.newc : pal.cell, focus: is1 || is2 });
+        for (let j = 0; j < n; j++) {
+          const x = cx + (j - (n - 1) / 2) * 0.48, L = lens(j) * 0.8;
+          I.push({ k: 1, p: [x, cy + L / 2 + 0.1, 0], q: [x, cy - L / 2 + 0.1, 0], w: 0.22, c: pat[j] ? pal.pat : pal.mat, rod: true });
+        }
+        I.push({ k: 3, p: [cx, cy - 0.85, 0], text: String(k + 1), size: 11, c: pal.ink });
+        if (is1) O.push({ p: [cx, cy + 1.15, 0], text: '지금 극 1', c: pal.newc, dy: -12 });
+        if (is2) O.push({ p: [cx, cy + 1.15, 0], text: '지금 극 2', c: pal.newc, dy: -12 });
+      }
+      return;
+    }
+    const big = n > 3, sp = big ? 0.44 : 2.4, w = big ? 0.1 : 0.2, g = big ? 0.13 : 0.27;
+    const yP = 3.0, yRow = 3.7;
+    const half = 5.0;
+    I.push({ k: 0, p: [0, yP, 0], r: 0.17, c: pal.cen });
+    I.push({ k: 0, p: [0, -yP, 0], r: 0.17, c: pal.cen });
+    for (let x = -half; x < half - 0.05; x += 0.4) I.push({ k: 1, p: [x, 0, 0], q: [x + 0.2, 0, 0], w: 0.04, c: pal.link, flat: true });
+    let rowTop = 0;
+    for (let i = 0; i < n; i++) {
+      const x = (i - (n - 1) / 2) * sp, L = lens(i), matUp = flips[i];
+      [1, -1].forEach((s) => {
+        const isMat = s > 0 ? matUp : !matUp, c = isMat ? pal.mat : pal.pat;
+        const y0 = s * 0.25, y1 = s * (0.25 + L), yc = s * (0.25 + L * 0.3);
+        I.push({ k: 1, p: [0, s * yP, 0], q: [x, yc, 0], w: big ? 0.012 : 0.025, c: pal.link, a: 0.7 });
+        [-1, 1].forEach((d) => I.push({ k: 1, p: [x + d * g / 2, y0, 0], q: [x + d * g / 2, y1, 0], w: w, c: c, rod: true }));
+        I.push({ k: 0, p: [x, yc, 0], r: w * 0.85, c: pal.cen });
+        // 그 극 쪽 배우자가 받는 염색체(염색분체 하나)
+        const Lm = L * 0.45;
+        I.push({ k: 1, p: [x, s * yRow, 0], q: [x, s * (yRow + Lm), 0], w: w, c: c, rod: true });
+        rowTop = Math.max(rowTop, yRow + Lm);
+      });
+    }
+    O.push({ p: [0, rowTop, 0], text: '극 1 쪽 배우자', c: pal.cen, dy: -16 });
+    O.push({ p: [0, -rowTop, 0], text: '극 2 쪽 배우자', c: pal.cen, dy: 16 });
+    O.push({ p: [0, yP, 0], text: '극 1', c: pal.cen, dx: 40 });
+    O.push({ p: [0, -yP, 0], text: '극 2', c: pal.cen, dx: 40 });
+    // 중기판 라벨: 왼쪽 아래 빈자리(염색체·방추사와 겹치지 않게)에 두고 점선까지 짧은 선으로 이어요
+    if (!big) {
+      I.push({ k: 1, p: [-3.2, 0, 0], q: [-3.2, -2.05, 0], w: 0.02, c: pal.cen, a: 0.8 });
+      O.push({ p: [-3.2, -2.35, 0], text: '중기판(가운데 배열)', c: pal.cen });
+    }
+  }
+
+  extraState() {
+    return { cross: true, labels: true, sortN: 3, sortView: 'one', flips: Array.from({ length: 23 }, (_, i) => i % 3 !== 1) };
+  }
+
+  extraVals(st) {
+    const pal = this.pal(), f = st.f;
+    const legend = { mat: pal.mat, pat: pal.pat, locA: pal.locA, locB: pal.locB, cen: pal.cen };
+    // 교차
+    const on = this.crossEff(st);
+    const ph = this.crossPhase(f)[1];
+    const evText = {
+      '짝짓기': ['제1감수분열 전기: 상동염색체가 짝을 지어 4가닥이 나란히 붙어요(4분염색체).', '엄마 유래 2가닥은 A·B, 아빠 유래 2가닥은 a·b를 가져요.'],
+      '절단': ['안쪽 두 가닥(엄마 1·아빠 1)이 A와 B 사이 같은 위치에서 잘려요.', '조각을 바꾸려면 DNA가 먼저 잘려야 해요.'],
+      '교환': ['잘린 아래 조각(B, b)이 상대 가닥으로 옮겨 가요. 이게 교차예요.', '바깥 두 가닥은 그대로예요.'],
+      '재조합 결과': ['조각이 다시 붙어 AB, Ab, aB, ab 4가닥이 됐어요.', '원래 없던 Ab와 aB가 생겼어요. 이게 재조합이에요.'],
+      '교차 없음': ['교차가 없으면 4가닥이 그대로 AB, AB, ab, ab예요.', '「교차 일어남」을 켜면 안쪽 두 가닥이 조각을 바꿔요.'],
+      '배우자 4종': ['후기 I에 상동염색체, 후기 II에 자매염색분체가 갈라져요.', '배우자 4개가 AB, Ab, aB, ab를 하나씩 받아 4종류가 돼요.'],
+      '배우자 2종': ['후기 I에 상동염색체, 후기 II에 자매염색분체가 갈라져요.', '교차가 없으면 배우자 4개가 AB 2개, ab 2개로 2종류뿐이에요.']
+    }[ph];
+    const events = [{ c: ph === '교환' || ph === '재조합 결과' || ph === '배우자 4종' ? pal.newc : pal.mat, text: evText[0] }, { c: pal.pat, text: evText[1] }];
+    if (this.crossForced(st)) events.push({ c: pal.cen, text: '단계를 고른 동안은 교차가 일어난 모습이에요. ▶나 재생 바를 움직이면 「교차 일어남」 설정을 따라요.' });
+    // 분배
+    const n = st.sortN, kinds = Math.pow(2, n);
+    const sup = { 1: '¹', 2: '²', 3: '³', 23: '²³' }[n];
+    const flips = st.flips.slice(0, n);
+    let sortEvents;
+    if (n <= 3) {
+      const up = flips.map((m, i) => (i + 1) + '번 ' + (m ? '엄마' : '아빠')).join(' · ');
+      const dn = flips.map((m, i) => (i + 1) + '번 ' + (m ? '아빠' : '엄마')).join(' · ');
+      sortEvents = [{ c: pal.mat, text: '극 1 쪽 배우자: ' + up }, { c: pal.pat, text: '극 2 쪽 배우자: ' + dn }];
+    } else {
+      const m = flips.filter(Boolean).length;
+      sortEvents = [{ c: pal.mat, text: '극 1 쪽 배우자: 엄마 것 ' + m + '개 + 아빠 것 ' + (23 - m) + '개' }, { c: pal.pat, text: '극 2 쪽 배우자: 엄마 것 ' + (23 - m) + '개 + 아빠 것 ' + m + '개' }];
+    }
+    sortEvents.push({ c: pal.cen, text: '쌍마다 2가지라서 ' + Array.from({ length: Math.min(n, 3) }, () => '2').join(' × ') + (n > 3 ? ' × … (23번)' : '') + ' = ' + kinds.toLocaleString('en-US') + '가지예요.' });
+    const setFlip = (i) => { const a = this.state.flips.slice(); a[i] = !a[i]; this.setState({ flips: a }); };
+    return {
+      legend: legend,
+      xTile: { swap: on ? '2가닥' : '0가닥', kinds: on ? '4종' : '2종' },
+      events: events,
+      sTile: { n: n + '쌍', kinds: kinds.toLocaleString('en-US') + '가지', pow: '2' + sup },
+      sortEvents: sortEvents,
+      nOpts: [1, 2, 3, 23].map((v) => ({ label: v === 23 ? '사람 23쌍' : v + '쌍', pressed: n === v ? 'true' : 'false', pick: () => this.setState({ sortN: v, sortView: v > 3 ? 'one' : this.state.sortView }) })),
+      canListAll: n <= 3,
+      viewOpts: [['one', '한 가지 배열'], ['all', '모든 경우']].map((d) => ({ label: d[1], pressed: st.sortView === d[0] ? 'true' : 'false', pick: () => this.setState({ sortView: d[0] }) })),
+      flipBtns: n <= 3 ? flips.map((_, i) => ({ label: (i + 1) + '번 쌍 뒤집기', pick: () => setFlip(i) })) : [],
+      shuffle: () => this.setState({ flips: this.state.flips.map(() => Math.random() < 0.5) })
+    };
+  }
+
+  // ================= 공통 셸: 아래는 주제와 무관해요. 고치지 않아요 =================
+  constructor(...args) {
+    super(...args);
+    let reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    let narrow = false;
+    try { narrow = window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) {}
+    let saved = null;
+    try { saved = window.localStorage.getItem('od-theme'); } catch (e) {}
+    const PANEL_W = { left: { min: 220, max: 480 }, right: { min: 280, max: 720 } };
+    let widths = {};
+    try { widths = JSON.parse(window.localStorage.getItem('interactive-panel-w')) || {}; } catch (e) {}
+    const okW = (side) => { const v = widths[side]; return typeof v === 'number' && v >= PANEL_W[side].min && v <= PANEL_W[side].max ? v : null; };
+    this.T = this.topic();
+    this.state = Object.assign({
+      mode: this.T.MODES[0].key, f: 0, playing: false, speed: 1, step: -1, spin: !reduce,
+      theme: (saved === 'light' || saved === 'dark') ? saved : (this.systemDark() ? 'dark' : 'light'),
+      // leftOpen/rightOpen: docked panels on wide screens; drawer: the one open drawer on narrow screens
+      leftOpen: true, rightOpen: true, drawer: null, narrow: narrow,
+      // leftW/rightW: user-set docked widths in px (null = default); resizing: a handle is being dragged
+      leftW: okW('left'), rightW: okW('right'), resizing: false
+    }, this.extraState());
+    this.reduceMotion = reduce;
+    this.K = {
+      PANEL_W: PANEL_W, PANEL_W_KEY: 'interactive-panel-w', PANEL_DEFAULT: { left: 320, right: 400 },
+      THEMES: {
+        light: { bg: '#ffffff', surface: '#f7f8fa', ink: '#111111', ink2: '#6b7280', line: '#d9dee7', accent: '#1677ff', accentInk: '#1b64da', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#b54708', prof: '#6941c6', supp: '#067647', danger: '#d92d20', scroll: '#c9d0db', scrollHover: '#9aa3b2' },
+        dark: { bg: '#17171c', surface: '#212128', ink: '#f2f4f6', ink2: '#a3abb8', line: '#34353d', accent: '#3182f6', accentInk: '#6ea4ff', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#f5a15c', prof: '#b69cff', supp: '#5fd39a', danger: '#ff6b61', scroll: '#3f414b', scrollHover: '#5b5e6a' }
+      }
+    };
+    this.cam = Object.assign({}, this.modeDef().cam);
+    this.sim = { f: 0, cx: 0 };
+    this.pointer = { x: -1, y: -1, inside: false, drag: false, lx: 0, ly: 0 };
+    this.colorCache = {};
+    this._tick = (t) => this.tick(t);
+    this._canvasRef = (el) => this.attachCanvas(el);
+    this.handles = {};
+    this._handleRefL = (el) => this.attachHandle('left', el);
+    this._handleRefR = (el) => this.attachHandle('right', el);
+  }
+
+  componentWillUnmount() {
+    this.attachCanvas(null);
+    this.attachHandle('left', null);
+    this.attachHandle('right', null);
+  }
+
+  modeDef(key) {
+    const k = key || this.state.mode;
+    return this.T.MODES.find((m) => m.key === k) || this.T.MODES[0];
+  }
+  systemDark() {
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; }
+  }
+  isNarrow() {
+    try { return window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) { return false; }
+  }
+  syncBreakpoint() { this.setState({ narrow: this.isNarrow(), drawer: null }); }
+  // In drawer mode only one panel is open at a time.
+  togglePanel(side) {
+    const st = this.state;
+    if (st.narrow) this.setState({ drawer: st.drawer === side ? null : side });
+    else if (side === 'left') this.setState({ leftOpen: !st.leftOpen });
+    else this.setState({ rightOpen: !st.rightOpen });
+  }
+  // Docked panel width: the canvas column always keeps at least 400px.
+  panelMax(side) {
+    const lim = this.K.PANEL_W[side], other = side === 'left' ? 'right' : 'left', st = this.state;
+    const h = this.handles[other];
+    const otherOpen = other === 'left' ? st.leftOpen : st.rightOpen;
+    const otherW = !otherOpen ? 0 : h ? h.el.parentElement.getBoundingClientRect().width
+      : (st[other + 'W'] || this.K.PANEL_DEFAULT[other]);
+    return Math.max(lim.min, Math.min(lim.max, (window.innerWidth || 1440) - otherW - 400));
+  }
+  setPanelWidth(side, px, save) {
+    const v = Math.round(Math.min(Math.max(px, this.K.PANEL_W[side].min), this.panelMax(side)));
+    this.setState({ [side + 'W']: v });
+    if (save) this.savePanelWidths(side, v);
+  }
+  resetPanelWidth(side) {
+    this.setState({ [side + 'W']: null });
+    this.savePanelWidths(side, null);
+  }
+  savePanelWidths(side, v) {
+    try {
+      const key = this.K.PANEL_W_KEY;
+      let w = {};
+      try { w = JSON.parse(window.localStorage.getItem(key)) || {}; } catch (e) {}
+      if (v == null) delete w[side]; else w[side] = v;
+      window.localStorage.setItem(key, JSON.stringify(w));
+    } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ }
+  }
+  // Re-fit user widths when the window shrinks (not saved).
+  refitPanels() {
+    ['left', 'right'].forEach((side) => {
+      const w = this.state[side + 'W'];
+      if (w != null && w > this.panelMax(side)) this.setPanelWidth(side, w, false);
+    });
+  }
+  attachHandle(side, el) {
+    const old = this.handles[side];
+    if (old && old.el === el) return;
+    if (old) {
+      Object.keys(old.on).forEach((ev) => old.el.removeEventListener(ev, old.on[ev]));
+      delete this.handles[side];
+      if (!Object.keys(this.handles).length) window.removeEventListener('resize', this._refit);
+    }
+    if (!el) return;
+    const dir = side === 'left' ? 1 : -1;
+    const width = () => el.parentElement.getBoundingClientRect().width;
+    let drag = null;
+    const on = {
+      pointerdown: (e) => {
+        if (this.state.narrow || e.button !== 0) return;
+        e.preventDefault();
+        drag = { x: e.clientX, w: width() };
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        this.setState({ resizing: true });
+      },
+      pointermove: (e) => { if (drag) this.setPanelWidth(side, drag.w + dir * (e.clientX - drag.x), false); },
+      pointerup: () => {
+        if (!drag) return;
+        drag = null;
+        this.setState({ resizing: false });
+        this.setPanelWidth(side, width(), true);
+      },
+      dblclick: () => this.resetPanelWidth(side),
+      keydown: (e) => {
+        const step = e.shiftKey ? 64 : 16;
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          e.preventDefault(); e.stopPropagation();
+          this.setPanelWidth(side, width() + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+        } else if (e.key === 'Home') { e.preventDefault(); e.stopPropagation(); this.resetPanelWidth(side); }
+      }
+    };
+    on.pointercancel = on.pointerup;
+    Object.keys(on).forEach((ev) => el.addEventListener(ev, on[ev]));
+    if (!Object.keys(this.handles).length) {
+      this._refit = this._refit || (() => this.refitPanels());
+      window.addEventListener('resize', this._refit);
+    }
+    this.handles[side] = { el: el, on: on };
+  }
+  textTone(hex) { return this.state.theme === 'light' ? this.mix(hex, '#000000', 0.4) : hex; }
+  pal() { return this.T.PAL[this.state.theme] || this.T.PAL.dark; }
+  setTheme(t) {
+    this.setState({ theme: t });
+    try {
+      if ((t === 'dark') === this.systemDark()) window.localStorage.removeItem('od-theme');
+      else window.localStorage.setItem('od-theme', t);
+    } catch (e) {}
+  }
+
+  attachCanvas(el) {
+    if (this.canvas === el) return;
+    if (this.canvas) {
+      const c = this.canvas;
+      c.removeEventListener('pointerdown', this._pd);
+      c.removeEventListener('pointermove', this._pm);
+      c.removeEventListener('pointerup', this._pu);
+      c.removeEventListener('pointercancel', this._pu);
+      c.removeEventListener('pointerleave', this._pl);
+      cancelAnimationFrame(this.raf);
+      try { this._mq.removeEventListener('change', this._mqH); } catch (err) {}
+    }
+    this.canvas = el || null;
+    if (!el) return;
+    this.ctx = el.getContext('2d');
+    const p = this.pointer;
+    this._pd = (e) => {
+      if (!this.modeDef().rotatable) return;
+      p.drag = true; p.lx = e.clientX; p.ly = e.clientY;
+      try { el.setPointerCapture(e.pointerId); } catch (err) {}
+      el.style.cursor = 'grabbing';
+    };
+    this._pm = (e) => {
+      const r = el.getBoundingClientRect();
+      p.x = e.clientX - r.left; p.y = e.clientY - r.top; p.inside = true;
+      if (p.drag && this.modeDef().rotatable) {
+        this.cam.yaw += (e.clientX - p.lx) * 0.008;
+        this.cam.pitch = Math.max(-1.45, Math.min(1.45, this.cam.pitch + (e.clientY - p.ly) * 0.008));
+        p.lx = e.clientX; p.ly = e.clientY;
+      }
+    };
+    this._pu = () => { p.drag = false; el.style.cursor = ''; };
+    this._pl = () => { p.inside = false; };
+    el.addEventListener('pointerdown', this._pd);
+    el.addEventListener('pointermove', this._pm);
+    el.addEventListener('pointerup', this._pu);
+    el.addEventListener('pointercancel', this._pu);
+    el.addEventListener('pointerleave', this._pl);
+    try {
+      this._mq = window.matchMedia('(max-width: 1023.98px)');
+      this._mqH = () => this.syncBreakpoint();
+      this._mq.addEventListener('change', this._mqH);
+    } catch (err) {}
+    this.last = 0;
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  tick(t) {
+    if (!this.canvas) return;
+    const dt = this.last ? Math.min(0.05, (t - this.last) / 1000) : 0;
+    this.last = t;
+    const st = this.state, m = this.modeDef(), pb = m.playback;
+    if (m.autoSpin && st.spin && !this.pointer.drag) this.cam.yaw += dt * 0.3;
+    if (pb && st.playing) {
+      this.sim.f = Math.min(pb.fmax, this.sim.f + dt * pb.rate * st.speed);
+      if (this.sim.f >= pb.fmax) this.setState({ playing: false, f: this.sim.f });
+      else if (t - (this.lastPush || 0) > 120) { this.lastPush = t; this.setState({ f: this.sim.f }); }
+    }
+    // a broken scene keeps the page alive but is reported once for the browser check
+    try { this.draw(dt, t); } catch (err) { if (!this.drawErr) { this.drawErr = true; console.error(err); } }
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  // ---------- math helpers (장면에서 써도 돼요) ----------
+  lerp(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+  sm(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+  rgb(hex) { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  mix(hex, to, amt) {
+    const a = this.rgb(hex), b = this.rgb(to);
+    return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * amt) + ',' + Math.round(a[1] + (b[1] - a[1]) * amt) + ',' + Math.round(a[2] + (b[2] - a[2]) * amt) + ')';
+  }
+  rgba(hex, al) { const a = this.rgb(hex); return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + al + ')'; }
+  shades(hex) {
+    let s = this.colorCache[hex];
+    if (!s) { s = { hi: this.mix(hex, '#FFFFFF', 0.55), mid: hex, lo: this.mix(hex, '#000000', 0.55) }; this.colorCache[hex] = s; }
+    return s;
+  }
+  proj(p, V) {
+    const x = p[0] - V.cx, y = p[1], z = p[2];
+    const x1 = x * V.cy + z * V.sy, z1 = -x * V.sy + z * V.cy;
+    const y2 = y * V.cp - z1 * V.sp, z2 = y * V.sp + z1 * V.cp;
+    const s = V.F / Math.max(2, V.D - z2);
+    return [V.ox + x1 * s, V.oy - y2 * s, z2, s];
+  }
+
+  // ---------- drawing ----------
+  draw(dt, now) {
+    const el = this.canvas, ctx = this.ctx, st = this.state, m = this.modeDef();
+    const dpr = window.devicePixelRatio || 1;
+    const W = el.clientWidth, H = el.clientHeight;
+    if (!W || !H) return;
+    if (el.width !== Math.round(W * dpr) || el.height !== Math.round(H * dpr)) { el.width = Math.round(W * dpr); el.height = Math.round(H * dpr); }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const pal = this.pal();
+    ctx.fillStyle = pal.bg; ctx.fillRect(0, 0, W, H);
+
+    const I = [], O = [];
+    this.buildScene(st.mode, I, O);
+    const scale = Math.min(W / m.fit[0], H / m.fit[1]), D = m.D, z = this.cam.zoom;
+    const V = {
+      cx: this.sim.cx, cy: Math.cos(this.cam.yaw), sy: Math.sin(this.cam.yaw), cp: Math.cos(this.cam.pitch), sp: Math.sin(this.cam.pitch),
+      F: scale * z * D, D: D, ox: W / 2, oy: H / 2 - (m.playback ? 20 : 0)
+    };
+    let zmin = Infinity, zmax = -Infinity;
+    for (const it of I) {
+      it.A = this.proj(it.p, V);
+      if (it.q) { it.B = this.proj(it.q, V); it.z = (it.A[2] + it.B[2]) / 2; } else it.z = it.A[2];
+      if (it.z < zmin) zmin = it.z;
+      if (it.z > zmax) zmax = it.z;
+    }
+    I.sort((a, b) => a.z - b.z);
+    // depth fog; a flat scene (all items at one depth) is drawn without it
+    const span = zmax - zmin;
+    for (const it of I) {
+      const fog = span < 0.01 ? 1 : 0.42 + 0.58 * ((it.z - zmin) / span);
+      ctx.globalAlpha = Math.max(0, (it.a == null ? 1 : it.a) * fog);
+      if (ctx.globalAlpha < 0.01) continue;
+      const x = it.A[0], y = it.A[1], s = it.A[3];
+      if (it.k === 0) {
+        const R = it.r * s;
+        if (R < 0.4) continue;
+        if (it.flat) { ctx.fillStyle = it.c; ctx.beginPath(); ctx.arc(x, y, Math.max(1.3, R), 0, 6.2832); ctx.fill(); }
+        else {
+          const sh = this.shades(it.c);
+          const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+          g.addColorStop(0, sh.hi); g.addColorStop(0.5, sh.mid); g.addColorStop(1, sh.lo);
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        }
+      } else if (it.k === 1) {
+        const lw = Math.max(1, it.w * (s + it.B[3]) / 2);
+        ctx.lineCap = it.flat ? 'butt' : 'round';
+        if (it.rod) {
+          ctx.strokeStyle = this.shades(it.c).lo; ctx.lineWidth = lw + 2;
+          ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+        }
+        ctx.strokeStyle = it.c; ctx.lineWidth = lw;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+      } else if (it.k === 3) {
+        const fs = Math.max(8, Math.min(14, it.size * s / (scale * z) * 1.05));
+        ctx.font = '700 ' + fs + 'px "Pretendard", system-ui, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = it.c; ctx.fillText(it.text, x, y + 0.5);
+      } else if (it.k === 4) {
+        const ang = Math.atan2(it.B[1] - y, it.B[0] - x), mx = (x + it.B[0]) / 2, my = (y + it.B[1]) / 2, r = 6;
+        ctx.fillStyle = it.c; ctx.beginPath();
+        ctx.moveTo(mx + Math.cos(ang) * r, my + Math.sin(ang) * r);
+        ctx.lineTo(mx + Math.cos(ang + 2.5) * r, my + Math.sin(ang + 2.5) * r);
+        ctx.lineTo(mx + Math.cos(ang - 2.5) * r, my + Math.sin(ang - 2.5) * r);
+        ctx.closePath(); ctx.fill();
+      } else if (it.k === 5) {
+        // lit translucent sphere, highlight up-left like the solid spheres
+        const R = it.r * s, ba = pal.blobAlpha == null ? 0.3 : pal.blobAlpha;
+        const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+        g.addColorStop(0, 'rgba(255,255,255,0.55)'); g.addColorStop(0.3, this.rgba(it.c, Math.min(1, ba + 0.15))); g.addColorStop(1, this.rgba(it.c, 0.18));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        ctx.strokeStyle = it.c; ctx.lineWidth = it.focus ? 3 : 1.5; ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+    for (const o of O) this.drawOverlay(o, V, now);
+  }
+
+  drawOverlay(o, V, now) {
+    const ctx = this.ctx, A = this.proj(o.p, V), pal = this.pal();
+    if (o.t === 'ring') {
+      const r = Math.max(6, 0.32 * A[3]) * (1 + (this.reduceMotion ? 0 : 0.15 * Math.sin((now || 0) / 160)));
+      ctx.globalAlpha = 1; ctx.strokeStyle = pal.ring; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(A[0], A[1], r, 0, 6.2832); ctx.stroke();
+      ctx.font = '600 11px "Pretendard", system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = pal.ring; ctx.fillText(o.text, A[0], A[1] + r + 10);
+      return;
+    }
+    const size = o.size || 12, x = A[0] + (o.dx || 0), y = A[1] + (o.dy || 0);
+    ctx.font = '600 ' + size + 'px "Pretendard", system-ui, sans-serif';
+    const tw = ctx.measureText(o.text).width, w = tw + 14, h = size + 10;
+    ctx.globalAlpha = o.a == null ? 1 : o.a;
+    if (o.lead) {
+      ctx.strokeStyle = this.rgba(o.c, 0.6); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(x, y); ctx.stroke();
+    }
+    ctx.fillStyle = pal.labelBg;
+    ctx.strokeStyle = this.rgba(o.c, 0.55); ctx.lineWidth = 1;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x - w / 2, y - h / 2, w, h, 6); else ctx.rect(x - w / 2, y - h / 2, w, h);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = pal.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(o.text, x, y + 0.5);
+    ctx.globalAlpha = 1;
+  }
+
+  setMode(mode) {
+    this.cam = Object.assign({}, this.modeDef(mode).cam);
+    this.sim.f = 0;
+    this.pointer.drag = false;
+    this.setState({ mode: mode, f: 0, playing: false, step: -1 });
+  }
+
+  pickStep(i) {
+    const s = (this.T.STEPS || [])[i];
+    if (!s) return;
+    if (s.mode !== this.state.mode) this.setMode(s.mode);
+    if (s.f != null) this.sim.f = s.f;
+    this.setState({ f: this.sim.f, playing: false, step: i });
+  }
+
+  renderVals() {
+    const st = this.state, T = this.T, m = this.modeDef(), pb = m.playback;
+    const tg = T.TOGGLES ? (Array.isArray(T.TOGGLES) ? T.TOGGLES : (T.TOGGLES[st.mode] || [])) : [];
+    const togDefs = tg.concat(m.autoSpin ? [['spin', '자동 회전']] : []);
+    const toggles = togDefs.map((d) => ({
+      label: d[1], pressed: st[d[0]] ? 'true' : 'false',
+      toggle: () => { const o = {}; o[d[0]] = !st[d[0]]; this.setState(o); }
+    }));
+    const STEPS = T.STEPS || [];
+    const steps = STEPS.map((s, i) => ({ s: s, i: i })).filter((x) => x.s.mode === st.mode).map((x, k) => ({
+      num: k + 1, title: x.s.title, who: x.s.who, c: x.s.c, pressed: st.step === x.i ? 'true' : 'false',
+      pick: () => this.pickStep(x.i)
+    }));
+    const speeds = [0.5, 1, 2].map((v) => ({
+      label: v + '×', pressed: st.speed === v ? 'true' : 'false',
+      pick: () => this.setState({ speed: v })
+    }));
+    const is = {};
+    T.MODES.forEach((d) => { is[d.key] = d.key === st.mode; });
+    const f = st.f;
+    const isDark = st.theme === 'dark';
+    const leftOn = st.narrow ? st.drawer === 'left' : st.leftOpen, rightOn = st.narrow ? st.drawer === 'right' : st.rightOpen;
+    return Object.assign({
+      th: this.K.THEMES[st.theme], isDark: isDark, isLight: !isDark,
+      themeLabel: isDark ? '라이트 모드로 전환' : '다크 모드로 전환',
+      toggleTheme: () => this.setTheme(isDark ? 'light' : 'dark'),
+      canvasRef: this._canvasRef, canvasCls: m.rotatable ? '' : 'is-fixed',
+      hasModes: T.MODES.length > 1, is: is,
+      modes: T.MODES.map((d) => ({ label: d.label, pressed: d.key === st.mode ? 'true' : 'false', pick: () => { if (d.key !== this.state.mode) this.setMode(d.key); } })),
+      leftCls: leftOn ? 'is-open' : '', rightCls: rightOn ? 'is-open' : '',
+      leftExpanded: leftOn ? 'true' : 'false', rightExpanded: rightOn ? 'true' : 'false',
+      scrimCls: (st.narrow && st.drawer) ? 'is-on' : '',
+      toggleLeft: () => this.togglePanel('left'),
+      toggleRight: () => this.togglePanel('right'),
+      closePanels: () => this.setState({ drawer: null }),
+      layoutStyle: ((st.leftW ? '--pl-user: ' + st.leftW + 'px; ' : '') + (st.rightW ? '--pr-user: ' + st.rightW + 'px;' : '')).trim(),
+      layoutCls: st.resizing ? 'is-resizing' : '',
+      leftWNow: st.leftW ? String(st.leftW) : '', rightWNow: st.rightW ? String(st.rightW) : '',
+      leftHandleRef: this._handleRefL, rightHandleRef: this._handleRefR,
+      onKey: (e) => { if (e.key === 'Escape' && this.state.narrow && this.state.drawer) this.setState({ drawer: null }); },
+      hasToggles: toggles.length > 0, toggles: toggles,
+      hasSteps: steps.length > 0, steps: steps,
+      hasStep: st.step >= 0 && st.step < STEPS.length, stepDetail: st.step >= 0 && STEPS[st.step] ? STEPS[st.step].text : '',
+      mistakes: (T.MISTAKES && T.MISTAKES[st.mode]) || [],
+      canvasLabel: m.canvasLabel(f),
+      zoomIn: () => { this.cam.zoom = Math.min(3, this.cam.zoom * 1.2); },
+      zoomOut: () => { this.cam.zoom = Math.max(0.5, this.cam.zoom / 1.2); },
+      resetView: () => { this.cam = Object.assign({}, m.cam); },
+      hasPlayback: !!pb, isPlaying: st.playing, notPlaying: !st.playing, playLabel: st.playing ? '일시정지' : '재생',
+      togglePlay: () => {
+        if (!pb) return;
+        if (!st.playing && this.sim.f >= pb.fmax) this.sim.f = 0;
+        this.setState({ playing: !st.playing, step: -1, f: this.sim.f });
+      },
+      fInt: Math.round(f * 10), fLabel: pb ? pb.label(f) : '', fMax10: pb ? Math.round(pb.fmax * 10) : 0,
+      onScrub: (e) => { const v = Number(e.target.value) / 10; this.sim.f = v; this.setState({ f: v, playing: false, step: -1 }); },
+      speeds: speeds
+    }, this.extraVals(st));
+  }
+}
+mountDC(Component);
+</script>
+</body>
+</html>
