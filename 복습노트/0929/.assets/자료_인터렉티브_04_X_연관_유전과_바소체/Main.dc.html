@@ -1,0 +1,1102 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>X 연관 유전과 바소체</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+.app{--radius:8px;--tap:48px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--dur:220ms;--dur-exit:150ms;--ease-out:cubic-bezier(.2,.8,.2,1);--scrim:rgba(0,0,0,.4);
+  height:100vh;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;box-sizing:border-box;
+  background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;font-size:16px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.app *,.app *::before,.app *::after{box-sizing:border-box}
+.app button{font-family:inherit;color:inherit}
+.app :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.num{font-variant-numeric:tabular-nums}
+
+.topbar{display:flex;align-items:center;gap:var(--s2);min-height:56px;padding:var(--s2) var(--s3);background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:17px;font-weight:700;white-space:nowrap}
+.text-btn{flex:none;min-height:44px;min-width:44px;padding:0 var(--s3);border:0;border-radius:var(--radius);background:transparent;color:var(--ink);font:600 14px/1 'Pretendard',system-ui,sans-serif;cursor:pointer}
+.panel-toggle{display:inline-flex;align-items:center;gap:var(--s1);padding:0 var(--s2)}
+.panel-toggle svg,.theme-toggle svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.panel-toggle .strip{fill:transparent;stroke:none;transition:fill 150ms ease-out}
+.panel-toggle[aria-expanded="true"]{color:var(--accent-ink)}
+.panel-toggle[aria-expanded="true"] .strip{fill:currentColor}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;padding:0}
+.seg{flex:none;display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.seg button{min-height:40px;padding:0 var(--s3);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+.layout{display:grid;grid-template-columns:auto minmax(320px,1fr) auto;min-height:0}
+.panel{position:relative;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--bg);color:var(--ink)}
+.panel-left{grid-column:1;width:clamp(260px,20vw,320px);border-right:1px solid var(--line)}
+.panel-right{grid-column:3;width:clamp(320px,24vw,400px);border-left:1px solid var(--line)}
+.panel-inner{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--s4) var(--s4) var(--s6)}
+.panel-inner::-webkit-scrollbar{width:8px}
+.panel-inner::-webkit-scrollbar-track{background:transparent}
+.panel-inner::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:8px;border:2px solid var(--bg)}
+.panel-inner::-webkit-scrollbar-thumb:hover{background:var(--scroll-hover)}
+@supports (scrollbar-color:auto){.panel-inner{scrollbar-width:thin;scrollbar-color:var(--scroll) transparent}}
+.panel-head{display:flex;align-items:center;gap:var(--s2);min-height:44px;margin-bottom:var(--s2)}
+.panel-head h2{flex:1 1 0;min-width:0;margin:0;font-size:22px;line-height:1.4}
+.stage{grid-column:2;position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--bg)}
+.scrim{display:none}
+.panel-resize{display:none}
+
+.sec{margin-top:var(--s5);padding-top:var(--s5);border-top:1px solid var(--line)}
+.panel-head + .sec,.panel-head + div > .sec:first-child{margin-top:0;padding-top:0;border-top:0}
+.sec-title{display:block;margin:0 0 var(--s3);font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-0.01em}
+.sub{margin:var(--s3) 0 0;font-size:14px;line-height:1.6;color:var(--ink-2)}
+
+.opt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.btn{display:flex;align-items:center;gap:var(--s2);width:100%;min-height:var(--tap);padding:0 var(--s3);border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font-size:14px;font-weight:600;line-height:1.3;text-align:left;cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.btn .box{flex:none;width:12px;height:12px;border-radius:3px;border:1.5px solid currentColor}
+.btn[aria-pressed="true"] .box{background:currentColor}
+.steps{display:flex;flex-direction:column;gap:var(--s2)}
+.steps .btn{padding:var(--s2) var(--s3);gap:var(--s3)}
+.step-num{flex:none;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid;font-size:12px;font-weight:700;color:var(--ink)}
+.step-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.step-txt b{font-size:15px;font-weight:700}
+.step-txt span{font-size:13px;font-weight:500;color:var(--ink-2)}
+.detail{margin-top:var(--s3);padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+
+
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.tiles.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tile{padding:var(--s3);border-radius:var(--radius);background:var(--surface)}
+.tile b{display:block;font-size:20px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}
+.tile span{display:block;font-size:13px;line-height:1.4;color:var(--ink-2)}
+.events{display:flex;flex-direction:column;gap:var(--s2)}
+.event{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.6}
+.dot{flex:none;width:10px;height:10px;margin-top:7px;border-radius:50%}
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2) var(--s3);font-size:13px;color:var(--ink-2)}
+.legend div{display:flex;align-items:center;gap:var(--s2)}
+.sw{flex:none;width:16px;height:6px;border-radius:3px}
+.sw.ball{width:12px;height:12px;border-radius:50%}
+.sec.warn{border-top:0;padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+.warn .sec-title{color:var(--warn);font-size:17px}
+.mistake{margin-top:var(--s3)}
+.mistake b{display:block;font-weight:700}
+.mistake span{color:var(--ink-2)}
+
+.canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.canvas.is-fixed{cursor:default}
+.view-btns{position:absolute;top:var(--s3);right:var(--s3);display:flex;gap:6px}
+.icon-btn{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);cursor:pointer}
+.icon-btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.icon-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.float{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius)}
+.hover-card{position:absolute;left:var(--s3);bottom:var(--s3);display:flex;flex-direction:column;gap:2px;padding:var(--s3) var(--s4);pointer-events:none}
+.hover-card .k{font-size:13px;color:var(--ink-2)}
+.hover-card .v{font-size:18px;font-weight:700}
+.playbar{position:absolute;left:var(--s3);right:var(--s3);bottom:var(--s3);display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3)}
+.play{flex:none;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--radius);background:var(--btn-bg);color:var(--on-btn) !important;cursor:pointer}
+.play svg{width:18px;height:18px;fill:currentColor}
+.scrub{flex:1 1 200px;min-width:160px;display:flex;flex-direction:column;gap:2px}
+.scrub span{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.scrub input{width:100%;height:24px;margin:0;accent-color:var(--accent)}
+.speeds{display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.speeds button{min-width:48px;height:40px;padding:0 var(--s2);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
+.speeds button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+@media (hover:hover){.btn:hover,.icon-btn:hover{background:var(--surface)}.text-btn:hover{background:var(--surface)}}
+@media (min-width:1024px){
+  .panel-head{display:none}
+  .layout{--pl:var(--pl-user,clamp(260px,20vw,320px));--pr:var(--pr-user,clamp(320px,24vw,400px))}
+  .panel{width:0;border-width:0;visibility:hidden;transition:width var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left.is-open{width:var(--pl)}
+  .panel-right.is-open{width:var(--pr)}
+  .panel.is-open{visibility:visible;border-width:1px;transition:width var(--dur) var(--ease-out)}
+  .panel-left .panel-inner{width:var(--pl)}
+  .panel-right .panel-inner{width:var(--pr);align-self:flex-end}
+  .layout.is-resizing .panel{transition:none}
+  .layout.is-resizing{cursor:col-resize;user-select:none}
+  .panel-resize{display:block;position:absolute;top:0;bottom:0;z-index:2;width:12px;padding:0;border:0;background:transparent;cursor:col-resize;touch-action:none}
+  .panel-left .panel-resize{right:0}
+  .panel-right .panel-resize{left:0}
+  .panel-resize::after{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--accent);opacity:0;transition:opacity 150ms ease-out}
+  .panel-left .panel-resize::after{right:0}
+  .panel-right .panel-resize::after{left:0}
+  .panel-resize:focus-visible{outline:none}
+  .panel-resize:focus-visible::after,.is-resizing .panel-resize:active::after{opacity:1}
+  @media (hover:hover){.panel-resize:hover::after{opacity:1}}
+}
+@media (max-width: 1023.98px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .stage{grid-column:1}
+  .panel{position:fixed;top:0;bottom:0;z-index:40;visibility:hidden;transition:transform var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left{left:0;width:min(304px,88vw);transform:translateX(-100%)}
+  .panel-right{right:0;width:min(360px,88vw);transform:translateX(100%)}
+  .panel.is-open{visibility:visible;transform:none;transition:transform var(--dur) var(--ease-out)}
+  .panel-inner{padding-top:calc(var(--s3) + env(safe-area-inset-top));padding-bottom:calc(var(--s6) + env(safe-area-inset-bottom))}
+  .scrim{display:block;position:fixed;inset:0;z-index:35;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .scrim.is-on{opacity:1;visibility:visible;transition:opacity var(--dur) var(--ease-out)}
+}
+@media (max-width:640px){.brand{display:none}.topbar{justify-content:space-between}}
+@media (max-width:480px){.panel-toggle span{display:none}.seg button{padding:0 var(--s2)}}
+@media (prefers-reduced-motion:reduce){.panel,.panel.is-open,.scrim,.scrim.is-on,.panel-toggle .strip,.panel-resize::after{transition:none}}
+</style>
+</helmet>
+<div class="app" onKeyDown="{{onKey}}" style="--bg: {{th.bg}}; --surface: {{th.surface}}; --ink: {{th.ink}}; --ink-2: {{th.ink2}}; --line: {{th.line}}; --accent: {{th.accent}}; --accent-ink: {{th.accentInk}}; --btn-bg: {{th.btnBg}}; --on-btn: {{th.onBtn}}; --warn: {{th.warn}}; --prof: {{th.prof}}; --supp: {{th.supp}}; --danger: {{th.danger}}; --scroll: {{th.scroll}}; --scroll-hover: {{th.scrollHover}}">
+<header class="topbar">
+<button class="text-btn panel-toggle" type="button" aria-label="조작 패널" aria-expanded="{{leftExpanded}}" onClick="{{toggleLeft}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M9 4v16"></path></svg><span>조작</span></button>
+<strong class="brand">X 연관 유전과 바소체</strong>
+<sc-if value="{{hasModes}}" hint-placeholder-val="{{ true }}">
+<div class="seg" role="group" aria-label="보기 선택">
+<sc-for list="{{modes}}" as="md" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{md.pressed}}" onClick="{{md.pick}}">{{md.label}}</button>
+</sc-for>
+</div>
+</sc-if>
+<button class="text-btn theme-toggle" type="button" aria-label="{{themeLabel}}" title="{{themeLabel}}" onClick="{{toggleTheme}}">
+<sc-if value="{{isDark}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+<sc-if value="{{isLight}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></sc-if>
+</button>
+<button class="text-btn panel-toggle" type="button" aria-label="설명 패널" aria-expanded="{{rightExpanded}}" onClick="{{toggleRight}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M15 4v16"></path></svg><span>설명</span></button>
+</header>
+
+<div class="layout {{layoutCls}}" style="{{layoutStyle}}">
+<aside class="panel panel-left {{leftCls}}" aria-label="조작">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="220" aria-valuemax="480" aria-valuenow="{{leftWNow}}" ref="{{leftHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>조작</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<sc-if value="{{hasToggles}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">보기 옵션</h3>
+<div class="opt">
+<sc-for list="{{toggles}}" as="t" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{t.pressed}}" onClick="{{t.toggle}}"><span class="box" aria-hidden="true"></span>{{t.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<!-- SLOT:left -->
+<sc-if value="{{is.cross}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">교배 고르기</h3>
+<div class="steps">
+<sc-for list="{{crosses}}" as="x" hint-placeholder-count="3">
+<button class="btn" type="button" aria-pressed="{{x.pressed}}" onClick="{{x.pick}}"><span class="step-txt"><b>{{x.label}}</b><span>{{x.geno}}</span></span></button>
+</sc-for>
+</div>
+<p class="sub">위 칸은 어머니 난자(X 하나), 왼쪽 칸은 아버지 정자(X 또는 Y)예요. 아버지 X를 받으면 딸, Y를 받으면 아들이에요.</p>
+</div>
+</sc-if>
+<sc-if value="{{is.calico}}" hint-placeholder-val="{{ false }}">
+<div class="sec">
+<h3 class="sec-title">무작위 결과</h3>
+<div class="opt">
+<button class="btn" type="button" aria-pressed="false" onClick="{{reroll}}">다시 뽑기</button>
+<button class="btn" type="button" aria-pressed="{{seedFirst}}" onClick="{{resetSeed}}">처음 결과로</button>
+</div>
+<p class="sub">{{seedNote}}</p>
+</div>
+</sc-if>
+<!-- /SLOT:left -->
+
+<sc-if value="{{hasSteps}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">단계</h3>
+<div class="steps">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}"><span class="step-num num" style="border-color: {{s.c}}">{{s.num}}</span><span class="step-txt"><b>{{s.title}}</b><span>{{s.who}}</span></span></button>
+</sc-for>
+</div>
+<sc-if value="{{hasStep}}" hint-placeholder-val="{{ false }}">
+<div class="detail" aria-live="polite">{{stepDetail}}</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</aside>
+
+<section class="stage" aria-label="모형 보기">
+<canvas class="canvas {{canvasCls}}" ref="{{canvasRef}}" role="img" aria-label="{{canvasLabel}}"></canvas>
+<div class="view-btns">
+<button class="icon-btn" type="button" aria-label="확대" onClick="{{zoomIn}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="축소" onClick="{{zoomOut}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="시점 처음으로" onClick="{{resetView}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v5h5"></path></svg></button>
+</div>
+
+<sc-if value="{{hasPlayback}}" hint-placeholder-val="{{ false }}">
+<div class="playbar float">
+<button class="play" type="button" aria-label="{{playLabel}}" onClick="{{togglePlay}}">
+<sc-if value="{{isPlaying}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></sc-if>
+<sc-if value="{{notPlaying}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5l12 7-12 7z"></path></svg></sc-if>
+</button>
+<label class="scrub">
+<span>{{fLabel}}</span>
+<input type="range" min="0" max="{{fMax10}}" step="1" value="{{fInt}}" onChange="{{onScrub}}">
+</label>
+<div class="speeds" role="group" aria-label="재생 속도">
+<sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{sp.pressed}}" onClick="{{sp.pick}}">{{sp.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</section>
+
+<aside class="panel panel-right {{rightCls}}" aria-label="설명">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="280" aria-valuemax="720" aria-valuenow="{{rightWNow}}" ref="{{rightHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>설명</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<!-- SLOT:right -->
+<sc-if value="{{is.cross}}" hint-placeholder-val="{{ true }}">
+<div>
+<div class="sec">
+<h3 class="sec-title">딸 (아버지 X를 받은 칸)</h3>
+<div class="tiles three">
+<div class="tile"><b>{{ratio.dNormal}}</b><span>정상 (XX)</span></div>
+<div class="tile"><b>{{ratio.dCarrier}}</b><span>보인자 (정상)</span></div>
+<div class="tile"><b>{{ratio.dSick}}</b><span>환자</span></div>
+</div>
+<h3 class="sec-title" style="margin-top: 16px">아들 (아버지 Y를 받은 칸)</h3>
+<div class="tiles">
+<div class="tile"><b>{{ratio.sNormal}}</b><span>정상</span></div>
+<div class="tile"><b>{{ratio.sSick}}</b><span>환자</span></div>
+</div>
+<p class="sub">{{ratio.note}}</p>
+</div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{events}}" as="e" hint-placeholder-count="1">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw ball" style="background: {{legend.ok}}"></span>정상</div>
+<div><span class="sw ball" style="background: {{legend.car}}"></span>보인자 (정상)</div>
+<div><span class="sw ball" style="background: {{legend.dis}}"></span>환자 (= 색맹)</div>
+<div><span class="sw" style="background: {{legend.x}}"></span>X (긴 막대)</div>
+<div><span class="sw" style="background: {{legend.dis}}"></span>X′ 표시 (질환 대립유전자)</div>
+<div><span class="sw" style="background: {{legend.y}}"></span>Y (짧은 막대)</div>
+</div>
+<p class="sub">성연관은 유전자가 성염색체에 있다는 위치 이야기예요. 한 성에서만 나타난다는 뜻이 아니에요.</p>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{is.calico}}" hint-placeholder-val="{{ false }}">
+<div>
+<div class="sec">
+<h3 class="sec-title">세포 수</h3>
+<div class="tiles three">
+<div class="tile"><b class="num">{{count.o}}</b><span>주황 (Xᴼ 활성)</span></div>
+<div class="tile"><b class="num">{{count.b}}</b><span>검정 (Xᴮ 활성)</span></div>
+<div class="tile"><b class="num">{{count.all}}</b><span>보이는 세포</span></div>
+</div>
+<p class="sub">{{count.note}}</p>
+</div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{events}}" as="e" hint-placeholder-count="1">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw" style="background: {{legend.o}}"></span>활성 Xᴼ (풀린 막대)</div>
+<div><span class="sw" style="background: {{legend.blk}}"></span>활성 Xᴮ (풀린 막대)</div>
+<div><span class="sw ball" style="background: {{legend.o}}"></span><span class="sw ball" style="background: {{legend.blk}}"></span>바소체 (꺼진 X 색의 작은 공)</div>
+<div><span class="sw ball" style="background: {{legend.nuc}}"></span>핵</div>
+<div><span class="sw ball" style="background: {{legend.o}}"></span>주황 털 세포</div>
+<div><span class="sw ball" style="background: {{legend.blk}}"></span>검정 털 세포</div>
+</div>
+<p class="sub">작은 점(바소체)의 색은 꺼진 X의 색이에요. 세포 색은 켜진 X가 정해요.</p>
+</div>
+</div>
+</sc-if>
+<!-- /SLOT:right -->
+
+<div class="sec warn">
+<h3 class="sec-title">꼭 기억해요</h3>
+<sc-for list="{{mistakes}}" as="m" hint-placeholder-count="3">
+<div class="mistake"><b>{{m.title}}</b><span>{{m.text}}</span></div>
+</sc-for>
+</div>
+</div>
+</aside>
+</div>
+<div class="scrim {{scrimCls}}" aria-hidden="true" onClick="{{closePanels}}"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  // ================= 주제 훅: 주제마다 바꾸는 곳은 이 네 메서드뿐이에요 =================
+  // 계약은 bio-interactive/references/scene-api.md에 있어요.
+
+  topic() {
+    return {
+      MODES: [
+        { key: 'cross', label: 'X 연관', cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [12.4, 10], D: 60,
+          autoSpin: false, rotatable: false,
+          playback: { fmax: 9, rate: 1, label: (f) => this.crossPhase(f) + ' · ' + f.toFixed(1) + ' / 9' },
+          canvasLabel: (f) => this.crossCanvasLabel(f) },
+        { key: 'calico', label: '불활성화', cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [11, 9.4], D: 60,
+          autoSpin: false, rotatable: false,
+          playback: { fmax: 12, rate: 1, label: (f) => this.calPhase(f) + ' · ' + f.toFixed(1) + ' / 12' },
+          canvasLabel: (f) => this.calCanvasLabel(f) }
+      ],
+      STEPS: [
+        { mode: 'cross', f: 2.8, phase: '배우자 이동', c: '#4A86E8', title: '배우자 만들기', who: '어머니 난자 · 아버지 정자',
+          text: '어머니의 난자는 두 X 중 하나만 받아요. 아버지의 정자는 X 또는 Y 하나만 받고, 둘을 함께 받지 않아요. 그래서 위 칸에는 X가, 왼쪽 칸에는 X나 Y가 하나씩 와요.' },
+        { mode: 'cross', f: 8, phase: '자녀 판정', hl: 'd', c: '#E0A21B', title: '딸 판정', who: '아버지 X + 어머니 X',
+          text: '딸은 아버지 X 하나와 어머니 X 하나를 받아요. X′가 하나면 정상 보인자, 둘이면 환자예요. 기본 교배(정상 아버지 XY × 보인자 어머니 XX′)에서는 딸이 모두 정상이고, 그중 절반이 보인자예요.' },
+        { mode: 'cross', f: 8.5, phase: '자녀 판정', hl: 's', c: '#E5484D', title: '아들 판정', who: '아버지 Y + 어머니 X',
+          text: '아들의 X는 어머니에게서만 와요. X′를 가려 줄 두 번째 X가 없어서 X′ 하나만 받아도 환자예요. 기본 교배(정상 아버지 XY × 보인자 어머니 XX′)에서는 아들 절반이 정상, 절반이 환자예요.' },
+        { mode: 'cross', f: 9, phase: '자녀 판정', c: '#2F9E6B', title: '결론: 딸이 색맹이려면', who: '교배 비교',
+          text: '딸이 색맹(X′X′)이려면 어머니와 아버지 모두에게서 X′를 받아야 해요. 그래서 정상 아버지 XY의 딸은 색맹이 될 수 없어요. 왼쪽에서 교배를 바꿔 딸 칸을 비교해 보세요.' },
+        { mode: 'calico', f: 2.8, phase: 'XX 배아 세포', c: '#8A94A3', title: 'XX 배아 세포', who: '이형접합 암컷 XᴼXᴮ',
+          text: '이형접합 암컷 고양이의 세포는 주황 Xᴼ와 검정 Xᴮ를 하나씩 가져요. 아직은 두 X가 모두 풀린 막대예요. 불활성화는 배 발생 동안 일어나요(교과서 보충).' },
+        { mode: 'calico', f: 5.9, phase: '무작위 불활성화', c: '#E8892B', title: '무작위 불활성화', who: '세포마다 따로',
+          text: '세포마다 두 X 중 하나가 무작위로 응축돼 바소체(공)가 돼요. 어느 쪽이 꺼질지는 세포마다 달라요. 남은 막대 하나가 활성 X예요.' },
+        { mode: 'calico', f: 8.8, phase: '분열로 집단 형성', c: '#2F9E6B', title: '분열로 집단 형성', who: '체세포 분열',
+          text: '불활성화는 되돌아가지 않아서, 한 세포의 후손은 모두 같은 X가 꺼져 있어요(교과서 보충). 그래서 같은 X가 켜진 세포끼리 집단을 이뤄요.' },
+        { mode: 'calico', f: 12, phase: '얼룩', c: '#3A3A44', title: '얼룩 털', who: '털색 모자이크',
+          text: 'Xᴼ가 켜진 집단은 주황 털, Xᴮ가 켜진 집단은 검정 털을 만들어 얼룩이 돼요. 큰 무늬가 생기는 자세한 이유는 수업에서 다루지 않았어요. 「다시 뽑기」로 무늬가 바뀌는 걸 보세요.' }
+      ],
+      MISTAKES: {
+        cross: [
+          { title: '보인자 ≠ 환자', text: 'XX′는 정상 보인자, X′X′와 X′Y가 환자예요. X′Y는 X′가 하나뿐이어도 환자라서, 이 모형에 남성 보인자는 없어요.' },
+          { title: '딸이 색맹이면 아버지도 X′', text: '딸은 아버지 X를 꼭 받아요. 「정상 아버지 × 색맹 어머니」를 골라 보면 딸 칸이 모두 보인자예요.' },
+          { title: '자녀가 다 정상 ≠ 보인자 아님', text: '보인자 어머니도 우연히 정상 자녀만 낳을 수 있어요. 정상 딸도 표에서 절반은 보인자예요.' }
+        ],
+        calico: [
+          { title: '바소체 ≠ 활성 X', text: '바소체는 응축돼 작동하지 않는 X예요. 화면에서 공 모양이 바소체, 풀린 막대가 활성 X예요.' },
+          { title: '엄마 것·아빠 것을 골라 끄지 않아요', text: '어느 X가 꺼질지는 세포마다 무작위예요. 「다시 뽑기」를 누르면 같은 고양이도 무늬가 달라져요.' },
+          { title: '얼룩 고양이 = 조건이 붙은 암컷', text: '얼룩 고양이가 정상 성염색체 2개를 가졌다면 Xᴼ·Xᴮ 이형접합 암컷이에요. 수컷이나 동형접합 암컷은 한 가지 색만 내요.' }
+        ]
+      },
+      TOGGLES: {
+        cross: [['labels', '이름표'], ['geno', '유전자형 글자']],
+        calico: [['labels', '이름표'], ['barr', '바소체 표시']]
+      },
+      PAL: {
+        light: { bg: '#ffffff', labelBg: '#f7f8fa', ink: '#111111', ink2: '#6b7280', ring: '#111111', blobAlpha: 0.30,
+          x: '#4A86E8', y: '#8E6CE0', dis: '#E5484D', ok: '#2F9E6B', car: '#E0A21B', egg: '#F2A7B8', sperm: '#7FB3E6',
+          line: '#8A94A3', hl: '#1677ff',
+          o: '#E8892B', blk: '#2E2E36', oT: '#F9DDBF', bT: '#C9CBD3', nuc: '#9DB2D6', cell: '#B9C2CF', barr: '#8A8F9C' },
+        dark: { bg: '#17171c', labelBg: '#212128', ink: '#f2f4f6', ink2: '#a3abb8', ring: '#f2f4f6', blobAlpha: 0.42,
+          x: '#6EA4FF', y: '#B69CFF', dis: '#FF6B6B', ok: '#5FD39A', car: '#F5C04A', egg: '#F7B7C6', sperm: '#9CC6F2',
+          line: '#AEB7C4', hl: '#6EA4FF',
+          o: '#FFA552', blk: '#80808F', oT: '#5E4128', bT: '#383843', nuc: '#7F9CCC', cell: '#6B7585', barr: '#A3ABB8' }
+      }
+    };
+  }
+
+  // ---------- X 연관 교배 ----------
+  crossDefs() {
+    return [
+      { label: '정상 아버지 × 보인자 어머니', geno: 'XY × XX′', dad: ['X', 'Y'], mom: ['X', 'X′'], dadTxt: 'XY', dadSt: '정상', momTxt: 'XX′', momSt: '보인자' },
+      { label: '정상 아버지 × 색맹 어머니', geno: 'XY × X′X′', dad: ['X', 'Y'], mom: ['X′', 'X′'], dadTxt: 'XY', dadSt: '정상', momTxt: 'X′X′', momSt: '색맹(환자)' },
+      { label: '색맹 아버지 × 보인자 어머니', geno: 'X′Y × XX′', dad: ['X′', 'Y'], mom: ['X', 'X′'], dadTxt: 'X′Y', dadSt: '색맹(환자)', momTxt: 'XX′', momSt: '보인자' }
+    ];
+  }
+  // 교배 단계를 고르면 단계 설명과 맞도록 기본 교배(0)를 보여 줘요. 교배 버튼을 누르면 단계 선택이 풀려요.
+  crossIdx() {
+    const st = this.state, s = st.step >= 0 ? (this.T.STEPS || [])[st.step] : null;
+    return s && s.mode === 'cross' ? 0 : (st.cross || 0);
+  }
+  crossPhase(f) { return f < 3 ? '배우자 이동' : f < 6 ? '수정' : '자녀 판정'; }
+  // 칸 하나: r = 0 딸(아버지 X), 1 아들(아버지 Y); c = 어머니 X 순서
+  crossCell(cr, r, c) {
+    const pa = cr.dad[r], ma = cr.mom[c];
+    if (pa === 'Y') return { geno: ma + 'Y', st: ma === 'X′' ? 'sick' : 'normal' };
+    const n = (pa === 'X′' ? 1 : 0) + (ma === 'X′' ? 1 : 0);
+    const geno = n === 1 ? 'XX′' : n === 2 ? 'X′X′' : 'XX';
+    return { geno: geno, st: n === 0 ? 'normal' : n === 1 ? 'carrier' : 'sick' };
+  }
+  crossCounts(cr) {
+    const k = { dNormal: 0, dCarrier: 0, dSick: 0, sNormal: 0, sSick: 0 };
+    [0, 1].forEach((c) => {
+      const d = this.crossCell(cr, 0, c).st, s = this.crossCell(cr, 1, c).st;
+      k[d === 'normal' ? 'dNormal' : d === 'carrier' ? 'dCarrier' : 'dSick']++;
+      k[s === 'normal' ? 'sNormal' : 'sSick']++;
+    });
+    return k;
+  }
+  crossSummary(cr) {
+    const k = this.crossCounts(cr);
+    const d = k.dSick === 0
+      ? (k.dCarrier === 2 ? '딸은 모두 정상 보인자' : k.dCarrier === 1 ? '딸은 모두 정상(절반이 보인자)' : '딸은 모두 정상')
+      : k.dSick === 2 ? '딸은 모두 환자' : '딸은 절반이 환자, 절반이 ' + (k.dCarrier ? '보인자' : '정상');
+    const s = k.sSick === 0 ? '아들은 모두 정상' : k.sSick === 2 ? '아들은 모두 환자' : '아들은 절반이 환자';
+    return d + ', ' + s + (k.sSick === 0 ? '이에요.' : '예요.');
+  }
+  crossCanvasLabel(f) {
+    const cr = this.crossDefs()[this.crossIdx()];
+    const head = '아버지 ' + cr.dadTxt + ' × 어머니 ' + cr.momTxt + ' 교배 표. ';
+    if (f < 3) return head + (f < 2.6 ? '정자는 X 또는 Y 하나, 난자는 X 하나를 받는 중이에요.' : '정자는 X 또는 Y 하나, 난자는 X 하나를 받았어요.');
+    if (f < 6) return head + '정자와 난자가 만나 네 칸이 채워지는 중이에요.';
+    return head + this.crossSummary(cr);
+  }
+  stColor(st) { const pal = this.pal(); return st === 'normal' ? pal.ok : st === 'carrier' ? pal.car : pal.dis; }
+  stName(st) { return st === 'normal' ? '정상' : st === 'carrier' ? '보인자 (정상)' : '환자'; }
+  // 염색체 막대: X는 길고 Y는 짧아요. X′는 빨간 띠로 표시해요.
+  chrom(I, kind, p, a, label) {
+    const pal = this.pal(), isY = kind === 'Y', h = isY ? 0.5 : 1.0;
+    I.push({ k: 1, p: [p[0], p[1] - h / 2, 0], q: [p[0], p[1] + h / 2, 0], w: 0.26, c: isY ? pal.y : pal.x, rod: true, a: a });
+    if (kind === 'X′') I.push({ k: 1, p: [p[0], p[1] + 0.08, 0], q: [p[0], p[1] + 0.26, 0], w: 0.34, c: pal.dis, flat: true, a: a });
+    if (label) I.push({ k: 3, p: [p[0], p[1] - h / 2 - 0.24, 0], text: kind, size: 11, c: pal.ink, a: a });
+  }
+  rect(I, cx, cy, w, h, lw, c, a) {
+    const x0 = cx - w / 2, x1 = cx + w / 2, y0 = cy - h / 2, y1 = cy + h / 2;
+    [[[x0, y0], [x1, y0]], [[x1, y0], [x1, y1]], [[x1, y1], [x0, y1]], [[x0, y1], [x0, y0]]].forEach((e) =>
+      I.push({ k: 1, p: [e[0][0], e[0][1], 0], q: [e[1][0], e[1][1], 0], w: lw, c: c, a: a }));
+  }
+  buildCross(I, O) {
+    const pal = this.pal(), st = this.state, f = this.sim.f, cr = this.crossDefs()[this.crossIdx()];
+    const colX = [0.2, 3.2], rowY = [0, -2.8];
+    const momC = [[1.4, 3.7], [2.0, 3.7]], dadC = [[-5.3, -1.4], [-4.7, -1.4]];
+    const eggP = (c) => [colX[c], 2.1], spP = (r) => [-2.4, rowY[r]];
+    const geno = st.geno;
+    // 부모
+    I.push({ k: 3, p: [3.75, 3.95, 0], text: '어머니 ' + cr.momTxt, size: 13, c: pal.ink });
+    I.push({ k: 3, p: [3.75, 3.45, 0], text: cr.momSt, size: 11, c: this.textTone(cr.momSt === '색맹(환자)' ? pal.dis : pal.car) });
+    I.push({ k: 3, p: [-5, -0.45, 0], text: '아버지 ' + cr.dadTxt, size: 13, c: pal.ink });
+    I.push({ k: 3, p: [-5, -2.35, 0], text: cr.dadSt, size: 11, c: this.textTone(cr.dadSt === '색맹(환자)' ? pal.dis : pal.ok) });
+    cr.mom.forEach((k, i) => this.chrom(I, k, momC[i], 1, false));
+    cr.dad.forEach((k, i) => this.chrom(I, k, dadC[i], 1, false));
+    // 배우자: 난자(위)와 정자(왼쪽)
+    const ga = this.sm((f - 0.1) / 0.9), t1 = this.sm((f - 0.2) / 2.4);
+    [0, 1].forEach((c) => {
+      const e = eggP(c);
+      I.push({ k: 5, p: [e[0], e[1], 0], r: 0.72, c: pal.egg, a: ga });
+      const p = [this.lerp([momC[c][0], momC[c][1], 0], [e[0], e[1], 0], t1)[0], this.lerp([momC[c][0], momC[c][1], 0], [e[0], e[1], 0], t1)[1]];
+      this.chrom(I, cr.mom[c], p, 1, false);
+    });
+    [0, 1].forEach((r) => {
+      const s = spP(r);
+      I.push({ k: 1, p: [s[0] - 0.55, s[1], 0], q: [s[0] - 1.35, s[1] + 0.2, 0], w: 0.07, c: pal.sperm, a: ga });
+      I.push({ k: 5, p: [s[0], s[1], 0], r: 0.62, c: pal.sperm, a: ga });
+      const q = this.lerp([dadC[r][0], dadC[r][1], 0], [s[0], s[1], 0], t1);
+      this.chrom(I, cr.dad[r], [q[0], q[1]], 1, false);
+      I.push({ k: 3, p: [s[0], s[1] - 0.95, 0], text: r === 0 ? '딸 칸' : '아들 칸', size: 11, c: pal.ink2, a: ga });
+    });
+    // 표 칸
+    const t2 = this.sm((f - 3.2) / 2.4), t3 = this.sm((f - 6.1) / 1.2);
+    const STEPS = this.T.STEPS, cur = st.step >= 0 && STEPS[st.step] && STEPS[st.step].mode === 'cross' ? STEPS[st.step].hl : null;
+    [0, 1].forEach((r) => [0, 1].forEach((c) => {
+      const x = colX[c], y = rowY[r], cell = this.crossCell(cr, r, c), sc = this.stColor(cell.st);
+      if (t3 > 0) I.push({ k: 1, p: [x - 1.38, y, 0], q: [x + 1.38, y, 0], w: 2.48, c: sc, flat: true, a: 0.22 * t3 });
+      this.rect(I, x, y, 2.8, 2.5, 0.03, pal.line, 1);
+      if (f > 3.2) {
+        const m0 = eggP(c), d0 = spP(r);
+        const mp = this.lerp([m0[0], m0[1], 0], [x - 0.3, y + 0.35, 0], t2), dp = this.lerp([d0[0], d0[1], 0], [x + 0.3, y + 0.35, 0], t2);
+        this.chrom(I, cr.mom[c], [mp[0], mp[1]], 1, false);
+        this.chrom(I, cr.dad[r], [dp[0], dp[1]], 1, false);
+      }
+      if (t3 > 0) {
+        if (geno) I.push({ k: 3, p: [x, y - 0.55, 0], text: cell.geno, size: 13, c: pal.ink, a: t3 });
+        I.push({ k: 3, p: [x, y - 0.95, 0], text: this.stName(cell.st), size: 11, c: this.textTone(sc), a: t3 });
+      }
+    }));
+    if (cur) { const y = cur === 'd' ? rowY[0] : rowY[1]; this.rect(I, 1.7, y, 5.95, 2.65, 0.08, pal.hl, 1); }
+    if (st.labels) {
+      O.push({ p: [eggP(0)[0] - 0.72, 2.1, 0], text: '난자: X 하나', c: pal.egg, dx: -58, dy: -22, a: ga });
+      O.push({ p: [spP(0)[0], 0.62, 0], text: '정자: X 또는 Y', c: pal.sperm, dy: -26, a: ga });
+      if (cr.mom.indexOf('X′') >= 0 || cr.dad.indexOf('X′') >= 0) {
+        const xi = cr.mom.indexOf('X′');
+        const pp = xi >= 0 ? momC[xi] : dadC[0];
+        O.push({ p: [pp[0], pp[1] + 0.17, 0], text: 'X′ (색맹 대립유전자)', c: pal.dis, dx: xi >= 0 ? -96 : 0, dy: xi >= 0 ? -6 : -58, lead: true });
+      }
+    }
+  }
+
+  // ---------- X 불활성화 (얼룩 고양이) ----------
+  calPhase(f) { return f < 3 ? 'XX 배아 세포' : f < 6 ? '무작위 불활성화' : f < 9 ? '분열로 집단 형성' : '얼룩'; }
+  // 시드 고정 난수(mulberry32): 같은 시드는 언제나 같은 결과예요.
+  prng(seed) {
+    let a = (seed * 2654435761) >>> 0;
+    return () => {
+      a = (a + 0x6D2B79F5) >>> 0;
+      let t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  calLayout() {
+    const seed = this.state.seed || 1;
+    if (this._cal && this._cal.seed === seed) return this._cal;
+    const rnd = this.prng(seed), COLS = 12, ROWS = 8, C = 0.75;
+    const pos = (c, r) => [(c - (COLS - 1) / 2) * C, ((ROWS - 1) / 2 - r) * C];
+    const F = [];
+    for (let by = 0; by < 2; by++) for (let bx = 0; bx < 3; bx++) {
+      const col = bx * 4 + 1 + Math.floor(rnd() * 2), row = by * 4 + 1 + Math.floor(rnd() * 2);
+      F.push({ col: col, row: row, p: pos(col, row) });
+    }
+    // 세포마다 꺼질 X를 무작위로(0.5씩). 여섯 개가 모두 같은 드문 경우는 같은 시드 흐름에서 다시 뽑아요.
+    let off;
+    for (let tries = 0; tries < 64; tries++) {
+      off = F.map(() => (rnd() < 0.5 ? 'O' : 'B'));
+      if (off.indexOf('O') >= 0 && off.indexOf('B') >= 0) break;
+    }
+    F.forEach((fd, i) => { fd.off = off[i]; fd.t = 3.2 + i * 0.4; });
+    const cells = [];
+    let maxD = 1;
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+      let best = 0, bd = Infinity;
+      F.forEach((fd, i) => { const d = (fd.col - c) * (fd.col - c) + (fd.row - r) * (fd.row - r); if (d < bd) { bd = d; best = i; } });
+      const g = Math.max(Math.abs(F[best].col - c), Math.abs(F[best].row - r));
+      if (g > maxD) maxD = g;
+      cells.push({ p: pos(c, r), fi: best, g: g });
+    }
+    cells.forEach((cl) => { cl.t = 6.1 + 2.3 * cl.g / maxD; });
+    this._cal = { seed: seed, F: F, cells: cells, C: C };
+    return this._cal;
+  }
+  calCounts(f) {
+    const L = this.calLayout();
+    let o = 0, b = 0, all = 0;
+    if (f < 6.1) {
+      L.F.forEach((fd) => { all++; if (f >= fd.t + 0.3) { if (fd.off === 'B') o++; else b++; } });
+    } else {
+      L.cells.forEach((cl) => { if (f >= cl.t) { all++; if (L.F[cl.fi].off === 'B') o++; else b++; } });
+    }
+    return { o: o, b: b, all: all };
+  }
+  calCanvasLabel(f) {
+    const k = this.calCounts(f);
+    if (f < 3) return '이형접합 암컷 고양이의 초기 배아 세포 6개. 핵마다 Xᴼ와 Xᴮ가 모두 풀려 있어요.';
+    if (f < 6) return '세포마다 X 하나가 무작위로 응축돼 바소체가 되는 중이에요. 주황 ' + k.o + '개, 검정 ' + k.b + '개가 정해졌어요.';
+    if (f < 9) return '세포가 분열해 같은 X가 꺼진 집단으로 늘어나는 중이에요. 세포 ' + k.all + '개예요.';
+    return '주황 털 세포 ' + k.o + '개와 검정 털 세포 ' + k.b + '개가 얼룩을 이뤄요.';
+  }
+  buildCalico(I, O) {
+    const pal = this.pal(), st = this.state, f = this.sim.f, L = this.calLayout(), C = L.C;
+    const col = (al) => (al === 'O' ? pal.o : pal.blk);
+    const big = 1 - this.sm((f - 6) / 0.6), t4 = this.sm((f - 9.1) / 1.2);
+    // 피부 세포 격자(분열로 늘어난 세포)
+    if (f > 6) {
+      L.cells.forEach((cl) => {
+        const a = this.sm((f - cl.t) / 0.35);
+        if (a <= 0) return;
+        const fd = L.F[cl.fi], on = fd.off === 'O' ? 'B' : 'O', x = cl.p[0], y = cl.p[1], h = C * 0.44;
+        I.push({ k: 1, p: [x - h, y, 0], q: [x + h, y, 0], w: C * 0.88, c: on === 'O' ? pal.oT : pal.bT, flat: true, a: a });
+        if (t4 > 0) I.push({ k: 1, p: [x - h, y, 0], q: [x + h, y, 0], w: C * 0.88, c: col(on), flat: true, a: a * t4 });
+        if (st.barr) I.push({ k: 0, p: [x + C * 0.2, y - C * 0.2, 0], r: C * 0.11, c: col(fd.off), flat: true, a: a });
+      });
+    }
+    // 초기 배아 세포(창시 세포) 6개: 핵 안에 X 두 개
+    if (big > 0) {
+      L.F.forEach((fd) => {
+        const x = fd.p[0], y = fd.p[1], fa = big;
+        I.push({ k: 5, p: [x, y, 0], r: 0.85, c: pal.cell, a: fa });
+        I.push({ k: 5, p: [x, y, 0], r: 0.56, c: pal.nuc, a: fa });
+        const u = this.sm((f - fd.t) / 0.6);
+        ['O', 'B'].forEach((al) => {
+          const sx = al === 'O' ? -0.17 : 0.17;
+          if (fd.off === al && u > 0) {
+            const len = 0.3 * (1 - u), bx = x + sx * (1 + u * 0.6), byy = y - 0.3 * u;
+            if (len > 0.02) I.push({ k: 1, p: [bx, byy - len, 0], q: [bx, byy + len, 0], w: 0.11, c: col(al), rod: true, a: fa });
+            if (st.barr) I.push({ k: 0, p: [bx, byy, 0], r: 0.06 + 0.1 * u, c: col(al), a: fa });
+          } else {
+            I.push({ k: 1, p: [x + sx, y - 0.3, 0], q: [x + sx, y + 0.3, 0], w: 0.11, c: col(al), rod: true, a: fa });
+          }
+        });
+      });
+    }
+    if (!st.labels) return;
+    const f0 = L.F[0];
+    if (f < 6) {
+      O.push({ p: [f0.p[0] - 0.6, f0.p[1] + 0.6, 0], text: 'XX 배아 세포', c: pal.nuc, dx: -30, dy: -26, lead: true });
+      if (f < f0.t + 0.3) O.push({ p: [f0.p[0] - 0.17, f0.p[1] + 0.3, 0], text: '두 X 모두 풀림', c: pal.ink2, dx: -70, dy: 4, lead: true });
+      else {
+        const sx = f0.off === 'O' ? -0.17 : 0.17;
+        O.push({ t: 'ring', p: [f0.p[0] + sx * 1.6, f0.p[1] - 0.3, 0], text: '바소체' });
+        O.push({ p: [f0.p[0] - sx, f0.p[1] + 0.3, 0], text: '활성 X' + (f0.off === 'O' ? 'ᴮ' : 'ᴼ'), c: col(f0.off === 'O' ? 'B' : 'O'), dx: 62, dy: -34, lead: true });
+      }
+    } else if (f < 9) {
+      O.push({ p: [f0.p[0], f0.p[1], 0], text: '같은 X가 꺼진 세포 집단', c: pal.ink2, dy: -44, lead: true, a: this.sm((f - 6.6) / 0.6) });
+    } else {
+      const oi = L.F.findIndex((fd) => fd.off === 'B'), bi = L.F.findIndex((fd) => fd.off === 'O');
+      if (oi >= 0) O.push({ p: [L.F[oi].p[0], L.F[oi].p[1], 0], text: '주황 털 (Xᴼ 활성)', c: pal.o, dy: -30, a: t4 });
+      if (bi >= 0) O.push({ p: [L.F[bi].p[0], L.F[bi].p[1], 0], text: '검정 털 (Xᴮ 활성)', c: pal.blk, dy: 30, a: t4 });
+    }
+  }
+
+  // 장면 만들기: I(그리기 항목)와 O(라벨)에 push만 해요. 진행값은 this.sim.f를 써요.
+  buildScene(mode, I, O) {
+    if (mode === 'cross') this.buildCross(I, O);
+    else this.buildCalico(I, O);
+  }
+
+  // 주제 전용 상태(보기 옵션 키 등). 공통 상태에 합쳐져요.
+  extraState() {
+    return { labels: true, geno: true, barr: true, cross: 0, seed: 1 };
+  }
+
+  // 주제 전용 마크업 값. renderVals() 결과에 합쳐져요.
+  extraVals(st) {
+    const pal = this.pal(), f = st.f;
+    if (st.mode === 'cross') {
+      const ci = this.crossIdx(), cr = this.crossDefs()[ci], k = this.crossCounts(cr), show = f >= 6.1;
+      const fr = (n) => (!show ? '?' : n === 0 ? '0' : n === 1 ? '1/2' : '1');
+      const ev = f < 3 ? { c: pal.sperm, text: '정자는 X 또는 Y 하나, 난자는 X 하나만 받아요.' }
+        : f < 6 ? { c: pal.egg, text: '정자와 난자가 만나 네 칸(딸 2, 아들 2)이 채워져요.' }
+          : { c: pal.ok, text: this.crossSummary(cr) };
+      return {
+        ratio: { dNormal: fr(k.dNormal), dCarrier: fr(k.dCarrier), dSick: fr(k.dSick), sNormal: fr(k.sNormal), sSick: fr(k.sSick),
+          note: show ? '보인자도 표현형은 정상이에요. 표현형으로 보면 정상 딸은 정상과 보인자를 합한 값이에요.' : '자녀 판정 단계에서 비율이 나타나요.' },
+        events: [ev],
+        crosses: this.crossDefs().map((d, i) => ({ label: d.label, geno: d.geno, pressed: ci === i ? 'true' : 'false',
+          pick: () => this.setState({ cross: i, step: -1 }) })),
+        legend: { ok: pal.ok, car: pal.car, dis: pal.dis, x: pal.x, y: pal.y },
+        count: { o: 0, b: 0, all: 0, note: '' }, seedNote: '', seedFirst: 'false', reroll: () => {}, resetSeed: () => {}
+      };
+    }
+    const k = this.calCounts(f), seed = st.seed || 1;
+    const ev = f < 3 ? { c: pal.nuc, text: '세포마다 Xᴼ와 Xᴮ가 모두 풀려 있어요.' }
+      : f < 6 ? { c: pal.barr, text: '세포마다 X 하나가 무작위로 응축돼 바소체가 돼요.' }
+        : f < 9 ? { c: pal.ok, text: '분열한 세포는 같은 X가 꺼진 채로 늘어나요(교과서 보충).' }
+          : { c: pal.o, text: '켜진 X에 따라 주황·검정 털 집단이 얼룩을 만들어요.' };
+    return {
+      count: { o: k.o, b: k.b, all: k.all,
+        note: f < 3 ? '아직 어느 X도 꺼지지 않았어요.' : '켜진 X가 정해진 세포만 셌어요.' },
+      events: [ev],
+      seedNote: '뽑기 ' + seed + '번째예요. 같은 번호는 늘 같은 결과예요.',
+      seedFirst: seed === 1 ? 'true' : 'false',
+      reroll: () => this.setState({ seed: (this.state.seed || 1) + 1 }),
+      resetSeed: () => this.setState({ seed: 1 }),
+      legend: { o: pal.o, blk: pal.blk, barr: pal.barr, nuc: pal.nuc, ok: pal.ok, car: pal.car, dis: pal.dis, x: pal.x, y: pal.y },
+      ratio: { dNormal: '', dCarrier: '', dSick: '', sNormal: '', sSick: '', note: '' }, crosses: []
+    };
+  }
+
+  // ================= 공통 셸: 아래는 주제와 무관해요. 고치지 않아요 =================
+  constructor(...args) {
+    super(...args);
+    let reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    let narrow = false;
+    try { narrow = window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) {}
+    let saved = null;
+    try { saved = window.localStorage.getItem('od-theme'); } catch (e) {}
+    const PANEL_W = { left: { min: 220, max: 480 }, right: { min: 280, max: 720 } };
+    let widths = {};
+    try { widths = JSON.parse(window.localStorage.getItem('interactive-panel-w')) || {}; } catch (e) {}
+    const okW = (side) => { const v = widths[side]; return typeof v === 'number' && v >= PANEL_W[side].min && v <= PANEL_W[side].max ? v : null; };
+    this.T = this.topic();
+    this.state = Object.assign({
+      mode: this.T.MODES[0].key, f: 0, playing: false, speed: 1, step: -1, spin: !reduce,
+      theme: (saved === 'light' || saved === 'dark') ? saved : (this.systemDark() ? 'dark' : 'light'),
+      // leftOpen/rightOpen: docked panels on wide screens; drawer: the one open drawer on narrow screens
+      leftOpen: true, rightOpen: true, drawer: null, narrow: narrow,
+      // leftW/rightW: user-set docked widths in px (null = default); resizing: a handle is being dragged
+      leftW: okW('left'), rightW: okW('right'), resizing: false
+    }, this.extraState());
+    this.reduceMotion = reduce;
+    this.K = {
+      PANEL_W: PANEL_W, PANEL_W_KEY: 'interactive-panel-w', PANEL_DEFAULT: { left: 320, right: 400 },
+      THEMES: {
+        light: { bg: '#ffffff', surface: '#f7f8fa', ink: '#111111', ink2: '#6b7280', line: '#d9dee7', accent: '#1677ff', accentInk: '#1b64da', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#b54708', prof: '#6941c6', supp: '#067647', danger: '#d92d20', scroll: '#c9d0db', scrollHover: '#9aa3b2' },
+        dark: { bg: '#17171c', surface: '#212128', ink: '#f2f4f6', ink2: '#a3abb8', line: '#34353d', accent: '#3182f6', accentInk: '#6ea4ff', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#f5a15c', prof: '#b69cff', supp: '#5fd39a', danger: '#ff6b61', scroll: '#3f414b', scrollHover: '#5b5e6a' }
+      }
+    };
+    this.cam = Object.assign({}, this.modeDef().cam);
+    this.sim = { f: 0, cx: 0 };
+    this.pointer = { x: -1, y: -1, inside: false, drag: false, lx: 0, ly: 0 };
+    this.colorCache = {};
+    this._tick = (t) => this.tick(t);
+    this._canvasRef = (el) => this.attachCanvas(el);
+    this.handles = {};
+    this._handleRefL = (el) => this.attachHandle('left', el);
+    this._handleRefR = (el) => this.attachHandle('right', el);
+  }
+
+  componentWillUnmount() {
+    this.attachCanvas(null);
+    this.attachHandle('left', null);
+    this.attachHandle('right', null);
+  }
+
+  modeDef(key) {
+    const k = key || this.state.mode;
+    return this.T.MODES.find((m) => m.key === k) || this.T.MODES[0];
+  }
+  systemDark() {
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; }
+  }
+  isNarrow() {
+    try { return window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) { return false; }
+  }
+  syncBreakpoint() { this.setState({ narrow: this.isNarrow(), drawer: null }); }
+  // In drawer mode only one panel is open at a time.
+  togglePanel(side) {
+    const st = this.state;
+    if (st.narrow) this.setState({ drawer: st.drawer === side ? null : side });
+    else if (side === 'left') this.setState({ leftOpen: !st.leftOpen });
+    else this.setState({ rightOpen: !st.rightOpen });
+  }
+  // Docked panel width: the canvas column always keeps at least 400px.
+  panelMax(side) {
+    const lim = this.K.PANEL_W[side], other = side === 'left' ? 'right' : 'left', st = this.state;
+    const h = this.handles[other];
+    const otherOpen = other === 'left' ? st.leftOpen : st.rightOpen;
+    const otherW = !otherOpen ? 0 : h ? h.el.parentElement.getBoundingClientRect().width
+      : (st[other + 'W'] || this.K.PANEL_DEFAULT[other]);
+    return Math.max(lim.min, Math.min(lim.max, (window.innerWidth || 1440) - otherW - 400));
+  }
+  setPanelWidth(side, px, save) {
+    const v = Math.round(Math.min(Math.max(px, this.K.PANEL_W[side].min), this.panelMax(side)));
+    this.setState({ [side + 'W']: v });
+    if (save) this.savePanelWidths(side, v);
+  }
+  resetPanelWidth(side) {
+    this.setState({ [side + 'W']: null });
+    this.savePanelWidths(side, null);
+  }
+  savePanelWidths(side, v) {
+    try {
+      const key = this.K.PANEL_W_KEY;
+      let w = {};
+      try { w = JSON.parse(window.localStorage.getItem(key)) || {}; } catch (e) {}
+      if (v == null) delete w[side]; else w[side] = v;
+      window.localStorage.setItem(key, JSON.stringify(w));
+    } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ }
+  }
+  // Re-fit user widths when the window shrinks (not saved).
+  refitPanels() {
+    ['left', 'right'].forEach((side) => {
+      const w = this.state[side + 'W'];
+      if (w != null && w > this.panelMax(side)) this.setPanelWidth(side, w, false);
+    });
+  }
+  attachHandle(side, el) {
+    const old = this.handles[side];
+    if (old && old.el === el) return;
+    if (old) {
+      Object.keys(old.on).forEach((ev) => old.el.removeEventListener(ev, old.on[ev]));
+      delete this.handles[side];
+      if (!Object.keys(this.handles).length) window.removeEventListener('resize', this._refit);
+    }
+    if (!el) return;
+    const dir = side === 'left' ? 1 : -1;
+    const width = () => el.parentElement.getBoundingClientRect().width;
+    let drag = null;
+    const on = {
+      pointerdown: (e) => {
+        if (this.state.narrow || e.button !== 0) return;
+        e.preventDefault();
+        drag = { x: e.clientX, w: width() };
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        this.setState({ resizing: true });
+      },
+      pointermove: (e) => { if (drag) this.setPanelWidth(side, drag.w + dir * (e.clientX - drag.x), false); },
+      pointerup: () => {
+        if (!drag) return;
+        drag = null;
+        this.setState({ resizing: false });
+        this.setPanelWidth(side, width(), true);
+      },
+      dblclick: () => this.resetPanelWidth(side),
+      keydown: (e) => {
+        const step = e.shiftKey ? 64 : 16;
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          e.preventDefault(); e.stopPropagation();
+          this.setPanelWidth(side, width() + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+        } else if (e.key === 'Home') { e.preventDefault(); e.stopPropagation(); this.resetPanelWidth(side); }
+      }
+    };
+    on.pointercancel = on.pointerup;
+    Object.keys(on).forEach((ev) => el.addEventListener(ev, on[ev]));
+    if (!Object.keys(this.handles).length) {
+      this._refit = this._refit || (() => this.refitPanels());
+      window.addEventListener('resize', this._refit);
+    }
+    this.handles[side] = { el: el, on: on };
+  }
+  textTone(hex) { return this.state.theme === 'light' ? this.mix(hex, '#000000', 0.4) : hex; }
+  pal() { return this.T.PAL[this.state.theme] || this.T.PAL.dark; }
+  setTheme(t) {
+    this.setState({ theme: t });
+    try {
+      if ((t === 'dark') === this.systemDark()) window.localStorage.removeItem('od-theme');
+      else window.localStorage.setItem('od-theme', t);
+    } catch (e) {}
+  }
+
+  attachCanvas(el) {
+    if (this.canvas === el) return;
+    if (this.canvas) {
+      const c = this.canvas;
+      c.removeEventListener('pointerdown', this._pd);
+      c.removeEventListener('pointermove', this._pm);
+      c.removeEventListener('pointerup', this._pu);
+      c.removeEventListener('pointercancel', this._pu);
+      c.removeEventListener('pointerleave', this._pl);
+      cancelAnimationFrame(this.raf);
+      try { this._mq.removeEventListener('change', this._mqH); } catch (err) {}
+    }
+    this.canvas = el || null;
+    if (!el) return;
+    this.ctx = el.getContext('2d');
+    const p = this.pointer;
+    this._pd = (e) => {
+      if (!this.modeDef().rotatable) return;
+      p.drag = true; p.lx = e.clientX; p.ly = e.clientY;
+      try { el.setPointerCapture(e.pointerId); } catch (err) {}
+      el.style.cursor = 'grabbing';
+    };
+    this._pm = (e) => {
+      const r = el.getBoundingClientRect();
+      p.x = e.clientX - r.left; p.y = e.clientY - r.top; p.inside = true;
+      if (p.drag && this.modeDef().rotatable) {
+        this.cam.yaw += (e.clientX - p.lx) * 0.008;
+        this.cam.pitch = Math.max(-1.45, Math.min(1.45, this.cam.pitch + (e.clientY - p.ly) * 0.008));
+        p.lx = e.clientX; p.ly = e.clientY;
+      }
+    };
+    this._pu = () => { p.drag = false; el.style.cursor = ''; };
+    this._pl = () => { p.inside = false; };
+    el.addEventListener('pointerdown', this._pd);
+    el.addEventListener('pointermove', this._pm);
+    el.addEventListener('pointerup', this._pu);
+    el.addEventListener('pointercancel', this._pu);
+    el.addEventListener('pointerleave', this._pl);
+    try {
+      this._mq = window.matchMedia('(max-width: 1023.98px)');
+      this._mqH = () => this.syncBreakpoint();
+      this._mq.addEventListener('change', this._mqH);
+    } catch (err) {}
+    this.last = 0;
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  tick(t) {
+    if (!this.canvas) return;
+    const dt = this.last ? Math.min(0.05, (t - this.last) / 1000) : 0;
+    this.last = t;
+    const st = this.state, m = this.modeDef(), pb = m.playback;
+    if (m.autoSpin && st.spin && !this.pointer.drag) this.cam.yaw += dt * 0.3;
+    if (pb && st.playing) {
+      this.sim.f = Math.min(pb.fmax, this.sim.f + dt * pb.rate * st.speed);
+      if (this.sim.f >= pb.fmax) this.setState({ playing: false, f: this.sim.f });
+      else if (t - (this.lastPush || 0) > 120) { this.lastPush = t; this.setState({ f: this.sim.f }); }
+    }
+    // a broken scene keeps the page alive but is reported once for the browser check
+    try { this.draw(dt, t); } catch (err) { if (!this.drawErr) { this.drawErr = true; console.error(err); } }
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  // ---------- math helpers (장면에서 써도 돼요) ----------
+  lerp(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+  sm(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+  rgb(hex) { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  mix(hex, to, amt) {
+    const a = this.rgb(hex), b = this.rgb(to);
+    return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * amt) + ',' + Math.round(a[1] + (b[1] - a[1]) * amt) + ',' + Math.round(a[2] + (b[2] - a[2]) * amt) + ')';
+  }
+  rgba(hex, al) { const a = this.rgb(hex); return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + al + ')'; }
+  shades(hex) {
+    let s = this.colorCache[hex];
+    if (!s) { s = { hi: this.mix(hex, '#FFFFFF', 0.55), mid: hex, lo: this.mix(hex, '#000000', 0.55) }; this.colorCache[hex] = s; }
+    return s;
+  }
+  proj(p, V) {
+    const x = p[0] - V.cx, y = p[1], z = p[2];
+    const x1 = x * V.cy + z * V.sy, z1 = -x * V.sy + z * V.cy;
+    const y2 = y * V.cp - z1 * V.sp, z2 = y * V.sp + z1 * V.cp;
+    const s = V.F / Math.max(2, V.D - z2);
+    return [V.ox + x1 * s, V.oy - y2 * s, z2, s];
+  }
+
+  // ---------- drawing ----------
+  draw(dt, now) {
+    const el = this.canvas, ctx = this.ctx, st = this.state, m = this.modeDef();
+    const dpr = window.devicePixelRatio || 1;
+    const W = el.clientWidth, H = el.clientHeight;
+    if (!W || !H) return;
+    if (el.width !== Math.round(W * dpr) || el.height !== Math.round(H * dpr)) { el.width = Math.round(W * dpr); el.height = Math.round(H * dpr); }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const pal = this.pal();
+    ctx.fillStyle = pal.bg; ctx.fillRect(0, 0, W, H);
+
+    const I = [], O = [];
+    this.buildScene(st.mode, I, O);
+    const scale = Math.min(W / m.fit[0], H / m.fit[1]), D = m.D, z = this.cam.zoom;
+    const V = {
+      cx: this.sim.cx, cy: Math.cos(this.cam.yaw), sy: Math.sin(this.cam.yaw), cp: Math.cos(this.cam.pitch), sp: Math.sin(this.cam.pitch),
+      F: scale * z * D, D: D, ox: W / 2, oy: H / 2 - (m.playback ? 20 : 0)
+    };
+    let zmin = Infinity, zmax = -Infinity;
+    for (const it of I) {
+      it.A = this.proj(it.p, V);
+      if (it.q) { it.B = this.proj(it.q, V); it.z = (it.A[2] + it.B[2]) / 2; } else it.z = it.A[2];
+      if (it.z < zmin) zmin = it.z;
+      if (it.z > zmax) zmax = it.z;
+    }
+    I.sort((a, b) => a.z - b.z);
+    // depth fog; a flat scene (all items at one depth) is drawn without it
+    const span = zmax - zmin;
+    for (const it of I) {
+      const fog = span < 0.01 ? 1 : 0.42 + 0.58 * ((it.z - zmin) / span);
+      ctx.globalAlpha = Math.max(0, (it.a == null ? 1 : it.a) * fog);
+      if (ctx.globalAlpha < 0.01) continue;
+      const x = it.A[0], y = it.A[1], s = it.A[3];
+      if (it.k === 0) {
+        const R = it.r * s;
+        if (R < 0.4) continue;
+        if (it.flat) { ctx.fillStyle = it.c; ctx.beginPath(); ctx.arc(x, y, Math.max(1.3, R), 0, 6.2832); ctx.fill(); }
+        else {
+          const sh = this.shades(it.c);
+          const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+          g.addColorStop(0, sh.hi); g.addColorStop(0.5, sh.mid); g.addColorStop(1, sh.lo);
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        }
+      } else if (it.k === 1) {
+        const lw = Math.max(1, it.w * (s + it.B[3]) / 2);
+        ctx.lineCap = it.flat ? 'butt' : 'round';
+        if (it.rod) {
+          ctx.strokeStyle = this.shades(it.c).lo; ctx.lineWidth = lw + 2;
+          ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+        }
+        ctx.strokeStyle = it.c; ctx.lineWidth = lw;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+      } else if (it.k === 3) {
+        const fs = Math.max(8, Math.min(14, it.size * s / (scale * z) * 1.05));
+        ctx.font = '700 ' + fs + 'px "Pretendard", system-ui, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = it.c; ctx.fillText(it.text, x, y + 0.5);
+      } else if (it.k === 4) {
+        const ang = Math.atan2(it.B[1] - y, it.B[0] - x), mx = (x + it.B[0]) / 2, my = (y + it.B[1]) / 2, r = 6;
+        ctx.fillStyle = it.c; ctx.beginPath();
+        ctx.moveTo(mx + Math.cos(ang) * r, my + Math.sin(ang) * r);
+        ctx.lineTo(mx + Math.cos(ang + 2.5) * r, my + Math.sin(ang + 2.5) * r);
+        ctx.lineTo(mx + Math.cos(ang - 2.5) * r, my + Math.sin(ang - 2.5) * r);
+        ctx.closePath(); ctx.fill();
+      } else if (it.k === 5) {
+        // lit translucent sphere, highlight up-left like the solid spheres
+        const R = it.r * s, ba = pal.blobAlpha == null ? 0.3 : pal.blobAlpha;
+        const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+        g.addColorStop(0, 'rgba(255,255,255,0.55)'); g.addColorStop(0.3, this.rgba(it.c, Math.min(1, ba + 0.15))); g.addColorStop(1, this.rgba(it.c, 0.18));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        ctx.strokeStyle = it.c; ctx.lineWidth = it.focus ? 3 : 1.5; ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+    for (const o of O) this.drawOverlay(o, V, now);
+  }
+
+  drawOverlay(o, V, now) {
+    const ctx = this.ctx, A = this.proj(o.p, V), pal = this.pal();
+    if (o.t === 'ring') {
+      const r = Math.max(6, 0.32 * A[3]) * (1 + (this.reduceMotion ? 0 : 0.15 * Math.sin((now || 0) / 160)));
+      ctx.globalAlpha = 1; ctx.strokeStyle = pal.ring; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(A[0], A[1], r, 0, 6.2832); ctx.stroke();
+      ctx.font = '600 11px "Pretendard", system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = pal.ring; ctx.fillText(o.text, A[0], A[1] + r + 10);
+      return;
+    }
+    const size = o.size || 12, x = A[0] + (o.dx || 0), y = A[1] + (o.dy || 0);
+    ctx.font = '600 ' + size + 'px "Pretendard", system-ui, sans-serif';
+    const tw = ctx.measureText(o.text).width, w = tw + 14, h = size + 10;
+    ctx.globalAlpha = o.a == null ? 1 : o.a;
+    if (o.lead) {
+      ctx.strokeStyle = this.rgba(o.c, 0.6); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(x, y); ctx.stroke();
+    }
+    ctx.fillStyle = pal.labelBg;
+    ctx.strokeStyle = this.rgba(o.c, 0.55); ctx.lineWidth = 1;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x - w / 2, y - h / 2, w, h, 6); else ctx.rect(x - w / 2, y - h / 2, w, h);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = pal.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(o.text, x, y + 0.5);
+    ctx.globalAlpha = 1;
+  }
+
+  setMode(mode) {
+    this.cam = Object.assign({}, this.modeDef(mode).cam);
+    this.sim.f = 0;
+    this.pointer.drag = false;
+    this.setState({ mode: mode, f: 0, playing: false, step: -1 });
+  }
+
+  pickStep(i) {
+    const s = (this.T.STEPS || [])[i];
+    if (!s) return;
+    if (s.mode !== this.state.mode) this.setMode(s.mode);
+    if (s.f != null) this.sim.f = s.f;
+    this.setState({ f: this.sim.f, playing: false, step: i });
+  }
+
+  renderVals() {
+    const st = this.state, T = this.T, m = this.modeDef(), pb = m.playback;
+    const tg = T.TOGGLES ? (Array.isArray(T.TOGGLES) ? T.TOGGLES : (T.TOGGLES[st.mode] || [])) : [];
+    const togDefs = tg.concat(m.autoSpin ? [['spin', '자동 회전']] : []);
+    const toggles = togDefs.map((d) => ({
+      label: d[1], pressed: st[d[0]] ? 'true' : 'false',
+      toggle: () => { const o = {}; o[d[0]] = !st[d[0]]; this.setState(o); }
+    }));
+    const STEPS = T.STEPS || [];
+    const steps = STEPS.map((s, i) => ({ s: s, i: i })).filter((x) => x.s.mode === st.mode).map((x, k) => ({
+      num: k + 1, title: x.s.title, who: x.s.who, c: x.s.c, pressed: st.step === x.i ? 'true' : 'false',
+      pick: () => this.pickStep(x.i)
+    }));
+    const speeds = [0.5, 1, 2].map((v) => ({
+      label: v + '×', pressed: st.speed === v ? 'true' : 'false',
+      pick: () => this.setState({ speed: v })
+    }));
+    const is = {};
+    T.MODES.forEach((d) => { is[d.key] = d.key === st.mode; });
+    const f = st.f;
+    const isDark = st.theme === 'dark';
+    const leftOn = st.narrow ? st.drawer === 'left' : st.leftOpen, rightOn = st.narrow ? st.drawer === 'right' : st.rightOpen;
+    return Object.assign({
+      th: this.K.THEMES[st.theme], isDark: isDark, isLight: !isDark,
+      themeLabel: isDark ? '라이트 모드로 전환' : '다크 모드로 전환',
+      toggleTheme: () => this.setTheme(isDark ? 'light' : 'dark'),
+      canvasRef: this._canvasRef, canvasCls: m.rotatable ? '' : 'is-fixed',
+      hasModes: T.MODES.length > 1, is: is,
+      modes: T.MODES.map((d) => ({ label: d.label, pressed: d.key === st.mode ? 'true' : 'false', pick: () => { if (d.key !== this.state.mode) this.setMode(d.key); } })),
+      leftCls: leftOn ? 'is-open' : '', rightCls: rightOn ? 'is-open' : '',
+      leftExpanded: leftOn ? 'true' : 'false', rightExpanded: rightOn ? 'true' : 'false',
+      scrimCls: (st.narrow && st.drawer) ? 'is-on' : '',
+      toggleLeft: () => this.togglePanel('left'),
+      toggleRight: () => this.togglePanel('right'),
+      closePanels: () => this.setState({ drawer: null }),
+      layoutStyle: ((st.leftW ? '--pl-user: ' + st.leftW + 'px; ' : '') + (st.rightW ? '--pr-user: ' + st.rightW + 'px;' : '')).trim(),
+      layoutCls: st.resizing ? 'is-resizing' : '',
+      leftWNow: st.leftW ? String(st.leftW) : '', rightWNow: st.rightW ? String(st.rightW) : '',
+      leftHandleRef: this._handleRefL, rightHandleRef: this._handleRefR,
+      onKey: (e) => { if (e.key === 'Escape' && this.state.narrow && this.state.drawer) this.setState({ drawer: null }); },
+      hasToggles: toggles.length > 0, toggles: toggles,
+      hasSteps: steps.length > 0, steps: steps,
+      hasStep: st.step >= 0 && st.step < STEPS.length, stepDetail: st.step >= 0 && STEPS[st.step] ? STEPS[st.step].text : '',
+      mistakes: (T.MISTAKES && T.MISTAKES[st.mode]) || [],
+      canvasLabel: m.canvasLabel(f),
+      zoomIn: () => { this.cam.zoom = Math.min(3, this.cam.zoom * 1.2); },
+      zoomOut: () => { this.cam.zoom = Math.max(0.5, this.cam.zoom / 1.2); },
+      resetView: () => { this.cam = Object.assign({}, m.cam); },
+      hasPlayback: !!pb, isPlaying: st.playing, notPlaying: !st.playing, playLabel: st.playing ? '일시정지' : '재생',
+      togglePlay: () => {
+        if (!pb) return;
+        if (!st.playing && this.sim.f >= pb.fmax) this.sim.f = 0;
+        this.setState({ playing: !st.playing, step: -1, f: this.sim.f });
+      },
+      fInt: Math.round(f * 10), fLabel: pb ? pb.label(f) : '', fMax10: pb ? Math.round(pb.fmax * 10) : 0,
+      onScrub: (e) => { const v = Number(e.target.value) / 10; this.sim.f = v; this.setState({ f: v, playing: false, step: -1 }); },
+      speeds: speeds
+    }, this.extraVals(st));
+  }
+}
+</script>
+</body>
+</html>

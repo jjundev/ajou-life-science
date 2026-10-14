@@ -1,0 +1,1152 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>염색체 구조 변화</title>
+<!-- 생성 파일: .assets/자료_인터렉티브_03_염색체_구조_변화/Main.dc.html을 고친 뒤 bio-interactive/scripts/build.cjs로 다시 만드세요. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+<style>
+body{margin:0}
+.app{--radius:8px;--tap:48px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--dur:220ms;--dur-exit:150ms;--ease-out:cubic-bezier(.2,.8,.2,1);--scrim:rgba(0,0,0,.4);
+  height:100vh;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;box-sizing:border-box;
+  background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;font-size:16px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.app *,.app *::before,.app *::after{box-sizing:border-box}
+.app button{font-family:inherit;color:inherit}
+.app :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.num{font-variant-numeric:tabular-nums}
+
+.topbar{display:flex;align-items:center;gap:var(--s2);min-height:56px;padding:var(--s2) var(--s3);background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:17px;font-weight:700;white-space:nowrap}
+.text-btn{flex:none;min-height:44px;min-width:44px;padding:0 var(--s3);border:0;border-radius:var(--radius);background:transparent;color:var(--ink);font:600 14px/1 'Pretendard',system-ui,sans-serif;cursor:pointer}
+.panel-toggle{display:inline-flex;align-items:center;gap:var(--s1);padding:0 var(--s2)}
+.panel-toggle svg,.theme-toggle svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.panel-toggle .strip{fill:transparent;stroke:none;transition:fill 150ms ease-out}
+.panel-toggle[aria-expanded="true"]{color:var(--accent-ink)}
+.panel-toggle[aria-expanded="true"] .strip{fill:currentColor}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;padding:0}
+.seg{flex:none;display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.seg button{min-height:40px;padding:0 var(--s3);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+.layout{display:grid;grid-template-columns:auto minmax(320px,1fr) auto;min-height:0}
+.panel{position:relative;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--bg);color:var(--ink)}
+.panel-left{grid-column:1;width:clamp(260px,20vw,320px);border-right:1px solid var(--line)}
+.panel-right{grid-column:3;width:clamp(320px,24vw,400px);border-left:1px solid var(--line)}
+.panel-inner{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--s4) var(--s4) var(--s6)}
+.panel-inner::-webkit-scrollbar{width:8px}
+.panel-inner::-webkit-scrollbar-track{background:transparent}
+.panel-inner::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:8px;border:2px solid var(--bg)}
+.panel-inner::-webkit-scrollbar-thumb:hover{background:var(--scroll-hover)}
+@supports (scrollbar-color:auto){.panel-inner{scrollbar-width:thin;scrollbar-color:var(--scroll) transparent}}
+.panel-head{display:flex;align-items:center;gap:var(--s2);min-height:44px;margin-bottom:var(--s2)}
+.panel-head h2{flex:1 1 0;min-width:0;margin:0;font-size:22px;line-height:1.4}
+.stage{grid-column:2;position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--bg)}
+.scrim{display:none}
+.panel-resize{display:none}
+
+.sec{margin-top:var(--s5);padding-top:var(--s5);border-top:1px solid var(--line)}
+.panel-head + .sec,.panel-head + div > .sec:first-child{margin-top:0;padding-top:0;border-top:0}
+.sec-title{display:block;margin:0 0 var(--s3);font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-0.01em}
+.sub{margin:var(--s3) 0 0;font-size:14px;line-height:1.6;color:var(--ink-2)}
+
+.opt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.btn{display:flex;align-items:center;gap:var(--s2);width:100%;min-height:var(--tap);padding:0 var(--s3);border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font-size:14px;font-weight:600;line-height:1.3;text-align:left;cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.btn .box{flex:none;width:12px;height:12px;border-radius:3px;border:1.5px solid currentColor}
+.btn[aria-pressed="true"] .box{background:currentColor}
+.steps{display:flex;flex-direction:column;gap:var(--s2)}
+.steps .btn{padding:var(--s2) var(--s3);gap:var(--s3)}
+.step-num{flex:none;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid;font-size:12px;font-weight:700;color:var(--ink)}
+.step-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.step-txt b{font-size:15px;font-weight:700}
+.step-txt span{font-size:13px;font-weight:500;color:var(--ink-2)}
+.detail{margin-top:var(--s3);padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+
+
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.tiles.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tile{padding:var(--s3);border-radius:var(--radius);background:var(--surface)}
+.tile b{display:block;font-size:20px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}
+.tile span{display:block;font-size:13px;line-height:1.4;color:var(--ink-2)}
+.events{display:flex;flex-direction:column;gap:var(--s2)}
+.event{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.6}
+.dot{flex:none;width:10px;height:10px;margin-top:7px;border-radius:50%}
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2) var(--s3);font-size:13px;color:var(--ink-2)}
+.legend div{display:flex;align-items:center;gap:var(--s2)}
+.sw{flex:none;width:16px;height:6px;border-radius:3px}
+.sw.ball{width:12px;height:12px;border-radius:50%}
+.sec.warn{border-top:0;padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+.warn .sec-title{color:var(--warn);font-size:17px}
+.mistake{margin-top:var(--s3)}
+.mistake b{display:block;font-weight:700}
+.mistake span{color:var(--ink-2)}
+
+.canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.canvas.is-fixed{cursor:default}
+.view-btns{position:absolute;top:var(--s3);right:var(--s3);display:flex;gap:6px}
+.icon-btn{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);cursor:pointer}
+.icon-btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.icon-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.float{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius)}
+.hover-card{position:absolute;left:var(--s3);bottom:var(--s3);display:flex;flex-direction:column;gap:2px;padding:var(--s3) var(--s4);pointer-events:none}
+.hover-card .k{font-size:13px;color:var(--ink-2)}
+.hover-card .v{font-size:18px;font-weight:700}
+.playbar{position:absolute;left:var(--s3);right:var(--s3);bottom:var(--s3);display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3)}
+.play{flex:none;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--radius);background:var(--btn-bg);color:var(--on-btn) !important;cursor:pointer}
+.play svg{width:18px;height:18px;fill:currentColor}
+.scrub{flex:1 1 200px;min-width:160px;display:flex;flex-direction:column;gap:2px}
+.scrub span{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.scrub input{width:100%;height:24px;margin:0;accent-color:var(--accent)}
+.speeds{display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.speeds button{min-width:48px;height:40px;padding:0 var(--s2);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
+.speeds button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+@media (hover:hover){.btn:hover,.icon-btn:hover{background:var(--surface)}.text-btn:hover{background:var(--surface)}}
+@media (min-width:1024px){
+  .panel-head{display:none}
+  .layout{--pl:var(--pl-user,clamp(260px,20vw,320px));--pr:var(--pr-user,clamp(320px,24vw,400px))}
+  .panel{width:0;border-width:0;visibility:hidden;transition:width var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left.is-open{width:var(--pl)}
+  .panel-right.is-open{width:var(--pr)}
+  .panel.is-open{visibility:visible;border-width:1px;transition:width var(--dur) var(--ease-out)}
+  .panel-left .panel-inner{width:var(--pl)}
+  .panel-right .panel-inner{width:var(--pr);align-self:flex-end}
+  .layout.is-resizing .panel{transition:none}
+  .layout.is-resizing{cursor:col-resize;user-select:none}
+  .panel-resize{display:block;position:absolute;top:0;bottom:0;z-index:2;width:12px;padding:0;border:0;background:transparent;cursor:col-resize;touch-action:none}
+  .panel-left .panel-resize{right:0}
+  .panel-right .panel-resize{left:0}
+  .panel-resize::after{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--accent);opacity:0;transition:opacity 150ms ease-out}
+  .panel-left .panel-resize::after{right:0}
+  .panel-right .panel-resize::after{left:0}
+  .panel-resize:focus-visible{outline:none}
+  .panel-resize:focus-visible::after,.is-resizing .panel-resize:active::after{opacity:1}
+  @media (hover:hover){.panel-resize:hover::after{opacity:1}}
+}
+@media (max-width: 1023.98px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .stage{grid-column:1}
+  .panel{position:fixed;top:0;bottom:0;z-index:40;visibility:hidden;transition:transform var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left{left:0;width:min(304px,88vw);transform:translateX(-100%)}
+  .panel-right{right:0;width:min(360px,88vw);transform:translateX(100%)}
+  .panel.is-open{visibility:visible;transform:none;transition:transform var(--dur) var(--ease-out)}
+  .panel-inner{padding-top:calc(var(--s3) + env(safe-area-inset-top));padding-bottom:calc(var(--s6) + env(safe-area-inset-bottom))}
+  .scrim{display:block;position:fixed;inset:0;z-index:35;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .scrim.is-on{opacity:1;visibility:visible;transition:opacity var(--dur) var(--ease-out)}
+}
+@media (max-width:640px){.brand{display:none}.topbar{justify-content:space-between}}
+@media (max-width:480px){.panel-toggle span{display:none}.seg button{padding:0 var(--s2)}}
+@media (prefers-reduced-motion:reduce){.panel,.panel.is-open,.scrim,.scrim.is-on,.panel-toggle .strip,.panel-resize::after{transition:none}}
+</style>
+</head>
+<body>
+<div id="dc-root"></div>
+<template id="dc-template">
+<div class="app" onKeyDown="{{onKey}}" style="--bg: {{th.bg}}; --surface: {{th.surface}}; --ink: {{th.ink}}; --ink-2: {{th.ink2}}; --line: {{th.line}}; --accent: {{th.accent}}; --accent-ink: {{th.accentInk}}; --btn-bg: {{th.btnBg}}; --on-btn: {{th.onBtn}}; --warn: {{th.warn}}; --prof: {{th.prof}}; --supp: {{th.supp}}; --danger: {{th.danger}}; --scroll: {{th.scroll}}; --scroll-hover: {{th.scrollHover}}">
+<header class="topbar">
+<button class="text-btn panel-toggle" type="button" aria-label="조작 패널" aria-expanded="{{leftExpanded}}" onClick="{{toggleLeft}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M9 4v16"></path></svg><span>조작</span></button>
+<strong class="brand">염색체 구조 변화</strong>
+<sc-if value="{{hasModes}}" hint-placeholder-val="{{ true }}">
+<div class="seg" role="group" aria-label="보기 선택">
+<sc-for list="{{modes}}" as="md" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{md.pressed}}" onClick="{{md.pick}}">{{md.label}}</button>
+</sc-for>
+</div>
+</sc-if>
+<button class="text-btn theme-toggle" type="button" aria-label="{{themeLabel}}" title="{{themeLabel}}" onClick="{{toggleTheme}}">
+<sc-if value="{{isDark}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+<sc-if value="{{isLight}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></sc-if>
+</button>
+<button class="text-btn panel-toggle" type="button" aria-label="설명 패널" aria-expanded="{{rightExpanded}}" onClick="{{toggleRight}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M15 4v16"></path></svg><span>설명</span></button>
+</header>
+
+<div class="layout {{layoutCls}}" style="{{layoutStyle}}">
+<aside class="panel panel-left {{leftCls}}" aria-label="조작">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="220" aria-valuemax="480" aria-valuenow="{{leftWNow}}" ref="{{leftHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>조작</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<sc-if value="{{hasToggles}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">보기 옵션</h3>
+<div class="opt">
+<sc-for list="{{toggles}}" as="t" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{t.pressed}}" onClick="{{t.toggle}}"><span class="box" aria-hidden="true"></span>{{t.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<!-- SLOT:left -->
+<sc-if value="{{is.types}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">변화 고르기</h3>
+<div class="opt">
+<sc-for list="{{kinds}}" as="k" hint-placeholder-count="4">
+<button class="btn" type="button" aria-pressed="{{k.pressed}}" onClick="{{k.pick}}"><span class="box" aria-hidden="true"></span>{{k.label}}</button>
+</sc-for>
+</div>
+<p class="sub">누르면 그 변화의 처음(절단 전)부터 재생해요. 재생은 결실 → 중복 → 역위 → 전좌 순서로 이어져요.</p>
+</div>
+</sc-if>
+<sc-if value="{{is.switch}}" hint-placeholder-val="{{ false }}">
+<div class="sec">
+<h3 class="sec-title">형광등 비유</h3>
+<p class="sub" style="margin-top: 0">형광등은 세포분열 촉진 유전자, 스위치는 그 유전자의 발현을 조절하는 부위예요. 전좌로 형광등이 늘 켜진 스위치 밑으로 옮겨 가요.</p>
+</div>
+</sc-if>
+<!-- /SLOT:left -->
+
+<sc-if value="{{hasSteps}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">단계</h3>
+<div class="steps">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}"><span class="step-num num" style="border-color: {{s.c}}">{{s.num}}</span><span class="step-txt"><b>{{s.title}}</b><span>{{s.who}}</span></span></button>
+</sc-for>
+</div>
+<sc-if value="{{hasStep}}" hint-placeholder-val="{{ false }}">
+<div class="detail" aria-live="polite">{{stepDetail}}</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</aside>
+
+<section class="stage" aria-label="모형 보기">
+<canvas class="canvas {{canvasCls}}" ref="{{canvasRef}}" role="img" aria-label="{{canvasLabel}}"></canvas>
+<div class="view-btns">
+<button class="icon-btn" type="button" aria-label="확대" onClick="{{zoomIn}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="축소" onClick="{{zoomOut}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="시점 처음으로" onClick="{{resetView}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v5h5"></path></svg></button>
+</div>
+
+<sc-if value="{{hasPlayback}}" hint-placeholder-val="{{ false }}">
+<div class="playbar float">
+<button class="play" type="button" aria-label="{{playLabel}}" onClick="{{togglePlay}}">
+<sc-if value="{{isPlaying}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></sc-if>
+<sc-if value="{{notPlaying}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5l12 7-12 7z"></path></svg></sc-if>
+</button>
+<label class="scrub">
+<span>{{fLabel}}</span>
+<input type="range" min="0" max="{{fMax10}}" step="1" value="{{fInt}}" onChange="{{onScrub}}">
+</label>
+<div class="speeds" role="group" aria-label="재생 속도">
+<sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{sp.pressed}}" onClick="{{sp.pick}}">{{sp.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</section>
+
+<aside class="panel panel-right {{rightCls}}" aria-label="설명">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="280" aria-valuemax="720" aria-valuenow="{{rightWNow}}" ref="{{rightHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>설명</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<!-- SLOT:right -->
+<sc-if value="{{is.types}}" hint-placeholder-val="{{ true }}">
+<div>
+<div class="sec">
+<h3 class="sec-title">{{kd.title}}</h3>
+<div class="tiles">
+<div class="tile"><b>{{kd.delta}}</b><span>{{kd.deltaSub}}</span></div>
+<div class="tile"><b>{{kd.chrom}}</b><span>{{kd.chromSub}}</span></div>
+</div>
+<div class="detail">
+<div><span style="color: var(--ink-2)">전 </span><b class="num" style="letter-spacing: 0.06em">{{kd.before}}</b></div>
+<div><span style="color: var(--ink-2)">후 </span><b class="num" style="letter-spacing: 0.06em">{{kd.after}}</b></div>
+</div>
+<p class="sub">「·」은 동원체 자리예요. 글자 하나는 여러 유전자를 담을 수 있는 조각이에요.</p>
+</div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{events}}" as="e" hint-placeholder-count="1">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">수업 예</h3>
+<p class="sub" style="margin-top: 0">{{kd.ex}}</p>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw" style="background: {{legend.chr}}"></span>원래 염색체</div>
+<div><span class="sw" style="background: {{legend.chr2}}"></span>비상동염색체</div>
+<div><span class="sw" style="background: {{legend.homo}}"></span>상동염색체</div>
+<div><span class="sw" style="background: {{legend.copy}}"></span>끼어든 DE 사본</div>
+<div><span class="sw" style="background: {{legend.lost}}"></span>잃는 절편</div>
+<div><span class="sw" style="background: {{legend.inv}}"></span>뒤집히는 절편</div>
+<div><span class="sw ball" style="background: {{legend.cen}}"></span>동원체</div>
+<div><span class="sw" style="background: {{legend.cut}}"></span>절단 자리</div>
+</div>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{is.switch}}" hint-placeholder-val="{{ false }}">
+<div>
+<div class="sec">
+<h3 class="sec-title">버킷 림프종의 전좌</h3>
+<div class="tiles">
+<div class="tile"><b>{{sw.loc}}</b><span>촉진 유전자의 자리</span></div>
+<div class="tile"><b>{{sw.reg}}</b><span>바로 옆 조절 부위</span></div>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">발현량 (상대값)</h3>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div>
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span>전좌 전</span><span style="color: var(--ink-2)">{{sw.beforeTxt}}</span></div>
+<div style="height: 10px; border-radius: 5px; background: var(--surface); overflow: hidden"><div style="height: 10px; border-radius: 5px; width: {{sw.beforeW}}; background: {{legend.reg}}"></div></div>
+</div>
+<div>
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span>전좌 후</span><span style="color: var(--ink-2)">{{sw.afterTxt}}</span></div>
+<div style="height: 10px; border-radius: 5px; background: var(--surface); overflow: hidden"><div style="height: 10px; border-radius: 5px; width: {{sw.afterW}}; background: {{legend.strong}}"></div></div>
+</div>
+</div>
+<p class="sub">막대는 상대값이에요. 유전자 서열은 그대로이고, 옆의 조절 부위만 바뀌었어요.</p>
+</div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{events}}" as="e" hint-placeholder-count="1">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw" style="background: {{legend.chr2}}"></span>8번 염색체</div>
+<div><span class="sw" style="background: {{legend.chr}}"></span>14번 염색체</div>
+<div><span class="sw" style="background: {{legend.reg}}"></span>자기 조절 부위</div>
+<div><span class="sw" style="background: {{legend.strong}}"></span>강한 조절 부위</div>
+<div><span class="sw" style="background: {{legend.gene}}"></span>세포분열 촉진 유전자</div>
+<div><span class="sw ball" style="background: {{legend.prod}}"></span>단백질 산물</div>
+</div>
+</div>
+</div>
+</sc-if>
+<!-- /SLOT:right -->
+
+<div class="sec warn">
+<h3 class="sec-title">꼭 기억해요</h3>
+<sc-for list="{{mistakes}}" as="m" hint-placeholder-count="3">
+<div class="mistake"><b>{{m.title}}</b><span>{{m.text}}</span></div>
+</sc-for>
+</div>
+</div>
+</aside>
+</div>
+<div class="scrim {{scrimCls}}" aria-hidden="true" onClick="{{closePanels}}"></div>
+</div>
+</template>
+<script>
+// Minimal x-dc runtime for opening the canvas component as a plain HTML page.
+// Supports what Main.dc.html uses: {{dotted.path}} holes in text and attributes,
+// event attributes (onClick, onKeyDown, onMouseEnter, onMouseLeave, onChange),
+// callback ref, <sc-if value> and <sc-for list as>.
+const DC_EVENTS = { onclick: 'click', onkeydown: 'keydown', onmouseenter: 'mouseenter', onmouseleave: 'mouseleave', onchange: 'input' };
+const DC_HOLE = /\{\{\s*([\w.$]+)\s*\}\}/g;
+let dcSchedule = () => {};
+
+class DCLogic {
+  constructor(props) { this.props = props || {}; this.state = {}; }
+  setState(u) {
+    this.state = Object.assign({}, this.state, typeof u === 'function' ? u(this.state) : u);
+    dcSchedule();
+  }
+}
+
+function dcGet(scope, path) {
+  let o = scope;
+  for (const k of path.split('.')) { if (o == null) return undefined; o = o[k]; }
+  return o;
+}
+function dcInterp(str, scope) {
+  return str.replace(DC_HOLE, (_, p) => { const v = dcGet(scope, p); return v == null ? '' : String(v); });
+}
+function dcSingle(str) {
+  const m = str.match(/^\s*\{\{\s*([\w.$]+)\s*\}\}\s*$/);
+  return m ? m[1] : null;
+}
+
+// Compiles one node in place; pushes updaters that take the current scope.
+function dcCompile(node, ups) {
+  if (node.nodeType === 3) {
+    if (!node.data.includes('{{')) return;
+    const src = node.data;
+    let last;
+    ups.push((s) => { const v = dcInterp(src, s); if (v !== last) { node.data = v; last = v; } });
+    return;
+  }
+  if (node.nodeType !== 1) return;
+  const tag = node.tagName.toLowerCase();
+  if (tag === 'sc-if' || tag === 'sc-for') { dcBlock(node, tag, ups); return; }
+  for (const a of [...node.attributes]) {
+    const name = a.name, val = a.value;
+    if (name.startsWith('hint-')) { node.removeAttribute(name); continue; }
+    if (!val.includes('{{')) continue;
+    node.removeAttribute(name);
+    if (DC_EVENTS[name]) {
+      const p = dcSingle(val);
+      let cur;
+      node.addEventListener(DC_EVENTS[name], (e) => { const f = dcGet(cur, p); if (typeof f === 'function') f(e); });
+      ups.push((s) => { cur = s; });
+    } else if (name === 'ref') {
+      const p = dcSingle(val);
+      let done = false;
+      ups.push((s) => { if (!done) { done = true; const f = dcGet(s, p); if (typeof f === 'function') f(node); } });
+    } else {
+      let last;
+      ups.push((s) => {
+        const v = dcInterp(val, s);
+        if (v === last) return;
+        last = v;
+        if (name === 'value' && 'value' in node) node.value = v; else node.setAttribute(name, v);
+      });
+    }
+  }
+  for (const c of [...node.childNodes]) dcCompile(c, ups);
+}
+
+function dcBlock(el, tag, ups) {
+  const anchor = document.createComment(tag);
+  el.parentNode.replaceChild(anchor, el);
+  const tpl = document.createDocumentFragment();
+  while (el.firstChild) tpl.appendChild(el.firstChild);
+  const make = () => {
+    const frag = tpl.cloneNode(true), u = [];
+    for (const c of [...frag.childNodes]) dcCompile(c, u);
+    return { frag: frag, nodes: [...frag.childNodes], u: u };
+  };
+  if (tag === 'sc-if') {
+    const p = dcSingle(el.getAttribute('value') || '');
+    let inst = null;
+    ups.push((s) => {
+      const on = !!dcGet(s, p);
+      if (!on) { if (inst) { inst.nodes.forEach((n) => n.remove()); inst = null; } return; }
+      if (!inst) { inst = make(); anchor.parentNode.insertBefore(inst.frag, anchor); }
+      inst.u.forEach((f) => f(s));
+    });
+  } else {
+    const p = dcSingle(el.getAttribute('list') || ''), as = el.getAttribute('as');
+    const insts = [];
+    ups.push((s) => {
+      const list = dcGet(s, p) || [];
+      while (insts.length > list.length) insts.pop().nodes.forEach((n) => n.remove());
+      while (insts.length < list.length) { const i = make(); anchor.parentNode.insertBefore(i.frag, anchor); insts.push(i); }
+      list.forEach((item, k) => { const sc = Object.create(s); sc[as] = item; insts[k].u.forEach((f) => f(sc)); });
+    });
+  }
+}
+
+function mountDC(Component) {
+  const comp = new Component({});
+  const frag = document.getElementById('dc-template').content.cloneNode(true), ups = [];
+  for (const c of [...frag.childNodes]) dcCompile(c, ups);
+  const root = document.getElementById('dc-root');
+  let pending = false;
+  const render = () => { pending = false; const v = comp.renderVals(); ups.forEach((f) => f(v)); };
+  dcSchedule = () => { if (!pending) { pending = true; queueMicrotask(render); } };
+  root.appendChild(frag);
+  render();
+  window.addEventListener('pagehide', () => { if (comp.componentWillUnmount) comp.componentWillUnmount(); });
+}
+class Component extends DCLogic {
+  // ================= 주제 훅: 주제마다 바꾸는 곳은 이 네 메서드뿐이에요 =================
+  // 계약은 bio-interactive/references/scene-api.md에 있어요.
+
+  topic() {
+    const SUB = ['원래', '절단', '이동', '재결합'];
+    const KINDS = [
+      { name: '결실', title: '결실 (deletion)', head: '결실: F 절편이 빠져요', c: '#E5604F',
+        before: 'ABC·DEFGH', after: 'ABC·DEGH', delta: '−1 조각', deltaSub: 'F 안의 유전자가 사라져요',
+        chrom: '1개', chromSub: '한 염색체 안에서 일어나요',
+        ex: '5번 염색체 일부가 결실되면 고양이 울음 증후군이 생겨요. 후두 이상으로 울음소리가 고양이 소리처럼 들려요.',
+        ev: ['F 조각 양쪽이 잘릴 자리예요.', 'F 양쪽에서 DNA가 끊어져요.', '잘린 F 조각을 잃어버려요.', 'F 없이 남은 부분이 다시 붙어 ABC·DEGH가 돼요.'] },
+      { name: '중복', title: '중복 (duplication)', head: '중복: DE가 한 번 더 들어가요', c: '#1FA67A',
+        before: 'ABC·DEFGH', after: 'ABC·DEDEFGH', delta: '+2 조각', deltaSub: '원래 염색체에서 D·E가 2벌이 돼요 (상동 쪽은 그만큼 빠져요)',
+        chrom: '상동 2개', chromSub: '상동염색체의 DE가 끼어들어요',
+        ex: '중복된 사본 하나에 돌연변이가 쌓이면 새 기능이 생길 수 있어요. 비슷하지만 조금씩 다른 글로빈 유전자들이 그 예예요.',
+        ev: ['위는 상동염색체, 아래는 원래 염색체예요.', '상동염색체의 DE 양쪽과 원래 염색체의 E 뒤가 끊어져요.', '상동염색체에서 잘린 DE가 E 뒤로 옮겨 가요.', 'DE가 끼어든 채 붙어 DE가 두 번 나와요.'] },
+      { name: '역위', title: '역위 (inversion)', head: '역위: EFG가 거꾸로 붙어요', c: '#8E6AD8',
+        before: 'ABC·DEFGH', after: 'ABC·DGFEH', delta: '0', deltaSub: '조각 수는 그대로예요',
+        chrom: '1개', chromSub: '같은 자리에서 방향만 반대',
+        ex: '수업에서는 DEFGH가 DGFEH로 바뀌는 그림으로 설명했어요. 잘린 조각이 거꾸로 붙는 변화예요.',
+        ev: ['EFG 조각 아래 화살표가 방향이에요.', 'D와 E 사이, G와 H 사이가 끊어져요.', 'EFG 조각이 반 바퀴 돌아 방향이 뒤집혀요.', 'GFE 순서로 제자리에 다시 붙어요.'] },
+      { name: '전좌', title: '전좌 (translocation)', head: '전좌: 비상동염색체와 조각을 바꿔요', c: '#D9762B',
+        before: 'ABC·DEFGH / K·LMN', after: 'ABC·DEN / K·LMFGH', delta: '0', deltaSub: '두 염색체를 합치면 그대로',
+        chrom: '비상동 2개', chromSub: '서로 다른 염색체끼리 교환 (상호 전좌)',
+        ex: '8번과 14번 염색체 사이 전좌가 버킷 림프종에서 나타나요. 「조절」 모드에서 그 결과를 볼 수 있어요.',
+        ev: ['긴 염색체 ABC·DEFGH와 비상동염색체 K·LMN이 있어요.', 'E와 F 사이, M과 N 사이가 끊어져요.', 'FGH와 N이 서로 상대 염색체로 옮겨 가요.', 'ABC·DEN과 K·LMFGH로 다시 붙어요. F 앞 이웃이 E에서 M으로 바뀌었어요.'] }
+    ];
+    const SW = ['정상 조절', '전좌', '과다 발현'];
+    const kOf = (f) => Math.min(3, Math.floor(f / 4));
+    const subOf = (t) => SUB[t < 1 ? 0 : t < 2 ? 1 : t < 3 ? 2 : 3];
+    const swOf = (f) => SW[Math.min(2, Math.floor(f / 4))];
+    return {
+      KINDS: KINDS, SUB: SUB, SW: SW,
+      MODES: [
+        { key: 'types', label: '구조', cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [14.6, 8.4], D: 60,
+          autoSpin: false, rotatable: false,
+          playback: { fmax: 16, rate: 0.8, label: (f) => { const K = kOf(f); return KINDS[K].name + ' · ' + subOf(f - 4 * K) + ' · ' + f.toFixed(1) + ' / 16'; } },
+          canvasLabel: (f) => { const K = kOf(f), d = KINDS[K]; return d.name + '의 ' + subOf(f - 4 * K) + ' 단계예요. ' + d.before + '에서 ' + d.after + '로 바뀌어요.'; } },
+        { key: 'switch', label: '조절', cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [14.6, 8.4], D: 60,
+          autoSpin: false, rotatable: false,
+          playback: { fmax: 12, rate: 0.8, label: (f) => swOf(f) + ' · ' + f.toFixed(1) + ' / 12' },
+          canvasLabel: (f) => '버킷 림프종의 8번·14번 염색체 전좌, ' + swOf(f) + ' 단계예요. ' + (f < 6.2 ? '촉진 유전자가 8번 염색체의 자기 조절 부위 옆에 있어요.' : '촉진 유전자가 14번 염색체의 강한 조절 부위 옆에 있어요.') }
+      ],
+      STEPS: [
+        { mode: 'types', f: 3.9, phase: '결실', c: '#E5604F', title: '결실: F를 잃어요', who: '절단 → 소실 → 재결합',
+          text: 'F 양쪽에서 염색체가 잘리고 F 조각을 잃은 채 다시 붙어요. F에 있던 유전자와 염기서열이 사라져서 ABC·DEGH가 돼요. 5번 염색체 일부가 결실되면 고양이 울음 증후군이 생겨요.' },
+        { mode: 'types', f: 7.9, phase: '중복', c: '#1FA67A', title: '중복: DE가 2벌', who: '상동염색체의 DE 삽입',
+          text: '상동염색체에서 잘린 DE가 원래 염색체의 E 뒤에 끼어들어 ABC·DEDEFGH가 돼요. DE를 내준 상동염색체에는 그만큼 빠진 자리가 생겨요(교과서 보충). 복제 중 같은 부분을 한 번 더 만들어도 중복이 생겨요. 보고서의 같은 문장을 두 번 쓴 셈이에요.' },
+        { mode: 'types', f: 11.9, phase: '역위', c: '#8E6AD8', title: '역위: EFG → GFE', who: '잘린 조각이 거꾸로 붙음',
+          text: 'D와 E 사이, G와 H 사이가 잘린 뒤 EFG 조각이 반대 방향으로 다시 붙어요. 화살표가 왼쪽을 향하게 바뀌고 순서는 ABC·DGFEH가 돼요. 조각 수는 그대로지만 이웃한 서열이 바뀌어요.' },
+        { mode: 'types', f: 15.9, phase: '전좌', c: '#D9762B', title: '전좌: FGH ↔ N', who: '비상동염색체끼리 교환',
+          text: '긴 염색체의 FGH와 비상동염색체의 N이 서로 자리를 바꿔 ABC·DEN과 K·LMFGH가 돼요. 상동염색체 사이 교환인 교차와 달리, 전좌는 비상동염색체 사이에서 일어나요. F 앞 이웃이 E에서 M으로 바뀌었어요.' },
+        { mode: 'switch', f: 3.9, phase: '정상 조절', c: '#8A94A3', title: '필요할 때만 켜져요', who: '8번 염색체의 자기 조절 부위',
+          text: '세포분열 촉진 유전자는 8번 염색체에서 자기 조절 부위의 조절을 받아요. 필요할 때만 발현되어 단백질 산물이 조금만 만들어져요. 유전자가 있다고 늘 단백질이 만들어지는 건 아니에요.' },
+        { mode: 'switch', f: 7.9, phase: '전좌', c: '#D97706', title: '강한 조절 부위 옆으로', who: '8번 ↔ 14번 전좌',
+          text: '8번 염색체가 조절 부위와 유전자 사이에서 잘리고, 유전자가 든 조각이 14번 염색체 끝으로 옮겨 가요. 14번 끝 조각은 8번으로 가요. 이제 유전자 바로 앞에는 늘 강하게 켜진 조절 부위가 있어요. 유전자 서열 자체는 그대로예요.' },
+        { mode: 'switch', f: 11.9, phase: '과다 발현', c: '#D6457A', title: '너무 많이 만들어져요', who: '강한 조절 부위 → 촉진 유전자',
+          text: '늘 켜진 스위치 밑으로 형광등이 옮겨 간 셈이라 촉진 유전자가 쉬지 않고 발현돼요. 세포분열 촉진 단백질이 지나치게 많아지면 분열이 멈추지 않아 암(버킷 림프종)이 될 수 있어요. 모든 전좌가 암이 되는 건 아니에요.' }
+      ],
+      MISTAKES: {
+        types: [
+          { title: '교차 ≠ 전좌', text: '교차는 감수분열 때 상동염색체의 비자매염색분체 사이 교환이에요. 전좌는 비상동염색체로 절편이 옮겨 가는 거예요. 전좌 장면에서 모양·색이 다른 K·LMN과 바꾸는 걸 확인해요.' },
+          { title: '역위 = 방향 반전', text: '역위는 조각을 순서만 섞는 게 아니라 거꾸로 붙이는 거예요. EFG가 GFE가 되고, 조각 아래 화살표도 반대로 돌아가요.' },
+          { title: '고양이 울음 ≠ 고양이 눈', text: '고양이 울음 증후군은 5번 염색체 일부의 결실이에요. 영상에 함께 나온 고양이 눈 증후군은 22번 염색체 일부의 추가 사본과 관련된 별개 예예요.' }
+        ],
+        switch: [
+          { title: '서열 그대로 ≠ 발현량 그대로', text: '전좌 뒤에도 촉진 유전자의 서열은 같아요. 옆 조절 부위가 바뀌어 발현량이 달라졌어요. 막대 두 개를 비교해 보세요.' },
+          { title: '유전자 안 절단 ≠ 조절 관계 변화', text: '유전자 안에서 잘리면 유전자가 망가질 수 있어요. 여기서는 조절 부위와 유전자 사이에서 잘려 조절 관계가 바뀌었어요.' },
+          { title: '전좌 = 암? 아니에요', text: '버킷 림프종은 하나의 극단적인 예예요. 결과는 어디가 잘리고 무엇 옆으로 옮겨 갔는지에 따라 달라져요.' }
+        ]
+      },
+      TOGGLES: { types: [['labels', '이름표'], ['ghost', '원래 순서']], switch: [['labels', '이름표'], ['glow', '형광등 불빛']] },
+      PAL: {
+        light: { bg: '#ffffff', labelBg: '#f7f8fa', ink: '#111111', ring: '#111111', muted: '#6b7280', blobAlpha: 0.30,
+          chr: '#3F7BDB', chr2: '#D9762B', homo: '#7189AB', copy: '#1A9970', lost: '#D9503F', inv: '#7E5BD0',
+          cen: '#4B5563', cut: '#D92D20', blockInk: '#ffffff',
+          reg: '#8A94A3', strong: '#D97706', gene: '#D6457A', glow: '#F5C518', prod: '#D6457A' },
+        dark: { bg: '#17171c', labelBg: '#212128', ink: '#f2f4f6', ring: '#f2f4f6', muted: '#a3abb8', blobAlpha: 0.42,
+          chr: '#6EA4FF', chr2: '#FFA86B', homo: '#A3B5CF', copy: '#4FD1A1', lost: '#FF8A7A', inv: '#B69CFF',
+          cen: '#C9CED6', cut: '#FF6B61', blockInk: '#17171c',
+          reg: '#AEB7C4', strong: '#F5A15C', gene: '#FF7FAA', glow: '#FFD84D', prod: '#FF7FAA' }
+      }
+    };
+  }
+
+  // 장면 만들기: I(그리기 항목)와 O(라벨)에 push만 해요. 진행값은 this.sim.f를 써요.
+  buildScene(mode, I, O) {
+    const pal = this.pal(), st = this.state, f = this.sim.f, sm = (x) => this.sm(x);
+    const BH = 0.74, X0 = -4.0, NX = -5.7;
+    // 절편 블록 하나: 가운데 x, 폭 w(장면 단위). 글자는 블록 위에 똑바로.
+    const block = (x, y, c, text, o) => {
+      o = o || {};
+      const w = o.w || 1, a = o.a == null ? 1 : o.a, h = o.h || BH;
+      I.push({ k: 1, p: [x - w / 2 + 0.05, y, 0], q: [x + w / 2 - 0.05, y, 0], w: h, c: c, rod: true, flat: true, a: a });
+      if (text) I.push({ k: 3, p: [x, y, 0], text: text, size: o.size || 13, c: pal.blockInk, a: a });
+    };
+    const cen = (x, y, a) => {
+      I.push({ k: 1, p: [x - 0.28, y, 0], q: [x + 0.28, y, 0], w: 0.26, c: pal.cen, flat: true, a: a == null ? 1 : a });
+      I.push({ k: 0, p: [x, y, 0], r: 0.27, c: pal.cen, a: a == null ? 1 : a });
+    };
+    const cut = (x, y, a) => { if (a > 0.02) I.push({ k: 1, p: [x, y - 0.6, 0], q: [x, y + 0.6, 0], w: 0.07, c: pal.cut, flat: true, a: a }); };
+    const name = (y, text) => I.push({ k: 3, p: [NX, y, 0], text: text, size: 12, c: pal.muted });
+    // 왼쪽 끝을 x0에 맞춘 배치: 각 항목의 가운데(x)와 왼쪽 끝(l)
+    const lay = (items, x0) => {
+      const P = {}; let x = x0;
+      for (const it of items) { P[it[0]] = { x: x + it[1] / 2, l: x }; x += it[1]; }
+      return P;
+    };
+    const B = (id) => [id, 1];
+    const lab = (o) => { if (st.labels) O.push(o); };
+
+    if (mode === 'types') {
+      const K = Math.min(3, Math.floor(f / 4)), t = f - 4 * K, kd = this.T.KINDS[K];
+      const c = sm(t - 1), m = sm(t - 2), j = sm((t - 3) / 0.7), g = 0.3 * c * (1 - j), ca = c * (1 - j);
+      I.push({ k: 3, p: [0, 3.2, 0], text: kd.head, size: 14, c: pal.ink });
+      if (st.ghost) {
+        const gy = -3.05, seq = ['A', 'B', 'C', '·', 'D', 'E', 'F', 'G', 'H'];
+        let x = X0;
+        name(gy, '기준');
+        for (const s of seq) {
+          if (s === '·') { I.push({ k: 0, p: [x + 0.2, gy, 0], r: 0.16, c: pal.cen, a: 0.5 }); x += 0.4; }
+          else { block(x + 0.33, gy, pal.chr, s, { w: 0.66, h: 0.44, a: 0.45, size: 10 }); x += 0.66; }
+        }
+      }
+      if (K === 0) {
+        const y = 0;
+        const P = lay([B('A'), B('B'), B('C'), ['cen', 0.55], B('D'), B('E'), ['g1', g], ['F', 1 - j], ['g2', g], B('G'), B('H')], X0);
+        name(y, '원래');
+        ['A', 'B', 'C', 'D', 'E', 'G', 'H'].forEach((id) => block(P[id].x, y, pal.chr, id));
+        cen(P.cen.x, y);
+        const fy = y - 1.9 * m;
+        block(P.F.x, fy, pal.lost, 'F', { a: 1 - 0.45 * j });
+        cut(P.g1.x, y, ca); cut(P.g2.x, y, ca);
+        lab({ p: [P.cen.x, y, 0], text: '동원체', c: pal.cen, dy: 34, lead: true });
+        if (t >= 1 && t < 2.2) lab({ p: [P.g2.x, y + 0.6, 0], text: '절단', c: pal.cut, dy: -26, lead: true });
+        if (m > 0.5) lab({ p: [P.F.x, fy, 0], text: '잃어버린 F 절편', c: pal.lost, dx: 92 });
+      } else if (K === 1) {
+        const yH = 0.9, yM = -1.3;
+        const PH = lay([B('A'), B('B'), B('C'), ['cen', 0.55], ['h1', g], ['S', 2 * (1 - j)], ['h2', g], B('F'), B('G'), B('H')], X0);
+        const PM = lay([B('A'), B('B'), B('C'), ['cen', 0.55], B('D'), B('E'), ['g1', g], ['S', 2 * m], ['g2', g], B('F'), B('G'), B('H')], X0);
+        name(yH, '상동'); name(yM, '원래');
+        ['A', 'B', 'C', 'F', 'G', 'H'].forEach((id) => block(PH[id].x, yH, pal.homo, id, { a: 0.8 }));
+        cen(PH.cen.x, yH, 0.8);
+        ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].forEach((id) => block(PM[id].x, yM, pal.chr, id));
+        cen(PM.cen.x, yM);
+        const tgtL = PM.S.l + g * 0;
+        ['D', 'E'].forEach((id, i) => {
+          const src = [PH.S.l + 0.5 + i, yH, 0], tgt = [tgtL + 0.5 + i, yM, 0], p = this.lerp(src, tgt, m);
+          block(p[0], p[1], pal.copy, id);
+        });
+        cut(PH.h1.x, yH, ca); cut(PH.h2.x, yH, ca); cut(PM.S.x, yM, ca * (1 - m));
+        lab({ p: [PM.cen.x, yM, 0], text: '동원체', c: pal.cen, dy: 34, lead: true });
+        if (t >= 1 && t < 2.2) lab({ p: [PH.h2.x, yH + 0.6, 0], text: '절단', c: pal.cut, dy: -26, lead: true });
+        if (t >= 2) { const mx = this.lerp([PH.S.l + 1, yH, 0], [tgtL + 1, yM, 0], m); lab({ p: mx, text: 'DE 사본', c: pal.copy, dx: 96, dy: m > 0.9 ? 34 : 0, lead: m > 0.9 }); }
+      } else if (K === 2) {
+        const y = 0;
+        const P = lay([B('A'), B('B'), B('C'), ['cen', 0.55], B('D'), ['g1', g], B('E'), B('F'), B('G'), ['g2', g], B('H')], X0);
+        name(y, '원래');
+        ['A', 'B', 'C', 'D', 'H'].forEach((id) => block(P[id].x, y, pal.chr, id));
+        cen(P.cen.x, y);
+        const xc = P.F.x, th = Math.PI * m, co = Math.cos(th), si = Math.sin(th);
+        ['E', 'F', 'G'].forEach((id) => {
+          const o = P[id].x - xc;
+          block(xc + o * co, y - o * si * 0.95, pal.inv, id);
+        });
+        if (Math.abs(co) > 0.12) {
+          const ay = y - 0.72, L = 1.2 * co;
+          I.push({ k: 1, p: [xc - L, ay, 0], q: [xc + L, ay, 0], w: 0.06, c: pal.inv, flat: true });
+          I.push({ k: 4, p: [xc + L * 0.5, ay, 0], q: [xc + L, ay, 0], c: pal.inv });
+        }
+        cut(P.g1.x, y, ca); cut(P.g2.x, y, ca);
+        lab({ p: [P.cen.x, y, 0], text: '동원체', c: pal.cen, dy: 34, lead: true });
+        if (t >= 1 && t < 2.2) lab({ p: [P.g2.x, y + 0.6, 0], text: '절단', c: pal.cut, dy: -26, lead: true });
+        if (t >= 3) lab({ p: [xc, y - 0.72, 0], text: '방향이 뒤집혔어요', c: pal.inv, dy: 26 });
+      } else {
+        const yL = 0.7, yS = -1.5;
+        const PL = lay([B('A'), B('B'), B('C'), ['cen', 0.55], B('D'), B('E'), ['g1', g], ['S', 3 - 2 * m]], X0);
+        const PS = lay([B('K'), ['cen', 0.55], B('L'), B('M'), ['g1', g], ['S', 1 + 2 * m]], X0);
+        name(yL, '긴'); name(yS, '비상동');
+        ['A', 'B', 'C', 'D', 'E'].forEach((id) => block(PL[id].x, yL, pal.chr, id));
+        cen(PL.cen.x, yL);
+        ['K', 'L', 'M'].forEach((id) => block(PS[id].x, yS, pal.chr2, id));
+        cen(PS.cen.x, yS);
+        const bulge = 1.1 * Math.sin(Math.PI * m);
+        ['F', 'G', 'H'].forEach((id, i) => {
+          const p = this.lerp([PL.S.l + 0.5 + i, yL, 0], [PS.S.l + 0.5 + i, yS, 0], m);
+          block(p[0] + bulge, p[1], pal.chr, id);
+        });
+        const pn = this.lerp([PS.S.l + 0.5, yS, 0], [PL.S.l + 0.5, yL, 0], m);
+        block(pn[0] - bulge, pn[1], pal.chr2, 'N');
+        cut(PL.g1.x, yL, ca); cut(PS.g1.x, yS, ca);
+        lab({ p: [PL.cen.x, yL, 0], text: '동원체', c: pal.cen, dy: -34, lead: true });
+        if (t >= 1 && t < 2.2) lab({ p: [PL.g1.x, yL + 0.6, 0], text: '절단', c: pal.cut, dy: -26, lead: true });
+        if (t >= 2 && t < 3.2) lab({ p: [(PL.S.l + PS.S.l) / 2 + 1, (yL + yS) / 2, 0], text: '서로 교환', c: pal.chr2, dx: 120 });
+      }
+      return;
+    }
+
+    // ---------- switch: 버킷 림프종 8번·14번 전좌 ----------
+    const c = sm(f - 4), m = sm((f - 5) / 1.6), j = sm((f - 6.6) / 0.8), g = 0.3 * c * (1 - j), ca = c * (1 - j);
+    const y8 = 0.9, y14 = -1.7, GW = 1.4;
+    I.push({ k: 3, p: [0, 3.2, 0], text: '버킷 림프종: 8번·14번 염색체 전좌', size: 14, c: pal.ink });
+    const P8 = lay([B('a'), B('b'), ['cen', 0.55], B('c'), ['R', 0.8], ['g1', g], ['S', 2.4 - 1.4 * m]], X0);
+    const P14 = lay([B('a'), ['cen', 0.55], B('b'), B('c'), ['R', 1.0], ['g1', g], ['S', 1 + 1.4 * m]], X0);
+    name(y8, '8번'); name(y14, '14번');
+    ['a', 'b', 'c'].forEach((id) => block(P8[id].x, y8, pal.chr2, ''));
+    cen(P8.cen.x, y8);
+    block(P8.R.x, y8, pal.reg, '', { w: 0.8 });
+    ['a', 'b', 'c'].forEach((id) => block(P14[id].x, y14, pal.chr, ''));
+    cen(P14.cen.x, y14);
+    block(P14.R.x, y14, pal.strong, '', { w: 1.0 });
+    const bulge = 1.2 * Math.sin(Math.PI * m);
+    const gp = this.lerp([P8.S.l + GW / 2, y8, 0], [P14.S.l + GW / 2, y14, 0], m); gp[0] += bulge;
+    const dp = this.lerp([P8.S.l + GW + 0.5, y8, 0], [P14.S.l + GW + 0.5, y14, 0], m); dp[0] += bulge;
+    const tp = this.lerp([P14.S.l + 0.5, y14, 0], [P8.S.l + 0.5, y8, 0], m); tp[0] -= bulge;
+    // 발현량(상대값)과 단백질 산물 수
+    let L, n, pa = 1, px = gp[0], py = gp[1], dir = f < 6.2 ? 1 : -1;
+    if (f < 4) { L = 0.22 * sm((f - 0.6) / 1.6); n = Math.round(3 * sm((f - 0.8) / 2)); }
+    else if (f < 8) { L = 0.22 * (1 - sm(f - 4)); n = 3; pa = 1 - sm((f - 4) / 0.8); px = P8.S.l + GW / 2; py = y8; dir = 1; }
+    else { L = 0.22 + 0.78 * sm((f - 8.2) / 2.2); n = Math.round(15 * sm((f - 8.3) / 2.6)); }
+    if (st.glow && L > 0.02) I.push({ k: 5, p: [gp[0], gp[1], 0], r: 0.55 + 0.8 * L, c: pal.glow, a: Math.min(1, L * 1.2) });
+    block(dp[0], dp[1], pal.chr2, '');
+    block(tp[0], tp[1], pal.chr, '');
+    block(gp[0], gp[1], pal.gene, '촉진', { w: GW });
+    for (let i = 0; i < n; i++) {
+      const col = i % 5, row = Math.floor(i / 5);
+      I.push({ k: 0, p: [px + (col - 2) * 0.48, py + dir * (1.0 + row * 0.46), 0], r: 0.17, c: pal.prod, a: pa });
+    }
+    cut(P8.g1.x, y8, ca); cut(P14.g1.x, y14, ca);
+    lab({ p: [P8.R.x, y8 + 0.37, 0], text: '자기 조절 부위', c: pal.reg, dx: -70, dy: -34, lead: true });
+    lab({ p: [P14.R.x, y14 - 0.37, 0], text: '강한 조절 부위(늘 켜짐)', c: pal.strong, dx: -60, dy: 34, lead: true });
+    if (m < 0.1 || m > 0.9) lab({ p: [gp[0], gp[1], 0], text: '세포분열 촉진 유전자', c: pal.gene, dx: 40, dy: f < 6.2 ? 36 : -36, lead: true });
+    if (n > 0 && pa > 0.5) lab({ p: [px + 1.0, py + dir * 1.2, 0], text: f >= 8 ? '단백질 산물 과다' : '단백질 산물', c: pal.prod, dx: 80 });
+  }
+
+  // 주제 전용 상태(보기 옵션 키 등). 공통 상태에 합쳐져요.
+  extraState() {
+    return { labels: true, ghost: true, glow: true };
+  }
+
+  // 주제 전용 마크업 값. renderVals() 결과에 합쳐져요.
+  extraVals(st) {
+    const pal = this.pal(), f = st.f, T = this.T;
+    const K = Math.min(3, Math.floor(f / 4)), t = f - 4 * K, kd = T.KINDS[K], sub = t < 1 ? 0 : t < 2 ? 1 : t < 3 ? 2 : 3;
+    const kc = [pal.lost, pal.copy, pal.inv, pal.chr2][K];
+    const kinds = T.KINDS.map((d, i) => ({ label: d.name, pressed: i === K ? 'true' : 'false',
+      pick: () => { this.sim.f = 4 * i; this.setState({ f: 4 * i, playing: true, step: -1 }); } }));
+    const p = this.sm((f - 8.2) / 2.2);
+    const sw = {
+      loc: f < 6.2 ? '8번 염색체' : '14번 염색체',
+      reg: f < 6.2 ? '자기 조절 부위' : '강한 조절 부위',
+      beforeW: '22%', beforeTxt: '조금 (필요할 때만)',
+      afterW: f < 8 ? '0%' : Math.round(22 + 78 * p) + '%',
+      afterTxt: f < 6.2 ? '재생하면 채워져요' : f < 8 ? '곧 많아져요' : '많음 (늘 켜짐)'
+    };
+    let events;
+    if (st.mode === 'types') events = [{ c: kc, text: kd.ev[sub] }];
+    else if (f < 4) events = [{ c: pal.reg, text: f < 0.8 ? '촉진 유전자 앞에 자기 조절 부위가 있어요.' : '필요할 때만 켜져서 단백질 산물이 조금 생겨요.' }];
+    else if (f < 8) events = [{ c: pal.strong, text: f < 5 ? '조절 부위와 유전자 사이, 14번의 강한 조절 부위 뒤가 끊어져요.' : f < 6.6 ? '유전자 조각은 14번으로, 14번 끝 조각은 8번으로 옮겨 가요.' : '유전자가 강한 조절 부위 바로 뒤에 붙었어요.' }];
+    else events = [{ c: pal.gene, text: f < 9 ? '늘 켜진 조절 부위가 유전자를 계속 켜요.' : '단백질 산물이 넘쳐 세포분열이 지나치게 일어나요.' }];
+    return {
+      kinds: kinds,
+      kd: { title: kd.title, delta: kd.delta, deltaSub: kd.deltaSub, chrom: kd.chrom, chromSub: kd.chromSub, before: kd.before, after: kd.after, ex: kd.ex },
+      events: events, sw: sw,
+      legend: { chr: pal.chr, chr2: pal.chr2, homo: pal.homo, copy: pal.copy, lost: pal.lost, inv: pal.inv, cen: pal.cen, cut: pal.cut,
+        reg: pal.reg, strong: pal.strong, gene: pal.gene, prod: pal.prod }
+    };
+  }
+
+  // ================= 공통 셸: 아래는 주제와 무관해요. 고치지 않아요 =================
+  constructor(...args) {
+    super(...args);
+    let reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    let narrow = false;
+    try { narrow = window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) {}
+    let saved = null;
+    try { saved = window.localStorage.getItem('od-theme'); } catch (e) {}
+    const PANEL_W = { left: { min: 220, max: 480 }, right: { min: 280, max: 720 } };
+    let widths = {};
+    try { widths = JSON.parse(window.localStorage.getItem('interactive-panel-w')) || {}; } catch (e) {}
+    const okW = (side) => { const v = widths[side]; return typeof v === 'number' && v >= PANEL_W[side].min && v <= PANEL_W[side].max ? v : null; };
+    this.T = this.topic();
+    this.state = Object.assign({
+      mode: this.T.MODES[0].key, f: 0, playing: false, speed: 1, step: -1, spin: !reduce,
+      theme: (saved === 'light' || saved === 'dark') ? saved : (this.systemDark() ? 'dark' : 'light'),
+      // leftOpen/rightOpen: docked panels on wide screens; drawer: the one open drawer on narrow screens
+      leftOpen: true, rightOpen: true, drawer: null, narrow: narrow,
+      // leftW/rightW: user-set docked widths in px (null = default); resizing: a handle is being dragged
+      leftW: okW('left'), rightW: okW('right'), resizing: false
+    }, this.extraState());
+    this.reduceMotion = reduce;
+    this.K = {
+      PANEL_W: PANEL_W, PANEL_W_KEY: 'interactive-panel-w', PANEL_DEFAULT: { left: 320, right: 400 },
+      THEMES: {
+        light: { bg: '#ffffff', surface: '#f7f8fa', ink: '#111111', ink2: '#6b7280', line: '#d9dee7', accent: '#1677ff', accentInk: '#1b64da', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#b54708', prof: '#6941c6', supp: '#067647', danger: '#d92d20', scroll: '#c9d0db', scrollHover: '#9aa3b2' },
+        dark: { bg: '#17171c', surface: '#212128', ink: '#f2f4f6', ink2: '#a3abb8', line: '#34353d', accent: '#3182f6', accentInk: '#6ea4ff', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#f5a15c', prof: '#b69cff', supp: '#5fd39a', danger: '#ff6b61', scroll: '#3f414b', scrollHover: '#5b5e6a' }
+      }
+    };
+    this.cam = Object.assign({}, this.modeDef().cam);
+    this.sim = { f: 0, cx: 0 };
+    this.pointer = { x: -1, y: -1, inside: false, drag: false, lx: 0, ly: 0 };
+    this.colorCache = {};
+    this._tick = (t) => this.tick(t);
+    this._canvasRef = (el) => this.attachCanvas(el);
+    this.handles = {};
+    this._handleRefL = (el) => this.attachHandle('left', el);
+    this._handleRefR = (el) => this.attachHandle('right', el);
+  }
+
+  componentWillUnmount() {
+    this.attachCanvas(null);
+    this.attachHandle('left', null);
+    this.attachHandle('right', null);
+  }
+
+  modeDef(key) {
+    const k = key || this.state.mode;
+    return this.T.MODES.find((m) => m.key === k) || this.T.MODES[0];
+  }
+  systemDark() {
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; }
+  }
+  isNarrow() {
+    try { return window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) { return false; }
+  }
+  syncBreakpoint() { this.setState({ narrow: this.isNarrow(), drawer: null }); }
+  // In drawer mode only one panel is open at a time.
+  togglePanel(side) {
+    const st = this.state;
+    if (st.narrow) this.setState({ drawer: st.drawer === side ? null : side });
+    else if (side === 'left') this.setState({ leftOpen: !st.leftOpen });
+    else this.setState({ rightOpen: !st.rightOpen });
+  }
+  // Docked panel width: the canvas column always keeps at least 400px.
+  panelMax(side) {
+    const lim = this.K.PANEL_W[side], other = side === 'left' ? 'right' : 'left', st = this.state;
+    const h = this.handles[other];
+    const otherOpen = other === 'left' ? st.leftOpen : st.rightOpen;
+    const otherW = !otherOpen ? 0 : h ? h.el.parentElement.getBoundingClientRect().width
+      : (st[other + 'W'] || this.K.PANEL_DEFAULT[other]);
+    return Math.max(lim.min, Math.min(lim.max, (window.innerWidth || 1440) - otherW - 400));
+  }
+  setPanelWidth(side, px, save) {
+    const v = Math.round(Math.min(Math.max(px, this.K.PANEL_W[side].min), this.panelMax(side)));
+    this.setState({ [side + 'W']: v });
+    if (save) this.savePanelWidths(side, v);
+  }
+  resetPanelWidth(side) {
+    this.setState({ [side + 'W']: null });
+    this.savePanelWidths(side, null);
+  }
+  savePanelWidths(side, v) {
+    try {
+      const key = this.K.PANEL_W_KEY;
+      let w = {};
+      try { w = JSON.parse(window.localStorage.getItem(key)) || {}; } catch (e) {}
+      if (v == null) delete w[side]; else w[side] = v;
+      window.localStorage.setItem(key, JSON.stringify(w));
+    } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ }
+  }
+  // Re-fit user widths when the window shrinks (not saved).
+  refitPanels() {
+    ['left', 'right'].forEach((side) => {
+      const w = this.state[side + 'W'];
+      if (w != null && w > this.panelMax(side)) this.setPanelWidth(side, w, false);
+    });
+  }
+  attachHandle(side, el) {
+    const old = this.handles[side];
+    if (old && old.el === el) return;
+    if (old) {
+      Object.keys(old.on).forEach((ev) => old.el.removeEventListener(ev, old.on[ev]));
+      delete this.handles[side];
+      if (!Object.keys(this.handles).length) window.removeEventListener('resize', this._refit);
+    }
+    if (!el) return;
+    const dir = side === 'left' ? 1 : -1;
+    const width = () => el.parentElement.getBoundingClientRect().width;
+    let drag = null;
+    const on = {
+      pointerdown: (e) => {
+        if (this.state.narrow || e.button !== 0) return;
+        e.preventDefault();
+        drag = { x: e.clientX, w: width() };
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        this.setState({ resizing: true });
+      },
+      pointermove: (e) => { if (drag) this.setPanelWidth(side, drag.w + dir * (e.clientX - drag.x), false); },
+      pointerup: () => {
+        if (!drag) return;
+        drag = null;
+        this.setState({ resizing: false });
+        this.setPanelWidth(side, width(), true);
+      },
+      dblclick: () => this.resetPanelWidth(side),
+      keydown: (e) => {
+        const step = e.shiftKey ? 64 : 16;
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          e.preventDefault(); e.stopPropagation();
+          this.setPanelWidth(side, width() + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+        } else if (e.key === 'Home') { e.preventDefault(); e.stopPropagation(); this.resetPanelWidth(side); }
+      }
+    };
+    on.pointercancel = on.pointerup;
+    Object.keys(on).forEach((ev) => el.addEventListener(ev, on[ev]));
+    if (!Object.keys(this.handles).length) {
+      this._refit = this._refit || (() => this.refitPanels());
+      window.addEventListener('resize', this._refit);
+    }
+    this.handles[side] = { el: el, on: on };
+  }
+  textTone(hex) { return this.state.theme === 'light' ? this.mix(hex, '#000000', 0.4) : hex; }
+  pal() { return this.T.PAL[this.state.theme] || this.T.PAL.dark; }
+  setTheme(t) {
+    this.setState({ theme: t });
+    try {
+      if ((t === 'dark') === this.systemDark()) window.localStorage.removeItem('od-theme');
+      else window.localStorage.setItem('od-theme', t);
+    } catch (e) {}
+  }
+
+  attachCanvas(el) {
+    if (this.canvas === el) return;
+    if (this.canvas) {
+      const c = this.canvas;
+      c.removeEventListener('pointerdown', this._pd);
+      c.removeEventListener('pointermove', this._pm);
+      c.removeEventListener('pointerup', this._pu);
+      c.removeEventListener('pointercancel', this._pu);
+      c.removeEventListener('pointerleave', this._pl);
+      cancelAnimationFrame(this.raf);
+      try { this._mq.removeEventListener('change', this._mqH); } catch (err) {}
+    }
+    this.canvas = el || null;
+    if (!el) return;
+    this.ctx = el.getContext('2d');
+    const p = this.pointer;
+    this._pd = (e) => {
+      if (!this.modeDef().rotatable) return;
+      p.drag = true; p.lx = e.clientX; p.ly = e.clientY;
+      try { el.setPointerCapture(e.pointerId); } catch (err) {}
+      el.style.cursor = 'grabbing';
+    };
+    this._pm = (e) => {
+      const r = el.getBoundingClientRect();
+      p.x = e.clientX - r.left; p.y = e.clientY - r.top; p.inside = true;
+      if (p.drag && this.modeDef().rotatable) {
+        this.cam.yaw += (e.clientX - p.lx) * 0.008;
+        this.cam.pitch = Math.max(-1.45, Math.min(1.45, this.cam.pitch + (e.clientY - p.ly) * 0.008));
+        p.lx = e.clientX; p.ly = e.clientY;
+      }
+    };
+    this._pu = () => { p.drag = false; el.style.cursor = ''; };
+    this._pl = () => { p.inside = false; };
+    el.addEventListener('pointerdown', this._pd);
+    el.addEventListener('pointermove', this._pm);
+    el.addEventListener('pointerup', this._pu);
+    el.addEventListener('pointercancel', this._pu);
+    el.addEventListener('pointerleave', this._pl);
+    try {
+      this._mq = window.matchMedia('(max-width: 1023.98px)');
+      this._mqH = () => this.syncBreakpoint();
+      this._mq.addEventListener('change', this._mqH);
+    } catch (err) {}
+    this.last = 0;
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  tick(t) {
+    if (!this.canvas) return;
+    const dt = this.last ? Math.min(0.05, (t - this.last) / 1000) : 0;
+    this.last = t;
+    const st = this.state, m = this.modeDef(), pb = m.playback;
+    if (m.autoSpin && st.spin && !this.pointer.drag) this.cam.yaw += dt * 0.3;
+    if (pb && st.playing) {
+      this.sim.f = Math.min(pb.fmax, this.sim.f + dt * pb.rate * st.speed);
+      if (this.sim.f >= pb.fmax) this.setState({ playing: false, f: this.sim.f });
+      else if (t - (this.lastPush || 0) > 120) { this.lastPush = t; this.setState({ f: this.sim.f }); }
+    }
+    // a broken scene keeps the page alive but is reported once for the browser check
+    try { this.draw(dt, t); } catch (err) { if (!this.drawErr) { this.drawErr = true; console.error(err); } }
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  // ---------- math helpers (장면에서 써도 돼요) ----------
+  lerp(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+  sm(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+  rgb(hex) { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  mix(hex, to, amt) {
+    const a = this.rgb(hex), b = this.rgb(to);
+    return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * amt) + ',' + Math.round(a[1] + (b[1] - a[1]) * amt) + ',' + Math.round(a[2] + (b[2] - a[2]) * amt) + ')';
+  }
+  rgba(hex, al) { const a = this.rgb(hex); return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + al + ')'; }
+  shades(hex) {
+    let s = this.colorCache[hex];
+    if (!s) { s = { hi: this.mix(hex, '#FFFFFF', 0.55), mid: hex, lo: this.mix(hex, '#000000', 0.55) }; this.colorCache[hex] = s; }
+    return s;
+  }
+  proj(p, V) {
+    const x = p[0] - V.cx, y = p[1], z = p[2];
+    const x1 = x * V.cy + z * V.sy, z1 = -x * V.sy + z * V.cy;
+    const y2 = y * V.cp - z1 * V.sp, z2 = y * V.sp + z1 * V.cp;
+    const s = V.F / Math.max(2, V.D - z2);
+    return [V.ox + x1 * s, V.oy - y2 * s, z2, s];
+  }
+
+  // ---------- drawing ----------
+  draw(dt, now) {
+    const el = this.canvas, ctx = this.ctx, st = this.state, m = this.modeDef();
+    const dpr = window.devicePixelRatio || 1;
+    const W = el.clientWidth, H = el.clientHeight;
+    if (!W || !H) return;
+    if (el.width !== Math.round(W * dpr) || el.height !== Math.round(H * dpr)) { el.width = Math.round(W * dpr); el.height = Math.round(H * dpr); }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const pal = this.pal();
+    ctx.fillStyle = pal.bg; ctx.fillRect(0, 0, W, H);
+
+    const I = [], O = [];
+    this.buildScene(st.mode, I, O);
+    const scale = Math.min(W / m.fit[0], H / m.fit[1]), D = m.D, z = this.cam.zoom;
+    const V = {
+      cx: this.sim.cx, cy: Math.cos(this.cam.yaw), sy: Math.sin(this.cam.yaw), cp: Math.cos(this.cam.pitch), sp: Math.sin(this.cam.pitch),
+      F: scale * z * D, D: D, ox: W / 2, oy: H / 2 - (m.playback ? 20 : 0)
+    };
+    let zmin = Infinity, zmax = -Infinity;
+    for (const it of I) {
+      it.A = this.proj(it.p, V);
+      if (it.q) { it.B = this.proj(it.q, V); it.z = (it.A[2] + it.B[2]) / 2; } else it.z = it.A[2];
+      if (it.z < zmin) zmin = it.z;
+      if (it.z > zmax) zmax = it.z;
+    }
+    I.sort((a, b) => a.z - b.z);
+    // depth fog; a flat scene (all items at one depth) is drawn without it
+    const span = zmax - zmin;
+    for (const it of I) {
+      const fog = span < 0.01 ? 1 : 0.42 + 0.58 * ((it.z - zmin) / span);
+      ctx.globalAlpha = Math.max(0, (it.a == null ? 1 : it.a) * fog);
+      if (ctx.globalAlpha < 0.01) continue;
+      const x = it.A[0], y = it.A[1], s = it.A[3];
+      if (it.k === 0) {
+        const R = it.r * s;
+        if (R < 0.4) continue;
+        if (it.flat) { ctx.fillStyle = it.c; ctx.beginPath(); ctx.arc(x, y, Math.max(1.3, R), 0, 6.2832); ctx.fill(); }
+        else {
+          const sh = this.shades(it.c);
+          const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+          g.addColorStop(0, sh.hi); g.addColorStop(0.5, sh.mid); g.addColorStop(1, sh.lo);
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        }
+      } else if (it.k === 1) {
+        const lw = Math.max(1, it.w * (s + it.B[3]) / 2);
+        ctx.lineCap = it.flat ? 'butt' : 'round';
+        if (it.rod) {
+          ctx.strokeStyle = this.shades(it.c).lo; ctx.lineWidth = lw + 2;
+          ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+        }
+        ctx.strokeStyle = it.c; ctx.lineWidth = lw;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+      } else if (it.k === 3) {
+        const fs = Math.max(8, Math.min(14, it.size * s / (scale * z) * 1.05));
+        ctx.font = '700 ' + fs + 'px "Pretendard", system-ui, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = it.c; ctx.fillText(it.text, x, y + 0.5);
+      } else if (it.k === 4) {
+        const ang = Math.atan2(it.B[1] - y, it.B[0] - x), mx = (x + it.B[0]) / 2, my = (y + it.B[1]) / 2, r = 6;
+        ctx.fillStyle = it.c; ctx.beginPath();
+        ctx.moveTo(mx + Math.cos(ang) * r, my + Math.sin(ang) * r);
+        ctx.lineTo(mx + Math.cos(ang + 2.5) * r, my + Math.sin(ang + 2.5) * r);
+        ctx.lineTo(mx + Math.cos(ang - 2.5) * r, my + Math.sin(ang - 2.5) * r);
+        ctx.closePath(); ctx.fill();
+      } else if (it.k === 5) {
+        // lit translucent sphere, highlight up-left like the solid spheres
+        const R = it.r * s, ba = pal.blobAlpha == null ? 0.3 : pal.blobAlpha;
+        const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+        g.addColorStop(0, 'rgba(255,255,255,0.55)'); g.addColorStop(0.3, this.rgba(it.c, Math.min(1, ba + 0.15))); g.addColorStop(1, this.rgba(it.c, 0.18));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        ctx.strokeStyle = it.c; ctx.lineWidth = it.focus ? 3 : 1.5; ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+    for (const o of O) this.drawOverlay(o, V, now);
+  }
+
+  drawOverlay(o, V, now) {
+    const ctx = this.ctx, A = this.proj(o.p, V), pal = this.pal();
+    if (o.t === 'ring') {
+      const r = Math.max(6, 0.32 * A[3]) * (1 + (this.reduceMotion ? 0 : 0.15 * Math.sin((now || 0) / 160)));
+      ctx.globalAlpha = 1; ctx.strokeStyle = pal.ring; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(A[0], A[1], r, 0, 6.2832); ctx.stroke();
+      ctx.font = '600 11px "Pretendard", system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = pal.ring; ctx.fillText(o.text, A[0], A[1] + r + 10);
+      return;
+    }
+    const size = o.size || 12, x = A[0] + (o.dx || 0), y = A[1] + (o.dy || 0);
+    ctx.font = '600 ' + size + 'px "Pretendard", system-ui, sans-serif';
+    const tw = ctx.measureText(o.text).width, w = tw + 14, h = size + 10;
+    ctx.globalAlpha = o.a == null ? 1 : o.a;
+    if (o.lead) {
+      ctx.strokeStyle = this.rgba(o.c, 0.6); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(x, y); ctx.stroke();
+    }
+    ctx.fillStyle = pal.labelBg;
+    ctx.strokeStyle = this.rgba(o.c, 0.55); ctx.lineWidth = 1;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x - w / 2, y - h / 2, w, h, 6); else ctx.rect(x - w / 2, y - h / 2, w, h);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = pal.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(o.text, x, y + 0.5);
+    ctx.globalAlpha = 1;
+  }
+
+  setMode(mode) {
+    this.cam = Object.assign({}, this.modeDef(mode).cam);
+    this.sim.f = 0;
+    this.pointer.drag = false;
+    this.setState({ mode: mode, f: 0, playing: false, step: -1 });
+  }
+
+  pickStep(i) {
+    const s = (this.T.STEPS || [])[i];
+    if (!s) return;
+    if (s.mode !== this.state.mode) this.setMode(s.mode);
+    if (s.f != null) this.sim.f = s.f;
+    this.setState({ f: this.sim.f, playing: false, step: i });
+  }
+
+  renderVals() {
+    const st = this.state, T = this.T, m = this.modeDef(), pb = m.playback;
+    const tg = T.TOGGLES ? (Array.isArray(T.TOGGLES) ? T.TOGGLES : (T.TOGGLES[st.mode] || [])) : [];
+    const togDefs = tg.concat(m.autoSpin ? [['spin', '자동 회전']] : []);
+    const toggles = togDefs.map((d) => ({
+      label: d[1], pressed: st[d[0]] ? 'true' : 'false',
+      toggle: () => { const o = {}; o[d[0]] = !st[d[0]]; this.setState(o); }
+    }));
+    const STEPS = T.STEPS || [];
+    const steps = STEPS.map((s, i) => ({ s: s, i: i })).filter((x) => x.s.mode === st.mode).map((x, k) => ({
+      num: k + 1, title: x.s.title, who: x.s.who, c: x.s.c, pressed: st.step === x.i ? 'true' : 'false',
+      pick: () => this.pickStep(x.i)
+    }));
+    const speeds = [0.5, 1, 2].map((v) => ({
+      label: v + '×', pressed: st.speed === v ? 'true' : 'false',
+      pick: () => this.setState({ speed: v })
+    }));
+    const is = {};
+    T.MODES.forEach((d) => { is[d.key] = d.key === st.mode; });
+    const f = st.f;
+    const isDark = st.theme === 'dark';
+    const leftOn = st.narrow ? st.drawer === 'left' : st.leftOpen, rightOn = st.narrow ? st.drawer === 'right' : st.rightOpen;
+    return Object.assign({
+      th: this.K.THEMES[st.theme], isDark: isDark, isLight: !isDark,
+      themeLabel: isDark ? '라이트 모드로 전환' : '다크 모드로 전환',
+      toggleTheme: () => this.setTheme(isDark ? 'light' : 'dark'),
+      canvasRef: this._canvasRef, canvasCls: m.rotatable ? '' : 'is-fixed',
+      hasModes: T.MODES.length > 1, is: is,
+      modes: T.MODES.map((d) => ({ label: d.label, pressed: d.key === st.mode ? 'true' : 'false', pick: () => { if (d.key !== this.state.mode) this.setMode(d.key); } })),
+      leftCls: leftOn ? 'is-open' : '', rightCls: rightOn ? 'is-open' : '',
+      leftExpanded: leftOn ? 'true' : 'false', rightExpanded: rightOn ? 'true' : 'false',
+      scrimCls: (st.narrow && st.drawer) ? 'is-on' : '',
+      toggleLeft: () => this.togglePanel('left'),
+      toggleRight: () => this.togglePanel('right'),
+      closePanels: () => this.setState({ drawer: null }),
+      layoutStyle: ((st.leftW ? '--pl-user: ' + st.leftW + 'px; ' : '') + (st.rightW ? '--pr-user: ' + st.rightW + 'px;' : '')).trim(),
+      layoutCls: st.resizing ? 'is-resizing' : '',
+      leftWNow: st.leftW ? String(st.leftW) : '', rightWNow: st.rightW ? String(st.rightW) : '',
+      leftHandleRef: this._handleRefL, rightHandleRef: this._handleRefR,
+      onKey: (e) => { if (e.key === 'Escape' && this.state.narrow && this.state.drawer) this.setState({ drawer: null }); },
+      hasToggles: toggles.length > 0, toggles: toggles,
+      hasSteps: steps.length > 0, steps: steps,
+      hasStep: st.step >= 0 && st.step < STEPS.length, stepDetail: st.step >= 0 && STEPS[st.step] ? STEPS[st.step].text : '',
+      mistakes: (T.MISTAKES && T.MISTAKES[st.mode]) || [],
+      canvasLabel: m.canvasLabel(f),
+      zoomIn: () => { this.cam.zoom = Math.min(3, this.cam.zoom * 1.2); },
+      zoomOut: () => { this.cam.zoom = Math.max(0.5, this.cam.zoom / 1.2); },
+      resetView: () => { this.cam = Object.assign({}, m.cam); },
+      hasPlayback: !!pb, isPlaying: st.playing, notPlaying: !st.playing, playLabel: st.playing ? '일시정지' : '재생',
+      togglePlay: () => {
+        if (!pb) return;
+        if (!st.playing && this.sim.f >= pb.fmax) this.sim.f = 0;
+        this.setState({ playing: !st.playing, step: -1, f: this.sim.f });
+      },
+      fInt: Math.round(f * 10), fLabel: pb ? pb.label(f) : '', fMax10: pb ? Math.round(pb.fmax * 10) : 0,
+      onScrub: (e) => { const v = Number(e.target.value) / 10; this.sim.f = v; this.setState({ f: v, playing: false, step: -1 }); },
+      speeds: speeds
+    }, this.extraVals(st));
+  }
+}
+mountDC(Component);
+</script>
+</body>
+</html>
