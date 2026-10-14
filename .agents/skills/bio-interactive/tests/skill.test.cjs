@@ -78,3 +78,8 @@ test('docs put the data folder and notes under .assets', () => {
   for (const s of ['.assets/자료_인터렉티브_NN_<이름>/', '"<DEST>/.assets/자료_인터렉티브_NN_<이름>"', '`.assets/`의 정리노트'])
     assert.ok(md.includes(s), s);
 });
+
+test('step scroll is documented', () => {
+  assert.ok(read('references/scene-api.md').includes('revealStepDetail'));
+  assert.ok(read('SKILL.md').includes('설명 상자가 패널 안에 보이고'));
+});

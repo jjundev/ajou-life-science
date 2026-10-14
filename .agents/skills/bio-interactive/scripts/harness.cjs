@@ -42,7 +42,9 @@ function loadComponent(file, opts = {}) {
     innerWidth: opts.innerWidth || 1440,
     addEventListener() {}, removeEventListener() {},
   };
-  const ctx = vm.createContext({ DCLogic, window: win, requestAnimationFrame: () => 0, cancelAnimationFrame() {}, console });
+  const globals = { DCLogic, window: win, requestAnimationFrame: opts.raf || (() => 0), cancelAnimationFrame() {}, console };
+  if (opts.document) globals.document = opts.document;
+  const ctx = vm.createContext(globals);
   vm.runInContext(src + '\n;globalThis.__C = Component;', ctx);
   const c = new ctx.__C({});
   return { c, store, win };

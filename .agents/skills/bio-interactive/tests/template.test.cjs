@@ -248,3 +248,93 @@ test('panel scrollbar uses theme tokens', () => {
     '.panel-inner::-webkit-scrollbar-thumb{background:var(--scroll)', '.panel-inner::-webkit-scrollbar-thumb:hover{background:var(--scroll-hover)}'])
     assert.ok(m.includes(s), s);
 });
+
+// Left-panel DOM stub: rects are { top, bottom }; detail/btn null means "not rendered".
+// `other` is a pressed button in an earlier .steps group outside the step list's section.
+function fakeDom({ box, detail, btn, other, scrollTop = 0 }) {
+  const scrolls = [];
+  const PRESSED = '.steps [aria-pressed="true"]';
+  const el = (r) => r && { getBoundingClientRect: () => r };
+  const sec = { querySelector: (q) => (q === PRESSED ? el(btn) : null) };
+  const inner = {
+    scrollTop,
+    getBoundingClientRect: () => box,
+    querySelector: (q) => (q === '.detail' ? detail && { getBoundingClientRect: () => detail, parentElement: sec } : q === PRESSED ? el(other || btn) : null),
+    scrollTo: (o) => scrolls.push({ top: o.top, behavior: o.behavior }),
+  };
+  return { document: { querySelector: (q) => (q === '.panel-left .panel-inner' ? inner : null) }, scrolls };
+}
+const runNow = (fn) => { fn(); return 1; };
+
+test('picking a step scrolls the left panel to show its text', () => {
+  const dom = fakeDom({ box: { top: 0, bottom: 600 }, detail: { top: 620, bottom: 760 }, btn: { top: 400, bottom: 460 } });
+  const { c } = loadComponent(T, { document: dom.document, raf: runNow });
+  c.pickStep(0);
+  assert.equal(dom.scrolls.length, 1);
+  assert.equal(dom.scrolls[0].top, 176);
+  assert.equal(dom.scrolls[0].behavior, 'smooth');
+});
+
+test('visible step text does not scroll', () => {
+  const dom = fakeDom({ box: { top: 0, bottom: 600 }, detail: { top: 300, bottom: 500 }, btn: { top: 100, bottom: 160 } });
+  const { c } = loadComponent(T, { document: dom.document, raf: runNow });
+  c.pickStep(0);
+  assert.equal(dom.scrolls.length, 0);
+});
+
+test('long step text keeps the pressed button in view', () => {
+  const dom = fakeDom({ box: { top: 0, bottom: 600 }, detail: { top: 620, bottom: 1400 }, btn: { top: 300, bottom: 360 } });
+  const { c } = loadComponent(T, { document: dom.document, raf: runNow });
+  c.pickStep(0);
+  assert.equal(dom.scrolls.length, 1);
+  assert.equal(dom.scrolls[0].top, 284);
+});
+
+test('reduced motion scrolls instantly', () => {
+  const dom = fakeDom({ box: { top: 0, bottom: 600 }, detail: { top: 620, bottom: 760 }, btn: { top: 400, bottom: 460 } });
+  const { c } = loadComponent(T, { document: dom.document, raf: runNow, reduceMotion: true });
+  c.pickStep(0);
+  assert.equal(dom.scrolls[0].behavior, 'auto');
+});
+
+test('no rendered step text means no scroll', () => {
+  const dom = fakeDom({ box: { top: 0, bottom: 600 }, detail: null, btn: null });
+  const { c } = loadComponent(T, { document: dom.document, raf: runNow });
+  c.pickStep(0);
+  assert.equal(dom.scrolls.length, 0);
+});
+
+test('picking a step in another mode schedules one scroll', () => {
+  const dom = fakeDom({ box: { top: 0, bottom: 600 }, detail: { top: 620, bottom: 760 }, btn: { top: 400, bottom: 460 } });
+  let frames = 0;
+  const { c } = loadComponent(withSteps(MIXED), { document: dom.document, raf: (fn) => { frames++; fn(); return 1; } });
+  c.setMode('a');
+  c.pickStep(1);
+  assert.equal(c.state.mode, 'b');
+  assert.equal(frames, 1);
+  assert.equal(dom.scrolls.length, 1);
+});
+
+test('without a DOM pickStep schedules nothing', () => {
+  let frames = 0;
+  const { c } = loadComponent(T, { raf: () => { frames++; return 1; } });
+  c.pickStep(0);
+  assert.equal(frames, 0);
+  assert.equal(c.state.step, 0);
+});
+
+test('step scroll targets an absolute position so a newer press replaces a running one', () => {
+  const dom = fakeDom({ box: { top: 0, bottom: 600 }, detail: { top: 620, bottom: 760 }, btn: { top: 400, bottom: 460 }, scrollTop: 100 });
+  const { c } = loadComponent(T, { document: dom.document, raf: runNow });
+  c.pickStep(0);
+  assert.equal(dom.scrolls.length, 1);
+  assert.equal(dom.scrolls[0].top, 276);
+});
+
+test('pressed buttons in other .steps groups do not cap the step scroll', () => {
+  const dom = fakeDom({ box: { top: 0, bottom: 600 }, detail: { top: 620, bottom: 760 }, btn: { top: 400, bottom: 460 }, other: { top: -200, bottom: -150 } });
+  const { c } = loadComponent(T, { document: dom.document, raf: runNow });
+  c.pickStep(0);
+  assert.equal(dom.scrolls.length, 1);
+  assert.equal(dom.scrolls[0].top, 176);
+});

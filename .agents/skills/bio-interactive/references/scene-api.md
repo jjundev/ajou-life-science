@@ -94,7 +94,7 @@ topic() {
 
 상태: `mode, f, playing, speed, step, spin, theme, leftOpen, rightOpen, drawer, narrow, leftW, rightW, resizing` (+ `extraState()`). `step`은 `STEPS` 전체 인덱스(없으면 -1)예요.
 
-메서드: `setMode(key)`는 모드를 바꾸고 `f`·고른 단계를 지워요. `pickStep(i)`는 `STEPS[i]`(전체 인덱스)를 골라요. 필요하면 모드를 바꾸고 `f`로 옮겨요.
+메서드: `setMode(key)`는 모드를 바꾸고 `f`·고른 단계를 지워요. `pickStep(i)`는 `STEPS[i]`(전체 인덱스)를 골라요. 필요하면 모드를 바꾸고 `f`로 옮겨요. 고른 뒤 다음 프레임에 왼쪽 패널을 설명 상자가 보이게 스크롤해요(`revealStepDetail()`, 눌린 버튼이 위로 사라지지 않을 만큼만, reduced-motion이면 즉시). 이 셸 메서드는 고치지 않아요.
 
 `renderVals()` 공통 키: `th, isDark, isLight, themeLabel, toggleTheme, canvasRef, canvasCls, hasModes, is, modes[{label, pressed, pick}], leftCls, rightCls, leftExpanded, rightExpanded, scrimCls, toggleLeft, toggleRight, closePanels, layoutStyle, layoutCls, leftWNow, rightWNow, leftHandleRef, rightHandleRef, onKey, hasToggles, toggles[{label, pressed, toggle}], hasSteps, steps[{num, title, who, c, pressed, pick}], hasStep, stepDetail, mistakes, canvasLabel, zoomIn, zoomOut, resetView, hasPlayback, isPlaying, notPlaying, playLabel, togglePlay, fInt, fLabel, fMax10, onScrub, speeds[{label, pressed, pick}]`
 
