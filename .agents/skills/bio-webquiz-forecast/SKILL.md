@@ -1,6 +1,6 @@
 ---
 name: bio-webquiz-forecast
-description: 생명과학 다음 웹과제(장별 퀴즈)를 예상해 복습문제 형식의 예상문제 HTML과 검토된 예상문제해설 HTML을 만든다. "4장 웹과제 예상해줘", "웹과제 예상문제 만들어줘", "예상문제 한 세트 더", /bio-webquiz-forecast N [lite]처럼 장 번호와 함께 요청할 때 쓴다. 부를 때마다 웹과제예상/<N>장/에 v1, v2 … 새 세트가 쌓인다. 정리노트·복습문제(복습팩)·커닝페이퍼를 만드는 요청에는 쓰지 않는다.
+description: 생명과학 다음 웹과제(장별 퀴즈)를 예상해 복습문제 형식의 예상문제 HTML과 검토된 예상문제해설 HTML을 만든다. "4장 웹과제 예상해줘", "웹과제 예상문제 만들어줘", "예상문제 한 세트 더", /bio-webquiz-forecast N [lite]처럼 장 번호와 함께 요청할 때 쓴다. 부를 때마다 웹과제예상의 장별 폴더에 v1, v2 … 새 세트가 쌓인다. 정리노트·복습문제(복습팩)·커닝페이퍼를 만드는 요청에는 쓰지 않는다.
 ---
 
 # 생명과학 웹과제 예상 세트
@@ -28,11 +28,15 @@ description: 생명과학 다음 웹과제(장별 퀴즈)를 예상해 복습문
 - 실제 웹과제가 이미 있으면(`웹과제/<N>장/questions.json`) 그 발문은 피하고, 실제 경향을 개요에 반영한다.
 - raw/intake만 있으면 공통 출제 기준의 별도 원본 관찰을 참고할 수 있다. 정본 bank 미등록과 공식 답 미확인을 공개하고 확정 집계에 합산하지 않는다. raw를 정본 원문 bank로 사용하지 않고 발문을 복사하지 않는다.
 
+이번 장의 `웹과제/<N>장/note-feedback.md`가 있으면 [공통 본문 피드백](../bio-review-pack/references/note-feedback.md)에 따라 출제 관찰·문항별 판별 기준을 읽고 실제 근거 파일을 대조한다. 개인 학습 가설은 미확인 상태를 유지하며 출제 사실로 쓰지 않는다. 피드백이 없으면 미작성, 근거가 부족하면 보류로 보고한다. bank 존재만으로 응시 완료를 단정하지 않는다.
+
 ### 3. 개요 카드 o1·o2
 `references/forecast-rules.md`대로 메인 에이전트가 `src/v<K>/cards/o1.html`, `o2.html`을 쓴다. o2에는 재출제 유력 기출 10개(번호·핵심 한 줄·정답)를 넣는다.
 
 ### 4. 설계표
-`references/question-blueprint.md`의 장별 유형 목표·기본 12/심화 3 목표와 최소 풀이 단계를 정하고 `src/v<K>/blueprint.md`와 `pack.json`(`answer_key`, `exam_sources`, `types_required`, `forbidden` 포함)을 쓴다.
+`references/question-blueprint.md`의 장별 근거를 우선한 유형·기본/심화 목표(근거 부족 시에만 기본 12/심화 3 참고 정책)와 최소 풀이 단계를 정하고 `src/v<K>/blueprint.md`와 `pack.json`(`answer_key`, `exam_sources`, `types_required`, `forbidden` 포함)을 쓴다.
+
+설계표 뒤에 `question-blueprint.md`의 `## 회상·비교 연습` 목록을 두고 적용 가능한 새 문항 p6~p15의 명칭·단위 변형을 근거와 연결한다. 고정 의무 개수를 만들거나 기존 버전을 소급 수정하지 않는다.
 
 ### 5. 카드 작성
 `references/card-brief.md`의 브리프로 작성자 3명을 **한 메시지에서 병렬로** 띄운다: p1–p5(기출, 원문 대조), p6–p10, p11–p15. 모델은 `opus or sol`(lite면 `sonnet or luna`). 작성자는 빌드·검사를 돌리지 않는다. 세 명이 모두 돌아온 뒤 메인 에이전트가 6단계를 한다.
