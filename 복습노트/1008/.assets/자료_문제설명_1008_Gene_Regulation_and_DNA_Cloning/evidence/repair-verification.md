@@ -1,0 +1,11 @@
+# Current repair verification
+
+Native fresh reviewer found two important explanation conclusions plus audit inaccuracies. Executor checked actual 5강 PDF1 #2 and PDF3 #19/#23 images, textbook PDF18/print109, note cross references. Removed unsupported strongest-answer criterion in1001p2, reversed function-to-sequence inference in1006p11, unique-answer rule in1006p8, stale independent attribution1006p1. RED/GREEN recorded in review-fix.py log. These explanations now retain printed/intended choices while explicitly disclosing literal ambiguity. Original stems/options/cardanswers unchanged.
+
+Audit current17criteria and exact paragraph excerpts were corrected; q03 sourcePDF7–8, q15 sourcePDF7–8; q04 changed status; previous4장 record retained. Current topic paragraphs/source quoted directly. Current source_visual for unchanged source problems follows fresh reviewer observations; affected content repairs were checked again by executor against actual source images after rebuild. Reviewer coverage is stated in final-review.md, not inflated to every word source-verified.
+
+Independent blind reviewer solved all91. Conditional supplement derives alternatives without keys. Controller compared normal answers to current manifests; ambiguous originals have matching printed/intended conditional readings, and literal ambiguity is retained in explanation. This is disclosure validation, not certification of unique literal answers. 1001p2 original grading mode remains single under preservation boundary; the explanation warns printed/intended choice vs literal ambiguity. No learner mastery is inferred.
+
+Browser36cases (3packs×note/review/explain×2sizes×2themes), every screen checked; 24additional pointer/new-topic cases. No overflow/brokenimages/pageerrors/badHTTP. Explanation resources are all local; pre-existing note/review templates still request their CDN styles/scripts and were tested with networking. No template changes. Earlier test-only failures were selector mistakes (including clicking a hidden desktop-only control on mobile); corrected tests use visible mobile .problem-toggle and current stage.json.
+
+Deferred minor:1001p1 does not discuss the source option's false nine-kind premise explicitly; it is still rejected as not the definition. No source stem repaired.

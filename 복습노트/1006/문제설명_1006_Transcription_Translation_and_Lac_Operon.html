@@ -213,7 +213,7 @@
     }
 
     /* ---------- 좌우 패널 (drawer) ---------- */
-    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 360px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-p-min: 360px; --panel-p-max: 720px; --panel-r: clamp(300px, 22vw, 380px); --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
     body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
     .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
     .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
@@ -231,12 +231,16 @@
       :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
     }
 
-    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .layout { display: grid; grid-template-columns: auto auto minmax(320px, 1fr) auto auto; min-height: 0; }
     .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
     .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
     .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
-    .content { grid-column: 2; }
-    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-prob { grid-column: 2; border-right: 1px solid var(--line); }
+    .content { grid-column: 3; }
+    .panel-right { grid-column: 5; border-left: 1px solid var(--line); }
+    /* 문제 패널이 DOM에서 본문 앞에 있어도 오른쪽 칸(4)에 둘 때 줄이 바뀌지 않게 모두 첫 줄에 둔다 */
+    .layout > .panel, .layout > .content { grid-row: 1; }
+    .layout[data-prob-dock="right"] .panel-prob { grid-column: 4; border-right: 0; border-left: 1px solid var(--line); }
     .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
     .content::-webkit-scrollbar, .panel-inner::-webkit-scrollbar { width: 8px; }
     .content::-webkit-scrollbar-track, .panel-inner::-webkit-scrollbar-track { background: transparent; }
@@ -291,6 +295,21 @@
       background: transparent; color: var(--ink-2); font: 700 var(--fs-panel)/1 var(--font); cursor: pointer; }
     .panel-tabs [role="tab"][aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
     .probs, .orig-tab, .sum-tab { padding-top: var(--s2); }
+    /* 문제 패널 머리: [이동] [문제 | 원문] … [왼쪽 | 오른쪽 | 띄우기] — 탭과 버튼 사이 빈 띠를 끌면 패널이 떨어진다 */
+    .panel-prob .panel-head { align-items: flex-end; border-bottom: 1px solid var(--line); }
+    .panel-prob .panel-tabs { flex: 0 1 auto; border-bottom: 0; }
+    .panel-tabs [role="tab"] { white-space: nowrap; }
+    .prob-dock { display: flex; align-self: center; gap: 2px; margin-left: auto; }
+    .prob-dock button, .float-move { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0;
+      border: 0; border-radius: 6px; background: transparent; color: var(--ink-2); cursor: pointer; }
+    .prob-dock svg, .float-move svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .prob-dock .strip { fill: currentColor; stroke: none; }
+    .prob-dock button[aria-checked="true"] { color: var(--accent-ink); background: var(--surface); }
+    @media (hover: hover) { .prob-dock button:hover, .float-move:hover { background: var(--surface); } }
+    .float-move { display: none; align-self: center; cursor: grab; }
+    .float-resize { display: none; }
+    .dock-preview { display: none; }
+    #toggle-prob[data-dock="right"] .strip { transform: translateX(6px); }
     .orig-tab details.original { margin-top: 0; padding-top: 0; border-top: 0; }
     .orig-tab details.original > summary { display: none; }
     .problem-pane > .layer:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
@@ -387,20 +406,44 @@
     @media (min-width: 1024px) {
       .layout { --l: var(--panel-l-user, var(--panel-l)); }
       .layout[data-left="closed"] { --l: 0px; }
+      .layout { --r: var(--panel-r-user, var(--panel-r)); }
+      .layout[data-right="closed"] { --r: 0px; }
       .panel-left { width: var(--l); }
-      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
-      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-right { width: var(--r); }
+      /* 기본값: 목차·요약 패널과 본문 폭을 뺀 나머지를 문제 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-prob { width: var(--panel-p-user, clamp(var(--panel-p-min), calc(100vw - var(--l) - var(--r) - var(--measure) - var(--scrollbar)), var(--panel-p-max))); }
       .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
-      .panel-left .panel-resize { right: 0; }
+      .panel-left .panel-resize, .panel-prob .panel-resize { right: 0; }
       .panel-right .panel-resize { left: 0; }
       .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
-      .panel-left .panel-resize::after { right: 0; }
+      .panel-left .panel-resize::after, .panel-prob .panel-resize::after { right: 0; }
       .panel-right .panel-resize::after { left: 0; }
       .panel-resize:focus-visible { outline: none; }
       .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
       @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
       body.is-resizing { cursor: col-resize; user-select: none; }
-      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .layout[data-prob-dock="right"] .panel-prob .panel-resize, .layout[data-prob-dock="right"] .panel-prob .panel-resize::after { left: 0; right: auto; }
+      /* 터치 화면에서도 머리·이동 버튼 끌기가 스크롤로 넘어가 취소되지 않게 */
+      .panel-prob .panel-head, .float-move { touch-action: none; }
+      /* 띄운 문제 창: grid에서 빠져 본문 위에 뜬다. 위치·크기는 스크립트가 --fx/--fy/--fw/--fh로 준다 */
+      .layout[data-prob-dock="float"] .panel-prob { position: fixed; left: var(--fx); top: var(--fy); width: var(--fw); height: var(--fh); z-index: 30;
+        border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 12px 32px rgb(0 0 0 / .18); }
+      .layout[data-prob-dock="float"] .panel-prob .panel-head { position: sticky; top: calc(-1 * var(--s4)); z-index: 1; margin-top: calc(-1 * var(--s4)); padding-top: var(--s2); background: var(--bg); cursor: grab; }
+      .layout[data-prob-dock="float"] .panel-prob .panel-resize { display: none; }
+      /* 좁은 창에서도 머리가 한 줄에 들어가게 간격을 줄인다 */
+      .layout[data-prob-dock="float"] .panel-prob .panel-head { gap: var(--s1); }
+      .layout[data-prob-dock="float"] .panel-prob .panel-tabs [role="tab"] { padding: 0 var(--s2); }
+      .layout[data-prob-dock="float"] .float-move { display: inline-flex; }
+      .layout[data-prob-dock="float"] .float-resize { display: block; position: absolute; right: 0; bottom: 0; z-index: 3; width: 16px; height: 16px; cursor: nwse-resize; touch-action: none;
+        background: linear-gradient(135deg, transparent 50%, var(--ink-2) 50%, var(--ink-2) 58%, transparent 58%, transparent 70%, var(--ink-2) 70%, var(--ink-2) 78%, transparent 78%); border-bottom-right-radius: 12px; }
+      .float-resize:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+      body.is-dragging, body.is-dragging .panel-prob .panel-head { cursor: grabbing; user-select: none; }
+      body.is-sizing, body.is-sizing .float-resize { cursor: nwse-resize; user-select: none; }
+      .dock-preview:not([hidden]) { display: block; position: fixed; z-index: 29; bottom: 0; width: min(400px, 40vw); pointer-events: none;
+        background: color-mix(in srgb, var(--accent) 18%, transparent); border: 2px solid var(--accent); }
+      .dock-preview[data-side="left"] { left: 0; }
+      .dock-preview[data-side="right"] { right: 0; }
+      .layout[data-left="closed"] .panel-left, .layout[data-prob="closed"] .panel-prob, .layout[data-right="closed"] .panel-right { display: none; }
       .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
       .scrim, .panel-close { display: none; }
     }
@@ -418,9 +461,11 @@
         transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
       .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
       html:not(.js) .panel-left { display: none; }
+      /* 좁은 화면의 문제는 각 문항 안 '문제 보기'로 본다 */
+      .panel-prob, #toggle-prob { display: none; }
     }
     @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
-    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-prob, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
     @media (prefers-reduced-motion: reduce) {
       .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
       .panel.is-shown { animation: none; }
@@ -454,13 +499,14 @@
   <header class="topbar">
     <div class="topbar-inner">
       <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <button class="text-btn panel-toggle" id="toggle-prob" type="button" aria-controls="panel-prob" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="9" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16 M15 4v16"/></svg><span>문제</span></button>
       <strong class="brand">문제풀이 입문 설명</strong>
       <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
-      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>문제</span></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>요약</span></button>
     </div>
     <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
   </header>
-  <div class="layout" data-left="open" data-right="closed">
+  <div class="layout" data-left="open" data-prob="open" data-right="closed" data-prob-dock="left">
     <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
       <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
       <div class="panel-inner">
@@ -470,8 +516,31 @@
         </div>
         <p class="panel-meta">읽은 토픽 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
         <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
-        <nav class="toc" aria-label="목차"><ul class="toc-list"><li><a href="#p1">P1. 가닥과 안티코돈</a></li><li><a href="#p2">P2. 전사 서열의 조건</a></li><li><a href="#p3">P3. 삽입과 조기 종결</a></li><li><a href="#p4">P4. 핵 안의 원본</a></li><li><a href="#p5">P5. 리보솜의 구성</a></li><li><a href="#p6">P6. 두 자리 암호</a></li><li><a href="#p7">P7. 오페론의 유도자</a></li><li><a href="#p8">P8. 과오와 틀이동의 경계</a></li><li><a href="#p9">P9. tRNA의 짝</a></li><li><a href="#p10">P10. 발현량의 변화</a></li><li><a href="#p11">P11. 기능과 변이 유형</a></li><li><a href="#p12">P12. 틀이동의 원인</a></li><li><a href="#p13">P13. 같은 아미노산의 두 코돈</a></li><li><a href="#p14">P14. DNA를 여는 과정</a></li><li><a href="#p15">P15. tRNA의 운반 기능</a></li><li><a href="#p16">P16. 전사 시작 부위</a></li><li><a href="#p17">P17. 돌연변이의 다양한 영향</a></li><li><a href="#p18">P18. 번역에 직접 쓰는 분자</a></li><li><a href="#p19">P19. 번역의 시작</a></li><li><a href="#p20">P20. 원본과 번역 사본</a></li><li><a href="#p21">P21. [변형] 억제자와 유도자</a></li><li><a href="#p22">P22. [변형] tRNA의 두 기능</a></li><li><a href="#p23">P23. [변형] 방향을 바꾸어 읽기</a></li><li><a href="#p24">P24. [변형] 가공에서 남는 구간</a></li><li><a href="#p25">P25. [변형] 세 염기의 삭제</a></li><li><a href="#p26">P26. [변형] 결합하지 못하는 억제자</a></li><li><a href="#p27">P27. [변형] 유전암호의 세 진술</a></li><li><a href="#p28">P28. [변형] 리보솜과 단백질의 재료</a></li><li><a href="#p29">P29. [변형] 선택하는 전사</a></li><li><a href="#p30">P30. [변형] tRNA와 여러 코돈</a></li><li><a href="#p31">P31. [변형] 염기는 바뀌고 아미노산은 유지</a></li><li><a href="#p32">P32. [변형] 다섯 종류의 두 자리 신호</a></li></ul></nav>
+        <nav class="toc" aria-label="목차"><ul class="toc-list"><li><a href="#p1">P1. 가닥과 안티코돈</a></li><li><a href="#p2">P2. 전사 서열의 조건</a></li><li><a href="#p3">P3. 삽입과 조기 종결</a></li><li><a href="#p4">P4. 핵 안의 원본</a></li><li><a href="#p5">P5. 리보솜의 구성</a></li><li><a href="#p6">P6. 두 자리 암호</a></li><li><a href="#p7">P7. 오페론의 유도자</a></li><li><a href="#p8">P8. 과오와 틀이동의 경계</a></li><li><a href="#p9">P9. tRNA의 짝</a></li><li><a href="#p10">P10. 발현량의 변화</a></li><li><a href="#p11">P11. 기능과 변이 유형</a></li><li><a href="#p12">P12. 틀이동의 원인</a></li><li><a href="#p13">P13. 같은 아미노산의 두 코돈</a></li><li><a href="#p14">P14. DNA를 여는 과정</a></li><li><a href="#p15">P15. tRNA의 운반 기능</a></li><li><a href="#p16">P16. 전사 시작 부위</a></li><li><a href="#p17">P17. 돌연변이의 다양한 영향</a></li><li><a href="#p18">P18. 번역에 직접 쓰는 분자</a></li><li><a href="#p19">P19. 번역의 시작</a></li><li><a href="#p20">P20. 원본과 번역 사본</a></li><li><a href="#p21">P21. [변형] 억제자와 유도자</a></li><li><a href="#p22">P22. [변형] tRNA의 두 기능</a></li><li><a href="#p23">P23. [변형] 방향을 바꾸어 읽기</a></li><li><a href="#p24">P24. [변형] 가공에서 남는 구간</a></li><li><a href="#p25">P25. [변형] 세 염기의 삭제</a></li><li><a href="#p26">P26. [변형] 결합하지 못하는 억제자</a></li><li><a href="#p27">P27. [변형] 유전암호의 세 진술</a></li><li><a href="#p28">P28. [변형] 리보솜과 단백질의 재료</a></li><li><a href="#p29">P29. [변형] 선택하는 전사</a></li><li><a href="#p30">P30. [변형] tRNA와 여러 코돈</a></li><li><a href="#p31">P31. [변형] 염기는 바뀌고 아미노산은 유지</a></li><li><a href="#p32">P32. [변형] 다섯 종류의 두 자리 신호</a></li><li><a href="#p33">P33. [변형] 넌센스라는 이름에서 결과 떠올리기</a></li></ul></nav>
       </div>
+    </aside>
+    <aside class="panel panel-prob" id="panel-prob" aria-labelledby="panel-prob-title">
+      <div class="panel-resize" data-side="prob" role="separator" aria-orientation="vertical" aria-controls="panel-prob" aria-label="문제 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <button class="float-move" type="button" aria-label="문제 창 이동. 화살표로 이동" title="끌어서 이동"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01" stroke-width="3"/></svg></button>
+          <h2 id="panel-prob-title" class="sr-only">문제, 원문</h2>
+          <div class="panel-tabs" role="tablist" aria-labelledby="panel-prob-title">
+            <button type="button" role="tab" id="tab-problem" data-tab="problem" aria-controls="tabpanel-problem" aria-selected="true">문제</button>
+            <button type="button" role="tab" id="tab-original" data-tab="original" aria-controls="tabpanel-original" aria-selected="false" tabindex="-1" hidden>원문</button>
+          </div>
+          <div class="prob-dock" role="radiogroup" aria-label="문제 패널 위치">
+            <button type="button" role="radio" data-dock="left" aria-checked="true" tabindex="0" aria-label="왼쪽에 붙이기" title="왼쪽에 붙이기"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="7" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/></svg></button>
+            <button type="button" role="radio" data-dock="right" aria-checked="false" tabindex="-1" aria-label="오른쪽에 붙이기" title="오른쪽에 붙이기"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="14" y="4" width="7" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/></svg></button>
+            <button type="button" role="radio" data-dock="float" aria-checked="false" tabindex="-1" aria-label="띄우기" title="띄우기"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><rect class="strip" x="11" y="8" width="7" height="6" rx="1"/></svg></button>
+          </div>
+        </div>
+        <div class="probs" role="tabpanel" id="tabpanel-problem" aria-labelledby="tab-problem">
+          <p class="panel-empty" id="prob-empty">문항을 고르면 여기에 문제가 나와요.</p>
+        </div>
+        <div class="orig-tab" role="tabpanel" id="tabpanel-original" aria-labelledby="tab-original" hidden></div>
+      </div>
+      <div class="float-resize" role="button" tabindex="0" aria-label="문제 창 크기 조절. 화살표로 조절, Enter로 기본 크기"></div>
     </aside>
     <div class="content">
   <main>
@@ -507,7 +576,7 @@
   <div data-subpart="main">
     <p>(1) 틀려요. TGA는 T가 들어 있는 DNA 표기예요. tRNA 안티코돈은 RNA이므로 T가 아니라 U를 써요.</p>
     <p>(2) 틀려요. UCU는 어느 읽기에서도 나오지 않아요. 문자 그대로의 코돈 UGA와도, 주형 가정의 코돈 ACU와도 세 쌍이 모두 상보적이지 않아요.</p>
-    <p>(3) 문자 그대로 읽으면 맞는 답이에요. ‘암호화 서열’을 암호화가닥 5′-TGA-3′로 읽으면 mRNA는 T만 U로 바꾼 5′-UGA-3′이고, 이와 상보적인 서열은 3′-ACU-5′, 곧 ACU예요. 다만 UGA는 종결 코돈이어서 실제 세포에서는 이 코돈에 결합하는 tRNA가 없어요. 따라서 엄밀히는 ‘결합하는 tRNA가 없다’가 맞고, 보기 중 상보 서열은 (3)이에요. 독립 재풀이도 이 읽기로 (3)을 골랐어요.</p>
+    <p>(3) 문자 그대로 읽으면 맞는 답이에요. ‘암호화 서열’을 암호화가닥 5′-TGA-3′로 읽으면 mRNA는 T만 U로 바꾼 5′-UGA-3′이고, 이와 상보적인 서열은 3′-ACU-5′, 곧 ACU예요. 다만 UGA는 종결 코돈이어서 실제 세포에서는 이 코돈에 결합하는 tRNA가 없어요. 따라서 엄밀히는 ‘결합하는 tRNA가 없다’가 맞고, 보기 중 상보 서열은 (3)이에요.</p>
     <p>(4) 틀려요. ACT는 짝은 (3)과 같지만 T를 썼어요. tRNA는 RNA라서 T가 들어갈 수 없어요.</p>
     <p>(5) 출제 의도상 맞아요(기출 인쇄 정답). 출제자는 TGA를 교과서 그림 5.10(p.102)처럼 3′→5′로 적은 주형가닥으로 본 것으로 보여요. 주형 3′-TGA-5′에서 mRNA는 5′-ACU-3′이고, 이 코돈과 역평행으로 짝짓는 안티코돈은 3′-UGA-5′예요. 이 해석에서는 ACU가 트레오닌(Thr)을 지정하므로 tRNA가 실제로 결합한다는 점도 발문과 맞아요.</p>
     <p>정리하면 문자 그대로는 (3), 주형가닥 가정에서는 (5)가 나와요. 발문이 ‘코돈에 결합하는 tRNA’가 있다고 전제하므로 그 전제가 성립하는 주형 읽기가 출제 의도예요. 따라서 이 카드의 답은 (5)예요.</p>
@@ -887,7 +956,7 @@
     <p>(3) 맞아요(답). 침묵 돌연변이는 정의상 아미노산이 바뀌지 않고, 과오는 정의상 아미노산이 바뀌어요. 엄밀한 정의로 보든 넓은 뜻으로 보든 ‘침묵 = 과오’는 성립할 수 없어요.</p>
     <p>(4) 엄밀히는 과오가 될 수 없어요 — 틀이동은 과오와 다른 유형이에요. 넓은 뜻으로는 틀이동으로 아미노산이 바뀌므로 출제 의도로는 답이 아니에요.</p>
     <p>(5) 과오가 될 수 있어요. 낫모양적혈구빈혈증은 베타 글로빈 유전자의 염기 하나가 바뀌어 글루탐산이 발린으로 바뀐 과오 돌연변이예요(p.110 그림 5.19).</p>
-    <p>부정형 문항이므로 답은 ‘과오가 될 수 없다’로 판정되면서 두 해석 모두에서 그 판정이 유지되는 보기예요. 따라서 답은 (3)이에요.</p>
+    <p>엄밀한 분류에서는 (1)(2)(3)(4)가 모두 과오 유형이 아니므로 단일 정답이 성립하지 않아요. 인쇄·출제 의도는 (3)이지만, 이를 유일한 엄밀 답으로 확정하지 않아요.</p>
   </div>
 </div>
 <div class="layer formal" data-explanation="verify">
@@ -895,7 +964,7 @@
   <div data-subpart="main">
     <p>답 (3) 침묵 돌연변이와 같다.</p>
     <p>교과서 그림으로 대조해요: 교과서 p.109 그림 5.18b(과오)는 mRNA 코돈 UCA가 CCA로 바뀌어 Ser이 Pro로 바뀌지만, 그림 5.18d(침묵)는 GGU가 GGC로 바뀌어도 Gly 그대로예요. 같은 그림 안에서 두 경우의 결과가 ‘아미노산 변화 있음/없음’으로 반대예요.</p>
-    <p>정의 충돌 여부로 다시 세어 봐도, 어떤 해석에서도 과오가 될 수 없는 보기는 (3) 하나예요. 기출 5강 합본 3쪽 19번 인쇄 정답도 ③이에요.</p>
+    <p>정의로 다시 세면 엄밀하게는 (1)(2)(3)(4)가 해당해요. 넓은 뜻의 아미노산 변화로 보더라도 침묵을 제외하는 출제 의도를 설명할 뿐, 원문의 단일 정답 결함이 해소되지는 않아요. 기출 5강 합본 3쪽 19번 인쇄 정답도 ③이에요.</p>
   </div>
 </div>
 <div class="layer warn" data-explanation="pitfall">
@@ -1028,7 +1097,7 @@
 </article><article class="topic" id="p11"><h3>P11. 기능과 변이 유형</h3><p class="panel-meta">기출 5강 23 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p11">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p11"><div class="layer formal" data-source-problem="p11"><div data-source-field="conditions"><p>돌연변이가 발생하였지만 생성된 단백질의 기능에 큰 변화를 주지 않았을 때, 이를 무엇이라고 하는가?</p><ul class="choices"><li data-choice="1">(1) 변역틀이동 돌연변이</li><li data-choice="2">(2) 침묵 돌연변이</li><li data-choice="3">(3) 정지 돌연변이</li><li data-choice="4">(4) 과오 돌연변이</li><li data-choice="5">(5) 유전 암호의 보편성</li></ul></div></div><details class="original" data-original-problem="p11"><summary>기출 원문 보기</summary><p>기출 5강 23번 (PDF 3쪽)</p></details></div><div class="layer eli5" data-explanation="understand">
   <h4>문제를 내 말로 읽어요</h4>
   <p>주어진 것: 돌연변이가 생겼지만 만들어진 단백질의 기능에는 큰 변화가 없어요.</p>
-  <p>구할 것: 이런 돌연변이를 부르는 이름이에요. 보기 가운데 ‘단백질이 그대로 유지되는’ 돌연변이 유형을 골라요.</p>
+  <p>구할 것: 이런 돌연변이의 분류 이름이에요. 다만 기능 보존만 주어졌고 아미노산 서열 보존은 주어지지 않았다는 점을 먼저 확인해요.</p>
   <p>쉽게 말하면, 요리책의 글자 하나가 바뀌었는데 완성된 요리 맛이 그대로인 경우의 이름을 묻는 문제예요.</p>
   <p><strong>문항 결함:</strong> ‘기능에 큰 변화가 없다’는 조건만으로는 침묵 돌연변이를 확정할 수 없어요. 아미노산이 하나 바뀌었지만 성질이 비슷해 기능이 유지되는 과오 돌연변이(이른바 중성 과오)도 같은 결과를 낼 수 있어요. 출제 의도는 아미노산 자체가 바뀌지 않는 침묵 돌연변이이고, 기출 인쇄 정답이자 카드 정답은 (2)예요.</p>
 </div>
@@ -1053,7 +1122,7 @@
     <p>(1) 틀려요. 번역틀이동은 삽입·삭제 지점 뒤의 코돈이 모두 밀려 아미노산 서열이 크게 달라지고, 교과서 p.110은 결과 폴리펩타이드가 종종 기능을 상실한다고 해요.</p>
     <p>(2) 맞아요. 침묵 돌연변이는 코돈이 바뀌어도 같은 아미노산을 지정하므로 단백질 자체가 그대로이고, 기능 변화가 없는 대표 유형이에요.</p>
     <p>(3) 틀려요. 정지 돌연변이는 아미노산 코돈이 종결 코돈으로 바뀌어 정상보다 짧은 폴리펩타이드를 만들고, 많은 경우 기능이 부분적으로만 남아요(p.109~110).</p>
-    <p>(4) 엄밀히는 맞을 수도 있어요 — 과오 돌연변이도 바뀐 아미노산이 원래와 성질이 비슷하거나 기능에 중요하지 않은 자리라면 기능이 거의 유지될 수 있어요(p.109). 하지만 과오는 아미노산이 바뀌는 유형이라 ‘기능 변화 없음’이 항상 성립하지 않아요. 출제자가 묻는 ‘변화가 없는 돌연변이의 이름’에는 정의상 단백질이 그대로인 침묵이 더 정확히 맞아요.</p>
+    <p>(4) 엄밀히는 맞을 수도 있어요 — 과오 돌연변이도 바뀐 아미노산이 원래와 성질이 비슷하거나 기능에 중요하지 않은 자리라면 기능이 거의 유지될 수 있어요(p.109). 과오가 언제나 기능을 유지하지는 않지만, 이 사례에서 기능이 유지된 과오일 가능성을 주어진 조건만으로 배제할 수 없어요. 출제 의도는 (2)이지만 그 의도와 논리적 확정은 달라요.</p>
     <p>(5) 틀려요. 유전 암호의 보편성은 거의 모든 생물이 같은 유전암호를 쓴다는 성질이지, 돌연변이 유형의 이름이 아니에요.</p>
     <p>따라서 출제 의도에 따른 답은 (2)예요.</p>
   </div>
@@ -1061,9 +1130,9 @@
 <div class="layer formal" data-explanation="verify">
   <h4>완성 답과 검산</h4>
   <div data-subpart="main">
-    <p>답 (2) 침묵 돌연변이.</p>
+    <p>인쇄·출제 의도 답 (2) 침묵 돌연변이; 기능 보존만으로 분류를 확정할 수는 없어요.</p>
     <p>교과서 그림으로 대조해요: 교과서 p.109 그림 5.18의 다섯 경우 중 폴리펩타이드 서열이 정상(Met-Thr-Gly-Ser-Cys-Leu)과 완전히 같은 것은 d(침묵) 하나뿐이에요. b(과오)는 Ser이 Pro로, c(정지)는 Ser 뒤에서 끊기고, e(틀이동)는 Thr 뒤가 모두 달라요.</p>
-    <p>‘서열이 같으면 기능도 같다’는 확실한 경우는 침묵뿐이므로 답은 (2)예요. 기출 5강 합본 3쪽 23번 인쇄 정답도 ②예요.</p>
+    <p>이 그림의 침묵 사례는 출제 의도 (2)를 설명해 줘요. 그러나 문제에는 서열 유지가 주어지지 않았으므로 이 사례를 근거로 기능을 유지하는 과오를 배제할 수 없어요. 따라서 인쇄·출제 의도 답은 (2), 엄밀한 분류는 조건 부족으로 불확정이에요. 기출 5강 합본 3쪽 23번 인쇄 정답도 ②예요.</p>
   </div>
 </div>
 <div class="layer warn" data-explanation="pitfall">
@@ -2247,6 +2316,13 @@
   <div class="summary-group"><h4>핵심 판단</h4><p>$5^2=25$이므로 (3)이 답이에요. 32는 밑·지수를 바꾼 값, 125는 세 자리 값.</p></div>
   <div class="summary-group"><h4>검산</h4><p>첫 염기별로 5개씩 직접 세고 교재 5장 p.102의 $4^n$ 계산과 대조해요.</p></div>
 </div>
+</article><article class="topic" id="p33"><h3>P33. [변형] 넌센스라는 이름에서 결과 떠올리기</h3><p class="panel-meta">생성 변형 1006 p33 · <a href="%EB%B3%B5%EC%8A%B5%EB%AC%B8%EC%A0%9C_1006_Transcription_Translation_and_Lac_Operon.html#p33">원 문제 보기</a></p><div class="problem-pane" data-problem-for="p33"><div class="layer formal" data-source-problem="p33"><div data-source-field="conditions"><p>암호화 부위의 염기쌍 하나가 치환되어 nonsense mutation이 생겼다. 이 분류에 해당하는 설명은?</p><ul class="choices"><li data-choice="1">(1) 삽입된 한 염기 때문에 뒤의 코돈 경계가 바뀐다.</li><li data-choice="2">(2) 아미노산을 지정하던 코돈이 종결 신호가 되어 번역이 일찍 끝난다.</li><li data-choice="3">(3) 서로 다른 코돈이 같은 아미노산을 지정하여 해당 아미노산이 유지된다.</li><li data-choice="4">(4) 한 아미노산이 다른 아미노산으로 바뀌지만 종결 신호는 생기지 않는다.</li><li data-choice="5">(5) 프로모터가 없어져 RNA 합성이 시작되지 않는다.</li></ul></div></div><details class="original" data-original-problem="p33"><summary>기출 원문 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 명칭→현상 회상; 정지·넌센스·nonsense와 틀이동의 원인 구별(강의노트 5장 p6; 실제 피드백 q09/q12). 근거 토픽: s4-substitution.</p></details></div><div class="layer eli5" data-explanation="understand"><h4>문제를 내 말로 읽어요</h4><p>암호화 부위의 염기쌍 하나가 치환됐고, 분류 이름이 <strong>nonsense mutation</strong>이라고 주어졌어요. 이 이름이 가리키는 현상을 골라요.</p></div>
+<div class="layer formal" data-explanation="recall"><h4>이 문제를 봤을 때 떠올릴 개념과 공식</h4><p>nonsense라는 이름이 단서예요. 강의노트 5장 p6의 정지 돌연변이는 실제 웹과제에서 넌센스라고도 불리며, 아미노산을 지정하던 코돈이 종결 코돈으로 바뀌는 치환이에요. 리보솜은 그 신호에서 합성을 멈춰 정상보다 짧은 폴리펩티드가 나올 수 있어요.</p><p>세 염기씩 나누는 경계 자체가 달라지는 번역틀이동(frameshift)은 암호화 부위에서 삽입·삭제 수가 3의 배수가 아닌 경우예요. 짧은 산물이라는 결과가 겹칠 수 있어도 원인과 분류는 구별해요.</p><p><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1006_Transcription_Translation_and_Lac_Operon.html#s4-substitution">치환의 세 결과</a>를 기준으로 비교해요.</p></div>
+<div class="layer formal" data-explanation="start"><h4>종이에 쓸 첫 줄</h4><p>첫 줄에 “치환 → 아미노산 코돈이 종결 코돈으로 바뀜 → 조기 번역 종료”라고 적어요. 삽입·삭제에 의한 코돈 경계 이동은 별도로 적어요.</p></div>
+<div class="layer formal" data-explanation="solve"><h4>왜 이렇게 푸는지 함께 따라가요</h4><div data-subpart="main"><p>(1) 틀려요. 삽입·삭제에 따른 경계 변화는 번역틀이동이에요.</p><p>(2) 맞아요. nonsense는 정지·넌센스 돌연변이이며 아미노산 코돈이 종결 코돈으로 바뀌어요.</p><p>(3) 틀려요. 해당 아미노산 유지라는 결과는 침묵 변이와 연결해요.</p><p>(4) 틀려요. 종결 코돈 생성 없이 다른 아미노산으로 바뀌는 것은 과오(missense) 변이예요.</p><p>(5) 틀려요. 넌센스는 번역 종결 신호의 변화이며 전사 개시 차단을 뜻하지 않아요.</p><p>정답: (2)예요.</p></div></div>
+<div class="layer formal" data-explanation="verify"><h4>완성 답과 검산</h4><div data-subpart="main"><p>답은 (2)예요. 강의노트 5장 PDF 6쪽의 Nonsense 정의와 교재 인쇄 p109 그림 5.18c를 대조해요. 아미노산 코돈이 정지 코돈으로 변하고 사슬이 조기에 끝나요. 삽입을 그린 그림 5.18e와 경계 변화가 다르므로 (1)을 소거해요.</p></div></div>
+<div class="layer warn" data-explanation="pitfall"><h4>이 문항에서 하기 쉬운 실수</h4><p>nonsense를 뜻 모르는 영어로만 보지 않아요. 정지·넌센스라는 이름과 조기 종결이라는 현상을 연결해요. 단백질이 짧다는 결과만으로 틀이동이라고 판단하지 않아요.</p></div>
+<div class="layer formal" data-explanation="retry"><h4>설명을 닫고 다시 해 봐요</h4><ul><li>nonsense라는 이름만 보고 바뀌는 코돈의 종류를 말해 봐요.</li><li>삽입 없이 치환만으로 조기 종결이 생기는 예를 설명해 봐요.</li><li>침묵·과오·정지를 현상에서 이름으로 거꾸로 분류해 봐요.</li></ul></div><div class="sum" hidden=""><div class="summary-group"><h4>떠올릴 개념·공식</h4><p>nonsense = 정지·넌센스; 아미노산 코돈이 종결 코돈으로 변해요.</p></div><div class="summary-group"><h4>첫 줄</h4><p>치환 → 종결 신호 생성 → 번역 조기 종료.</p></div><div class="summary-group"><h4>핵심 판단</h4><p>코돈 경계 이동인 틀이동과 구별해요. 답 (2).</p></div><div class="summary-group"><h4>검산</h4><p>강의노트 p6와 교재 p109 그림 5.18c/e를 비교해요.</p></div></div>
 </article></section>
   </main>
   <footer>원 문제·정리노트·PDF는 보존해요.</footer>
@@ -2255,25 +2331,17 @@
       <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
       <div class="panel-inner">
         <div class="panel-head">
-          <h2 id="panel-right-title" class="sr-only">문제, 원문, 요약</h2>
-          <div class="panel-tabs" role="tablist" aria-labelledby="panel-right-title">
-            <button type="button" role="tab" id="tab-problem" data-tab="problem" aria-controls="tabpanel-problem" aria-selected="true">문제</button>
-            <button type="button" role="tab" id="tab-original" data-tab="original" aria-controls="tabpanel-original" aria-selected="false" tabindex="-1" hidden>원문</button>
-            <button type="button" role="tab" id="tab-summary" data-tab="summary" aria-controls="tabpanel-summary" aria-selected="false" tabindex="-1">요약</button>
-          </div>
+          <h2 id="panel-right-title">페이지 요약</h2>
           <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
         </div>
-        <div class="probs" role="tabpanel" id="tabpanel-problem" aria-labelledby="tab-problem">
-          <p class="panel-empty" id="prob-empty">문항을 고르면 여기에 문제가 나와요.</p>
-        </div>
-        <div class="orig-tab" role="tabpanel" id="tabpanel-original" aria-labelledby="tab-original" hidden></div>
-        <div class="sum-tab" role="tabpanel" id="tabpanel-summary" aria-labelledby="tab-summary" hidden>
+        <div class="sum-tab">
           <p class="panel-sub" id="sum-for">전체 흐름</p>
           <p class="panel-empty" id="sum-empty">페이지를 넘기면 그 페이지의 핵심 식과 용어가 여기에 나옵니다.</p>
           <div class="sums"></div>
         </div>
       </div>
     </aside>
+    <div class="dock-preview" hidden></div>
   </div>
   <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
   <nav class="pager" aria-label="화면 이동">
@@ -2284,7 +2352,7 @@
     </div>
   </nav>
   <p class="sr-only" id="pager-status" aria-live="polite"></p>
-<script type="application/json" id="explain-choice-model">{"p1": {"answer": "5", "mode": "ambiguous", "options": ["1", "2", "3", "4", "5"]}, "p2": {"answer": "3", "mode": "ambiguous", "options": ["1", "2", "3", "4"]}, "p3": {"answer": "1", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p4": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p5": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4"]}, "p6": {"answer": "5", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p7": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p8": {"answer": "3", "mode": "ambiguous", "options": ["1", "2", "3", "4", "5"]}, "p9": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4"]}, "p10": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4"]}, "p11": {"answer": "2", "mode": "ambiguous", "options": ["1", "2", "3", "4", "5"]}, "p12": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4"]}, "p13": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p14": {"answer": "4", "mode": "ambiguous", "options": ["1", "2", "3", "4"]}, "p15": {"answer": "2", "mode": "single", "options": ["1", "2", "3", "4"]}, "p16": {"answer": "5", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p17": {"answer": "5", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p18": {"answer": "5", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p19": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p20": {"answer": "4", "mode": "ambiguous", "options": ["1", "2", "3", "4", "5"]}, "p21": {"answer": "2", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p22": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p23": {"answer": "2", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p24": {"answer": "5", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p25": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p26": {"answer": "1", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p27": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p28": {"answer": "5", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p29": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p30": {"answer": "5", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p31": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p32": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4", "5"]}}</script>
+<script type="application/json" id="explain-choice-model">{"p1": {"answer": "5", "mode": "ambiguous", "options": ["1", "2", "3", "4", "5"]}, "p2": {"answer": "3", "mode": "ambiguous", "options": ["1", "2", "3", "4"]}, "p3": {"answer": "1", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p4": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p5": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4"]}, "p6": {"answer": "5", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p7": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p8": {"answer": "3", "mode": "ambiguous", "options": ["1", "2", "3", "4", "5"]}, "p9": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4"]}, "p10": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4"]}, "p11": {"answer": "2", "mode": "ambiguous", "options": ["1", "2", "3", "4", "5"]}, "p12": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4"]}, "p13": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p14": {"answer": "4", "mode": "ambiguous", "options": ["1", "2", "3", "4"]}, "p15": {"answer": "2", "mode": "single", "options": ["1", "2", "3", "4"]}, "p16": {"answer": "5", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p17": {"answer": "5", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p18": {"answer": "5", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p19": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p20": {"answer": "4", "mode": "ambiguous", "options": ["1", "2", "3", "4", "5"]}, "p21": {"answer": "2", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p22": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p23": {"answer": "2", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p24": {"answer": "5", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p25": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p26": {"answer": "1", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p27": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p28": {"answer": "5", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p29": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p30": {"answer": "5", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p31": {"answer": "4", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p32": {"answer": "3", "mode": "single", "options": ["1", "2", "3", "4", "5"]}, "p33": {"answer": "2", "mode": "single", "options": ["1", "2", "3", "4", "5"]}}</script>
   <script id="theme-ui">
     (function () {
       const root = document.documentElement;
@@ -2318,8 +2386,9 @@
       const body = document.body;
       const layout = document.querySelector('.layout');
       const kind = body.dataset.panels;
-      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
-      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const SIDES = ['left', 'prob', 'right'];
+      const panels = { left: document.getElementById('panel-left'), prob: document.getElementById('panel-prob'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), prob: document.getElementById('toggle-prob'), right: document.getElementById('toggle-right') };
       const scrim = document.getElementById('panel-scrim');
       const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
       const wideMq = matchMedia('(min-width: 1024px)');
@@ -2328,33 +2397,71 @@
         get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
         set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
       };
-      const PREF = 'od-panels:' + kind;
+      // v2: 문제가 왼쪽 패널로 옮겨 오며 예전 저장값(오른쪽 = 문제)은 읽지 않는다
+      const PREF = 'od-panels:' + kind + ':v2';
       // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
       const RANGE = body.dataset.range || '';
       const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
       const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
       let overlay = null;
+      // 넓은 화면에서 공간이 모자라 잠시 숨긴 패널. 저장값은 그대로 두어 화면이 넓어지면 다시 보인다
+      let last = null;
+      const DOCKS = ['left', 'right', 'float'];
+      const SNAP = 32, UNDOCK = 24, FLOAT_MIN = { w: 280, h: 200 };
+      const topbar = document.querySelector('.topbar');
+      const pager = document.querySelector('.pager');
+      const preview = layout.querySelector('.dock-preview');
+      const dockBtns = panels.prob.querySelectorAll('.prob-dock [data-dock]');
+      const moveBtn = panels.prob.querySelector('.float-move');
+      const sizer = panels.prob.querySelector('.float-resize');
 
       // ---------- 열고 닫기 ----------
       function docked() {
         const pref = store.get(PREF, {});
-        // 문제해설은 문제가 오른쪽에 있으므로 오른쪽을 기본으로 연다
-        if (kind === 'explain') return { left: pref.left ?? roomyMq.matches, right: pref.right ?? true };
-        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+        // 문제해설은 본문 왼쪽 문제 패널을 기본으로 연다
+        if (kind === 'explain') return { left: pref.left ?? roomyMq.matches, prob: pref.prob ?? true, right: pref.right ?? false };
+        return { left: pref.left ?? true, prob: false, right: pref.right ?? roomyMq.matches };
+      }
+      // 본문이 최소 폭(320px)보다 좁아지면 먼저 직접 넓힌 패널(문제 → 요약)을 이번 화면에서만 줄이고,
+      // 그래도 모자라면 목차 → 요약 → 문제 순으로 숨긴다. 방금 연 패널은 마지막까지 남긴다
+      // 띄운 문제 창은 grid 칸을 차지하지 않으므로 폭 계산·숨김 순서에서 뺀다
+      const inGrid = (s) => layout.dataset[s] === 'open' && !(s === 'prob' && layout.dataset.probDock === 'float');
+      function fit() {
+        const order = ['left', 'right', 'prob'].filter((s) => s !== last).concat(last ? [last] : []);
+        const room = () => document.documentElement.clientWidth - SIDES.reduce((w, s) => w + (inGrid(s) ? panels[s].getBoundingClientRect().width : 0), 0);
+        applyWidths();
+        ['prob', 'right'].forEach((side) => {
+          const short = 320 - room();
+          if (short <= 0 || !inGrid(side) || !layout.style.getPropertyValue(WIDTH[side].prop)) return;
+          const w = panels[side].getBoundingClientRect().width;
+          layout.style.setProperty(WIDTH[side].prop, Math.max(WIDTH[side].min, Math.round(w - short)) + 'px');
+        });
+        for (const side of order) {
+          if (room() >= 320) break;
+          if (inGrid(side) && SIDES.filter(inGrid).length > 1) layout.dataset[side] = 'closed';
+        }
       }
       function sync() {
         const wide = wideMq.matches;
         const d = docked();
-        ['left', 'right'].forEach((side) => {
-          const open = wide ? d[side] : overlay === side;
+        const pp = probPref();
+        layout.dataset.probDock = pp.dock;
+        dockBtns.forEach((b) => { const on = b.dataset.dock === pp.dock; b.setAttribute('aria-checked', String(on)); b.tabIndex = on ? 0 : -1; });
+        SIDES.forEach((side) => { layout.dataset[side] = (wide ? d[side] : overlay === side) ? 'open' : 'closed'; });
+        if (wide) fit();
+        const floating = wide && pp.dock === 'float' && layout.dataset.prob === 'open';
+        if (floating) placeFloat(pp);
+        SIDES.forEach((side) => {
+          const open = layout.dataset[side] === 'open';
           const p = panels[side];
-          layout.dataset[side] = open ? 'open' : 'closed';
           p.classList.toggle('is-open', !wide && open);
           p.inert = !open;
           if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else if (side === 'prob' && floating) { p.setAttribute('role', 'dialog'); p.removeAttribute('aria-modal'); }
           else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
           toggles[side].setAttribute('aria-expanded', String(open));
         });
+        placeToggle();
         const drawer = !wide && overlay !== null;
         scrim.classList.toggle('is-on', drawer);
         body.classList.toggle('drawer-open', drawer);
@@ -2375,33 +2482,33 @@
       function toggle(side) {
         if (wideMq.matches) {
           const d = docked();
-          d[side] = !d[side];
+          // 공간 때문에 숨긴 패널은 눌렀을 때 다시 연다
+          d[side] = layout.dataset[side] !== 'open';
           store.set(PREF, d);
+          if (d[side]) last = side;
           sync();
           if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
         } else if (overlay === side) closeDrawer(true);
         else openDrawer(side);
       }
 
-      toggles.left.addEventListener('click', () => toggle('left'));
-      toggles.right.addEventListener('click', () => toggle('right'));
+      SIDES.forEach((side) => toggles[side].addEventListener('click', () => toggle(side)));
       scrim.addEventListener('click', () => closeDrawer(true));
       document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
       panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
       document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
 
       // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
-      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, prob: { min: 320, max: 720, prop: '--panel-p-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
       function applyWidths() {
         const w = store.get(PREF + ':w', {});
-        ['left', 'right'].forEach((side) => {
+        SIDES.forEach((side) => {
           if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
           else layout.style.removeProperty(WIDTH[side].prop);
         });
       }
       function maxFor(side) {
-        const other = side === 'left' ? panels.right : panels.left;
-        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        const otherW = SIDES.reduce((w, s) => w + (s !== side && inGrid(s) ? panels[s].getBoundingClientRect().width : 0), 0);
         return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
       }
       function setWidth(side, px, save) {
@@ -2418,7 +2525,8 @@
       }
       document.querySelectorAll('.panel-resize').forEach((handle) => {
         const side = handle.dataset.side;
-        const dir = side === 'left' ? 1 : -1;
+        // 오른쪽에 붙은 패널은 왼쪽 경계를 끈다: 왼쪽으로 끌면 넓어진다
+        const dir = () => (side === 'right' || (side === 'prob' && layout.dataset.probDock === 'right') ? -1 : 1);
         handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
         handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
         handle.addEventListener('pointerdown', (e) => {
@@ -2426,9 +2534,10 @@
           e.preventDefault();
           const startX = e.clientX;
           const startW = panels[side].getBoundingClientRect().width;
+          const d = dir();
           handle.setPointerCapture(e.pointerId);
           body.classList.add('is-resizing');
-          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const move = (ev) => setWidth(side, startW + d * (ev.clientX - startX), false);
           const up = () => {
             handle.removeEventListener('pointermove', move);
             handle.removeEventListener('pointerup', up);
@@ -2440,21 +2549,174 @@
           handle.addEventListener('pointerup', up);
           handle.addEventListener('pointercancel', up);
         });
-        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('dblclick', () => { resetWidth(side); sync(); });
         handle.addEventListener('keydown', (e) => {
           const step = e.shiftKey ? 64 : 16;
           const cur = panels[side].getBoundingClientRect().width;
           if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
             e.preventDefault();
             e.stopPropagation();
-            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
-          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir(), true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); sync(); }
         });
       });
+
+      // ---------- 문제 패널 자리: 왼쪽·오른쪽에 붙이기, 띄우기(옮기고 크기 조절하는 창) ----------
+      function probPref() {
+        const v = store.get(PREF + ':prob', {}) || {};
+        const num = (n, d) => (typeof n === 'number' && Number.isFinite(n) ? n : d);
+        const w = num(v.w, 420);
+        return {
+          dock: DOCKS.includes(v.dock) ? v.dock : 'left',
+          x: num(v.x, document.documentElement.clientWidth - w - 24),
+          y: num(v.y, topbar.getBoundingClientRect().bottom + 16),
+          w,
+          h: num(v.h, Math.min(560, Math.round(0.7 * window.innerHeight)))
+        };
+      }
+      function saveProb(patch) { store.set(PREF + ':prob', Object.assign(probPref(), patch)); }
+      function setDock(dock) {
+        saveProb({ dock });
+        last = 'prob';
+        sync();
+      }
+      function placeToggle() {
+        const dock = layout.dataset.probDock;
+        toggles.prob.dataset.dock = dock;
+        if (dock === 'right') { if (toggles.prob.nextElementSibling !== toggles.right) toggles.right.before(toggles.prob); }
+        else if (toggles.prob.previousElementSibling !== toggles.left) toggles.left.after(toggles.prob);
+      }
+      const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), Math.max(lo, hi));
+      // 아래 경계: 이전/다음 바를 가리지 않게 그 위까지
+      function floor() {
+        const r = pager ? pager.getBoundingClientRect() : null;
+        return r && r.height ? Math.round(r.top) : document.documentElement.clientHeight;
+      }
+      // 창을 상단 바 아래·이전/다음 바 위·화면 안에 맞춘다. 크기를 먼저 줄이고 위치를 민다. 저장값은 건드리지 않는다
+      function placeFloat(g = probPref()) {
+        const top = Math.round(topbar.getBoundingClientRect().bottom);
+        const W = document.documentElement.clientWidth, H = floor();
+        const w = Math.round(clamp(g.w, FLOAT_MIN.w, W)), h = Math.round(clamp(g.h, FLOAT_MIN.h, H - top));
+        const r = { x: Math.round(clamp(g.x, 0, W - w)), y: Math.round(clamp(g.y, top, H - h)), w, h };
+        const st = panels.prob.style;
+        st.setProperty('--fx', r.x + 'px'); st.setProperty('--fy', r.y + 'px');
+        st.setProperty('--fw', r.w + 'px'); st.setProperty('--fh', r.h + 'px');
+        return r;
+      }
+      function dockPreview(side) {
+        preview.hidden = !side;
+        if (side) {
+          preview.dataset.side = side;
+          preview.style.top = Math.round(topbar.getBoundingClientRect().bottom) + 'px';
+          preview.style.bottom = (document.documentElement.clientHeight - floor()) + 'px';
+        }
+      }
+      // 끌기 도중 화면이 좁아지는 등 끌기를 끝내야 할 때 부른다
+      let endDrag = null;
+      dockBtns.forEach((b) => b.addEventListener('click', () => setDock(b.dataset.dock)));
+      // 단일 선택: 화살표로 이웃 자리를 고른다(페이지 넘김으로 번지지 않게)
+      panels.prob.querySelector('.prob-dock').addEventListener('keydown', (e) => {
+        const step = { ArrowLeft: -1, ArrowUp: -1, ArrowRight: 1, ArrowDown: 1 }[e.key];
+        if (!step) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const next = DOCKS[(DOCKS.indexOf(layout.dataset.probDock) + step + DOCKS.length) % DOCKS.length];
+        setDock(next);
+        panels.prob.querySelector(`.prob-dock [data-dock="${next}"]`).focus();
+      });
+      // 머리 끌기: 띄운 창은 옮기고(가장자리 32px 안에서 놓으면 그쪽에 붙음), 붙인 패널은 24px 넘게 끌면 떨어져 나온다
+      const head = panels.prob.querySelector('.panel-head');
+      head.addEventListener('pointerdown', (e) => {
+        if (!wideMq.matches || e.button !== 0 || e.target.closest('button:not(.float-move),[role=tab],a,input')) return;
+        e.preventDefault();
+        let floating = layout.dataset.probDock === 'float';
+        let ox = e.clientX, oy = e.clientY;
+        let start = floating ? placeFloat() : null, cur = start, snap = null;
+        head.setPointerCapture(e.pointerId);
+        body.classList.add('is-dragging');
+        const move = (ev) => {
+          if (!floating) {
+            if (Math.hypot(ev.clientX - ox, ev.clientY - oy) <= UNDOCK) return;
+            saveProb({ x: ev.clientX - probPref().w / 2, y: ev.clientY - 20 });
+            setDock('float');
+            floating = true;
+            start = cur = placeFloat();
+            ox = ev.clientX; oy = ev.clientY;
+            return;
+          }
+          cur = placeFloat({ x: start.x + ev.clientX - ox, y: start.y + ev.clientY - oy, w: start.w, h: start.h });
+          const W = document.documentElement.clientWidth;
+          snap = ev.clientX <= SNAP ? 'left' : ev.clientX >= W - SNAP ? 'right' : null;
+          dockPreview(snap);
+        };
+        const up = (ev) => {
+          endDrag = null;
+          head.removeEventListener('pointermove', move);
+          head.removeEventListener('pointerup', up);
+          head.removeEventListener('pointercancel', up);
+          head.removeEventListener('lostpointercapture', up);
+          body.classList.remove('is-dragging');
+          dockPreview(null);
+          // 브라우저가 끌기를 취소했으면 가장자리 근처여도 붙이지 않는다
+          if (snap && ev.type === 'pointerup') setDock(snap);
+          else if (floating && cur) saveProb({ x: cur.x, y: cur.y });
+        };
+        head.addEventListener('pointermove', move);
+        head.addEventListener('pointerup', up);
+        head.addEventListener('pointercancel', up);
+        head.addEventListener('lostpointercapture', up);
+        endDrag = () => up({ type: 'pointercancel' });
+      });
+      // 모서리 손잡이로 크기 조절
+      sizer.addEventListener('pointerdown', (e) => {
+        if (!wideMq.matches || e.button !== 0) return;
+        e.preventDefault();
+        const start = placeFloat(), ox = e.clientX, oy = e.clientY;
+        let cur = start;
+        sizer.setPointerCapture(e.pointerId);
+        body.classList.add('is-sizing');
+        const move = (ev) => { cur = placeFloat({ x: start.x, y: start.y, w: start.w + ev.clientX - ox, h: start.h + ev.clientY - oy }); };
+        const up = () => {
+          endDrag = null;
+          sizer.removeEventListener('pointermove', move);
+          sizer.removeEventListener('pointerup', up);
+          sizer.removeEventListener('pointercancel', up);
+          sizer.removeEventListener('lostpointercapture', up);
+          body.classList.remove('is-sizing');
+          saveProb({ w: cur.w, h: cur.h });
+        };
+        sizer.addEventListener('pointermove', move);
+        sizer.addEventListener('pointerup', up);
+        sizer.addEventListener('pointercancel', up);
+        sizer.addEventListener('lostpointercapture', up);
+        endDrag = up;
+      });
+      // 키보드: 이동 버튼은 위치, 모서리는 크기(←→ 너비, ↑↓ 높이). 16px, Shift 64px
+      const ARROWS = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+      function nudge(e, resize) {
+        const k = ARROWS[e.key];
+        if (!k || layout.dataset.probDock !== 'float') return;
+        e.preventDefault();
+        e.stopPropagation();
+        const step = e.shiftKey ? 64 : 16, g = placeFloat();
+        const r = placeFloat(resize ? { x: g.x, y: g.y, w: g.w + k[0] * step, h: g.h + k[1] * step } : { x: g.x + k[0] * step, y: g.y + k[1] * step, w: g.w, h: g.h });
+        saveProb(r);
+      }
+      moveBtn.addEventListener('keydown', (e) => nudge(e, false));
+      sizer.addEventListener('keydown', (e) => {
+        if ((e.key === 'Enter' || e.key === ' ') && layout.dataset.probDock === 'float') {
+          e.preventDefault();
+          const g = placeFloat();
+          saveProb(placeFloat({ x: g.x, y: g.y, w: 420, h: Math.min(560, Math.round(0.7 * window.innerHeight)) }));
+        } else nudge(e, true);
+      });
+
       applyWidths();
-      const onMq = () => { overlay = null; sync(); };
+      const onMq = () => { if (endDrag) endDrag(); overlay = null; sync(); };
       wideMq.addEventListener('change', onMq);
       roomyMq.addEventListener('change', onMq);
+      let fitFrame = 0;
+      window.addEventListener('resize', () => { cancelAnimationFrame(fitFrame); fitFrame = requestAnimationFrame(() => { if (wideMq.matches) sync(); }); });
 
       // ---------- 목차의 진행 표시 ----------
       const progressN = document.getElementById('progress-n');
@@ -2532,21 +2794,18 @@
         });
       }
 
-      // ---------- 문제해설: 오른쪽 = [문제 | 원문 | 요약] 탭, 좁은 화면은 해설 위 접힘 ----------
+      // ---------- 문제해설: 본문 왼쪽 = [문제 | 원문] 탭, 오른쪽 = 요약, 좁은 화면은 해설 위 접힘 ----------
       function setupExplain() {
         const KEY = 'od-note-read:' + RANGE;
         const TAB = 'bio-problem-explain-tab';
         const topics = Array.from(document.querySelectorAll('main article.topic'));
         const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
         const box = panels.right.querySelector('.sums');
-        const probs = panels.right.querySelector('.probs');
-        const origTab = panels.right.querySelector('.orig-tab');
+        const probs = panels.prob.querySelector('.probs');
+        const origTab = panels.prob.querySelector('.orig-tab');
         const origBtn = document.getElementById('tab-original');
-        const sumTab = panels.right.querySelector('.sum-tab');
-        const tabList = panels.right.querySelector('.panel-tabs');
+        const tabList = panels.prob.querySelector('.panel-tabs');
         const tabs = Array.from(tabList.querySelectorAll('[role="tab"]'));
-        const title = document.getElementById('panel-right-title');
-        const label = toggles.right.querySelector('span');
         const sub = document.getElementById('sum-for');
         const empty = document.getElementById('sum-empty');
         const probEmpty = document.getElementById('prob-empty');
@@ -2557,7 +2816,7 @@
         const expanded = new Set();
         let curId = null;
         const saved = store.get(TAB, 'problem');
-        let tab = ['problem', 'original', 'summary'].includes(saved) ? saved : 'problem';
+        let tab = ['problem', 'original'].includes(saved) ? saved : 'problem';
         // 보기 문항의 판정 문단((1), A, ㄱ, ① 로 시작)을 보기별 카드로 보인다
         const verdictRe = /^\(?([0-9]+|[A-Za-z]|[ㄱ-ㅎ]|[①-⑩])(\)|\.|\s)/;
         topics.filter((t) => t.querySelector('.choices')).forEach((t) => {
@@ -2566,7 +2825,7 @@
           });
         });
         topics.forEach((t) => {
-          // 조각의 <div class="sum" hidden> 을 요약 탭으로 옮긴다. 없으면 안내 문구만 보인다.
+          // 조각의 <div class="sum" hidden> 을 요약 패널로 옮긴다. 없으면 안내 문구만 보인다.
           const el = t.querySelector(':scope > .sum');
           if (el) { el.hidden = true; box.appendChild(el); sums[t.id] = el; }
           const pane = t.querySelector(':scope > .problem-pane');
@@ -2600,13 +2859,17 @@
           tabs.forEach((b) => { const on = b.dataset.tab === shown; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; });
           probs.hidden = shown !== 'problem';
           origTab.hidden = shown !== 'original';
-          sumTab.hidden = shown !== 'summary';
           if (save) { tab = name; store.set(TAB, name); }
           window.mlLayoutMath?.();
         }
-        // 넓은 화면은 오른쪽 문제 탭(원문은 원문 탭), 좁은 화면은 각 문항 메타 줄 뒤 "문제 보기" 아래로 옮긴다
+        // 넓은 화면은 왼쪽 문제 패널의 문제 탭(원문은 원문 탭), 좁은 화면은 각 문항 메타 줄 뒤 "문제 보기" 아래로 옮긴다
+        // 좁은 화면으로 바뀌어 문제 패널이 사라질 때, 패널 안에 있던 초점을 그 문항의 '문제 보기'로 옮긴다
+        let lastFocus = null;
+        document.addEventListener('focusin', (e) => { lastFocus = e.target; });
         function mountPanes() {
           const wide = wideMq.matches;
+          const active = document.activeElement;
+          const refocus = !wide && lastFocus && panels.prob.contains(lastFocus) && (active === lastFocus || active === body || !active);
           Object.keys(origs).forEach((id) => {
             const orig = origs[id];
             if (wide) { orig.open = true; origTab.appendChild(orig); orig.hidden = id !== curId; }
@@ -2620,12 +2883,9 @@
               paintToggle(id);
             }
           });
-          tabList.hidden = !wide;
-          title.classList.toggle('sr-only', wide);
-          title.textContent = wide ? '문제, 원문, 요약' : '페이지 요약';
-          label.textContent = wide ? '문제' : '요약';
           probEmpty.hidden = Boolean(curId && panes[curId]);
-          showTab(wide ? tab : 'summary', false);
+          showTab(tab, false);
+          if (refocus && opens[curId]) opens[curId].focus();
         }
         // ---------- 보기 클릭: 복습노트와 같은 판정·알림·스크롤, 넓은 화면은 해설 판정 문단으로 이동 (선택은 메모리에만) ----------
         let model = {};
@@ -2849,7 +3109,7 @@
           if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
           e.preventDefault();
           e.stopPropagation();
-          const order = ['problem'].concat(origs[curId] ? ['original'] : [], ['summary']);
+          const order = ['problem'].concat(origs[curId] ? ['original'] : []);
           const at = order.indexOf(effective(tab));
           const next = order[(at + (e.key === 'ArrowRight' ? 1 : order.length - 1)) % order.length];
           showTab(next, true);
@@ -2869,6 +3129,7 @@
           }
           probEmpty.hidden = Boolean(curId && panes[curId]);
           if (curId && !read.has(curId)) { read.add(curId); store.set(KEY, Array.from(read)); }
+          panels.prob.querySelector('.panel-inner').scrollTop = 0;
           panels.right.querySelector('.panel-inner').scrollTop = 0;
           markToc(read, topics.length, '읽음');
           revealCurrent();
@@ -3063,6 +3324,7 @@
       document.addEventListener('od:screen', schedule);
       new ResizeObserver(schedule).observe(document.querySelector('.content'));
       new ResizeObserver(schedule).observe(document.querySelector('#panel-right .panel-inner'));
+      new ResizeObserver(schedule).observe(document.querySelector('#panel-prob .panel-inner'));
       new MutationObserver(schedule).observe(document.querySelector('.sums'), {subtree:true, attributes:true, attributeFilter:['hidden']});
       new MutationObserver(schedule).observe(document.querySelector('.probs'), {subtree:true, attributes:true, attributeFilter:['hidden']});
       document.fonts.ready.then(schedule);
