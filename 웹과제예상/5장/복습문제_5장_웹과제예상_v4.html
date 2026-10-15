@@ -1,0 +1,1906 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>생명과학 복습문제 5장</title>
+  <meta name="description" content="5장 웹과제 예상 v4">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('od-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']})"></script>
+  <style>
+    /* ---------- 토큰 ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #b54708; --prof: #6941c6; --supp: #067647; --danger: #d92d20;
+      --scroll: #c9d0db; --scroll-hover: #9aa3b2;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --fs-body: 17px; --fs-lead: 20px; --fs-small: 14px; --fs-label: 13px; --fs-fig: 12px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+      --radius: 8px; --measure: 680px; --tap: 48px; --btn-min: 160px;
+      --dur: 220ms; --dur-exit: 150ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+      /* 예전 조각이 참조할 수 있는 이름 */
+      --surface-2: var(--surface); --accent-soft: var(--surface); --warn-soft: var(--surface);
+      --prof-soft: var(--surface); --supp-soft: var(--surface); --eli5: var(--accent-ink); --eli5-soft: var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+        --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+        --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+        --scroll: #3f414b; --scroll-hover: #5b5e6a;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+      --scroll: #3f414b; --scroll-hover: #5b5e6a;
+    }
+
+    /* ---------- 기본 ---------- */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent-ink); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+
+    /* ---------- 상단 바 ---------- */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s2) var(--s4); display: flex; align-items: center; gap: var(--s3); min-height: 56px; }
+    .brand { flex: 1 1 auto; min-width: 0; font-size: var(--fs-body); font-weight: 700; white-space: nowrap; }
+    .text-btn { flex: none; min-height: 44px; min-width: 44px; padding: 0 var(--s3); border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); font: 600 var(--fs-small)/1 var(--font); cursor: pointer; }
+    .bar { height: 2px; background: var(--line); overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+
+    /* ---------- 본문 ---------- */
+    main { flex: 1 0 auto; width: 100%; max-width: var(--measure); margin: 0 auto; padding: var(--s6) var(--s5) var(--s7); }
+    .hero h1 { font-size: clamp(28px, 6vw, 36px); line-height: 1.3; margin: 0 0 var(--s3); letter-spacing: -0.02em; }
+    .hero p { color: var(--ink-2); margin: 0; }
+    section { margin-top: var(--s7); }
+    section > h2 { font-size: 22px; line-height: 1.4; margin: 0 0 var(--s4); }
+    .topic { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .topic h3 { margin: 0 0 var(--s2); font-size: clamp(24px, 5vw, 28px); line-height: 1.35; letter-spacing: -0.01em; }
+    .tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+    .tag { font-size: var(--fs-label); line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+
+    /* 레이어: 배경 없이 라벨과 구분선으로 나눈다 */
+    .layer { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .layer.eli5 { margin-top: 0; padding-top: 0; border-top: 0; }
+    .layer > :first-child { margin-top: 0; }
+    .layer > :last-child { margin-bottom: 0; }
+    .layer-title { display: block; font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); margin-bottom: var(--s2); }
+    .layer.eli5 .layer-title { color: var(--accent-ink); }
+    .layer.eli5 .lead { font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; margin: 0 0 var(--s3); }
+    .layer.prof .layer-title { color: var(--prof); }
+    .layer.warn { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn .layer-title { color: var(--warn); }
+    .layer.supp .badge.supp { margin-bottom: var(--s2); }
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
+    .badge.supp { color: var(--supp); }
+    blockquote { margin: var(--s2) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
+    ol.steps { padding-left: 1.4em; }
+    ol.steps li { margin: var(--s2) 0; }
+
+    /* 그림 · 수식 · 표 */
+    .figure { margin: var(--s4) 0; text-align: center; }
+    .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
+    .figure img { max-width: 100%; height: auto; }
+    .figure figcaption { font-size: var(--fs-small); color: var(--ink-2); margin-top: var(--s1); }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: var(--s1) 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+    th, td { border-bottom: 1px solid var(--line); padding: var(--s2); text-align: left; vertical-align: top; }
+    th { color: var(--ink-2); font-weight: 600; }
+    td:first-child, th:first-child { min-width: 6em; }
+
+    /* 위젯 */
+    .widget { background: var(--surface); border-radius: var(--radius); padding: var(--s4); margin: var(--s5) 0; }
+    .widget h4 { margin: 0 0 var(--s1); font-size: var(--fs-body); }
+    .widget-help { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s3); }
+    .controls { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--s2); font-size: var(--fs-small); }
+    .controls label { display: flex; align-items: center; gap: var(--s2); min-height: 44px; }
+    .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .widget svg { width: 100%; height: auto; background: var(--bg); border-radius: var(--radius); }
+    .readout { font-size: var(--fs-small); margin-top: var(--s2); }
+    .legend { font-size: var(--fs-label); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .sw { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: var(--s1); border-radius: 2px; }
+    .sw.truth { background: var(--ink-2); } .sw.fit { background: var(--accent); } .sw.train { background: var(--accent); height: 10px; width: 10px; border-radius: 50%; }
+    .sw.test { background: var(--warn); height: 10px; width: 10px; border-radius: 50%; } .sw.like { background: var(--accent); } .sw.prior { background: var(--prof); } .sw.post { background: var(--supp); }
+    .axis { stroke: var(--line); stroke-width: 1.5; }
+    .tick { fill: var(--ink-2); font-size: 11px; }
+    .plot-truth { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .plot-fit { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+    .pt-train { fill: var(--accent); }
+    .pt-test { fill: var(--warn); }
+    .plot-like { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .plot-prior { fill: none; stroke: var(--prof); stroke-width: 2; stroke-dasharray: 6 4; }
+    .plot-post { fill: none; stroke: var(--supp); stroke-width: 3; }
+    .mark-ml { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .mark-map { stroke: var(--supp); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 2; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 2.5; }
+    .fig-danger { stroke: var(--danger); fill: none; stroke-width: 2.5; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: 13px; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-fig); font-family: inherit; }
+
+    footer { width: 100%; max-width: var(--measure); margin: 0 auto; padding: 0 var(--s5) var(--s6); color: var(--ink-2); font-size: var(--fs-small); }
+
+    /* ---------- 문제 카드 ---------- */
+    .card { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .card h3 { margin: 0 0 var(--s4); font-size: clamp(22px, 5vw, 26px); line-height: 1.4; letter-spacing: -0.01em; }
+    .problem { margin: 0 0 var(--s5); }
+    .problem ol { padding-left: 1.4em; }
+    details { border-top: 1px solid var(--line); }
+    .card details:last-of-type { border-bottom: 1px solid var(--line); }
+    details[open] { padding-bottom: var(--s4); }
+    details > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: var(--s3);
+      min-height: var(--tap); cursor: pointer; font-weight: 600; }
+    details > summary::-webkit-details-marker { display: none; }
+    details > summary::after { content: ""; flex: none; width: 8px; height: 8px; margin-right: var(--s1);
+      border-right: 2px solid var(--ink-2); border-bottom: 2px solid var(--ink-2); transform: rotate(45deg); transition: transform 150ms ease-out; }
+    details[open] > summary::after { transform: rotate(-135deg); }
+    details.original { color: var(--ink-2); font-size: var(--fs-small); }
+    details.original > summary { color: var(--ink); font-size: var(--fs-body); }
+    .answer { font-weight: 700; background: var(--surface); border-radius: var(--radius); padding: var(--s3) var(--s4); }
+    .link-back { font-size: var(--fs-small); color: var(--ink-2); margin: var(--s5) 0 var(--s4); }
+    .top-link { flex: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--s2);
+      font-size: var(--fs-small); font-weight: 600; text-decoration: none; }
+    .js .card { padding: 0; border-top: 0; }
+    @media (prefers-reduced-motion: reduce) { details > summary::after { transition: none; } }
+
+    /* ---------- 하단 이동 바 ---------- */
+    .pager { position: sticky; bottom: 0; z-index: 10; background: var(--bg); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .pager-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s3) var(--s4); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); }
+    .pager-count { font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; min-width: 4em; }
+    .btn { min-height: var(--tap); min-width: var(--btn-min); padding: 0 var(--s6); border-radius: var(--radius); border: 0; font: 700 var(--fs-body)/1 var(--font); cursor: pointer; white-space: nowrap;
+      transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+    .btn-ghost { justify-self: start; background: var(--surface); color: var(--ink); }
+    .btn-primary { justify-self: end; background: var(--btn-bg); color: var(--on-btn); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    @media (hover: hover) {
+      .text-btn:hover, .btn-ghost:not(:disabled):hover { background: var(--line); }
+      .btn-primary:not(:disabled):hover { box-shadow: inset 0 0 0 100px rgba(0, 0, 0, .14); }
+    }
+
+    /* ---------- 목차 시트 ---------- */
+    .sheet { width: min(100%, var(--measure)); max-width: 100%; max-height: 80dvh; margin: auto auto 0; padding: 0; border: 0;
+      border-radius: 16px 16px 0 0; background: var(--bg); color: var(--ink); }
+    .sheet::backdrop { background: rgba(0, 0, 0, .4); }
+    .sheet-inner { padding: var(--s4) var(--s5) calc(var(--s5) + env(safe-area-inset-bottom)); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s2); }
+    .sheet-head h2 { margin: 0; font-size: var(--fs-lead); }
+    .toc { display: flex; flex-direction: column; }
+    .toc > a, .toc-group > a { display: block; padding: var(--s3) 0 var(--s1); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); text-decoration: none; }
+    .toc-list { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+    .toc-list a { display: flex; align-items: center; gap: var(--s3); min-height: var(--tap); padding: var(--s2) var(--s3); margin: 0 calc(-1 * var(--s3));
+      border-radius: var(--radius); color: var(--ink); text-decoration: none; line-height: 1.4; }
+    .toc-list a[aria-current="true"] { background: var(--surface); font-weight: 700; color: var(--accent-ink); }
+    .toc-list .toc-title { flex: 1 1 0; min-width: 0; }
+    @media (hover: hover) { .toc-list a:hover { background: var(--surface); } }
+
+    /* ---------- 한 화면에 하나씩 (JS가 켤 때만) ---------- */
+    html:not(.js) .pager, html:not(.js) #toc-open { display: none; }
+    html:not(.js) .sheet { display: block; position: static; width: 100%; max-height: none; margin: 0 auto; border-radius: 0; border-bottom: 1px solid var(--line); }
+    html:not(.js) .sheet-close { display: none; }
+    .js main > .hero:not(.is-current), .js main > section:not(.is-on), .js .screen:not(.is-current) { display: none; }
+    .js main > section { margin-top: 0; }
+    .js main > section > h2 { font-size: var(--fs-label); font-weight: 600; color: var(--accent-ink); margin: 0 0 var(--s2); }
+    .js .topic { padding: 0; border-top: 0; }
+    .js .hero { padding-top: 12vh; }
+    .js footer { display: none; }
+    .js body.at-end footer { display: block; }
+    .screen.enter-next { animation: enter-next var(--dur) var(--ease-out); }
+    .screen.enter-prev { animation: enter-prev var(--dur) var(--ease-out); }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .screen.enter-next, .screen.enter-prev { animation: none; }
+      .bar > span, .btn { transition: none; }
+    }
+    @media (max-width: 480px) {
+      main { padding: var(--s5) var(--s4) var(--s6); }
+      footer { padding: 0 var(--s4) var(--s5); }
+      .btn { min-width: 120px; padding: 0 var(--s5); }
+    }
+    @media print {
+      .topbar, .pager, .sheet { display: none !important; }
+      .js main > .hero, .js main > section, .js .screen, .js footer { display: block !important; }
+    }
+
+    /* ---------- 좌우 패널 (drawer) ---------- */
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
+    .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
+    .panel-toggle svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-toggle .strip { fill: transparent; stroke: none; transition: fill 150ms ease-out; }
+    .panel-toggle[aria-expanded="true"] { color: var(--accent-ink); }
+    .panel-toggle[aria-expanded="true"] .strip { fill: currentColor; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .i-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .theme-toggle .i-sun { display: block; }
+      :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
+    }
+
+    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
+    .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
+    .content { grid-column: 2; }
+    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
+    .content::-webkit-scrollbar, .panel-inner::-webkit-scrollbar { width: 8px; }
+    .content::-webkit-scrollbar-track, .panel-inner::-webkit-scrollbar-track { background: transparent; }
+    .content::-webkit-scrollbar-thumb, .panel-inner::-webkit-scrollbar-thumb { background: var(--scroll); border-radius: 8px; border: 2px solid var(--bg); }
+    .content::-webkit-scrollbar-thumb:hover, .panel-inner::-webkit-scrollbar-thumb:hover { background: var(--scroll-hover); }
+    @supports (scrollbar-color: auto) { .content, .panel-inner { scrollbar-width: thin; scrollbar-color: var(--scroll) transparent; } }
+    .panel-resize { display: none; }
+    .panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 44px; margin-bottom: var(--s2); }
+    .panel-head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-lead); line-height: 1.4; }
+    .panel-sub { margin: 0 0 var(--s4); font-weight: 700; line-height: 1.45; }
+    .panel-empty { margin: 0; color: var(--ink-2); }
+    .panel-label { display: block; margin: var(--s5) 0 var(--s2); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+
+    /* 진행 상태 */
+    .panel-meta { margin: 0 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .panel-meta b { color: var(--ink); }
+    .progress { height: 4px; margin-bottom: var(--s3); border-radius: 2px; background: var(--line); overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+    .panel .toc-list a { margin: 0 calc(-1 * var(--s2)); padding: var(--s2); font-size: var(--fs-panel); }
+    .toc-mark { flex: none; display: block; width: 20px; height: 20px; color: var(--ink-2); }
+    .toc-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .toc-mark.is-done { color: var(--accent-ink); }
+
+    /* 복습문제: 원문 · 힌트 · 풀이 */
+    .aid details:last-of-type { border-bottom: 1px solid var(--line); }
+    .aid details.original > summary { font-size: var(--fs-panel); }
+    .solved-btn { display: flex; align-items: center; justify-content: center; gap: var(--s2); width: 100%; min-height: var(--tap); margin-top: var(--s5); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .solved-btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
+
+    /* 정리노트: 섹션 요약 */
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+    .eq-list li:first-child { padding-top: 0; }
+    .eq-name { display: block; font-size: var(--fs-small); font-weight: 600; color: var(--ink-2); }
+    .eq-list .katex-display { margin: var(--s1) 0 0; text-align: left; }
+    .eq-list .katex-display > .katex { text-align: left; }
+    .terms { margin: 0; }
+    .terms dt { font-weight: 700; margin-top: var(--s3); }
+    .terms dt:first-child { margin-top: 0; }
+    .terms dd { margin: var(--s1) 0 0; }
+    .flow { margin: 0; padding-left: 1.4em; }
+    .flow li { margin: var(--s2) 0; }
+
+    @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
+
+    /* 넓은 화면: 본문 옆에 붙는 패널 */
+    @media (min-width: 1024px) {
+      .layout { --l: var(--panel-l-user, var(--panel-l)); }
+      .layout[data-left="closed"] { --l: 0px; }
+      .panel-left { width: var(--l); }
+      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
+      .panel-left .panel-resize { right: 0; }
+      .panel-right .panel-resize { left: 0; }
+      .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
+      .panel-left .panel-resize::after { right: 0; }
+      .panel-right .panel-resize::after { left: 0; }
+      .panel-resize:focus-visible { outline: none; }
+      .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
+      @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
+      body.is-resizing { cursor: col-resize; user-select: none; }
+      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
+      .scrim, .panel-close { display: none; }
+    }
+    @keyframes panel-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 좁은 화면: 가장자리에서 밀려 나오는 drawer */
+    @media (max-width: 1023.98px) {
+      .panel { position: fixed; top: 0; bottom: 0; z-index: 40; visibility: hidden;
+        transition: transform var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .panel-left { left: 0; width: min(var(--drawer-l), 88vw); transform: translateX(-100%); }
+      .panel-right { right: 0; width: min(var(--drawer-r), 88vw); transform: translateX(100%); }
+      .panel.is-open { visibility: visible; transform: none; transition: transform var(--dur) var(--ease-out); }
+      .panel-inner { padding-top: calc(var(--s3) + env(safe-area-inset-top)); padding-bottom: calc(var(--s6) + env(safe-area-inset-bottom)); }
+      .scrim { position: fixed; inset: 0; z-index: 35; background: var(--scrim); opacity: 0; visibility: hidden;
+        transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
+      html:not(.js) .panel-left { display: none; }
+    }
+    @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
+      .panel.is-shown { animation: none; }
+      .panel-resize::after { transition: none; }
+    }
+    @media print {
+      body { display: block; height: auto; overflow: visible; }
+      .layout { display: block; }
+      .content { overflow: visible; }
+      .panel, .scrim { display: none !important; }
+    }
+  </style>
+<style id="forecast-overrides">.review-export-bar { display: none !important; }</style>
+</head>
+<body data-screens="article.card" data-panels="review" data-range="5장-v4">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <strong class="brand">복습문제</strong>
+      <a class="top-link" href="../../복습노트/1001/정리노트_1001_Chromosome_Changes_and_DNA_Replication.html">정리노트</a>
+      <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>풀이</span></button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
+  </header>
+  <div class="layout" data-left="open" data-right="closed">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
+      <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-left-title">문제 목록</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-meta">푼 문제 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <nav class="toc" aria-label="목차"><a href="#partA">예상 개요</a><a href="#partB">기출 5</a><a href="#partC">새 문제 10</a></nav>
+      </div>
+    </aside>
+    <div class="content">
+  <main>
+    <div class="hero">
+      <h1>5장 웹과제 예상 v4</h1>
+      <p>DNA 복제·교정, 전사·가공, 번역, 진핵 유전자 발현 조절(염색질·증폭자·miRNA·프로테아좀)을 다각도로 연습해요. 독립 풀이 결과 기본 14·심화 1로 판정되었어요(목표 기본 12·심화 3). P7과 P10이 명확한 한 원리 적용(수준 2)으로 판별되었으며 억지 조건 없이 깔끔한 문제 구성을 유지해요. 5장 실제 bank는 없고 1~3장 확정 경향을 참고해요.</p>
+    </div>
+    <section id="partA"><h2>A. 예상 개요</h2>
+<article class="card" id="o1" data-source="예상 5장 개요"><h3>형식과 주제 예상</h3><div class="problem"><ul><li>5장 실제 웹과제 bank와 별도 raw 관찰은 없어요. 아래는 응시 전 대비용 생성 세트예요.</li><li>확정 참고: 1~3장 46문항 중 새 문항 32·기출 재사용/변형 14, 부정형 18·그림 8·ㄱㄴㄷ 2예요. 5장의 확정 비율은 아니에요.</li><li>생성 목표: 개요 2·기출 5·새 문제 10, 기본 12·심화 3이에요. 독립 풀이 결과 기본 14·심화 1로 판정되었어요(P7과 P10이 명확한 한 원리 적용인 수준 2로 평가됨).</li><li>유형 목표: 부정형 5·계산 2·그림 2·표 2예요. 유형은 겹칠 수 있어요.</li><li>별점은 노트 요약과 기출 반복 주제의 우선순위예요. 실제 출제 확률은 아니에요. 상세 A/P/E 기작과 범위 밖 역사 실험은 넣지 않아요.</li></ul><div class="table-wrap"><table><thead><tr><th>가능성</th><th>주제</th><th>예상 질문</th><th>함정</th></tr></thead><tbody><tr><td>★★★</td><td>반보존복제</td><td>딸 가닥의 기원</td><td>반보존과 분산</td></tr><tr><td>★★★</td><td>DNA 상보성</td><td>염기 비율과 방향</td><td>한 가닥에 샤가프 적용</td></tr><tr><td>★★★</td><td>합성 방향</td><td>3′ 말단의 연장</td><td>지연가닥은 역방향</td></tr><tr><td>★★★</td><td>복제 효소</td><td>프라이머·연결효소 역할</td><td>RNA와 DNA 프라이머</td></tr><tr><td>★★★</td><td>전사</td><td>주형과 산물</td><td>복제·번역 혼동</td></tr><tr><td>★★☆</td><td>RNA 가공</td><td>인트론 제거와 엑손 연결</td><td>엑손을 버림</td></tr><tr><td>★★★</td><td>유전암호</td><td>중복성과 종결</td><td>종결도 아미노산</td></tr><tr><td>★★★</td><td>tRNA</td><td>코돈 상보성과 운반</td><td>안티코돈 방향</td></tr><tr><td>★★★</td><td>돌연변이</td><td>침묵·과오·무의미</td><td>모든 치환은 과오</td></tr><tr><td>★★☆</td><td>lac 오페론</td><td>젖당과 억제자</td><td>유도자가 DNA에 결합</td></tr><tr><td>★★☆</td><td>염색질 조절</td><td>접근성과 전사</td><td>메틸화와 아세틸화</td></tr><tr><td>★★☆</td><td>증폭자</td><td>서열과 활성자</td><td>활성자는 DNA</td></tr><tr><td>★★☆</td><td>선택적 이어맞추기</td><td>한 유전자 여러 RNA</td><td>DNA 자체 변화</td></tr><tr><td>★★☆</td><td>RNA 간섭</td><td>mRNA 분해·번역 억제</td><td>DNA 원본 파괴</td></tr><tr><td>★★☆</td><td>단백질 수명</td><td>유비퀴틴과 프로테아좀</td><td>표지와 분해 장치</td></tr></tbody></table></div></div></article>
+<article class="card" id="o2" data-source="예상 5장 개요"><h3>막판 체크</h3><div class="problem"><ol><li>DNA 복제와 RNA 전사 모두 새 뉴클레오타이드는 3′ 말단에만 붙어 5′→3′ 방향으로 합성돼요.</li><li>염기 계산은 주어진 가닥이 단일가닥인지 이중가닥인지 먼저 살피고, 샤가프 법칙(A=T, G=C)의 적용 여부를 따져요.</li><li>돌연변이는 아미노산 서열 변화를 코돈 단위로 추적하고, 종결코돈이 새로 생기면 번역이 조기 종결되어 펩타이드 길이가 짧아져요.</li><li>진핵 유전자 발현 조절은 염색질 구조 변형(히스톤 아세틸화·DNA 메틸화), 전사 개시(증폭자·활성인자), 전사 후(RNA 가공·miRNA), 번역 후(유비퀴틴·프로테아좀)의 단계를 명확히 구분해요.</li></ol><p><b>재출제 유력 기출 10</b></p><div class="table-wrap"><table><thead><tr><th>기출 번호</th><th>핵심 한 줄</th><th>정답 보기 문장</th></tr></thead><tbody><tr><td>기출 5강 15</td><td>다음 중 DNA 복제의 오류를 수정하는 메커니즘에 대한 설명으로 잘못된 것은?</td><td>DNA 중합효소는 새로운 뉴클레오타이드 사슬을 조립할 때 많은 오류를 범한다</td></tr><tr><td>기출 5강 26</td><td>DNA 분자의 코돈 CCU를 코돈 CCC로 변화시킨 돌연변이를 가정하자. 이 두 코돈은 모두 프롤린을 지시한다. 이러한 예를 무엇이라 하는가?</td><td>유전암호의 중복성</td></tr><tr><td>기출 5강 2</td><td>다음 중 전사에 관한 설명으로 옳은 것은?</td><td>번역될 유전자의 RNA 사본을 생성한다</td></tr><tr><td>기출 5강 37</td><td>다음 중 번역 과정에 직접적으로 참여하지 않는 분자는?</td><td>DNA</td></tr><tr><td>기출 5강 5</td><td>TTACAGGTCC 유전자로부터 만들어진 mRNA는 어느 것인가?</td><td>AAUGUCCAGG</td></tr><tr><td>기출 5강 20</td><td>운반 RNA (tRNA)에 대한 설명으로 옳은 것은?</td><td>전령 RNA (mRNA)의 코돈과 상보적인 안티코돈 부분을 가지고 있다</td></tr><tr><td>기출 5강 24</td><td>같은 사람에게 존재하는 두 종류의 세포(예 : 피부세포와 신경세포)의 차이를 야기하는 것은 무엇인가?</td><td>다른 종류의 세포는 같은 유전자를 갖는다. 그러나 이 중 발현하는 유전자는 다르다.</td></tr><tr><td>기출 5강 25</td><td>번역틀이동 돌연변이는 ( ) 의 결과로 생긴다.</td><td>유전자의 암호화 부위에 염기 하나가 삽입 또는 삭제</td></tr><tr><td>기출 5강 14</td><td>번역 과정은 최종적으로 ________을(를) 생산한다.</td><td>폴리펩타이드</td></tr><tr><td>기출 5강 22</td><td>DNA 암호의 서열은 최종적으로 어떠한 분자를 만드는가?</td><td>단백질</td></tr></tbody></table></div></div></article>
+    </section>
+    <section id="partB"><h2>B. 기출 재출제 예상</h2>
+<article class="card" id="p1" data-source="기출 5강 15 예상" data-types="부정형">
+  <h3>P1. [기출 예상] DNA 복제 중 오류 수정</h3>
+  <div class="problem">
+    <p>다음 중 DNA 복제의 오류를 수정하는 메커니즘에 대한 설명으로 잘못된 것은?</p>
+    <ul class="choices">
+      <li>A. 교정 후에도 남아 있는 염기쌍 불일치들은 DNA 수선 메커니즘에 의해 수정된다</li>
+      <li>B. 모두 맞다</li>
+      <li>C. 교정과 DNA 수선 이후에도 돌연변이는 발생 할 수 있다</li>
+      <li>D. DNA 중합효소는 불일치 뉴클레오타이드를 제거하고 되돌릴 수 있다</li>
+      <li>E. DNA 중합효소는 새로운 뉴클레오타이드 사슬을 조립할 때 많은 오류를 범한다</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary><p>기출 5강 합본 15번을 보기 순서만 바꿔 실은 예상 문제예요.</p></details>
+  <details class="hint"><summary>힌트 보기</summary><p>DNA 중합효소의 높은 복제 정확도와 자체 교정 기능을 떠올려요.</p></details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 맞아요. 복제 도중 교정을 통과한 미세한 불일치는 복제 직후 여러 DNA 수선 효소 체계에 의해 수정돼요.</li>
+      <li>B. 맞아요. 복제 오류 수정과 정확도에 관한 과학적 사실 진술들이 성립해요.</li>
+      <li>C. 맞아요. 정밀한 교정과 수선 과정을 거쳐도 극소수의 오류가 남아 돌연변이가 발생할 수 있어요.</li>
+      <li>D. 맞아요. DNA 중합효소는 잘못 결합된 뉴클레오타이드를 즉시 인식해 제거하고 올바른 염기로 교체하는 교정(proofreading) 능력이 있어요.</li>
+      <li>E. 틀려요. DNA 중합효소는 매우 높은 충실도(fidelity)를 지녀 사슬을 조립할 때 오류를 거의 범하지 않아요.</li>
+      <li>수업과의 연결: DNA 중합효소는 자체 교정 기능으로 복제 오류율을 극도로 낮춰요(<a href="../../복습노트/1001/정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s6-proofreading">정리노트 “DNA 복제 오류의 교정과 수선”</a>).</li>
+    </ol>
+    <p class="answer">정답: E</p>
+  </details>
+</article>
+<article class="card" id="p2" data-source="기출 5강 26 예상" data-types="">
+  <h3>P2. [기출 예상] 동일 아미노산을 지정하는 코돈</h3>
+  <div class="problem">
+    <p>DNA 분자의 코돈 CCU를 코돈 CCC로 변화시킨 돌연변이를 가정하자. 이 두 코돈은 모두 프롤린을 지시한다. 이러한 예를 무엇이라 하는가?</p>
+    <ul class="choices">
+      <li>A. 유전암호의 보편성</li>
+      <li>B. 유전암호의 중복성</li>
+      <li>C. 유전암호의 모호성</li>
+      <li>D. 유전암호의 진화성</li>
+      <li>E. 유전암호의 연속성</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary><p>기출 5강 합본 26번을 보기 순서만 바꿔 실은 예상 문제예요.</p></details>
+  <details class="hint"><summary>힌트 보기</summary><p>동일한 아미노산에 여러 코돈이 대응하는 성질을 떠올려요.</p></details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. 유전암호의 보편성은 거의 모든 생물체가 동일한 코돈 체계를 공유한다는 특성이에요.</li>
+      <li>B. 맞아요. 하나의 아미노산이 둘 이상의 동의 코돈에 의해 지정되는 특성을 유전암호의 중복성(redundancy)이라고 해요.</li>
+      <li>C. 틀려요. 각 코돈은 오직 하나의 아미노산만을 명확히 지정하므로 겹치는 혼동이 없어요.</li>
+      <li>D. 틀려요. 유전암호의 진화성은 이 현상을 가리키는 유전학 용어가 아니에요.</li>
+      <li>E. 틀려요. 유전암호의 연속성은 코돈이 쉼표 없이 연속적으로 해독된다는 성질이에요.</li>
+      <li>수업과의 연결: 코돈 64개가 20종의 아미노산을 지정하므로 중복성을 띠어요(<a href="../../복습노트/1006/정리노트_1006_Transcription_Translation_and_Lac_Operon.html#s2-code">정리노트 “유전암호의 규칙과 코돈 표”</a>).</li>
+    </ol>
+    <p class="answer">정답: B</p>
+  </details>
+</article>
+<article class="card" id="p3" data-source="기출 5강 2 예상" data-types="">
+  <h3>P3. [기출 변형] 전사 과정의 특징</h3>
+  <div class="problem">
+    <p>다음 중 전사에 관한 설명으로 옳은 것은?</p>
+    <ul class="choices">
+      <li>A. 전사는 세포질의 리보솜에서 개시된다.</li>
+      <li>B. RNA 중합효소는 프라이머가 있어야만 합성을 시작할 수 있다.</li>
+      <li>C. RNA 합성 시 아데닌(A)에 타이민(T)이 상보적으로 결합한다.</li>
+      <li>D. 새로운 RNA 가닥은 RNA 중합효소에 의해 5′에서 3′ 방향으로 합성된다.</li>
+      <li>E. 주형 DNA의 양쪽 가닥 모두가 동시에 하나의 RNA 사본으로 전사된다.</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary><p>기출 5강 합본 2번의 발문을 유지하고 새로운 보기로 전사 합성 방향을 묻는 변형 문제예요.</p></details>
+  <details class="hint"><summary>힌트 보기</summary><p>새로 만들어지는 RNA 사본이 합성되는 방향성을 확인해요.</p></details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. 전사는 핵 안에서 일어나며, 리보솜은 세포질에서 번역을 진행해요.</li>
+      <li>B. 틀려요. RNA 중합효소는 DNA 중합효소와 달리 프라이머 없이도 스스로 합성을 시작해요.</li>
+      <li>C. 틀려요. RNA 합성 시 DNA의 아데닌(A)에는 타이민(T) 대신 우라실(U)이 상보적으로 결합해요.</li>
+      <li>D. 맞아요. RNA 중합효소는 신생 RNA의 3′ 말단에 뉴클레오타이드를 부가하므로 5′에서 3′ 방향으로 합성돼요.</li>
+      <li>E. 틀려요. 전사 시 DNA 두 가닥 중 한 가닥(주형 가닥)만 선택적으로 전사돼요.</li>
+      <li>원문 정답과 달라진 점: 원문은 RNA 사본 생성이라는 전사의 정의를 물었으나, 여기서는 RNA 합성의 연장 방향성을 정답으로 다뤘어요.</li>
+      <li>수업과의 연결: RNA 중합효소는 5′→3′ 방향으로 신생 RNA 사본을 연장해요(<a href="../../복습노트/1006/정리노트_1006_Transcription_Translation_and_Lac_Operon.html#s1-transcription">정리노트 “전사의 시작과 진행”</a>).</li>
+    </ol>
+    <p class="answer">정답: D</p>
+  </details>
+</article>
+<article class="card" id="p4" data-source="기출 5강 37 예상" data-types="부정형">
+  <h3>P4. [기출 변형] 번역에 직접 참여하지 않는 분자</h3>
+  <div class="problem">
+    <p>다음 중 번역 과정에 직접적으로 참여하지 않는 분자는?</p>
+    <ul class="choices">
+      <li>A. RNA 중합효소</li>
+      <li>B. 아미노산</li>
+      <li>C. 운반 RNA(tRNA)</li>
+      <li>D. 리보솜 소단위체</li>
+      <li>E. 전령 RNA(mRNA)</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary><p>기출 5강 합본 37번의 발문을 유지하고 배제 대상을 RNA 중합효소로 바꾼 변형 문제예요.</p></details>
+  <details class="hint"><summary>힌트 보기</summary><p>전사 효소와 번역 복합체를 이루는 분자를 구분해요.</p></details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. RNA 중합효소는 DNA를 전사하여 RNA를 합성하는 효소이며 번역에는 직접 참여하지 않아요.</li>
+      <li>B. 맞아요. 아미노산은 번역 과정에서 폴리펩타이드를 합성하는 기본 단위체로 직접 사용돼요.</li>
+      <li>C. 맞아요. tRNA는 mRNA 코돈에 맞는 특정 아미노산을 리보솜으로 운반하여 번역에 직접 참여해요.</li>
+      <li>D. 맞아요. 리보솜 소단위체는 mRNA 및 tRNA와 결합하여 단백질 합성을 촉매하는 주된 번역 장치예요.</li>
+      <li>E. 맞아요. mRNA는 단백질 아미노산 서열을 지정하는 유전 암호 정보를 직접 제공하는 주형이에요.</li>
+      <li>원문 정답과 달라진 점: 원문 정답은 유전 정보 보관소인 DNA였으나, 여기서는 전사를 촉매하는 RNA 중합효소를 직접 참여하지 않는 분자로 출제했어요.</li>
+      <li>수업과의 연결: 번역 장치에는 mRNA, tRNA, 리보솜, 아미노산이 직접 관여해요(<a href="../../복습노트/1006/정리노트_1006_Transcription_Translation_and_Lac_Operon.html#s3-ribosome">정리노트 “번역 장치: 리보솜과 tRNA”</a>).</li>
+    </ol>
+    <p class="answer">정답: A</p>
+  </details>
+</article>
+<article class="card" id="p5" data-source="기출 5강 5 예상" data-types="계산">
+  <h3>P5. [기출 변형] 주형 DNA로부터 전사된 mRNA 서열</h3>
+  <div class="problem">
+    <p>만약 전사 주형 가닥 DNA 서열이 3′-TACCGGATTC-5′ 라면, 이로부터 합성되는 mRNA 분자의 5′→3′ 서열은 어느 것인가?</p>
+    <ul class="choices">
+      <li>A. 5′-UACCGGAUUC-3′</li>
+      <li>B. 5′-AUGGCCTTAG-3′</li>
+      <li>C. 5′-AUGGCCUAAG-3′</li>
+      <li>D. 5′-GAATCCGGTA-3′</li>
+      <li>E. 5′-CUUAGGCCAU-3′</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary><p>기출 5강 합본 5번을 바탕으로 주형 가닥의 서열 조건과 방향성을 명시하여 계산하도록 바꾼 변형 문제예요.</p></details>
+  <details class="hint"><summary>힌트 보기</summary><p>주형 가닥과 전사된 RNA의 역평행 관계 및 A-U, T-A, G-C 상보성을 적용해요.</p></details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. 상보 가닥을 합성하지 않고 원래 주형 서열의 T만 U로 바꾼 오답이에요.</li>
+      <li>B. 틀려요. RNA에는 타이민(T) 대신 우라실(U)이 포함되어야 해요.</li>
+      <li>C. 맞아요. 3′-TACCGGATTC-5′ 주형에 대해 역평행(5′→3′)으로 T-A, A-U, C-G, G-C 상보적 염기가 결합하면 5′-AUGGCCUAAG-3′이 돼요.</li>
+      <li>D. 틀려요. 우라실(U)이 없는 DNA 염기 서열이며 전사된 RNA 사본이 아니에요.</li>
+      <li>E. 틀려요. 상보 염기 서열의 말단 방향을 거꾸로 뒤집어 잘못 읽은 결과예요.</li>
+      <li>수업과의 연결: 전사는 3′→5′ DNA 주형 가닥을 읽어 역평행인 5′→3′ RNA를 합성해요(<a href="../../복습노트/1006/정리노트_1006_Transcription_Translation_and_Lac_Operon.html#s1-transcription">정리노트 “전사의 시작과 진행”</a>).</li>
+    </ol>
+    <p class="answer">정답: C</p>
+  </details>
+</article>
+    </section>
+    <section id="partC"><h2>C. 새 문제 예상</h2>
+<article class="card" id="p6" data-source="예상 5장 6" data-types="부정형 그림">
+  <h3>P6. [예상] 복제 분기점에서의 두 가닥 합성</h3>
+  <div class="problem">
+    <p>다음 그림은 복제 분기점에서 DNA가 복제되는 과정을 나타낸 모식도예요. (가)와 (나)는 각각 새로 합성되는 가닥 중 하나이고, (다)는 짧은 조각의 앞부분에 존재하는 구조예요. 이에 대한 설명으로 <strong>옳지 않은 것</strong>은?</p>
+    <figure class="figure"><svg viewBox="0 0 340 180" role="img" aria-label="복제 분기점 모식도" id="p6-svg">
+      <text class="fig-text" x="210" y="22">분기점 진행 방향</text>
+      <path class="fig-accent" d="M225 32 H285 M277 27 L285 32 L277 37" stroke-width="2"/>
+      <path class="fig-ink" d="M25 50 H165 L225 85 H320 M25 140 H165 L225 95 H320" stroke-width="2.5"/>
+      <text class="fig-text" x="10" y="54">3′</text><text class="fig-text" x="324" y="89">5′</text>
+      <text class="fig-text" x="10" y="144">5′</text><text class="fig-text" x="324" y="99">3′</text>
+      <path class="fig-ink" d="M45 64 H195" stroke-width="2.5"/>
+      <path class="fig-ink" d="M187 59 L195 64 L187 69" stroke-width="2.5"/>
+      <text class="fig-text" x="35" y="78">5′</text><text class="fig-text" x="202" y="68">3′</text>
+      <text class="fig-accent" x="110" y="42">(가)</text>
+      <rect class="fig-accent" x="105" y="123" width="16" height="6"/>
+      <path class="fig-ink" d="M105 126 H55" stroke-width="2.5"/>
+      <path class="fig-ink" d="M63 121 L55 126 L63 131" stroke-width="2.5"/>
+      <text class="fig-text" x="42" y="130">3′</text>
+      <rect class="fig-accent" x="185" y="123" width="16" height="6"/>
+      <path class="fig-ink" d="M185 126 H135" stroke-width="2.5"/>
+      <path class="fig-ink" d="M143 121 L135 126 L143 131" stroke-width="2.5"/>
+      <text class="fig-text" x="122" y="130">3′</text>
+      <text class="fig-accent" x="145" y="150">(나)</text>
+      <text class="fig-accent" x="187" y="115">(다)</text>
+      <path class="fig-muted" d="M193 117 V122" stroke-width="1.5"/>
+      <rect class="fig-accent" x="40" y="165" width="14" height="6"/>
+      <text class="fig-muted" x="58" y="171">RNA 프라이머</text>
+      <path class="fig-ink" d="M150 168 H180" stroke-width="2.5"/>
+      <text class="fig-muted" x="185" y="171">새 DNA 가닥</text>
+    </svg></figure>
+    <ul class="choices">
+      <li>A. (가)는 복제 분기점이 열리는 방향을 향해 연속적으로 합성되는 선도 가닥이에요.</li>
+      <li>B. (나)는 복제 분기점 진행 반대 방향으로 불연속적으로 합성되는 지연 가닥이에요.</li>
+      <li>C. (다)는 프라이메이스에 의해 합성된 짧은 RNA 프라이머예요.</li>
+      <li>D. (나)의 오카자키 절편들은 3′에서 5′ 방향으로 뉴클레오타이드가 연결되어 신장돼요.</li>
+      <li>E. (나) 가닥의 절편 사이에 남은 당-인산 골격의 틈은 DNA 연결효소에 의해 공유결합으로 연결돼요.</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary><p>복제 분기점에서 두 가닥의 합성 방향성과 효소의 역할을 묻는 신규 예상 문제예요.</p></details>
+  <details class="hint"><summary>힌트 보기</summary>DNA 중합효소가 새로운 뉴클레오타이드를 붙일 수 있는 말단이 3′인지 5′인지, 그리고 신장 방향성을 살펴봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 맞아요. (가)는 복제 분기점이 풀리는 방향(오른쪽)으로 5′→3′ 연속 신장하는 선도 가닥이에요.</li>
+      <li>B. 맞아요. (나)는 복제 분기점이 열리는 반대 방향으로 조각조각 합성되는 지연 가닥의 오카자키 절편이에요.</li>
+      <li>C. 맞아요. (다)는 각 오카자키 절편의 합성을 시작하기 위해 프라이메이스가 만든 짧은 RNA 프라이머예요.</li>
+      <li>D. 틀려요. DNA 중합효소는 기존 가닥의 3′ 말단에만 뉴클레오타이드를 추가할 수 있으므로, 지연 가닥의 오카자키 절편도 항상 5′에서 3′ 방향으로 신장돼요.</li>
+      <li>E. 맞아요. 프라이머가 DNA로 교체된 후 절편 사이에 남은 틈(닉)은 DNA 연결효소가 당-인산 골격의 포스포다이에스터 공유결합을 이어 완결해요.</li>
+      <li>수업과의 연결: <a href="../../복습노트/1001/정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s5-strands">정리노트 “선도 가닥과 지연 가닥의 복제”</a>의 개념을 적용해요.</li>
+    </ol>
+    <p class="answer">정답: D</p>
+  </details>
+</article>
+<article class="card" id="p7" data-source="예상 5장 7" data-types="표">
+  <h3>P7. [예상] 세 핵산 시료의 염기 조성 판별</h3>
+  <div class="problem">
+    <p>표는 세 종류의 생물체 또는 바이러스에서 추출한 핵산 시료 I~III의 염기 조성 비율(%)을 분석한 결과예요. 이에 대한 옳은 분석만을 고른 것은?</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>시료</th><th>A (%)</th><th>T (%)</th><th>G (%)</th><th>C (%)</th><th>U (%)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>시료 I</td><td>28</td><td>28</td><td>22</td><td>22</td><td>0</td></tr>
+          <tr><td>시료 II</td><td>34</td><td>20</td><td>26</td><td>20</td><td>0</td></tr>
+          <tr><td>시료 III</td><td>24</td><td>0</td><td>26</td><td>26</td><td>24</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="choices">
+      <li>A. 시료 I은 티민을 포함하므로 단일가닥 RNA예요.</li>
+      <li>B. 시료 II는 티민을 포함하지만 샤가프의 상보적 염기쌍 법칙(A=T, G=C)을 만족하지 않으므로 단일가닥 DNA예요.</li>
+      <li>C. 시료 III은 우라실을 포함하므로 단일가닥 DNA예요.</li>
+      <li>D. 시료 I과 시료 II를 혼합하면 열을 가하지 않아도 저절로 완전한 이중나선을 형성해요.</li>
+      <li>E. 시료 III을 완전히 가수분해하면 디옥시리보스 당과 인산이 1:1 비율로 검출돼요.</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary><p>샤가프의 법칙과 염기 조성을 바탕으로 단일가닥/이중가닥 핵산의 종류를 판별하는 신규 예상 문제예요.</p></details>
+  <details class="hint"><summary>힌트 보기</summary>티민(T)과 우라실(U)의 유무로 DNA와 RNA를 구분하고, A=T(또는 U), G=C 비율이 엄격히 성립하는지 확인해요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. 시료 I은 T를 포함하고 U가 없으므로 DNA이며, A=T=28%, G=C=22%로 샤가프 법칙을 만족하므로 이중가닥 DNA예요.</li>
+      <li>B. 맞아요. 시료 II는 T를 포함하고 U가 없어 DNA이지만, A(34%)≠T(20%), G(26%)≠C(20%)로 샤가프 법칙(A=T, G=C)이 성립하지 않으므로 단일가닥 DNA예요.</li>
+      <li>C. 틀려요. 시료 III은 T가 없고 U를 24% 포함하므로 RNA이며, A(24%)=U(24%), G(26%)=C(26%)이므로 이중가닥 RNA 바이러스의 유전체예요.</li>
+      <li>D. 틀려요. 시료 I과 II는 서로 다른 시료로 염기 서열이 상보적이라는 근거가 없으며, 단순히 혼합한다고 해서 저절로 완전한 이중나선을 이루지 않아요.</li>
+      <li>E. 틀려요. 시료 III은 RNA이므로 디옥시리보스가 아니라 리보스 당과 인산이 검출돼요.</li>
+      <li>수업과의 연결: <a href="../../복습노트/1001/정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s3-dna-structure">정리노트 “뉴클레오타이드와 상보적인 두 가닥”</a>의 개념을 적용해요.</li>
+    </ol>
+    <p class="answer">정답: B</p>
+  </details>
+</article>
+<article class="card" id="p8" data-source="예상 5장 8" data-types="그림">
+  <h3>P8. [예상] 진핵 전사 개시 복합체와 증폭자</h3>
+  <div class="problem">
+    <p>다음 그림은 진핵세포에서 유전자 발현을 조절하는 전사 개시 복합체의 형성을 나타낸 모식도예요. (가)~(라)에 대한 설명으로 옳은 것은?</p>
+    <figure class="figure"><svg viewBox="0 0 340 180" role="img" aria-label="진핵 전사 개시 복합체 모식도" id="p8-svg">
+      <path class="fig-ink" d="M140 55 H70 C25 55 25 145 70 145 H325" stroke-width="3"/>
+      <path class="fig-accent" d="M95 55 H135" stroke-width="7"/>
+      <text class="fig-text" x="105" y="38">(가)</text>
+      <text class="fig-muted" x="98" y="24">증폭자</text>
+      <circle class="fig-accent" cx="115" cy="74" r="14"/>
+      <text class="fig-text" x="108" y="78">(나)</text>
+      <text class="fig-muted" x="65" y="86">활성인자</text>
+      <circle class="fig-muted" cx="42" cy="100" r="11"/>
+      <text class="fig-muted" x="8" y="104">굴곡 단백질</text>
+      <ellipse class="fig-dot" cx="168" cy="98" rx="22" ry="18"/>
+      <text class="fig-text" x="160" y="102">(다)</text>
+      <text class="fig-muted" x="154" y="72">매개체</text>
+      <rect class="fig-ink" x="206" y="96" width="52" height="38" rx="6" stroke-width="2"/>
+      <text class="fig-text" x="210" y="118">전사 개시</text>
+      <text class="fig-text" x="214" y="130">복합체</text>
+      <path class="fig-accent" d="M205 145 H255" stroke-width="7"/>
+      <text class="fig-text" x="222" y="165">(라)</text>
+      <text class="fig-muted" x="210" y="177">프로모터</text>
+      <path class="fig-ink" d="M275 145 H325" stroke-width="5"/>
+      <text class="fig-muted" x="278" y="136">전사 영역 →</text>
+    </svg></figure>
+    <ul class="choices">
+      <li>A. (가)는 프로모터와 멀리 떨어져 존재할 수 있는 DNA 조절 서열인 증폭자(Enhancer)예요.</li>
+      <li>B. (나)는 전사를 억제하기 위해 프로모터에 직접 결합하는 RNA 분자예요.</li>
+      <li>C. (다)는 DNA 서열이며 단백질이 관여하지 않는 부위예요.</li>
+      <li>D. (라)는 인트론 서열로 전사 시작 후 즉시 잘려 나가는 부위예요.</li>
+      <li>E. DNA 굴곡 단백질이 작용해도 (나)는 (다)나 전사 복합체와 물리적으로 접촉할 수 없어요.</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary><p>진핵 전사 조절에서 증폭자와 활성인자, 매개 복합체의 상호작용을 묻는 신규 예상 문제예요.</p></details>
+  <details class="hint"><summary>힌트 보기</summary>DNA 조절 서열(증폭자·프로모터)과 단백질 인자(활성인자·매개체)를 각각 구별하고, DNA 굽힘의 역할을 떠올려 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 맞아요. (가)는 프로모터로부터 수천 염기쌍 이상 멀리 떨어져서도 전사를 촉진할 수 있는 조절 DNA 서열인 증폭자(Enhancer)예요.</li>
+      <li>B. 틀려요. (나)는 증폭자에 결합하여 전사를 촉진하는 활성인자(Activator) 단백질이에요.</li>
+      <li>C. 틀려요. (다)는 활성인자와 전사 개시 복합체 사이의 상호작용을 매개하는 단백질 복합체(Mediator)예요.</li>
+      <li>D. 틀려요. (라)는 RNA 중합효소와 일반 전사인자가 결합하여 전사를 개시하는 DNA 부위인 프로모터예요.</li>
+      <li>E. 틀려요. DNA 굴곡 단백질이 DNA를 구부려 줌으로써 원거리의 (나) 활성인자가 (다) 매개체를 통해 전사 복합체와 물리적으로 접촉할 수 있게 돼요.</li>
+      <li>수업과의 연결: <a href="../../복습노트/1008/정리노트_1008_Gene_Regulation_and_DNA_Cloning.html#s1-initiation">정리노트 “전사 조절: 증폭자와 전사인자”</a>의 개념을 적용해요.</li>
+    </ol>
+    <p class="answer">정답: A</p>
+  </details>
+</article>
+<article class="card" id="p9" data-source="예상 5장 9" data-types="계산">
+  <h3>P9. [예상] 점돌연변이에 따른 아미노산 개수 계산</h3>
+  <div class="problem">
+    <p>어떤 진핵생물 유전자로부터 만들어진 정상 mRNA의 암호화 부위 서열이 다음과 같아요.<br>5′-AUG GCA UAC GGU UCA UAA-3′<br>이 mRNA의 9번째 염기인 C가 A로 치환되는 점돌연변이가 발생했어요. (단, UAA, UAG, UGA는 종결코돈이며, 정상 코돈 UAC는 티로신을 암호화해요.) 번역 결과 합성되는 정상 단백질과 변이 단백질의 아미노산 개수로 옳은 것은?</p>
+    <ul class="choices">
+      <li>A. 정상: 6개, 변이: 2개</li>
+      <li>B. 정상: 6개, 변이: 3개</li>
+      <li>C. 정상: 5개, 변이: 5개</li>
+      <li>D. 정상: 5개, 변이: 3개</li>
+      <li>E. 정상: 5개, 변이: 2개</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary><p>염기 치환에 의한 조기 종결(무의미 돌연변이)과 합성되는 펩타이드 아미노산 개수를 계산하는 신규 예상 문제예요.</p></details>
+  <details class="hint"><summary>힌트 보기</summary>종결코돈 자체는 아미노산을 암호화하지 않음을 기억하고, 9번째 염기가 바뀐 3번째 코돈이 무엇이 되는지 확인해요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. 종결코돈(UAA)은 아미노산을 지정하지 않으므로 정상 단백질의 아미노산 수는 6개가 아니라 5개예요.</li>
+      <li>B. 틀려요. 정상 단백질은 종결코돈을 제외한 5개이며, 변이 단백질은 3번째 코돈이 종결코돈이 되므로 2개만 합성돼요.</li>
+      <li>C. 틀려요. 9번째 염기가 C에서 A로 치환되면 3번째 코돈이 UAA(종결코돈)로 변하므로 변이 단백질은 5개가 될 수 없어요.</li>
+      <li>D. 틀려요. 3번째 코돈(UAA)에서 번역이 즉시 종결되므로 3번째 위치에는 아미노산이 들어가지 않아 변이 단백질은 2개예요.</li>
+      <li>E. 맞아요. 정상 mRNA는 5개의 아미노산(AUG-GCA-UAC-GGU-UCA)을 합성한 뒤 UAA에서 종결되어 5개이고, 변이 mRNA는 3번째 코돈이 UAA(종결코돈)로 바뀌는 무의미 돌연변이가 일어나 앞선 2개(AUG-GCA)만 합성하고 종결되어 2개예요.</li>
+      <li>수업과의 연결: <a href="../../복습노트/1006/정리노트_1006_Transcription_Translation_and_Lac_Operon.html#s4-substitution">정리노트 “염기 치환과 아미노산 변화”</a>의 개념을 적용해요.</li>
+    </ol>
+    <p class="answer">정답: E</p>
+  </details>
+</article>
+<article class="card" id="p10" data-source="예상 5장 10" data-types="표">
+  <h3>P10. [예상] lac 오페론 변이주의 유전자형 분석</h3>
+  <div class="problem">
+    <p>표는 대장균의 야생형과 서로 다른 단일 돌연변이주 I, II의 배지 조건에 따른 β-갈락토시다이스(lacZ 산물) 합성 여부를 조사한 결과예요. (+: 합성됨, -: 합성되지 않음) 이에 대한 옳은 설명만을 고른 것은?</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>대장균 균주</th><th>젖당 없음</th><th>젖당 있음</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>야생형</td><td>-</td><td>+</td></tr>
+          <tr><td>변이주 I</td><td>+</td><td>+</td></tr>
+          <tr><td>변이주 II</td><td>-</td><td>-</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="choices">
+      <li>A. 야생형은 젖당이 없을 때 억제자가 프로모터에 직접 결합하여 전사를 막아요.</li>
+      <li>B. 변이주 I은 젖당이 없어도 효소를 생산하므로 작동자(operator) 서열이 결실될 수는 없어요.</li>
+      <li>C. 변이주 I은 억제자 유전자(lacI) 결실 변이이거나 작동자 결합 부위 변이일 수 있어요.</li>
+      <li>D. 변이주 II는 젖당이 들어왔을 때 유도자가 억제자에 결합하여 억제자가 완전히 분해되는 균주예요.</li>
+      <li>E. 변이주 II는 억제자가 작동자에 전혀 결합하지 못하는 돌연변이예요.</li>
+    </ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary><p>lac 오페론 돌연변이주의 표현형 표를 분석하여 억제자와 작동자의 조절 기작을 판별하는 신규 예상 문제예요.</p></details>
+  <details class="hint"><summary>힌트 보기</summary>젖당이 없는데도 효소가 계속 나오는 원인(억제 실패)과, 젖당이 있어도 전혀 나오지 않는 원인을 작동자와 억제자 수준에서 구분해요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. 야생형에서 억제자 단백질이 결합하는 부위는 프로모터가 아니라 작동자(operator)예요.</li>
+      <li>B. 틀려요. 작동자 서열이 결실되거나 변형되면 억제자가 결합할 수 없어 젖당이 없어도 전사가 지속되는 구성적 발현(변이주 I)이 나타나요.</li>
+      <li>C. 맞아요. 젖당 유무와 무관하게 항상 효소가 합성되는 변이주 I은 활성 억제자를 만들지 못하는 lacI 결실이거나 억제자가 결합하지 못하는 작동자(operator) 변이일 수 있어요.</li>
+      <li>D. 틀려요. 유도자(알로락토스)는 억제자의 입체구조를 변화시켜 작동자에서 떨어지게 할 뿐 억제자를 분해하지 않으며, 억제자가 분해된다면 효소가 발현되어야 하므로 변이주 II의 결과와 맞지 않아요.</li>
+      <li>E. 틀려요. 억제자가 작동자에 결합하지 못하면 상시 발현되는 변이주 I의 표현형을 보여야 하며, 전혀 발현되지 않는 변이주 II와는 반대예요.</li>
+      <li>수업과의 연결: <a href="../../복습노트/1006/정리노트_1006_Transcription_Translation_and_Lac_Operon.html#s5-operon">정리노트 “lac 오페론: 젖당이 있을 때와 없을 때”</a>의 개념을 적용해요.</li>
+    </ol>
+    <p class="answer">정답: C</p>
+  </details>
+</article>
+<article class="card" id="p11" data-source="예상 5장 11" data-types="부정형">
+  <h3>P11. [예상] 진핵 mRNA의 5′ 캡과 3′ 폴리A 꼬리</h3>
+  <div class="problem"><p>진핵세포의 전사 후 RNA 가공 과정에서 첨가되는 5′ 캡(5′ cap)과 3′ 폴리A 꼬리(poly-A tail)에 대한 설명으로 옳지 않은 것은?</p>
+
+    <ul class="choices"><li>A. 5′ 캡과 폴리A 꼬리는 번역 과정에서 특정한 소수성 아미노산 서열로 번역돼요.</li><li>B. 5′ 캡은 변형된 구아닌 뉴클레오타이드(7-메틸구아노신)로 구성되어 있어요.</li><li>C. 5′ 캡은 세포질의 리보솜이 mRNA 분자를 인식하고 결합하는 데 도움을 줘요.</li><li>D. 3′ 폴리A 꼬리는 세포질 내의 가수분해 효소에 의한 mRNA의 급격한 분해를 지연시켜 줘요.</li><li>E. 5′ 캡과 폴리A 꼬리는 모두 전사체가 핵에서 세포질로 원활하게 방출되도록 촉진해요.</li></ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary><p>진핵생물 mRNA의 말단 변형 구조와 그 생물학적 기능을 묻는 신규 예상 문제예요.</p></details>
+  <details class="hint"><summary>힌트 보기</summary>5′ 캡과 3′ 폴리A 꼬리가 실제 단백질 암호화 부위인지, 보호 및 인식용 비암호화 변형인지 생각해 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>A. 틀려요. 5′ 캡과 폴리A 꼬리는 mRNA의 보호와 리보솜 결합을 돕는 비암호화 말단 구조이며, 단백질의 아미노산 서열로 번역되지 않아요.</li><li>B. 맞아요. 5′ 캡은 7-메틸구아노신이라는 변형된 구아닌 뉴클레오타이드가 5′ 말단에 거꾸로 부착된 구조예요.</li><li>C. 맞아요. 5′ 캡은 세포질에서 리보솜 소단위체가 mRNA의 시작 부위를 정확히 인식하고 부착하도록 안내해요.</li><li>D. 맞아요. 3′ 폴리A 꼬리는 세포질 효소에 의한 분해를 지연시켜 mRNA의 수명과 안정성을 높여 줘요.</li><li>E. 맞아요. 5′ 캡과 폴리A 꼬리는 완성된 전사체가 핵공 복합체를 통과하여 세포질로 방출되도록 촉진해요.</li><li>수업과의 연결: 진핵세포의 전사 후 가공에서 캡과 꼬리의 역할을 확인해요(<a href="../../복습노트/1006/정리노트_1006_Transcription_Translation_and_Lac_Operon.html#s1-processing">정리노트 &quot;진핵생물의 RNA 가공: 캡·꼬리·스플라이싱&quot;</a>).</li></ol>
+    <p class="answer">정답: A</p>
+  </details>
+</article>
+<article class="card" id="p12" data-source="예상 5장 12" data-types="부정형">
+  <h3>P12. [예상] DNA 복제와 RNA 전사의 기작 비교</h3>
+  <div class="problem"><p>세포 내에서 일어나는 DNA 복제와 RNA 전사 과정을 비교한 설명으로 옳지 않은 것은?</p>
+
+    <ul class="choices"><li>A. 복제는 DNA의 두 가닥 모두 주형으로 쓰이지만, 전사는 특정 유전자의 한쪽 가닥만 주형으로 쓰여요.</li><li>B. DNA 중합효소와 RNA 중합효소는 모두 합성을 시작하기 위해 반드시 RNA 프라이머를 필요로 해요.</li><li>C. 복제 과정에서는 dNTP(디옥시뉴클레오시드 3인산)가 쓰이고, 전사 과정에서는 NTP(리보뉴클레오시드 3인산)가 재료로 쓰여요.</li><li>D. 두 과정 모두 새로운 뉴클레오타이드 사슬이 합성될 때 5′에서 3′ 방향으로 신장돼요.</li><li>E. 복제 산물은 모가닥과 결합한 이중나선으로 남지만, 전사 산물인 단일가닥 RNA는 주형 DNA로부터 떨어져 나와요.</li></ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary><p>DNA 복제와 RNA 전사의 공통점과 핵심 차이점을 비교하는 신규 예상 문제예요.</p></details>
+  <details class="hint"><summary>힌트 보기</summary>중합효소가 단독으로 사슬 합성을 시작할 수 있는지, 아니면 기존 가닥의 3′-OH 말단(프라이머)이 반드시 필요한지 비교해 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>A. 맞아요. DNA 복제는 기존 이중가닥의 두 가닥이 각각 모두 주형이 되지만, 전사는 특정 유전자의 주형 가닥 한 가닥만 읽어서 전사체를 만들어요.</li><li>B. 틀려요. DNA 중합효소는 합성을 시작하기 위해 RNA 프라이머가 필수적이지만, RNA 중합효소는 프라이머 없이도 스스로 신생 사슬 합성을 개시할 수 있어요.</li><li>C. 맞아요. 복제에는 dATP, dGTP, dCTP, dTTP(dNTP)가 쓰이고, 전사에는 ATP, GTP, CTP, UTP(NTP)가 기질 재료로 쓰여요.</li><li>D. 맞아요. 두 과정 모두 신생 사슬의 3′ 말단에 새로운 뉴클레오타이드를 첨가하므로 합성 방향은 항상 5′에서 3′ 방향이에요.</li><li>E. 맞아요. 복제 산물은 모가닥과 결합하여 이중나선을 형성(반보존적 복제)하지만, 전사된 단일가닥 RNA는 주형 DNA로부터 해리되어 나와요.</li><li>수업과의 연결: DNA 복제와 전사의 공통점 및 차이점을 확인해요(<a href="../../복습노트/1001/정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s7-expression">정리노트 &quot;유전자 발현의 개관: DNA에서 단백질로&quot;</a>).</li></ol>
+    <p class="answer">정답: B</p>
+  </details>
+</article>
+<article class="card" id="p13" data-source="예상 5장 13" data-types="">
+  <h3>P13. [예상] 염색질 구조와 후성유전학적 전사 조절</h3>
+  <div class="problem"><p>진핵세포의 염색질 구조 변형과 유전자 발현 조절에 대한 설명으로 옳은 것은?</p>
+
+    <ul class="choices"><li>A. 히스톤 단백질의 꼬리에 아세틸기가 첨가되면 염색질이 더 단단히 응축되어 전사가 억제돼요.</li><li>B. DNA 메틸화는 주로 아데닌 염기에 일어나며 항상 유전자 전사를 촉진하는 신호로 작용해요.</li><li>C. 히스톤 아세틸화는 양전하를 중화시켜 DNA와의 결합을 느슨하게 만들어 전사인자의 접근을 촉진해요.</li><li>D. 히스톤 탈아세틸화 효소(HDAC)가 작용하면 진정염색질(euchromatin)이 형성되어 전사율이 증가해요.</li><li>E. DNA 염기 서열 자체의 영구적 돌연변이만이 후대에 형질 차이를 전달할 수 있는 유일한 기작이에요.</li></ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary><p>히스톤 아세틸화와 DNA 메틸화에 따른 염색질 응축도 및 전사 활성 변화를 묻는 신규 예상 문제예요.</p></details>
+  <details class="hint"><summary>힌트 보기</summary>히스톤 꼬리의 아세틸화가 단백질 전하를 어떻게 바꾸고, 염색질의 열림/닫힘에 어떤 영향을 미치는지 생각해 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>A. 틀려요. 히스톤 아세틸화는 염색질 구조를 느슨하게 풀어 전사를 촉진하는 변화예요.</li><li>B. 틀려요. DNA 메틸화는 주로 사이토신(C) 염기에 일어나며, 일반적으로 염색질을 응축시켜 전사를 억제하는 신호로 작용해요.</li><li>C. 맞아요. 히스톤 아세틸화는 라이신 잔기의 양전하를 중화시켜 음전하의 DNA와의 결합을 느슨하게 만들고, 전사인자의 접근성을 높여 전사를 촉진해요.</li><li>D. 틀려요. 히스톤 탈아세틸화 효소(HDAC)는 아세틸기를 떼어내어 염색질을 단단히 응축(이질염색질화)시키므로 전사율이 감소해요.</li><li>E. 틀려요. DNA 염기 서열의 변화 없이 히스톤 수식이나 DNA 메틸화 등 염색질 구조 변형으로 유전자 발현이 조절되어 유전되는 후성유전 기작도 있어요.</li><li>수업과의 연결: 염색질 구조 수식과 전사 조절을 확인해요(<a href="../../복습노트/1008/정리노트_1008_Gene_Regulation_and_DNA_Cloning.html#s0-chromatin">정리노트 &quot;염색질 구조 조절: 히스톤과 DNA 수식&quot;</a>).</li></ol>
+    <p class="answer">정답: C</p>
+  </details>
+</article>
+<article class="card" id="p14" data-source="예상 5장 14" data-types="부정형">
+  <h3>P14. [예상] 유비퀴틴과 프로테아좀에 의한 단백질 분해</h3>
+  <div class="problem"><p>세포 내에서 수명이 다하거나 손상된 단백질을 선택적으로 분해하는 과정에 대한 설명으로 옳지 않은 것은?</p>
+
+    <ul class="choices"><li>A. 유비퀴틴(ubiquitin)은 분해 대상 단백질에 결합하여 분해 표지(death tag) 역할을 하는 작은 폴리펩타이드예요.</li><li>B. 프로테아좀(proteasome)은 통 모양의 거대한 단백질 복합체로 내부에서 펩타이드 결합을 가수분해해요.</li><li>C. 프로테아좀에 들어간 표적 단백질은 짧은 펩타이드 조각으로 잘린 후 세포질에서 아미노산으로 재활용돼요.</li><li>D. 표적 단백질에 결합했던 유비퀴틴 분자들은 분해되지 않고 떨어져 나와 다시 재사용돼요.</li><li>E. 프로테아좀은 수명이 다한 mRNA 분자도 인식하여 뉴클레오타이드 단위로 직접 분해해요.</li></ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary><p>단백질 수명 조절을 담당하는 유비퀴틴-프로테아좀 분해 경로의 역할을 묻는 신규 예상 문제예요.</p></details>
+  <details class="hint"><summary>힌트 보기</summary>프로테아좀이 인식하여 분해하는 대상 물질이 단백질인지 아니면 핵산(RNA)인지 구별해 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>A. 맞아요. 유비퀴틴은 분해되어야 할 표적 단백질에 결합하여 분해 표지 역할을 하는 76개 아미노산의 작은 폴리펩타이드예요.</li><li>B. 맞아요. 프로테아좀은 원통형의 거대한 단백질 복합체로, 내부에서 펩타이드 결합을 가수분해하여 단백질을 분해해요.</li><li>C. 맞아요. 표적 단백질은 짧은 펩타이드 조각으로 잘려 배출된 뒤 세포질의 펩티데이스에 의해 아미노산으로 완전히 분해되어 재활용돼요.</li><li>D. 맞아요. 표적 단백질에 결합했던 유비퀴틴 분자들은 파괴되지 않고 떨어져 나와 다른 표적 단백질에 다시 재사용돼요.</li><li>E. 틀려요. 프로테아좀은 단백질만을 특이적으로 분해하는 거대 복합체이며, mRNA 분자를 인식하거나 뉴클레오타이드 단위로 분해하지 않아요.</li><li>수업과의 연결: 단백질의 분해 표지와 프로테아좀의 역할을 확인해요(<a href="../../복습노트/1008/정리노트_1008_Gene_Regulation_and_DNA_Cloning.html#s3-proteasome">정리노트 &quot;단백질 분해: 유비퀴틴과 프로테아좀&quot;</a>).</li></ol>
+    <p class="answer">정답: E</p>
+  </details>
+</article>
+<article class="card" id="p15" data-source="예상 5장 15" data-types="">
+  <h3>P15. [예상] microRNA(miRNA)와 전사 후 조절</h3>
+  <div class="problem"><p>진핵세포에서 microRNA(miRNA)에 의해 일어나는 유전자 발현 조절 기작에 대한 설명으로 옳은 것은?</p>
+
+    <ul class="choices"><li>A. miRNA는 3개의 뉴클레오타이드로 이루어져 있으며 코돈과 1:1로 직접 결합해요.</li><li>B. miRNA는 핵 속의 DNA 이중나선에 직접 끼어들어가 유전자 서열을 영구적으로 제거해요.</li><li>C. miRNA는 항상 표적 mRNA의 5′ 캡 부위에만 결합하여 핵 밖 방출을 촉진해요.</li><li>D. miRNA가 표적 mRNA와 부분적으로 상보 결합하면 번역이 억제되고, 거의 완전하게 결합하면 mRNA가 분해돼요.</li><li>E. miRNA는 번역이 끝난 폴리펩타이드 사슬에 직접 부착하여 단백질의 3차원 구조를 변성시켜요.</li></ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary><p>비암호화 RNA인 miRNA의 길이와 상보 결합 정도에 따른 번역 억제 및 분해 기작을 묻는 신규 예상 문제예요.</p></details>
+  <details class="hint"><summary>힌트 보기</summary>miRNA가 단백질 복합체와 결합하여 표적 mRNA와 상보 결합할 때, 상보성의 정도에 따라 나타나는 두 가지 결과를 떠올려 보세요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps"><li>A. 틀려요. miRNA는 3개의 뉴클레오타이드가 아니라 약 20~22개의 뉴클레오타이드로 구성된 작은 비암호화 RNA예요.</li><li>B. 틀려요. miRNA는 세포질에서 표적 mRNA를 대상으로 작용하며, 핵 속의 DNA 염기 서열을 물리적으로 제거하지 않아요.</li><li>C. 틀려요. miRNA는 주로 표적 mRNA의 3′ 비번역 부위(3′ UTR)에 상보 결합하여 번역 억제나 분해를 유도해요.</li><li>D. 맞아요. miRNA가 표적 mRNA와 염기서열이 불완전하게 부분 결합하면 번역이 차단되고, 거의 완전하게 결합하면 mRNA가 분해돼요.</li><li>E. 틀려요. miRNA는 완성된 폴리펩타이드에 직접 붙지 않고, 번역 전 단계에서 mRNA에 결합하여 단백질 생성을 억제해요.</li><li>수업과의 연결: 비암호화 RNA에 의한 유전자 발현 조절을 확인해요(<a href="../../복습노트/1008/정리노트_1008_Gene_Regulation_and_DNA_Cloning.html#s2-rnai">정리노트 &quot;비암호화 RNA: miRNA와 RNA 간섭&quot;</a>).</li></ol>
+    <p class="answer">정답: D</p>
+  </details>
+</article>
+    </section>
+  </main>
+  <footer>근거: 1001·1006·1008 정리노트와 5강 기출. 실제 출제 확률이나 공식 정답을 예측한 통계가 아니에요.</footer>
+    </div>
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="panel-right-title">
+      <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-right-title">풀이 도움</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-sub" id="aid-for" hidden></p>
+        <p class="panel-empty">문제로 넘어가면 그 문제의 교과서 원문, 힌트, 풀이가 여기에 나옵니다. 먼저 스스로 풀어 본 뒤 여세요.</p>
+        <div class="aids"></div>
+        <button class="solved-btn" id="solved-btn" type="button" aria-pressed="false" hidden><span>푼 문제로 표시</span></button>
+      </div>
+    </aside>
+  </div>
+  <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
+  <nav class="pager" aria-label="화면 이동">
+    <div class="pager-inner">
+      <button class="btn btn-ghost" id="pager-prev" type="button">이전</button>
+      <span class="pager-count" id="pager-count"></span>
+      <button class="btn btn-primary" id="pager-next" type="button">시작하기</button>
+    </div>
+  </nav>
+  <p class="sr-only" id="pager-status" aria-live="polite"></p>
+
+  <script id="theme-ui">
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const sysDark = matchMedia('(prefers-color-scheme: dark)');
+      const KEY = 'od-theme';
+      const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+      function label() {
+        const next = isDark() ? '라이트 모드로 전환' : '다크 모드로 전환';
+        btn.setAttribute('aria-label', next);
+        btn.title = next;
+      }
+      btn.addEventListener('click', () => {
+        const t = isDark() ? 'light' : 'dark';
+        // 시스템 설정과 같아지면 저장을 지워 다시 시스템을 따른다
+        if ((t === 'dark') === sysDark.matches) { delete root.dataset.theme; try { localStorage.removeItem(KEY); } catch (e) {} }
+        else { root.dataset.theme = t; try { localStorage.setItem(KEY, t); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+        label();
+      });
+      sysDark.addEventListener('change', label);
+      window.addEventListener('storage', (e) => {
+        if (e.key !== KEY) return;
+        if (e.newValue === 'light' || e.newValue === 'dark') root.dataset.theme = e.newValue; else delete root.dataset.theme;
+        label();
+      });
+      label();
+    })();
+  </script>
+  <script id="panels-ui">
+    (function () {
+      const body = document.body;
+      const layout = document.querySelector('.layout');
+      const kind = body.dataset.panels;
+      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const scrim = document.getElementById('panel-scrim');
+      const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
+      const wideMq = matchMedia('(min-width: 1024px)');
+      const roomyMq = matchMedia('(min-width: 1280px)');
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      // 푼 기록은 탭(세션) 단위로만 유지: 뒤로가기·새로고침엔 남고, 창을 닫고 다시 열면 초기화
+      const tabStore = {
+        get(k, d) { try { const v = sessionStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      const PREF = 'od-panels:' + kind;
+      // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
+      const RANGE = body.dataset.range || '';
+      const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+      const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+      let overlay = null;
+
+      // ---------- 열고 닫기 ----------
+      function docked() {
+        const pref = store.get(PREF, {});
+        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+      }
+      function sync() {
+        const wide = wideMq.matches;
+        const d = docked();
+        ['left', 'right'].forEach((side) => {
+          const open = wide ? d[side] : overlay === side;
+          const p = panels[side];
+          layout.dataset[side] = open ? 'open' : 'closed';
+          p.classList.toggle('is-open', !wide && open);
+          p.inert = !open;
+          if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
+          toggles[side].setAttribute('aria-expanded', String(open));
+        });
+        const drawer = !wide && overlay !== null;
+        scrim.classList.toggle('is-on', drawer);
+        body.classList.toggle('drawer-open', drawer);
+        blockers.forEach((el) => { el.inert = drawer; });
+      }
+      function openDrawer(side) {
+        overlay = side;
+        sync();
+        requestAnimationFrame(() => panels[side].querySelector('[data-panel-close]').focus());
+      }
+      function closeDrawer(refocus) {
+        if (overlay === null) return;
+        const side = overlay;
+        overlay = null;
+        sync();
+        if (refocus) toggles[side].focus();
+      }
+      function toggle(side) {
+        if (wideMq.matches) {
+          const d = docked();
+          d[side] = !d[side];
+          store.set(PREF, d);
+          sync();
+          if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+        } else if (overlay === side) closeDrawer(true);
+        else openDrawer(side);
+      }
+
+      toggles.left.addEventListener('click', () => toggle('left'));
+      toggles.right.addEventListener('click', () => toggle('right'));
+      scrim.addEventListener('click', () => closeDrawer(true));
+      document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
+      panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
+
+      // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      function applyWidths() {
+        const w = store.get(PREF + ':w', {});
+        ['left', 'right'].forEach((side) => {
+          if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
+          else layout.style.removeProperty(WIDTH[side].prop);
+        });
+      }
+      function maxFor(side) {
+        const other = side === 'left' ? panels.right : panels.left;
+        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
+      }
+      function setWidth(side, px, save) {
+        const v = Math.round(Math.min(Math.max(px, WIDTH[side].min), maxFor(side)));
+        layout.style.setProperty(WIDTH[side].prop, v + 'px');
+        panels[side].querySelector('.panel-resize').setAttribute('aria-valuenow', String(v));
+        if (save) { const w = store.get(PREF + ':w', {}); w[side] = v; store.set(PREF + ':w', w); }
+      }
+      function resetWidth(side) {
+        const w = store.get(PREF + ':w', {});
+        delete w[side];
+        store.set(PREF + ':w', w);
+        layout.style.removeProperty(WIDTH[side].prop);
+      }
+      document.querySelectorAll('.panel-resize').forEach((handle) => {
+        const side = handle.dataset.side;
+        const dir = side === 'left' ? 1 : -1;
+        handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
+        handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
+        handle.addEventListener('pointerdown', (e) => {
+          if (!wideMq.matches || e.button !== 0) return;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startW = panels[side].getBoundingClientRect().width;
+          handle.setPointerCapture(e.pointerId);
+          body.classList.add('is-resizing');
+          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const up = () => {
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', up);
+            handle.removeEventListener('pointercancel', up);
+            body.classList.remove('is-resizing');
+            setWidth(side, panels[side].getBoundingClientRect().width, true);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', up);
+          handle.addEventListener('pointercancel', up);
+        });
+        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('keydown', (e) => {
+          const step = e.shiftKey ? 64 : 16;
+          const cur = panels[side].getBoundingClientRect().width;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+        });
+      });
+      applyWidths();
+      const onMq = () => { overlay = null; sync(); };
+      wideMq.addEventListener('change', onMq);
+      roomyMq.addEventListener('change', onMq);
+
+      // ---------- 목차의 진행 표시 ----------
+      const progressN = document.getElementById('progress-n');
+      const progressBar = document.getElementById('progress-bar');
+      const progressTotal = document.getElementById('progress-total');
+      function markToc(done, total, doneLabel) {
+        panels.left.querySelectorAll('.toc-list a').forEach((a) => {
+          const id = decodeURIComponent(a.getAttribute('href').slice(1));
+          let mark = a.querySelector('.toc-mark');
+          if (!mark) {
+            mark = document.createElement('span');
+            mark.className = 'toc-mark';
+            mark.setAttribute('aria-hidden', 'true');
+            const state = document.createElement('span');
+            state.className = 'sr-only toc-state';
+            a.append(mark, state);
+          }
+          const isDone = done.has(id);
+          mark.classList.toggle('is-done', isDone);
+          mark.innerHTML = isDone ? ICON_DONE : ICON_TODO;
+          a.querySelector('.toc-state').textContent = isDone ? ' (' + doneLabel + ')' : '';
+        });
+        progressN.textContent = String(done.size);
+        progressTotal.textContent = String(total);
+        progressBar.style.transform = 'scaleX(' + (total ? done.size / total : 0) + ')';
+      }
+      function revealCurrent() {
+        const link = panels.left.querySelector('.toc-list a[aria-current="true"]');
+        if (link && layout.dataset.left === 'open') link.scrollIntoView({ block: 'nearest' });
+      }
+
+      // ---------- 복습문제: 오른쪽 = 원문 · 힌트 · 풀이 ----------
+      function setupReview() {
+        const KEY = 'od-review-solved:' + RANGE;
+        const cards = Array.from(document.querySelectorAll('main article.card'));
+        const aids = panels.right.querySelector('.aids');
+        const sub = document.getElementById('aid-for');
+        const empty = panels.right.querySelector('.panel-empty');
+        const btn = document.getElementById('solved-btn');
+        const groups = {};
+        const solved = new Set(tabStore.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        cards.forEach((card) => {
+          const g = document.createElement('div');
+          g.className = 'aid';
+          g.dataset.cardId = card.id;
+          g.hidden = true;
+          card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
+          aids.appendChild(g);
+          groups[card.id] = g;
+        });
+        let curId = null;
+        function paintBtn() {
+          const on = solved.has(curId);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.innerHTML = (on ? ICON_DONE : ICON_TODO) + '<span>' + (on ? '푼 문제 · 표시 해제' : '푼 문제로 표시') + '</span>';
+        }
+        btn.addEventListener('click', () => {
+          if (!curId) return;
+          if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
+          tabStore.set(KEY, Array.from(solved));
+          paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:answer', ({detail}) => {
+          if (!cards.some(c => c.id === detail.id)) return;
+          if (detail.restored && detail.selected !== null) return;
+          if (detail.selected === null) solved.delete(detail.id);
+          else solved.add(detail.id);
+          tabStore.set(KEY, Array.from(solved));
+          if (curId) paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          curId = s.matches('article.card') ? s.id : null;
+          Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
+          empty.hidden = Boolean(curId);
+          btn.hidden = !curId;
+          sub.textContent = curId ? ((s.querySelector('h3') || {}).textContent || '').trim() : '';
+          sub.hidden = !curId;
+          if (curId) paintBtn();
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(solved, cards.length, '푼 문제');
+          revealCurrent();
+        });
+      }
+
+      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
+      function setupNote() {
+        const KEY = 'od-note-read:' + RANGE;
+        const topics = Array.from(document.querySelectorAll('main article.topic'));
+        const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
+        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
+        const box = panels.right.querySelector('.sums');
+        const sums = {};
+        topics.forEach((t) => {
+          const el = t.querySelector(':scope > .sum');
+          if (!el) return;
+          el.hidden = true;
+          box.appendChild(el);
+          sums[t.id] = el;
+        });
+        const sub = document.getElementById('sum-for');
+        const empty = document.getElementById('sum-empty');
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          const key = s.matches('article.topic') ? s.id : 'intro';
+          Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
+          empty.hidden = Boolean(sums[key]);
+          sub.textContent = key === 'intro' ? '전체 흐름' : ((s.querySelector('h3') || {}).textContent || '').trim();
+          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(read, topics.length, '읽음');
+          revealCurrent();
+        });
+      }
+
+      if (kind === 'review') setupReview();
+      if (kind === 'note') setupNote();
+      sync();
+    })();
+  </script>
+  <script id="pager-ui">
+    (function () {
+      const root = document.documentElement;
+      const main = document.querySelector('main');
+      const hero = main.querySelector('.hero');
+      const screens = [hero].concat(Array.from(main.querySelectorAll(document.body.dataset.screens)));
+      if (screens.length < 2) { root.classList.remove('js'); return; }
+      screens.forEach((s) => s.classList.add('screen'));
+
+      const last = screens.length - 1;
+      const prevBtn = document.getElementById('pager-prev');
+      const nextBtn = document.getElementById('pager-next');
+      const count = document.getElementById('pager-count');
+      const bar = document.getElementById('pager-bar');
+      const status = document.getElementById('pager-status');
+      const toc = document.querySelector('#panel-left .toc');
+      const scroller = document.querySelector('.content');
+      const titleOf = (s) => ((s.querySelector('h3') || s.querySelector('h1') || {}).textContent || '').trim();
+      let cur = -1;
+
+      // 목차: 섹션 링크 아래에 화면(토픽·카드) 목록을 붙인다
+      const tocLinks = [];
+      Array.from(toc.querySelectorAll(':scope > a')).forEach((a) => {
+        const sec = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+        const group = document.createElement('div');
+        group.className = 'toc-group';
+        a.replaceWith(group);
+        group.appendChild(a);
+        if (!sec) return;
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        screens.forEach((s, i) => {
+          if (!sec.contains(s)) return;
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#' + s.id;
+          link.innerHTML = '<span class="toc-title"></span>';
+          link.firstChild.textContent = titleOf(s);
+          li.appendChild(link);
+          list.appendChild(li);
+          tocLinks[i] = link;
+        });
+        group.appendChild(list);
+      });
+
+      function indexFor(hash) {
+        const id = decodeURIComponent((hash || '').replace(/^#/, ''));
+        const el = id && document.getElementById(id);
+        if (!el || !main.contains(el)) return { i: 0 };
+        const i = screens.findIndex((s) => s.contains(el) || el.contains(s));
+        return { i: Math.max(i, 0), target: i >= 0 && screens[i].contains(el) && screens[i] !== el ? el : null };
+      }
+
+      function render(i, target) {
+        const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
+        if (i !== cur) {
+          if (cur >= 0) document.dispatchEvent(new CustomEvent('od:leave', { detail: { index: cur, screen: screens[cur] } }));
+          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
+          main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
+          const s = screens[i];
+          const sec = s.closest('section');
+          if (sec) sec.classList.add('is-on');
+          s.classList.add('is-current');
+          if (dir) { s.classList.remove('enter-next', 'enter-prev'); void s.offsetWidth; s.classList.add(dir); }
+          cur = i;
+          document.body.classList.toggle('at-end', i === last);
+          prevBtn.disabled = i === 0;
+          nextBtn.textContent = i === 0 ? '시작하기' : i === last ? '처음으로' : '다음';
+          count.textContent = i === 0 ? '' : i + ' / ' + last;
+          bar.style.transform = 'scaleX(' + (i / last) + ')';
+          status.textContent = i === 0 ? titleOf(s) : i + ' / ' + last + ', ' + titleOf(s);
+          tocLinks.forEach((link, k) => link && link.setAttribute('aria-current', String(k === i)));
+          document.dispatchEvent(new CustomEvent('od:screen', { detail: { index: i, screen: s } }));
+        }
+        if (target) target.scrollIntoView({ block: 'start' });
+        else scroller.scrollTo(0, 0);
+      }
+
+      function go(i) {
+        i = Math.min(Math.max(i, 0), last);
+        if (i === cur) return;
+        const url = i === 0 ? location.pathname + location.search : '#' + screens[i].id;
+        history.pushState(null, '', url);
+        render(i);
+      }
+
+      prevBtn.addEventListener('click', () => go(cur - 1));
+      nextBtn.addEventListener('click', () => go(cur === last ? 0 : cur + 1));
+      const fromUrl = () => { const r = indexFor(location.hash); render(r.i, r.target); };
+      window.addEventListener('hashchange', fromUrl);
+      window.addEventListener('popstate', fromUrl);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+
+      // 좌우로 밀어서 넘기기 (가로로 스크롤되는 영역은 제외)
+      let sx = 0, sy = 0, skip = true;
+      main.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (skip) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 64 && Math.abs(dx) > 2 * Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      fromUrl();
+    })();
+  </script>
+<!-- review-interaction:start -->
+<style>
+/* Progressive enhancement: original source remains readable without scripts. */
+.review-ready .choices { list-style:none; padding:0; }
+.review-ready .choices > li { margin:0 0 var(--s3); }
+.review-choice {
+  display:block; width:100%; min-height:44px; text-align:left; font:inherit;
+  color:var(--ink); background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:12px 16px; cursor:pointer; overflow-wrap:anywhere;
+}
+.review-choice:hover { border-color:var(--accent); }
+.review-choice:focus-visible, .review-reset:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+.review-choice[aria-expanded] { position:relative; padding-right:44px; }
+.review-choice[aria-expanded]::after { content:""; position:absolute; right:18px; top:20px; width:8px; height:8px; border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor; transform:rotate(45deg); }
+.review-choice[aria-expanded="true"]::after { transform:rotate(225deg); top:24px; }
+.review-choice[data-result="correct"], .review-choice[data-result="intended"] { border:3px solid var(--accent); }
+.review-choice[data-result="selected"] { border:3px solid var(--danger); }
+.review-choice[data-result="uncertain"] { border:3px solid var(--ink-2); }
+.review-choice-label { display:block; margin-top:6px; font-size:var(--fs-small); font-weight:700; color:var(--ink); }
+.review-choice-label[hidden], .review-diagnostic[hidden], .review-extra[hidden],
+.review-reset[hidden], .review-diagnostics[hidden] { display:none; }
+.review-diagnostics { list-style:none; padding:0; margin:0; }
+.review-diagnostic { padding:12px 16px 8px; color:var(--ink-2); overflow-wrap:anywhere; }
+.review-status { margin:var(--s3) 0; font-weight:650; }
+.review-status:empty { display:none; }
+.review-reset { min-height:44px; margin:var(--s2) 0 var(--s4); }
+.review-choice-content { padding:var(--s2) 0; }
+/* Look comes from the template's .solved-btn; only visibility and focus live here. */
+.review-unsure[hidden] { display:none; }
+.review-unsure.solved-btn[aria-pressed="true"] { border-color:#ffa030; color:#ffa030; }
+.review-unsure:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+.review-feedback {
+  position:fixed; top:calc(env(safe-area-inset-top) + 72px); left:50%; z-index:100;
+  transform:translateX(-50%); width:max-content; max-width:calc(100vw - 32px);
+  display:flex; align-items:center; gap:12px; padding:10px 16px;
+  border:2px solid var(--line); border-radius:12px; background:var(--bg);
+  color:var(--ink); font-weight:700; pointer-events:none;
+  animation:review-feedback-in 180ms ease-out both;
+}
+.review-feedback[data-result="correct"] { border-color:var(--accent); }
+.review-feedback[data-result="incorrect"] { border-color:var(--danger); }
+.review-feedback[data-result="saved"], .review-feedback[data-result="downloaded"] { border-color:var(--accent); }
+.review-feedback[data-result="saved"] .review-feedback-icon,
+.review-feedback[data-result="downloaded"] .review-feedback-icon { border-radius:50%; background:var(--accent); }
+.review-feedback[data-result="saved"] .review-feedback-icon::after,
+.review-feedback[data-result="downloaded"] .review-feedback-icon::after {
+  content:""; position:absolute; left:7px; top:3px; width:5px; height:10px;
+  border:solid var(--on-btn); border-width:0 2px 2px 0; rotate:45deg;
+}
+.review-feedback[data-result="unsure"] .review-feedback-icon { display:none; }
+.review-feedback[data-result="wrong-folder"] .review-feedback-icon { display:none; }
+.review-feedback[data-result="cancelled"] .review-feedback-icon { display:none; }
+.review-feedback-icon { position:relative; flex:none; width:20px; height:20px; }
+.review-feedback[data-result="correct"] .review-feedback-icon {
+  border-radius:50%; background:var(--accent); transform:scale(.45);
+  animation:review-pop 350ms ease-out both;
+}
+.review-feedback[data-result="correct"] .review-feedback-icon::before,
+.review-feedback[data-result="correct"] .review-feedback-icon::after {
+  content:""; position:absolute; left:8px; top:8px; width:4px; height:4px;
+  border-radius:50%; background:var(--accent);
+  box-shadow:0 -16px var(--accent), 16px 0 var(--accent), 0 16px var(--accent), -16px 0 var(--accent);
+  animation:review-burst 650ms ease-out both;
+}
+.review-feedback[data-result="correct"] .review-feedback-icon::after {
+  rotate:45deg; animation-delay:80ms;
+}
+.review-feedback[data-result="incorrect"] .review-feedback-icon {
+  animation:review-shake 320ms ease-in-out;
+}
+.review-feedback[data-result="incorrect"] .review-feedback-icon::before,
+.review-feedback[data-result="incorrect"] .review-feedback-icon::after {
+  content:""; position:absolute; left:9px; top:0; width:3px; height:20px;
+  border-radius:2px; background:var(--danger); rotate:45deg;
+}
+.review-feedback[data-result="incorrect"] .review-feedback-icon::after { rotate:-45deg; }
+@keyframes review-feedback-in {
+  from { opacity:0; translate:0 -8px; } to { opacity:1; translate:0 0; }
+}
+@keyframes review-pop {
+  from { transform:scale(.35); opacity:.5; } to { transform:scale(.65); opacity:1; }
+}
+@keyframes review-shake {
+  0%,100% { translate:0; } 25%,75% { translate:-5px; } 50% { translate:5px; }
+}
+@keyframes review-burst {
+  from { opacity:1; scale:.45; } to { opacity:0; scale:1.5; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .review-feedback, .review-feedback-icon, .review-feedback-icon::before,
+  .review-feedback-icon::after { animation:none !important; }
+  .review-feedback[data-result="correct"] .review-feedback-icon::before,
+  .review-feedback[data-result="correct"] .review-feedback-icon::after { display:none; }
+}
+.review-export-bar {
+  display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:12px;
+  max-width:var(--measure); margin:0 auto; padding:12px 16px 0;
+}
+body:not(.at-end) .review-export-bar { display:none; }
+.review-export-note { margin:0; font-size:var(--fs-small); color:var(--ink-2); }
+.review-export-note:empty { display:none; }
+.review-export-help-wrap { position:relative; }
+.review-export-help {
+  width:32px; height:32px; padding:0; border:1px solid var(--line); border-radius:50%;
+  color:var(--ink-2); font-weight:700; line-height:1;
+}
+.review-export-popup {
+  position:absolute; bottom:calc(100% + 10px); left:50%; translate:-50% 0; z-index:20;
+  width:min(320px, calc(100vw - 32px)); padding:14px 16px;
+  background:var(--surface); color:var(--ink); border:1px solid var(--line); border-radius:12px;
+  box-shadow:0 8px 24px rgba(0,0,0,.18); text-align:left;
+}
+.review-export-popup[hidden] { display:none; }
+.review-export-popup-text { margin:0 0 8px; font-size:var(--fs-small); line-height:1.6; }
+.review-export-popup-close { display:block; margin-left:auto; }
+@media print {
+  .review-export-bar { display:none !important; }
+  .review-feedback { display:none !important; }
+  .review-reset, .review-status, .review-choice-label, .review-unsure { display:none !important; }
+  .review-diagnostic[hidden] { display:list-item !important; }
+  .review-diagnostics[hidden] { display:block !important; }
+  .review-choice::after { display:none; }
+  .review-extra[hidden] { display:block !important; }
+  .review-choice { border:0 !important; box-shadow:none !important; padding:0; }
+}
+
+</style>
+<script id="review-interaction-model" type="application/json">{"cards": {"p1": {"answer": "E", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "8b851c98532bd4417878e54edf0662c360f3fe70052945bc076628c2cd488121"}, "p10": {"answer": "C", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "69294a49cb79724303cc5be65bd098cff129c2b084a25e6c29b4226c86f6842e"}, "p11": {"answer": "A", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "e86436233108cce2af3f43ee4a36580bb35b48b5898bd210bbc5f7034aefd583"}, "p12": {"answer": "B", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "2cdbf93b142bb0789397f1de57f3e2f32911350cbb9875326b1eb2b4597b76d6"}, "p13": {"answer": "C", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "d132ca8dc3e25bca73add3e776d8e7fa3d307cdab8162748f4adeb1997a90359"}, "p14": {"answer": "E", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "f8137bba59403f793a3766d03101b28ae8d8c0c5a6573852ec46891aba290134"}, "p15": {"answer": "D", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "ebfd51bb5518050406462cc0213c6ed5e7654191d094f2f64275315248c5bcf0"}, "p2": {"answer": "B", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "ed36e65db8f2bae94e0b6d8ce9994719ecbe6e668ec54b6257d573db17c2bb66"}, "p3": {"answer": "D", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "e13c26e6624f908442251d65d7db9f56aa601c39e40b9b3cd8e36f85ff5b3188"}, "p4": {"answer": "A", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "d2e69ca7fe9b92b9535746c4f173455c1cc8fe6b657605a1561773b86c85f114"}, "p5": {"answer": "C", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "7591c8caf4665c5c89defae1d7adbac7ebfdaf96df7d95ea570f687e8fed4dcb"}, "p6": {"answer": "D", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "086d2aff77d8d35c9e45229721b01e98eae67eadc25be2291479b0dc2398c242"}, "p7": {"answer": "B", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "1ad92613b4130f0f528c07d8ea24c7951798815d7f857340c668d6a516652ac8"}, "p8": {"answer": "A", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "71f5e1af6f7d879acce6be96c3b451537cd90bf1077af99b7bfae03e21170db3"}, "p9": {"answer": "E", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "f1872845001aef12fde49140d33dc3ff5262b9092641a72ede5fa878d16a34ba"}}, "documentId": "복습문제_5장_웹과제예상_v4.html", "errors": [], "schema": 1, "skipped": ["o1", "o2"]}</script>
+<script>
+(function (scope) {
+  'use strict';
+  function stripDiagnosticPrefix(text, id) {
+    const match = text.match(/^\s*(?:\((\d+)\)|([A-Z])[.)])\s*/);
+    return match && (match[1] || match[2]) === id ? text.slice(match[0].length) : text;
+  }
+  function scrollAnswerIntoView(scroller, selectedLi, answerLi, selectedButton, answerButton) {
+    if (!scroller || !selectedLi.getClientRects().length) return;
+    const viewport = scroller.getBoundingClientRect();
+    const height = scroller.clientHeight;
+    const margin = 16;
+    const span = (a, b) => {
+      const x = a.getBoundingClientRect(), y = b.getBoundingClientRect();
+      return {top:Math.min(x.top, y.top), bottom:Math.max(x.bottom, y.bottom)};
+    };
+    let target = span(selectedLi, answerLi);
+    if (target.bottom - target.top > height - 2 * margin)
+      target = span(selectedButton, answerButton);
+    if (target.bottom - target.top > height - 2 * margin)
+      target = span(selectedButton, selectedButton);
+    scroller.scrollTop += (target.top + target.bottom - viewport.top - viewport.bottom) / 2;
+  }
+  function grade(card, selected) {
+    if (!card.options.some(o => o.id === selected)) return null;
+    if (card.mode === 'ambiguous') return 'ambiguous';
+    return selected === card.answer ? 'correct' : 'incorrect';
+  }
+  function storageKey(documentId, cardId) {
+    return 'od-review-attempt:v1:' + encodeURIComponent(documentId) + ':' + encodeURIComponent(cardId);
+  }
+  function readAttempt(storage, key, card) {
+    try {
+      const value = JSON.parse(storage.getItem(key));
+      return value && value.version === card.version && grade(card, value.selected) !== null ? value.selected : null;
+    } catch { return null; }
+  }
+  function readUnsure(storage, key, card) {
+    try {
+      const value = JSON.parse(storage.getItem(key));
+      return !!value && value.version === card.version && grade(card, value.selected) === 'correct' && value.unsure === true;
+    } catch { return false; }
+  }
+  function writeAttempt(storage, key, card, selected, unsure) {
+    try {
+      if (selected === null) storage.removeItem(key);
+      else storage.setItem(key, JSON.stringify({version:card.version, selected, unsure:unsure === true}));
+    } catch {}
+  }
+  function exportKey(documentId) {
+    return 'od-review-export:v1:' + encodeURIComponent(documentId);
+  }
+  function readSnapshot(storage, key) {
+    const empty = () => ({schema:1, cards:{}});
+    try {
+      const value = JSON.parse(storage.getItem(key));
+      return value && value.schema === 1 && value.cards && typeof value.cards === 'object' && !Array.isArray(value.cards)
+        ? value : empty();
+    } catch { return empty(); }
+  }
+  function writeSnapshot(storage, key, snapshot) {
+    try { storage.setItem(key, JSON.stringify(snapshot)); } catch {}
+  }
+  function updateSnapshot(snapshot, selectedById, ids, now, unsureById) {
+    const cards = Object.assign({}, snapshot.cards);
+    for (const id of ids) {
+      const selected = selectedById[id] === undefined ? null : selectedById[id];
+      const unsure = selected !== null && !!unsureById && unsureById[id] === true;
+      const prev = cards[id];
+      if (prev && prev.selected === selected && (prev.unsure === true) === unsure) continue;
+      cards[id] = {selected, unsure, updatedAt: selected === null ? null : now.toISOString()};
+    }
+    return {schema:1, cards};
+  }
+  function buildExport(model, snapshot, meta) {
+    const counts = {correct:0, incorrect:0, ambiguous:0};
+    let unsure = 0;
+    const cards = meta.ids.map(id => {
+      const data = model.cards[id];
+      const entry = snapshot.cards[id] || {};
+      const result = grade(data, entry.selected);
+      if (result !== null) counts[result] += 1;
+      const marked = result !== null && entry.unsure === true;
+      if (marked) unsure += 1;
+      return {
+        id, title: meta.titles[id] || '',
+        selected: result === null ? null : entry.selected,
+        answer: data.answer, result, unsure: marked,
+        updatedAt: result === null ? null : (entry.updatedAt || null)
+      };
+    });
+    const answered = counts.correct + counts.incorrect + counts.ambiguous;
+    return {
+      schema:1, documentId:model.documentId, range:meta.range, exportedAt:meta.now.toISOString(),
+      summary:{total:cards.length, answered, unanswered:cards.length - answered,
+        correct:counts.correct, incorrect:counts.incorrect, ambiguous:counts.ambiguous, unsure},
+      skipped: model.skipped || [], cards
+    };
+  }
+  function exportFilename(documentId, now) {
+    const p = n => String(n).padStart(2, '0');
+    const stamp = now.getFullYear() + p(now.getMonth() + 1) + p(now.getDate()) +
+      '-' + p(now.getHours()) + p(now.getMinutes());
+    return documentId.replace(/\.html?$/i, '') + '_풀이기록_' + stamp + '.json';
+  }
+  function handleStore(win) {
+    const run = async (mode, fn) => {
+      const db = await new Promise((resolve, reject) => {
+        const req = win.indexedDB.open('od-review-export', 1);
+        req.onupgradeneeded = () => req.result.createObjectStore('handles');
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+      try {
+        return await new Promise((resolve, reject) => {
+          const tx = db.transaction('handles', mode);
+          const req = fn(tx.objectStore('handles'));
+          tx.oncomplete = () => resolve(req.result);
+          tx.onerror = tx.onabort = () => reject(tx.error);
+        });
+      } finally { db.close(); }
+    };
+    return {
+      get: () => run('readonly', st => st.get('root')).then(h => h || null, () => null),
+      set: h => run('readwrite', st => st.put(h, 'root')).catch(() => {}),
+      clear: () => run('readwrite', st => st.delete('root')).catch(() => {})
+    };
+  }
+  async function resolveExportDir(root, documentId, range) {
+    const child = async (dir, name, create) => {
+      try { return await dir.getDirectoryHandle(name, create ? {create:true} : undefined); }
+      catch (error) { if (error && error.name === 'NotFoundError') return null; throw error; }
+    };
+    const inAssets = async dir => child(await child(dir, '.assets', true), '풀이기록', true);
+    if (root.name === '풀이기록') return root;
+    if (root.name === '.assets') return child(root, '풀이기록', true);
+    if (root.name === '복습노트') {
+      const day = range ? await child(root, range, false) : null;
+      return day ? inAssets(day) : null;
+    }
+    try { await root.getFileHandle(documentId); }
+    catch (error) { if (error && error.name === 'NotFoundError') return null; throw error; }
+    return inAssets(root);
+  }
+  const isCancel = error => !!error && (error.name === 'AbortError' || error.name === 'NotAllowedError');
+  // The first export asks for the folder once and remembers it (IndexedDB), so
+  // later exports write straight into <날짜>/.assets/풀이기록 without a picker.
+  async function saveExport(win, text, filename, meta) {
+    meta = meta || {};
+    if (typeof win.showDirectoryPicker === 'function') {
+      const store = meta.store || handleStore(win);
+      const write = async root => {
+        const dir = await resolveExportDir(root, meta.documentId, meta.range);
+        if (!dir) return 'wrong-folder';
+        const file = await dir.getFileHandle(filename, {create:true});
+        const out = await file.createWritable();
+        await out.write(text);
+        await out.close();
+        return 'saved';
+      };
+      try {
+        const remembered = await store.get();
+        if (remembered) {
+          try {
+            let permission = await remembered.queryPermission({mode:'readwrite'});
+            if (permission !== 'granted') permission = await remembered.requestPermission({mode:'readwrite'});
+            if (permission !== 'granted') return 'cancelled';
+            if (await write(remembered) === 'saved') return 'saved';
+          } catch (error) { if (isCancel(error)) return 'cancelled'; }
+          await store.clear();
+        }
+        const root = await win.showDirectoryPicker({mode:'readwrite', id:'od-review-export'});
+        const result = await write(root);
+        if (result === 'saved') await store.set(root);
+        return result;
+      } catch (error) {
+        if (isCancel(error)) return 'cancelled';
+      }
+    }
+    const url = win.URL.createObjectURL(new win.Blob([text], {type:'application/json'}));
+    const a = win.document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    win.document.body.append(a);
+    a.click();
+    a.remove();
+    win.setTimeout(() => win.URL.revokeObjectURL(url), 1000);
+    return 'downloaded';
+  }
+  function mount(root, model, storage) {
+    if (!model || model.schema !== 1 || !model.cards) return;
+    const win = root.defaultView;
+    const emit = (id, selected, result, restored = false) => root.dispatchEvent(
+      new win.CustomEvent('od:answer', {detail:{id, selected, result, restored}}));
+    const element = (tag, cls, text) => {
+      const el = root.createElement(tag);
+      el.className = cls;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    };
+    const selectedById = {};
+    const unsureById = {};
+    let feedback = null;
+    let feedbackTimer = null;
+    let feedbackOwner = null;
+    function clearFeedback(owner = null) {
+      if (owner !== null && owner !== feedbackOwner) return;
+      if (feedbackTimer !== null) win.clearTimeout(feedbackTimer);
+      feedbackTimer = null;
+      if (feedback) feedback.remove();
+      feedback = null;
+      feedbackOwner = null;
+    }
+    function showFeedback(result, id, message, duration) {
+      clearFeedback();
+      if (!message && result !== 'correct' && result !== 'incorrect') return;
+      feedback = element('div', 'review-feedback');
+      feedback.dataset.reviewFeedback = '';
+      feedback.dataset.result = result;
+      feedback.setAttribute('aria-hidden', 'true');
+      feedback.append(
+        element('span', 'review-feedback-icon'),
+        element('span', 'review-feedback-text', message || (result === 'correct' ? '정답이에요' : '다시 확인해요'))
+      );
+      root.body.append(feedback);
+      feedbackOwner = id;
+      feedbackTimer = win.setTimeout(clearFeedback, duration || 1100);
+    }
+    const UNSURE_ICON_OFF = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+    const UNSURE_ICON_ON = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+    for (const [id, data] of Object.entries(model.cards)) {
+      const card = root.getElementById(id);
+      if (!card || card.classList.contains('review-ready')) continue;
+      const aid = Array.from(root.querySelectorAll('.aid')).find(n => n.dataset.cardId === id);
+      const solution = (aid || card).querySelector('details.solution');
+      const choices = Array.from(card.querySelectorAll('.choices > li'));
+      const diagnostics = solution ? Array.from(solution.querySelectorAll('ol.steps > li')) : [];
+      const options = data.options;
+      // Validate every reference before moving a single original node.
+      if (!solution || !Array.isArray(options) || choices.length !== options.length ||
+          !options.length || !options.some(o => o.id === data.answer) ||
+          new Set(options.map(o => o.index)).size !== options.length ||
+          new Set(options.map(o => o.diagnostic)).size !== options.length ||
+          options.some(o => !choices[o.index] || !diagnostics[o.diagnostic])) continue;
+      const positions = diagnostics.map(n => ({node:n, parent:n.parentNode, next:n.nextSibling}));
+      const diagnosticTexts = [];
+      const choiceNodes = choices.map(n => Array.from(n.childNodes));
+      const summary = solution.querySelector('summary');
+      const summaryText = summary ? summary.textContent : '';
+      const originalOpen = solution.open;
+      const originalHidden = solution.hidden;
+      let status, reset, notice, unsureBtn;
+      try {
+        // Some future cards supply the caution only as metadata. Keep its full
+        // explanation in the solution panel, without duplicating existing prose.
+        const compact = text => text.replace(/\s+/g, '');
+        if (data.mode === 'ambiguous' && data.notice &&
+            !compact(solution.textContent).includes(compact(data.notice))) {
+          notice = element('p', 'review-notice', data.notice);
+          solution.append(notice);
+        }
+        const controls = options.map(o => {
+          const li = choices[o.index];
+          const button = element('button', 'review-choice');
+          button.type = 'button';
+          const complex = li.querySelector('a,button,input,select,textarea,table,div,p,figure,ul,ol');
+          if (complex) {
+            button.textContent = o.id + '번 선택';
+            const content = element('div', 'review-choice-content');
+            content.id = id + '-choice-content-' + o.index;
+            content.append(...Array.from(li.childNodes));
+            button.setAttribute('aria-describedby', content.id);
+            li.append(button, content);
+          } else {
+            button.append(...Array.from(li.childNodes));
+            li.append(button);
+          }
+          const badge = element('span', 'review-choice-label');
+          badge.hidden = true;
+          button.append(badge);
+          button.setAttribute('aria-pressed', 'false');
+          const list = element('ol', 'review-diagnostics');
+          list.id = id + '-review-diagnostics-' + o.index;
+          const diagnostic = diagnostics[o.diagnostic];
+          const first = diagnostic.firstChild;
+          if (first && first.nodeType === 3) {
+            diagnosticTexts.push({node:first, text:first.textContent});
+            first.textContent = stripDiagnosticPrefix(first.textContent, o.id);
+          }
+          diagnostic.classList.add('review-diagnostic');
+          diagnostic.hidden = true;
+          list.append(diagnostic);
+          li.append(list);
+          return {id:o.id, button, badge, diagnostic, list};
+        });
+        status = element('p', 'review-status');
+        status.setAttribute('role', 'status');
+        status.setAttribute('aria-live', 'polite');
+        reset = element('button', 'review-reset text-btn', '다시 풀기');
+        reset.type = 'button';
+        card.querySelector('.choices').before(status);
+        card.querySelector('.choices').after(reset);
+        const key = storageKey(model.documentId, id);
+        let selected = readAttempt(storage, key, data);
+        let unsure = selected !== null && readUnsure(storage, key, data);
+        selectedById[id] = selected;
+        unsureById[id] = unsure;
+        unsureBtn = element('button', 'review-unsure solved-btn');
+        unsureBtn.type = 'button';
+        // Same look and place as the 푼 문제 button: bottom of the aid panel.
+        (aid || solution).append(unsureBtn);
+        const expanded = new Set(selected === null ? [] : [selected, data.answer]);
+        function paintDisclosure(c) {
+          const answered = selected !== null;
+          const open = answered && expanded.has(c.id);
+          c.diagnostic.hidden = !open;
+          c.list.hidden = !open;
+          if (answered) {
+            c.button.setAttribute('aria-expanded', String(open));
+            c.button.setAttribute('aria-controls', c.list.id);
+          } else {
+            c.button.removeAttribute('aria-expanded');
+            c.button.removeAttribute('aria-controls');
+          }
+        }
+        function paint() {
+          const answered = selected !== null;
+          const result = grade(data, selected);
+          reset.hidden = !answered;
+          unsureBtn.hidden = result !== 'correct';
+          unsureBtn.innerHTML = (unsure ? UNSURE_ICON_ON : UNSURE_ICON_OFF) +
+            '<span>' + (unsure ? '애매함 표시 취소' : '애매함으로 표시') + '</span>';
+          unsureBtn.setAttribute('aria-pressed', String(unsure));
+          unsureBtn.dataset.unsure = String(unsure);
+          status.textContent = !answered ? '' : result === 'ambiguous'
+            ? '단일 정답 판정 주의'
+            : result === 'correct' ? '정답이에요.' : '정답이 아니에요. 보기별 이유를 확인해 보세요.';
+          status.dataset.result = result || '';
+          controls.forEach(c => {
+            c.button.dataset.selected = String(c.id === selected);
+            if (answered) c.button.removeAttribute('aria-pressed');
+            else c.button.setAttribute('aria-pressed', 'false');
+            c.button.dataset.result = !answered ? '' : c.id === data.answer
+              ? (data.mode === 'ambiguous' ? 'intended' : 'correct')
+              : c.id === selected ? (data.mode === 'ambiguous' ? 'uncertain' : 'selected') : '';
+            c.badge.hidden = !answered;
+            c.badge.textContent = !answered ? '' : [
+              c.id === selected ? '내 선택' : '',
+              c.id === data.answer ? (data.mode === 'ambiguous' ? '출제 의도상 답' : '정답')
+                : data.mode === 'single' ? '정답 아님' : ''
+            ].filter(Boolean).join(' · ');
+            paintDisclosure(c);
+          });
+          solution.hidden = !answered;
+          solution.open = answered;
+          if (summary) summary.textContent = '추가 해설 · 수업과의 연결';
+        }
+        controls.forEach(c => c.button.addEventListener('click', () => {
+          if (selected !== null) {
+            if (expanded.has(c.id)) expanded.delete(c.id);
+            else expanded.add(c.id);
+            paintDisclosure(c);
+            return;
+          }
+          selected = c.id;
+          selectedById[id] = selected;
+          unsure = false;
+          unsureById[id] = false;
+          expanded.add(selected);
+          expanded.add(data.answer);
+          writeAttempt(storage, key, data, selected);
+          paint();
+          emit(id, selected, grade(data, selected));
+          showFeedback(grade(data, selected), id);
+          const selectedOption = options.find(o => o.id === selected);
+          const answerOption = options.find(o => o.id === data.answer);
+          const selectedControl = controls.find(control => control.id === selected);
+          const answerControl = controls.find(control => control.id === data.answer);
+          win.requestAnimationFrame(() => {
+            if (!card.isConnected || !card.getClientRects().length) return;
+            scrollAnswerIntoView(root.querySelector('.content'),
+              choices[selectedOption.index], choices[answerOption.index],
+              selectedControl.button, answerControl.button);
+          });
+        }));
+        reset.addEventListener('click', () => {
+          clearFeedback(id);
+          selected = null;
+          selectedById[id] = null;
+          unsure = false;
+          unsureById[id] = false;
+          expanded.clear();
+          writeAttempt(storage, key, data, null);
+          paint();
+          emit(id, null, null);
+          root.dispatchEvent(new win.CustomEvent('od:mark', {detail:{id}}));
+          controls[0].button.focus();
+        });
+        unsureBtn.addEventListener('click', () => {
+          if (selected === null) return;
+          unsure = !unsure;
+          unsureById[id] = unsure;
+          writeAttempt(storage, key, data, selected, unsure);
+          paint();
+          root.dispatchEvent(new win.CustomEvent('od:mark', {detail:{id}}));
+          showFeedback('unsure', id, unsure ? '애매함으로 표시했어요' : '애매함 표시를 취소했어요');
+        });
+        card.classList.add('review-ready');
+        solution.classList.add('review-extra');
+        paint();
+        if (selected !== null) emit(id, selected, grade(data, selected), true);
+        else {
+          try {
+            if (storage.getItem(key) !== null) {
+              writeAttempt(storage, key, data, null);
+              emit(id, null, null, true);
+            }
+          } catch {}
+        }
+      } catch (error) {
+        // Keep a readable static question if enhancement cannot be completed.
+        diagnosticTexts.forEach(p => { p.node.textContent = p.text; });
+        choices.forEach((li, i) => li.replaceChildren(...choiceNodes[i]));
+        positions.slice().reverse().forEach(p => {
+          p.node.hidden = false;
+          p.node.classList.remove('review-diagnostic');
+          p.parent.insertBefore(p.node, p.next);
+        });
+        for (const el of [status, reset, notice, unsureBtn]) if (el) el.remove();
+        solution.hidden = originalHidden;
+        solution.open = originalOpen;
+        if (summary) summary.textContent = summaryText;
+        solution.classList.remove('review-extra');
+        card.classList.remove('review-ready');
+        win.console.warn('문항 상호작용을 적용하지 못했습니다:', id, error);
+      }
+    }
+    const exportCards = Array.from(root.querySelectorAll('main article.card')).filter(el => model.cards[el.id]);
+    const pager = root.querySelector('.pager');
+    if (exportCards.length && pager && !pager.querySelector('.review-export-bar')) {
+      const ids = exportCards.map(el => el.id);
+      const titles = {};
+      exportCards.forEach(el => { titles[el.id] = ((el.querySelector('h3') || {}).textContent || '').trim(); });
+      const snapKey = exportKey(model.documentId);
+      let snapshot = readSnapshot(storage, snapKey);
+      root.addEventListener('od:leave', ({detail}) => {
+        const id = detail && detail.screen && detail.screen.id;
+        if (!model.cards[id]) return;
+        snapshot = updateSnapshot(snapshot, selectedById, [id], new Date(), unsureById);
+        writeSnapshot(storage, snapKey, snapshot);
+      });
+      root.addEventListener('od:mark', ({detail}) => {
+        const id = detail && detail.id;
+        if (!model.cards[id]) return;
+        snapshot = updateSnapshot(snapshot, selectedById, [id], new Date(), unsureById);
+        writeSnapshot(storage, snapKey, snapshot);
+      });
+      const bar = element('div', 'review-export-bar');
+      const button = element('button', 'btn btn-primary review-export', 'JSON 내보내기');
+      button.type = 'button';
+      const note = element('p', 'review-export-note sr-only');
+      note.setAttribute('role', 'status');
+      note.setAttribute('aria-live', 'polite');
+      const helpWrap = element('div', 'review-export-help-wrap');
+      const help = element('button', 'text-btn review-export-help', '?');
+      help.type = 'button';
+      help.setAttribute('aria-label', '저장 폴더 도움말');
+      help.setAttribute('aria-expanded', 'false');
+      const popup = element('div', 'review-export-popup');
+      popup.id = 'review-export-popup';
+      popup.setAttribute('role', 'note');
+      popup.hidden = true;
+      help.setAttribute('aria-controls', popup.id);
+      popup.append(
+        element('p', 'review-export-popup-text',
+          '처음 한 번만 이 HTML이 들어 있는 복습노트/날짜 폴더(또는 복습노트 폴더)를 골라 주세요. ' +
+          '그 뒤로는 창 없이 풀이기록 폴더에 바로 저장돼요. Chrome은 다운로드·문서·바탕 화면 자체는 막아요.'),
+        element('button', 'text-btn review-export-popup-close', '닫기'));
+      popup.querySelector('button').type = 'button';
+      helpWrap.append(help, popup);
+      const setHelp = open => {
+        popup.hidden = !open;
+        help.setAttribute('aria-expanded', String(open));
+      };
+      help.addEventListener('click', () => setHelp(popup.hidden));
+      popup.querySelector('button').addEventListener('click', () => { setHelp(false); help.focus(); });
+      root.addEventListener('keydown', e => { if (e.key === 'Escape' && !popup.hidden) { setHelp(false); help.focus(); } });
+      root.addEventListener('click', e => { if (!popup.hidden && !helpWrap.contains(e.target)) setHelp(false); });
+      root.addEventListener('od:screen', () => setHelp(false));
+      bar.append(button, helpWrap, note);
+      pager.prepend(bar);
+      root.addEventListener('od:screen', () => { note.textContent = ''; });
+      button.addEventListener('click', async () => {
+        if (button.disabled) return;
+        button.disabled = true;
+        const now = new Date();
+        snapshot = updateSnapshot(snapshot, selectedById, ids, now, unsureById);
+        writeSnapshot(storage, snapKey, snapshot);
+        const data = buildExport(model, snapshot, {ids, titles, range: root.body.dataset.range || '', now});
+        let outcome;
+        try {
+          outcome = await saveExport(win, JSON.stringify(data, null, 2) + '\n', exportFilename(model.documentId, now),
+            {documentId: model.documentId, range: root.body.dataset.range || ''});
+        }
+        finally { button.disabled = false; }
+        const message = outcome === 'saved' ? '풀이기록 폴더에 저장했어요'
+          : outcome === 'downloaded' ? '다운로드 폴더에 저장했어요'
+          : outcome === 'wrong-folder' ? '복습노트/' + (root.body.dataset.range || '날짜') + ' 폴더를 골라 주세요'
+          : '저장을 취소했어요';
+        note.textContent = message + '.';
+        showFeedback(outcome, 'export', message, 2200);
+      });
+    }
+    // Existing page CSS hides side panels when printing. Move original details,
+    // including static questions, into their cards for print, then restore them.
+    if (!root.documentElement.dataset.reviewPrint) {
+      root.documentElement.dataset.reviewPrint = 'ready';
+      let printPositions = [];
+      win.addEventListener('beforeprint', () => {
+        if (printPositions.length) return;
+        root.querySelectorAll('.aid[data-card-id]').forEach(aid => {
+          const card = root.getElementById(aid.dataset.cardId);
+          if (!card) return;
+          Array.from(aid.children).forEach(node => {
+            printPositions.push({node, parent:aid, open:node.open});
+            if (node.tagName === 'DETAILS') node.open = true;
+            card.append(node);
+          });
+        });
+      });
+      win.addEventListener('afterprint', () => {
+        printPositions.forEach(p => {p.parent.append(p.node); p.node.open = p.open;});
+        printPositions = [];
+      });
+    }
+  }
+  const api = {stripDiagnosticPrefix, grade, storageKey, readAttempt, readUnsure, writeAttempt, mount,
+    exportKey, readSnapshot, writeSnapshot, updateSnapshot, buildExport, exportFilename, saveExport, resolveExportDir, handleStore};
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else scope.ReviewInteraction = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
+</script>
+<script>(function () {
+      function start() {
+        try {
+          let storage = null;
+          try { storage = window.sessionStorage; } catch {}
+          ReviewInteraction.mount(document, JSON.parse(document.getElementById('review-interaction-model').textContent), storage);
+        } catch (error) { console.warn('복습문제 상호작용 초기화 실패:', error); }
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
+      else start();
+    })();</script>
+<!-- review-interaction:end -->
+</body>
+</html>
