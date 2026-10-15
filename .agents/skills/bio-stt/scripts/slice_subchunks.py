@@ -80,7 +80,15 @@ def slice_chunk(input_path: str, sub_seconds: int = 150, out_dir: str | None = N
     results = []
     # 3. Wrap each subchunk into 1fps MP4
     for sub in sub_files:
-        dur = get_duration(str(sub))
+        try:
+            dur = get_duration(str(sub))
+            if dur < 0.5:
+                sub.unlink(missing_ok=True)
+                continue
+        except Exception:
+            sub.unlink(missing_ok=True)
+            continue
+
         mp4_path = sub.with_name(f"{sub.stem}_temp.mp4")
         md_path = sub.with_name(f"{sub.stem}.md")
 
