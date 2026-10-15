@@ -86,14 +86,16 @@
     /* 정확히 말하면: 본문 크기 그대로, 굵은 첫머리만 진하게 */
     .layer.formal b { font-weight: 700; color: var(--ink); }
     /* 교수님 말씀 · 주의: 보조 정보는 한 단계 작게 */
-    .layer.prof, .layer.warn { font-size: var(--fs-sub); line-height: 1.7; }
+    .layer.prof, .layer.warn, .layer.listen { font-size: var(--fs-sub); line-height: 1.7; }
     .layer.prof blockquote { font-size: var(--fs-sub); }
     .layer.prof .layer-title { color: var(--prof); }
-    .layer.warn { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn, .layer.listen { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
     .layer.warn .layer-title { color: var(--warn); font-size: var(--fs-body); }
+    .layer.listen .layer-title { color: var(--accent-ink); font-size: var(--fs-body); }
     .layer.supp .badge.supp { margin-bottom: var(--s2); }
     .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
     .badge.supp { color: var(--supp); }
+    .badge.exam { color: var(--warn); margin-right: var(--s1); }
     blockquote { margin: var(--s3) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
     ol.steps { padding-left: 1.4em; }
     ol.steps li { margin: var(--s2) 0; }
@@ -346,7 +348,7 @@
         </div>
         <p class="panel-meta">읽은 토픽 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
         <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
-        <nav class="toc" aria-label="목차"><a href="#s0">0 호흡 마무리</a><a href="#s1">1 발효</a><a href="#s2">2 광합성 개관</a><a href="#s3">3 명반응</a><a href="#s4">4 캘빈·광호흡</a><a href="#s5">5 요약·예고</a></nav>
+        <nav class="toc" aria-label="목차"><a href="#s0">0. 지난 수업 복습 </a><a href="#s1">1. 발효와 세포호흡의</a><a href="#s2">2. 광합성 개관</a><a href="#s3">3. 광의존반응(명반응</a><a href="#s4">4. 광독립반응(캘빈 </a><a href="#s5">5. 요약 · 예고</a></nav>
       </div>
     </aside>
     <div class="content">
@@ -1239,6 +1241,11 @@
         get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
         set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
       };
+      // 푼 기록은 탭(세션) 단위로만 유지: 뒤로가기·새로고침엔 남고, 창을 닫고 다시 열면 초기화
+      const tabStore = {
+        get(k, d) { try { const v = sessionStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
       const PREF = 'od-panels:' + kind;
       // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
       const RANGE = body.dataset.range || '';
@@ -1404,7 +1411,7 @@
         const empty = panels.right.querySelector('.panel-empty');
         const btn = document.getElementById('solved-btn');
         const groups = {};
-        const solved = new Set(store.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        const solved = new Set(tabStore.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
         cards.forEach((card) => {
           const g = document.createElement('div');
           g.className = 'aid';
@@ -1422,7 +1429,7 @@
         btn.addEventListener('click', () => {
           if (!curId) return;
           if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
-          store.set(KEY, Array.from(solved));
+          tabStore.set(KEY, Array.from(solved));
           paintBtn();
           markToc(solved, cards.length, '푼 문제');
         });

@@ -1,0 +1,25 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__ test_desktop_toc_and_problem_default_open_without_overriding_saved_choice ___
+
+panel_page_url = 'http://127.0.0.1:57318/stage/문제설명_0917_Recursion.html#p3'
+
+    def test_desktop_toc_and_problem_default_open_without_overriding_saved_choice(panel_page_url):
+        with sync_playwright() as pw:
+            browser = pw.chromium.launch()
+            try:
+                for width in (1024, 1280):
+                    context = browser.new_context(viewport={"width": width, "height": 900})
+                    page = context.new_page()
+                    page.goto(panel_page_url, wait_until="networkidle")
+>                   assert page.locator("#panel-left").is_visible()
+E                   AssertionError: assert False
+E                    +  where False = is_visible()
+E                    +    where is_visible = <Locator frame=<Frame name= url='http://127.0.0.1:57318/stage/%EB%AC%B8%EC%A0%9C%EC%84%A4%EB%AA%85_0917_Recursion.html#p3'> selector='#panel-left'>.is_visible
+E                    +      where <Locator frame=<Frame name= url='http://127.0.0.1:57318/stage/%EB%AC%B8%EC%A0%9C%EC%84%A4%EB%AA%85_0917_Recursion.html#p3'> selector='#panel-left'> = locator('#panel-left')
+E                    +        where locator = <Page url='http://127.0.0.1:57318/stage/%EB%AC%B8%EC%A0%9C%EC%84%A4%EB%AA%85_0917_Recursion.html#p3'>.locator
+
+test_panel_browser.py:37: AssertionError
+=========================== short test summary info ============================
+FAILED test_panel_browser.py::test_desktop_toc_and_problem_default_open_without_overriding_saved_choice
+1 failed in 2.65s
