@@ -205,6 +205,9 @@ def with_choices(path: Path, problems) -> tuple[Problem, ...]:
 
 def load_source(path: Path, repo: Path) -> SourcePack:
     path = inside(existing_path(Path(path)), Path(repo))
+    from mpe_exam import FILENAME_RE as EXAM_RE, load_exam_source
+    if re.fullmatch(EXAM_RE, nfc(path.name)):
+        return load_exam_source(path, repo)
     from mpe_forecast import FILENAME_RE, load_forecast_source
     if re.fullmatch(FILENAME_RE, nfc(path.name)):
         return load_forecast_source(path, repo)

@@ -18,10 +18,12 @@ ASSETS = Path(__file__).resolve().parents[1] / 'assets'
 SIDES = {'review': SIDE, 'forecast': PACK}  # profile → hidden folder for side files (homework: none)
 
 def side_of(pack):
+    if pack.profile == 'exam':
+        return PACK + '/' + pack.slug.rsplit('_', 1)[1]
     return SIDES.get(pack.profile)
 
 def names(pack):
-    if pack.profile == 'forecast':
+    if pack.profile in ('forecast', 'exam'):
         stem = f'문제해설_{pack.range}_{pack.slug}'
         fig, data = f'figures_{stem}', f'자료_{stem}'
     else:
@@ -30,6 +32,12 @@ def names(pack):
         fig, data = f'figures_문제설명_{range_}_{pack.slug}', f'자료_문제설명_{range_}_{pack.slug}'
     side = side_of(pack)
     return (stem, f'{side}/{fig}', f'{side}/{data}') if side else (stem, fig, data)
+
+def short_answer_html(problem):
+    model = problem.short_answer
+    return ('<div class="short-answer-reference" data-short-answer="' + problem.id + '"><h4>단답형 정답과 허용답</h4><p>'
+            + html.escape(model.canonical) + ' · 허용답: ' + html.escape(', '.join(model.accepted))
+            + ' · 대소문자 구별: ' + ('예' if model.case_sensitive else '아니요') + '</p></div>')
 
 def dump(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -165,7 +173,7 @@ def build_explanation(pack, fragments, stage: Path, repo: Path) -> Artifacts:
         # Validate each block separately: details wraps the original only after its content passed.
         reading = resources(reading, p, pack, repo, stage, fig_name, pack.path.parent, 'source')
         if p.original_html:
-            label = '원문·출처 정보 보기' if pack.profile == 'forecast' else '기출 원문 보기'
+            label = '원문·출처 정보 보기' if pack.profile in ('forecast', 'exam') else '기출 원문 보기'
             original = resources(p.original_html, p, pack, repo, stage, fig_name, pack.path.parent, 'original')
             reading += ('<details class="original" data-original-problem="' + p.id + '"><summary>' + label + '</summary>'
                         + original + '</details>')
@@ -173,6 +181,8 @@ def build_explanation(pack, fragments, stage: Path, repo: Path) -> Artifacts:
         if p.choice:
             choices[p.id] = {'answer': p.choice.answer, 'mode': p.choice.mode, 'options': list(p.choice.option_ids)}
         explanation = resources(fragments[p.id], p, pack, repo, stage, fig_name, pack.path.parent, 'explain')
+        if p.short_answer:
+            explanation += short_answer_html(p)
         original_link = quote(pack.path.name, safe='') + '#' + p.id
         articles.append(f'<article class="topic" id="{p.id}"><h3>{html.escape(p.title)}</h3>'
                         + f'<p class="panel-meta">{html.escape(p.source)} · <a href="{original_link}">원 문제 보기</a></p>'
@@ -183,6 +193,8 @@ def build_explanation(pack, fragments, stage: Path, repo: Path) -> Artifacts:
     title = f'생명과학 {"과제" if pack.profile == "homework" else "복습"} {pack.range} 문제설명'
     if pack.profile == 'forecast':
         title = f'생명과학 {pack.range} 웹과제 예상 {pack.slug.split("_")[-1]} 문제해설'
+    if pack.profile == 'exam':
+        title = f'생명과학 {pack.range} 시험 예상 {pack.slug.split("_")[-1]} 문제해설'
     values = {'PAGE_TITLE': html.escape(title), 'BRAND': '문제풀이 입문 설명', 'DESCRIPTION': '첫 줄부터 완성 답과 검산까지 설명해요.',
               'TOC': '<ul class="toc-list">' + ''.join(toc) + '</ul>', 'TITLE': html.escape(title),
               'SUBTITLE': '왼쪽 목차로 문항을 고르고, 오른쪽 문제를 보며 해설을 따라가요.',
@@ -216,6 +228,9 @@ def build_explanation(pack, fragments, stage: Path, repo: Path) -> Artifacts:
 def check_artifacts(pack, artifacts):
     errors = []
     try:
+        if pack.profile == 'exam':
+            from mpe_exam import assert_exam_fresh
+            assert_exam_fresh(pack)
         root = artifacts.html.parent.resolve()
         manifest = json.loads(artifacts.manifest.read_text(encoding='utf-8'))
         if manifest['source_sha256'] != pack.sha256 or manifest['source'] != str(pack.path):
@@ -261,6 +276,10 @@ def check_artifacts(pack, artifacts):
                     nodes = list(reading[0].find_all(lambda n: n.attrs.get('data-source-field') == field))
                     if (expected and (len(nodes) != 1 or compact(inner(nodes[0])) != compact(expected))) or (not expected and nodes):
                         errors.append(f'{p.id}: {field} 원문 보존 실패')
+            if p.short_answer:
+                short_nodes = list(document.find_all(lambda n: n.attrs.get('data-short-answer') == p.id))
+                if len(short_nodes) != 1 or compact(inner(short_nodes[0])) != compact(inner(next(parse(short_answer_html(p)).find_all(lambda n: n.tag == 'div')))):
+                    errors.append(f'{p.id}: 단답형 허용답 보존 실패')
             if p.original_html:
                 original = list(document.find_all(lambda n: n.attrs.get('data-original-problem') == p.id))
                 if len(original) != 1 or compact(p.original_html) not in re.sub(r'\s+', '', original[0].text()):

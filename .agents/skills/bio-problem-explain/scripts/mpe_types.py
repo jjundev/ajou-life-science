@@ -12,6 +12,12 @@ class ChoiceModel:
     option_ids: tuple[str, ...]
 
 @dataclass(frozen=True)
+class ShortAnswerModel:
+    canonical: str
+    accepted: tuple[str, ...]
+    case_sensitive: bool
+
+@dataclass(frozen=True)
 class Problem:
     id: str
     number: int
@@ -25,6 +31,7 @@ class Problem:
     reference_answer: str
     subparts: tuple[str, ...]
     choice: ChoiceModel | None = None
+    short_answer: ShortAnswerModel | None = None
 
 @dataclass(frozen=True)
 class SourcePack:
