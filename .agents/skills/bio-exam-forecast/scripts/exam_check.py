@@ -13,6 +13,11 @@ from exam_dom import parse,inner,outer
 def locate(question):
  question=Path(question).resolve()
  m=re.fullmatch(r'시험예상문제_([1-9]\d*장(?:-[1-9]\d*장)?)_v([1-9]\d*)\.html',question.name)
+ if not m and re.fullmatch(r'시험예상문제_[1-9]\d*장(?:-[1-9]\d*장)?\.html',question.name):
+  publication=load(question.parent/'.pack/publication.json')['question']
+  version=publication['version']
+  if publication['file']!=question.name or type(version) is not int or version<1:raise ExamError('공개 시험 파일 연결 오류')
+  m=re.fullmatch(r'시험예상문제_([1-9]\d*장(?:-[1-9]\d*장)?)_v([1-9]\d*)\.html',question.stem+f'_v{version}.html')
  if not m or question.parent.name!=m[1] or question.parent.parent.name!='시험예상':raise ExamError('시험 파일명/폴더 불일치')
  src=question.parent/'.pack'/('v'+m[2]);repo=question.parent.parent.parent
  return repo,src

@@ -1209,6 +1209,15 @@
         }
         Object.keys(panes).forEach((id) => {
           const m = model[id];
+          if (Object.values(model).some(item => item.showOptionIds)) {
+            const paragraph = panes[id].querySelector('[data-source-field="conditions"] p');
+            if (paragraph) {
+              const walker = document.createTreeWalker(paragraph, NodeFilter.SHOW_TEXT);
+              let text;
+              while ((text = walker.nextNode()) && !text.textContent.trim()) {}
+              if (text) text.textContent = text.textContent.replace(/^\s*(?:\d{1,3}[.)]|\(\d{1,3}\))\s+/, '');
+            }
+          }
           const list = panes[id].querySelector('.choices');
           if (!m || !list || !Array.isArray(m.options)) return;
           const items = Array.from(list.children).filter((li) => li.tagName === 'LI');
@@ -1225,6 +1234,17 @@
             const content = document.createElement('div');
             content.className = 'review-choice-content';
             while (li.firstChild) content.appendChild(li.firstChild);
+            if (m.showOptionIds) {
+              const firstText = document.createTreeWalker(content, NodeFilter.SHOW_TEXT).nextNode();
+              if (firstText) {
+                const prefix = new RegExp('^\\s*(?:\\(' + (i + 1) + '\\)|\\(' + escapeRe(m.options[i]) + '\\)|' + escapeRe(m.options[i]) + '[.)])\\s*');
+                firstText.textContent = firstText.textContent.replace(prefix, '');
+              }
+              const optionId = document.createElement('span');
+              optionId.className = 'review-choice-id';
+              optionId.textContent = m.options[i] + '. ';
+              content.prepend(optionId);
+            }
             const badge = document.createElement('span');
             badge.className = 'review-choice-label';
             badge.hidden = true;

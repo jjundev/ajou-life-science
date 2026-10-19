@@ -18,6 +18,14 @@ def test_exam_output_layout(tmp_path,repo,approved_exam,core_only):
  run,item=build_exam_run(tmp_path,repo,approved_exam,core_only=core_only)
  assert names(item['pack'])==('문제해설_1장-6장_시험예상_v1','.pack/v1/figures_문제해설_1장-6장_시험예상_v1','.pack/v1/자료_문제해설_1장-6장_시험예상_v1')
  artifacts=load_artifacts(item)
+ assert '시험 예상 v1 문제해설' not in artifacts.html.read_text()
+ assert '"showOptionIds": true' in artifacts.html.read_text()
+ import html
+ for p in item['pack'].problems:
+  title=html.escape(p.title)
+  assert f'<h3>{title}</h3>' in artifacts.html.read_text()
+  assert f'<a href="#{p.id}">{title}</a>' in artifacts.html.read_text()
+  assert p.title in artifacts.md.read_text()
  for p in [artifacts.html,artifacts.md]:
   s=p.read_text();assert 'Aa' in s and '합성 답' in s
  assert call('check','--run',run).returncode==0

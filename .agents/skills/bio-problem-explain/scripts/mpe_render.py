@@ -180,6 +180,8 @@ def build_explanation(pack, fragments, stage: Path, repo: Path) -> Artifacts:
         reading = f'<div class="problem-pane" data-problem-for="{p.id}">' + reading + '</div>'
         if p.choice:
             choices[p.id] = {'answer': p.choice.answer, 'mode': p.choice.mode, 'options': list(p.choice.option_ids)}
+            if pack.profile == 'exam':
+                choices[p.id]['showOptionIds'] = True
         explanation = resources(fragments[p.id], p, pack, repo, stage, fig_name, pack.path.parent, 'explain')
         if p.short_answer:
             explanation += short_answer_html(p)
@@ -194,7 +196,7 @@ def build_explanation(pack, fragments, stage: Path, repo: Path) -> Artifacts:
     if pack.profile == 'forecast':
         title = f'생명과학 {pack.range} 웹과제 예상 {pack.slug.split("_")[-1]} 문제해설'
     if pack.profile == 'exam':
-        title = f'생명과학 {pack.range} 시험 예상 {pack.slug.split("_")[-1]} 문제해설'
+        title = f'생명과학 {pack.range} 시험 예상 문제해설'
     values = {'PAGE_TITLE': html.escape(title), 'BRAND': '문제풀이 입문 설명', 'DESCRIPTION': '첫 줄부터 완성 답과 검산까지 설명해요.',
               'TOC': '<ul class="toc-list">' + ''.join(toc) + '</ul>', 'TITLE': html.escape(title),
               'SUBTITLE': '왼쪽 목차로 문항을 고르고, 오른쪽 문제를 보며 해설을 따라가요.',

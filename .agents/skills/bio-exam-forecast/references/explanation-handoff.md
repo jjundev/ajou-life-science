@@ -8,6 +8,8 @@ python3 EXPLAIN/scripts/mpe_cli.py extract --repo REPO --target ABS_시험예상
 
 exam adapter는 p1~p75와 20개 short_answer 모델을 전달한다. all/최신은 기존 복습노트만 선택한다. range/version/manifest/카드/정답/검토가 불일치하면 거부한다. pack/blueprint/scope/policy/candidates/manifest/question-review와 present 근거를 context_hashes에 묶고 missing→present도 재확인한다.
 
+시험 해설의 본문 제목·왼쪽 목차·MD 제목은 `[출제 방식] PN. 문제개념`으로 통일한다. 개념은 문제판과 동일한 `concept_summary`를 사용한다. 출제 방식은 `past/original=기출 원문`, `past/variant=기출 변형`, `web/original=웹과제 원문`, `web/variant=웹과제 변형`, `new/generated=새 예상문제`다. 예: `[기출 원문] P1. 생명의 계층구조`. 표시 번호는 대문자, 이동 앵커는 기존 소문자 `#p1`이다. 긴 목차 제목은 줄바꿈하고 읽음 표시·이동 기능을 유지한다. 메타데이터 누락·알 수 없는 조합은 확인 오류로 처리한다.
+
 해설기의 `references/authoring.md`에 따라 필수 구역·필요한 선택 구역과 요약을 작성한다. 객관식은 판단 기준을 먼저 제시하고 모든 선지의 실제 주장에 적용해 선택·제외 이유를 설명하며 불필요한 반복을 덜어낸다. 단답형 canonical/accepted/대소문자·단위 판정도 설명한다. build/check 후 source_visual/content/independent/browser 네 해설 검토를 실제 수행하고 publish한다. 해설 이름은 `문제해설_<범위>_시험예상_vK.html`, 부속 MD·그림·자료는 `.pack/vK/` 안이다. 단순 HTML 존재는 완료가 아니다. status는 실제 manifest/validation/검토/산출 해시와 현재 질문 근거를 검사한다.
 
 최초 검토 이후 오류가 있으면 문제 RUN의 `exam_cli.py repair --run RUN --reason ...`를 먼저 기록한다. repair-history와 run.repairs_used를 같이 보존한다. 두 단계 합계 최대2회이며 새 해설 RUN은 이 예산을 초기화하지 않는다.

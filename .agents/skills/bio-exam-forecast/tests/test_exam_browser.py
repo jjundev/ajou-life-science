@@ -24,7 +24,7 @@ def test_submit_is_only_reveal_boundary(repo,width,height,scheme):
   assert page.locator('#p56 .result').inner_text()=='자기채점 대기'
   assert page.locator('#p75 .result').inner_text()=='자동 일치'
   assert '미응답' in page.locator('#summary').inner_text()
-  page.locator('#reset-exam').click();assert page.locator('.solution:visible').count()==0
+  page.once('dialog',lambda d:d.accept());page.locator('#reset-exam').click();assert page.locator('.solution:visible').count()==0
   assert page.locator('#p56 input').input_value()==''
   assert page.locator('input:checked').count()==0
   assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
@@ -45,6 +45,6 @@ def test_casefold_matches_python_without_changing_sensitive_answers(repo):
  models=json.loads(s[start:end]);models['p56']['answer']=dict(kind='short',canonical='ﬃ',accepted=['ﬃ'],case_sensitive=False)
  p.write_text(s[:start]+json.dumps(models)+s[end:])
  with sync_playwright() as pw:
-  browser=pw.chromium.launch(headless=True);page=browser.new_page();page.goto(p.as_uri()+'#p56');page.locator('#p56 input').fill('ffi');page.locator('#submit-exam').click()
+  browser=pw.chromium.launch(headless=True);page=browser.new_page();page.goto(p.as_uri()+'#p56');page.locator('#p56 input').fill('ffi');page.evaluate("location.hash='p75'");page.locator('#submit-exam').click()
   assert page.locator('#p56 .result').inner_text()=='자동 일치'
   browser.close()

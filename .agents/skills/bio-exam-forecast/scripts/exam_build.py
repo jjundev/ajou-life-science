@@ -43,11 +43,14 @@ def write_pack(src,selection,scope_data,manifest,policy_notes,policy_summary):
  if src.parent.name!='.pack' or src.parent.parent.name!=scope.label or not re.fullmatch(r'v[1-9]\d*',src.name):raise ExamError('범위/버전 경로 불일치')
  problems=[]
  for i,c in enumerate(selection.problems,1):
-  p=copy.deepcopy(c);p['candidate_id']=p['id'];p['id']=f'p{i}';problems.append(p)
+  p=copy.deepcopy(c);p['candidate_id']=p['id'];p['id']=f'p{i}'
+  topics={t['id']:t['title'] for t in scope_data['topics']}
+  p.setdefault('concept_summary', ' · '.join(dict.fromkeys(topics[t] for t in p['topic_ids'])))
+  problems.append(p)
  pack=dict(schema_version=1,profile='exam',scope=list(scope.chapters),range=scope.label,version=int(src.name[1:]),counts=dict(mcq=55,short=20),targets=[dict(format=k[0],origin=k[1],mode=k[2],target=v) for k,v in TARGETS.items()],policy_summary=policy_summary,problems=problems,scope_data=scope_data,source_manifest='source-manifest.json')
  errors=validate_pack(pack)
  if errors:raise ExamError('\n'.join(errors))
- dump(src/'pack.json',pack);dump(src/'scope.json',scope_data);dump(src/'candidates.json',list(selection.problems));dump(src/'source-manifest.json',manifest)
+ dump(src/'pack.json',pack);dump(src/'scope.json',scope_data);dump(src/'candidates.json',[dict({k:v for k,v in p.items() if k not in ('id','candidate_id')},id=p['candidate_id']) for p in problems]);dump(src/'source-manifest.json',manifest)
  (src/'policy-notes.md').write_text(policy_notes,encoding='utf-8');(src/'blueprint.md').write_text(blueprint(pack),encoding='utf-8');(src/'selection-report.md').write_text(selection_report(selection),encoding='utf-8')
  return pack
 
@@ -89,6 +92,7 @@ def _resources(repo,src,markup,id_,manifest,*,copy_assets=True):
 def card_html(repo,src,p,manifest,*,copy_assets=True):
  body=_resources(repo,src,p['problem_html'],p['id'],manifest,copy_assets=copy_assets)
  id_=p['id'];answer=p['answer']
+ title=html.escape(p.get('concept_summary') or '시험 예상문제')
  if p['format']=='mcq':
   inputs='<fieldset><legend>답 선택</legend>'+''.join(f'<label><input type="radio" name="{id_}" value="{html.escape(o["id"])}"> {html.escape(o["id"])}. {html.escape(o["text"])}</label>' for o in p['options'])+'</fieldset>'
   key=html.escape(answer['option_id'])
@@ -97,7 +101,7 @@ def card_html(repo,src,p,manifest,*,copy_assets=True):
   key=html.escape(answer['canonical'])+' · 허용답: '+html.escape(', '.join(answer['accepted']))
  steps=''.join('<li>'+x+'</li>' for x in p['solution_steps'])
  refs=html.escape(json.dumps(dict(origin=p['origin'],mode=p['mode'],refs=p['source_refs'],reason=p['selection_reason'],style_basis=p['style_basis']),ensure_ascii=False))
- return f'<article class="card" id="{id_}"><h3>{id_}. 시험 예상문제</h3><div class="problem">{body}</div><div class="exam-input">{inputs}</div><p class="result" role="status"></p><div class="solution" hidden><ol class="steps">{steps}</ol><p class="answer">정답: {key}</p></div><div class="provenance" hidden>{refs}</div></article>'
+ return f'<article class="card" id="{id_}"><h3>{id_}. {title}</h3><div class="problem">{body}</div><div class="exam-input">{inputs}</div><p class="result" role="status"></p><div class="solution" hidden><ol class="steps">{steps}</ol><p class="answer">정답: {key}</p></div><div class="provenance" hidden>{refs}</div></article>'
 
 def render_exam(repo,src):
  src=Path(src);pack=load(src/'pack.json');manifest=load(src/'source-manifest.json');scope=Scope(tuple(pack['scope']))
@@ -125,16 +129,19 @@ def render_exam(repo,src):
  template=template.replace('data-panels="review"','data-panels="exam"')
  template=template.replace('<strong class="brand">복습문제</strong>','<strong class="brand">시험예상문제</strong>')
  template=re.sub(r'      <a class="top-link"[^\n]+\n','',template)
+ template=template.replace('<button class="text-btn theme-toggle"', '<button class="text-btn" id="reset-exam" type="button">다시 풀기</button>\n      <button class="text-btn theme-toggle"')
  template=template.replace('푼 문제 <b id="progress-n">','응답한 문제 <b id="progress-n">')
  template=template.replace('문제로 넘어가면 그 문제의 교과서 원문, 힌트, 풀이가 여기에 나옵니다. 먼저 스스로 풀어 본 뒤 여세요.','전체 제출 후 현재 문제의 정답과 풀이를 확인할 수 있습니다.')
  template=template.replace('<div class="aids"></div>','<div class="aids" id="exam-aid"></div>')
+ template=template.replace('</main>',(ASSETS/'exam-results.html').read_text(encoding='utf-8')+'\n</main>')
  template=template.replace('</head>',(ASSETS/'exam-template.html').read_text(encoding='utf-8')+'\n</head>')
- controls='<div class="exam-actions"><button class="btn btn-primary" id="submit-exam" type="button">전체 제출</button><button class="text-btn" id="reset-exam" type="button">다시 풀기</button><p id="summary" role="status" aria-live="polite"></p></div>'
+ controls='<div class="exam-actions"><button class="btn btn-primary" id="submit-exam" type="button" hidden>전체 제출</button><p id="summary" role="status" aria-live="polite"></p></div>'
  template=template.replace('<div class="pager-inner">',controls+'<div class="pager-inner">')
  fold=json.dumps(casefold_map(),ensure_ascii=True).replace('<','\\u003c')
  model=json.dumps({p['id']:dict(format=p['format'],answer=p['answer']) for p in pack['problems']},ensure_ascii=False).replace('<','\\u003c')
- scripts='<script type="application/json" id="exam-casefold">'+fold+'</script><script type="application/json" id="exam-model">'+model+'</script><script>'+(ASSETS/'exam-runtime.js').read_text(encoding='utf-8')+'</script>'
- title=f'시험 예상문제 {scope.label} v{pack["version"]}'
+ meta=json.dumps(dict(documentId=f'시험예상문제_{scope.label}_v{pack["version"]}.html',range=scope.label,examVersion=pack['version'],questionSetHash=digest(pack['problems'])),ensure_ascii=False).replace('<','\\u003c')
+ scripts='<script type="application/json" id="exam-meta">'+meta+'</script><script type="application/json" id="exam-casefold">'+fold+'</script><script type="application/json" id="exam-model">'+model+'</script><script>'+(ASSETS/'exam-runtime.js').read_text(encoding='utf-8')+'</script>'
+ title=f'시험 예상문제 {scope.label}'
  intro='객관식 55문항 · 단답형 20문항. 전체 제출 후 정답과 출처가 공개됩니다.'
  replacements=dict(PAGE_TITLE=html.escape(title),DESCRIPTION=intro,RANGE='exam-'+scope.label+'-'+src.name,TITLE=html.escape(title),INTRO=intro+'<noscript> JavaScript를 켜면 이동·제출·채점을 사용할 수 있습니다. 정답은 숨겨져 있습니다.</noscript>',TOC='<a href="#exam-mcq">객관식 1–55</a><a href="#exam-short">단답형 56–75</a>',PARTS='<section id="exam-mcq"><h2>객관식</h2>'+''.join(content[:55])+'</section><section id="exam-short"><h2>단답형</h2>'+''.join(content[55:])+'</section>',FOOTER='55+20은 연습용 구성입니다.',SCRIPTS=scripts)
  text=re.sub(r'\{\{([A-Z_]+)\}\}',lambda m:replacements[m[1]],template)

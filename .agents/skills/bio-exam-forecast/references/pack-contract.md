@@ -15,6 +15,8 @@ scripts/exam_contract.py가 기계 계약을 검사한다. `parse_scope`는 단�
 - transformation(변형/생성 설명), original_payload_sha256(원문이면 `payload(candidate)`, 그 외 null).
 - review의 scope/key/source/style/family 각각 status/pass와 evidence. collector 초안은 not_run이며 의미 판단을 마치기 전 선정하지 않는다.
 
+`concept_summary`는 문항별 짧은 일반 텍스트 제목이다. 후보에 작성하면 pack에 보존하고, 생략하면 포함 토픽 제목으로 채운다. 새 발행본은 [확정 양식](exam-ui.md)에 따라 적절한 개념 요약과 답 노출 여부를 검토한다. 제목은 HTML 이스케이프해 `pN. 개념 요약`으로 표시하며, 문제·정답·풀이 데이터와 구분한다.
+
 문제 HTML은 정답·힌트·풀이·모델을 포함하지 않는다. 객관식은 4~5보기 ul.choices의 순서/텍스트와 options가 같아야 한다. 그림 src는 저장소 상대 경로다. HTML은 수동 저작이며 실행 코드/외부 URL/이벤트 속성을 넣지 않는다.
 
 `pack.json`: schema_version=1, profile=exam, scope, range, version, counts(55/20), targets(생성 정책), policy_summary, scope_data, source_manifest, problems. problems는 p1..p55(mcq), p56..p75(short), 원래 id는 candidate_id. scope/pack/blueprint/candidates/cards/HTML이 서로 일치해야 한다.

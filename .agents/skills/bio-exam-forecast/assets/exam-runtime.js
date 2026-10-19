@@ -1,10 +1,114 @@
 (() => {
   'use strict';
+  // Original question numbers are presentation metadata; keep source/model bytes intact.
+  document.querySelectorAll('article.card > .problem').forEach(problem => {
+    const paragraph = problem.querySelector('p');
+    if (!paragraph) return;
+    const walker = document.createTreeWalker(paragraph, NodeFilter.SHOW_TEXT);
+    let text;
+    while ((text = walker.nextNode()) && !text.textContent.trim()) {}
+    if (text) text.textContent = text.textContent.replace(/^\s*(?:\d{1,3}[.)]|\(\d{1,3}\))\s+/, '');
+  });
   const models = JSON.parse(document.getElementById('exam-model').textContent);
   const fold = JSON.parse(document.getElementById('exam-casefold').textContent);
   const summary = document.getElementById('summary');
   const normalize = (s, sensitive) => { const n = s.normalize('NFC').trim(); return sensitive ? n : Array.from(n).map(c => fold[c] ?? c.toLowerCase()).join(''); };
-  let submitted = false, current = null;
+  let submitted = false, current = null, attempt = null;
+  const meta = JSON.parse(document.getElementById('exam-meta').textContent);
+  const results = document.getElementById('exam-results');
+  const filter = document.getElementById('results-filter');
+  const labels = {correct:'정답', incorrect:'오답', matched:'자동 일치', pending:'자기채점 대기', unanswered:'미응답'};
+  function resultRoute() {
+    const active = submitted && location.hash === '#exam-results';
+    document.body.classList.toggle('exam-results', active);
+    results.hidden = !active;
+    syncControls(); showAid();
+    if (active) {
+      const toggle = document.getElementById('toggle-right');
+      if (matchMedia('(min-width: 1024px)').matches && toggle.getAttribute('aria-expanded') !== 'true') toggle.click();
+      document.getElementById('results-title').focus({preventScroll:true});
+      document.querySelector('.content').scrollTop = 0;
+    }
+  }
+  function syncControls() {
+    const button = document.getElementById('submit-exam');
+    const ids = Object.keys(models);
+    button.hidden = !submitted && current !== ids[ids.length - 1];
+    document.body.classList.toggle('exam-last-unsubmitted', !submitted && current === ids[ids.length - 1]);
+  }
+  function openResults() {
+    if (location.hash === '#exam-results') resultRoute();
+    else location.hash = 'exam-results';
+  }
+  window.addEventListener('hashchange', resultRoute);
+  window.addEventListener('popstate', resultRoute);
+  // The shared question pager must not consume arrow keys on the results screen.
+  document.addEventListener('keydown', e => {
+    if (document.body.classList.contains('exam-results') && ['ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
+  }, true);
+  // Keep result-screen swipes from reaching the shared question pager.
+  document.addEventListener('touchend', e => {
+    if (document.body.classList.contains('exam-results') && results.contains(e.target)) e.stopPropagation();
+  }, {capture:true, passive:true});
+  function filterResults() {
+    let shown = 0;
+    results.querySelectorAll('.exam-result-row').forEach(row => {
+      row.hidden = filter.value !== 'all' && row.dataset.result !== filter.value;
+      shown += Number(!row.hidden);
+    });
+    document.getElementById('results-count').textContent = `${shown} / ${attempt.cards.length}문항`;
+    document.getElementById('results-empty').hidden = shown !== 0;
+  }
+  filter.addEventListener('change', filterResults);
+  function renderResults() {
+    const {summary:s} = attempt;
+    const percent = s.mcq.total ? Math.round(s.mcq.correct / s.mcq.total * 100) : 0;
+    const text = `객관식 정답 ${s.mcq.correct}/${s.mcq.total} · 정답률 ${percent}% · 단답형 자동 일치 ${s.short.matched} · 자기채점 대기 ${s.short.pending} · 미응답 ${s.unanswered}`;
+    summary.textContent = text;
+    document.getElementById('results-summary').textContent = text;
+    const list = document.getElementById('results-list'); list.replaceChildren();
+    for (const card of attempt.cards) {
+      const row = document.createElement('li'); row.className = 'exam-result-row'; row.dataset.result = card.result;
+      const heading = document.createElement('h3'); heading.textContent = card.id + ' · ' + (card.format === 'mcq' ? '객관식' : '단답형');
+      const status = document.createElement('p'); status.className = 'exam-result-status'; status.textContent = labels[card.result];
+      const dl = document.createElement('dl');
+      const fields = [['내 답', card.selected === null ? '미응답' : card.selected],
+        ['정답', card.format === 'mcq' ? card.answer.option_id : card.answer.canonical]];
+      if (card.format === 'short') fields.push(['허용답', card.answer.accepted.join(', ') || '없음']);
+      for (const [name,value] of fields) {
+        const dt = document.createElement('dt'); dt.textContent = name;
+        const dd = document.createElement('dd'); dd.textContent = value; dl.append(dt, dd);
+      }
+      const link = document.createElement('a'); link.href = '#' + card.id; link.textContent = '문제·해설 보기';
+      link.setAttribute('aria-label', card.id + ' 문제·해설 보기');
+      link.addEventListener('click', () => {
+        const toggle = document.getElementById('toggle-right');
+        if (toggle.getAttribute('aria-expanded') !== 'true') toggle.click();
+      });
+      row.append(heading, status, dl, link); list.append(row);
+    }
+    filter.value = 'all'; filterResults();
+  }
+  document.getElementById('export-exam').addEventListener('click', () => {
+    if (!attempt) return;
+    const status = document.getElementById('export-status');
+    let url, link;
+    try {
+      const now = new Date();
+      url = URL.createObjectURL(new Blob([JSON.stringify({...attempt, exportedAt:now.toISOString()}, null, 2) + '\n'], {type:'application/json;charset=utf-8'}));
+      const pad = n => String(n).padStart(2,'0');
+      const stamp = now.getFullYear() + pad(now.getMonth()+1) + pad(now.getDate()) + '-' + pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());
+      link = document.createElement('a'); link.href = url;
+      link.download = meta.documentId.replace(/\.html?$/i,'') + '_풀이기록_' + stamp + '.json';
+      document.body.append(link); link.click();
+      status.textContent = 'JSON 다운로드를 요청했습니다. 브라우저의 다운로드 목록을 확인하세요.';
+    } catch {
+      status.textContent = 'JSON 내보내기에 실패했습니다. 결과는 유지됩니다. 다시 눌러 주세요.';
+    } finally {
+      link?.remove();
+      if (url) setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+  });
   const aid = document.getElementById('exam-aid');
   const empty = document.querySelector('#panel-right .panel-empty');
   const valueOf = (card, model) => model.format === 'mcq' ? (card.querySelector('input:checked')?.value || '') : card.querySelector('input[type=text]').value;
@@ -28,6 +132,30 @@
   }
   function showAid() {
     aid.replaceChildren();
+    const isResults = submitted && location.hash === '#exam-results';
+    document.getElementById('panel-right-title').textContent = isResults ? '채점표' : '풀이 도움';
+    document.querySelector('#toggle-right span').textContent = isResults ? '채점표' : '풀이';
+    if (isResults) {
+      empty.hidden = true;
+      document.getElementById('aid-for').hidden = true;
+      const legend = document.createElement('p'); legend.className = 'scorecard-legend';
+      legend.textContent = '○ 정답·자동 일치 · × 오답 · ? 자기채점 대기 · — 미응답';
+      const table = document.createElement('table'); table.id = 'exam-scorecard';
+      const caption = document.createElement('caption'); caption.textContent = '전체 문항 채점표'; table.append(caption);
+      const tbody = document.createElement('tbody');
+      const symbols = {correct:'○', incorrect:'×', matched:'○', pending:'?', unanswered:'—'};
+      let row;
+      attempt.cards.forEach((card, i) => {
+        if (i % 5 === 0) { row = document.createElement('tr'); tbody.append(row); }
+        const cell = document.createElement('td');
+        const link = document.createElement('a'); link.href = '#' + card.id; link.dataset.result = card.result;
+        link.textContent = `${i + 1} ${symbols[card.result]}`;
+        link.setAttribute('aria-label', `${i + 1}번 · ${labels[card.result]} · 문제와 해설 보기`);
+        cell.append(link); row.append(cell);
+      });
+      table.append(tbody); aid.append(legend, table);
+      return;
+    }
     const card = current && document.getElementById(current);
     const show = submitted && Boolean(card);
     empty.hidden = show;
@@ -51,36 +179,61 @@
   }
   document.addEventListener('od:screen', ({detail}) => {
     current = detail.screen.matches('article.card') ? detail.screen.id : null;
-    progress(); showAid();
+    progress(); syncControls(); showAid();
     document.querySelector('.toc-list a[aria-current="true"]')?.scrollIntoView({block:'nearest'});
   });
   document.querySelector('main').addEventListener('input', progress);
+  document.querySelector('main').addEventListener('change', e => {
+    if (submitted || !e.target.matches('.exam-input input[type=radio]:checked')) return;
+    const card = e.target.closest('article.card');
+    const ids = Object.keys(models);
+    if (card.id !== current || ids.indexOf(current) === ids.length - 1) return;
+    document.getElementById('pager-next').click();
+    const heading = document.getElementById(current)?.querySelector('h3');
+    if (heading) { heading.tabIndex = -1; heading.focus({preventScroll:true}); }
+  });
   document.getElementById('submit-exam').addEventListener('click', () => {
-    let correct = 0, matched = 0, pending = 0, blank = 0;
-    for (const [id, model] of Object.entries(models)) {
+    if (submitted) { openResults(); return; }
+    if (current !== Object.keys(models).at(-1)) return;
+    const cards = Object.entries(models).map(([id, model]) => {
       const card = document.getElementById(id), answer = model.answer;
-      const input = model.format === 'mcq' ? card.querySelector('input:checked') : card.querySelector('input[type=text]');
-      const value = input ? input.value : '';
-      let result;
-      if (!value.trim()) { blank++; result = '미응답'; }
-      else if (model.format === 'mcq') { const ok = value === answer.option_id; correct += Number(ok); result = ok ? '정답' : '오답'; }
-      else {
-        const ok = [answer.canonical, ...answer.accepted].some(x => normalize(x, answer.case_sensitive) === normalize(value, answer.case_sensitive));
-        matched += Number(ok); pending += Number(!ok); result = ok ? '자동 일치' : '자기채점 대기';
+      const value = valueOf(card, model);
+      let result = 'unanswered';
+      if (value.trim()) {
+        if (model.format === 'mcq') result = value === answer.option_id ? 'correct' : 'incorrect';
+        else result = [answer.canonical, ...answer.accepted].some(x => normalize(x, answer.case_sensitive) === normalize(value, answer.case_sensitive)) ? 'matched' : 'pending';
       }
-      card.querySelector('.result').textContent = result;
+      card.querySelector('.result').textContent = labels[result];
       card.querySelectorAll('.solution,.provenance').forEach(n => { n.hidden = false; });
-    }
+      return {id, format:model.format, selected:value.trim() ? value : null, answer, result};
+    });
+    const count = (format, result) => cards.filter(c => c.format === format && (!result || c.result === result)).length;
+    const unanswered = cards.filter(c => c.result === 'unanswered').length;
+    attempt = {schema:'bio-exam-attempt', schemaVersion:1, ...meta,
+      attemptId:window.crypto?.randomUUID ? window.crypto.randomUUID() : Date.now().toString(36) + '-' + Math.random().toString(36).slice(2),
+      submittedAt:new Date().toISOString(),
+      summary:{total:cards.length, answered:cards.length-unanswered, unanswered,
+        mcq:{total:count('mcq'), correct:count('mcq','correct'), incorrect:count('mcq','incorrect'), unanswered:count('mcq','unanswered')},
+        short:{total:count('short'), matched:count('short','matched'), pending:count('short','pending'), unanswered:count('short','unanswered')}}, cards};
     submitted = true;
     document.querySelectorAll('.exam-input input').forEach(n => { n.disabled = true; });
-    showAid();
-    summary.textContent = `객관식 정답 ${correct}/55 · 단답형 자동 일치 ${matched} · 자기채점 대기 ${pending} · 미응답 ${blank}`;
+    document.getElementById('submit-exam').textContent = '전체 결과';
+    renderResults(); showAid(); openResults();
+
   });
-  document.getElementById('reset-exam').addEventListener('click', () => {
-    submitted = false;
-    document.querySelectorAll('input').forEach(n => { n.disabled = false; if (n.type === 'radio') n.checked = false; else n.value = ''; });
+  function resetExam() {
+    if (submitted && !window.confirm('제출한 답안과 결과를 초기화하고 다시 풀까요? 필요한 기록은 먼저 JSON으로 내보내세요.')) return;
+    submitted = false; attempt = null;
+    document.querySelectorAll('.exam-input input').forEach(n => { n.disabled = false; if (n.type === 'radio') n.checked = false; else n.value = ''; });
     document.querySelectorAll('.solution,.provenance').forEach(n => { n.hidden = true; });
-    document.querySelectorAll('.result').forEach(n => { n.textContent = ''; }); summary.textContent = ''; progress(); showAid();
-  });
+    document.querySelectorAll('.result').forEach(n => { n.textContent = ''; });
+    summary.textContent = ''; document.getElementById('results-list').replaceChildren();
+    document.getElementById('results-summary').textContent = '';
+    document.getElementById('export-status').textContent = '';
+    document.getElementById('submit-exam').textContent = '전체 제출';
+    progress(); showAid(); resultRoute();
+    location.hash = 'p1';
+  }
+  document.getElementById('reset-exam').addEventListener('click', resetExam);
   if (window.renderMathInElement) window.renderMathInElement(document.querySelector('main'), {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],ignoredTags:['script','noscript','style','textarea','pre','code','input'],throwOnError:false});
 })();

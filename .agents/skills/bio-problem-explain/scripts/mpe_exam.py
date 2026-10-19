@@ -7,7 +7,18 @@ from pathlib import Path
 from mpe_shared import parse,inner
 from mpe_source import inside,existing_path,nfc,sha256
 from mpe_types import ExplainError,Problem,SourcePack,ChoiceModel,ShortAnswerModel
-FILENAME_RE=r'시험예상문제_([1-9]\d*장(?:-[1-9]\d*장)?)_v([1-9]\d*)\.html'
+FILENAME_RE=r'시험예상문제_([1-9]\d*장(?:-[1-9]\d*장)?)(?:_v([1-9]\d*))?\.html'
+
+def exam_problem_title(problem):
+    labels={('past','original'):'기출 원문',('past','variant'):'기출 변형',
+            ('web','original'):'웹과제 원문',('web','variant'):'웹과제 변형',
+            ('new','generated'):'새 예상문제'}
+    label=labels.get((problem.get('origin'),problem.get('mode')))
+    concept=problem.get('concept_summary')
+    id_=problem.get('id','')
+    if not label or not isinstance(concept,str) or not concept.strip() or not re.fullmatch(r'p[1-9]\d*',id_):
+        raise ExplainError(f'{id_}: 시험 해설 제목 메타데이터 확인 필요')
+    return f'[{label}] {id_.upper()}. {concept.strip()}'
 
 def exam_api():
     scripts=Path(__file__).resolve().parents[2]/'bio-exam-forecast/scripts'
@@ -46,7 +57,7 @@ def load_exam_source(path,repo):
             choice=ChoiceModel(answer['option_id'],'single',tuple(o['id'] for o in p['options'])) if p['format']=='mcq' else None
             short=ShortAnswerModel(answer['canonical'],tuple(answer['accepted']),answer['case_sensitive']) if p['format']=='short' else None
             ref=answer['option_id'] if choice else answer['canonical']
-            problems.append(Problem(p['id'],int(p['id'][1:]),f'{p["id"]}. 시험 예상문제',source,'',inner(problem),'',(),tuple(p['solution_steps']),ref,('main',),choice,short))
+            problems.append(Problem(p['id'],int(p['id'][1:]),exam_problem_title(p),source,'',inner(problem),'',(),tuple(p['solution_steps']),ref,('main',),choice,short))
         files=[src/name for name in (*checker.BINDINGS,'question-review.json')]
         files += [sources.local(repo,row['path']) for row in json.loads((src/'source-manifest.json').read_text(encoding='utf-8'))['sources'] if row['status']=='present']
         # Bind authored cards and copied visual assets too.
