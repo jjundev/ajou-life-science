@@ -178,9 +178,23 @@ class SelectionTests(unittest.TestCase):
         (run/'cards/p1.html').write_text('<article class="card" id="p1" data-source="생성 변형 s0-cell"><h3>P1. 세포</h3><div class="problem"><p>세균에 관한 옳은 설명은?</p><ul class="choices"><li data-choice="1">(1) DNA가 있다.</li><li data-choice="2">(2) DNA가 없다.</li></ul></div><details class="original"><summary>출처</summary>생성 문제</details><details class="hint"><summary>힌트</summary>유전물질</details><details class="solution"><summary>풀이</summary><ol class="steps"><li data-explains="1">(1) 맞아요. 세균에도 DNA가 있어요.</li><li data-explains="2">(2) 틀려요. 핵이 없어도 DNA가 있어요.</li></ol><p class="answer">정답: (1)</p></details></article>')
         ref = self.repo/'lecture.txt';ref.write_text('테스트용 근거')
         diagnosis = dict(schema=1, inputs=plan['inputs'], review_note_search='임시 저장소에는 기존 노트 없음', references=[dict(self.m.fingerprint(self.repo,ref),role='lecture',locations=['test'])], weaknesses=[dict(id='w1',status='self_corrected',evidence=[dict(path=plan['inputs'][0]['path'],line_start=1,line_end=2,quote='나중의 정정')],later_check='끝까지 확인',criterion='핵과 DNA 구별',topic='s0-cell',problems=['p1'])])
+        source = self.repo/'복습노트/0910';source.mkdir(parents=True)
+        for kind,body in [
+            ('정리노트','<article class="topic" id="s0-original">핵과 DNA</article>'),
+            ('복습문제','<article class="card" id="p77"><ul class="choices"><li data-choice="1">DNA</li></ul></article>'),
+            ('문제설명','<article class="topic" id="p77"><div data-explanation="solve">설명</div></article>')]:
+            (source/f'{kind}_0910_Source.html').write_text(body)
+        inventory=self.m.study_inventory(self.repo,source)
+        (run/'work/study-reading.md').write_text('임시 fixture의 세 자료 전체 항목을 확인한 기록')
+        inventory.update(input_paths=[x['path'] for x in plan['inputs']],match_evidence='fixture의 0910 차시 연결',reading={role:dict(items=entry['items'],evidence='work/study-reading.md') for role,entry in inventory['files'].items()})
+        diagnosis.update(schema=2,study_packs=[inventory],review_note_search='fixture의 복습노트/0910 HTML 3종')
+        weakness=diagnosis['weaknesses'][0]
+        weakness.update(status='study_corrected',correction=dict(origin='unknown',evidence=weakness['evidence']),source_context=dict(pack=inventory['folder'],match='confirmed',problem='p77',choices=['1'],note_topics=['s0-original'],explanation_sections=['solve']))
         self.m.write(run/'diagnosis.json', diagnosis)
         result = self.m.assemble(run)
         out = Path(result['output'])
+        archived=self.m.read(out/'.pack/diagnosis.json')['study_packs'][0]['reading']
+        self.assertTrue(all((out/row['archived_evidence']).is_file() for row in archived.values()))
         self.assertEqual(self.m.read(out/'.pack/weakness-run.json')['status'], 'draft')
         self.assertEqual(self.m.select(self.repo,'0910')['catalog'][1]['status'], 'incomplete')
         with self.assertRaisesRegex(ValueError, '미완료'): self.m.finish(run)
