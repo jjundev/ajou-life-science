@@ -118,19 +118,27 @@ def render_exam(repo,src):
  dump(src/'source-manifest.json',manifest)
  vendor=ROOT/'.agents/skills/bio-problem-explain/assets/vendor'
  shutil.copytree(vendor,src/'vendor',dirs_exist_ok=True)
- csspath=ROOT/'.agents/skills/bio-review-pack/assets/review-template.html'
- if not csspath.exists():csspath=ROOT/'.agents/skills/bio-review-pack/templates/review-template.html'
- css=re.search(r'<style>(.*?)</style>',csspath.read_text(encoding='utf-8'),re.S)[1]
- # Font URLs in the reused style are rebased to local fixed vendor files.
- css=css.split('body { height: 100vh',1)[0]
- css=re.sub(r'@import[^;]+;','',css)
- css=re.sub(r'url\([^)]*https?[^)]*\)','none',css)
+ template=(ROOT/'.agents/skills/bio-review-pack/assets/review-template.html').read_text(encoding='utf-8')
+ vendor_url=f'.pack/{src.name}/vendor'
+ template=re.sub(r'https://cdn.jsdelivr.net/npm/pretendard@[^" ]+/dist/web/static/pretendard.css',vendor_url+'/pretendard/pretendard.css',template)
+ template=re.sub(r'https://cdn.jsdelivr.net/npm/katex@[^" ]+/dist/',vendor_url+'/katex/',template)
+ template=template.replace('data-panels="review"','data-panels="exam"')
+ template=template.replace('<strong class="brand">복습문제</strong>','<strong class="brand">시험예상문제</strong>')
+ template=re.sub(r'      <a class="top-link"[^\n]+\n','',template)
+ template=template.replace('푼 문제 <b id="progress-n">','응답한 문제 <b id="progress-n">')
+ template=template.replace('문제로 넘어가면 그 문제의 교과서 원문, 힌트, 풀이가 여기에 나옵니다. 먼저 스스로 풀어 본 뒤 여세요.','전체 제출 후 현재 문제의 정답과 풀이를 확인할 수 있습니다.')
+ template=template.replace('<div class="aids"></div>','<div class="aids" id="exam-aid"></div>')
+ template=template.replace('</head>',(ASSETS/'exam-template.html').read_text(encoding='utf-8')+'\n</head>')
+ controls='<div class="exam-actions"><button class="btn btn-primary" id="submit-exam" type="button">전체 제출</button><button class="text-btn" id="reset-exam" type="button">다시 풀기</button><p id="summary" role="status" aria-live="polite"></p></div>'
+ template=template.replace('<div class="pager-inner">',controls+'<div class="pager-inner">')
  fold=json.dumps(casefold_map(),ensure_ascii=True).replace('<','\\u003c')
  model=json.dumps({p['id']:dict(format=p['format'],answer=p['answer']) for p in pack['problems']},ensure_ascii=False).replace('<','\\u003c')
- replacements=dict(CASEFOLD=fold,TITLE=f'시험 예상문제 {scope.label} v{pack["version"]}',STYLES=css,CONTENT=''.join(content),MODEL=model,RUNTIME=(ASSETS/'exam-runtime.js').read_text(encoding='utf-8'),VENDOR=f'.pack/{src.name}/vendor')
- text=(ASSETS/'exam-template.html').read_text(encoding='utf-8')
- text=re.sub(r'__(TITLE|STYLES|CONTENT|MODEL|RUNTIME|VENDOR|CASEFOLD)__',lambda m:replacements[m[1]],text)
- if re.search(r'__[A-Z]+__',text):raise ExamError('미치환 template slot')
+ scripts='<script type="application/json" id="exam-casefold">'+fold+'</script><script type="application/json" id="exam-model">'+model+'</script><script>'+(ASSETS/'exam-runtime.js').read_text(encoding='utf-8')+'</script>'
+ title=f'시험 예상문제 {scope.label} v{pack["version"]}'
+ intro='객관식 55문항 · 단답형 20문항. 전체 제출 후 정답과 출처가 공개됩니다.'
+ replacements=dict(PAGE_TITLE=html.escape(title),DESCRIPTION=intro,RANGE='exam-'+scope.label+'-'+src.name,TITLE=html.escape(title),INTRO=intro+'<noscript> JavaScript를 켜면 이동·제출·채점을 사용할 수 있습니다. 정답은 숨겨져 있습니다.</noscript>',TOC='<a href="#exam-mcq">객관식 1–55</a><a href="#exam-short">단답형 56–75</a>',PARTS='<section id="exam-mcq"><h2>객관식</h2>'+''.join(content[:55])+'</section><section id="exam-short"><h2>단답형</h2>'+''.join(content[55:])+'</section>',FOOTER='55+20은 연습용 구성입니다.',SCRIPTS=scripts)
+ text=re.sub(r'\{\{([A-Z_]+)\}\}',lambda m:replacements[m[1]],template)
+ if re.search(r'\{\{[A-Z_]+\}\}',text):raise ExamError('미치환 template slot')
  return text
 
 def build_exam(repo,src):

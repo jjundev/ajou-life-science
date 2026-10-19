@@ -8,12 +8,19 @@ def test_submit_is_only_reveal_boundary(repo,width,height,scheme):
   browser=pw.chromium.launch(headless=True);page=browser.new_page(viewport=dict(width=width,height=height),color_scheme=scheme)
   errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
   remote=[];page.on('request',lambda r:remote.append(r.url) if r.url.startswith(('http:','https:')) else None)
-  page.goto(p.as_uri());page.locator('#p1 input[value="B"]').check();page.locator('#p55 input[value="B"]').check()
-  page.locator('#p56 input').fill('aa');page.locator('#p57 input').fill('合成誤答');page.locator('#p75 input').fill('합성 답')
+  page.goto(p.as_uri())
+  def visit(id):
+   page.evaluate('(id) => { location.hash=id; }', id)
+   page.locator('#'+id).wait_for(state='visible')
+  visit('p1');page.locator('#p1 input[value="B"]').check()
+  visit('p55');page.locator('#p55 input[value="B"]').check()
+  visit('p56');page.locator('#p56 input').fill('aa')
+  visit('p57');page.locator('#p57 input').fill('合成誤答')
+  visit('p75');page.locator('#p75 input').fill('합성 답')
   assert page.locator('.solution:visible').count()==0
   page.emulate_media(media='print');assert page.locator('.solution:visible').count()==0;page.emulate_media(media='screen')
   page.locator('#submit-exam').click()
-  assert page.locator('.solution:visible').count()==75
+  assert page.locator('article.card .solution:not([hidden])').count()==75
   assert page.locator('#p56 .result').inner_text()=='자기채점 대기'
   assert page.locator('#p75 .result').inner_text()=='자동 일치'
   assert '미응답' in page.locator('#summary').inner_text()
@@ -38,6 +45,6 @@ def test_casefold_matches_python_without_changing_sensitive_answers(repo):
  models=json.loads(s[start:end]);models['p56']['answer']=dict(kind='short',canonical='ﬃ',accepted=['ﬃ'],case_sensitive=False)
  p.write_text(s[:start]+json.dumps(models)+s[end:])
  with sync_playwright() as pw:
-  browser=pw.chromium.launch(headless=True);page=browser.new_page();page.goto(p.as_uri());page.locator('#p56 input').fill('ffi');page.locator('#submit-exam').click()
+  browser=pw.chromium.launch(headless=True);page=browser.new_page();page.goto(p.as_uri()+'#p56');page.locator('#p56 input').fill('ffi');page.locator('#submit-exam').click()
   assert page.locator('#p56 .result').inner_text()=='자동 일치'
   browser.close()

@@ -1,3 +1,30 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>__TITLE__</title><link rel="stylesheet" href="__VENDOR__/katex/katex.min.css"><link rel="stylesheet" href="__VENDOR__/pretendard/pretendard.css"><style>__STYLES__
-:root{color-scheme:light dark}*{box-sizing:border-box}body{margin:auto;max-width:1000px;padding:18px;font-family:Pretendard,sans-serif;background:light-dark(#f8fafc,#121820);color:light-dark(#202832,#e7edf5)}main{display:block!important}.card{display:block!important;margin:18px 0;padding:20px;border:1px solid #71809655;border-radius:12px;overflow-wrap:anywhere}.problem{overflow-x:auto}img,svg{max-width:100%;height:auto}input[type=text]{font:inherit;width:100%;padding:12px;border:1px solid #718096;border-radius:6px}label{display:block;padding:10px;cursor:pointer}button{font:inherit;padding:12px 18px;margin:6px;cursor:pointer}.solution[hidden],.provenance[hidden]{display:none!important}.result{font-weight:bold}table{max-width:100%}@media print{button{display:none}.solution[hidden],.provenance[hidden]{display:none!important}}
-</style></head><body><header><h1>__TITLE__</h1><p>객관식 55문항 · 단답형 20문항. 전체 제출 후 정답과 출처가 공개됩니다.</p></header><noscript>JavaScript를 켜면 제출·채점을 사용할 수 있습니다. 정답은 숨겨져 있습니다.</noscript><main>__CONTENT__</main><button id="submit-exam" type="button">전체 제출</button><button id="reset-exam" type="button">다시 풀기</button><p id="summary" role="status" aria-live="polite"></p><script type="application/json" id="exam-casefold">__CASEFOLD__</script><script type="application/json" id="exam-model">__MODEL__</script><script src="__VENDOR__/katex/katex.min.js"></script><script src="__VENDOR__/katex/contrib/auto-render.min.js"></script><script>__RUNTIME__</script></body></html>
+<!-- Exam extensions to the shared review-template.html shell. -->
+<style>
+.exam-input fieldset { border:0; padding:0; margin:var(--s5) 0; min-width:0; }
+.exam-input legend { font-size:var(--fs-small); color:var(--ink-2); margin-bottom:var(--s3); }
+.exam-input label:has(input[type=radio]) {
+  display:flex; align-items:baseline; gap:var(--s2); min-height:44px; margin-bottom:var(--s3);
+  padding:12px 16px; border:1px solid var(--line); border-radius:8px;
+  background:var(--surface); color:var(--ink); cursor:pointer;
+}
+.exam-input label:has(input:checked) { border-color:var(--accent); outline:2px solid var(--accent); outline-offset:-2px; }
+.exam-input label:hover { border-color:var(--accent); }
+.exam-input input[type=radio] { flex:none; accent-color:var(--accent); }
+.exam-input input[type=text] { width:100%; margin:var(--s2) 0; padding:12px 16px; font:inherit;
+  border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); color:var(--ink); caret-color:var(--accent); }
+.problem .choices { display:none; }
+img, svg { max-width:100%; height:auto; }
+.exam-actions { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:var(--s2); padding:var(--s2) var(--s4) 0; }
+.exam-actions .btn { min-width:0; min-height:44px; }
+#summary { flex-basis:100%; margin:0; text-align:center; font-size:var(--fs-small); color:var(--ink-2); }
+#summary:empty { display:none; }
+.result { font-weight:650; }
+.result:empty { display:none; }
+.provenance { font-size:var(--fs-small); overflow-wrap:anywhere; }
+.js article.card > .solution, .js article.card > .provenance { display:none !important; }
+.solution[hidden], .provenance[hidden] { display:none !important; }
+html:not(.js) body { height:auto; display:block; overflow:visible; }
+html:not(.js) .layout { display:block; }
+html:not(.js) .panel-left { display:none; }
+@media print { .exam-actions { display:none; } .solution[hidden], .provenance[hidden] { display:none !important; } }
+</style>
