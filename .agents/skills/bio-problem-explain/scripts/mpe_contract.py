@@ -7,6 +7,7 @@ from urllib.parse import urlsplit
 from mpe_shared import Node, parse, math_delimiter_errors, prose_text
 
 KEYS = ('understand', 'recall', 'start', 'solve', 'verify', 'pitfall', 'retry')
+REQUIRED_KEYS = ('understand', 'recall', 'solve', 'verify')
 
 def payload_hash(pack, fragments):
     payload = {'source_sha256': pack.sha256, 'fragments': fragments}
@@ -45,17 +46,21 @@ def validate_fragment(problem, fragment):
     errors = markup_errors(root, allow_summary=True)
     sections = list(root.find_all(lambda n: 'data-explanation' in n.attrs))
     counts = Counter(n.attrs['data-explanation'] for n in sections)
-    if counts != Counter(KEYS):
-        errors.append('일곱 설명 구역(understand/recall/start/solve/verify/pitfall/retry)을 각각 한 번 작성하세요')
-    if tuple(n.attrs['data-explanation'] for n in sections) != KEYS:
-        errors.append('설명 구역 순서는 understand/recall/start/solve/verify/pitfall/retry여야 해요')
+    if any(counts[key] != 1 for key in REQUIRED_KEYS):
+        errors.append('필수 설명 구역(understand/recall/solve/verify)을 각각 한 번 작성하세요')
+    if any(key not in KEYS or count != 1 for key, count in counts.items()):
+        errors.append('알 수 없거나 중복된 설명 구역이 있어요')
+    if tuple(n.attrs['data-explanation'] for n in sections) != tuple(key for key in KEYS if key in counts):
+        errors.append('설명 구역 순서는 understand/recall/[start]/solve/verify/[pitfall]/[retry]여야 해요')
     for node in sections:
         if node.attrs['data-explanation'] == 'recall':
             body = _body_text(node)
             if not body.strip():
                 errors.append('recall: 제목 외에 단서·개념·공식·적용 조건 설명이 필요해요')
-        if node.parent is not root or 'layer' not in node.classes or not node.text().strip():
+        if node.parent is not root or 'layer' not in node.classes or not _body_text(node).strip():
             errors.append('설명 구역은 내용이 있는 직계 layer여야 해요')
+        if node.attrs['data-explanation'] == 'pitfall' and 'warn' not in node.classes:
+            errors.append('pitfall: warn 설명 층 필요')
         if node.attrs['data-explanation'] in ('solve', 'verify'):
             items = list(node.find_all(lambda n: 'data-subpart' in n.attrs))
             if Counter(n.attrs['data-subpart'] for n in items) != Counter(problem.subparts) or any(not n.text().strip() for n in items):
@@ -64,8 +69,8 @@ def validate_fragment(problem, fragment):
             items = list(node.find_all(lambda n: n.tag == 'li'))
             if not 1 <= len(items) <= 3 or any(not n.text().strip() for n in items):
                 errors.append('retry: 비어 있지 않은 재풀이 항목 1~3개 필요')
-    if not all(any(layer in node.classes for node in sections) for layer in ('eli5', 'formal', 'warn')):
-        errors.append('eli5/formal/warn 설명 층 필요')
+    if not all(any(layer in node.classes for node in sections) for layer in ('eli5', 'formal')):
+        errors.append('eli5/formal 설명 층 필요')
     summaries = list(root.find_all(lambda n: 'sum' in n.classes))
     if len(summaries) != 1 or summaries[0].parent is not root or 'hidden' not in summaries[0].attrs or not summaries[0].text().strip():
         errors.append('직계 sum[hidden] 요약 하나 필요')

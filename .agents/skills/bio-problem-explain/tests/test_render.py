@@ -9,13 +9,14 @@ from mpe_shared import parse
 from mpe_types import ChoiceModel, ExplainError
 from mpe_render import build_explanation, check_artifacts, names
 
-def make(tmp_path):
+def make(tmp_path, core_only=False):
     source=source_file(tmp_path/'repo');pack=load_source(source,tmp_path/'repo')
     p=pack.problems[0]
-    return pack,{p.id:fragment(p)}
+    return pack,{p.id:fragment(p, core_only=core_only)}
 
-def test_legacy_statement_rendered_once(tmp_path):
-    pack,fragments=make(tmp_path)
+@pytest.mark.parametrize('core_only', [False, True])
+def test_legacy_statement_rendered_once(tmp_path, core_only):
+    pack,fragments=make(tmp_path, core_only=core_only)
     result=build_explanation(pack,fragments,tmp_path/'stage',tmp_path/'repo')
     assert check_artifacts(pack,result)==[]
     text=result.html.read_text();md=result.md.read_text()
@@ -32,6 +33,8 @@ def test_legacy_statement_rendered_once(tmp_path):
     assert '왼쪽 목차로 문항을 고르고, 오른쪽 문제를 보며 해설을 따라가요.' in text
     assert md.index('printf') < md.index('이 문제를 봤을 때')
     assert 'https://cdn.' not in text
+    for key in ('start', 'pitfall', 'retry'):
+        assert bool(list(parse(text).find_all(lambda n: n.attrs.get('data-explanation') == key))) is not core_only
 
 def test_problem_pane_wraps_statement_and_original(tmp_path):
     pack,fragments=make(tmp_path);result=build_explanation(pack,fragments,tmp_path/'stage',tmp_path/'repo')

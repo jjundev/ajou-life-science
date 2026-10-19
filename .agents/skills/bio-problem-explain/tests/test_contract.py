@@ -1,7 +1,54 @@
 from copy import deepcopy
+from itertools import combinations
 import pytest
 from helpers import problem, fragment, pack
 from mpe_contract import validate_fragment, validate_reviews, payload_hash
+from mpe_shared import parse, outer
+
+OPTIONAL_SECTIONS = ('start', 'pitfall', 'retry')
+
+
+def without_sections(text, *keys):
+    for node in parse(text).find_all(lambda n: n.attrs.get('data-explanation') in keys):
+        text = text.replace(outer(node), '')
+    return text
+
+
+@pytest.mark.parametrize('included', [subset for size in range(4)
+                                    for subset in combinations(OPTIONAL_SECTIONS, size)])
+def test_optional_sections_can_be_omitted_independently(included):
+    text = without_sections(fragment(), *(key for key in OPTIONAL_SECTIONS if key not in included))
+    assert validate_fragment(problem(), text) == []
+
+
+@pytest.mark.parametrize('key', ('understand', 'recall', 'solve', 'verify'))
+def test_core_sections_remain_required_without_optional_sections(key):
+    text = without_sections(fragment(), *OPTIONAL_SECTIONS, key)
+    assert validate_fragment(problem(), text)
+
+
+@pytest.mark.parametrize('key', OPTIONAL_SECTIONS)
+def test_optional_sections_still_reject_duplicates_empty_bodies_and_wrong_order(key):
+    text = fragment()
+    block = outer(next(parse(text).find_all(lambda n: n.attrs.get('data-explanation') == key)))
+    assert validate_fragment(problem(), text + block)
+    empty = f'<div class="layer warn formal" data-explanation="{key}"><h4>제목뿐인 구역</h4></div>'
+    assert validate_fragment(problem(), text.replace(block, empty))
+    misplaced = text.replace(block, '')
+    assert any('순서' in error for error in validate_fragment(problem(), block + misplaced))
+
+
+def test_unknown_section_refused_even_when_core_is_complete():
+    text = without_sections(fragment(), *OPTIONAL_SECTIONS)
+    text += '<div class="layer formal" data-explanation="background"><p>배경</p></div>'
+    assert validate_fragment(problem(), text)
+
+
+def test_warning_layer_required_only_for_present_pitfall():
+    text = fragment().replace('class="layer warn" data-explanation="pitfall"',
+                              'class="layer formal" data-explanation="pitfall"')
+    assert validate_fragment(problem(), text)
+    assert validate_fragment(problem(), without_sections(text, 'pitfall')) == []
 
 RECALL = ('<div class="layer formal" data-explanation="recall">'
           '<h4>이 문제를 봤을 때 떠올릴 개념과 공식</h4>'

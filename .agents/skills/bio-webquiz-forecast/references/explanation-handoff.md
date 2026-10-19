@@ -6,7 +6,7 @@
 
 1. 형제 스킬 `bio-problem-explain`의 SKILL.md와 저작·검토 references를 읽는다. 대상은 `웹과제예상/<N>장/복습문제_<N>장_웹과제예상_v<K>.html`의 **명시 절대 경로**다. 날짜·최신·all로 선택하지 않는다. 새 RUN을 만들고 해설기 1–7단계를 수행한다. `lite` 호출이면 해설 저작에도 lite를 전달하고 네 검토는 유지한다. 모델·저작자와 독립 검산자 분담은 해설기 규칙을 따른다.
 2. 추출은 `python "$EXPLAIN/scripts/mpe_cli.py" extract --repo "$REPO" --target "$HTML" --run "$EXPLAIN_RUN"`으로 한다. EXPLAIN은 형제 스킬의 절대 경로, HTML은 방금 통과한 파일, EXPLAIN_RUN은 비어 있는 고유 경로다. 셸 변수는 같은 호출에서 먼저 설정하거나 실제 절대 경로로 치환한다.
-3. p1–p15 모두의 일곱 구역을 저작한다. o1·o2는 설명 대상이 아니다. 해당 `.pack/v<K>/pack.json`, `blueprint.md`, 관련 노트·교과서·강의노트·기출을 실제로 대조한다. 설계표·정답키·개요 정답·카드 풀이·해설은 독립 검산자에게 제공하지 않는다. 정답 비공개 문항 사본만 준다.
+3. p1–p15 모두의 해설을 저작한다. 필수 구역·선택 구역과 요약은 해설기의 `references/authoring.md`를 따른다. 판단 기준을 먼저 제시하고 모든 선지의 실제 주장에 적용해 선택·제외 이유를 설명하며 불필요한 반복을 덜어낸다. o1·o2는 설명 대상이 아니다. 해당 `.pack/v<K>/pack.json`, `blueprint.md`, 관련 노트·교과서·강의노트·기출을 실제로 대조한다. 설계표·정답키·개요 정답·카드 풀이·해설은 독립 검산자에게 제공하지 않는다. 정답 비공개 문항 사본만 준다.
 4. build/check와 source_visual·content·independent·browser 네 검토를 수행한다. 실제 사용한 참조 파일 path/SHA-256을 review.json의 references에 기록한다. pack.json/blueprint.md도 문맥 해시로 묶이며 변경하면 재추출이 필요하다. 검토 결과를 현재 input_hash와 artifact_hashes에 대해 승인한 뒤 publish한다.
 
 ## 수정·재검토 루프

@@ -14,7 +14,7 @@ from mpe_contract import payload_hash
 from mpe_types import ExplainError
 
 
-def build_run(tmp_path, version=5):
+def build_run(tmp_path, version=5, core_only=False):
     repo = tmp_path / 'repo'
     source = forecast_source_file(repo, version=version)
     run = tmp_path / f'run-v{version}'
@@ -22,7 +22,7 @@ def build_run(tmp_path, version=5):
     assert result.returncode == 0, result.stderr
     item = load_run(run)[0]
     for p in item['pack'].problems:
-        (item['folder']/'explanations'/f'{p.id}.html').write_text(fragment(p))
+        (item['folder']/'explanations'/f'{p.id}.html').write_text(fragment(p, core_only=core_only))
     result = call('build', '--run', run)
     assert result.returncode == 0, result.stderr
     return source, run, load_run(run)[0]
@@ -34,8 +34,9 @@ def approve(item):
     return review
 
 
-def test_forecast_cli_round_trip(tmp_path):
-    source, run, item = build_run(tmp_path)
+@pytest.mark.parametrize('core_only', [False, True])
+def test_forecast_cli_round_trip(tmp_path, core_only):
+    source, run, item = build_run(tmp_path, core_only=core_only)
     before = source.read_bytes()
     assert names(item['pack']) == ('문제해설_4장_웹과제예상_v5', '.pack/figures_문제해설_4장_웹과제예상_v5', '.pack/자료_문제해설_4장_웹과제예상_v5')
     artifacts = load_artifacts(item)

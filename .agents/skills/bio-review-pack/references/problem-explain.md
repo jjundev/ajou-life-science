@@ -15,7 +15,7 @@ bio-problem-explain 스킬의 "실행" 1~7단계를 이 팩의 최종 복습문�
 **절차** (`EXPLAIN_SKILL/SKILL.md`를 읽고 그대로 따른다)
 1. `EXPLAIN_SKILL/SKILL.md`와 `references/authoring.md`, `references/verification.md`를 읽는다.
 2. 실행 1단계: `--target ABS_REVIEW`(최종 HTML 절대 경로)로 `extract`한다. 날짜나 최신 팩 선택에 맡기지 않는다. 모든 ABS 자리는 실제 절대 경로다.
-3. 실행 2~3단계: `source.json`의 전체 문항·소문항을 읽고 기출 합본·웹과제·교과서·강의노트·정리노트·`.pack/`의 해당 쪽을 실제로 대조한 뒤 `explanations/pN.html`에 모든 문항의 일곱 구역과 요약을 쓴다. CLI는 설명을 자동 저작하지 않는다.
+3. 실행 2~3단계: `source.json`의 전체 문항·소문항을 읽고 기출 합본·웹과제·교과서·강의노트·정리노트·`.pack/`의 해당 쪽을 실제로 대조한 뒤 `explanations/pN.html`을 쓴다. 필수 구역·선택 구역과 요약은 해설기의 `references/authoring.md`를 따른다. 객관식은 판단 기준을 먼저 제시하고 모든 선지에 적용해 선택·제외 이유를 설명하며 불필요한 반복을 덜어낸다. CLI는 설명을 자동 저작하지 않는다.
 4. 실행 4단계: 정답을 보지 않은 별도 재풀이와 교과서 대조로 모든 소문항을 검산하고 `evidence/`에 둔다. 원문 오타·복수 정답·답안지 충돌은 disputed로 보류한다.
 5. 실행 5단계: `build` 후 `check`. build는 검토를 `not_run`으로 되돌리며 기계 통과는 정답·실화면 승인이 아니다.
 6. 실행 6단계: `source_visual`/`content`/`independent`/`browser`를 실제로 수행해 `review.json`에 기록한다. `lite`에서도 생략하지 않는다. 끝나면 서버를 종료한다.

@@ -8,7 +8,7 @@ python3 EXPLAIN/scripts/mpe_cli.py extract --repo REPO --target ABS_시험예상
 
 exam adapter는 p1~p75와 20개 short_answer 모델을 전달한다. all/최신은 기존 복습노트만 선택한다. range/version/manifest/카드/정답/검토가 불일치하면 거부한다. pack/blueprint/scope/policy/candidates/manifest/question-review와 present 근거를 context_hashes에 묶고 missing→present도 재확인한다.
 
-기존 understand/recall/start/solve/verify/pitfall/retry 조각을 작성하고 단답형 canonical/accepted/대소문자·단위 판정을 설명한다. build/check 후 source_visual/content/independent/browser 네 해설 검토를 실제 수행하고 publish한다. 해설 이름은 `문제해설_<범위>_시험예상_vK.html`, 부속 MD·그림·자료는 `.pack/vK/` 안이다. 단순 HTML 존재는 완료가 아니다. status는 실제 manifest/validation/검토/산출 해시와 현재 질문 근거를 검사한다.
+해설기의 `references/authoring.md`에 따라 필수 구역·필요한 선택 구역과 요약을 작성한다. 객관식은 판단 기준을 먼저 제시하고 모든 선지의 실제 주장에 적용해 선택·제외 이유를 설명하며 불필요한 반복을 덜어낸다. 단답형 canonical/accepted/대소문자·단위 판정도 설명한다. build/check 후 source_visual/content/independent/browser 네 해설 검토를 실제 수행하고 publish한다. 해설 이름은 `문제해설_<범위>_시험예상_vK.html`, 부속 MD·그림·자료는 `.pack/vK/` 안이다. 단순 HTML 존재는 완료가 아니다. status는 실제 manifest/validation/검토/산출 해시와 현재 질문 근거를 검사한다.
 
 최초 검토 이후 오류가 있으면 문제 RUN의 `exam_cli.py repair --run RUN --reason ...`를 먼저 기록한다. repair-history와 run.repairs_used를 같이 보존한다. 두 단계 합계 최대2회이며 새 해설 RUN은 이 예산을 초기화하지 않는다.
 

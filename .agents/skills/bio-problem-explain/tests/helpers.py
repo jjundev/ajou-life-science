@@ -7,10 +7,10 @@ def problem():
                    '<p>$A=1$</p>', '<ol><li>(a) $A$</li><li>(b) $A^2$</li></ol>',
                    (), ('계산',), '1', ('a', 'b'))
 
-def fragment(p=None):
+def fragment(p=None, *, core_only=False):
     p = p or problem()
     parts = ''.join(f'<div data-subpart="{key}"><p>첫 식에서 계산하고 대입해 확인해요. $1=1$</p></div>' for key in p.subparts)
-    return ('<div class="layer eli5" data-explanation="understand"><p>구할 것을 읽어요.</p></div>'
+    text = ('<div class="layer eli5" data-explanation="understand"><p>구할 것을 읽어요.</p></div>'
             '<div class="layer formal" data-explanation="recall">'
             '<h4>이 문제를 봤을 때 떠올릴 개념과 공식</h4>'
             '<p>제곱을 구하라는 단서에서 같은 수의 곱을 떠올려요. '
@@ -21,6 +21,11 @@ def fragment(p=None):
             '<div class="layer warn" data-explanation="pitfall"><p>행과 열을 바꾸지 않아요.</p></div>'
             '<div class="layer formal" data-explanation="retry"><ul><li>다시 계산해요.</li></ul></div>'
             '<div class="sum" hidden><p>시작·판단·검산</p></div>')
+    if core_only:
+        from mpe_shared import parse, outer
+        for node in parse(text).find_all(lambda n: n.attrs.get('data-explanation') in ('start', 'pitfall', 'retry')):
+            text = text.replace(outer(node), '')
+    return text
 
 def pack(path=Path('복습문제_0917_Recursion.html')):
     return SourcePack('review', '0917', 'Recursion', path, '0'*64, (problem(),))
