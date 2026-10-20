@@ -230,31 +230,6 @@ def load_plan(run):
     return plan
 
 
-def adapt_export(source, pack_relative, document_id):
-    """Adapt only generated JS, keeping sibling templates unchanged."""
-    marker = "    if (root.name === '복습노트') {"
-    if source.count(marker) != 1:
-        raise ValueError('저장 경로 어댑터와 기존 생성기 버전이 달라요')
-    parts = pack_relative.split('/')
-    if any(not re.fullmatch(r'\d{4}|v[2-9]\d*|v1\d+', p) for p in parts):
-        raise ValueError('잘못된 팩 상대 경로')
-    custom = '''    if (root.name === '약점노트') {
-      let pack = root;
-      for (const part of %s) {
-        pack = await child(pack, part, false);
-        if (!pack) return null;
-      }
-      try { await pack.getFileHandle(%s); }
-      catch (error) { if (error && error.name === 'NotFoundError') return null; throw error; }
-      return inAssets(pack);
-    }
-''' % (json.dumps(parts, ensure_ascii=False), json.dumps(document_id, ensure_ascii=False))
-    source = source.replace(marker, custom + marker)
-    source = source.replace('복습노트/날짜 폴더(또는 복습노트 폴더)', '약점노트의 이 HTML이 있는 폴더(또는 약점노트 폴더)')
-    source = source.replace("'복습노트/' +", "'약점노트/' +")
-    return source
-
-
 class StudyHTML(HTMLParser):
     """Inventory pedagogic units, including collapsed material; never mark them read."""
     VOID = {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'}
@@ -528,11 +503,9 @@ def assemble(run):
     write(out/'.pack/source-manifest.json', plan['inputs'])
     call(SIBLINGS/'bio-review-pack/scripts/assemble.py', '--run', run, '--out', out)
     review = out/f'복습문제_{plan["date"]}_{plan["slug"]}.html'
-    review.write_text(adapt_export(review.read_text(encoding='utf-8'), '/'.join(Path(plan['output']).parts[1:]), review.name), encoding='utf-8')
     names = check_pair(plan, out, run)
     call(SIBLINGS/'bio-review-pack/scripts/html2md.py', out/names[0], out/names[1], '--check')
     write(out/'.pack/diagnosis.json', archive_study_reading(data, run, out))
-    (out/'.assets/풀이기록').mkdir(parents=True, exist_ok=True)
     return dict(output=str(out), note=str(out/names[0]), review=str(review),
                 next='bio-problem-explain: extract --target <absolute review path above>; four reviews and publish, then finish')
 

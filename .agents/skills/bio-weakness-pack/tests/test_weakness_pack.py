@@ -203,29 +203,4 @@ class SelectionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, '풀이기록'): self.m.assemble(run)
         self.assertEqual(Path(result['note']).read_bytes(), before)
 
-    def test_export_adapter_routes_versioned_root_and_rejects_wrong_folder(self):
-        source = (Path(__file__).resolve().parents[2]/'bio-review-pack/assets/review-interaction.js').read_text()
-        adapted = self.m.adapt_export(source, '0910/v2', '복습문제_0910_Weakness_0910_v2.html')
-        js = adapted + r'''
-const api = module.exports;
-const assert = require('node:assert/strict');
-(async()=>{
- const seen=[];
- const leaf={name:'풀이기록'};
- const node=(name,next)=>({name,async getDirectoryHandle(key){seen.push(key);if(!(key in next)){const e=new Error();e.name='NotFoundError';throw e;}return next[key];}});
- const assets=node('.assets',{'풀이기록':leaf});
- const v2=node('v2',{'.assets':assets});v2.getFileHandle=async()=>({});
- const day=node('0910',{'v2':v2});
- const root=node('약점노트',{'0910':day});
- assert.equal(await api.resolveExportDir(root,'복습문제_0910_Weakness_0910_v2.html','0910'),leaf);
- assert.deepEqual(seen,['0910','v2','.assets','풀이기록']);
- const wrong={name:'other',async getFileHandle(){const e=new Error();e.name='NotFoundError';throw e;}};
- assert.equal(await api.resolveExportDir(wrong,'x','0910'),null);
- assert.equal(await api.resolveExportDir(v2,'복습문제_0910_Weakness_0910_v2.html','0910'),leaf);
-})().catch(e=>{console.error(e);process.exit(1)});
-'''
-        result = subprocess.run(['node','--input-type=commonjs','-e',js],capture_output=True,text=True)
-        self.assertEqual(result.returncode,0,result.stderr)
-
-
 if __name__ == '__main__': unittest.main()
