@@ -69,6 +69,7 @@ def test_results_prompt_and_review_roundtrip(repo, width, scheme):
         review=copied[copied.index('## 다시 볼 문항'):copied.index('## 확신 있게 맞힌 문항')]
         correct=copied[copied.index('## 확신 있게 맞힌 문항'):]
         assert '#### p2.' in section(review,'### 오답')
+        assert '#### p2. p2.' not in copied
         assert '보기:\n- [A] ' in section(review,'### 오답') and '내 답: [A] / 정답: [' in review
         assert '- 풀이: ' in section(review,'### 오답')
         pending=section(review,'### 자기채점 대기')

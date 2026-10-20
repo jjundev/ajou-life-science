@@ -62,7 +62,8 @@
     const list = Array.isArray(options) ? options : [];
     const used = new Set(list.map(o => o.diagnostic));
     const texts = {
-      title: heading ? heading.textContent.replace(/\s+/g, ' ').trim() : '',
+      // The prompt already prints the card id, so drop the "P1." label from the heading.
+      title: heading ? heading.textContent.replace(/\s+/g, ' ').trim().replace(/^P\d+\.\s*/i, '') : '',
       stem: read(problem),
       options: list.map(o => ({id:o.id, text:stripDiagnosticPrefix(read(choices[o.index]).trim(), o.id)})),
       diagnostics: {},

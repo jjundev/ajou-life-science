@@ -321,6 +321,7 @@ class TestReviewBrowser(unittest.TestCase):
         self.assertTrue(text.startswith('# 생명과학 복기 요청'))
         wrong = self.section(text, '### 오답')
         self.assertIn('#### p1.', wrong)
+        self.assertNotIn('#### p1. P1.', wrong)
         self.assertIn('내 답: [1] / 정답: [2]', wrong)
         option_lines = [line for line in text.splitlines() if line.startswith('- [')]
         self.assertTrue(option_lines)

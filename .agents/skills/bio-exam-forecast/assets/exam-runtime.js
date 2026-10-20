@@ -15,7 +15,8 @@
   document.querySelectorAll('main article.card').forEach(card => {
     const problem = card.querySelector('.problem');
     texts[card.id] = {
-      title: (card.querySelector('h3')?.textContent || '').replace(/\s+/g, ' ').trim(),
+      // The prompt already prints the card id, so drop the "p1." label from the heading.
+      title: (card.querySelector('h3')?.textContent || '').replace(/\s+/g, ' ').trim().replace(/^p\d+\.\s*/i, ''),
       stem: problem ? (prompt ? prompt.problemText(problem) : problem.textContent.replace(/\s+/g, ' ').trim()) : '',
       options: Array.from(card.querySelectorAll('.exam-input label')).filter(label => label.querySelector('input[type=radio]'))
         .map(label => ({id: label.querySelector('input').value, text: label.textContent.replace(/\s+/g, ' ').trim().replace(/^[A-Z]\.\s*/, '')})),
