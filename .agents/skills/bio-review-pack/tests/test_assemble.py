@@ -158,6 +158,15 @@ class TestPackRecords(unittest.TestCase):
         self.assertTrue(log.endswith("- 2026-10-09 augment: 추가 p3, p4 — HTML에서 복원\n"))
         self.assertEqual(log.count("\n- "), 2)
 
+    def test_summary_audit_is_saved_for_full_and_preserved_for_augment(self):
+        (self.run / 'summary-audit.md').write_text('검토 완료\n', encoding='utf-8')
+        assemble.save_pack_records(self.run, self.out, 'full', [])
+        self.assertTrue((self.pack / 'summary-audit.md').is_file())
+        self.assertEqual((self.pack / 'summary-audit.md').read_text(), '검토 완료\n')
+        (self.run / 'summary-audit.md').write_text('다른 본문의 검토\n', encoding='utf-8')
+        assemble.save_pack_records(self.run, self.out, 'augment', [])
+        self.assertEqual((self.pack / 'summary-audit.md').read_text(), '검토 완료\n')
+
     def test_missing_records_keep_previous(self):
         self.pack.mkdir(parents=True)
         (self.pack / "key-check.md").write_text("keep\n", encoding="utf-8")

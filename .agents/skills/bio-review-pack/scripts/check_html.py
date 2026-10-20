@@ -258,6 +258,33 @@ def stt_time_problems(text: str, where: str) -> list[Problem]:
 TERMS_RE = re.compile(r'(<p class="panel-label">용어</p>\s*|<div class="sum-supp"[^>]*>\s*)?<dl class="terms">')
 
 
+def page_summary_problems(source: str) -> list[Problem]:
+    """패널 요약의 구조만 검사한다. 핵심·조건의 보존은 본문 대조로 검토한다."""
+    from html2md import Builder, Node
+    tree = Builder()
+    tree.feed(source)
+    if not any(n.attrs.get('id') == SUM_PANEL_ID for n in tree.root.find_all(lambda n: True)):
+        return []
+    out = []
+    for topic in tree.root.find_all(lambda n: n.tag == 'article' and 'topic' in n.classes):
+        where = topic.attrs.get('id', 'topic')
+        sums = [n for n in topic.children if isinstance(n, Node) and 'sum' in n.classes]
+        # 요약 필수 여부는 manifest의 layers를 아는 check_note가 판정한다.
+        if len(sums) > 1:
+            out.append(Problem('sum-duplicate', where, '직계 자식 페이지 요약은 하나만 필요'))
+        for summary in sums:
+            if not summary.text().strip():
+                out.append(Problem('sum-empty', where, '페이지 요약 내용 없음'))
+            leads = [n for n in summary.children if isinstance(n, Node) and 'sum-lead' in n.classes]
+            if not leads:
+                out.append(Problem('sum-lead-missing', where, '직계 자식 핵심 문장 없음'))
+            elif len(leads) > 1:
+                out.append(Problem('sum-lead-duplicate', where, '핵심 문장은 하나만 필요'))
+            if any(not n.text().strip() for n in leads):
+                out.append(Problem('sum-lead-empty', where, '핵심 문장 내용 없음'))
+    return out
+
+
 def supplement_summary_problems(source: str) -> list[Problem]:
     """패널을 가진 노트의 보충별 대응만 검사한다. 요약의 의미 충족도는 검토자가 판단한다."""
     from html2md import Builder, Node
@@ -311,6 +338,7 @@ def supplement_summary_problems(source: str) -> list[Problem]:
 def check_common(doc: Doc, source: str, path: Path) -> list[Problem]:
     name = Path(path).name
     out: list[Problem] = []
+    out += page_summary_problems(source)
     out += supplement_summary_problems(source)
     if doc.lang != "ko":
         out.append(Problem("lang", name, f"<html lang> = {doc.lang!r}"))
