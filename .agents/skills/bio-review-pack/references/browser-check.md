@@ -56,7 +56,7 @@ const textNodes = Array.from(document.querySelectorAll('main *, #panel-right *')
 ```
 통과: `katexErrors: 0`, `rawDollar: false`, `sumsInPanel`이 manifest에서 `layers`가 빈 목록이 아닌 토픽 수, `sumsLeftInMain: 0`, `hScroll: []`, 모든 위젯 `drawn: true`. `read_console_messages`에 오류 없음.
 
-개념 토픽 하나로 넘겨(`location.hash = '#<토픽 id>'`) 오른쪽 "페이지 요약" 패널에 그 토픽의 요약이 보이는지 스크린샷으로 확인한다(1280px 이상에서는 패널이 기본으로 열린다).
+개념 토픽 하나로 넘겨(`location.hash = '#<토픽 id>'`) 오른쪽 "페이지 요약" 패널에서 페이지 주제 제목의 중복 없이 핵심 요약부터 보이는지 스크린샷으로 확인한다(1280px 이상에서는 패널이 기본으로 열린다).
 보충이 있는 모든 토픽에서 `.sum-supp`이 기존 용어와 같은 제목·설명 양식으로 표시되고 제목 앞에 `(보충)`만 붙는지 확인한다. 별도 초록색 배지·구분선·글머리표·본문 이동 링크가 없어야 한다. 마지막 설명까지 스크롤할 수 있는지, 모바일 패널의 줄바꿈·가로 넘침이 없는지 확인한다. 대표 화면을 밝은/어두운 테마에서 직접 확인한다.
 공유 템플릿의 `(보충)` 접두사·기존 용어 스타일 일치·본문 링크 부재·모바일 가로 넘침 검사는 `python3 .agents/skills/bio-review-pack/tests/browser_check_note_supplement.py`로 실행한다. 이 fixture 검사가 실제 산출물 전체의 내용·화면 검토를 대신하지는 않는다.
 
