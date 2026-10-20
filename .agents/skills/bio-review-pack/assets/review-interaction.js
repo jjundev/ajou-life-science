@@ -46,145 +46,52 @@
       else storage.setItem(key, JSON.stringify({version:card.version, selected, unsure:unsure === true}));
     } catch {}
   }
-  function exportKey(documentId) {
-    return 'od-review-export:v1:' + encodeURIComponent(documentId);
-  }
-  function readSnapshot(storage, key) {
-    const empty = () => ({schema:1, cards:{}});
-    try {
-      const value = JSON.parse(storage.getItem(key));
-      return value && value.schema === 1 && value.cards && typeof value.cards === 'object' && !Array.isArray(value.cards)
-        ? value : empty();
-    } catch { return empty(); }
-  }
-  function writeSnapshot(storage, key, snapshot) {
-    try { storage.setItem(key, JSON.stringify(snapshot)); } catch {}
-  }
-  function updateSnapshot(snapshot, selectedById, ids, now, unsureById) {
-    const cards = Object.assign({}, snapshot.cards);
-    for (const id of ids) {
-      const selected = selectedById[id] === undefined ? null : selectedById[id];
-      const unsure = selected !== null && !!unsureById && unsureById[id] === true;
-      const prev = cards[id];
-      if (prev && prev.selected === selected && (prev.unsure === true) === unsure) continue;
-      cards[id] = {selected, unsure, updatedAt: selected === null ? null : now.toISOString()};
+  function promptApi(scope) {
+    if (scope && scope.ReviewPrompt) return scope.ReviewPrompt;
+    if (typeof require === 'function') {
+      try { return require('./review-prompt.js'); } catch {}
     }
-    return {schema:1, cards};
+    return null;
   }
-  function buildExport(model, snapshot, meta) {
-    const counts = {correct:0, incorrect:0, ambiguous:0};
-    let unsure = 0;
-    const cards = meta.ids.map(id => {
+  // Capture plain text before enhancement moves nodes or adds badges.
+  function captureCardText(card, choices, diagnostics, options, solution) {
+    const prompt = promptApi(card.ownerDocument && card.ownerDocument.defaultView);
+    const read = el => !el ? '' : prompt ? prompt.problemText(el) : el.textContent.replace(/\s+/g, ' ').trim();
+    const heading = card.querySelector('h3');
+    const problem = card.querySelector('.problem');
+    const list = Array.isArray(options) ? options : [];
+    const used = new Set(list.map(o => o.diagnostic));
+    const texts = {
+      title: heading ? heading.textContent.replace(/\s+/g, ' ').trim() : '',
+      stem: read(problem),
+      options: list.map(o => ({id:o.id, text:stripDiagnosticPrefix(read(choices[o.index]).trim(), o.id)})),
+      diagnostics: {},
+      extras: diagnostics.filter((_, i) => !used.has(i)).map(read).filter(Boolean)
+    };
+    list.forEach(o => { texts.diagnostics[o.id] = stripDiagnosticPrefix(read(diagnostics[o.diagnostic]).trim(), o.id); });
+    return texts;
+  }
+  function buildPromptRecord(model, texts, ids, selectedById, unsureById, range) {
+    const items = ids.map(id => {
       const data = model.cards[id];
-      const entry = snapshot.cards[id] || {};
-      const result = grade(data, entry.selected);
-      if (result !== null) counts[result] += 1;
-      const marked = result !== null && entry.unsure === true;
-      if (marked) unsure += 1;
-      return {
-        id, title: meta.titles[id] || '',
-        selected: result === null ? null : entry.selected,
-        answer: data.answer, result, unsure: marked,
-        updatedAt: result === null ? null : (entry.updatedAt || null)
-      };
+      const t = texts[id] || {title:'', stem:'', options:[], diagnostics:{}, extras:[]};
+      const raw = selectedById[id];
+      const result = grade(data, raw);
+      const selected = result === null ? null : raw;
+      const status = result === null ? 'unanswered'
+        : result === 'correct' && unsureById && unsureById[id] === true ? 'unsure' : result;
+      const diagnostic = optionId => (t.diagnostics || {})[optionId] || '';
+      const explanations = [];
+      if (selected !== null && selected !== data.answer)
+        explanations.push({label:'내 선택 [' + selected + ']', text:diagnostic(selected)});
+      explanations.push({label:(data.mode === 'ambiguous' ? '출제 의도상 답 [' : '정답 [') + data.answer + ']',
+        text:diagnostic(data.answer)});
+      (t.extras || []).forEach(text => explanations.push({label:'', text}));
+      if (data.notice) explanations.push({label:'출제 주의', text:data.notice});
+      return {id, title:t.title, stem:t.stem, format:'mcq', options:t.options, selected,
+        answer:data.answer, accepted:null, status, explanations};
     });
-    const answered = counts.correct + counts.incorrect + counts.ambiguous;
-    return {
-      schema:1, documentId:model.documentId, range:meta.range, exportedAt:meta.now.toISOString(),
-      summary:{total:cards.length, answered, unanswered:cards.length - answered,
-        correct:counts.correct, incorrect:counts.incorrect, ambiguous:counts.ambiguous, unsure},
-      skipped: model.skipped || [], cards
-    };
-  }
-  function exportFilename(documentId, now) {
-    const p = n => String(n).padStart(2, '0');
-    const stamp = now.getFullYear() + p(now.getMonth() + 1) + p(now.getDate()) +
-      '-' + p(now.getHours()) + p(now.getMinutes());
-    return documentId.replace(/\.html?$/i, '') + '_풀이기록_' + stamp + '.json';
-  }
-  function handleStore(win) {
-    const run = async (mode, fn) => {
-      const db = await new Promise((resolve, reject) => {
-        const req = win.indexedDB.open('od-review-export', 1);
-        req.onupgradeneeded = () => req.result.createObjectStore('handles');
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
-      });
-      try {
-        return await new Promise((resolve, reject) => {
-          const tx = db.transaction('handles', mode);
-          const req = fn(tx.objectStore('handles'));
-          tx.oncomplete = () => resolve(req.result);
-          tx.onerror = tx.onabort = () => reject(tx.error);
-        });
-      } finally { db.close(); }
-    };
-    return {
-      get: () => run('readonly', st => st.get('root')).then(h => h || null, () => null),
-      set: h => run('readwrite', st => st.put(h, 'root')).catch(() => {}),
-      clear: () => run('readwrite', st => st.delete('root')).catch(() => {})
-    };
-  }
-  async function resolveExportDir(root, documentId, range) {
-    const child = async (dir, name, create) => {
-      try { return await dir.getDirectoryHandle(name, create ? {create:true} : undefined); }
-      catch (error) { if (error && error.name === 'NotFoundError') return null; throw error; }
-    };
-    const inAssets = async dir => child(await child(dir, '.assets', true), '풀이기록', true);
-    if (root.name === '풀이기록') return root;
-    if (root.name === '.assets') return child(root, '풀이기록', true);
-    if (root.name === '복습노트') {
-      const day = range ? await child(root, range, false) : null;
-      return day ? inAssets(day) : null;
-    }
-    try { await root.getFileHandle(documentId); }
-    catch (error) { if (error && error.name === 'NotFoundError') return null; throw error; }
-    return inAssets(root);
-  }
-  const isCancel = error => !!error && (error.name === 'AbortError' || error.name === 'NotAllowedError');
-  // The first export asks for the folder once and remembers it (IndexedDB), so
-  // later exports write straight into <날짜>/.assets/풀이기록 without a picker.
-  async function saveExport(win, text, filename, meta) {
-    meta = meta || {};
-    if (typeof win.showDirectoryPicker === 'function') {
-      const store = meta.store || handleStore(win);
-      const write = async root => {
-        const dir = await resolveExportDir(root, meta.documentId, meta.range);
-        if (!dir) return 'wrong-folder';
-        const file = await dir.getFileHandle(filename, {create:true});
-        const out = await file.createWritable();
-        await out.write(text);
-        await out.close();
-        return 'saved';
-      };
-      try {
-        const remembered = await store.get();
-        if (remembered) {
-          try {
-            let permission = await remembered.queryPermission({mode:'readwrite'});
-            if (permission !== 'granted') permission = await remembered.requestPermission({mode:'readwrite'});
-            if (permission !== 'granted') return 'cancelled';
-            if (await write(remembered) === 'saved') return 'saved';
-          } catch (error) { if (isCancel(error)) return 'cancelled'; }
-          await store.clear();
-        }
-        const root = await win.showDirectoryPicker({mode:'readwrite', id:'od-review-export'});
-        const result = await write(root);
-        if (result === 'saved') await store.set(root);
-        return result;
-      } catch (error) {
-        if (isCancel(error)) return 'cancelled';
-      }
-    }
-    const url = win.URL.createObjectURL(new win.Blob([text], {type:'application/json'}));
-    const a = win.document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    win.document.body.append(a);
-    a.click();
-    a.remove();
-    win.setTimeout(() => win.URL.revokeObjectURL(url), 1000);
-    return 'downloaded';
+    return {kind:'review', documentId:model.documentId, range:range || '', items};
   }
   function mount(root, model, storage) {
     if (!model || model.schema !== 1 || !model.cards) return;
@@ -199,6 +106,7 @@
     };
     const selectedById = {};
     const unsureById = {};
+    const texts = {};
     let feedback = null;
     let feedbackTimer = null;
     let feedbackOwner = null;
@@ -235,6 +143,7 @@
       const choices = Array.from(card.querySelectorAll('.choices > li'));
       const diagnostics = solution ? Array.from(solution.querySelectorAll('ol.steps > li')) : [];
       const options = data.options;
+      try { texts[id] = captureCardText(card, choices, diagnostics, options, solution); } catch {}
       // Validate every reference before moving a single original node.
       if (!solution || !Array.isArray(options) || choices.length !== options.length ||
           !options.length || !options.some(o => o.id === data.answer) ||
@@ -392,7 +301,6 @@
           writeAttempt(storage, key, data, null);
           paint();
           emit(id, null, null);
-          root.dispatchEvent(new win.CustomEvent('od:mark', {detail:{id}}));
           controls[0].button.focus();
         });
         unsureBtn.addEventListener('click', () => {
@@ -401,7 +309,6 @@
           unsureById[id] = unsure;
           writeAttempt(storage, key, data, selected, unsure);
           paint();
-          root.dispatchEvent(new win.CustomEvent('od:mark', {detail:{id}}));
           showFeedback('unsure', id, unsure ? '애매함으로 표시했어요' : '애매함 표시를 취소했어요');
         });
         card.classList.add('review-ready');
@@ -436,76 +343,31 @@
     }
     const exportCards = Array.from(root.querySelectorAll('main article.card')).filter(el => model.cards[el.id]);
     const pager = root.querySelector('.pager');
-    if (exportCards.length && pager && !pager.querySelector('.review-export-bar')) {
+    const prompt = promptApi(win);
+    if (prompt && exportCards.length && pager && !pager.querySelector('.review-export-bar')) {
       const ids = exportCards.map(el => el.id);
-      const titles = {};
-      exportCards.forEach(el => { titles[el.id] = ((el.querySelector('h3') || {}).textContent || '').trim(); });
-      const snapKey = exportKey(model.documentId);
-      let snapshot = readSnapshot(storage, snapKey);
-      root.addEventListener('od:leave', ({detail}) => {
-        const id = detail && detail.screen && detail.screen.id;
-        if (!model.cards[id]) return;
-        snapshot = updateSnapshot(snapshot, selectedById, [id], new Date(), unsureById);
-        writeSnapshot(storage, snapKey, snapshot);
-      });
-      root.addEventListener('od:mark', ({detail}) => {
-        const id = detail && detail.id;
-        if (!model.cards[id]) return;
-        snapshot = updateSnapshot(snapshot, selectedById, [id], new Date(), unsureById);
-        writeSnapshot(storage, snapKey, snapshot);
-      });
       const bar = element('div', 'review-export-bar');
-      const button = element('button', 'btn btn-primary review-export', 'JSON 내보내기');
+      const button = element('button', 'btn btn-primary review-export', '복기 프롬프트 복사');
       button.type = 'button';
       const note = element('p', 'review-export-note sr-only');
       note.setAttribute('role', 'status');
       note.setAttribute('aria-live', 'polite');
-      const helpWrap = element('div', 'review-export-help-wrap');
-      const help = element('button', 'text-btn review-export-help', '?');
-      help.type = 'button';
-      help.setAttribute('aria-label', '저장 폴더 도움말');
-      help.setAttribute('aria-expanded', 'false');
-      const popup = element('div', 'review-export-popup');
-      popup.id = 'review-export-popup';
-      popup.setAttribute('role', 'note');
-      popup.hidden = true;
-      help.setAttribute('aria-controls', popup.id);
-      popup.append(
-        element('p', 'review-export-popup-text',
-          '처음 한 번만 이 HTML이 들어 있는 복습노트/날짜 폴더(또는 복습노트 폴더)를 골라 주세요. ' +
-          '그 뒤로는 창 없이 풀이기록 폴더에 바로 저장돼요. Chrome은 다운로드·문서·바탕 화면 자체는 막아요.'),
-        element('button', 'text-btn review-export-popup-close', '닫기'));
-      popup.querySelector('button').type = 'button';
-      helpWrap.append(help, popup);
-      const setHelp = open => {
-        popup.hidden = !open;
-        help.setAttribute('aria-expanded', String(open));
-      };
-      help.addEventListener('click', () => setHelp(popup.hidden));
-      popup.querySelector('button').addEventListener('click', () => { setHelp(false); help.focus(); });
-      root.addEventListener('keydown', e => { if (e.key === 'Escape' && !popup.hidden) { setHelp(false); help.focus(); } });
-      root.addEventListener('click', e => { if (!popup.hidden && !helpWrap.contains(e.target)) setHelp(false); });
-      root.addEventListener('od:screen', () => setHelp(false));
-      bar.append(button, helpWrap, note);
+      bar.append(button, note);
       pager.prepend(bar);
       root.addEventListener('od:screen', () => { note.textContent = ''; });
       button.addEventListener('click', async () => {
         if (button.disabled) return;
         button.disabled = true;
-        const now = new Date();
-        snapshot = updateSnapshot(snapshot, selectedById, ids, now, unsureById);
-        writeSnapshot(storage, snapKey, snapshot);
-        const data = buildExport(model, snapshot, {ids, titles, range: root.body.dataset.range || '', now});
         let outcome;
         try {
-          outcome = await saveExport(win, JSON.stringify(data, null, 2) + '\n', exportFilename(model.documentId, now),
-            {documentId: model.documentId, range: root.body.dataset.range || ''});
+          const record = buildPromptRecord(model, texts, ids, selectedById, unsureById, root.body.dataset.range || '');
+          const text = prompt.buildReviewPrompt(record);
+          outcome = await prompt.copyText(win, text) ? 'copied' : 'manual';
+          if (outcome === 'manual') prompt.openPromptDialog(root, text);
         }
         finally { button.disabled = false; }
-        const message = outcome === 'saved' ? '풀이기록 폴더에 저장했어요'
-          : outcome === 'downloaded' ? '다운로드 폴더에 저장했어요'
-          : outcome === 'wrong-folder' ? '복습노트/' + (root.body.dataset.range || '날짜') + ' 폴더를 골라 주세요'
-          : '저장을 취소했어요';
+        const message = outcome === 'copied' ? '복기 프롬프트를 복사했어요. AI 채팅에 붙여 넣으세요'
+          : '자동 복사가 막혀 있어요. 열린 창에서 직접 복사해 주세요';
         note.textContent = message + '.';
         showFeedback(outcome, 'export', message, 2200);
       });
@@ -534,7 +396,7 @@
     }
   }
   const api = {stripDiagnosticPrefix, grade, storageKey, readAttempt, readUnsure, writeAttempt, mount,
-    exportKey, readSnapshot, writeSnapshot, updateSnapshot, buildExport, exportFilename, saveExport, resolveExportDir, handleStore};
+    captureCardText, buildPromptRecord};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else scope.ReviewInteraction = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

@@ -182,7 +182,8 @@ def install(source: str, document_id: str, overrides: dict | None = None, strict
         raise ValueError('body 종료 태그는 하나여야 함')
     payload = json.dumps(model, ensure_ascii=False, sort_keys=True).replace('<', '\\u003c')
     css = (SKILL / 'assets/review-interaction.css').read_text(encoding='utf-8')
-    js = (SKILL / 'assets/review-interaction.js').read_text(encoding='utf-8')
+    js = ((SKILL / 'assets/review-prompt.js').read_text(encoding='utf-8') + '\n'
+          + (SKILL / 'assets/review-interaction.js').read_text(encoding='utf-8'))
     boot = """(function () {
       function start() {
         try {
