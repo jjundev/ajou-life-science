@@ -137,7 +137,6 @@
     document.querySelector('#toggle-right span').textContent = isResults ? '채점표' : '풀이';
     if (isResults) {
       empty.hidden = true;
-      document.getElementById('aid-for').hidden = true;
       const legend = document.createElement('p'); legend.className = 'scorecard-legend';
       legend.textContent = '○ 정답·자동 일치 · × 오답 · ? 자기채점 대기 · — 미응답';
       const table = document.createElement('table'); table.id = 'exam-scorecard';
@@ -160,9 +159,6 @@
     const show = submitted && Boolean(card);
     empty.hidden = show;
     empty.textContent = submitted ? '문제를 선택하면 정답과 풀이가 여기에 나옵니다.' : '전체 제출 후 현재 문제의 정답과 풀이를 확인할 수 있습니다.';
-    const title = document.getElementById('aid-for');
-    title.hidden = !card;
-    title.textContent = card ? card.querySelector('h3').textContent : '';
     if (!show) return;
     const result = card.querySelector('.result').cloneNode(true);
     const solution = card.querySelector('.solution').cloneNode(true);

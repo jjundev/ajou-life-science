@@ -494,7 +494,6 @@ html:not(.js) #reset-exam { display:none; }
           <h2 id="panel-right-title">풀이 도움</h2>
           <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
         </div>
-        <p class="panel-sub" id="aid-for" hidden></p>
         <p class="panel-empty">전체 제출 후 현재 문제의 정답과 풀이를 확인할 수 있습니다.</p>
         <div class="aids" id="exam-aid"></div>
         <button class="solved-btn" id="solved-btn" type="button" aria-pressed="false" hidden><span>푼 문제로 표시</span></button>
@@ -649,7 +648,6 @@ html:not(.js) #reset-exam { display:none; }
     document.querySelector('#toggle-right span').textContent = isResults ? '채점표' : '풀이';
     if (isResults) {
       empty.hidden = true;
-      document.getElementById('aid-for').hidden = true;
       const legend = document.createElement('p'); legend.className = 'scorecard-legend';
       legend.textContent = '○ 정답·자동 일치 · × 오답 · ? 자기채점 대기 · — 미응답';
       const table = document.createElement('table'); table.id = 'exam-scorecard';
@@ -672,9 +670,6 @@ html:not(.js) #reset-exam { display:none; }
     const show = submitted && Boolean(card);
     empty.hidden = show;
     empty.textContent = submitted ? '문제를 선택하면 정답과 풀이가 여기에 나옵니다.' : '전체 제출 후 현재 문제의 정답과 풀이를 확인할 수 있습니다.';
-    const title = document.getElementById('aid-for');
-    title.hidden = !card;
-    title.textContent = card ? card.querySelector('h3').textContent : '';
     if (!show) return;
     const result = card.querySelector('.result').cloneNode(true);
     const solution = card.querySelector('.solution').cloneNode(true);
@@ -959,7 +954,6 @@ html:not(.js) #reset-exam { display:none; }
         const KEY = 'od-review-solved:' + RANGE;
         const cards = Array.from(document.querySelectorAll('main article.card'));
         const aids = panels.right.querySelector('.aids');
-        const sub = document.getElementById('aid-for');
         const empty = panels.right.querySelector('.panel-empty');
         const btn = document.getElementById('solved-btn');
         const groups = {};
@@ -1001,8 +995,6 @@ html:not(.js) #reset-exam { display:none; }
           Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
           empty.hidden = Boolean(curId);
           btn.hidden = !curId;
-          sub.textContent = curId ? ((s.querySelector('h3') || {}).textContent || '').trim() : '';
-          sub.hidden = !curId;
           if (curId) paintBtn();
           panels.right.querySelector('.panel-inner').scrollTop = 0;
           markToc(solved, cards.length, '푼 문제');
@@ -1025,14 +1017,12 @@ html:not(.js) #reset-exam { display:none; }
           box.appendChild(el);
           sums[t.id] = el;
         });
-        const sub = document.getElementById('sum-for');
         const empty = document.getElementById('sum-empty');
         document.addEventListener('od:screen', (e) => {
           const s = e.detail.screen;
           const key = s.matches('article.topic') ? s.id : 'intro';
           Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
           empty.hidden = Boolean(sums[key]);
-          sub.textContent = key === 'intro' ? '전체 흐름' : ((s.querySelector('h3') || {}).textContent || '').trim();
           if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
           panels.right.querySelector('.panel-inner').scrollTop = 0;
           markToc(read, topics.length, '읽음');
