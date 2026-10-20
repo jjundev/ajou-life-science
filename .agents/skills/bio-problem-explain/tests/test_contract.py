@@ -96,11 +96,8 @@ def test_nested_heading_only_recall_refused():
     assert any('recall' in e for e in validate_fragment(problem(), text.replace(block, nested)))
 
 def reviews():
-    base = {'status': 'pass', 'reviewer': '검토자', 'evidence': '근거: 합성 fixture 계산'}
-    items = {f'p1:{s}': dict(base) for s in ('a', 'b')}
-    return {'input_hash': payload_hash(pack(), {'p1': fragment()}),
-            'source_visual': base, 'browser': base, 'content': {**base, 'items': items},
-            'independent': {**base, 'items': {k: {**v, 'method': 'exact', 'conclusion': '1=1'} for k,v in items.items()}}}
+    from helpers import approved
+    return approved(pack(), {'p1': fragment()})
 
 def test_all_subparts_must_be_solved_and_verified():
     assert validate_fragment(problem(), fragment()) == []

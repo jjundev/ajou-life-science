@@ -11,7 +11,7 @@ def fragment(p=None, *, core_only=False):
     p = p or problem()
     parts = ''.join(f'<div data-subpart="{key}"><p>첫 식에서 계산하고 대입해 확인해요. $1=1$</p></div>' for key in p.subparts)
     text = ('<div class="layer eli5" data-explanation="understand"><p>구할 것을 읽어요.</p></div>'
-            '<div class="layer formal" data-explanation="recall">'
+            '<div class="layer formal" data-explanation="recall" data-note-link-omitted="합성 테스트에는 대응하는 수업 정리노트가 없음">'
             '<h4>이 문제를 봤을 때 떠올릴 개념과 공식</h4>'
             '<p>제곱을 구하라는 단서에서 같은 수의 곱을 떠올려요. '
             '$A^2=A\\cdot A$이며 A는 주어진 스칼라예요.</p></div>'
@@ -31,7 +31,7 @@ def pack(path=Path('복습문제_0917_Recursion.html')):
     return SourcePack('review', '0917', 'Recursion', path, '0'*64, (problem(),))
 
 def approved(pack, fragments, artifacts=None):
-    from mpe_contract import payload_hash
+    from mpe_contract import payload_hash, initial_reviews
     from mpe_render import artifact_hashes
     base = {'status': 'pass', 'reviewer': 'test fixture', 'evidence': 'fixture calculation at evidence.txt'}
     keys = [f'{p.id}:{s}' for p in pack.problems for s in p.subparts]
@@ -40,6 +40,9 @@ def approved(pack, fragments, artifacts=None):
               'content': {**base, 'items': {k: dict(base) for k in keys}},
               'independent': {**base, 'items': {k: {**base, 'method': 'exact', 'conclusion': '1=1'} for k in keys}},
               'references': []}
+    result['content']['note_link_exceptions'] = {
+        id_: {**base, 'reason': entry['reason']}
+        for id_, entry in initial_reviews(pack, fragments)['content']['note_link_exceptions'].items()}
     if artifacts:
         result['artifact_hashes'] = artifact_hashes(artifacts)
     return result

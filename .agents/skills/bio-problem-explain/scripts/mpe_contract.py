@@ -2,8 +2,10 @@
 import hashlib
 import json
 import math
+import unicodedata
 from collections import Counter
-from urllib.parse import urlsplit
+from pathlib import PurePosixPath
+from urllib.parse import urlsplit, unquote
 from mpe_shared import Node, parse, math_delimiter_errors, prose_text
 
 KEYS = ('understand', 'recall', 'start', 'solve', 'verify', 'pitfall', 'retry')
@@ -41,9 +43,41 @@ def _body_text(node):
         return ''
     return ''.join(_body_text(child) for child in node.children)
 
+def note_link_contract(root):
+    """Return structural errors and the explicit omission reason, if declared.
+
+    Resource resolution checks actual files/anchors; content review checks relevance.
+    An omission declaration permits building a stage, never unreviewed publication.
+    """
+    recalls = list(root.find_all(lambda n: n.attrs.get('data-explanation') == 'recall'))
+    if len(recalls) != 1:
+        return [], None  # The section contract reports this error.
+    recall = recalls[0]
+    links = []
+    for node in recall.find_all(lambda n: n.tag == 'a'):
+        url = urlsplit(node.attrs.get('href', ''))
+        name = unicodedata.normalize('NFC', PurePosixPath(unquote(url.path)).name)
+        anchor = unquote(url.fragment).strip()
+        navigation = (anchor.lower() in {'top', 'toc', 'contents', 'main', 'summary', 'questions', 'problems'}
+                      or anchor.startswith(('panel-', 'tab-', 'tabpanel-'))
+                      or anchor.endswith(('-links', '-cheatsheet', '-next')))
+        if (not url.scheme and not url.netloc and name.startswith('정리노트_')
+                and name.endswith('.html') and anchor and not navigation and node.text().strip()):
+            links.append(node)
+    declared = 'data-note-link-omitted' in recall.attrs
+    reason = recall.attrs.get('data-note-link-omitted', '').strip()
+    if declared:
+        if not reason or links:
+            return ['recall: 정리노트 링크 예외는 링크 없이 구체적인 생략 사유가 필요해요'], reason
+        return [], reason
+    if not links:
+        return ['recall: 관련 정리노트의 개념 앵커 링크 또는 명시적인 생략 사유가 필요해요'], None
+    return [], None
+
 def validate_fragment(problem, fragment):
     root = parse(fragment)
     errors = markup_errors(root, allow_summary=True)
+    errors.extend(note_link_contract(root)[0])
     sections = list(root.find_all(lambda n: 'data-explanation' in n.attrs))
     counts = Counter(n.attrs['data-explanation'] for n in sections)
     if any(counts[key] != 1 for key in REQUIRED_KEYS):
@@ -80,9 +114,15 @@ def validate_fragment(problem, fragment):
 def initial_reviews(pack, fragments):
     keys = [f'{p.id}:{s}' for p in pack.problems for s in p.subparts]
     pending = {'status': 'not_run', 'reviewer': '', 'evidence': ''}
+    exceptions = {}
+    for p in pack.problems:
+        _, reason = note_link_contract(parse(fragments.get(p.id, '')))
+        if reason:
+            exceptions[p.id] = {**pending, 'reason': reason}
     return {'input_hash': payload_hash(pack, fragments), 'references': [],
             'source_visual': dict(pending), 'browser': dict(pending),
-            'content': {**pending, 'items': {k: dict(pending) for k in keys}},
+            'content': {**pending, 'items': {k: dict(pending) for k in keys},
+                        'note_link_exceptions': exceptions},
             'independent': {**pending, 'items': {k: {**pending, 'method': '', 'conclusion': ''} for k in keys}}}
 
 def validate_reviews(pack, fragments, reviews):
@@ -118,4 +158,21 @@ def validate_reviews(pack, fragments, reviews):
                     errors.append(f'{key}: 유한한 tolerance>0 및 0<=residual<=tolerance 필요')
     if set(fragments) != {p.id for p in pack.problems}:
         errors.append('문항별 설명 조각 집합 불일치')
+    content = reviews.get('content')
+    exceptions = content.get('note_link_exceptions', {}) if isinstance(content, dict) else {}
+    if not isinstance(exceptions, dict):
+        errors.append('정리노트 링크 예외 검토는 문항 ID별 객체여야 해요')
+        exceptions = {}
+    omissions = {}
+    for p in pack.problems:
+        link_errors, reason = note_link_contract(parse(fragments.get(p.id, '')))
+        errors.extend(f'{p.id}: {error}' for error in link_errors)
+        if reason:
+            omissions[p.id] = reason
+    if set(exceptions) != set(omissions):
+        errors.append('정리노트 링크 예외: 생략한 문항만 명시적으로 내용 검토해야 해요')
+    for id_, reason in omissions.items():
+        entry = exceptions.get(id_)
+        if check(entry, f'{id_}: 정리노트 링크 예외') and entry.get('reason') != reason:
+            errors.append(f'{id_}: 정리노트 링크 예외 사유가 설명 조각과 달라요')
     return errors
