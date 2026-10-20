@@ -456,11 +456,16 @@ def block(node, ctx):
         parts = ["".join(inline(c, ctx) for c in s.children).strip() for s in node.children if isinstance(s, Node)]
         return ["**" + " · ".join(p for p in parts if p) + "**"]
     if t == "div" and "layer" in cls:
-        return children_blocks(node, ctx)
+        body = children_blocks(node, ctx)
+        if "supp" in cls and node.attrs.get("id"):
+            body = [f'<a id="{node.attrs["id"]}"></a>', ""] + body
+        return body
     if t == "div" and "sum" in cls:
         return ["**페이지 요약**", ""] + children_blocks(node, ctx)
     if t == "p" and "panel-label" in cls:
         return ["*" + "".join(inline(c, ctx) for c in node.children).strip() + "*"]
+    if t == "p" and "sum-supp-label" in cls:
+        return ["**" + "".join(inline(c, ctx) for c in node.children).strip() + "**"]
     if t == "dl":
         lines = []
         for c in node.children:
@@ -576,7 +581,7 @@ def html_math_and_ids(path):
             return
         if n.tag in BLOCK or n.tag in ("td", "th", "br"):
             texts.append("\n")
-        if n.attrs.get("id") and (n.tag in ("section", "article") or "widget" in n.classes):
+        if n.attrs.get("id") and (n.tag in ("section", "article") or "widget" in n.classes or {"layer", "supp"} <= n.classes):
             ids.append(n.attrs["id"])
         for c in n.children:
             walk(c)

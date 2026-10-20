@@ -258,9 +258,56 @@ def stt_time_problems(text: str, where: str) -> list[Problem]:
 TERMS_RE = re.compile(r'(<p class="panel-label">용어</p>\s*)?<dl class="terms">')
 
 
+def supplement_summary_problems(source: str) -> list[Problem]:
+    """패널을 가진 노트의 보충별 대응만 검사한다. 요약의 의미 충족도는 검토자가 판단한다."""
+    from html2md import Builder, Node
+    tree = Builder()
+    tree.feed(source)
+    if not any(n.attrs.get('id') == SUM_PANEL_ID for n in tree.root.find_all(lambda n: True)):
+        return []
+    out = []
+    for topic in tree.root.find_all(lambda n: n.tag == 'article' and 'topic' in n.classes):
+        where = topic.attrs.get('id', 'topic')
+        children = [n for n in topic.children if isinstance(n, Node)]
+        sources = [n for n in children if {'layer', 'supp'} <= n.classes]
+        sums = [n for n in children if 'sum' in n.classes]
+        entries = [n for s in sums for n in s.find_all(lambda n: 'sum-supp' in n.classes)]
+        source_ids = {n.attrs.get('id') for n in sources if n.attrs.get('id')}
+        for src in sources:
+            anchor = src.attrs.get('id')
+            if not anchor:
+                out.append(Problem('supp-source-id', where, '본문 보충에 고유 id 필요'))
+                continue
+            matched = [n for n in entries if n.attrs.get('data-supp-source') == anchor]
+            if not matched:
+                out.append(Problem('supp-summary-missing', where, anchor))
+                continue
+            if len(matched) != 1:
+                out.append(Problem('supp-summary-duplicate', where, anchor))
+            badges = list(src.find_all(lambda n: {'badge', 'supp'} <= n.classes))
+            label = badges[0].text().strip() if badges else ''
+            if not badges:
+                out.append(Problem('missing-supp', where, '본문 보충 배지 없음'))
+            for entry in matched:
+                labels = list(entry.find_all(lambda n: 'sum-supp-label' in n.classes))
+                if badges and (label not in SUPP_LABELS or len(labels) != 1 or labels[0].text().strip() != label):
+                    out.append(Problem('supp-summary-label', where, anchor))
+                items = list(entry.find_all(lambda n: n.tag == 'li'))
+                if not items or any(not n.text().strip() for n in items):
+                    out.append(Problem('supp-summary-empty', where, anchor))
+                links = list(entry.find_all(lambda n: n.tag == 'a' and n.attrs.get('href') == '#' + anchor))
+                if not links:
+                    out.append(Problem('supp-summary-link', where, anchor))
+        for entry in entries:
+            if entry.attrs.get('data-supp-source') not in source_ids:
+                out.append(Problem('supp-summary-source', where, entry.attrs.get('data-supp-source', '')))
+    return out
+
+
 def check_common(doc: Doc, source: str, path: Path) -> list[Problem]:
     name = Path(path).name
     out: list[Problem] = []
+    out += supplement_summary_problems(source)
     if doc.lang != "ko":
         out.append(Problem("lang", name, f"<html lang> = {doc.lang!r}"))
     out += [Problem("duplicate-id", name, i) for i in sorted(doc.duplicate_ids)]

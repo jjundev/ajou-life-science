@@ -54,6 +54,8 @@ const textNodes = Array.from(document.querySelectorAll('main *, #panel-right *')
 통과: `katexErrors: 0`, `rawDollar: false`, `sumsInPanel`이 manifest에서 `layers`가 빈 목록이 아닌 토픽 수, `sumsLeftInMain: 0`, `hScroll: []`, 모든 위젯 `drawn: true`. `read_console_messages`에 오류 없음.
 
 개념 토픽 하나로 넘겨(`location.hash = '#<토픽 id>'`) 오른쪽 "페이지 요약" 패널에 그 토픽의 요약이 보이는지 스크린샷으로 확인한다(1280px 이상에서는 패널이 기본으로 열린다).
+보충이 있는 모든 토픽에서 `.sum-supp`의 배지·목록·본문 연결이 패널 안에 표시되고 마지막 항목까지 스크롤할 수 있는지 검사한다. `본문 보충 보기`는 같은 토픽 본문의 해당 보충으로 이동해야 한다. 모바일에서는 패널을 연 상태의 줄바꿈·가로 넘침과 링크 후 본문 접근성을 확인한다. 두 종류의 배지가 있는 대표 화면은 밝은/어두운 테마에서 직접 확인한다.
+공유 템플릿의 보충 배지·본문 링크·모바일 패널 닫기·포커스 회귀 검사는 `python3 .agents/skills/bio-review-pack/tests/browser_check_note_supplement.py`로 실행한다. 이 fixture 검사가 실제 산출물 전체의 내용·화면 검토를 대신하지는 않는다.
 
 위젯마다 그 토픽으로 넘긴 뒤 슬라이더 하나를 바꾸고(`input` 이벤트) readout 값이 `.widget-static` 표의 같은 설정 값과 같은지 확인한다.
 
