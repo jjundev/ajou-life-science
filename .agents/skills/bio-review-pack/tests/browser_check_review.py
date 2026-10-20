@@ -51,10 +51,11 @@ class TestReviewBrowser(unittest.TestCase):
         expect(self.page.locator('#'+card)).to_be_visible()
         return self.page.locator('#'+card)
 
-    def open_current_assets(self, date='0929', card='p1'):
+    def open_current_assets(self, date='0929', card='p1', transform=None):
         path = next((REPO / '복습노트' / date).glob('복습문제*.html'))
         url = self.url(date, card).split('#', 1)[0]
-        source = ri.install(path.read_text(encoding='utf-8'), path.name)
+        text = path.read_text(encoding='utf-8')
+        source = ri.install(transform(text) if transform else text, path.name)
         self.page.route(url, lambda route: route.fulfill(body=source, content_type='text/html'))
         return self.open(date, card)
 
@@ -386,6 +387,24 @@ class TestReviewBrowser(unittest.TestCase):
         block = text[text.index('#### ' + found['id'] + '.'):]
         block = block[:block.find('\n####', 1) if '\n####' in block[1:] else len(block)]
         self.assertIn('[그림: ' + found['alt'] + ']', block)
+
+    def test_prompt_keeps_math_as_tex(self):
+        vendor = REPO / '.agents/skills/bio-problem-explain/assets/vendor/katex'
+        def serve(route):
+            local = vendor / route.request.url.split('/dist/', 1)[1].split('?', 1)[0]
+            if local.is_file():
+                route.fulfill(path=str(local))
+            else:
+                route.abort()
+        self.page.route('https://cdn.jsdelivr.net/npm/katex@*/dist/**', serve)
+        self.context.add_init_script(self.CLIPBOARD_MOCK)
+        card = self.open_current_assets(
+            transform=lambda s: s.replace('귀에 털이 난 남성은', '귀에 털이 난 $x^2$ 남성은', 1))
+        expect(card.locator('.problem .katex').first).to_be_attached()
+        card.locator('.review-choice').first.click()
+        text = self.copy_prompt()
+        self.assertIn('귀에 털이 난 $x^2$ 남성은', text)
+        self.assertNotIn('x2x^2', text)
 
     def unsure_button(self, cid='p1'):
         return self.page.locator(f'.aid[data-card-id="{cid}"] .review-unsure')
