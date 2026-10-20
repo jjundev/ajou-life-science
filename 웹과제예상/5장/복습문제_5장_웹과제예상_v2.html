@@ -1183,6 +1183,13 @@ body:not(.at-end) .review-export-bar { display:none; }
   function problemText(problemEl) {
     const clone = problemEl.cloneNode(true);
     clone.querySelectorAll('.choices').forEach(node => node.remove());
+    // KaTeX may already have rendered; restore its TeX source instead of MathML + glyph text.
+    clone.querySelectorAll('.katex').forEach(node => {
+      const tex = node.querySelector('annotation[encoding="application/x-tex"]');
+      if (!tex) return;
+      const fence = node.closest('.katex-display') ? '$$' : '$';
+      node.replaceWith(clone.ownerDocument.createTextNode(fence + tex.textContent.trim() + fence));
+    });
     clone.querySelectorAll('img').forEach(img => {
       img.replaceWith(clone.ownerDocument.createTextNode(` [그림: ${img.getAttribute('alt') || ''}] `));
     });
