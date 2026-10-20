@@ -202,7 +202,7 @@ squash=lambda s:re.sub(r'\s+','',s)
 def test_choice_feedback_copied_from_review_pack():
     template=squash((Path(__file__).resolve().parents[1]/'assets/note-template.html').read_text())
     css=(REVIEW/'review-interaction.css').read_text();js=(REVIEW/'review-interaction.js').read_text()
-    slices=[css[css.index('.review-feedback {'):css.index('.review-feedback[data-result="saved"]')],
+    slices=[css[css.index('.review-feedback {'):css.index('.review-feedback[data-result="copied"]')],
             css[css.index('.review-feedback-icon { position:relative'):css.index('.review-export-bar')],
             css[css.index('.review-choice[data-result="correct"]'):css.index('.review-choice-label[hidden]')],
             js[js.index('function scrollAnswerIntoView('):js.index('function grade(')]]

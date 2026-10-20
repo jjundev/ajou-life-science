@@ -9,6 +9,21 @@
     while ((text = walker.nextNode()) && !text.textContent.trim()) {}
     if (text) text.textContent = text.textContent.replace(/^\s*(?:\d{1,3}[.)]|\(\d{1,3}\))\s+/, '');
   });
+  // Capture prompt text before KaTeX rewrites the math.
+  const prompt = window.ReviewPrompt;
+  const texts = {};
+  document.querySelectorAll('main article.card').forEach(card => {
+    const problem = card.querySelector('.problem');
+    texts[card.id] = {
+      // The prompt already prints the card id, so drop the "p1." label from the heading.
+      title: (card.querySelector('h3')?.textContent || '').replace(/\s+/g, ' ').trim().replace(/^p\d+\.\s*/i, ''),
+      stem: problem ? (prompt ? prompt.problemText(problem) : problem.textContent.replace(/\s+/g, ' ').trim()) : '',
+      options: Array.from(card.querySelectorAll('.exam-input label')).filter(label => label.querySelector('input[type=radio]'))
+        .map(label => ({id: label.querySelector('input').value, text: label.textContent.replace(/\s+/g, ' ').trim().replace(/^[A-Z]\.\s*/, '')})),
+      explanations: Array.from(card.querySelectorAll('.solution ol.steps > li'))
+        .map(li => ({label: '풀이', text: li.textContent.replace(/\s+/g, ' ').trim()}))
+    };
+  });
   const models = JSON.parse(document.getElementById('exam-model').textContent);
   const fold = JSON.parse(document.getElementById('exam-casefold').textContent);
   const summary = document.getElementById('summary');
@@ -89,25 +104,29 @@
     }
     filter.value = 'all'; filterResults();
   }
-  document.getElementById('export-exam').addEventListener('click', () => {
-    if (!attempt) return;
-    const status = document.getElementById('export-status');
-    let url, link;
+  const promptStatus = {matched: 'correct', correct: 'correct', incorrect: 'incorrect', pending: 'pending', unanswered: 'unanswered'};
+  const copyButton = document.getElementById('copy-prompt');
+  copyButton.addEventListener('click', async () => {
+    if (!attempt || !prompt || copyButton.disabled) return;
+    const status = document.getElementById('prompt-status');
+    copyButton.disabled = true;
     try {
-      const now = new Date();
-      url = URL.createObjectURL(new Blob([JSON.stringify({...attempt, exportedAt:now.toISOString()}, null, 2) + '\n'], {type:'application/json;charset=utf-8'}));
-      const pad = n => String(n).padStart(2,'0');
-      const stamp = now.getFullYear() + pad(now.getMonth()+1) + pad(now.getDate()) + '-' + pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());
-      link = document.createElement('a'); link.href = url;
-      link.download = meta.documentId.replace(/\.html?$/i,'') + '_풀이기록_' + stamp + '.json';
-      document.body.append(link); link.click();
-      status.textContent = 'JSON 다운로드를 요청했습니다. 브라우저의 다운로드 목록을 확인하세요.';
-    } catch {
-      status.textContent = 'JSON 내보내기에 실패했습니다. 결과는 유지됩니다. 다시 눌러 주세요.';
-    } finally {
-      link?.remove();
-      if (url) setTimeout(() => URL.revokeObjectURL(url), 1000);
-    }
+      const items = attempt.cards.map(card => {
+        const t = texts[card.id] || {title: '', stem: '', options: [], explanations: []};
+        const mcq = card.format === 'mcq';
+        return {id: card.id, title: t.title, stem: t.stem, format: mcq ? 'mcq' : 'short',
+          options: mcq ? t.options : null, selected: card.selected,
+          answer: mcq ? card.answer.option_id : card.answer.canonical,
+          accepted: mcq ? null : card.answer.accepted.filter(x => x !== card.answer.canonical),
+          status: promptStatus[card.result], explanations: t.explanations};
+      });
+      const text = prompt.buildReviewPrompt({kind: 'exam', documentId: meta.documentId, range: meta.range, items});
+      if (await prompt.copyText(window, text)) status.textContent = '복기 프롬프트를 복사했어요. AI 채팅에 붙여 넣으세요.';
+      else {
+        prompt.openPromptDialog(document, text);
+        status.textContent = '자동 복사가 막혀 있어요. 열린 창에서 직접 복사해 주세요.';
+      }
+    } finally { copyButton.disabled = false; }
   });
   const aid = document.getElementById('exam-aid');
   const empty = document.querySelector('#panel-right .panel-empty');
@@ -218,14 +237,14 @@
 
   });
   function resetExam() {
-    if (submitted && !window.confirm('제출한 답안과 결과를 초기화하고 다시 풀까요? 필요한 기록은 먼저 JSON으로 내보내세요.')) return;
+    if (submitted && !window.confirm('제출한 답안과 결과를 초기화하고 다시 풀까요? 복기하려면 먼저 복기 프롬프트를 복사하세요.')) return;
     submitted = false; attempt = null;
     document.querySelectorAll('.exam-input input').forEach(n => { n.disabled = false; if (n.type === 'radio') n.checked = false; else n.value = ''; });
     document.querySelectorAll('.solution,.provenance').forEach(n => { n.hidden = true; });
     document.querySelectorAll('.result').forEach(n => { n.textContent = ''; });
     summary.textContent = ''; document.getElementById('results-list').replaceChildren();
     document.getElementById('results-summary').textContent = '';
-    document.getElementById('export-status').textContent = '';
+    document.getElementById('prompt-status').textContent = '';
     document.getElementById('submit-exam').textContent = '전체 제출';
     progress(); showAid(); resultRoute();
     location.hash = 'p1';

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """웹과제 예상 세트(.pack/v<K>) → 복습문제 형식 HTML, 그리고 버전 관리.
 
-조립은 bio-review-pack assemble.build_review를 그대로 쓴다. 치환 3개(정리노트 링크, data-range, 내보내기 숨김)는
+조립은 bio-review-pack assemble.build_review를 그대로 쓴다. 치환 2개(정리노트 링크, data-range)는
 각각 정확히 1회여야 한다. 장 폴더 루트에는 HTML만 두고 소스는 숨김 폴더 `.pack/v<K>/`에 둔다.
 CLI:
   build.py <src>              .pack/v<K> → 웹과제예상/<N>장/복습문제_<N>장_웹과제예상_v<K>.html
@@ -20,7 +20,6 @@ sys.path.insert(0, str(REVIEW_PACK))
 import assemble  # noqa: E402
 import manifest as manifest_mod  # noqa: E402
 
-OVERRIDE_STYLE = '<style id="forecast-overrides">.review-export-bar { display: none !important; }</style>'
 PACK = ".pack"  # 장 폴더의 숨김 소스 폴더(해설 부속 파일도 여기에 둔다)
 VERSION_RE = re.compile(r"v(\d+)")
 HTML_VERSION_RE = re.compile(r"_v(\d+)\.html$")
@@ -55,7 +54,6 @@ def render(src: Path | str) -> tuple[str, str]:
         raise BuildError(str(e)) from e
     html = _once(html, f'href="{manifest_mod.note_name(m)}"', f'href="{m["note_href"]}"')
     html = _once(html, f'data-range="{m["range"]}"', f'data-range="{m["range"]}-v{m["version"]}"')
-    html = _once(html, "</head>", OVERRIDE_STYLE + "\n</head>")
     return manifest_mod.review_name(m), html
 
 

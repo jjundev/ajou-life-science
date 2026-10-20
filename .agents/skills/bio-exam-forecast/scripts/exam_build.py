@@ -140,7 +140,7 @@ def render_exam(repo,src):
  fold=json.dumps(casefold_map(),ensure_ascii=True).replace('<','\\u003c')
  model=json.dumps({p['id']:dict(format=p['format'],answer=p['answer']) for p in pack['problems']},ensure_ascii=False).replace('<','\\u003c')
  meta=json.dumps(dict(documentId=f'시험예상문제_{scope.label}_v{pack["version"]}.html',range=scope.label,examVersion=pack['version'],questionSetHash=digest(pack['problems'])),ensure_ascii=False).replace('<','\\u003c')
- scripts='<script type="application/json" id="exam-meta">'+meta+'</script><script type="application/json" id="exam-casefold">'+fold+'</script><script type="application/json" id="exam-model">'+model+'</script><script>'+(ASSETS/'exam-runtime.js').read_text(encoding='utf-8')+'</script>'
+ scripts='<script type="application/json" id="exam-meta">'+meta+'</script><script type="application/json" id="exam-casefold">'+fold+'</script><script type="application/json" id="exam-model">'+model+'</script><script>'+(ROOT/'.agents/skills/bio-review-pack/assets/review-prompt.js').read_text(encoding='utf-8')+'</script><script>'+(ASSETS/'exam-runtime.js').read_text(encoding='utf-8')+'</script>'
  title=f'시험 예상문제 {scope.label}'
  intro='객관식 55문항 · 단답형 20문항. 전체 제출 후 정답과 출처가 공개됩니다.'
  replacements=dict(PAGE_TITLE=html.escape(title),DESCRIPTION=intro,RANGE='exam-'+scope.label+'-'+src.name,TITLE=html.escape(title),INTRO=intro+'<noscript> JavaScript를 켜면 이동·제출·채점을 사용할 수 있습니다. 정답은 숨겨져 있습니다.</noscript>',TOC='<a href="#exam-mcq">객관식 1–55</a><a href="#exam-short">단답형 56–75</a>',PARTS='<section id="exam-mcq"><h2>객관식</h2>'+''.join(content[:55])+'</section><section id="exam-short"><h2>단답형</h2>'+''.join(content[55:])+'</section>',FOOTER='55+20은 연습용 구성입니다.',SCRIPTS=scripts)

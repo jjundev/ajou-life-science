@@ -21,7 +21,8 @@ class TestBuild(unittest.TestCase):
             self.assertEqual(html.count('data-range="9장-v2"'), 1)
             self.assertNotIn('data-range="9장"', html)
             self.assertEqual(html.count('href="../../복습노트/0000/정리노트_0000_T.html"'), 1)  # 상단 링크만(카드 링크는 #s1-t)
-            self.assertEqual(html.count(build.OVERRIDE_STYLE), 1)
+            self.assertNotIn('forecast-overrides', html)
+            self.assertIn('review-export-bar', html)
             self.assertIn('"documentId": "복습문제_9장_웹과제예상_v2.html"', html)
 
     def test_build_writes_to_chapter_dir(self):

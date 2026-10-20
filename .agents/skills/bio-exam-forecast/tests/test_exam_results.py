@@ -1,17 +1,36 @@
-import json
 import pytest
 from playwright.sync_api import sync_playwright, expect
 from exam_fixtures import make_pack
 
+CLIPBOARD_MOCK = '''
+  window.__copied = null;
+  Object.defineProperty(navigator, 'clipboard', {configurable: true, value: {
+    writeText: async (text) => { window.__copied = text; }
+  }});
+'''
+CLIPBOARD_BLOCKED = '''
+  Object.defineProperty(navigator, 'clipboard', {configurable: true, value: {
+    writeText: async () => { throw new Error('denied'); }
+  }});
+  document.execCommand = () => false;
+'''
+
+
+def section(text, heading):
+    start = text.index(heading)
+    nxt = [i for i in (text.find('\n### ', start + 1), text.find('\n## ', start + 1)) if i != -1]
+    return text[start:min(nxt) if nxt else len(text)]
+
 
 @pytest.mark.parametrize('width,scheme', [(1280,'light'),(1280,'dark'),(375,'light'),(375,'dark')])
-def test_results_export_and_review_roundtrip(repo, width, scheme):
+def test_results_prompt_and_review_roundtrip(repo, width, scheme):
     path = make_pack(repo)
     with sync_playwright() as pw:
         browser = pw.chromium.launch(headless=True)
         page = browser.new_page(viewport=dict(width=width,height=900), color_scheme=scheme)
         errors=[]
         page.on('pageerror', lambda e: errors.append(str(e)))
+        page.add_init_script(CLIPBOARD_MOCK)
         page.goto(path.as_uri())
         def visit(id):
             page.evaluate('(id) => location.hash=id', id)
@@ -42,23 +61,23 @@ def test_results_export_and_review_roundtrip(repo, width, scheme):
         page.locator('#results-filter').select_option('matched')
         assert page.locator('.exam-result-row:visible').count()==1
         page.locator('#results-filter').select_option('all')
-        with page.expect_download() as info:
-            page.locator('#export-exam').click()
-        download=info.value
-        assert '_풀이기록_' in download.suggested_filename
-        data=json.loads(open(download.path()).read())
-        assert data['schema']=='bio-exam-attempt' and data['schemaVersion']==1
-        assert len(data['questionSetHash'])==64
-        assert data['summary']==dict(total=75,answered=4,unanswered=71,
-            mcq=dict(total=55,correct=1,incorrect=1,unanswered=53),
-            short=dict(total=20,matched=1,pending=1,unanswered=18))
-        assert data['cards'][56]['selected']=='  <script>different</script>  '
-        assert data['cards'][0]['result']=='correct'
-        assert data['cards'][4]['selected'] is None
-        with page.expect_download() as info:
-            page.locator('#export-exam').click()
-        again=json.loads(open(info.value.path()).read())
-        assert again['attemptId']==data['attemptId'] and again['submittedAt']==data['submittedAt']
+        assert page.locator('#export-exam').count()==0
+        page.locator('#copy-prompt').click()
+        expect(page.locator('#prompt-status')).to_have_text('복기 프롬프트를 복사했어요. AI 채팅에 붙여 넣으세요.')
+        copied=page.evaluate('window.__copied')
+        assert '시험 예상문제(' in copied
+        review=copied[copied.index('## 다시 볼 문항'):copied.index('## 확신 있게 맞힌 문항')]
+        correct=copied[copied.index('## 확신 있게 맞힌 문항'):]
+        assert '#### p2.' in section(review,'### 오답')
+        assert '#### p2. p2.' not in copied
+        assert '보기:\n- [A] ' in section(review,'### 오답') and '내 답: [A] / 정답: [' in review
+        assert '- 풀이: ' in section(review,'### 오답')
+        pending=section(review,'### 자기채점 대기')
+        assert '#### p57.' in pending
+        assert '내 답: "  <script>different</script>  "' in pending and '(허용:' in pending
+        assert '#### p75.' in section(review,'### 미응답')
+        assert '- p1. ' in correct and '- p56. ' in correct
+        assert '#### p1.' not in copied
         page.locator('.exam-result-row a[href="#p1"]').click()
         expect(page.locator('#p1')).to_be_visible()
         assert page.locator('#p1 input[value=B]').is_disabled()
@@ -80,23 +99,28 @@ def test_results_export_and_review_roundtrip(repo, width, scheme):
         browser.close()
 
 
-def test_blank_submit_and_export_failure_retry(repo):
+def test_blank_submit_and_copy_fallback(repo):
     path=make_pack(repo)
     with sync_playwright() as pw:
         browser=pw.chromium.launch(headless=True)
-        page=browser.new_page(); page.goto(path.as_uri())
+        page=browser.new_page()
+        errors=[]
+        page.on('pageerror', lambda e: errors.append(str(e)))
+        page.add_init_script(CLIPBOARD_BLOCKED)
+        page.goto(path.as_uri())
         page.evaluate("location.hash='p75'")
         expect(page.locator('#p75')).to_be_visible()
         page.locator('#submit-exam').click()
         expect(page.locator('#results-title')).to_be_visible()
         assert page.locator('.exam-result-row[data-result=unanswered]').count()==75
-        page.evaluate('() => { window.originalBlobURL=URL.createObjectURL; URL.createObjectURL=()=>{throw Error("test")} }')
-        page.locator('#export-exam').click()
-        expect(page.locator('#export-status')).to_contain_text('다시')
-        page.evaluate('() => { URL.createObjectURL=window.originalBlobURL }')
-        with page.expect_download() as info: page.locator('#export-exam').click()
-        data=json.loads(open(info.value.path()).read())
-        assert data['summary']['unanswered']==75
+        page.locator('#copy-prompt').click()
+        dialog=page.locator('dialog.review-prompt-dialog[open]')
+        expect(dialog).to_have_count(1)
+        text=dialog.locator('textarea').input_value()
+        assert '### 미응답' in text
+        assert 'katex' not in text
+        expect(page.locator('#prompt-status')).to_have_text('자동 복사가 막혀 있어요. 열린 창에서 직접 복사해 주세요.')
+        assert not errors
         browser.close()
 
 

@@ -1,6 +1,6 @@
 ---
 name: bio-review-coach
-description: Use when a learner asks to analyze 생명과학 복습문제 풀이기록 JSON, identify weak or uncertain concepts, or receive interactive concept coaching from previous answers.
+description: Use when a learner pastes a 생명과학 복기 프롬프트 or provides a legacy 풀이기록 JSON, asks to identify weak or uncertain concepts, or wants interactive concept coaching from previous answers.
 ---
 
 # 생명과학 풀이기록 코치
@@ -17,8 +17,8 @@ description: Use when a learner asks to analyze 생명과학 복습문제 풀이
 
 ## 진행 방식
 
-1. 사용자가 준 풀이기록 JSON을 읽는다. 경로가 없으면 현재 저장소의 `복습노트/<날짜>/.assets/풀이기록/`에서 요청에 맞는 파일을 찾는다(`.assets/`는 숨김 폴더라 Glob·Grep 도구가 건너뛴다. 경로를 글자 그대로 쓰고 Bash의 `ls`·`find`나 Python `pathlib`로 찾는다). 파일을 특정할 수 없으면 후보를 제시한다.
-2. `schema`, `documentId`, `range`, `summary`, `cards`를 확인한다. 대응되는 `복습문제_*.html` 또는 `.md`를 `documentId`와 문항 ID로 찾아 질문, 보기, 정답, 해설을 대조한다. 해설은 문항별 진단을 위한 근거로 쓰고, 오답을 정답 키에 맞추기 위해 해석하지 않는다.
+1. 붙여 넣은 복기 프롬프트(`# 생명과학 복기 요청`으로 시작, 문서명·범위·상태별 문항 묶음)를 읽거나, 이전 풀이기록 JSON이 주어지면 기존 방식대로 읽는다. 프롬프트의 `애매함 표시(맞혔지만 확신 없음)` 묶음은 JSON의 정답+`unsure`, `출제 모호` 묶음은 `ambiguous`, `자기채점 대기`는 아직 판정하지 않은 단답형과 같은 신호로 다룬다. JSON 경로가 없으면 현재 저장소의 `복습노트/<날짜>/.assets/풀이기록/`에서 요청에 맞는 파일을 찾는다(`.assets/`는 숨김 폴더라 Glob·Grep 도구가 건너뛴다. 경로를 글자 그대로 쓰고 Bash의 `ls`·`find`나 Python `pathlib`로 찾는다). 파일을 특정할 수 없으면 후보를 제시한다.
+2. 프롬프트면 `자료`·범위·문항 ID를, JSON이면 `schema`, `documentId`, `range`, `summary`, `cards`를 확인한다. 대응되는 `복습문제_*.html` 또는 `.md`를 `documentId`와 문항 ID로 찾아 질문, 보기, 정답, 해설을 대조한다. 해설은 문항별 진단을 위한 근거로 쓰고, 오답을 정답 키에 맞추기 위해 해석하지 않는다.
 3. 오답, 정답+`unsure`, 반복 정답, 무응답, `ambiguous`를 서로 다른 신호로 읽는다. 같은 개념을 묻는 문항은 함께 본다. 문항/답안 키가 모호하거나 충돌하면 해당 문항을 학습자 오개념의 증거로 세지 않는다.
 4. 질문 전에 핵심 진단을 간단히 공유한다. 확인된 사실과 가설을 구분하고, 정답률만으로 이해도를 단정하지 않는다.
 5. 가장 중요한 미확인 개념부터 **한 개념을 겨냥한** 숫자 선택지 질문을 한 번에 하나씩 낸다. 보기에는 `모르겠다`와 `답은 골랐지만 찍었거나 확신이 없다`를 별도 숫자 선택지로 둔다. 사용자에게 숫자만 답해도 된다고 알린다. 답을 읽을 때 선택지 번호와 선택지의 뜻을 함께 확인한다. 특히 “2번”을 “2개/2가지”라는 뜻으로 바꾸어 읽지 않는다.
