@@ -18,9 +18,8 @@ class TestSupplementSummary(unittest.TestCase):
         return [p.code for p in check_html.check_common(check_html.parse_html(source), source, Path('note.html'))]
 
     def entry(self, label=LABEL, text='보충 핵심', target='extra'):
-        return (f'<div class="sum-supp" data-supp-source="{target}">'
-                f'<p class="sum-supp-label">{label}</p><ul><li>{text}</li></ul>'
-                f'<a class="sum-supp-link" href="#{target}">본문 보충 보기</a></div>')
+        return (f'<div class="sum-supp" data-supp-source="{target}" data-supp-label="{label}">'
+                f'<dl class="terms"><dt>(보충) 짧은 제목</dt><dd>{text}</dd></dl></div>')
 
     def test_missing_summary_fails(self):
         self.assertIn('supp-summary-missing', self.codes())
@@ -45,8 +44,16 @@ class TestSupplementSummary(unittest.TestCase):
         other = '<article class="topic" id="other"><div class="layer supp" id="foreign"></div></article>'
         self.assertIn('supp-summary-source', self.codes(self.entry(target='foreign'), extra=other))
 
-    def test_link_must_return_to_source(self):
-        self.assertIn('supp-summary-link', self.codes(self.entry().replace('href="#extra"', 'href="#t"')))
+    def test_prefix_is_required(self):
+        self.assertIn('supp-summary-format', self.codes(self.entry().replace('(보충) ', '')))
+
+    def test_return_link_is_rejected(self):
+        entry = self.entry().replace('</dd>', '</dd><a href="#extra">본문 보충 보기</a>')
+        self.assertIn('supp-summary-format', self.codes(entry))
+
+    def test_legacy_list_is_rejected(self):
+        entry = self.entry().replace('<dd>보충 핵심</dd>', '<ul><li>보충 핵심</li></ul>')
+        self.assertIn('supp-summary-format', self.codes(entry))
 
     def test_body_without_summary_panel_is_unaffected(self):
         source = '<html lang="ko"><body><article class="topic"><div class="layer supp">보충</div></article></body></html>'
@@ -55,7 +62,8 @@ class TestSupplementSummary(unittest.TestCase):
     def test_template_has_panel_styles(self):
         text = (SKILL / 'assets/note-template.html').read_text()
         self.assertIn('.sum-supp {', text)
-        self.assertIn('.sum-supp-label {', text)
+        self.assertNotIn('.sum-supp-label {', text)
+        self.assertNotIn('.sum-supp-link', text)
 
 
 if __name__ == '__main__':

@@ -53,10 +53,10 @@ class TestHtml2Md(unittest.TestCase):
         self.assertIn("*핵심 식*", self.md)
         self.assertIn("- **분산(variance)** — 평균과의 차이를 제곱해 평균낸 값", self.md)
 
-    def test_supplement_summary_keeps_label_and_return_anchor(self):
+    def test_supplement_summary_uses_terms_without_return_link(self):
         self.assertIn('<a id="s1-var-supp-1"></a>', self.md)
-        self.assertIn('**보충 · 수업에서 다루지 않았어요**', self.md)
-        self.assertIn('[본문 보충 보기](#s1-var-supp-1)', self.md)
+        self.assertIn('- **(보충) 표본분산** — 표본분산은 N−1로 나눠요.', self.md)
+        self.assertNotIn('본문 보충 보기', self.md)
         self.assertEqual(html2md.check_md(self.note, self.note_md), [])
 
     def test_widget_static_becomes_figure_and_table(self):

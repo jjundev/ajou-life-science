@@ -134,7 +134,7 @@ class TestPack(unittest.TestCase):
 
     def test_missing_supp_badge(self):
         self.edit("sections/s1.html", '<span class="badge supp">보충 · 수업에서 다루지 않았어요</span>', "")
-        self.assertEqual(self.codes(), ["missing-supp"])
+        self.assertEqual(self.codes(), ["missing-supp", "supp-source-label"])
 
     def test_missing_sum(self):
         self.edit("sections/s1.html", '<div class="sum" hidden>\n          <p class="sum-lead">평균은', '<div class="summary" hidden>\n          <p class="sum-lead">평균은')

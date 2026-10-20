@@ -464,8 +464,6 @@ def block(node, ctx):
         return ["**페이지 요약**", ""] + children_blocks(node, ctx)
     if t == "p" and "panel-label" in cls:
         return ["*" + "".join(inline(c, ctx) for c in node.children).strip() + "*"]
-    if t == "p" and "sum-supp-label" in cls:
-        return ["**" + "".join(inline(c, ctx) for c in node.children).strip() + "**"]
     if t == "dl":
         lines = []
         for c in node.children:

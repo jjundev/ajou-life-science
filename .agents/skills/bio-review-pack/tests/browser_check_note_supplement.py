@@ -2,7 +2,6 @@
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-import re
 import tempfile
 import threading
 import unittest
@@ -36,7 +35,7 @@ class TestSupplementPanelBrowser(unittest.TestCase):
         cls.server.server_close()
         cls.tmp.cleanup()
 
-    def test_panel_label_return_link_and_mobile_drawer(self):
+    def test_panel_matches_existing_terms_without_return_link(self):
         for width, height in ((1280, 900), (375, 812)):
             for theme in ('light', 'dark'):
                 with self.subTest(width=width, theme=theme):
@@ -50,15 +49,18 @@ class TestSupplementPanelBrowser(unittest.TestCase):
                         expect(page.locator('#s1-var')).to_be_visible()
                         if width < 1024:
                             page.locator('#toggle-right').click()
-                        label = page.locator('#panel-right .sum:not([hidden]) .sum-supp-label')
-                        expect(label).to_have_text('보충 · 수업에서 다루지 않았어요')
-                        expect(label).to_be_visible()
-                        page.locator('#panel-right .sum-supp-link').click()
-                        expect(page.locator('body')).not_to_have_class(re.compile(r'\bdrawer-open\b'))
-                        target = page.locator('#s1-var-supp-1')
-                        expect(target).to_be_visible()
-                        expect(target).to_be_focused()
-                        self.assertEqual(page.evaluate('location.hash'), '#s1-var-supp-1')
+                        panel = page.locator('#panel-right .sum:not([hidden])')
+                        title = panel.locator('.sum-supp dt')
+                        expect(title).to_have_text('(보충) 표본분산')
+                        expect(title).to_be_visible()
+                        expect(panel.locator('.sum-supp dd')).to_have_text('표본분산은 N−1로 나눠요.')
+                        expect(panel.locator('.sum-supp a, .sum-supp ul, .sum-supp-label')).to_have_count(0)
+                        for selector, reference in (('.sum-supp dt', '.terms:not(.sum-supp .terms) dt'),
+                                                    ('.sum-supp dd', '.terms:not(.sum-supp .terms) dd')):
+                            styles = panel.locator(selector).evaluate("e => {const s=getComputedStyle(e); return [s.fontSize,s.fontWeight,s.color,s.lineHeight]}")
+                            original = panel.locator(reference).first.evaluate("e => {const s=getComputedStyle(e); return [s.fontSize,s.fontWeight,s.color,s.lineHeight]}")
+                            self.assertEqual(styles, original)
+                        self.assertFalse(page.locator('#panel-right').evaluate('e => e.scrollWidth > e.clientWidth'))
                         self.assertEqual(errors, [])
                     finally:
                         context.close()

@@ -261,11 +261,7 @@
     .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
 
     /* 정리노트: 페이지 요약 */
-    .sum-supp { margin-top: var(--s5); padding-top: var(--s4); border-top: 1px solid var(--line); }
-    .sum-supp-label { margin: 0 0 var(--s2); color: var(--supp); font-size: var(--fs-panel); font-weight: 700; line-height: 1.6; }
-    .sum-supp ul { margin: 0; padding-left: 1.4em; font-size: var(--fs-sub); line-height: 1.7; }
-    .sum-supp li + li { margin-top: var(--s2); }
-    .sum-supp-link { display: inline-block; margin-top: var(--s2); font-size: var(--fs-sub); text-underline-offset: .2em; }
+    .sum-supp { margin-top: var(--s4); }
     .sum-lead { margin: 0; font-size: var(--fs-body); font-weight: 700; line-height: 1.6; }
     .eq-list { list-style: none; margin: 0; padding: 0; }
     .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
@@ -495,13 +491,6 @@
       scrim.addEventListener('click', () => closeDrawer(true));
       document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
       panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
-      panels.right.addEventListener('click', (e) => {
-        const link = e.target.closest('.sum-supp-link');
-        if (!link) return;
-        const target = document.getElementById((link.getAttribute('href') || '').slice(1));
-        closeDrawer(false);
-        if (target) { target.setAttribute('tabindex', '-1'); target.focus({ preventScroll: true }); }
-      });
       document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
 
       // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------

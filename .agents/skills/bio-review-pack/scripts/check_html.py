@@ -255,7 +255,7 @@ def stt_time_problems(text: str, where: str) -> list[Problem]:
     return problems
 
 
-TERMS_RE = re.compile(r'(<p class="panel-label">용어</p>\s*)?<dl class="terms">')
+TERMS_RE = re.compile(r'(<p class="panel-label">용어</p>\s*|<div class="sum-supp"[^>]*>\s*)?<dl class="terms">')
 
 
 def supplement_summary_problems(source: str) -> list[Problem]:
@@ -287,17 +287,21 @@ def supplement_summary_problems(source: str) -> list[Problem]:
             badges = list(src.find_all(lambda n: {'badge', 'supp'} <= n.classes))
             label = badges[0].text().strip() if badges else ''
             if not badges:
-                out.append(Problem('missing-supp', where, '본문 보충 배지 없음'))
+                out.append(Problem('supp-source-label', where, '본문 보충 배지 없음'))
             for entry in matched:
-                labels = list(entry.find_all(lambda n: 'sum-supp-label' in n.classes))
-                if badges and (label not in SUPP_LABELS or len(labels) != 1 or labels[0].text().strip() != label):
+                if badges and (label not in SUPP_LABELS or entry.attrs.get('data-supp-label') != label):
                     out.append(Problem('supp-summary-label', where, anchor))
-                items = list(entry.find_all(lambda n: n.tag == 'li'))
-                if not items or any(not n.text().strip() for n in items):
+                terms = list(entry.find_all(lambda n: n.tag == 'dl' and 'terms' in n.classes))
+                titles = list(entry.find_all(lambda n: n.tag == 'dt'))
+                descriptions = list(entry.find_all(lambda n: n.tag == 'dd'))
+                if (len(terms) != 1 or len(titles) != 1 or len(descriptions) != 1
+                        or not titles[0].text().strip().startswith('(보충) ')
+                        or not titles[0].text().strip()[len('(보충) '):].strip()):
+                    out.append(Problem('supp-summary-format', where, anchor))
+                if not descriptions or any(not n.text().strip() for n in descriptions):
                     out.append(Problem('supp-summary-empty', where, anchor))
-                links = list(entry.find_all(lambda n: n.tag == 'a' and n.attrs.get('href') == '#' + anchor))
-                if not links:
-                    out.append(Problem('supp-summary-link', where, anchor))
+                if list(entry.find_all(lambda n: n.tag in ('a', 'ul', 'ol') or 'sum-supp-label' in n.classes)):
+                    out.append(Problem('supp-summary-format', where, anchor))
         for entry in entries:
             if entry.attrs.get('data-supp-source') not in source_ids:
                 out.append(Problem('supp-summary-source', where, entry.attrs.get('data-supp-source', '')))
