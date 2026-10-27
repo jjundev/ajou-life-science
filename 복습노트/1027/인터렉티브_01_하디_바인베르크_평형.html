@@ -1,0 +1,981 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>하디-바인베르크 평형</title>
+<!-- 생성 파일: .assets/자료_인터렉티브_01_하디_바인베르크_평형/Main.dc.html을 고친 뒤 bio-interactive/scripts/build.cjs로 다시 만드세요. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+<style>
+body{margin:0}
+.app{--radius:8px;--tap:48px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--dur:220ms;--dur-exit:150ms;--ease-out:cubic-bezier(.2,.8,.2,1);--scrim:rgba(0,0,0,.4);
+  height:100vh;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;box-sizing:border-box;
+  background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;font-size:16px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.app *,.app *::before,.app *::after{box-sizing:border-box}
+.app button{font-family:inherit;color:inherit}
+.app :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.num{font-variant-numeric:tabular-nums}
+
+.topbar{display:flex;align-items:center;gap:var(--s2);min-height:56px;padding:var(--s2) var(--s3);background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:17px;font-weight:700;white-space:nowrap}
+.text-btn{flex:none;min-height:44px;min-width:44px;padding:0 var(--s3);border:0;border-radius:var(--radius);background:transparent;color:var(--ink);font:600 14px/1 'Pretendard',system-ui,sans-serif;cursor:pointer}
+.panel-toggle{display:inline-flex;align-items:center;gap:var(--s1);padding:0 var(--s2)}
+.panel-toggle svg,.theme-toggle svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.panel-toggle .strip{fill:transparent;stroke:none;transition:fill 150ms ease-out}
+.panel-toggle[aria-expanded="true"]{color:var(--accent-ink)}
+.panel-toggle[aria-expanded="true"] .strip{fill:currentColor}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;padding:0}
+.seg{flex:none;display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.seg button{min-height:40px;padding:0 var(--s3);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+.layout{display:grid;grid-template-columns:auto minmax(320px,1fr) auto;min-height:0}
+.panel{position:relative;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--bg);color:var(--ink)}
+.panel-left{grid-column:1;width:clamp(260px,20vw,320px);border-right:1px solid var(--line)}
+.panel-right{grid-column:3;width:clamp(320px,24vw,400px);border-left:1px solid var(--line)}
+.panel-inner{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--s4) var(--s4) var(--s6)}
+.panel-inner::-webkit-scrollbar{width:8px}
+.panel-inner::-webkit-scrollbar-track{background:transparent}
+.panel-inner::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:8px;border:2px solid var(--bg)}
+.panel-inner::-webkit-scrollbar-thumb:hover{background:var(--scroll-hover)}
+@supports (scrollbar-color:auto){.panel-inner{scrollbar-width:thin;scrollbar-color:var(--scroll) transparent}}
+.panel-head{display:flex;align-items:center;gap:var(--s2);min-height:44px;margin-bottom:var(--s2)}
+.panel-head h2{flex:1 1 0;min-width:0;margin:0;font-size:22px;line-height:1.4}
+.stage{grid-column:2;position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--bg)}
+.scrim{display:none}
+.panel-resize{display:none}
+
+.sec{margin-top:var(--s5);padding-top:var(--s5);border-top:1px solid var(--line)}
+.panel-head + .sec,.panel-head + div > .sec:first-child{margin-top:0;padding-top:0;border-top:0}
+.sec-title{display:block;margin:0 0 var(--s3);font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-0.01em}
+.sub{margin:var(--s3) 0 0;font-size:14px;line-height:1.6;color:var(--ink-2)}
+
+.opt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.btn{display:flex;align-items:center;gap:var(--s2);width:100%;min-height:var(--tap);padding:0 var(--s3);border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font-size:14px;font-weight:600;line-height:1.3;text-align:left;cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.btn .box{flex:none;width:12px;height:12px;border-radius:3px;border:1.5px solid currentColor}
+.btn[aria-pressed="true"] .box{background:currentColor}
+.steps{display:flex;flex-direction:column;gap:var(--s2)}
+.steps .btn{padding:var(--s2) var(--s3);gap:var(--s3)}
+.step-num{flex:none;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid;font-size:12px;font-weight:700;color:var(--ink)}
+.step-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.step-txt b{font-size:15px;font-weight:700}
+.step-txt span{font-size:13px;font-weight:500;color:var(--ink-2)}
+.detail{margin-top:var(--s3);padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+
+
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.tiles.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tile{padding:var(--s3);border-radius:var(--radius);background:var(--surface)}
+.tile b{display:block;font-size:20px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}
+.tile span{display:block;font-size:13px;line-height:1.4;color:var(--ink-2)}
+.events{display:flex;flex-direction:column;gap:var(--s2)}
+.event{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.6}
+.dot{flex:none;width:10px;height:10px;margin-top:7px;border-radius:50%}
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2) var(--s3);font-size:13px;color:var(--ink-2)}
+.legend div{display:flex;align-items:center;gap:var(--s2)}
+.sw{flex:none;width:16px;height:6px;border-radius:3px}
+.sw.ball{width:12px;height:12px;border-radius:50%}
+.sec.warn{border-top:0;padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+.warn .sec-title{color:var(--warn);font-size:17px}
+.mistake{margin-top:var(--s3)}
+.mistake b{display:block;font-weight:700}
+.mistake span{color:var(--ink-2)}
+
+.canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.canvas.is-fixed{cursor:default}
+.view-btns{position:absolute;top:var(--s3);right:var(--s3);display:flex;gap:6px}
+.icon-btn{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);cursor:pointer}
+.icon-btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.icon-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.float{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius)}
+.hover-card{position:absolute;left:var(--s3);bottom:var(--s3);display:flex;flex-direction:column;gap:2px;padding:var(--s3) var(--s4);pointer-events:none}
+.hover-card .k{font-size:13px;color:var(--ink-2)}
+.hover-card .v{font-size:18px;font-weight:700}
+.playbar{position:absolute;left:var(--s3);right:var(--s3);bottom:var(--s3);display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3)}
+.play{flex:none;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--radius);background:var(--btn-bg);color:var(--on-btn) !important;cursor:pointer}
+.play svg{width:18px;height:18px;fill:currentColor}
+.scrub{flex:1 1 200px;min-width:160px;display:flex;flex-direction:column;gap:2px}
+.scrub span{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.scrub input{width:100%;height:24px;margin:0;accent-color:var(--accent)}
+.speeds{display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.speeds button{min-width:48px;height:40px;padding:0 var(--s2);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
+.speeds button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+@media (hover:hover){.btn:hover,.icon-btn:hover{background:var(--surface)}.text-btn:hover{background:var(--surface)}}
+@media (min-width:1024px){
+  .panel-head{display:none}
+  .layout{--pl:var(--pl-user,clamp(260px,20vw,320px));--pr:var(--pr-user,clamp(320px,24vw,400px))}
+  .panel{width:0;border-width:0;visibility:hidden;transition:width var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left.is-open{width:var(--pl)}
+  .panel-right.is-open{width:var(--pr)}
+  .panel.is-open{visibility:visible;border-width:1px;transition:width var(--dur) var(--ease-out)}
+  .panel-left .panel-inner{width:var(--pl)}
+  .panel-right .panel-inner{width:var(--pr);align-self:flex-end}
+  .layout.is-resizing .panel{transition:none}
+  .layout.is-resizing{cursor:col-resize;user-select:none}
+  .panel-resize{display:block;position:absolute;top:0;bottom:0;z-index:2;width:12px;padding:0;border:0;background:transparent;cursor:col-resize;touch-action:none}
+  .panel-left .panel-resize{right:0}
+  .panel-right .panel-resize{left:0}
+  .panel-resize::after{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--accent);opacity:0;transition:opacity 150ms ease-out}
+  .panel-left .panel-resize::after{right:0}
+  .panel-right .panel-resize::after{left:0}
+  .panel-resize:focus-visible{outline:none}
+  .panel-resize:focus-visible::after,.is-resizing .panel-resize:active::after{opacity:1}
+  @media (hover:hover){.panel-resize:hover::after{opacity:1}}
+}
+@media (max-width: 1023.98px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .stage{grid-column:1}
+  .panel{position:fixed;top:0;bottom:0;z-index:40;visibility:hidden;transition:transform var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left{left:0;width:min(304px,88vw);transform:translateX(-100%)}
+  .panel-right{right:0;width:min(360px,88vw);transform:translateX(100%)}
+  .panel.is-open{visibility:visible;transform:none;transition:transform var(--dur) var(--ease-out)}
+  .panel-inner{padding-top:calc(var(--s3) + env(safe-area-inset-top));padding-bottom:calc(var(--s6) + env(safe-area-inset-bottom))}
+  .scrim{display:block;position:fixed;inset:0;z-index:35;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .scrim.is-on{opacity:1;visibility:visible;transition:opacity var(--dur) var(--ease-out)}
+}
+@media (max-width:640px){.brand{display:none}.topbar{justify-content:space-between}}
+@media (max-width:480px){.panel-toggle span{display:none}.seg button{padding:0 var(--s2)}}
+@media (prefers-reduced-motion:reduce){.panel,.panel.is-open,.scrim,.scrim.is-on,.panel-toggle .strip,.panel-resize::after{transition:none}}
+</style>
+</head>
+<body>
+<div id="dc-root"></div>
+<template id="dc-template">
+<div class="app" onKeyDown="{{onKey}}" style="--bg: {{th.bg}}; --surface: {{th.surface}}; --ink: {{th.ink}}; --ink-2: {{th.ink2}}; --line: {{th.line}}; --accent: {{th.accent}}; --accent-ink: {{th.accentInk}}; --btn-bg: {{th.btnBg}}; --on-btn: {{th.onBtn}}; --warn: {{th.warn}}; --prof: {{th.prof}}; --supp: {{th.supp}}; --danger: {{th.danger}}; --scroll: {{th.scroll}}; --scroll-hover: {{th.scrollHover}}">
+<header class="topbar">
+<button class="text-btn panel-toggle" type="button" aria-label="조작 패널" aria-expanded="{{leftExpanded}}" onClick="{{toggleLeft}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M9 4v16"></path></svg><span>조작</span></button>
+<strong class="brand">하디-바인베르크 평형</strong>
+<sc-if value="{{hasModes}}" hint-placeholder-val="{{ true }}">
+<div class="seg" role="group" aria-label="보기 선택">
+<sc-for list="{{modes}}" as="md" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{md.pressed}}" onClick="{{md.pick}}">{{md.label}}</button>
+</sc-for>
+</div>
+</sc-if>
+<button class="text-btn theme-toggle" type="button" aria-label="{{themeLabel}}" title="{{themeLabel}}" onClick="{{toggleTheme}}">
+<sc-if value="{{isDark}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+<sc-if value="{{isLight}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></sc-if>
+</button>
+<button class="text-btn panel-toggle" type="button" aria-label="설명 패널" aria-expanded="{{rightExpanded}}" onClick="{{toggleRight}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M15 4v16"></path></svg><span>설명</span></button>
+</header>
+
+<div class="layout {{layoutCls}}" style="{{layoutStyle}}">
+<aside class="panel panel-left {{leftCls}}" aria-label="조작">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="220" aria-valuemax="480" aria-valuenow="{{leftWNow}}" ref="{{leftHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>조작</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<sc-if value="{{hasToggles}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">보기 옵션</h3>
+<div class="opt">
+<sc-for list="{{toggles}}" as="t" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{t.pressed}}" onClick="{{t.toggle}}"><span class="box" aria-hidden="true"></span>{{t.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<!-- SLOT:left -->
+<div class="sec">
+<h3 class="sec-title">대립유전자 빈도 p</h3>
+<div class="opt">
+<sc-for list="{{pOptions}}" as="o"><button class="btn" type="button" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for>
+</div>
+<p class="sub">p는 R의 빈도, q = 1 − p는 W의 빈도예요.</p>
+</div>
+<div class="sec">
+<h3 class="sec-title">부모의 초기 구성</h3>
+<div class="steps">
+<sc-for list="{{startOptions}}" as="o"><button class="btn" type="button" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for>
+</div>
+<p class="sub">같은 p에서 초기 구성만 바꿔 보세요. 자손의 예측값도 바뀔까요?</p>
+</div>
+<div class="sec">
+<h3 class="sec-title">모델의 다섯 조건</h3>
+<p class="sub">돌연변이 없음 · 이동 없음 · 무한한 개체군 · 자연선택 없음 · 무작위 교배</p>
+<p class="sub">모든 단계에서 다섯 조건을 유지해요.</p>
+</div>
+<!-- /SLOT:left -->
+
+<sc-if value="{{hasSteps}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">단계</h3>
+<div class="steps">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}"><span class="step-num num" style="border-color: {{s.c}}">{{s.num}}</span><span class="step-txt"><b>{{s.title}}</b><span>{{s.who}}</span></span></button>
+</sc-for>
+</div>
+<sc-if value="{{hasStep}}" hint-placeholder-val="{{ false }}">
+<div class="detail" aria-live="polite">{{stepDetail}}</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</aside>
+
+<section class="stage" aria-label="모형 보기">
+<canvas class="canvas {{canvasCls}}" ref="{{canvasRef}}" role="img" aria-label="{{canvasLabel}}"></canvas>
+<div class="view-btns">
+<button class="icon-btn" type="button" aria-label="확대" onClick="{{zoomIn}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="축소" onClick="{{zoomOut}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="시점 처음으로" onClick="{{resetView}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v5h5"></path></svg></button>
+</div>
+
+<sc-if value="{{hasPlayback}}" hint-placeholder-val="{{ false }}">
+<div class="playbar float">
+<button class="play" type="button" aria-label="{{playLabel}}" onClick="{{togglePlay}}">
+<sc-if value="{{isPlaying}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></sc-if>
+<sc-if value="{{notPlaying}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5l12 7-12 7z"></path></svg></sc-if>
+</button>
+<label class="scrub">
+<span>{{fLabel}}</span>
+<input type="range" min="0" max="{{fMax10}}" step="1" value="{{fInt}}" onChange="{{onScrub}}">
+</label>
+<div class="speeds" role="group" aria-label="재생 속도">
+<sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{sp.pressed}}" onClick="{{sp.pick}}">{{sp.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</section>
+
+<aside class="panel panel-right {{rightCls}}" aria-label="설명">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="280" aria-valuemax="720" aria-valuenow="{{rightWNow}}" ref="{{rightHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>설명</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<!-- SLOT:right -->
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">{{phaseName}}</h3>
+<div class="tiles">
+<div class="tile"><b>{{pText}}</b><span>p · R의 빈도</span></div>
+<div class="tile"><b>{{qText}}</b><span>q · W의 빈도</span></div>
+</div>
+<p class="sub">{{nowText}}</p>
+</div>
+<div class="sec">
+<h3 class="sec-title">{{tableTitle}}</h3>
+<div class="events">
+<sc-for list="{{freqRows}}" as="r"><div class="event"><span class="dot" style="background: {{r.c}}"></span><span>{{r.text}}</span></div></sc-for>
+</div>
+<p class="sub">{{denominator}}</p>
+</div>
+<div class="sec">
+<h3 class="sec-title">기호 대신 뜻으로 보기</h3>
+<div class="legend">
+<div><span class="sw ball" style="background: {{legend.r}}"></span>R = Cᴿ</div>
+<div><span class="sw ball" style="background: {{legend.w}}"></span>W = Cᵂ</div>
+</div>
+<p class="sub">금어초의 불완전우성 예예요. RR은 붉은 꽃, RW는 분홍 꽃, WW는 흰 꽃이에요. R·W는 우열 표시가 아니에요.</p>
+<p class="sub">수업 예와 가상 비교 수치를 사용해요. 1,000개체 환산값은 확률의 기댓값이며 실제 실험 결과가 아니에요.</p>
+</div>
+<!-- /SLOT:right -->
+
+<div class="sec warn">
+<h3 class="sec-title">꼭 기억해요</h3>
+<sc-for list="{{mistakes}}" as="m" hint-placeholder-count="3">
+<div class="mistake"><b>{{m.title}}</b><span>{{m.text}}</span></div>
+</sc-for>
+</div>
+</div>
+</aside>
+</div>
+<div class="scrim {{scrimCls}}" aria-hidden="true" onClick="{{closePanels}}"></div>
+</div>
+</template>
+<script>
+// Minimal x-dc runtime for opening the canvas component as a plain HTML page.
+// Supports what Main.dc.html uses: {{dotted.path}} holes in text and attributes,
+// event attributes (onClick, onKeyDown, onMouseEnter, onMouseLeave, onChange),
+// callback ref, <sc-if value> and <sc-for list as>.
+const DC_EVENTS = { onclick: 'click', onkeydown: 'keydown', onmouseenter: 'mouseenter', onmouseleave: 'mouseleave', onchange: 'input' };
+const DC_HOLE = /\{\{\s*([\w.$]+)\s*\}\}/g;
+let dcSchedule = () => {};
+
+class DCLogic {
+  constructor(props) { this.props = props || {}; this.state = {}; }
+  setState(u) {
+    this.state = Object.assign({}, this.state, typeof u === 'function' ? u(this.state) : u);
+    dcSchedule();
+  }
+}
+
+function dcGet(scope, path) {
+  let o = scope;
+  for (const k of path.split('.')) { if (o == null) return undefined; o = o[k]; }
+  return o;
+}
+function dcInterp(str, scope) {
+  return str.replace(DC_HOLE, (_, p) => { const v = dcGet(scope, p); return v == null ? '' : String(v); });
+}
+function dcSingle(str) {
+  const m = str.match(/^\s*\{\{\s*([\w.$]+)\s*\}\}\s*$/);
+  return m ? m[1] : null;
+}
+
+// Compiles one node in place; pushes updaters that take the current scope.
+function dcCompile(node, ups) {
+  if (node.nodeType === 3) {
+    if (!node.data.includes('{{')) return;
+    const src = node.data;
+    let last;
+    ups.push((s) => { const v = dcInterp(src, s); if (v !== last) { node.data = v; last = v; } });
+    return;
+  }
+  if (node.nodeType !== 1) return;
+  const tag = node.tagName.toLowerCase();
+  if (tag === 'sc-if' || tag === 'sc-for') { dcBlock(node, tag, ups); return; }
+  for (const a of [...node.attributes]) {
+    const name = a.name, val = a.value;
+    if (name.startsWith('hint-')) { node.removeAttribute(name); continue; }
+    if (!val.includes('{{')) continue;
+    node.removeAttribute(name);
+    if (DC_EVENTS[name]) {
+      const p = dcSingle(val);
+      let cur;
+      node.addEventListener(DC_EVENTS[name], (e) => { const f = dcGet(cur, p); if (typeof f === 'function') f(e); });
+      ups.push((s) => { cur = s; });
+    } else if (name === 'ref') {
+      const p = dcSingle(val);
+      let done = false;
+      ups.push((s) => { if (!done) { done = true; const f = dcGet(s, p); if (typeof f === 'function') f(node); } });
+    } else {
+      let last;
+      ups.push((s) => {
+        const v = dcInterp(val, s);
+        if (v === last) return;
+        last = v;
+        if (name === 'value' && 'value' in node) node.value = v; else node.setAttribute(name, v);
+      });
+    }
+  }
+  for (const c of [...node.childNodes]) dcCompile(c, ups);
+}
+
+function dcBlock(el, tag, ups) {
+  const anchor = document.createComment(tag);
+  el.parentNode.replaceChild(anchor, el);
+  const tpl = document.createDocumentFragment();
+  while (el.firstChild) tpl.appendChild(el.firstChild);
+  const make = () => {
+    const frag = tpl.cloneNode(true), u = [];
+    for (const c of [...frag.childNodes]) dcCompile(c, u);
+    return { frag: frag, nodes: [...frag.childNodes], u: u };
+  };
+  if (tag === 'sc-if') {
+    const p = dcSingle(el.getAttribute('value') || '');
+    let inst = null;
+    ups.push((s) => {
+      const on = !!dcGet(s, p);
+      if (!on) { if (inst) { inst.nodes.forEach((n) => n.remove()); inst = null; } return; }
+      if (!inst) { inst = make(); anchor.parentNode.insertBefore(inst.frag, anchor); }
+      inst.u.forEach((f) => f(s));
+    });
+  } else {
+    const p = dcSingle(el.getAttribute('list') || ''), as = el.getAttribute('as');
+    const insts = [];
+    ups.push((s) => {
+      const list = dcGet(s, p) || [];
+      while (insts.length > list.length) insts.pop().nodes.forEach((n) => n.remove());
+      while (insts.length < list.length) { const i = make(); anchor.parentNode.insertBefore(i.frag, anchor); insts.push(i); }
+      list.forEach((item, k) => { const sc = Object.create(s); sc[as] = item; insts[k].u.forEach((f) => f(sc)); });
+    });
+  }
+}
+
+function mountDC(Component) {
+  const comp = new Component({});
+  const frag = document.getElementById('dc-template').content.cloneNode(true), ups = [];
+  for (const c of [...frag.childNodes]) dcCompile(c, ups);
+  const root = document.getElementById('dc-root');
+  let pending = false;
+  const render = () => { pending = false; const v = comp.renderVals(); ups.forEach((f) => f(v)); };
+  dcSchedule = () => { if (!pending) { pending = true; queueMicrotask(render); } };
+  root.appendChild(frag);
+  render();
+  window.addEventListener('pagehide', () => { if (comp.componentWillUnmount) comp.componentWillUnmount(); });
+}
+class Component extends DCLogic {
+  // ================= 주제 훅: 주제마다 바꾸는 곳은 이 네 메서드뿐이에요 =================
+  // 계약은 bio-interactive/references/scene-api.md에 있어요.
+
+  topic() {
+    const phases = ['부모 세대', '대립유전자 세기', '독립적인 전달', '네 가지 결합', '자손 유전자형', '평형 유지'];
+    return {
+      MODES: [{ key: 'equilibrium', label: '평형', cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [10, 13.8], D: 60,
+        autoSpin: false, rotatable: false,
+        playback: { fmax: 12, rate: 0.7, label: f => phases[Math.min(5, Math.floor(f / 2))] + ' · ' + f.toFixed(1) + ' / 12' },
+        canvasLabel: f => '하디-바인베르크 확률 모형. ' + phases[Math.min(5, Math.floor(f / 2))] + ' 단계예요. R과 W는 금어초의 두 대립유전자예요.' }],
+      STEPS: [
+        { mode: 'equilibrium', f: 1.8, phase: '부모 세대', c: '#CC5365', title: '부모 유전자형을 세어요', who: '개체당 대립유전자 2개', text: 'RR·RW·WW 개체의 비율부터 확인해요. 부모는 처음부터 평형일 필요가 없어요. p와 초기 구성을 바꾸면 이 비율이 달라져요.' },
+        { mode: 'equilibrium', f: 3.8, phase: '대립유전자 세기', c: '#CC5365', title: '두 개씩 세어 p와 q를 구해요', who: '분모는 2 × 개체 수', text: 'RR은 R을 두 개, RW는 R과 W를 한 개씩 가져요. R의 빈도는 RR 빈도 + RW 빈도의 절반이에요. 부모가 1,000개체라면 분모는 대립유전자 2,000개예요.' },
+        { mode: 'equilibrium', f: 5.8, phase: '독립적인 전달', c: '#487F9B', title: '각 부모에게 하나씩 받아요', who: '무작위 교배 · 독립 결합', text: '각 부모에서 온 배우자는 R을 p, W를 q의 확률로 전달해요. 두 전달이 독립이므로 확률을 곱해요. 한 번 전달한 뒤에도 집단의 p:q는 그대로예요.' },
+        { mode: 'equilibrium', f: 7.8, phase: '네 가지 결합', c: '#AB6B99', title: 'RW가 되는 두 경로를 더해요', who: 'R×W와 W×R', text: '첫 부모의 R과 둘째 부모의 W가 만나도, 그 반대여도 RW예요. 두 경로는 각각 pq와 qp예요. 같은 이형접합이므로 합치면 2pq가 돼요.' },
+        { mode: 'equilibrium', f: 9.8, phase: '자손 유전자형', c: '#AB6B99', title: '자손은 p²·2pq·q²예요', who: '한 번의 무작위 교배 뒤', text: 'RR은 p², RW는 2pq, WW는 q²로 예측해요. 부모 구성과 달라질 수 있지만 대립유전자 빈도 p·q는 그대로예요. 1,000개체 환산값은 확률의 기댓값이에요.' },
+        { mode: 'equilibrium', f: 11.8, phase: '평형 유지', c: '#487F9B', title: '다음 세대에도 같아요', who: '다섯 조건이 계속 유지돼요', text: '자손에서 p를 다시 계산해도 p² + pq = p예요. 다음 자손 세대도 같은 p²·2pq·q²를 가져요. 부모 초기 구성이 달라도 같은 p라면 평형의 예측값은 같아요.' }
+      ],
+      MISTAKES: { equilibrium: [
+        { title: '개체 빈도 ≠ 대립유전자 빈도', text: 'RR·RW·WW는 개체 비율이에요. p·q는 개체마다 두 개씩 있는 대립유전자의 비율이에요. 두 번째 단계의 분모 2,000을 보세요.' },
+        { title: 'pq 한 경로 ≠ 2pq 전체', text: 'R×W와 W×R는 같은 RW 자손이에요. 네 번째 단계의 두 경로를 더해요. p+q=1과 p²+2pq+q²=1도 구분해요.' },
+        { title: '부모의 현재 구성 ≠ 자손의 평형', text: '부모가 평형이 아니어도 한 번의 무작위 교배 뒤 평형 비율이 나와요. 다섯 조건이 유지되면 그 뒤부터 같은 값을 유지해요.' }
+      ] },
+      TOGGLES: [['formulas', '계산식']],
+      PAL: {
+        light: { bg: '#ffffff', labelBg: '#f7f8fa', ink: '#17212A', ring: '#17212A', r: '#CC5365', w: '#487F9B', hetero: '#AB6B99', line: '#96A2AD', pale: '#E9EEF2' },
+        dark: { bg: '#17171c', labelBg: '#212128', ink: '#F2F4F6', ring: '#F2F4F6', r: '#F88B98', w: '#80B6D0', hetero: '#D79AC5', line: '#87929E', pale: '#30343D' }
+      }
+    };
+  }
+
+  buildScene(mode, I, O) {
+    const pal = this.pal(), st = this.state, f = this.sim.f;
+    const p = st.p, q = 1 - p, h = st.start === 'homo' ? 0 : st.start === 'balanced' ? 2 * p * q : 0.5;
+    const parent = [p - h / 2, h, q - h / 2], child = [p * p, 2 * p * q, q * q];
+    const names = ['RR', 'RW', 'WW'], colors = [pal.r, pal.hetero, pal.w];
+    const phase = Math.min(5, Math.floor(f / 2)), local = f - phase * 2;
+    const fmt = v => v.toFixed(2), count = v => Math.round(v * 1000);
+    const txt = (x, y, text, c = pal.ink, size = 12, a = 1) => I.push({ k: 3, p: [x,y,0], text, c, size, a });
+    const line = (x1,y1,x2,y2,c=pal.line,w=0.04,a=1) => I.push({ k: 1, p:[x1,y1,0], q:[x2,y2,0], c,w,flat:true,a });
+    const arrow = (x1,y1,x2,y2,c=pal.line) => { line(x1,y1,x2,y2,c); I.push({ k:4,p:[x1,y1,0],q:[x2,y2,0],c }); };
+    const allele = (x,y,letter,r=0.27,a=1) => { I.push({k:0,p:[x,y,0],r,c:letter==='R'?pal.r:pal.w,flat:true,a}); txt(x,y,letter,pal.bg,12,a); };
+    const pair = (x,y,name,r=0.27,a=1) => { line(x-.31,y,x+.31,y,pal.line,.06,a);allele(x-.31,y,name[0],r,a);allele(x+.31,y,name[1],r,a); };
+    const bar = (x,y,width,vals,a=1) => { let left=x-width/2; vals.forEach((v,i)=>{if(v>0)line(left,y,left+v*width,y,colors[i],.32,a);left+=v*width;}); };
+    const phaseNames = ['1 · 부모 세대', '2 · 대립유전자 세기', '3 · 독립적인 전달', '4 · 네 가지 결합', '5 · 자손 유전자형', '6 · 평형 유지'];
+    O.push({ p:[0,4.8,0],text:phaseNames[phase],c:pal.line,size:13 });
+    txt(0,4.05,'p = '+fmt(p)+'     q = '+fmt(q),pal.ink,13);
+
+    if (phase === 0) {
+      txt(0,3.25,'부모 1,000개체로 환산한 구성',pal.ink,13);
+      names.forEach((name,i) => {
+        const x=(i-1)*2.8;pair(x,2.05,name,.34);txt(x,1.25,name,colors[i],13);
+        txt(x,.65,count(parent[i])+'개체',pal.ink,13);txt(x,.08,'빈도 '+fmt(parent[i]),pal.ink,11);
+      });
+      bar(0,-1.05,8,parent);
+      txt(0,-1.75,parent.every((v,i)=>Math.abs(v-child[i])<1e-9)?'부모가 이미 평형인 경우예요.':'이 부모 구성은 평형 비율과 달라요.',pal.ink,12);
+      if(st.formulas)txt(0,-2.5,'p = RR 빈도 + ½ × RW 빈도',pal.ink,12);
+      txt(0,-3.35,'구성을 바꿔도 선택한 p는 유지돼요.',pal.ink,11);
+    } else if (phase === 1) {
+      names.forEach((name,i) => { const x=(i-1)*2.8;pair(x,2.65,name);txt(x,1.95,name+' '+count(parent[i]),colors[i],12); });
+      arrow(0,1.45,0,.75);
+      const a=this.sm(local*1.5);let left=-4;line(-4,0,4,0,pal.pale,.56);
+      line(left,0,left+8*p,0,pal.r,.56,a);line(left+8*p,0,4,0,pal.w,.56,a);
+      txt(-2.3,-.78,'R '+Math.round(2000*p)+'개',pal.r,13,a);txt(2.3,-.78,'W '+Math.round(2000*q)+'개',pal.w,13,a);
+      txt(0,-1.5,'총 2 × 1,000 = 2,000개',pal.ink,13);
+      if(st.formulas){txt(0,-2.25,'R: 2 × '+count(parent[0])+' + '+count(parent[1])+' = '+Math.round(2000*p),pal.r,12);txt(0,-2.9,'p = '+Math.round(2000*p)+' / 2,000 = '+fmt(p),pal.ink,12);}
+      txt(0,-3.6,'W도 같은 방법으로 세면 q = '+fmt(q),pal.w,11);
+    } else if (phase === 2) {
+      txt(0,3.2,'각 부모에서 배우자가 하나씩 와요.',pal.ink,12);
+      [-2.25,2.25].forEach((x,j)=>{
+        txt(x,2.5,'부모 쪽 '+(j+1),pal.ink,12);
+        line(x-1.5,1.7,x-1.5+3*p,1.7,pal.r,.25);line(x-1.5+3*p,1.7,x+1.5,1.7,pal.w,.25);
+        allele(x-.65,.75,'R');allele(x+.65,.75,'W');
+        txt(x,.02,'p '+fmt(p)+' / q '+fmt(q),pal.ink,11);
+        arrow(x,-.4,x,-1.1);
+      });
+      const t=this.sm(local/1.4);allele(this.lerp([-2.25,-1.1,0],[-.4,-1.8,0],t)[0],this.lerp([-2.25,-1.1,0],[-.4,-1.8,0],t)[1],'R');
+      allele(this.lerp([2.25,-1.1,0],[.4,-1.8,0],t)[0],this.lerp([2.25,-1.1,0],[.4,-1.8,0],t)[1],'W');
+      txt(0,-2.65,'그림은 R×W 한 경로의 예예요.',pal.ink,12);
+      txt(0,-3.35,'전달 뒤에도 p:q는 그대로예요.',pal.ink,12);
+    } else if (phase === 3) {
+      txt(0,3.25,'첫 부모 × 둘째 부모',pal.ink,13);
+      line(-3.8,2.5,3.8,2.5);line(-3.8,-2.5,3.8,-2.5);line(-3.8,0,3.8,0);line(0,2.5,0,-2.5);
+      const cells=[[-1.9,1.25,'RR',p*p,'p × p'],[1.9,1.25,'RW',p*q,'p × q'],[-1.9,-1.25,'WR',q*p,'q × p'],[1.9,-1.25,'WW',q*q,'q × q']];
+      cells.forEach((c,i)=>{
+        const a=this.sm(local*3-i*.36);pair(c[0],c[1]+.4,c[2],.27,a);txt(c[0],c[1]-.25,c[2]+' = '+fmt(c[3]),i===1||i===2?pal.hetero:pal.ink,12,a);
+        if(st.formulas)txt(c[0],c[1]-.82,c[4],pal.ink,11,a);
+      });
+      txt(0,-3.15,'RW와 WR는 같은 이형접합이에요.',pal.hetero,12);
+      txt(0,-3.8,fmt(p*q)+' + '+fmt(q*p)+' = 2pq = '+fmt(2*p*q),pal.ink,12);
+    } else if (phase === 4) {
+      txt(0,3.25,'자손 1세대 · 확률의 기댓값',pal.ink,13);
+      names.forEach((name,i)=>{
+        const y=2.05-i*1.65;pair(-3.15,y,name,.24);txt(-1.85,y,name,colors[i],12);
+        line(-1.1,y,3.7,y,pal.pale,.28);line(-1.1,y,-1.1+child[i]*4.8*this.sm(local*1.5),y,colors[i],.28);
+        txt(1.25,y-.52,fmt(child[i])+' → '+count(child[i])+'개체',pal.ink,12);
+      });
+      if(st.formulas)txt(0,-3.05,'p² + 2pq + q² = 1',pal.ink,13);
+      txt(0,-3.7,'1,000개체로 환산 · 실제 관측값 아님',pal.ink,11);
+    } else {
+      const rows=[{n:'부모',v:parent},{n:'자손 1세대',v:child},{n:'자손 2세대',v:child},{n:'자손 6세대',v:child}];
+      rows.forEach((r,i)=>{
+        const y=2.65-i*1.45,a=i===0?1:this.sm(local*2.8-(i-1)*.45);
+        txt(0,y+.42,r.n,pal.ink,12,a);bar(0,y-.05,7.8,r.v,a);
+        txt(0,y-.52,r.v.map((v,j)=>names[j]+' '+fmt(v)).join('  ·  '),pal.ink,11,a);
+      });
+      if(st.formulas)txt(0,-3.65,'자손의 p = p² + ½(2pq) = '+fmt(p),pal.ink,12);
+    }
+    txt(0,-4.65,'확률 모형 · R = Cᴿ · W = Cᵂ',pal.line,11);
+  }
+
+  extraState() {
+    return { p: 0.7, start: 'mixed', formulas: true };
+  }
+
+  extraVals(st) {
+    const pal=this.pal(),p=st.p,q=1-p,h=st.start==='homo'?0:st.start==='balanced'?2*p*q:0.5;
+    const parent=[p-h/2,h,q-h/2],child=[p*p,2*p*q,q*q],phase=Math.min(5,Math.floor(st.f/2));
+    const phases=['부모 세대','대립유전자 세기','독립적인 전달','네 가지 결합','자손 유전자형','평형 유지'];
+    const now=[
+      'RR·RW·WW는 개체 비율이에요. 초기 구성부터 확인해요.',
+      'R을 두 개씩 또는 한 개씩 세고 전체 대립유전자 수로 나눠요.',
+      '각 부모에게 하나씩 받아요. 두 전달은 독립이에요.',
+      'RW가 되는 두 경로를 합치면 pq + qp = 2pq예요.',
+      '한 세대 무작위 교배 뒤 p²·2pq·q²를 예측해요.',
+      '조건이 계속 유지되면 자손 세대의 빈도는 같아요.'
+    ];
+    const vals=phase<4?parent:child,names=['RR','RW','WW'],colors=[pal.r,pal.hetero,pal.w];
+    const choose=change=>{this.setState(Object.assign({},change,{playing:false}));};
+    return {
+      pText:p.toFixed(2),qText:q.toFixed(2),phaseName:phases[phase],nowText:now[phase],
+      tableTitle:phase<4?'부모의 유전자형 빈도':'자손의 유전자형 빈도',
+      freqRows:vals.map((v,i)=>({c:colors[i],text:names[i]+' = '+v.toFixed(2)+' · 1,000개체 환산 '+Math.round(v*1000)+'개체'})),
+      denominator:phase===1?'대립유전자 빈도의 분모는 2,000개예요.':'유전자형 빈도의 분모는 1,000개체예요.',
+      legend:{r:pal.r,w:pal.w},
+      pOptions:[0.4,0.5,0.7].map(v=>({label:'p = '+v.toFixed(1),pressed:String(st.p===v),pick:()=>choose({p:v})})),
+      startOptions:[['mixed','이형 50% · 수업 예 p=0.7'],['homo','동형접합만 있는 부모'],['balanced','이미 평형인 부모']].map(([key,label])=>({label,pressed:String(st.start===key),pick:()=>choose({start:key})}))
+    };
+  }
+
+  // ================= 공통 셸: 아래는 주제와 무관해요. 고치지 않아요 =================
+  constructor(...args) {
+    super(...args);
+    let reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    let narrow = false;
+    try { narrow = window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) {}
+    let saved = null;
+    try { saved = window.localStorage.getItem('od-theme'); } catch (e) {}
+    const PANEL_W = { left: { min: 220, max: 480 }, right: { min: 280, max: 720 } };
+    let widths = {};
+    try { widths = JSON.parse(window.localStorage.getItem('interactive-panel-w')) || {}; } catch (e) {}
+    const okW = (side) => { const v = widths[side]; return typeof v === 'number' && v >= PANEL_W[side].min && v <= PANEL_W[side].max ? v : null; };
+    this.T = this.topic();
+    this.state = Object.assign({
+      mode: this.T.MODES[0].key, f: 0, playing: false, speed: 1, step: -1, spin: !reduce,
+      theme: (saved === 'light' || saved === 'dark') ? saved : (this.systemDark() ? 'dark' : 'light'),
+      // leftOpen/rightOpen: docked panels on wide screens; drawer: the one open drawer on narrow screens
+      leftOpen: true, rightOpen: true, drawer: null, narrow: narrow,
+      // leftW/rightW: user-set docked widths in px (null = default); resizing: a handle is being dragged
+      leftW: okW('left'), rightW: okW('right'), resizing: false
+    }, this.extraState());
+    this.reduceMotion = reduce;
+    this.K = {
+      PANEL_W: PANEL_W, PANEL_W_KEY: 'interactive-panel-w', PANEL_DEFAULT: { left: 320, right: 400 },
+      THEMES: {
+        light: { bg: '#ffffff', surface: '#f7f8fa', ink: '#111111', ink2: '#6b7280', line: '#d9dee7', accent: '#1677ff', accentInk: '#1b64da', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#b54708', prof: '#6941c6', supp: '#067647', danger: '#d92d20', scroll: '#c9d0db', scrollHover: '#9aa3b2' },
+        dark: { bg: '#17171c', surface: '#212128', ink: '#f2f4f6', ink2: '#a3abb8', line: '#34353d', accent: '#3182f6', accentInk: '#6ea4ff', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#f5a15c', prof: '#b69cff', supp: '#5fd39a', danger: '#ff6b61', scroll: '#3f414b', scrollHover: '#5b5e6a' }
+      }
+    };
+    this.cam = Object.assign({}, this.modeDef().cam);
+    this.sim = { f: 0, cx: 0 };
+    this.pointer = { x: -1, y: -1, inside: false, drag: false, lx: 0, ly: 0 };
+    this.colorCache = {};
+    this._tick = (t) => this.tick(t);
+    this._canvasRef = (el) => this.attachCanvas(el);
+    this.handles = {};
+    this._handleRefL = (el) => this.attachHandle('left', el);
+    this._handleRefR = (el) => this.attachHandle('right', el);
+  }
+
+  componentWillUnmount() {
+    this.attachCanvas(null);
+    this.attachHandle('left', null);
+    this.attachHandle('right', null);
+  }
+
+  modeDef(key) {
+    const k = key || this.state.mode;
+    return this.T.MODES.find((m) => m.key === k) || this.T.MODES[0];
+  }
+  systemDark() {
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; }
+  }
+  isNarrow() {
+    try { return window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) { return false; }
+  }
+  syncBreakpoint() { this.setState({ narrow: this.isNarrow(), drawer: null }); }
+  // In drawer mode only one panel is open at a time.
+  togglePanel(side) {
+    const st = this.state;
+    if (st.narrow) this.setState({ drawer: st.drawer === side ? null : side });
+    else if (side === 'left') this.setState({ leftOpen: !st.leftOpen });
+    else this.setState({ rightOpen: !st.rightOpen });
+  }
+  // Docked panel width: the canvas column always keeps at least 400px.
+  panelMax(side) {
+    const lim = this.K.PANEL_W[side], other = side === 'left' ? 'right' : 'left', st = this.state;
+    const h = this.handles[other];
+    const otherOpen = other === 'left' ? st.leftOpen : st.rightOpen;
+    const otherW = !otherOpen ? 0 : h ? h.el.parentElement.getBoundingClientRect().width
+      : (st[other + 'W'] || this.K.PANEL_DEFAULT[other]);
+    return Math.max(lim.min, Math.min(lim.max, (window.innerWidth || 1440) - otherW - 400));
+  }
+  setPanelWidth(side, px, save) {
+    const v = Math.round(Math.min(Math.max(px, this.K.PANEL_W[side].min), this.panelMax(side)));
+    this.setState({ [side + 'W']: v });
+    if (save) this.savePanelWidths(side, v);
+  }
+  resetPanelWidth(side) {
+    this.setState({ [side + 'W']: null });
+    this.savePanelWidths(side, null);
+  }
+  savePanelWidths(side, v) {
+    try {
+      const key = this.K.PANEL_W_KEY;
+      let w = {};
+      try { w = JSON.parse(window.localStorage.getItem(key)) || {}; } catch (e) {}
+      if (v == null) delete w[side]; else w[side] = v;
+      window.localStorage.setItem(key, JSON.stringify(w));
+    } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ }
+  }
+  // Re-fit user widths when the window shrinks (not saved).
+  refitPanels() {
+    ['left', 'right'].forEach((side) => {
+      const w = this.state[side + 'W'];
+      if (w != null && w > this.panelMax(side)) this.setPanelWidth(side, w, false);
+    });
+  }
+  attachHandle(side, el) {
+    const old = this.handles[side];
+    if (old && old.el === el) return;
+    if (old) {
+      Object.keys(old.on).forEach((ev) => old.el.removeEventListener(ev, old.on[ev]));
+      delete this.handles[side];
+      if (!Object.keys(this.handles).length) window.removeEventListener('resize', this._refit);
+    }
+    if (!el) return;
+    const dir = side === 'left' ? 1 : -1;
+    const width = () => el.parentElement.getBoundingClientRect().width;
+    let drag = null;
+    const on = {
+      pointerdown: (e) => {
+        if (this.state.narrow || e.button !== 0) return;
+        e.preventDefault();
+        drag = { x: e.clientX, w: width() };
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        this.setState({ resizing: true });
+      },
+      pointermove: (e) => { if (drag) this.setPanelWidth(side, drag.w + dir * (e.clientX - drag.x), false); },
+      pointerup: () => {
+        if (!drag) return;
+        drag = null;
+        this.setState({ resizing: false });
+        this.setPanelWidth(side, width(), true);
+      },
+      dblclick: () => this.resetPanelWidth(side),
+      keydown: (e) => {
+        const step = e.shiftKey ? 64 : 16;
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          e.preventDefault(); e.stopPropagation();
+          this.setPanelWidth(side, width() + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+        } else if (e.key === 'Home') { e.preventDefault(); e.stopPropagation(); this.resetPanelWidth(side); }
+      }
+    };
+    on.pointercancel = on.pointerup;
+    Object.keys(on).forEach((ev) => el.addEventListener(ev, on[ev]));
+    if (!Object.keys(this.handles).length) {
+      this._refit = this._refit || (() => this.refitPanels());
+      window.addEventListener('resize', this._refit);
+    }
+    this.handles[side] = { el: el, on: on };
+  }
+  textTone(hex) { return this.state.theme === 'light' ? this.mix(hex, '#000000', 0.4) : hex; }
+  pal() { return this.T.PAL[this.state.theme] || this.T.PAL.dark; }
+  setTheme(t) {
+    this.setState({ theme: t });
+    try {
+      if ((t === 'dark') === this.systemDark()) window.localStorage.removeItem('od-theme');
+      else window.localStorage.setItem('od-theme', t);
+    } catch (e) {}
+  }
+
+  attachCanvas(el) {
+    if (this.canvas === el) return;
+    if (this.canvas) {
+      const c = this.canvas;
+      c.removeEventListener('pointerdown', this._pd);
+      c.removeEventListener('pointermove', this._pm);
+      c.removeEventListener('pointerup', this._pu);
+      c.removeEventListener('pointercancel', this._pu);
+      c.removeEventListener('pointerleave', this._pl);
+      cancelAnimationFrame(this.raf);
+      try { this._mq.removeEventListener('change', this._mqH); } catch (err) {}
+    }
+    this.canvas = el || null;
+    if (!el) return;
+    this.ctx = el.getContext('2d');
+    const p = this.pointer;
+    this._pd = (e) => {
+      if (!this.modeDef().rotatable) return;
+      p.drag = true; p.lx = e.clientX; p.ly = e.clientY;
+      try { el.setPointerCapture(e.pointerId); } catch (err) {}
+      el.style.cursor = 'grabbing';
+    };
+    this._pm = (e) => {
+      const r = el.getBoundingClientRect();
+      p.x = e.clientX - r.left; p.y = e.clientY - r.top; p.inside = true;
+      if (p.drag && this.modeDef().rotatable) {
+        this.cam.yaw += (e.clientX - p.lx) * 0.008;
+        this.cam.pitch = Math.max(-1.45, Math.min(1.45, this.cam.pitch + (e.clientY - p.ly) * 0.008));
+        p.lx = e.clientX; p.ly = e.clientY;
+      }
+    };
+    this._pu = () => { p.drag = false; el.style.cursor = ''; };
+    this._pl = () => { p.inside = false; };
+    el.addEventListener('pointerdown', this._pd);
+    el.addEventListener('pointermove', this._pm);
+    el.addEventListener('pointerup', this._pu);
+    el.addEventListener('pointercancel', this._pu);
+    el.addEventListener('pointerleave', this._pl);
+    try {
+      this._mq = window.matchMedia('(max-width: 1023.98px)');
+      this._mqH = () => this.syncBreakpoint();
+      this._mq.addEventListener('change', this._mqH);
+    } catch (err) {}
+    this.last = 0;
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  tick(t) {
+    if (!this.canvas) return;
+    const dt = this.last ? Math.min(0.05, (t - this.last) / 1000) : 0;
+    this.last = t;
+    const st = this.state, m = this.modeDef(), pb = m.playback;
+    if (m.autoSpin && st.spin && !this.pointer.drag) this.cam.yaw += dt * 0.3;
+    if (pb && st.playing) {
+      this.sim.f = Math.min(pb.fmax, this.sim.f + dt * pb.rate * st.speed);
+      if (this.sim.f >= pb.fmax) this.setState({ playing: false, f: this.sim.f });
+      else if (t - (this.lastPush || 0) > 120) { this.lastPush = t; this.setState({ f: this.sim.f }); }
+    }
+    // a broken scene keeps the page alive but is reported once for the browser check
+    try { this.draw(dt, t); } catch (err) { if (!this.drawErr) { this.drawErr = true; console.error(err); } }
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  // ---------- math helpers (장면에서 써도 돼요) ----------
+  lerp(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+  sm(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+  rgb(hex) { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  mix(hex, to, amt) {
+    const a = this.rgb(hex), b = this.rgb(to);
+    return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * amt) + ',' + Math.round(a[1] + (b[1] - a[1]) * amt) + ',' + Math.round(a[2] + (b[2] - a[2]) * amt) + ')';
+  }
+  rgba(hex, al) { const a = this.rgb(hex); return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + al + ')'; }
+  shades(hex) {
+    let s = this.colorCache[hex];
+    if (!s) { s = { hi: this.mix(hex, '#FFFFFF', 0.55), mid: hex, lo: this.mix(hex, '#000000', 0.55) }; this.colorCache[hex] = s; }
+    return s;
+  }
+  proj(p, V) {
+    const x = p[0] - V.cx, y = p[1], z = p[2];
+    const x1 = x * V.cy + z * V.sy, z1 = -x * V.sy + z * V.cy;
+    const y2 = y * V.cp - z1 * V.sp, z2 = y * V.sp + z1 * V.cp;
+    const s = V.F / Math.max(2, V.D - z2);
+    return [V.ox + x1 * s, V.oy - y2 * s, z2, s];
+  }
+
+  // ---------- drawing ----------
+  draw(dt, now) {
+    const el = this.canvas, ctx = this.ctx, st = this.state, m = this.modeDef();
+    const dpr = window.devicePixelRatio || 1;
+    const W = el.clientWidth, H = el.clientHeight;
+    if (!W || !H) return;
+    if (el.width !== Math.round(W * dpr) || el.height !== Math.round(H * dpr)) { el.width = Math.round(W * dpr); el.height = Math.round(H * dpr); }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const pal = this.pal();
+    ctx.fillStyle = pal.bg; ctx.fillRect(0, 0, W, H);
+
+    const I = [], O = [];
+    this.buildScene(st.mode, I, O);
+    const scale = Math.min(W / m.fit[0], H / m.fit[1]), D = m.D, z = this.cam.zoom;
+    const V = {
+      cx: this.sim.cx, cy: Math.cos(this.cam.yaw), sy: Math.sin(this.cam.yaw), cp: Math.cos(this.cam.pitch), sp: Math.sin(this.cam.pitch),
+      F: scale * z * D, D: D, ox: W / 2, oy: H / 2 - (m.playback ? 20 : 0)
+    };
+    let zmin = Infinity, zmax = -Infinity;
+    for (const it of I) {
+      it.A = this.proj(it.p, V);
+      if (it.q) { it.B = this.proj(it.q, V); it.z = (it.A[2] + it.B[2]) / 2; } else it.z = it.A[2];
+      if (it.z < zmin) zmin = it.z;
+      if (it.z > zmax) zmax = it.z;
+    }
+    I.sort((a, b) => a.z - b.z);
+    // depth fog; a flat scene (all items at one depth) is drawn without it
+    const span = zmax - zmin;
+    for (const it of I) {
+      const fog = span < 0.01 ? 1 : 0.42 + 0.58 * ((it.z - zmin) / span);
+      ctx.globalAlpha = Math.max(0, (it.a == null ? 1 : it.a) * fog);
+      if (ctx.globalAlpha < 0.01) continue;
+      const x = it.A[0], y = it.A[1], s = it.A[3];
+      if (it.k === 0) {
+        const R = it.r * s;
+        if (R < 0.4) continue;
+        if (it.flat) { ctx.fillStyle = it.c; ctx.beginPath(); ctx.arc(x, y, Math.max(1.3, R), 0, 6.2832); ctx.fill(); }
+        else {
+          const sh = this.shades(it.c);
+          const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+          g.addColorStop(0, sh.hi); g.addColorStop(0.5, sh.mid); g.addColorStop(1, sh.lo);
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        }
+      } else if (it.k === 1) {
+        const lw = Math.max(1, it.w * (s + it.B[3]) / 2);
+        ctx.lineCap = it.flat ? 'butt' : 'round';
+        if (it.rod) {
+          ctx.strokeStyle = this.shades(it.c).lo; ctx.lineWidth = lw + 2;
+          ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+        }
+        ctx.strokeStyle = it.c; ctx.lineWidth = lw;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+      } else if (it.k === 3) {
+        const fs = Math.max(8, Math.min(14, it.size * s / (scale * z) * 1.05));
+        ctx.font = '700 ' + fs + 'px "Pretendard", system-ui, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = it.c; ctx.fillText(it.text, x, y + 0.5);
+      } else if (it.k === 4) {
+        const ang = Math.atan2(it.B[1] - y, it.B[0] - x), mx = (x + it.B[0]) / 2, my = (y + it.B[1]) / 2, r = 6;
+        ctx.fillStyle = it.c; ctx.beginPath();
+        ctx.moveTo(mx + Math.cos(ang) * r, my + Math.sin(ang) * r);
+        ctx.lineTo(mx + Math.cos(ang + 2.5) * r, my + Math.sin(ang + 2.5) * r);
+        ctx.lineTo(mx + Math.cos(ang - 2.5) * r, my + Math.sin(ang - 2.5) * r);
+        ctx.closePath(); ctx.fill();
+      } else if (it.k === 5) {
+        // lit translucent sphere, highlight up-left like the solid spheres
+        const R = it.r * s, ba = pal.blobAlpha == null ? 0.3 : pal.blobAlpha;
+        const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+        g.addColorStop(0, 'rgba(255,255,255,0.55)'); g.addColorStop(0.3, this.rgba(it.c, Math.min(1, ba + 0.15))); g.addColorStop(1, this.rgba(it.c, 0.18));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        ctx.strokeStyle = it.c; ctx.lineWidth = it.focus ? 3 : 1.5; ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+    for (const o of O) this.drawOverlay(o, V, now);
+  }
+
+  drawOverlay(o, V, now) {
+    const ctx = this.ctx, A = this.proj(o.p, V), pal = this.pal();
+    if (o.t === 'ring') {
+      const r = Math.max(6, 0.32 * A[3]) * (1 + (this.reduceMotion ? 0 : 0.15 * Math.sin((now || 0) / 160)));
+      ctx.globalAlpha = 1; ctx.strokeStyle = pal.ring; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(A[0], A[1], r, 0, 6.2832); ctx.stroke();
+      ctx.font = '600 11px "Pretendard", system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = pal.ring; ctx.fillText(o.text, A[0], A[1] + r + 10);
+      return;
+    }
+    const size = o.size || 12, x = A[0] + (o.dx || 0), y = A[1] + (o.dy || 0);
+    ctx.font = '600 ' + size + 'px "Pretendard", system-ui, sans-serif';
+    const tw = ctx.measureText(o.text).width, w = tw + 14, h = size + 10;
+    ctx.globalAlpha = o.a == null ? 1 : o.a;
+    if (o.lead) {
+      ctx.strokeStyle = this.rgba(o.c, 0.6); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(x, y); ctx.stroke();
+    }
+    ctx.fillStyle = pal.labelBg;
+    ctx.strokeStyle = this.rgba(o.c, 0.55); ctx.lineWidth = 1;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x - w / 2, y - h / 2, w, h, 6); else ctx.rect(x - w / 2, y - h / 2, w, h);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = pal.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(o.text, x, y + 0.5);
+    ctx.globalAlpha = 1;
+  }
+
+  setMode(mode) {
+    this.cam = Object.assign({}, this.modeDef(mode).cam);
+    this.sim.f = 0;
+    this.pointer.drag = false;
+    this.setState({ mode: mode, f: 0, playing: false, step: -1 });
+  }
+
+  pickStep(i) {
+    const s = (this.T.STEPS || [])[i];
+    if (!s) return;
+    if (s.mode !== this.state.mode) this.setMode(s.mode);
+    if (s.f != null) this.sim.f = s.f;
+    this.setState({ f: this.sim.f, playing: false, step: i });
+    this.revealStepDetail();
+  }
+
+  // Scroll the left panel so the step text under the list shows, keeping the pressed button in view.
+  revealStepDetail() {
+    if (typeof document === 'undefined') return;
+    requestAnimationFrame(() => {
+      const box = document.querySelector('.panel-left .panel-inner'), d = box && box.querySelector('.detail');
+      if (!d) return;
+      const pad = 16, b = box.getBoundingClientRect();
+      let dy = d.getBoundingClientRect().bottom + pad - b.bottom;
+      const btn = d.parentElement.querySelector('.steps [aria-pressed="true"]');
+      if (btn) dy = Math.min(dy, btn.getBoundingClientRect().top - pad - b.top);
+      if (dy <= 0) return;
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      box.scrollTo({ top: box.scrollTop + dy, behavior: reduce ? 'auto' : 'smooth' });
+    });
+  }
+
+  renderVals() {
+    const st = this.state, T = this.T, m = this.modeDef(), pb = m.playback;
+    const tg = T.TOGGLES ? (Array.isArray(T.TOGGLES) ? T.TOGGLES : (T.TOGGLES[st.mode] || [])) : [];
+    const togDefs = tg.concat(m.autoSpin ? [['spin', '자동 회전']] : []);
+    const toggles = togDefs.map((d) => ({
+      label: d[1], pressed: st[d[0]] ? 'true' : 'false',
+      toggle: () => { const o = {}; o[d[0]] = !st[d[0]]; this.setState(o); }
+    }));
+    const STEPS = T.STEPS || [];
+    const steps = STEPS.map((s, i) => ({ s: s, i: i })).filter((x) => x.s.mode === st.mode).map((x, k) => ({
+      num: k + 1, title: x.s.title, who: x.s.who, c: x.s.c, pressed: st.step === x.i ? 'true' : 'false',
+      pick: () => this.pickStep(x.i)
+    }));
+    const speeds = [0.5, 1, 2].map((v) => ({
+      label: v + '×', pressed: st.speed === v ? 'true' : 'false',
+      pick: () => this.setState({ speed: v })
+    }));
+    const is = {};
+    T.MODES.forEach((d) => { is[d.key] = d.key === st.mode; });
+    const f = st.f;
+    const isDark = st.theme === 'dark';
+    const leftOn = st.narrow ? st.drawer === 'left' : st.leftOpen, rightOn = st.narrow ? st.drawer === 'right' : st.rightOpen;
+    return Object.assign({
+      th: this.K.THEMES[st.theme], isDark: isDark, isLight: !isDark,
+      themeLabel: isDark ? '라이트 모드로 전환' : '다크 모드로 전환',
+      toggleTheme: () => this.setTheme(isDark ? 'light' : 'dark'),
+      canvasRef: this._canvasRef, canvasCls: m.rotatable ? '' : 'is-fixed',
+      hasModes: T.MODES.length > 1, is: is,
+      modes: T.MODES.map((d) => ({ label: d.label, pressed: d.key === st.mode ? 'true' : 'false', pick: () => { if (d.key !== this.state.mode) this.setMode(d.key); } })),
+      leftCls: leftOn ? 'is-open' : '', rightCls: rightOn ? 'is-open' : '',
+      leftExpanded: leftOn ? 'true' : 'false', rightExpanded: rightOn ? 'true' : 'false',
+      scrimCls: (st.narrow && st.drawer) ? 'is-on' : '',
+      toggleLeft: () => this.togglePanel('left'),
+      toggleRight: () => this.togglePanel('right'),
+      closePanels: () => this.setState({ drawer: null }),
+      layoutStyle: ((st.leftW ? '--pl-user: ' + st.leftW + 'px; ' : '') + (st.rightW ? '--pr-user: ' + st.rightW + 'px;' : '')).trim(),
+      layoutCls: st.resizing ? 'is-resizing' : '',
+      leftWNow: st.leftW ? String(st.leftW) : '', rightWNow: st.rightW ? String(st.rightW) : '',
+      leftHandleRef: this._handleRefL, rightHandleRef: this._handleRefR,
+      onKey: (e) => { if (e.key === 'Escape' && this.state.narrow && this.state.drawer) this.setState({ drawer: null }); },
+      hasToggles: toggles.length > 0, toggles: toggles,
+      hasSteps: steps.length > 0, steps: steps,
+      hasStep: st.step >= 0 && st.step < STEPS.length, stepDetail: st.step >= 0 && STEPS[st.step] ? STEPS[st.step].text : '',
+      mistakes: (T.MISTAKES && T.MISTAKES[st.mode]) || [],
+      canvasLabel: m.canvasLabel(f),
+      zoomIn: () => { this.cam.zoom = Math.min(3, this.cam.zoom * 1.2); },
+      zoomOut: () => { this.cam.zoom = Math.max(0.5, this.cam.zoom / 1.2); },
+      resetView: () => { this.cam = Object.assign({}, m.cam); },
+      hasPlayback: !!pb, isPlaying: st.playing, notPlaying: !st.playing, playLabel: st.playing ? '일시정지' : '재생',
+      togglePlay: () => {
+        if (!pb) return;
+        if (!st.playing && this.sim.f >= pb.fmax) this.sim.f = 0;
+        this.setState({ playing: !st.playing, step: -1, f: this.sim.f });
+      },
+      fInt: Math.round(f * 10), fLabel: pb ? pb.label(f) : '', fMax10: pb ? Math.round(pb.fmax * 10) : 0,
+      onScrub: (e) => { const v = Number(e.target.value) / 10; this.sim.f = v; this.setState({ f: v, playing: false, step: -1 }); },
+      speeds: speeds
+    }, this.extraVals(st));
+  }
+}
+mountDC(Component);
+</script>
+</body>
+</html>
