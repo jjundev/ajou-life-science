@@ -1,0 +1,2093 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>생명과학 정리노트 1029</title>
+  <meta name="description" content="이영만 교수님 생명과학 · 1029 수업 (7장 소진화 · 8장 종분화)">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('od-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']})"></script>
+  <style>
+    /* ---------- 토큰 ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #b54708; --prof: #6941c6; --supp: #067647; --danger: #d92d20;
+      --scroll: #c9d0db; --scroll-hover: #9aa3b2;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --fs-title: clamp(28px, 6vw, 36px); --fs-h3: clamp(26px, 5.4vw, 32px); --fs-layer: 19px; --fs-lead: 22px; --fs-body: 17px; --fs-sub: 15px; --fs-small: 14px; --fs-label: 13px; --fs-fig: 12px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+      --radius: 8px; --measure: 680px; --tap: 48px; --btn-min: 160px;
+      --dur: 220ms; --dur-exit: 150ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+      /* 예전 조각이 참조할 수 있는 이름 */
+      --surface-2: var(--surface); --accent-soft: var(--surface); --warn-soft: var(--surface);
+      --prof-soft: var(--surface); --supp-soft: var(--surface); --eli5: var(--accent-ink); --eli5-soft: var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+        --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+        --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+        --scroll: #3f414b; --scroll-hover: #5b5e6a;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+      --scroll: #3f414b; --scroll-hover: #5b5e6a;
+    }
+
+    /* ---------- 기본 ---------- */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent-ink); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+
+    /* ---------- 상단 바 ---------- */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s2) var(--s4); display: flex; align-items: center; gap: var(--s3); min-height: 56px; }
+    .brand { flex: 1 1 auto; min-width: 0; font-size: var(--fs-body); font-weight: 700; white-space: nowrap; }
+    .text-btn { flex: none; min-height: 44px; min-width: 44px; padding: 0 var(--s3); border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); font: 600 var(--fs-small)/1 var(--font); cursor: pointer; }
+    .bar { height: 2px; background: var(--line); overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+
+    /* ---------- 본문 ---------- */
+    main { flex: 1 0 auto; width: 100%; max-width: var(--measure); margin: 0 auto; padding: var(--s6) var(--s5) var(--s7); }
+    .hero h1 { font-size: var(--fs-title); line-height: 1.3; margin: 0 0 var(--s3); letter-spacing: -0.02em; }
+    .hero p { color: var(--ink-2); margin: 0; }
+    section { margin-top: var(--s7); }
+    section > h2 { font-size: 22px; line-height: 1.4; margin: 0 0 var(--s4); }
+    .topic { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .topic h3 { margin: 0 0 var(--s2); font-size: var(--fs-h3); font-weight: 800; line-height: 1.3; letter-spacing: -0.02em; }
+    .tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+    .tag { font-size: var(--fs-label); line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+
+    /* 레이어: 배경 없이 라벨과 구분선으로 나눈다 */
+    .layer { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .layer.eli5 { margin-top: 0; padding-top: 0; border-top: 0; }
+    .layer > :first-child { margin-top: 0; }
+    .layer > :last-child { margin-bottom: 0; }
+    .layer-title { display: block; font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; color: var(--ink); margin-bottom: var(--s3); }
+    .layer.eli5 .layer-title { color: var(--accent-ink); }
+    .layer.eli5 .lead { font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; letter-spacing: -0.01em; margin: 0 0 var(--s4); }
+    /* 정확히 말하면: 본문 크기 그대로, 굵은 첫머리만 진하게 */
+    .layer.formal b { font-weight: 700; color: var(--ink); }
+    /* 교수님 말씀 · 주의: 보조 정보는 한 단계 작게 */
+    .layer.prof, .layer.warn, .layer.listen { font-size: var(--fs-sub); line-height: 1.7; }
+    .layer.prof blockquote { font-size: var(--fs-sub); }
+    .layer.prof .layer-title { color: var(--prof); }
+    .layer.warn, .layer.listen { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn .layer-title { color: var(--warn); font-size: var(--fs-body); }
+    .layer.listen .layer-title { color: var(--accent-ink); font-size: var(--fs-body); }
+    .layer.supp .badge.supp { margin-bottom: var(--s2); }
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
+    .badge.supp { color: var(--supp); }
+    .badge.exam { color: var(--warn); margin-right: var(--s1); }
+    blockquote { margin: var(--s3) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
+    ol.steps { padding-left: 1.4em; }
+    ol.steps li { margin: var(--s2) 0; }
+
+    /* 그림 · 수식 · 표 */
+    .figure { margin: var(--s4) 0; text-align: center; }
+    .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
+    .figure img { max-width: 100%; height: auto; }
+    .figure figcaption { font-size: var(--fs-small); color: var(--ink-2); margin-top: var(--s1); }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: var(--s1) 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+    th, td { border-bottom: 1px solid var(--line); padding: var(--s2); text-align: left; vertical-align: top; }
+    th { color: var(--ink-2); font-weight: 600; }
+    td:first-child, th:first-child { min-width: 6em; }
+
+    /* 위젯 */
+    .widget { background: var(--surface); border-radius: var(--radius); padding: var(--s4); margin: var(--s5) 0; }
+    .widget h4 { margin: 0 0 var(--s1); font-size: var(--fs-layer); line-height: 1.4; }
+    .widget-help { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s3); }
+    .controls { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--s2); font-size: var(--fs-small); }
+    .controls label { display: flex; align-items: center; gap: var(--s2); min-height: 44px; }
+    .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .widget svg { width: 100%; height: auto; background: var(--bg); border-radius: var(--radius); }
+    .readout { font-size: var(--fs-small); margin-top: var(--s2); }
+    .legend { font-size: var(--fs-label); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .sw { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: var(--s1); border-radius: 2px; }
+    .sw.truth { background: var(--ink-2); } .sw.fit { background: var(--accent); } .sw.train { background: var(--accent); height: 10px; width: 10px; border-radius: 50%; }
+    .sw.test { background: var(--warn); height: 10px; width: 10px; border-radius: 50%; } .sw.like { background: var(--accent); } .sw.prior { background: var(--prof); } .sw.post { background: var(--supp); }
+    .axis { stroke: var(--line); stroke-width: 1.5; }
+    .tick { fill: var(--ink-2); font-size: 11px; }
+    .plot-truth { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .plot-fit { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+    .pt-train { fill: var(--accent); }
+    .pt-test { fill: var(--warn); }
+    .plot-like { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .plot-prior { fill: none; stroke: var(--prof); stroke-width: 2; stroke-dasharray: 6 4; }
+    .plot-post { fill: none; stroke: var(--supp); stroke-width: 3; }
+    .mark-ml { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .mark-map { stroke: var(--supp); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 2; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 2.5; }
+    .fig-danger { stroke: var(--danger); fill: none; stroke-width: 2.5; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: 13px; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-fig); font-family: inherit; }
+
+    footer { width: 100%; max-width: var(--measure); margin: 0 auto; padding: 0 var(--s5) var(--s6); color: var(--ink-2); font-size: var(--fs-small); }
+
+    /* ---------- 하단 이동 바 ---------- */
+    .pager { position: sticky; bottom: 0; z-index: 10; background: var(--bg); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .pager-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s3) var(--s4); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); }
+    .pager-count { font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; min-width: 4em; }
+    .btn { min-height: var(--tap); min-width: var(--btn-min); padding: 0 var(--s6); border-radius: var(--radius); border: 0; font: 700 var(--fs-body)/1 var(--font); cursor: pointer; white-space: nowrap;
+      transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+    .btn-ghost { justify-self: start; background: var(--surface); color: var(--ink); }
+    .btn-primary { justify-self: end; background: var(--btn-bg); color: var(--on-btn); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    @media (hover: hover) {
+      .text-btn:hover, .btn-ghost:not(:disabled):hover { background: var(--line); }
+      .btn-primary:not(:disabled):hover { box-shadow: inset 0 0 0 100px rgba(0, 0, 0, .14); }
+    }
+
+    /* ---------- 목차 시트 ---------- */
+    .sheet { width: min(100%, var(--measure)); max-width: 100%; max-height: 80dvh; margin: auto auto 0; padding: 0; border: 0;
+      border-radius: 16px 16px 0 0; background: var(--bg); color: var(--ink); }
+    .sheet::backdrop { background: rgba(0, 0, 0, .4); }
+    .sheet-inner { padding: var(--s4) var(--s5) calc(var(--s5) + env(safe-area-inset-bottom)); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s2); }
+    .sheet-head h2 { margin: 0; font-size: var(--fs-lead); }
+    .toc { display: flex; flex-direction: column; }
+    .toc > a, .toc-group > a { display: block; padding: var(--s3) 0 var(--s1); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); text-decoration: none; }
+    .toc-list { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+    .toc-list a { display: flex; align-items: center; gap: var(--s3); min-height: var(--tap); padding: var(--s2) var(--s3); margin: 0 calc(-1 * var(--s3));
+      border-radius: var(--radius); color: var(--ink); text-decoration: none; line-height: 1.4; }
+    .toc-list a[aria-current="true"] { background: var(--surface); font-weight: 700; color: var(--accent-ink); }
+    .toc-list .toc-title { flex: 1 1 0; min-width: 0; }
+    @media (hover: hover) { .toc-list a:hover { background: var(--surface); } }
+
+    /* ---------- 한 화면에 하나씩 (JS가 켤 때만) ---------- */
+    html:not(.js) .pager, html:not(.js) #toc-open { display: none; }
+    html:not(.js) .sheet { display: block; position: static; width: 100%; max-height: none; margin: 0 auto; border-radius: 0; border-bottom: 1px solid var(--line); }
+    html:not(.js) .sheet-close { display: none; }
+    .js main > .hero:not(.is-current), .js main > section:not(.is-on), .js .screen:not(.is-current) { display: none; }
+    .js main > section { margin-top: 0; }
+    .js main > section > h2 { font-size: var(--fs-small); font-weight: 600; color: var(--accent-ink); margin: 0 0 var(--s2); }
+    .js .topic { padding: 0; border-top: 0; }
+    .js .hero { padding-top: 12vh; }
+    .js footer { display: none; }
+    .js body.at-end footer { display: block; }
+    .screen.enter-next { animation: enter-next var(--dur) var(--ease-out); }
+    .screen.enter-prev { animation: enter-prev var(--dur) var(--ease-out); }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .screen.enter-next, .screen.enter-prev { animation: none; }
+      .bar > span, .btn { transition: none; }
+    }
+    @media (max-width: 480px) {
+      main { padding: var(--s5) var(--s4) var(--s6); }
+      footer { padding: 0 var(--s4) var(--s5); }
+      .btn { min-width: 120px; padding: 0 var(--s5); }
+    }
+    @media print {
+      .topbar, .pager, .sheet { display: none !important; }
+      .js main > .hero, .js main > section, .js .screen, .js footer { display: block !important; }
+    }
+
+    /* ---------- 좌우 패널 (drawer) ---------- */
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
+    .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
+    .panel-toggle svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-toggle .strip { fill: transparent; stroke: none; transition: fill 150ms ease-out; }
+    .panel-toggle[aria-expanded="true"] { color: var(--accent-ink); }
+    .panel-toggle[aria-expanded="true"] .strip { fill: currentColor; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .i-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .theme-toggle .i-sun { display: block; }
+      :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
+    }
+
+    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
+    .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
+    .content { grid-column: 2; }
+    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
+    .content::-webkit-scrollbar, .panel-inner::-webkit-scrollbar { width: 8px; }
+    .content::-webkit-scrollbar-track, .panel-inner::-webkit-scrollbar-track { background: transparent; }
+    .content::-webkit-scrollbar-thumb, .panel-inner::-webkit-scrollbar-thumb { background: var(--scroll); border-radius: 8px; border: 2px solid var(--bg); }
+    .content::-webkit-scrollbar-thumb:hover, .panel-inner::-webkit-scrollbar-thumb:hover { background: var(--scroll-hover); }
+    @supports (scrollbar-color: auto) { .content, .panel-inner { scrollbar-width: thin; scrollbar-color: var(--scroll) transparent; } }
+    .panel-resize { display: none; }
+    .panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 44px; margin-bottom: var(--s2); }
+    .panel-head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-lead); line-height: 1.4; }
+    .panel-sub { margin: 0 0 var(--s4); font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; }
+    .panel-empty { margin: 0; color: var(--ink-2); }
+    .panel-label { display: block; margin: var(--s5) 0 var(--s2); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+
+    /* 진행 상태 */
+    .panel-meta { margin: 0 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .panel-meta b { color: var(--ink); }
+    .progress { height: 4px; margin-bottom: var(--s3); border-radius: 2px; background: var(--line); overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+    .panel .toc-list a { margin: 0 calc(-1 * var(--s2)); padding: var(--s2); font-size: var(--fs-panel); }
+    .toc-mark { flex: none; display: block; width: 20px; height: 20px; color: var(--ink-2); }
+    .toc-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .toc-mark.is-done { color: var(--accent-ink); }
+
+    /* 복습문제: 원문 · 힌트 · 풀이 */
+    .aid details:last-of-type { border-bottom: 1px solid var(--line); }
+    .aid details.original > summary { font-size: var(--fs-panel); }
+    .solved-btn { display: flex; align-items: center; justify-content: center; gap: var(--s2); width: 100%; min-height: var(--tap); margin-top: var(--s5); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .solved-btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
+
+    /* 정리노트: 페이지 요약 */
+    .sum-supp { margin-top: var(--s4); }
+    .sum-lead { margin: 0; font-size: var(--fs-body); font-weight: 700; line-height: 1.6; }
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+    .eq-list li:first-child { padding-top: 0; }
+    .eq-name { display: block; font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+    .eq-list .katex-display { margin: var(--s1) 0 0; text-align: left; }
+    .eq-list .katex-display > .katex { text-align: left; }
+    .terms { margin: 0; }
+    .terms dt { font-size: var(--fs-panel); font-weight: 700; margin-top: var(--s4); }
+    .terms dt:first-child { margin-top: 0; }
+    .terms dd { margin: var(--s1) 0 0; font-size: var(--fs-sub); line-height: 1.6; color: var(--ink-2); }
+    .flow { margin: 0; padding-left: 1.4em; font-size: var(--fs-sub); }
+    .flow li { margin: var(--s2) 0; }
+
+    @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
+
+    /* 넓은 화면: 본문 옆에 붙는 패널 */
+    @media (min-width: 1024px) {
+      .layout { --l: var(--panel-l-user, var(--panel-l)); }
+      .layout[data-left="closed"] { --l: 0px; }
+      .panel-left { width: var(--l); }
+      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
+      .panel-left .panel-resize { right: 0; }
+      .panel-right .panel-resize { left: 0; }
+      .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
+      .panel-left .panel-resize::after { right: 0; }
+      .panel-right .panel-resize::after { left: 0; }
+      .panel-resize:focus-visible { outline: none; }
+      .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
+      @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
+      body.is-resizing { cursor: col-resize; user-select: none; }
+      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
+      .scrim, .panel-close { display: none; }
+    }
+    @keyframes panel-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 좁은 화면: 가장자리에서 밀려 나오는 drawer */
+    @media (max-width: 1023.98px) {
+      .panel { position: fixed; top: 0; bottom: 0; z-index: 40; visibility: hidden;
+        transition: transform var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .panel-left { left: 0; width: min(var(--drawer-l), 88vw); transform: translateX(-100%); }
+      .panel-right { right: 0; width: min(var(--drawer-r), 88vw); transform: translateX(100%); }
+      .panel.is-open { visibility: visible; transform: none; transition: transform var(--dur) var(--ease-out); }
+      .panel-inner { padding-top: calc(var(--s3) + env(safe-area-inset-top)); padding-bottom: calc(var(--s6) + env(safe-area-inset-bottom)); }
+      .scrim { position: fixed; inset: 0; z-index: 35; background: var(--scrim); opacity: 0; visibility: hidden;
+        transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
+      html:not(.js) .panel-left { display: none; }
+    }
+    @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
+      .panel.is-shown { animation: none; }
+      .panel-resize::after { transition: none; }
+    }
+    @media print {
+      body { display: block; height: auto; overflow: visible; }
+      .layout { display: block; }
+      .content { overflow: visible; }
+      .panel, .scrim { display: none !important; }
+    }
+  </style>
+</head>
+<body data-screens="article.topic" data-panels="note" data-range="1029">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <strong class="brand">정리노트</strong>
+      <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>요약</span></button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
+  </header>
+  <div class="layout" data-left="open" data-right="closed">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
+      <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-left-title">목차</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-meta">읽은 토픽 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <nav class="toc" aria-label="목차"><a href="#s0">0 소진화 요인</a><a href="#s1">1 선택</a><a href="#s2">2 종과 격리</a><a href="#s3">3 종분화</a><a href="#s4">4 요약</a></nav>
+      </div>
+    </aside>
+    <div class="content">
+  <main>
+    <div class="hero">
+      <h1>소진화의 요인과 종분화 — 5살도 이해하는 정리노트</h1>
+      <p>이영만 교수님 생명과학 · 1029 수업 (7장 소진화 · 8장 종분화)</p>
+    </div>
+    <section id="s0"><h2>0. [7장] 평형 계산과 소진화를 일으키는 요소</h2>
+<article class="topic" id="s0-recap"><h3>지난 수업 복습</h3><div class="tags"><span class="tag date">1029 수업</span><span class="tag slide">7장 p4</span></div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <ul>
+      <li><strong>하디-바인베르크 원리</strong>: 돌연변이 없음, 이동 없음, 개체군 크기 무한, 자연선택 없음, 무작위 교배의 다섯 조건이 맞으면 대립유전자 빈도와 유전자형 빈도가 세대가 지나도 변하지 않아요.</li>
+      <li>꽃 색 예(붉은색 450, 분홍색 500, 흰색 50개체)에서 붉은색 대립유전자 빈도 p = 0.7, 흰색 대립유전자 빈도 q = 0.3이에요.</li>
+      <li>다음 세대 유전자형 빈도는 붉은색 p² = 0.49, 분홍색 2pq = 0.42, 흰색 q² = 0.09예요. p와 q가 그대로라 3세대, 4세대, 5세대도 같은 비율이고, 이 상태가 <strong>유전적 평형</strong>이에요.</li>
+      <li>다섯 조건 중 하나라도 깨지면 대립유전자 빈도가 변해요. 이것이 이번 수업의 소진화 요인으로 이어져요.</li>
+    </ul>
+    <p>지난 수업 정리: <a href="../1027/정리노트_1027_Evolutionary_Thought_and_Microevolution.html#s3-hardy-weinberg">하디-바인베르크 원리와 유전적 평형</a></p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">다섯 조건이 맞으면 p, q와 p², 2pq, q²가 세대가 지나도 그대로인 유전적 평형이 돼요.</p>
+    <p class="panel-label">핵심 식</p>
+    <ul class="eq-list"><li><span class="eq-name">다음 세대 유전자형 빈도</span>$$p^2 + 2pq + q^2 = 1$$</li></ul>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>하디-바인베르크 원리</dt><dd>돌연변이·이동·자연선택이 없고 크기가 무한하며 무작위 교배하는 집단에서는 대립유전자 빈도와 유전자형 빈도가 바뀌지 않아요.</dd>
+      <dt>유전적 평형</dt><dd>p, q가 그대로라 p², 2pq, q²도 세대마다 같은 상태예요. 꽃 색 예는 0.49, 0.42, 0.09가 계속 유지돼요.</dd>
+    </dl>
+  </div>
+</article>
+
+<article class="topic" id="s0-hw-practice"><h3>평형 계산의 함정과 열성 질환 역산</h3><div class="tags"><span class="tag date">1029 수업</span><span class="tag slide">7장 p4</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">첫 번째 짝은 누가 손으로 정해 둔 짝이라서, 제비뽑기로 다시 짝을 지으면 모양이 달라질 수 있어요.</p>
+    <figure class="figure"><svg id="fig-hw-trap" viewBox="0 0 560 180" role="img" aria-label="첫 상자는 강조 테두리로 표시된 손으로 정한 짝이고, 화살표를 따라 제비뽑기를 한 두 번째 상자와 세 번째 상자는 같은 비율이에요">
+      <rect x="16" y="40" width="150" height="100" rx="8" class="fig-danger"/>
+      <text x="91" y="30" text-anchor="middle" class="fig-text">첫 번째 무리</text>
+      <text x="91" y="80" text-anchor="middle" class="fig-text">손으로 정한 짝</text>
+      <text x="91" y="104" text-anchor="middle" class="fig-muted">비율이 다를 수 있어요</text>
+      <path d="M172 90H214M206 83L214 90L206 97" class="fig-ink"/>
+      <text x="193" y="74" text-anchor="middle" class="fig-muted">뽑기</text>
+      <rect x="220" y="40" width="150" height="100" rx="8" class="fig-accent"/>
+      <text x="295" y="30" text-anchor="middle" class="fig-text">두 번째 무리</text>
+      <text x="295" y="80" text-anchor="middle" class="fig-text">제비뽑기 짝</text>
+      <text x="295" y="104" text-anchor="middle" class="fig-muted">여기서부터 같아요</text>
+      <path d="M376 90H418M410 83L418 90L410 97" class="fig-ink"/>
+      <text x="397" y="74" text-anchor="middle" class="fig-muted">또 뽑기</text>
+      <rect x="424" y="40" width="120" height="100" rx="8" class="fig-accent"/>
+      <text x="484" y="30" text-anchor="middle" class="fig-text">세 번째 무리</text>
+      <text x="484" y="80" text-anchor="middle" class="fig-text">제비뽑기 짝</text>
+      <text x="484" y="104" text-anchor="middle" class="fig-muted">두 번째와 같아요</text>
+      <text x="280" y="168" text-anchor="middle" class="fig-muted">상자 속 구슬 수는 처음부터 끝까지 그대로</text>
+    </svg><figcaption>구슬은 그대로라서 두 번째부터는 몇 번을 다시 뽑아도 짝 비율이 같고, 첫 번째만 달라요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p><strong>"평형이 유지된다"는데 왜 1세대와 2세대가 다를까요?</strong> 평형이 유지된다는 말은 2세대부터의 이야기예요. 문제 속 <strong>1세대</strong>는 다섯 조건 아래에서 무작위 교배로 태어났다는 보장이 없어요. 그래서 1세대 유전자형 빈도는 p², 2pq, q² 모양이 아닐 수 있고, 교수님 표현으로 1세대는 <strong>평형이 깨진 상태</strong>에서 출발한다고 가정해요.</p>
+    <p>다음 세대로 넘어가는 것은 1세대의 유전자형 빈도가 아니라 대립유전자 빈도(p, q)예요. 무작위 교배는 집단 전체의 대립유전자에서 두 개씩 무작위로 짝을 짓는 일과 같아서, 2세대 유전자형 빈도는 p와 q만으로 p², 2pq, q²가 돼요. 2세대부터는 유전자형 빈도가 이미 이 모양이고 p, q도 변하지 않으니 3세대, 4세대도 같아요. 그래서 "평형"과 "1세대와 2세대가 다름"은 서로 모순이 아니에요.</p>
+    <p><strong>계산 순서(새 예)</strong>: 1세대 유전자형 빈도가 AA 0.70, Aa 0.20, aa 0.10이고 하디-바인베르크 조건이 적용된다고 해 봐요.</p>
+    <ol class="steps">
+      <li>1세대에서 대립유전자 빈도를 먼저 구해요. p = (AA 빈도) + (Aa 빈도의 절반) = 0.70 + 0.10 = 0.80, q = (aa 빈도) + (Aa 빈도의 절반) = 0.10 + 0.10 = 0.20이에요.</li>
+      <li>2세대 유전자형 빈도는 p² = 0.64, 2pq = 2 × 0.80 × 0.20 = 0.32, q² = 0.04예요.</li>
+      <li>1세대(0.70, 0.20, 0.10)와 다르므로 "1세대 값 그대로"를 고르면 틀려요. 3세대부터는 0.64, 0.32, 0.04가 계속돼요.</li>
+    </ol>
+    <p><strong>열성 질환에서 거꾸로 구하기</strong>: 열성 질환은 <strong>열성 동형접합자</strong>(aa)만 환자이고 AA와 Aa는 환자가 아니에요. 집단이 하디-바인베르크 평형이라고 가정하면 환자 비율이 곧 q²예요. 환자가 400명 중 1명인 새 예로 따라가 봐요.</p>
+    <ol class="steps">
+      <li>환자 비율 = q² = 1/400 = 0.0025</li>
+      <li>q = √0.0025 = 0.05 (환자 비율에 제곱근을 씌워요)</li>
+      <li>p = 1 − q = 0.95</li>
+      <li><strong>보인자</strong>(이형접합자 Aa, 열성 대립유전자를 가졌지만 환자가 아닌 사람) = 2pq = 2 × 0.95 × 0.05 = 0.095, 약 9.5%예요. AA = p² = 0.9025예요.</li>
+    </ol>
+    <p>환자는 400명 중 1명뿐인데 보인자는 약 10명 중 1명꼴이에요. 열성 대립유전자 대부분이 증상이 없는 이형접합자 안에 있기 때문이에요.</p>
+    <p><strong>평형 가정이 꼭 필요한 이유</strong>: "aa 빈도 = q²"는 유전자형이 p², 2pq, q² 모양일 때만 성립해요. 위 첫 예의 1세대처럼 평형이 깨진 집단에서는 aa 빈도가 0.10인데 q²는 0.04로 서로 달라요. 그래서 환자 비율에서 q를 구하는 계산은 "이 집단은 평형"이라는 가정 위에서만 할 수 있어요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>1세대를 그대로 쓰는 함정을 세 번 반복해 강조했어요.</p>
+    <blockquote>유전적 평형이 유지가 됐다고 해서 첫 번째 세대와 그대로 같다고 풀면 문제를 못 풉니다.</blockquote>
+    <blockquote>첫 번째 세대는 깨져 있다는 가정을 하고 문제를 내는 거에요, 항상.</blockquote>
+    <p>예로 교재 연습문제를 들었어요. 유전자형 빈도 0.6, 0.2, 0.2인 세대에 하디-바인베르크 요구사항이 적용될 때 자손 세대를 묻는데, "그대로 0.6, 0.2, 0.2"인 보기를 고르면 안 된다고 했어요.</p>
+    <p>열성 질환 예는 1만 명 중 1명이 환자인 경우였어요. q² = 0.0001이니 q = 0.01, p = 0.99이고, Aa는 2 × 0.99 × 0.01로 구해요. 교수님은 이 계산이 "<strong>10초</strong> 만에 풀려야 되는데"라고 했어요. 반대로 p = 0.4이면 q = 0.6, q² = 0.36이라 10만 명 중 3만 6천 명이 열성 동형접합자라는 예도 들었어요.</p>
+    <blockquote>이 공식을 자유롭게 적용을 할 줄 알아야 됩니다.</blockquote>
+    <p>이런 문제가 나올 테니 몇 가지 문제를 연습하라고 했어요.</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li><strong>착각</strong>: "평형이 유지된다"니까 자손 세대 유전자형 빈도는 1세대 값 그대로다. <strong>바른 구분</strong>: 평형은 2세대부터예요. 1세대 유전자형 빈도에서 p, q를 먼저 구하고 p², 2pq, q²로 다음 세대를 계산해요.</li>
+      <li><strong>착각</strong>: 환자 비율이 곧 q다. <strong>바른 구분</strong>: 환자 비율은 열성 동형접합자의 유전자형 빈도인 q²예요. q는 그 제곱근이라 400명 중 1명이면 q = 0.0025가 아니라 0.05예요.</li>
+      <li><strong>착각</strong>: 보인자와 환자는 같다. <strong>바른 구분</strong>: 보인자는 이형접합자 Aa로 2pq, 환자는 aa로 q²예요.</li>
+      <li><strong>착각</strong>: 환자 비율만 알면 언제나 q²로 풀 수 있다. <strong>바른 구분</strong>: 집단이 평형이라는 가정이 있어야 aa 빈도를 q²로 볼 수 있어요.</li>
+      <li>교수님의 "항상"은 문제를 그렇게 낸다는 뜻이에요. 1세대가 이미 p², 2pq, q² 모양이면 2세대와 같게 나오니, 같다고 고르기 전에도 p, q를 구해 확인해요.</li>
+    </ul>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">1세대는 평형이 깨진 상태로 출발하므로 p, q를 먼저 구해 다음 세대를 계산하고, 열성 질환은 평형을 가정해 q²에서 거꾸로 구해요.</p>
+    <p class="panel-label">핵심 식</p>
+    <ul class="eq-list">
+      <li><span class="eq-name">1세대에서 p 구하기</span>$$p = f(AA) + \tfrac{1}{2} f(Aa)$$</li>
+      <li><span class="eq-name">환자 비율에서 q 구하기</span>$$q = \sqrt{q^2},\quad p = 1 - q$$</li>
+      <li><span class="eq-name">보인자 빈도</span>$$f(Aa) = 2pq$$</li>
+    </ul>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>1세대의 함정</dt><dd>평형 유지는 2세대부터예요. 1세대 유전자형 빈도는 p², 2pq, q² 모양이 아닐 수 있어 그대로 다음 세대 답으로 쓰면 틀려요. 넘어가는 것은 p, q예요.</dd>
+      <dt>열성 동형접합자(aa)</dt><dd>열성 질환의 환자예요. 평형을 가정하면 환자 비율 = q²이고, q는 그 제곱근이에요.</dd>
+      <dt>보인자(Aa)</dt><dd>열성 대립유전자를 가진 이형접합자로 환자가 아니에요. 빈도는 2pq이고 평형 가정이 필요해요. 환자가 드물어도 보인자는 훨씬 많아요.</dd>
+    </dl>
+  </div>
+</article>
+
+<article class="topic" id="s0-factors"><h3>조건이 깨지면 소진화: 돌연변이와 유전자 확산</h3><div class="tags"><span class="tag date">1029 수업</span><span class="tag slide">7장 p4–5</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">구슬 병의 약속 다섯 개 중 하나만 깨져도 다음 병의 구슬 비율이 바뀌어요.</p>
+    <figure class="figure"><svg id="fig-factors-jar" viewBox="0 0 560 220" role="img" aria-label="가운데 구슬 병 둘레에 새 구슬 생김, 구슬 들어오고 나감, 병이 작아 운에 흔들림, 잘 버티는 구슬이 남음, 골라서 짝짓기의 다섯 가지 깨진 약속이 화살표로 병을 가리켜요">
+      <rect x="220" y="60" width="120" height="120" rx="14" class="fig-ink"/>
+      <rect x="252" y="40" width="56" height="22" rx="4" class="fig-ink"/>
+      <circle cx="248" cy="100" r="9" class="fig-dot"/><circle cx="276" cy="100" r="9" class="fig-ink"/><circle cx="304" cy="100" r="9" class="fig-dot"/>
+      <circle cx="248" cy="128" r="9" class="fig-ink"/><circle cx="276" cy="128" r="9" class="fig-dot"/><circle cx="304" cy="128" r="9" class="fig-dot"/>
+      <circle cx="262" cy="156" r="9" class="fig-dot"/><circle cx="290" cy="156" r="9" class="fig-ink"/>
+      <text x="280" y="200" text-anchor="middle" class="fig-text">다음 병의 구슬 비율</text>
+      <text x="20" y="44" class="fig-text">새 구슬이 생겨요</text>
+      <path d="M140 50L214 82" class="fig-accent"/>
+      <text x="20" y="112" class="fig-text">구슬이 들어오고 나가요</text>
+      <path d="M176 108H214" class="fig-accent"/>
+      <text x="20" y="180" class="fig-text">병이 작아 운에 흔들려요</text>
+      <path d="M180 172L214 156" class="fig-accent"/>
+      <text x="376" y="62" class="fig-text">잘 버티는 구슬이 남아요</text>
+      <path d="M372 70L346 84" class="fig-accent"/>
+      <text x="376" y="150" class="fig-text">골라서 짝을 지어요</text>
+      <path d="M372 144L346 132" class="fig-accent"/>
+    </svg><figcaption>다섯 가지 중 어느 일이 일어나도 병 속 구슬 비율이 달라져요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p><a href="#s0-recap">하디-바인베르크 원리</a>의 다섯 조건은 소진화가 일어나지 않는 조건이에요. 하나라도 깨지면 평형이 깨져 대립유전자 빈도와 유전자형 빈도가 변해요. 한 집단의 대립유전자 빈도가 세대에 따라 변하는 것이 <strong>소진화</strong>(microevolution)예요. 그래서 조건을 하나씩 뒤집으면 소진화를 일으키는 요인이 나와요.</p>
+    <div class="table-wrap"><table>
+      <tr><th>깨진 평형 조건</th><th>소진화 요인</th><th>대립유전자 빈도를 바꾸는 방식</th></tr>
+      <tr><td>돌연변이 없음</td><td>돌연변이</td><td>DNA에 새 대립유전자가 생겨 새로운 유전적 변이를 만들어요.</td></tr>
+      <tr><td>이동 없음(다른 개체군으로부터의 유입 없음)</td><td>유전자 확산 = 유전자 흐름</td><td>다른 집단에서 대립유전자가 들어오거나 나가요.</td></tr>
+      <tr><td>개체군 크기 무한</td><td>유전적 부동</td><td>크기가 유한하고 작을수록 우연한 사건으로 빈도가 크게 흔들려요.</td></tr>
+      <tr><td>자연선택 없음</td><td>자연선택</td><td>잘 생존하고 번식하는 개체의 대립유전자가 다음 세대에 많아져요.</td></tr>
+      <tr><td>무작위 교배</td><td>선택적 교배(성선택)</td><td>수업은 성선택과 묶어, 특정 형질이 짝으로 더 선택되면 그 대립유전자가 늘어난다고 설명했어요. 근친교배처럼 누구와 교배하느냐만 치우치면 유전자형 빈도(동형접합자 증가·이형접합자 감소)가 바뀌어요(<a href="#s0-factors-supp-1">보충</a>).</td></tr>
+    </table></div>
+    <p>유전적 부동은 <a href="#s0-drift">유전적 부동: 병목 현상과 창시자 효과</a>, 자연선택은 <a href="#s1-fitness">상대적 적응도와 자연선택의 세 양상</a>, 선택적 교배와 성선택은 <a href="#s1-sexual">성선택과 성적이형성</a>에서 자세히 다뤄요.</p>
+    <p><strong>돌연변이(mutation)</strong>는 DNA 염기서열이 변하는 것이고 자발적으로 일어나요. 자외선이나 여러 화학물질은 돌연변이를 더 많이 일어나게 할 수 있어요. 돌연변이는 생존·생식에 주는 효과에 따라 세 가지로 나눠요.</p>
+    <ul>
+      <li><strong>유해돌연변이</strong>: 해로운 돌연변이예요.</li>
+      <li><strong>중립돌연변이(neutral mutation)</strong>: 해도 득도 없는 돌연변이예요. 대부분의 돌연변이는 유해하거나 중립이에요.</li>
+      <li><strong>유익돌연변이</strong>: 어쩌다 생존·생식에 도움이 되는 돌연변이예요. 이런 개체가 자손을 더 많이 남겨 자연선택으로 그 대립유전자가 늘어나요.</li>
+    </ul>
+    <p>돌연변이 자체는 새 대립유전자를 만들어 빈도를 바꿔요. 그 대립유전자가 많아지느냐 줄어드느냐는 그다음에 자연선택 같은 다른 요인이 정해요.</p>
+    <p><strong>유전자 확산(gene flow)</strong>은 <strong>유전자 흐름</strong>이라고도 하며, 하디-바인베르크의 "이동 없음" 조건이 깨진 경우예요. 꽃가루나 씨앗의 확산, 개체의 이주처럼 이미 있는 집단 사이로 대립유전자가 옮겨 가요. 들어오는 것(유입)과 빠져나가는 것(유출) 모두 유전자 확산이에요. 이동해 온 개체가 번식하면 다른 집단의 대립유전자가 새로 들어오므로, 유전자 확산은 새로운 유전적 변이를 개체군에 도입해요.</p>
+    <p><strong>이주 직후의 빈도 구하기</strong>: 들어온 개체까지 합쳐 대립유전자 개수를 다시 세고, 전체 대립유전자 수(개체 수 × 2)로 나눠요. 지난 수업의 대립유전자 빈도 계산과 같은 방법이에요.</p>
+    <p><strong>빈도를 바꾸지 않는 것</strong>: 살면서 얻은 형질, 곧 획득형질은 유전되지 않아요. 그래서 다음 세대의 대립유전자 빈도를 바꾸지 못하고 소진화 요인이 아니에요. 지난 수업의 <a href="../1027/정리노트_1027_Evolutionary_Thought_and_Microevolution.html#s0-lamarck">라마르크의 획득형질 유전</a> 설명이 틀린 이유와 같아요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <blockquote>소진화가 결국 대립유전자 빈도 변화를 얘기하는 것이기 때문에</blockquote>
+    <p>다섯 조건의 반대가 곧 소진화를 일으키는 요인이라고 정리했어요. 돌연변이가 일어나고, 이동하고, 개체군 크기가 정해져 있고, 자연선택이 일어나고, 무작위가 아니라 선택적으로 교배하면 소진화가 일어나요.</p>
+    <p><strong>오타 비유</strong>: 보고서나 카톡에 <strong>오타</strong>가 나도 대부분 알아들어요. 이것이 중립돌연변이예요. '감사합니다'를 '감사하다'로 보내 실례가 되면 유해돌연변이예요. 오타가 났는데 오히려 더 좋은 표현이 되면 유익돌연변이예요.</p>
+    <p><strong>바람에 날려 온 종자</strong>: 옆 동네의 빨간 꽃 종자가 바람에 날려 오면 빨간색이 많아져요. 거꾸로 흰 꽃 종자가 태풍에 날려 사라져도 대립유전자 빈도가 변해요. 둘 다 유전자 확산이에요.</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li><strong>착각</strong>: 살면서 얻은 형질(획득형질)도 대립유전자 빈도를 바꾼다. <strong>바른 구분</strong>: 획득형질은 유전되지 않아 빈도를 바꾸지 못해요. 빈도와 무관한 것을 고를 때 가장 확실한 기준이에요. 돌연변이, 유전자 확산, 유전적 부동, 자연선택은 빈도를 바꾸는 요인이에요.</li>
+      <li><strong>착각</strong>: 선택적 교배는 어떤 경우든 대립유전자 빈도를 바꾼다. <strong>바른 구분</strong>: 수업은 성선택과 묶어, 특정 형질이 짝으로 더 선택되면 그 대립유전자가 늘어난다고 설명했어요. 근친교배처럼 누구와 교배하느냐만 치우치면 유전자형 빈도(동형접합자 증가·이형접합자 감소)가 바뀌고, 교재는 이때 대립유전자 빈도에 직접 영향은 없다고 적어요.</li>
+      <li><strong>착각</strong>: 몇 개체가 다른 곳으로 옮겨 간 일은 모두 유전자 확산이다. <strong>바른 구분</strong>: 이미 있는 두 집단 사이로 개체·꽃가루·씨앗이 오가면 유전자 확산이에요. 큰 집단에서 몇 개체만 떨어져 나와 새 지역에 새 집단을 세우면 <a href="#s0-drift">창시자 효과</a>(유전적 부동)예요.</li>
+      <li><strong>착각</strong>: 돌연변이는 대부분 이롭다. <strong>바른 구분</strong>: 대부분 유해하거나 중립이에요. 어쩌다 생긴 유익돌연변이를 늘리는 것은 자연선택이에요.</li>
+      <li>조건과 요인의 짝을 거꾸로도 확인해요. 돌연변이 – 돌연변이 없음, 유전자 흐름 – 이동 없음, 유전적 부동 – 무한 크기, 자연선택 – 자연선택 없음, 선택적 교배 – 무작위 교배예요.</li>
+    </ul>
+  </div>
+  <div class="layer supp" id="s0-factors-supp-1"><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>
+    <p><strong>선택적 교배와 근친교배</strong>: 강의노트는 "선택적 교배가 유전자형 빈도에 영향을 줄 수 있다"고 적고, 그 특별한 형태로 근친교배(inbreeding)를 들어요. 근친교배는 유전적으로 비슷한 친척끼리 교배하는 것이에요. 친척은 같은 대립유전자를 가진 경우가 많아 동형접합자의 빈도가 증가하고 이형접합자의 빈도가 감소하며, 그래서 열성 표현형이 자주 나타나요.</p>
+    <p>교재 표 7.3은 선택적 교배가 "직접적으로 대립유전자의 빈도에 영향을 주지 않지만 보통 유전자 평형을 막는다"고 적어요. 즉 근친교배는 대립유전자의 짝짓는 방식을 바꿔 유전자형 빈도를 p², 2pq, q²에서 벗어나게 해요. 수업에서 말한 성선택처럼 특정 형질을 가진 개체가 짝으로 더 많이 선택되어 자손을 더 남기는 경우는 그 대립유전자 빈도가 변해요(<a href="#s1-sexual">성선택과 성적이형성</a>). 근친교배는 수업에서 말하지 않았어요.</p>
+    <p>출처: 강의노트 7장 p5(선택적 교배와 근친교배, 동형접합자 증가·이형접합자 감소), 교재 7장 p.151 표 7.3(선택적 교배는 대립유전자 빈도에 직접 영향 없음)·p.152(근친교배 설명)</p>
+  </div>
+  <div class="layer supp" id="s0-factors-supp-2"><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>
+    <p><strong>치사돌연변이</strong>: 강의노트는 유해돌연변이 아래에 치사돌연변이를 적어요. 이름 그대로 개체를 죽음에 이르게 하는 유해돌연변이이고, 강의노트는 유해돌연변이가 집단 내 빈도가 감소한다고 적어요. 수업에서는 말하지 않았어요.</p>
+    <p>출처: 강의노트 7장 p4</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">하디-바인베르크 조건 하나가 깨질 때마다 그에 맞는 요인이 대립유전자 빈도를 바꿔 소진화가 일어나요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>소진화(microevolution)</dt><dd>한 집단의 대립유전자 빈도가 세대에 따라 변하는 것이에요. 평형 조건 중 하나라도 깨지면 일어나요.</dd>
+      <dt>조건과 요인의 짝</dt><dd>돌연변이 없음 – 돌연변이, 이동 없음 – 유전자 확산(유전자 흐름), 무한 크기 – 유전적 부동, 자연선택 없음 – 자연선택, 무작위 교배 – 선택적 교배(성선택). 선택적 교배는 수업에서 성선택과 묶어 설명했어요.</dd>
+      <dt>돌연변이(mutation)</dt><dd>DNA 염기서열의 자발적 변화로 새 대립유전자를 만들어요. 자외선·화학물질이 빈도를 높여요. 대부분 유해하거나 중립이에요.</dd>
+      <dt>유해·중립·유익돌연변이</dt><dd>유해는 해로워요. 중립은 해도 득도 없어요(오타를 알아듣는 경우). 유익은 생존·생식에 도움이 되어 자연선택으로 늘어나요.</dd>
+      <dt>유전자 확산(gene flow)</dt><dd>유전자 흐름이라고도 해요. 이미 있는 집단 사이로 꽃가루·씨앗·개체가 들어오거나 나가 빈도를 바꾸고 새 변이를 들여와요. 이주 직후 빈도는 대립유전자 개수를 다시 세어 개체 수 × 2로 나눠요. 소수가 새 지역에 새 집단을 세우는 창시자 효과와 구별해요.</dd>
+      <dt>획득형질</dt><dd>유전되지 않으므로 대립유전자 빈도를 바꾸지 못해 소진화 요인이 아니에요.</dd>
+    </dl>
+    <div class="sum-supp" data-supp-source="s0-factors-supp-1" data-supp-label="보충 · 노트에 빠졌던 수업 내용">
+      <dl class="terms"><dt>(보충) 근친교배</dt><dd>강의노트의 선택적 교배의 특별한 형태로, 동형접합자 빈도를 늘리고 이형접합자 빈도를 줄여요. 교재 표 7.3은 선택적 교배가 대립유전자 빈도에 직접 영향을 주지 않고 유전자 평형을 막는다고 적어요. 근친교배는 유전자형 빈도만 바꾸고, 성선택처럼 특정 형질이 짝으로 더 선택되면 대립유전자 빈도가 바뀌어요. 수업에서는 다루지 않았어요.</dd></dl>
+    </div>
+    <div class="sum-supp" data-supp-source="s0-factors-supp-2" data-supp-label="보충 · 노트에 빠졌던 수업 내용">
+      <dl class="terms"><dt>(보충) 치사돌연변이</dt><dd>강의노트가 유해돌연변이 아래 적은 개체를 죽게 하는 돌연변이로, 유해돌연변이는 집단 내 빈도가 줄어요. 수업에서는 다루지 않았어요.</dd></dl>
+    </div>
+  </div>
+</article>
+
+<article class="topic" id="s0-drift"><h3>유전적 부동: 병목 현상과 창시자 효과</h3><div class="tags"><span class="tag date">1029 수업</span><span class="tag slide">7장 p4–5</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">잘나서가 아니라 운이 좋아서 남은 몇 개의 구슬이 다음 무리의 모습을 정해요.</p>
+    <figure class="figure"><svg id="fig-drift-bottle" viewBox="0 0 560 230" role="img" aria-label="왼쪽 병목 그림은 색칠된 구슬, 테두리 구슬, 네모 구슬이 섞인 병에서 입구의 색칠된 구슬 다섯 개와 테두리 구슬 한 개만 남아 다시 커진 무리에 네모가 없어요. 오른쪽 창시자 그림은 큰 무리에서 테두리 구슬 두 개만 멀리 떠나 새 무리가 모두 테두리 구슬이에요">
+      <text x="140" y="20" text-anchor="middle" class="fig-text">그 자리에서 몇 개만 남기</text>
+      <path d="M30 210V90Q30 70 60 64H80V36H120V64H140Q170 70 170 90V210Z" class="fig-ink"/>
+      <circle cx="88" cy="46" r="6" class="fig-dot"/><circle cx="104" cy="46" r="6" class="fig-dot"/><circle cx="96" cy="58" r="6" class="fig-dot"/><circle cx="88" cy="70" r="6" class="fig-dot"/><circle cx="104" cy="70" r="6" class="fig-dot"/><circle cx="112" cy="58" r="6" class="fig-ink"/>
+      <circle cx="50" cy="110" r="7" class="fig-dot"/><circle cx="72" cy="110" r="7" class="fig-ink"/><rect x="88" y="103" width="14" height="14" class="fig-ink"/><circle cx="120" cy="110" r="7" class="fig-dot"/><circle cx="146" cy="110" r="7" class="fig-ink"/>
+      <rect x="43" y="133" width="14" height="14" class="fig-ink"/><circle cx="74" cy="140" r="7" class="fig-dot"/><circle cx="98" cy="140" r="7" class="fig-ink"/><circle cx="122" cy="140" r="7" class="fig-dot"/><rect x="139" y="133" width="14" height="14" class="fig-ink"/>
+      <circle cx="52" cy="172" r="7" class="fig-ink"/><circle cx="76" cy="172" r="7" class="fig-dot"/><rect x="91" y="165" width="14" height="14" class="fig-ink"/><circle cx="122" cy="172" r="7" class="fig-ink"/><circle cx="146" cy="172" r="7" class="fig-dot"/>
+      <path d="M176 120H206M198 113L206 120L198 127" class="fig-ink"/>
+      <rect x="212" y="90" width="62" height="70" rx="8" class="fig-accent"/>
+      <circle cx="228" cy="106" r="6" class="fig-dot"/><circle cx="244" cy="106" r="6" class="fig-dot"/><circle cx="260" cy="106" r="6" class="fig-dot"/>
+      <circle cx="228" cy="124" r="6" class="fig-dot"/><circle cx="244" cy="124" r="6" class="fig-ink"/><circle cx="260" cy="124" r="6" class="fig-dot"/>
+      <circle cx="228" cy="142" r="6" class="fig-dot"/><circle cx="244" cy="142" r="6" class="fig-dot"/><circle cx="260" cy="142" r="6" class="fig-dot"/>
+      <text x="243" y="180" text-anchor="middle" class="fig-muted">네모가 없어요</text>
+      <text x="420" y="20" text-anchor="middle" class="fig-text">몇 개만 멀리 떠나기</text>
+      <rect x="320" y="60" width="110" height="110" rx="12" class="fig-ink"/>
+      <circle cx="340" cy="82" r="7" class="fig-dot"/><circle cx="364" cy="82" r="7" class="fig-ink"/><rect x="381" y="75" width="14" height="14" class="fig-ink"/><circle cx="412" cy="82" r="7" class="fig-dot"/>
+      <circle cx="340" cy="114" r="7" class="fig-ink"/><circle cx="364" cy="114" r="7" class="fig-dot"/><circle cx="388" cy="114" r="7" class="fig-dot"/><rect x="405" y="107" width="14" height="14" class="fig-ink"/>
+      <circle cx="340" cy="146" r="7" class="fig-dot"/><rect x="357" y="139" width="14" height="14" class="fig-ink"/><circle cx="388" cy="146" r="7" class="fig-dot"/><circle cx="412" cy="146" r="7" class="fig-ink"/>
+      <path d="M436 114H476M468 107L476 114L468 121" class="fig-ink" stroke-dasharray="4 4"/>
+      <text x="456" y="100" text-anchor="middle" class="fig-muted">두 개만</text>
+      <rect x="484" y="80" width="64" height="70" rx="8" class="fig-accent"/>
+      <circle cx="500" cy="96" r="6" class="fig-ink"/><circle cx="516" cy="96" r="6" class="fig-ink"/><circle cx="532" cy="96" r="6" class="fig-ink"/>
+      <circle cx="500" cy="114" r="6" class="fig-ink"/><circle cx="516" cy="114" r="6" class="fig-ink"/><circle cx="532" cy="114" r="6" class="fig-ink"/>
+      <circle cx="508" cy="132" r="6" class="fig-ink"/><circle cx="524" cy="132" r="6" class="fig-ink"/>
+      <text x="516" y="170" text-anchor="middle" class="fig-muted">모두 테두리</text>
+      <text x="375" y="196" text-anchor="middle" class="fig-muted">처음 무리</text>
+    </svg><figcaption>병 입구 근처 구슬만 운 좋게 남으면 다시 커진 무리에 네모 구슬이 없고, 테두리 구슬 두 개만 멀리 떠나면 새 무리가 모두 테두리 구슬이 돼요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p><strong>유전적 부동(genetic drift)</strong>은 <strong>우연</strong>한 사건 때문에 대립유전자 빈도가 변하는 현상이에요. 강의노트는 "개체군 내 대립유전자 빈도의 예상치 못한 변화"라고 적어요. 부동(浮動)은 뜰 부(浮)와 움직일 동(動)으로, 떠서 이리저리 움직인다는 뜻이에요.</p>
+    <p><strong>우연인데 왜 진화인가요?</strong> 소진화는 한 집단의 대립유전자 빈도가 세대에 따라 변하는 것이에요. 정의에 원인 조건은 없으므로, 빈도가 바뀌었다면 원인이 우연이어도 그 집단은 진화한 것이에요. 소진화는 자연선택만으로 일어나지 않아요. 생존·생식에 유리한 형질이 아니어도 우연히 많아질 수 있어요.</p>
+    <p><strong>왜 작은 개체군에서 강한가요?</strong> 다음 세대는 부모 세대의 대립유전자 중 일부만 뽑혀 이어지는 것과 같아요. 많이 뽑으면 원래 비율에 가깝지만, 적게 뽑으면 우연히 한쪽이 몰리기 쉬워요. 그래서 개체군 크기가 유한하고 작을수록 유전적 부동이 잘 일어나고, 충분히 크면 영향이 작아요. 하디-바인베르크 조건 "개체군 크기 무한"이 깨진 경우가 바로 이것이에요.</p>
+    <div class="widget" id="widget-drift"><h4>직접 해 보기: 집단 크기와 유전적 부동</h4>
+      <p class="widget-help">개체 수와 세대 수를 바꾸면, A 대립유전자 빈도 0.5에서 출발한 반복 집단 5개가 우연만으로 어떻게 흔들리는지 보여요. 자연선택·돌연변이·이동은 없고, 매 세대 부모 세대의 빈도대로 대립유전자 2N개를 무작위로 다시 뽑아요.</p>
+      <div class="controls">
+        <label>개체 수 N <input type="range" id="drift-n" min="0" max="2" step="1" value="0"> <b id="drift-n-val">10마리</b></label>
+        <label>세대 수 <input type="range" id="drift-g" min="10" max="100" step="10" value="50"> <b id="drift-g-val">50세대</b></label>
+      </div>
+      <svg id="drift-plot" viewBox="0 0 560 300" role="img" aria-label="개체 10마리, 50세대 뒤 5개 집단 중 A가 고정되거나 소실된 집단 5개(고정 3, 소실 2), A 빈도 범위 0.00~1.00"></svg>
+      <p class="readout">고정된 시드의 난수로 그린 결과: <b id="drift-out">개체 10마리, 50세대 뒤 5개 집단 중 A가 고정되거나 소실된 집단 5개(고정 3, 소실 2), A 빈도 범위 0.00~1.00</b></p>
+      <p class="legend"><span><span class="sw fit"></span>반복 집단 5개의 A 대립유전자 빈도</span><span>점선: 출발 빈도 0.5</span><span>오른쪽 끝 테두리 원: 빈도가 1(A 고정) 또는 0(A 소실)에 닿은 집단</span></p>
+      <div class="widget-static" hidden>
+        <figure class="figure"><svg id="widget-drift-static-1" viewBox="0 0 560 300" role="img" aria-label="개체 10마리, 50세대 뒤 5개 집단 중 A가 고정되거나 소실된 집단 5개(고정 3, 소실 2), A 빈도 범위 0.00~1.00"><text x="16" y="20" class="fig-text">개체 10마리 · 50세대 · 반복 집단 5개</text><path d="M60 54V250H540" class="axis"/><path d="M60 152H540" class="axis" stroke-dasharray="4 4"/><text x="54" y="254" text-anchor="end" class="tick">0</text><text x="54" y="156" text-anchor="end" class="tick">0.5</text><text x="54" y="58" text-anchor="end" class="tick">1</text><text x="60" y="266" text-anchor="middle" class="tick">0</text><text x="300" y="266" text-anchor="middle" class="tick">25</text><text x="540" y="266" text-anchor="middle" class="tick">50</text><text x="300" y="284" text-anchor="middle" class="tick">세대</text><text x="16" y="44" class="tick">A 빈도</text><path d="M60 152L69.6 152L79.2 181.4L88.8 171.6L98.4 210.8L108 240.2L117.6 230.4L127.2 220.6L136.8 230.4L146.4 220.6L156 240.2L165.6 250L175.2 250L184.8 250L194.4 250L204 250L213.6 250L223.2 250L232.8 250L242.4 250L252 250L261.6 250L271.2 250L280.8 250L290.4 250L300 250L309.6 250L319.2 250L328.8 250L338.4 250L348 250L357.6 250L367.2 250L376.8 250L386.4 250L396 250L405.6 250L415.2 250L424.8 250L434.4 250L444 250L453.6 250L463.2 250L472.8 250L482.4 250L492 250L501.6 250L511.2 250L520.8 250L530.4 250L540 250" class="fig-accent"/><circle cx="540" cy="250" r="6" class="fig-danger"/><path d="M60 152L69.6 161.8L79.2 171.6L88.8 152L98.4 132.4L108 171.6L117.6 171.6L127.2 142.2L136.8 161.8L146.4 161.8L156 132.4L165.6 132.4L175.2 161.8L184.8 112.8L194.4 152L204 122.6L213.6 132.4L223.2 122.6L232.8 132.4L242.4 152L252 161.8L261.6 132.4L271.2 161.8L280.8 161.8L290.4 201L300 210.8L309.6 191.2L319.2 210.8L328.8 201L338.4 181.4L348 132.4L357.6 132.4L367.2 142.2L376.8 142.2L386.4 171.6L396 181.4L405.6 161.8L415.2 142.2L424.8 112.8L434.4 122.6L444 132.4L453.6 112.8L463.2 93.2L472.8 93.2L482.4 63.8L492 73.6L501.6 83.4L511.2 54L520.8 54L530.4 54L540 54" class="fig-accent"/><circle cx="540" cy="54" r="6" class="fig-danger"/><path d="M60 152L69.6 152L79.2 171.6L88.8 201L98.4 191.2L108 230.4L117.6 230.4L127.2 230.4L136.8 240.2L146.4 240.2L156 250L165.6 250L175.2 250L184.8 250L194.4 250L204 250L213.6 250L223.2 250L232.8 250L242.4 250L252 250L261.6 250L271.2 250L280.8 250L290.4 250L300 250L309.6 250L319.2 250L328.8 250L338.4 250L348 250L357.6 250L367.2 250L376.8 250L386.4 250L396 250L405.6 250L415.2 250L424.8 250L434.4 250L444 250L453.6 250L463.2 250L472.8 250L482.4 250L492 250L501.6 250L511.2 250L520.8 250L530.4 250L540 250" class="fig-accent"/><circle cx="540" cy="250" r="6" class="fig-danger"/><path d="M60 152L69.6 152L79.2 171.6L88.8 201L98.4 161.8L108 171.6L117.6 181.4L127.2 191.2L136.8 181.4L146.4 171.6L156 152L165.6 201L175.2 201L184.8 161.8L194.4 132.4L204 122.6L213.6 112.8L223.2 73.6L232.8 93.2L242.4 103L252 103L261.6 93.2L271.2 63.8L280.8 73.6L290.4 73.6L300 73.6L309.6 54L319.2 54L328.8 54L338.4 54L348 54L357.6 54L367.2 54L376.8 54L386.4 54L396 54L405.6 54L415.2 54L424.8 54L434.4 54L444 54L453.6 54L463.2 54L472.8 54L482.4 54L492 54L501.6 54L511.2 54L520.8 54L530.4 54L540 54" class="fig-accent"/><circle cx="540" cy="54" r="6" class="fig-danger"/><path d="M60 152L69.6 112.8L79.2 103L88.8 103L98.4 93.2L108 122.6L117.6 142.2L127.2 93.2L136.8 73.6L146.4 73.6L156 73.6L165.6 63.8L175.2 54L184.8 54L194.4 54L204 54L213.6 54L223.2 54L232.8 54L242.4 54L252 54L261.6 54L271.2 54L280.8 54L290.4 54L300 54L309.6 54L319.2 54L328.8 54L338.4 54L348 54L357.6 54L367.2 54L376.8 54L386.4 54L396 54L405.6 54L415.2 54L424.8 54L434.4 54L444 54L453.6 54L463.2 54L472.8 54L482.4 54L492 54L501.6 54L511.2 54L520.8 54L530.4 54L540 54" class="fig-accent"/><circle cx="540" cy="54" r="6" class="fig-danger"/><text x="540" y="48" text-anchor="end" class="fig-text">A 고정 3 · A 소실 2</text></svg></figure>
+        <figure class="figure"><svg id="widget-drift-static-2" viewBox="0 0 560 300" role="img" aria-label="개체 50마리, 50세대 뒤 5개 집단 중 A가 고정되거나 소실된 집단 0개(고정 0, 소실 0), A 빈도 범위 0.31~0.86"><text x="16" y="20" class="fig-text">개체 50마리 · 50세대 · 반복 집단 5개</text><path d="M60 54V250H540" class="axis"/><path d="M60 152H540" class="axis" stroke-dasharray="4 4"/><text x="54" y="254" text-anchor="end" class="tick">0</text><text x="54" y="156" text-anchor="end" class="tick">0.5</text><text x="54" y="58" text-anchor="end" class="tick">1</text><text x="60" y="266" text-anchor="middle" class="tick">0</text><text x="300" y="266" text-anchor="middle" class="tick">25</text><text x="540" y="266" text-anchor="middle" class="tick">50</text><text x="300" y="284" text-anchor="middle" class="tick">세대</text><text x="16" y="44" class="tick">A 빈도</text><path d="M60 152L69.6 163.8L79.2 155.9L88.8 155.9L98.4 155.9L108 157.9L117.6 177.5L127.2 171.6L136.8 171.6L146.4 163.8L156 161.8L165.6 165.7L175.2 157.9L184.8 165.7L194.4 171.6L204 159.8L213.6 169.6L223.2 167.7L232.8 152L242.4 154L252 146.1L261.6 132.4L271.2 132.4L280.8 136.3L290.4 148.1L300 150L309.6 155.9L319.2 165.7L328.8 152L338.4 142.2L348 130.4L357.6 128.5L367.2 136.3L376.8 122.6L386.4 146.1L396 150L405.6 142.2L415.2 144.2L424.8 142.2L434.4 140.2L444 148.1L453.6 179.4L463.2 179.4L472.8 177.5L482.4 175.5L492 181.4L501.6 181.4L511.2 185.3L520.8 197.1L530.4 187.3L540 189.2" class="fig-accent"/><path d="M60 152L69.6 142.2L79.2 146.1L88.8 134.4L98.4 132.4L108 155.9L117.6 152L127.2 130.4L136.8 132.4L146.4 138.3L156 126.5L165.6 126.5L175.2 144.2L184.8 155.9L194.4 155.9L204 138.3L213.6 136.3L223.2 130.4L232.8 138.3L242.4 152L252 150L261.6 146.1L271.2 157.9L280.8 144.2L290.4 161.8L300 157.9L309.6 155.9L319.2 157.9L328.8 154L338.4 157.9L348 163.8L357.6 150L367.2 157.9L376.8 146.1L386.4 148.1L396 142.2L405.6 134.4L415.2 122.6L424.8 132.4L434.4 144.2L444 146.1L453.6 146.1L463.2 159.8L472.8 148.1L482.4 146.1L492 148.1L501.6 140.2L511.2 148.1L520.8 154L530.4 148.1L540 169.6" class="fig-accent"/><path d="M60 152L69.6 159.8L79.2 169.6L88.8 159.8L98.4 165.7L108 159.8L117.6 154L127.2 159.8L136.8 159.8L146.4 163.8L156 144.2L165.6 154L175.2 161.8L184.8 161.8L194.4 163.8L204 167.7L213.6 177.5L223.2 171.6L232.8 173.6L242.4 165.7L252 179.4L261.6 175.5L271.2 171.6L280.8 171.6L290.4 183.4L300 161.8L309.6 159.8L319.2 169.6L328.8 163.8L338.4 157.9L348 171.6L357.6 159.8L367.2 169.6L376.8 175.5L386.4 177.5L396 183.4L405.6 189.2L415.2 183.4L424.8 185.3L434.4 165.7L444 163.8L453.6 173.6L463.2 175.5L472.8 169.6L482.4 167.7L492 169.6L501.6 165.7L511.2 165.7L520.8 167.7L530.4 171.6L540 165.7" class="fig-accent"/><path d="M60 152L69.6 152L79.2 150L88.8 148.1L98.4 130.4L108 124.6L117.6 106.9L127.2 95.2L136.8 89.3L146.4 87.3L156 81.4L165.6 79.5L175.2 79.5L184.8 93.2L194.4 83.4L204 85.4L213.6 91.2L223.2 81.4L232.8 89.3L242.4 91.2L252 87.3L261.6 91.2L271.2 81.4L280.8 87.3L290.4 79.5L300 85.4L309.6 85.4L319.2 81.4L328.8 91.2L338.4 93.2L348 87.3L357.6 93.2L367.2 83.4L376.8 81.4L386.4 89.3L396 99.1L405.6 103L415.2 101L424.8 99.1L434.4 93.2L444 83.4L453.6 83.4L463.2 79.5L472.8 93.2L482.4 93.2L492 79.5L501.6 89.3L511.2 87.3L520.8 73.6L530.4 75.6L540 81.4" class="fig-accent"/><path d="M60 152L69.6 144.2L79.2 144.2L88.8 152L98.4 126.5L108 128.5L117.6 128.5L127.2 136.3L136.8 148.1L146.4 163.8L156 167.7L165.6 157.9L175.2 157.9L184.8 161.8L194.4 175.5L204 175.5L213.6 173.6L223.2 163.8L232.8 161.8L242.4 154L252 152L261.6 136.3L271.2 134.4L280.8 124.6L290.4 124.6L300 112.8L309.6 99.1L319.2 95.2L328.8 93.2L338.4 106.9L348 97.1L357.6 99.1L367.2 91.2L376.8 93.2L386.4 95.2L396 81.4L405.6 83.4L415.2 87.3L424.8 91.2L434.4 91.2L444 91.2L453.6 103L463.2 99.1L472.8 97.1L482.4 105L492 110.8L501.6 103L511.2 87.3L520.8 87.3L530.4 93.2L540 83.4" class="fig-accent"/><text x="540" y="48" text-anchor="end" class="fig-text">A 고정 0 · A 소실 0</text></svg></figure>
+        <figure class="figure"><svg id="widget-drift-static-3" viewBox="0 0 560 300" role="img" aria-label="개체 500마리, 50세대 뒤 5개 집단 중 A가 고정되거나 소실된 집단 0개(고정 0, 소실 0), A 빈도 범위 0.38~0.52"><text x="16" y="20" class="fig-text">개체 500마리 · 50세대 · 반복 집단 5개</text><path d="M60 54V250H540" class="axis"/><path d="M60 152H540" class="axis" stroke-dasharray="4 4"/><text x="54" y="254" text-anchor="end" class="tick">0</text><text x="54" y="156" text-anchor="end" class="tick">0.5</text><text x="54" y="58" text-anchor="end" class="tick">1</text><text x="60" y="266" text-anchor="middle" class="tick">0</text><text x="300" y="266" text-anchor="middle" class="tick">25</text><text x="540" y="266" text-anchor="middle" class="tick">50</text><text x="300" y="284" text-anchor="middle" class="tick">세대</text><text x="16" y="44" class="tick">A 빈도</text><path d="M60 152L69.6 157.5L79.2 157.3L88.8 156.3L98.4 156.3L108 152L117.6 148.7L127.2 144L136.8 146.3L146.4 148.7L156 148.1L165.6 146.9L175.2 145.9L184.8 148.5L194.4 142.2L204 146.7L213.6 141L223.2 134.9L232.8 130.2L242.4 125.1L252 125.7L261.6 124.2L271.2 126.3L280.8 128.3L290.4 130.2L300 127.3L309.6 125L319.2 129.7L328.8 131L338.4 134.4L348 134.6L357.6 133.6L367.2 131.2L376.8 138.5L386.4 135.7L396 133L405.6 135.1L415.2 137.7L424.8 136.9L434.4 141L444 139.3L453.6 133.6L463.2 137.7L472.8 135.5L482.4 139.5L492 141.6L501.6 147.1L511.2 149.8L520.8 151.2L530.4 154.4L540 152.2" class="fig-accent"/><path d="M60 152L69.6 153.4L79.2 159.1L88.8 154.7L98.4 154.5L108 153.6L117.6 155.5L127.2 154.4L136.8 150.4L146.4 156.5L156 150.6L165.6 151.2L175.2 156.9L184.8 152L194.4 150L204 152.6L213.6 155.7L223.2 157.3L232.8 158.9L242.4 161L252 158.1L261.6 157.1L271.2 158.9L280.8 157.7L290.4 155.3L300 152.8L309.6 156.5L319.2 161L328.8 154.7L338.4 156.1L348 156.9L357.6 151.2L367.2 153.6L376.8 156.3L386.4 157.9L396 159.4L405.6 160.2L415.2 163.2L424.8 165.3L434.4 171.4L444 169.1L453.6 170.2L463.2 172L472.8 168.3L482.4 164.9L492 166.5L501.6 167.1L511.2 162.8L520.8 169.6L530.4 170.2L540 173.2" class="fig-accent"/><path d="M60 152L69.6 157.5L79.2 147.9L88.8 152.2L98.4 147.3L108 148.9L117.6 147.1L127.2 145.9L136.8 150L146.4 153.2L156 150.6L165.6 152L175.2 146.9L184.8 147.3L194.4 143.8L204 144.9L213.6 145.1L223.2 147.9L232.8 149.1L242.4 151L252 147.5L261.6 147.9L271.2 151.2L280.8 145.3L290.4 150.6L300 147.1L309.6 146.9L319.2 151.8L328.8 154L338.4 155.9L348 158.3L357.6 158.7L367.2 156.3L376.8 158.3L386.4 156.7L396 164.5L405.6 164.7L415.2 162.8L424.8 165.1L434.4 157.5L444 159.3L453.6 163.8L463.2 164.2L472.8 159.8L482.4 161.8L492 164.5L501.6 165.1L511.2 164.7L520.8 165.3L530.4 168.7L540 175.9" class="fig-accent"/><path d="M60 152L69.6 155.5L79.2 150.6L88.8 150.2L98.4 147.3L108 150.6L117.6 152.6L127.2 149.8L136.8 147.5L146.4 147.5L156 145.1L165.6 144.7L175.2 140L184.8 142.2L194.4 144L204 136.5L213.6 135.5L223.2 137.3L232.8 142L242.4 146.3L252 140.8L261.6 139.7L271.2 135.3L280.8 139.8L290.4 140L300 139.1L309.6 137.1L319.2 134.9L328.8 136.7L338.4 141.2L348 142.8L357.6 146.7L367.2 147.9L376.8 148.3L386.4 146.1L396 144.2L405.6 146.5L415.2 147.1L424.8 149.5L434.4 147.9L444 149.3L453.6 149.3L463.2 150.6L472.8 151L482.4 151.6L492 152.4L501.6 153.6L511.2 155.9L520.8 151.8L530.4 151.4L540 148.1" class="fig-accent"/><path d="M60 152L69.6 154.4L79.2 156.3L88.8 151.8L98.4 151.6L108 152.2L117.6 150.6L127.2 146.9L136.8 150.4L146.4 149.1L156 147.1L165.6 153L175.2 151.4L184.8 151L194.4 150.2L204 152L213.6 154.7L223.2 153.6L232.8 153.2L242.4 148.7L252 149.5L261.6 148.1L271.2 140.6L280.8 145.9L290.4 148.1L300 148.9L309.6 148.9L319.2 144.6L328.8 145.5L338.4 144.4L348 144.6L357.6 148.5L367.2 150.8L376.8 150.4L386.4 145.9L396 148.5L405.6 152.8L415.2 153.2L424.8 160.8L434.4 158.1L444 152.2L453.6 152L463.2 145.3L472.8 140.4L482.4 142.8L492 145.3L501.6 149.1L511.2 149.6L520.8 152.2L530.4 151.4L540 154.2" class="fig-accent"/><text x="540" y="48" text-anchor="end" class="fig-text">A 고정 0 · A 소실 0</text></svg></figure>
+        <div class="table-wrap"><table>
+          <tr><th>설정</th><th>50세대 뒤 A 빈도(집단 5개)</th><th>고정·소실된 집단</th></tr>
+          <tr><td>개체 10마리, 50세대</td><td>0.00, 1.00, 0.00, 1.00, 1.00</td><td>5개(고정 3, 소실 2)</td></tr><tr><td>개체 50마리, 50세대</td><td>0.31, 0.41, 0.43, 0.86, 0.85</td><td>0개(고정 0, 소실 0)</td></tr><tr><td>개체 500마리, 50세대</td><td>0.50, 0.39, 0.38, 0.52, 0.49</td><td>0개(고정 0, 소실 0)</td></tr>
+        </table></div>
+      </div>
+    </div>
+    <p>개체 10마리 집단은 몇십 세대 안에 A 빈도가 0이나 1에 닿아요. 빈도 0은 그 대립유전자가 사라진 것(소실), 빈도 1은 하나만 남은 것(고정)이에요. 같은 출발점인데 어떤 집단은 고정되고 어떤 집단은 소실되므로 방향이 정해진 변화가 아니에요. 500마리 집단은 같은 세대 동안 0.5 근처에서 조금만 흔들려요.</p>
+    <p><strong>왜 유전적 다양성을 줄이나요?</strong> 우연히 뽑히지 않은 대립유전자는 집단에서 사라지고, 돌연변이나 유전자 확산이 없으면 다시 생기지 않아요. 그래서 유전적 부동은 보통 <strong>유전적 다양성</strong>(변이)을 줄여요. 다양성이 줄면 병이나 환경 변화에 모두 같이 약해져 멸종 확률이 높아져요. 결국 개체군 크기가 작으면 유전적 부동 영향을 많이 받고, 다양성이 떨어져 쉽게 멸종해요.</p>
+    <p>유전적 부동이 일어나는 대표적인 두 상황이 있어요.</p>
+    <ol class="steps">
+      <li><strong>병목 현상(population bottleneck)</strong>: 폭풍, 지진 같은 자연재해나 사냥으로 그 자리에서 개체 수가 <em>시간적으로</em> 급격히 줄어요. 살아남은 소수는 형질이 뛰어나서가 아니라 우연히 살아남았어요. 이들이 다시 번식해 개체 수가 회복되어도 일부 대립유전자는 이미 사라졌고, 바뀐 유전적 조성이 그대로 유지돼요.</li>
+      <li><strong>창시자 효과(founder effect)</strong>: 큰 집단에서 적은 수의 개체가 <em>공간적으로</em> 떨어져 나와 멀리 떨어진 새 지역에서 새 집단을 시작해요. 창시자들의 유전자가 새 집단의 유전적 조성을 정하므로, 새 집단은 원래 집단과 조성이 크게 달라요.</li>
+    </ol>
+    <p>병목 현상과 창시자 효과는 둘 다 유전적 부동의 한 경우예요. 그 자리에서 급감했든 소수가 떠나 새로 시작했든, 우연으로 대립유전자 빈도가 바뀌었다면 유전적 부동이에요.</p>
+    <p><strong>자연선택과 가르는 기준</strong>: 누가 살아남았는지가 형질과 관련 있는지 봐요.</p>
+    <ul>
+      <li>산불, 홍수, 폭풍처럼 형질과 상관없이 한꺼번에 많이 죽으면 유전적 부동(병목 현상)이에요.</li>
+      <li>세균 감염처럼 저항성이 있는 개체가 더 많이 살아남으면, 형질에 따라 생존이 달라진 것이므로 자연선택이에요.</li>
+      <li>짝으로 선택되는 형질에 따라 자손 수가 달라지면 성선택이에요(<a href="#s1-sexual">성선택과 성적이형성</a>).</li>
+    </ul>
+    <p><strong>보전</strong>의 의미: 강의노트는 멸종위기종을 보존할 때 개체 수뿐 아니라 유전적 다양성도 회복해 주어야 한다고 적어요. 교수님은 작은 집단에 다른 지역의 개체를 데려와 교배시켜 유전적 다양성을 높인다고 설명했어요. 이것은 일부러 유전자 확산을 일으키는 셈이에요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p><strong>이름</strong>: "부동이 뭐니?"라고 묻고, 부동산도 부동자세도 아니라 뜰 부(浮), 움직일 동(動)이라고 했어요. 갑자기 떠서 움직이며 확 바뀐다는 뜻이에요.</p>
+    <p><strong>구슬 병</strong>: 병 속 <strong>구슬</strong>이 개체군이고 파란색, 흰색, 가끔 오렌지색이 섞여 있어요. 폭풍으로 다 죽고 병 입구의 파란 구슬 다섯 개와 흰 구슬 한 개만 살아남았어요. 이들이 다시 번식하면 새 집단은 거의 파란색이고 오렌지색은 아예 없어요. 이것이 병목 현상이에요.</p>
+    <blockquote>얘네들이 잘나서 잘 산 게 아니고 하필이면은 병목 근처에 있다 보니까 살아남은 거야.</blockquote>
+    <p><strong>영화 마션</strong>(영상 자료): 지구의 개는 다리 긴 개부터 짧은 개까지 다양해요. 화성 개척자가 하필 닥스훈트와 치와와만 데려가면 시간이 지나 화성의 개는 모두 다리가 짧아요. 적응이나 자연선택이 아니라 처음 간 개가 우연히 그랬을 뿐이고, 이것이 창시자 효과예요. 영상은 "시작이 운명을 결정"한다고 정리했어요.</p>
+    <p><strong>강의실 비유</strong>: "70점 이하는 들어오지 마"는 공부한 학생만 남으니 자연선택이에요. "이 줄만 남고 나머지는 나가"는 우연히 그 자리에 앉은 학생이 남으니 유전적 부동이에요. 성비가 대략 1 대 1인 50명 반에서 한 줄만 남기면 8 대 2처럼 크게 바뀔 수 있어요. 5,000명 수업에서 1,000명을 남기면 거의 5 대 5로 유지돼요. 차이는 집단 크기 때문이에요.</p>
+    <blockquote>유전적 다양성이 보통 줄어듭니다. 변이가 줄어들어요.</blockquote>
+    <p><strong>아일랜드 감자 대기근</strong>: 감자를 무성생식으로 재배해 유전적으로 다양하지 않았고, 병이 돌자 모두 죽었어요. 다양했다면 한두 개는 살아남았을 거라고 했어요. <strong>아프리카 치타</strong>도 숫자가 크게 줄어 쉽게 멸종할 위기라고 했어요.</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li><strong>착각</strong>: 살아남은 개체는 환경에 적응한 개체다. <strong>바른 구분</strong>: 형질 때문에 살아남으면 자연선택, 형질과 상관없이 운으로 살아남으면 유전적 부동이에요(70점 기준과 줄 남기기, 마션의 다리 짧은 개).</li>
+      <li><strong>착각</strong>: 우연히 빈도가 바뀐 것은 진화가 아니다. <strong>바른 구분</strong>: 대립유전자 빈도가 변했으면 원인이 우연이어도 소진화, 곧 진화예요.</li>
+      <li><strong>착각</strong>: 병목 현상과 창시자 효과는 같은 말이다. <strong>바른 구분</strong>: 병목 현상은 그 자리에서 재해 등으로 개체 수가 시간적으로 급감한 경우, 창시자 효과는 소수가 공간적으로 떨어져 나와 새 지역에 새 집단을 만든 경우예요. 둘 다 유전적 부동의 하위 개념이에요.</li>
+      <li><strong>착각</strong>: 유전적 부동은 한 가지 상황에서만 일어난다. <strong>바른 구분</strong>: 병목 현상과 창시자 효과는 둘 다 유전적 부동의 한 경우예요. "항상", "언제나" 같은 표현이 붙은 설명은 다른 경우가 없는지 확인해요.</li>
+      <li><strong>착각</strong>: 유전적 부동은 유전적 다양성을 늘린다. <strong>바른 구분</strong>: 우연히 대립유전자가 사라지므로 보통 줄여요. 새 변이를 들여오는 것은 유전자 확산과 돌연변이예요.</li>
+      <li><strong>착각</strong>: 유전적 부동은 큰 집단에서도 똑같이 강하다. <strong>바른 구분</strong>: 작은 개체군일수록 영향이 크고, 충분히 큰 집단에서는 영향이 작아요.</li>
+      <li><strong>정의로 가르기</strong>: 우연한 사건으로 대립유전자 빈도가 예상치 못하게 변하는 것이 유전적 부동이에요. 기존 집단 사이의 개체·꽃가루 이동은 <a href="#s0-factors">유전자 확산</a>, 친척끼리의 교배는 근친교배, 여러 대립유전자가 서로 균형을 이뤄 함께 유지되는 것은 <a href="#s1-balanced">평형 다형성</a>, 중간 표현형이 가장 유리한 선택은 <a href="#s1-fitness">안정화 선택</a>이에요.</li>
+    </ul>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">유전적 부동은 우연한 사건으로 대립유전자 빈도가 바뀌는 소진화이고, 작은 개체군에서 강하며 유전적 다양성을 줄여요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>유전적 부동(genetic drift)</dt><dd>우연한 사건으로 대립유전자 빈도가 예상치 못하게 변하는 것이에요. 원인이 우연이어도 빈도가 변했으므로 소진화예요. 형질 때문에 살아남는 자연선택·성선택과 달라요.</dd>
+      <dt>집단 크기 효과</dt><dd>적은 수에서 다음 세대를 뽑을수록 한쪽으로 몰리기 쉬워, 작은 개체군일수록 영향이 크고 충분히 큰 집단에서는 작아요. 부동은 방향이 정해지지 않아 같은 출발점에서도 고정(빈도 1)되거나 소실(빈도 0)될 수 있어요.</dd>
+      <dt>유전적 다양성 감소</dt><dd>우연히 사라진 대립유전자는 돌연변이·유전자 확산 없이는 돌아오지 않아 변이가 줄고, 멸종 확률이 높아져요.</dd>
+      <dt>병목 현상</dt><dd>유전적 부동의 한 경우예요. 그 자리에서 재해·사냥 등으로 개체 수가 시간적으로 급감하고 우연히 남은 소수가 번식해, 회복 뒤에도 바뀐 조성이 유지돼요. 산불·홍수처럼 형질과 무관한 대량 사망이 해당해요.</dd>
+      <dt>창시자 효과(founder effect)</dt><dd>병목 현상과 마찬가지로 유전적 부동의 한 경우예요. 큰 집단에서 소수가 공간적으로 떨어져 나와 새 지역에 새 집단을 세우면 창시자의 유전자가 새 집단 조성을 정해요. 기존 집단 사이의 이동인 유전자 확산과 달라요.</dd>
+      <dt>부동과 자연선택 가르기</dt><dd>생존이 형질과 무관하면 부동, 감염 저항성처럼 형질에 따라 생존이 달라지면 자연선택이에요.</dd>
+      <dt>보전</dt><dd>멸종위기종은 개체 수뿐 아니라 유전적 다양성도 회복해야 하며, 다른 지역 개체를 데려와 교배시켜 다양성을 높여요.</dd>
+    </dl>
+  </div>
+</article>
+    </section>
+    <section id="s1"><h2>1. [7장] 자연선택의 양상, 성선택, 남아 있는 변이</h2>
+<article class="topic" id="s1-fitness"><h3>상대적 적응도와 자연선택의 세 양상</h3><div class="tags"><span class="tag date">1029 수업</span><span class="tag slide">7장 p5</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">자연은 돈이나 행복이 아니라 다음 세대에 아이를 남들보다 얼마나 많이 남겼는지로 점수를 매겨요.</p>
+    <figure class="figure"><svg id="fig-fitness-heungbu" viewBox="0 0 560 200" role="img" aria-label="왼쪽 흥부 아래에 색칠된 동그라미 10개, 오른쪽 놀부 아래에 색칠된 동그라미 1개가 있어요. 흥부는 1.0, 놀부는 0.1이라고 적혀 있어요.">
+      <rect class="fig-ink" x="20" y="20" width="250" height="160" rx="12"/>
+      <rect class="fig-ink" x="290" y="20" width="250" height="160" rx="12"/>
+      <text class="fig-text" x="145" y="48" text-anchor="middle">흥부: 아이 10명</text>
+      <text class="fig-text" x="415" y="48" text-anchor="middle">놀부: 아이 1명 (큰 부자)</text>
+      <circle class="fig-dot" cx="55" cy="84" r="11"/><circle class="fig-dot" cx="100" cy="84" r="11"/><circle class="fig-dot" cx="145" cy="84" r="11"/><circle class="fig-dot" cx="190" cy="84" r="11"/><circle class="fig-dot" cx="235" cy="84" r="11"/><circle class="fig-dot" cx="55" cy="116" r="11"/><circle class="fig-dot" cx="100" cy="116" r="11"/><circle class="fig-dot" cx="145" cy="116" r="11"/><circle class="fig-dot" cx="190" cy="116" r="11"/><circle class="fig-dot" cx="235" cy="116" r="11"/>
+      <circle class="fig-dot" cx="415" cy="98" r="11"/>
+      <text class="fig-text" x="145" y="164" text-anchor="middle">점수 1.0</text>
+      <text class="fig-text" x="415" y="164" text-anchor="middle">점수 0.1</text>
+    </svg><figcaption>가장 많이 남긴 흥부를 1.0으로 놓고 견주면 놀부는 0.1이에요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p><strong>상대적 적응도(relative fitness)</strong>는 한 개체가 남긴 생존한 <strong>자식 수</strong>를 같은 개체군의 다른 개체와 비교한 값이에요. 강의노트는 생존과 생식의 두 요소로 이루어진다고 적어요. 자연선택은 적응도가 높은 개체를 선택하고, 그 결과 그 개체가 가진 대립유전자의 빈도가 다음 세대에 높아져요.</p>
+    <p>왜 오래 사는 것이나 부가 아니라 자식 수일까요? 자연선택이 바꾸는 것은 다음 세대의 대립유전자 빈도이고, 대립유전자는 자식을 통해서만 다음 세대로 전해지기 때문이에요. 오래 살아도 자식을 남기지 못하면 다음 세대에 기여하는 대립유전자는 없어요. 생존이 중요한 이유도 살아남아야 자식을 남길 수 있기 때문이에요.</p>
+    <p>왜 ‘상대적’일까요? 빈도는 전체 중 비율이에요. 가상의 예로 모든 개체가 똑같이 자식 10마리를 남기면 비율은 그대로라 빈도도 그대로예요. 남보다 더 많이 남겨야 그 대립유전자의 비율이 커져요. 그래서 집단에서 자식을 가장 많이 남긴 개체를 1.0으로 놓고 비교하기도 해요. 자식 10명인 <strong>흥부</strong>가 1.0이면 자식 1명인 놀부는 0.1이에요.</p>
+    <p>자연선택이 작용하는 대상은 대립유전자 자체가 아니라 개체의 <strong>표현형</strong>이에요(이 점이 왜 중요한지는 <a href="#s1-balanced">불리한 대립유전자가 남는 이유: 이형접합자 이점</a>에서 이어져요). 꼬리 길이처럼 값이 연속으로 이어지는 정량적 형질(양적 형질)은 개체 수를 그리면 가운데 <strong>평균</strong>이 가장 많은 종 모양(정규분포)이 돼요. 어느 쪽 표현형의 적응도가 낮은지에 따라 이 분포가 세 가지로 바뀌어요.</p>
+    <div class="table-wrap"><table>
+      <tr><th>양상</th><th>적응도가 낮은 쪽</th><th>평균</th><th>분포 모양</th></tr>
+      <tr><td><strong>방향성 선택(directional selection)</strong></td><td>한쪽 극단(예: 짧은 꼬리). 반대쪽 극단이 유리</td><td>유리한 쪽으로 이동</td><td>봉우리 하나가 통째로 옮겨 감</td></tr>
+      <tr><td><strong>안정화 선택(stabilizing selection)</strong></td><td>양쪽 극단 모두</td><td>그대로</td><td>폭이 좁아지고 높아짐(극단이 사라짐)</td></tr>
+      <tr><td><strong>분단성 선택(disruptive selection)</strong>, 다른 이름 <strong>다형화 선택</strong></td><td>중간</td><td>그대로일 수 있음</td><td>봉우리가 둘로 나뉨(아주 짧은 쪽과 아주 긴 쪽), 다양해짐</td></tr>
+    </table></div>
+    <p>새 사례는 다음 순서로 판별해요.</p>
+    <ol class="steps">
+      <li>변이를 가진 채 선택을 받는 집단이 누구인지 정해요. 항생제 사례라면 사람이 아니라 세균 집단이에요.</li>
+      <li>어떤 표현형이 늘고 어떤 표현형이 줄었는지 봐요. 늘어난 쪽이 한쪽 극단인지, 가운데인지, 양 극단인지 확인해요.</li>
+      <li>평균이 한쪽으로 옮겨 갔으면 방향성, 평균은 그대로인데 폭만 줄었으면 안정화, 가운데가 줄어 봉우리가 둘이면 분단성이에요.</li>
+    </ol>
+    <p><strong>항생제 내성</strong>: 항생제를 쓰면 내성이 있는 세균이 더 많이 살아남아 번식해요. 그 결과 내성 개체의 비율이 늘었다면 집단 전체가 ‘내성 있음’이라는 한쪽 끝으로 옮겨 간 것이므로 방향성 선택이에요. 수업 퀴즈의 표현으로는 내성이 없다가 있게 된, 있는 방향으로 바뀐 경우예요. 질병처럼 특정 표현형만 살아남게 하는 사건도 같은 방식으로 판별해요. 반대로 산불처럼 표현형과 상관없이 우연히 개체가 죽는 경우는 선택이 아니라 <a href="#s0-drift">유전적 부동: 병목 현상과 창시자 효과</a>예요.</p>
+    <p><strong>출생 체중</strong>: 너무 작은 아기와 너무 큰 아기가 모두 사망률이 높으면 평균 체중인 아기가 더 잘 살아남아요. 양 극단이 줄어드니 안정화 선택이에요.</p>
+    <div class="widget" id="widget-selection"><h4>직접 해 보기: 선택 양상과 꼬리 길이 분포</h4>
+      <p class="widget-help">선택 양상을 고르고 세대 수(선택이 쌓인 정도)를 늘리면, 점선인 선택 전 곡선 위에 실선인 선택 후 곡선이 겹쳐 그려져 평균 이동, 폭 감소, 봉우리 분리가 보여요.</p>
+      <div class="controls">
+        <label>선택 양상 <select id="selection-mode"><option value="directional" selected>방향성 선택 (짧은 꼬리 불리)</option><option value="stabilizing">안정화 선택 (양 극단 불리)</option><option value="disruptive">분단성 선택 (중간 불리)</option></select></label>
+        <label>세대 수 <input type="range" id="selection-g" min="0" max="6" step="1" value="3"> <b id="selection-g-val">3</b>세대</label>
+      </div>
+      <svg id="selection-plot" viewBox="0 0 560 300" role="img" aria-label="방향성 선택 3세대 뒤 꼬리 길이 분포. 점선은 선택 전 곡선(평균 10.0 cm, 표준편차 3.0 cm), 실선은 선택 후 곡선(평균 12.7 cm, 표준편차 3.0 cm, 봉우리 1개)"><text x="16" y="24" class="fig-text">방향성 선택 · 3세대 뒤</text><path d="M50 250H540" class="axis"/><path d="M50 50V250" class="axis"/><text x="50" y="266" text-anchor="middle" class="tick">0</text><text x="172.5" y="266" text-anchor="middle" class="tick">5</text><text x="295" y="266" text-anchor="middle" class="tick">10</text><text x="417.5" y="266" text-anchor="middle" class="tick">15</text><text x="540" y="266" text-anchor="middle" class="tick">20</text><text x="295" y="288" text-anchor="middle" class="tick">꼬리 길이 (cm)</text><text x="42" y="46" text-anchor="end" class="tick">빈도</text><path d="M50 249.3L54.9 249.2L59.8 248.9L64.7 248.7L69.6 248.4L74.5 248L79.4 247.6L84.3 247.1L89.2 246.5L94.1 245.8L99 245L103.9 244L108.8 242.9L113.7 241.6L118.6 240.1L123.5 238.4L128.4 236.5L133.3 234.4L138.2 231.9L143.1 229.2L148 226.2L152.9 222.9L157.8 219.2L162.7 215.2L167.6 210.8L172.5 206.1L177.4 201.1L182.3 195.7L187.2 190L192.1 184L197 177.7L201.9 171.1L206.8 164.4L211.7 157.4L216.6 150.4L221.5 143.3L226.4 136.2L231.3 129.2L236.2 122.3L241.1 115.6L246 109.1L250.9 103.1L255.8 97.4L260.7 92.2L265.6 87.6L270.5 83.6L275.4 80.2L280.3 77.6L285.2 75.6L290.1 74.5L295 74.1L299.9 74.5L304.8 75.6L309.7 77.6L314.6 80.2L319.5 83.6L324.4 87.6L329.3 92.2L334.2 97.4L339.1 103.1L344 109.1L348.9 115.6L353.8 122.3L358.7 129.2L363.6 136.2L368.5 143.3L373.4 150.4L378.3 157.4L383.2 164.4L388.1 171.1L393 177.7L397.9 184L402.8 190L407.7 195.7L412.6 201.1L417.5 206.1L422.4 210.8L427.3 215.2L432.2 219.2L437.1 222.9L442 226.2L446.9 229.2L451.8 231.9L456.7 234.4L461.6 236.5L466.5 238.4L471.4 240.1L476.3 241.6L481.2 242.9L486.1 244L491 245L495.9 245.8L500.8 246.5L505.7 247.1L510.6 247.6L515.5 248L520.4 248.4L525.3 248.7L530.2 248.9L535.1 249.2L540 249.3" class="fig-ink" stroke-dasharray="6 5"/><path d="M50 250L54.9 250L59.8 250L64.7 249.9L69.6 249.9L74.5 249.9L79.4 249.9L84.3 249.9L89.2 249.8L94.1 249.8L99 249.7L103.9 249.6L108.8 249.5L113.7 249.4L118.6 249.2L123.5 249.1L128.4 248.8L133.3 248.6L138.2 248.2L143.1 247.8L148 247.4L152.9 246.8L157.8 246.2L162.7 245.4L167.6 244.5L172.5 243.5L177.4 242.3L182.3 240.9L187.2 239.3L192.1 237.5L197 235.5L201.9 233.2L206.8 230.6L211.7 227.7L216.6 224.6L221.5 221.1L226.4 217.2L231.3 213.1L236.2 208.5L241.1 203.7L246 198.4L250.9 192.9L255.8 187L260.7 180.9L265.6 174.4L270.5 167.8L275.4 160.9L280.3 153.9L285.2 146.9L290.1 139.7L295 132.7L299.9 125.7L304.8 118.9L309.7 112.3L314.6 106L319.5 100.2L324.4 94.7L329.3 89.8L334.2 85.5L339.1 81.8L344 78.8L348.9 76.5L353.8 75L358.7 74.2L363.6 74.2L368.5 75L373.4 76.5L378.3 78.8L383.2 81.8L388.1 85.5L393 89.8L397.9 94.7L402.8 100.2L407.7 106L412.6 112.3L417.5 118.9L422.4 125.7L427.3 132.7L432.2 139.7L437.1 146.9L442 153.9L446.9 160.9L451.8 167.8L456.7 174.4L461.6 180.9L466.5 187L471.4 192.9L476.3 198.4L481.2 203.7L486.1 208.5L491 213.1L495.9 217.2L500.8 221.1L505.7 224.6L510.6 227.7L515.5 230.6L520.4 233.2L525.3 235.5L530.2 237.5L535.1 239.3L540 240.9" class="fig-accent"/><path d="M295 56V250" class="fig-ink" stroke-dasharray="2 4"/><path d="M361.2 70V250" class="fig-accent" stroke-dasharray="2 4"/><text x="289" y="52" text-anchor="end" class="fig-muted">선택 전 평균 10.0</text><text x="367.2" y="66" text-anchor="start" class="fig-text">선택 후 평균 12.7</text><text x="540" y="24" text-anchor="end" class="fig-muted">표준편차 3.0 cm · 봉우리 1개</text></svg>
+      <p class="readout">이 가상 모형에서는 <b id="selection-out">방향성 선택, 3세대 뒤: 평균 10.0 cm에서 12.7 cm로, 표준편차 3.0 cm에서 3.0 cm로, 봉우리 1개에서 1개로</b></p>
+      <p class="legend"><span><span class="sw truth"></span>선택 전: 점선 곡선과 점선 평균선</span><span><span class="sw fit"></span>선택 후: 강조색 실선 곡선과 강조색 점선 평균선</span></p>
+      <p class="widget-help">자식이 부모의 꼬리 길이를 그대로 닮는다고 단순화하고, 세대마다 같은 적응도 차이를 곱한 가상 모형이에요. 두 곡선 아래 넓이는 같게 맞췄어요(전체 개체를 1로 본 비율).</p>
+      <div class="widget-static" hidden><figure class="figure"><svg id="widget-selection-static-1" viewBox="0 0 560 300" role="img" aria-label="방향성 선택 4세대 뒤 꼬리 길이 분포. 점선은 선택 전 곡선(평균 10.0 cm, 표준편차 3.0 cm), 실선은 선택 후 곡선(평균 13.6 cm, 표준편차 3.0 cm, 봉우리 1개)"><text x="16" y="24" class="fig-text">방향성 선택 · 4세대 뒤</text><path d="M50 250H540" class="axis"/><path d="M50 50V250" class="axis"/><text x="50" y="266" text-anchor="middle" class="tick">0</text><text x="172.5" y="266" text-anchor="middle" class="tick">5</text><text x="295" y="266" text-anchor="middle" class="tick">10</text><text x="417.5" y="266" text-anchor="middle" class="tick">15</text><text x="540" y="266" text-anchor="middle" class="tick">20</text><text x="295" y="288" text-anchor="middle" class="tick">꼬리 길이 (cm)</text><text x="42" y="46" text-anchor="end" class="tick">빈도</text><path d="M50 249.3L54.9 249.2L59.8 248.9L64.7 248.7L69.6 248.4L74.5 248L79.4 247.6L84.3 247.1L89.2 246.5L94.1 245.8L99 245L103.9 244L108.8 242.9L113.7 241.6L118.6 240.1L123.5 238.4L128.4 236.5L133.3 234.4L138.2 231.9L143.1 229.2L148 226.2L152.9 222.9L157.8 219.2L162.7 215.2L167.6 210.8L172.5 206.1L177.4 201.1L182.3 195.7L187.2 190L192.1 184L197 177.7L201.9 171.1L206.8 164.4L211.7 157.4L216.6 150.4L221.5 143.3L226.4 136.2L231.3 129.2L236.2 122.3L241.1 115.6L246 109.1L250.9 103.1L255.8 97.4L260.7 92.2L265.6 87.6L270.5 83.6L275.4 80.2L280.3 77.6L285.2 75.6L290.1 74.5L295 74.1L299.9 74.5L304.8 75.6L309.7 77.6L314.6 80.2L319.5 83.6L324.4 87.6L329.3 92.2L334.2 97.4L339.1 103.1L344 109.1L348.9 115.6L353.8 122.3L358.7 129.2L363.6 136.2L368.5 143.3L373.4 150.4L378.3 157.4L383.2 164.4L388.1 171.1L393 177.7L397.9 184L402.8 190L407.7 195.7L412.6 201.1L417.5 206.1L422.4 210.8L427.3 215.2L432.2 219.2L437.1 222.9L442 226.2L446.9 229.2L451.8 231.9L456.7 234.4L461.6 236.5L466.5 238.4L471.4 240.1L476.3 241.6L481.2 242.9L486.1 244L491 245L495.9 245.8L500.8 246.5L505.7 247.1L510.6 247.6L515.5 248L520.4 248.4L525.3 248.7L530.2 248.9L535.1 249.2L540 249.3" class="fig-ink" stroke-dasharray="6 5"/><path d="M50 250L54.9 250L59.8 250L64.7 250L69.6 250L74.5 250L79.4 250L84.3 250L89.2 249.9L94.1 249.9L99 249.9L103.9 249.9L108.8 249.8L113.7 249.8L118.6 249.7L123.5 249.7L128.4 249.6L133.3 249.5L138.2 249.3L143.1 249.2L148 248.9L152.9 248.7L157.8 248.4L162.7 248L167.6 247.6L172.5 247.1L177.4 246.5L182.3 245.8L187.2 245L192.1 244L197 242.9L201.9 241.6L206.8 240.1L211.7 238.4L216.6 236.5L221.5 234.4L226.4 231.9L231.3 229.2L236.2 226.2L241.1 222.9L246 219.2L250.9 215.2L255.8 210.8L260.7 206.1L265.6 201.1L270.5 195.7L275.4 190L280.3 184L285.2 177.7L290.1 171.1L295 164.4L299.9 157.4L304.8 150.4L309.7 143.3L314.6 136.2L319.5 129.2L324.4 122.3L329.3 115.6L334.2 109.1L339.1 103.1L344 97.4L348.9 92.2L353.8 87.6L358.7 83.6L363.6 80.2L368.5 77.6L373.4 75.6L378.3 74.5L383.2 74.1L388.1 74.5L393 75.6L397.9 77.6L402.8 80.2L407.7 83.6L412.6 87.6L417.5 92.2L422.4 97.4L427.3 103.1L432.2 109.1L437.1 115.6L442 122.3L446.9 129.2L451.8 136.2L456.7 143.3L461.6 150.4L466.5 157.4L471.4 164.4L476.3 171.1L481.2 177.7L486.1 184L491 190L495.9 195.7L500.8 201.1L505.7 206.1L510.6 210.8L515.5 215.2L520.4 219.2L525.3 222.9L530.2 226.2L535.1 229.2L540 231.9" class="fig-accent"/><path d="M295 56V250" class="fig-ink" stroke-dasharray="2 4"/><path d="M383.2 70V250" class="fig-accent" stroke-dasharray="2 4"/><text x="289" y="52" text-anchor="end" class="fig-muted">선택 전 평균 10.0</text><text x="389.2" y="66" text-anchor="start" class="fig-text">선택 후 평균 13.6</text><text x="540" y="24" text-anchor="end" class="fig-muted">표준편차 3.0 cm · 봉우리 1개</text></svg></figure><figure class="figure"><svg id="widget-selection-static-2" viewBox="0 0 560 300" role="img" aria-label="안정화 선택 4세대 뒤 꼬리 길이 분포. 점선은 선택 전 곡선(평균 10.0 cm, 표준편차 3.0 cm), 실선은 선택 후 곡선(평균 10.0 cm, 표준편차 2.1 cm, 봉우리 1개)"><text x="16" y="24" class="fig-text">안정화 선택 · 4세대 뒤</text><path d="M50 250H540" class="axis"/><path d="M50 50V250" class="axis"/><text x="50" y="266" text-anchor="middle" class="tick">0</text><text x="172.5" y="266" text-anchor="middle" class="tick">5</text><text x="295" y="266" text-anchor="middle" class="tick">10</text><text x="417.5" y="266" text-anchor="middle" class="tick">15</text><text x="540" y="266" text-anchor="middle" class="tick">20</text><text x="295" y="288" text-anchor="middle" class="tick">꼬리 길이 (cm)</text><text x="42" y="46" text-anchor="end" class="tick">빈도</text><path d="M50 249.5L54.9 249.4L59.8 249.3L64.7 249.1L69.6 248.9L74.5 248.6L79.4 248.3L84.3 248L89.2 247.5L94.1 247L99 246.4L103.9 245.8L108.8 245L113.7 244.1L118.6 243L123.5 241.8L128.4 240.5L133.3 238.9L138.2 237.2L143.1 235.3L148 233.2L152.9 230.8L157.8 228.2L162.7 225.4L167.6 222.3L172.5 219L177.4 215.4L182.3 211.6L187.2 207.6L192.1 203.3L197 198.9L201.9 194.2L206.8 189.4L211.7 184.6L216.6 179.6L221.5 174.5L226.4 169.5L231.3 164.5L236.2 159.7L241.1 154.9L246 150.4L250.9 146.1L255.8 142.1L260.7 138.4L265.6 135.2L270.5 132.3L275.4 129.9L280.3 128.1L285.2 126.7L290.1 125.9L295 125.6L299.9 125.9L304.8 126.7L309.7 128.1L314.6 129.9L319.5 132.3L324.4 135.2L329.3 138.4L334.2 142.1L339.1 146.1L344 150.4L348.9 154.9L353.8 159.7L358.7 164.5L363.6 169.5L368.5 174.5L373.4 179.6L378.3 184.6L383.2 189.4L388.1 194.2L393 198.9L397.9 203.3L402.8 207.6L407.7 211.6L412.6 215.4L417.5 219L422.4 222.3L427.3 225.4L432.2 228.2L437.1 230.8L442 233.2L446.9 235.3L451.8 237.2L456.7 238.9L461.6 240.5L466.5 241.8L471.4 243L476.3 244.1L481.2 245L486.1 245.8L491 246.4L495.9 247L500.8 247.5L505.7 248L510.6 248.3L515.5 248.6L520.4 248.9L525.3 249.1L530.2 249.3L535.1 249.4L540 249.5" class="fig-ink" stroke-dasharray="6 5"/><path d="M50 250L54.9 250L59.8 250L64.7 250L69.6 250L74.5 250L79.4 250L84.3 250L89.2 249.9L94.1 249.9L99 249.9L103.9 249.8L108.8 249.7L113.7 249.6L118.6 249.4L123.5 249.2L128.4 249L133.3 248.6L138.2 248.1L143.1 247.5L148 246.8L152.9 245.8L157.8 244.6L162.7 243.1L167.6 241.3L172.5 239.1L177.4 236.4L182.3 233.2L187.2 229.5L192.1 225.2L197 220.3L201.9 214.6L206.8 208.3L211.7 201.3L216.6 193.6L221.5 185.3L226.4 176.4L231.3 167L236.2 157.2L241.1 147.3L246 137.2L250.9 127.3L255.8 117.6L260.7 108.5L265.6 100.1L270.5 92.6L275.4 86.1L280.3 81L285.2 77.2L290.1 74.9L295 74.1L299.9 74.9L304.8 77.2L309.7 81L314.6 86.1L319.5 92.6L324.4 100.1L329.3 108.5L334.2 117.6L339.1 127.3L344 137.2L348.9 147.3L353.8 157.2L358.7 167L363.6 176.4L368.5 185.3L373.4 193.6L378.3 201.3L383.2 208.3L388.1 214.6L393 220.3L397.9 225.2L402.8 229.5L407.7 233.2L412.6 236.4L417.5 239.1L422.4 241.3L427.3 243.1L432.2 244.6L437.1 245.8L442 246.8L446.9 247.5L451.8 248.1L456.7 248.6L461.6 249L466.5 249.2L471.4 249.4L476.3 249.6L481.2 249.7L486.1 249.8L491 249.9L495.9 249.9L500.8 249.9L505.7 250L510.6 250L515.5 250L520.4 250L525.3 250L530.2 250L535.1 250L540 250" class="fig-accent"/><path d="M295 56V250" class="fig-ink" stroke-dasharray="2 4"/><path d="M295 70V250" class="fig-accent" stroke-dasharray="2 4"/><text x="289" y="52" text-anchor="end" class="fig-muted">선택 전 평균 10.0</text><text x="301" y="66" text-anchor="start" class="fig-text">선택 후 평균 10.0</text><text x="540" y="24" text-anchor="end" class="fig-muted">표준편차 2.1 cm · 봉우리 1개</text></svg></figure><figure class="figure"><svg id="widget-selection-static-3" viewBox="0 0 560 300" role="img" aria-label="분단성 선택 4세대 뒤 꼬리 길이 분포. 점선은 선택 전 곡선(평균 10.0 cm, 표준편차 3.0 cm), 실선은 선택 후 곡선(평균 10.0 cm, 표준편차 4.3 cm, 봉우리 2개)"><text x="16" y="24" class="fig-text">분단성 선택 · 4세대 뒤</text><path d="M50 250H540" class="axis"/><path d="M50 50V250" class="axis"/><text x="50" y="266" text-anchor="middle" class="tick">0</text><text x="172.5" y="266" text-anchor="middle" class="tick">5</text><text x="295" y="266" text-anchor="middle" class="tick">10</text><text x="417.5" y="266" text-anchor="middle" class="tick">15</text><text x="540" y="266" text-anchor="middle" class="tick">20</text><text x="295" y="288" text-anchor="middle" class="tick">꼬리 길이 (cm)</text><text x="42" y="46" text-anchor="end" class="tick">빈도</text><path d="M50 249.3L54.9 249.2L59.8 248.9L64.7 248.7L69.6 248.4L74.5 248L79.4 247.6L84.3 247.1L89.2 246.5L94.1 245.8L99 245L103.9 244L108.8 242.9L113.7 241.6L118.6 240.1L123.5 238.4L128.4 236.5L133.3 234.4L138.2 231.9L143.1 229.2L148 226.2L152.9 222.9L157.8 219.2L162.7 215.2L167.6 210.8L172.5 206.1L177.4 201.1L182.3 195.7L187.2 190L192.1 184L197 177.7L201.9 171.1L206.8 164.4L211.7 157.4L216.6 150.4L221.5 143.3L226.4 136.2L231.3 129.2L236.2 122.3L241.1 115.6L246 109.1L250.9 103.1L255.8 97.4L260.7 92.2L265.6 87.6L270.5 83.6L275.4 80.2L280.3 77.6L285.2 75.6L290.1 74.5L295 74.1L299.9 74.5L304.8 75.6L309.7 77.6L314.6 80.2L319.5 83.6L324.4 87.6L329.3 92.2L334.2 97.4L339.1 103.1L344 109.1L348.9 115.6L353.8 122.3L358.7 129.2L363.6 136.2L368.5 143.3L373.4 150.4L378.3 157.4L383.2 164.4L388.1 171.1L393 177.7L397.9 184L402.8 190L407.7 195.7L412.6 201.1L417.5 206.1L422.4 210.8L427.3 215.2L432.2 219.2L437.1 222.9L442 226.2L446.9 229.2L451.8 231.9L456.7 234.4L461.6 236.5L466.5 238.4L471.4 240.1L476.3 241.6L481.2 242.9L486.1 244L491 245L495.9 245.8L500.8 246.5L505.7 247.1L510.6 247.6L515.5 248L520.4 248.4L525.3 248.7L530.2 248.9L535.1 249.2L540 249.3" class="fig-ink" stroke-dasharray="6 5"/><path d="M50 248.2L54.9 247.7L59.8 247.2L64.7 246.5L69.6 245.7L74.5 244.7L79.4 243.6L84.3 242.2L89.2 240.6L94.1 238.7L99 236.4L103.9 233.8L108.8 230.8L113.7 227.4L118.6 223.4L123.5 218.9L128.4 213.8L133.3 208.1L138.2 201.8L143.1 194.8L148 187.1L152.9 178.9L157.8 170.1L162.7 160.8L167.6 151.3L172.5 141.6L177.4 132.1L182.3 123.1L187.2 114.9L192.1 107.9L197 102.4L201.9 98.9L206.8 97.6L211.7 98.7L216.6 102.2L221.5 108.1L226.4 116.2L231.3 126L236.2 137L241.1 148.6L246 160.4L250.9 171.7L255.8 182.2L260.7 191.5L265.6 199.6L270.5 206.2L275.4 211.5L280.3 215.4L285.2 218.2L290.1 219.8L295 220.3L299.9 219.8L304.8 218.2L309.7 215.4L314.6 211.5L319.5 206.2L324.4 199.6L329.3 191.5L334.2 182.2L339.1 171.7L344 160.4L348.9 148.6L353.8 137L358.7 126L363.6 116.2L368.5 108.1L373.4 102.2L378.3 98.7L383.2 97.6L388.1 98.9L393 102.4L397.9 107.9L402.8 114.9L407.7 123.1L412.6 132.1L417.5 141.6L422.4 151.3L427.3 160.8L432.2 170.1L437.1 178.9L442 187.1L446.9 194.8L451.8 201.8L456.7 208.1L461.6 213.8L466.5 218.9L471.4 223.4L476.3 227.4L481.2 230.8L486.1 233.8L491 236.4L495.9 238.7L500.8 240.6L505.7 242.2L510.6 243.6L515.5 244.7L520.4 245.7L525.3 246.5L530.2 247.2L535.1 247.7L540 248.2" class="fig-accent"/><path d="M295 56V250" class="fig-ink" stroke-dasharray="2 4"/><path d="M295 70V250" class="fig-accent" stroke-dasharray="2 4"/><text x="289" y="52" text-anchor="end" class="fig-muted">선택 전 평균 10.0</text><text x="301" y="66" text-anchor="start" class="fig-text">선택 후 평균 10.0</text><text x="540" y="24" text-anchor="end" class="fig-muted">표준편차 4.3 cm · 봉우리 2개</text></svg></figure><div class="table-wrap"><table><tr><th>설정 (선택 전 평균 10.0 cm, 표준편차 3.0 cm, 봉우리 1개)</th><th>선택 후 평균</th><th>선택 후 표준편차</th><th>봉우리 수</th></tr><tr><td>방향성 선택, 0세대</td><td>10.0 cm</td><td>3.0 cm</td><td>1개</td></tr><tr><td>방향성 선택, 2세대</td><td>11.8 cm</td><td>3.0 cm</td><td>1개</td></tr><tr><td>방향성 선택, 4세대</td><td>13.6 cm</td><td>3.0 cm</td><td>1개</td></tr><tr><td>방향성 선택, 6세대</td><td>15.4 cm</td><td>3.0 cm</td><td>1개</td></tr><tr><td>안정화 선택, 2세대</td><td>10.0 cm</td><td>2.4 cm</td><td>1개</td></tr><tr><td>안정화 선택, 4세대</td><td>10.0 cm</td><td>2.1 cm</td><td>1개</td></tr><tr><td>안정화 선택, 6세대</td><td>10.0 cm</td><td>1.9 cm</td><td>1개</td></tr><tr><td>분단성 선택, 1세대</td><td>10.0 cm</td><td>3.4 cm</td><td>2개</td></tr><tr><td>분단성 선택, 4세대</td><td>10.0 cm</td><td>4.3 cm</td><td>2개</td></tr><tr><td>분단성 선택, 6세대</td><td>10.0 cm</td><td>4.7 cm</td><td>2개</td></tr></table></div></div>
+    </div>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>교수님은 흥부와 놀부 영상으로 상대적 적응도를 설명했어요. 놀부가 아무리 부자여도 자식이 1명이면 자식 10명인 흥부에 비해 0.1밖에 안 되고, 세대가 지나면 마을이 흥부의 유전자로 채워진다는 내용이에요.</p>
+    <blockquote>돈이 많다, 행복하다, 건강하다 이런 거 다 필요 없고 무조건 자식 수.</blockquote>
+    <p>세 양상은 “이 단어 속에 답이 다 들어 있습니다”라고 했어요. 꼬리 길이로 비유하며, 짧은 꼬리가 인기가 없으면 평균 자체가 한쪽으로 변하고, 짧은 꼬리도 긴 꼬리도 싫으면 그래프가 홀쭉해지고, 둘 다 귀여우면 봉우리가 두 개가 된다고 설명했어요.</p>
+    <p>항생제 내성 퀴즈에서 한 학생이 다형화 선택이라고 답하자, 교수님은 “없다가 있게 된 거”, 즉 있는 방향으로 바뀐 것이므로 방향성 선택이라고 정정했어요. 출생 체중 퀴즈의 답은 극단이 사라지는 안정화 선택이었어요.</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li><strong>항생제 내성 획득을 분단성(다형화) 선택으로 착각하기 쉬워요.</strong> 분단성은 가운데가 불리해 양 극단 두 무리가 남는 경우예요. 내성 세균이 늘어난 것은 집단이 한쪽 끝으로 옮겨 간 것이라 방향성 선택이에요.</li>
+      <li><strong>항생제를 사람이 썼으니 사람의 선택이라고 착각하기 쉬워요.</strong> 사람은 환경(항생제)을 만들었을 뿐 살아남을 세균을 골라 번식시키지 않았어요. 선택을 받는 것은 세균 집단이고, 내성 개체가 더 많이 번식한 자연선택이에요.</li>
+      <li><strong>안정화 선택과 방향성 선택을 헷갈리기 쉬워요.</strong> 안정화 선택은 평균이 변하지 않고 분포 폭이 줄어요. 방향성 선택은 평균 자체가 이동해요.</li>
+      <li><strong>적응도를 오래 살거나 강하거나 부유한 정도로 착각하기 쉬워요.</strong> 적응도는 다른 개체와 비교한 자식 수예요. 생존은 자식을 남기기 위한 조건으로만 들어가요.</li>
+      <li><strong>개체 수가 줄었으니 선택이 아니라고 착각하기 쉬워요.</strong> 선택이 일어나면 불리한 개체가 죽어 전체 수가 줄 수 있어요. 양상은 개체 수가 아니라 분포의 평균과 모양이 어떻게 바뀌었는지로 판별해요.</li>
+    </ul>
+  </div>
+  <div class="layer supp" id="s1-fitness-supp-1"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+    <p><strong>자연선택 직후의 다양성.</strong> 자연선택은 덜 적합한 표현형을 줄이므로 일반적으로 개체군 안의 다양성(변이)이 줄어요. 교재는 안정화 선택이 맨 가장자리 표현형을 제거하면서 유전자형과 표현형의 변이를 줄인다고 쓰고, 자연선택의 효과를 “한 대립유전자가 다른 것을 대체할 수 있다”고 정리해요. 예외는 분단성 선택이에요. 극단 표현형을 만드는 대립유전자가 더 흔해져 양 극단이 남고 다형성이 촉진돼요. 같은 표에는 대립유전자 변이가 보존될 수도 있다고 적혀 있어요(<a href="#s1-balanced">불리한 대립유전자가 남는 이유: 이형접합자 이점</a>).</p>
+    <p><strong>환경이 바뀌어 새롭고 강한 선택이 오면.</strong> 아래 일은 모두 일어날 수 있어요. 어느 하나만 반드시 일어나는 것은 아니에요.</p>
+    <ul>
+      <li>새 환경에 맞는 변이가 부족하면 적응하지 못해 개체 수가 줄고 멸종할 수 있어요. 교재는 변이가 없으면 환경 변화에 적응할 수 없을 수도 있다고 써요.</li>
+      <li>방향성 선택이면 평균이 옮겨 가므로, 전에 흔하던 형태가 드물어지고 전에 드물던 형태가 흔해져요.</li>
+      <li>불리한 형태가 제거되면 변이가 줄어 개체들이 서로 비슷해질 수 있어요.</li>
+    </ul>
+    <p>출처: 교재 7장 p.151(보존의 의미, 방향성·안정화·분단성 선택, 표 7.3), p.152 그림 7.15 설명</p>
+  </div>
+  <div class="layer supp" id="s1-fitness-supp-2"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+    <p><strong>새 사례에 정의 적용하기.</strong> 교재는 방향성 선택을 표현형 스펙트럼의 한쪽 끝 개체들이 가장 높은 상대적 적응도를 가질 때 평균에서 선호되는 극단 쪽으로 형질이 옮겨 가는 것이라고 정의해요. 이 정의만으로 아래 사례를 판별할 수 있어요.</p>
+    <ul>
+      <li><strong>선택받는 것은 그 집단이에요</strong>: 교재 7장 도입은 항생제가 저항성이 조금이라도 있는 세균이 선호되는 환경을 만들고, 살아남은 세균이 그 유전자를 다음 세대에 퍼뜨린다고 설명해요. 환경을 만든 쪽이 아니라 변이를 가진 채 더 많이 또는 덜 번식하는 집단을 기준으로 판단해요.</li>
+      <li><strong>한쪽 극단의 선호·제거는 방향성이에요</strong>: 한쪽 극단이 더 많은 자식을 남기거나(선호), 반대로 한쪽 극단만 자식을 남기지 못하면(제거) 평균이 다른 쪽으로 옮겨 가요. 그 극단을 없애는 원인이 사람의 사냥 같은 것이어도, 사람이 남길 개체를 골라 번식시킨 것이 아니면 기준은 같아요.</li>
+      <li><strong>획득형질 설명은 선택 유형이 아니에요</strong>: 살면서 쓰다 보니 형질이 변했고 그 변화가 자식에게 전해졌다는 설명은 라마르크식 생각이에요(<a href="../1027/정리노트_1027_Evolutionary_Thought_and_Microevolution.html#s0-lamarck">1027 라마르크</a>). 같은 결과라도 원래 그 형질을 가졌던 개체가 더 많이 남았다는 설명만 선택이에요.</li>
+    </ul>
+    <p><strong>분포 그래프 읽기.</strong> 같은 집단을 두 시점에 잰 분포 그래프는 가로축이 형질 값, 세로축이 개체 수예요. 아래는 핀치의 부리 깊이를 가뭄 전과 가뭄 생존자로 나눠 그리는 문항 그래프의 구조만 옮긴 모식도예요(곡선 모양과 위치는 설명용이고 실제 측정값이 아니에요).</p>
+    <figure class="figure"><svg id="fig-fitness-finch" viewBox="0 0 560 270" role="img" aria-label="가로축 부리 깊이(mm), 세로축 개체 수인 그래프예요. 크고 넓은 선 곡선이 1976 가뭄 전, 작고 낮은 강조색 선 곡선이 1978 가뭄 생존자예요. 각 곡선의 평균선이 점선으로 그려져 있고, 가뭄 생존자의 평균선이 오른쪽(부리가 깊은 쪽)에 있어요.">
+      <path class="axis" d="M60 215H530"/><path class="axis" d="M60 30V215"/><text class="tick" x="295" y="240" text-anchor="middle">부리 깊이 (mm)</text><text class="tick" x="66" y="26" text-anchor="start">개체 수</text><text class="tick" x="70" y="232">얕음</text><text class="tick" x="520" y="232" text-anchor="end">깊음</text><path class="fig-ink" d="M60 213.7L65 213.3L70 212.9L75 212.4L80 211.8L85 211L90 210.1L95 209L100 207.7L105 206.3L110 204.5L115 202.5L120 200.3L125 197.6L130 194.7L135 191.4L140 187.7L145 183.6L150 179.2L155 174.3L160 169.1L165 163.4L170 157.5L175 151.2L180 144.7L185 137.9L190 131L195 124L200 117L205 110.1L210 103.4L215 97L220 90.9L225 85.2L230 80.2L235 75.7L240 71.9L245 68.9L250 66.8L255 65.4L260 65L265 65.4L270 66.8L275 68.9L280 71.9L285 75.7L290 80.2L295 85.2L300 90.9L305 97L310 103.4L315 110.1L320 117L325 124L330 131L335 137.9L340 144.7L345 151.2L350 157.5L355 163.4L360 169.1L365 174.3L370 179.2L375 183.6L380 187.7L385 191.4L390 194.7L395 197.6L400 200.3L405 202.5L410 204.5L415 206.3L420 207.7L425 209L430 210.1L435 211L440 211.8L445 212.4L450 212.9L455 213.3L460 213.7L465 214L470 214.2L475 214.4L480 214.5L485 214.6L490 214.7L495 214.8L500 214.8L505 214.9L510 214.9L515 214.9L520 214.9"/><path class="fig-accent" d="M60 215L65 215L70 215L75 215L80 215L85 215L90 215L95 215L100 215L105 215L110 215L115 214.9L120 214.9L125 214.9L130 214.9L135 214.8L140 214.7L145 214.7L150 214.5L155 214.4L160 214.2L165 214L170 213.7L175 213.3L180 212.8L185 212.3L190 211.6L195 210.8L200 209.9L205 208.8L210 207.6L215 206.1L220 204.5L225 202.6L230 200.6L235 198.3L240 195.9L245 193.3L250 190.5L255 187.6L260 184.7L265 181.6L270 178.6L275 175.6L280 172.8L285 170.1L290 167.6L295 165.4L300 163.5L305 162L310 160.9L315 160.2L320 160L325 160.2L330 160.9L335 162L340 163.5L345 165.4L350 167.6L355 170.1L360 172.8L365 175.6L370 178.6L375 181.6L380 184.7L385 187.6L390 190.5L395 193.3L400 195.9L405 198.3L410 200.6L415 202.6L420 204.5L425 206.1L430 207.6L435 208.8L440 209.9L445 210.8L450 211.6L455 212.3L460 212.8L465 213.3L470 213.7L475 214L480 214.2L485 214.4L490 214.5L495 214.7L500 214.7L505 214.8L510 214.9L515 214.9L520 214.9"/><path class="fig-ink" d="M260 55V215" stroke-dasharray="4 4"/><path class="fig-accent" d="M320 140V215" stroke-dasharray="4 4"/><text class="fig-text" x="252" y="50" text-anchor="end">1976 (가뭄 전) 평균</text><text class="fig-text" x="330" y="132" text-anchor="start">1978 (가뭄 생존자) 평균</text><text class="fig-muted" x="120" y="110" text-anchor="middle">1976 (가뭄 전)</text><text class="fig-muted" x="470" y="190" text-anchor="middle">1978 (가뭄 생존자)</text><text class="fig-muted" x="295" y="262" text-anchor="middle">눈금 숫자를 뺀 모식도</text>
+    </svg><figcaption>생존자 곡선은 낮아 개체 수가 줄었고, 평균선은 부리가 깊은 쪽으로 옮겨 갔어요.</figcaption></figure>
+    <ul>
+      <li>두 평균선의 위치를 비교해요. 생존자 평균이 한쪽(부리가 깊은 쪽)으로 옮겨 갔으므로 방향성 선택이에요.</li>
+      <li>곡선의 높이(넓이)를 비교해요. 생존자 곡선이 훨씬 작으므로 개체 수는 오히려 줄었어요. 개체 수가 늘었다고 읽으면 틀려요.</li>
+      <li>“부리를 쓰는 방식에 따라 부리가 변해서 자식에게 전해졌다”는 획득형질 설명이에요. 그래프는 원래 부리가 깊었던 개체가 더 많이 살아남았다는 것을 보여 줄 뿐이에요.</li>
+    </ul>
+    <p>출처: 교재 7장 p.139(항생제 내성 도입), p.151(방향성 선택 정의), p.152 그림 7.15(분포 그래프 읽기). 라마르크는 1027 수업. 핀치 부리 깊이 자료 자체는 교재 7장과 강의노트에서 찾지 못해 수치 없는 모식도로만 그렸어요.</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">적응도는 남보다 자식을 얼마나 많이 남겼는가이고, 어느 표현형이 불리한지에 따라 분포가 세 가지로 바뀌어요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>상대적 적응도(relative fitness)</dt><dd>다른 개체와 비교한 생존한 자식 수예요. 대립유전자는 자식으로만 전해지므로 부·수명이 아니라 자식 수로 매기고, 남보다 많아야 빈도가 올라가요. 가장 많이 남긴 개체를 1.0으로 놓기도 해요(흥부 1.0, 놀부 0.1).</dd>
+      <dt>선택의 대상</dt><dd>자연선택은 대립유전자 자체가 아니라 표현형에 작용해요.</dd>
+      <dt>방향성 선택(directional selection)</dt><dd>한쪽 극단이 불리하고 반대쪽이 유리해 평균이 한쪽으로 이동해요. 예: 항생제 내성 세균 증가.</dd>
+      <dt>안정화 선택(stabilizing selection)</dt><dd>양 극단이 불리해 평균은 그대로, 분포 폭이 좁아져요. 예: 너무 작거나 큰 출생 체중의 높은 사망률.</dd>
+      <dt>분단성 선택(disruptive selection)</dt><dd>다형화 선택이라고도 해요. 중간이 불리해 봉우리가 둘이 되고 다양해져요.</dd>
+      <dt>판별 순서</dt><dd>선택받는 집단(세균 집단 등)을 정하고, 늘어난 쪽이 한쪽 끝·가운데·양 끝 중 어디인지 보고, 평균 이동·폭 감소·봉우리 둘로 나눠요. 개체 수 감소만으로 양상을 정하지 않아요.</dd>
+      <dt>헷갈리는 짝</dt><dd>항생제 내성 획득은 분단성이 아니라 방향성이에요. 항생제를 쓴 사람이 고른 것이 아니라 세균 집단에 일어난 자연선택이에요. 표현형과 무관한 우연한 죽음(산불)은 유전적 부동이에요.</dd>
+    </dl>
+    <div class="sum-supp" data-supp-source="s1-fitness-supp-1" data-supp-label="보충 · 수업에서 다루지 않았어요">
+      <dl class="terms"><dt>(보충) 선택 뒤 다양성과 강한 선택</dt><dd>자연선택 직후 다양성은 덜 적합한 형질이 제거되어 일반적으로 줄고, 분단성 선택은 양 극단이 남는 예외예요. 강하고 새로운 선택에서는 적응하지 못하면 멸종할 수도, 흔하던 형태가 드물어지고 드문 형태가 흔해질 수도, 변이가 줄어 비슷해질 수도 있어요(교재 기준).</dd></dl>
+    </div>
+    <div class="sum-supp" data-supp-source="s1-fitness-supp-2" data-supp-label="보충 · 수업에서 다루지 않았어요">
+      <dl class="terms"><dt>(보충) 새 사례와 분포 그래프</dt><dd>선택받는 것은 변이를 가진 그 집단이고, 한쪽 극단이 선호되거나 제거되면 평균이 옮겨 가는 방향성 선택이에요. 쓰다 보니 변했다는 획득형질 설명은 선택 유형이 아니에요. 두 시점 분포 그래프는 평균선의 이동으로 양상을, 곡선 크기로 개체 수 변화를 읽어요. 핀치 그래프는 수치 없는 모식도로만 다뤘어요.</dd></dl>
+    </div>
+  </div>
+</article>
+
+<article class="topic" id="s1-sexual"><h3>성선택과 성적이형성</h3><div class="tags"><span class="tag date">1029 수업</span><span class="tag slide">7장 p5</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">짝을 고르는 쪽이 좋아하는 모습은 다음 세대에 점점 많아져요.</p>
+    <figure class="figure"><svg id="fig-sexual-mane" viewBox="0 0 560 210" role="img" aria-label="왼쪽 처음 칸에는 수사자 네 마리 중 두 마리만 색칠된 동그라미 둘레에 갈기를 뜻하는 바깥 테두리 고리가 있고, 고르는 쪽인 테두리 동그라미에서 갈기 있는 두 마리로 화살표가 가요. 오른쪽 여러 세대 뒤 칸에는 네 마리 모두 바깥 고리가 있어요.">
+      <rect class="fig-ink" x="20" y="20" width="250" height="170" rx="12"/>
+      <rect class="fig-ink" x="290" y="20" width="250" height="170" rx="12"/>
+      <text class="fig-text" x="145" y="44" text-anchor="middle">처음</text>
+      <text class="fig-text" x="415" y="44" text-anchor="middle">여러 세대 뒤</text>
+      <circle class="fig-ink" cx="145" cy="150" r="13"/>
+      <text class="fig-muted" x="145" y="180" text-anchor="middle">고르는 쪽</text>
+      <circle class="fig-accent" cx="60" cy="85" r="20"/><circle class="fig-dot" cx="60" cy="85" r="11"/>
+      <circle class="fig-dot" cx="113" cy="85" r="11"/>
+      <circle class="fig-accent" cx="177" cy="85" r="20"/><circle class="fig-dot" cx="177" cy="85" r="11"/>
+      <circle class="fig-dot" cx="230" cy="85" r="11"/>
+      <path class="fig-ink" d="M136 138L72 106"/><path class="fig-ink" d="M72 106l11 0M72 106l5 10"/>
+      <path class="fig-ink" d="M154 138L170 108"/><path class="fig-ink" d="M170 108l-9 6M170 108l2 11"/>
+      <circle class="fig-accent" cx="335" cy="95" r="20"/><circle class="fig-dot" cx="335" cy="95" r="11"/>
+      <circle class="fig-accent" cx="390" cy="95" r="20"/><circle class="fig-dot" cx="390" cy="95" r="11"/>
+      <circle class="fig-accent" cx="445" cy="95" r="20"/><circle class="fig-dot" cx="445" cy="95" r="11"/>
+      <circle class="fig-accent" cx="500" cy="95" r="20"/><circle class="fig-dot" cx="500" cy="95" r="11"/>
+      <text class="fig-muted" x="415" y="150" text-anchor="middle">바깥 고리 = 갈기</text>
+    </svg><figcaption>고르는 쪽이 갈기 있는 수컷만 고르면, 여러 세대 뒤에는 수컷 대부분이 갈기를 가져요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p><strong>성선택(sexual selection)</strong>은 이성 중 한쪽이 마음에 드는 짝을 골라 교배하는 데서 생기는 선택이에요. 교수님은 이를 <strong>선택적 교배</strong>와 같은 말로 묶어 설명했어요. 자연계에서는 보통 <strong>암컷</strong>이 수컷을 골라요.</p>
+    <p>성선택이 일어나는 조건은 한쪽 성의 선택이 상대 개체의 짝짓기 성공을 가르는 것이에요. 선택받은 개체는 자식을 더 많이 남기고 선택받지 못한 개체는 자식을 덜 남기므로, 선택받은 형질을 만드는 대립유전자가 다음 세대에 많아져요. 즉 <strong>대립유전자 빈도</strong>가 변해 소진화가 일어나요.</p>
+    <ul>
+      <li>조건은 생존률이나 생식력이 높아지는 것 자체가 아니에요. 고르는 쪽의 선호가 짝짓기 성공의 차이를 만드는 것이에요.</li>
+      <li>조건은 ‘수컷이어야 한다’는 성별 규칙도 아니에요. 보통 암컷이 고르고 수컷이 선택받는다는 것은 흔한 경우이고, 판별의 핵심은 고르는 쪽과 선택받는 쪽의 관계예요.</li>
+    </ul>
+    <p><strong>성적이형성(sexual dimorphism)</strong>은 암수의 모양이 달라지는 현상이에요. di는 ‘둘’, morphism은 ‘형태’라는 뜻이에요. 암컷이 특정 형질만 계속 고르면 그 형질이 수컷에게만 쌓여 암수 차이가 점점 커져요. 강의노트는 성선택을 성적이형성의 원인으로 적어요.</p>
+    <ul>
+      <li>사자의 <strong>갈기</strong>: 수컷에게만 있어요. 암컷이 갈기 있는 수컷과만 교배하면 태어난 수컷이 모두 갈기를 갖게 돼요.</li>
+      <li><strong>공작</strong>: 화려하게 펼치는 깃(강의노트의 ‘공작의 꼬리’)도 수컷에게만 있어요.</li>
+      <li>사람: 교수님은 여성이 몸집 큰 남성을 선호한 결과 남성이 대체로 더 크다고 설명했어요.</li>
+    </ul>
+    <p>성선택 형질은 생존에 불리할 수 있어요. 공작 수컷의 큰 깃은 움직이기에 거추장스럽고 포식자 눈에 잘 띄어요. 그래도 그 형질이 짝짓기 성공을 높여 자식 수를 늘리면, 상대적 적응도는 자식 수로 매기므로 그 대립유전자가 퍼져요(<a href="#s1-fitness">상대적 적응도와 자연선택의 세 양상</a>).</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>성선택과 선택적 교배는 “둘의 차이까지 구별할 필요는 없고”라고 했어요. 남자가 여자 옷을 입으면 엄청 작다며 사람의 몸집 차이를 성선택의 결과로 들었어요.</p>
+    <p>라이언 킹을 예로 “갈기 있는 애가 킹이냐 퀸이냐?”라고 묻고, 답은 수컷이라고 했어요. 이어서 암수 모양 차이가 같아지는지, 비슷해지는지, 달라지는지를 묻고, 특정 형질만 고르니 차이가 점점 커진다고 답했어요.</p>
+    <p>공작의 큰 깃은 생존에는 도움이 안 되고 오히려 포식자에게 광고하는 셈이라고 했어요.</p>
+    <blockquote>얘들아, 나 좀 잡아먹어 볼래?</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li><strong>성선택과 선택적 교배를 강의노트에서도 같은 항목으로 착각하기 쉬워요.</strong> 교수님은 둘을 묶어 말했지만, 강의노트에서 성선택은 자연선택 항목 아래에 있고 선택적 교배·근친교배는 별도 항목이에요. 근친교배는 수업에서 다루지 않았어요.</li>
+      <li><strong>성선택이 일어나면 암수가 비슷해진다고 착각하기 쉬워요.</strong> 한쪽 성의 특정 형질만 골라지므로 암수 차이가 커져요. 이것이 성적이형성이에요.</li>
+      <li><strong>성선택 형질은 생존에도 유리하다고 착각하기 쉬워요.</strong> 공작의 깃처럼 생존에는 불리할 수 있어요. 남는 이유는 짝짓기 성공으로 자식을 더 많이 남기기 때문이에요.</li>
+      <li><strong>성선택의 조건을 ‘생존률·생식력 증가’나 ‘수컷일 것’으로 착각하기 쉬워요.</strong> 조건은 이성 중 한쪽(보통 암컷)의 선택이 짝짓기 성공에 영향을 주는 것이에요.</li>
+      <li><strong>공작의 ‘날개’라고 기억하기 쉬워요.</strong> 교수님은 날개라고 말했지만 강의노트는 ‘공작의 꼬리’라고 적어요. 펼치는 것은 날개가 아니라 꼬리 쪽 깃이에요.</li>
+    </ul>
+  </div>
+  <div class="layer supp" id="s1-sexual-supp-1"><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>
+    <p>강의노트는 성선택을 두 가지로 나눠요. 하나는 수컷과 암컷 사이의 선택이고 예가 공작의 꼬리예요. 다른 하나는 같은 성 사이의 선택이고 예가 사슴의 뿔이에요. 같은 성 사이의 선택은 고르는 쪽이 이성이 아니라 같은 성 개체 사이에서 일어난다는 점에서 공작 예와 달라요. 뿔이 이 선택에서 어떻게 쓰이는지는 수업과 강의노트에 설명이 없어요.</p>
+    <p>출처: 강의노트 7장 p5</p>
+  </div>
+  <div class="layer supp" id="s1-sexual-supp-2"><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>
+    <p>강의노트는 성선택을 자연선택 항목 아래에 두고, 선택적 교배와 근친교배는 “선택적 교배가 유전자형 빈도에 영향을 줄 수 있다”는 별도 항목으로 둬요. 자세한 내용은 <a href="#s0-factors">조건이 깨지면 소진화: 돌연변이와 유전자 확산</a>에 정리했어요.</p>
+    <p>출처: 강의노트 7장 p5</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">한쪽 성(보통 암컷)이 짝을 고르면 선택받은 형질의 대립유전자가 많아지고 암수 차이가 커져요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>성선택(sexual selection)</dt><dd>이성 중 한쪽(보통 암컷)이 짝을 골라 교배하는 데서 생기는 선택이에요. 교수님은 선택적 교배와 묶어 말했어요. 강의노트는 둘을 별도 항목으로 둬요. 조건은 그 선택이 짝짓기 성공을 가르는 것이고, 생존률·생식력 증가 자체나 ‘수컷일 것’이 아니에요.</dd>
+      <dt>결과</dt><dd>선택받은 형질의 대립유전자가 다음 세대에 많아져 대립유전자 빈도가 변해요.</dd>
+      <dt>성적이형성(sexual dimorphism)</dt><dd>암수 모양이 달라지는 현상(di 둘, morphism 형태)이에요. 한쪽 성의 특정 형질만 골라지므로 차이가 커지고, 성선택이 원인이에요. 예: 사자 갈기, 공작 깃, 사람 몸집.</dd>
+      <dt>생존과의 관계</dt><dd>공작 깃처럼 생존에 불리해도 짝짓기 성공으로 자식 수가 늘면 유지돼요.</dd>
+    </dl>
+    <div class="sum-supp" data-supp-source="s1-sexual-supp-1" data-supp-label="보충 · 노트에 빠졌던 수업 내용">
+      <dl class="terms"><dt>(보충) 같은 성 사이의 선택</dt><dd>강의노트는 성선택을 수컷과 암컷 사이(공작의 꼬리)와 같은 성 사이(사슴의 뿔)로 나눠요. 뿔의 쓰임은 수업·강의노트에 설명이 없어요.</dd></dl>
+    </div>
+    <div class="sum-supp" data-supp-source="s1-sexual-supp-2" data-supp-label="보충 · 노트에 빠졌던 수업 내용">
+      <dl class="terms"><dt>(보충) 강의노트의 항목 구분</dt><dd>강의노트는 성선택을 자연선택 아래에, 선택적 교배·근친교배를 유전자형 빈도에 영향을 주는 별도 항목으로 둬요.</dd></dl>
+    </div>
+  </div>
+</article>
+
+<article class="topic" id="s1-balanced"><h3>불리한 대립유전자가 남는 이유: 이형접합자 이점</h3><div class="tags"><span class="tag date">1029 수업</span><span class="tag slide">강의노트 7장에 없음</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">바뀐 정보를 하나만 가진 사람이 모기 병이 흔한 곳에서 가장 잘 살아남으면, 그 정보는 사라지지 않고 남아요.</p>
+    <figure class="figure"><svg id="fig-balanced-hidden" viewBox="0 0 560 230" role="img" aria-label="세 칸 표 그림이에요. 정상 정보 둘인 사람은 빈혈 없음, 모기 병에 약함. 정상 하나와 바뀐 것 하나인 사람은 빈혈 약함, 모기 병에 강함. 바뀐 것 둘인 사람은 빈혈 심함, 모기 병에 강함. 가운데 칸만 강조색 테두리로 둘러싸여 있고 아래에 모기 병이 흔한 곳에서 가장 유리라고 적혀 있어요.">
+      <rect class="fig-ink" x="20" y="20" width="160" height="160" rx="10"/>
+      <rect class="fig-accent" x="200" y="20" width="160" height="160" rx="10"/>
+      <rect class="fig-ink" x="380" y="20" width="160" height="160" rx="10"/>
+      <text class="fig-text" x="100" y="48" text-anchor="middle">정상 + 정상</text>
+      <text class="fig-text" x="280" y="48" text-anchor="middle">정상 + 바뀐 것</text>
+      <text class="fig-text" x="460" y="48" text-anchor="middle">바뀐 것 + 바뀐 것</text>
+      <text class="fig-muted" x="100" y="90" text-anchor="middle">빈혈: 없음</text>
+      <text class="fig-muted" x="280" y="90" text-anchor="middle">빈혈: 약함</text>
+      <text class="fig-muted" x="460" y="90" text-anchor="middle">빈혈: 심함</text>
+      <text class="fig-muted" x="100" y="130" text-anchor="middle">모기 병: 약함</text>
+      <text class="fig-muted" x="280" y="130" text-anchor="middle">모기 병: 강함</text>
+      <text class="fig-muted" x="460" y="130" text-anchor="middle">모기 병: 강함</text>
+      <text class="fig-text" x="280" y="210" text-anchor="middle">모기 병이 흔한 곳에서 가장 유리</text>
+    </svg><figcaption>강조색 테두리 칸의 사람이 가장 잘 살아남아서 바뀐 정보도 함께 다음 세대로 전해져요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p>자연선택이나 성선택이 계속되면 한쪽 대립유전자만 남고 불리하거나 매력 없는 대립유전자는 완전히 사라질 것 같아요. 실제로는 사라지지 않고 유지되는 경우가 많아요. 수업에서는 두 가지 이유를 들었어요.</p>
+    <p><strong>이유 1. 이배체이기 때문이에요.</strong> 사람은 상동염색체를 쌍으로 가지는 <strong>이배체</strong>라서 한 유전자좌에 대립유전자가 두 개 있어요. 자연선택은 유전자를 직접 보는 것이 아니라 <strong>표현형</strong>에 작용해요. 완전우성에서 <strong>이형접합자</strong>(Aa)는 우성 동형접합자(AA)와 표현형이 같아요. 그래서 열성 동형접합자(aa)가 불리해도, 열성 대립유전자 a는 우성 대립유전자에 가려진 채 이형접합자 안에서 선택을 피해 살아남아요.</p>
+    <p>수업의 열성 질환 예로 확인하면, 환자(aa)가 1만 명 중 1명이면 q = 0.01이고 이형접합자 빈도는 2pq = 2 × 0.99 × 0.01 ≈ 0.0198이에요(평형 가정, <a href="#s0-hw-practice">평형 계산의 함정과 열성 질환 역산</a>). 이형접합자는 a를 하나씩, 환자는 둘씩 가지므로 a의 약 99%가 표현형이 정상인 이형접합자 안에 있어요. 선택이 환자를 줄여도 a 대부분은 선택이 보지 못하는 곳에 있는 셈이에요.</p>
+    <p><strong>이유 2. 평형 다형성이에요.</strong> <strong>평형 다형성</strong>(balanced polymorphism)은 여러 형태(폴리모피즘, polymorphism)의 대립유전자가 한쪽으로 쏠리지 않고 평형을 유지하는 것이에요. 교수님은 한쪽이 많아지면 그쪽이 불리해지고 다른 쪽이 다시 많아지는 식으로 평형이 유지된다고 설명했어요. 그 이유 중 하나가 <strong>이형접합자 이점</strong>(heterozygote advantage)으로, 이형접합자의 상대적 적응도가 두 동형접합자보다 높은 경우예요.</p>
+    <p>대표 예는 <strong>낫모양 적혈구</strong> 빈혈증이에요. 헤모글로빈 유전자의 염기 하나가 바뀐 S 대립유전자 때문에 생기는 병이고, 바뀐 헤모글로빈이 적혈구 모양과 산소 운반에 영향을 주는 원리는 <a href="../0929/정리노트_0929_Heredity.html#s1-incomplete">0929 불완전우성과 낫모양적혈구</a>에서 배웠어요. 정상 대립유전자를 A라고 하면 세 유전자형은 다음과 같아요.</p>
+    <div class="table-wrap"><table>
+      <tr><th>유전자형</th><th>빈혈</th><th>말라리아</th><th>말라리아가 흔한 곳에서의 적응도</th></tr>
+      <tr><td>AA</td><td>없음</td><td>저항성 없음, 걸릴 위험 높음</td><td>말라리아로 일찍 죽을 수 있음</td></tr>
+      <tr><td>AS</td><td>약함(불완전 우성)</td><td>저항성 있음(S 하나로 충분)</td><td>가장 높음</td></tr>
+      <tr><td>SS</td><td>심함</td><td>저항성 있음</td><td>빈혈로 일찍 죽을 수 있음</td></tr>
+    </table></div>
+    <p>S는 빈혈을 일으켜 적응도를 떨어뜨리는 대립유전자인데도, 가장 유리한 AS 안에 실려 계속 다음 세대로 전해져요. 그래서 완전히 사라지지 않아요.</p>
+    <p><strong>숨은 조건: AS의 이점은 말라리아가 있어야 성립해요.</strong> AS가 AA보다 유리한 이유는 말라리아 저항성뿐이에요. 말라리아가 없는 지역에서는 AA가 말라리아로 손해 보는 일이 없으므로 S가 주는 이점이 사라지고, S는 빈혈이라는 손해만 남아요. 적응도는 같은 유전자형이라도 환경에 따라 달라져요.</p>
+    <ol class="steps">
+      <li>말라리아는 <strong>모기</strong>가 옮겨요. 말라리아 열원충은 사람의 적혈구와 모기의 장(소화관)을 오가며 살아요. 감염된 사람의 피를 빤 모기가 건강한 사람을 물면 옮아요.</li>
+      <li>모기는 물(웅덩이)이 많고 따뜻한 곳에서 잘 살아요. 아프리카가 미국보다 이런 조건이라 말라리아가 더 유행해요.</li>
+      <li>말라리아가 유행하는 곳에서는 S를 가진 사람(특히 AS)이 더 오래 살아남아 자식을 더 많이 남겨요. 그래서 S 빈도가 높아지고, 말라리아 분포와 S 빈도가 높은 지역이 겹쳐요.</li>
+      <li>그래서 같은 흑인이라도 아프리카에서는 S 빈도가 높고 미국에서는 낮아요. 인종 자체가 아니라 말라리아라는 환경 조건이 차이를 만들어요.</li>
+    </ol>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <blockquote>자연선택은 유전자를 보는 게 아닙니다. 표현형을 봅니다.</blockquote>
+    <p>AA는 빈혈증에는 안 걸리지만 말라리아로 일찍 죽을 수 있고, SS는 말라리아에는 안 걸리지만 빈혈로 일찍 죽는다며 “제일 좋은 사람이 A-S네요”라고 정리했어요.</p>
+    <p>퀴즈로 “왜 같은 흑인인데 아프리카 대륙에는 S 대립유전자 빈도가 높고, 미국에는 낮을까?”를 묻고 답은 말라리아라고 했어요. 인간을 가장 많이 죽인 동물 1위가 모기라는 이야기도 다시 꺼냈어요.</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <ul>
+      <li><strong>이형접합자 안에 숨는 것을 열성 동형접합자라고 착각하기 쉬워요.</strong> 교수님도 말하다가 고쳐 말했어요. 이형접합자 안에 숨는 것은 열성 대립유전자예요. 열성 동형접합자(aa)는 표현형이 드러나므로 선택을 받아요.</li>
+      <li><strong>AS의 우열 관계를 하나로 정하려다 헷갈리기 쉬워요.</strong> 빈혈 정도로 보면 AS는 중간인 불완전 우성이에요. 말라리아 저항성은 S 하나만 있어도 생겨요. 어떤 형질을 보느냐에 따라 우열 관계가 다르게 보여요.</li>
+      <li><strong>S가 ‘좋은 대립유전자’라서 남는다고 착각하기 쉬워요.</strong> SS는 여전히 심한 빈혈이에요. S가 남는 이유는 말라리아 지역에서 이형접합자 AS의 적응도가 가장 높기 때문이에요.</li>
+      <li><strong>AS가 어디서나 유리하다고 착각하기 쉬워요.</strong> 말라리아가 없는 지역에서는 AS의 이점이 사라져요. 그래서 미국에서는 S 빈도가 낮아요.</li>
+      <li><strong>S가 특정 인종만 가진 대립유전자라고 착각하기 쉬워요.</strong> 같은 흑인이라도 사는 곳의 말라리아 유행 여부에 따라 S 빈도가 달라요.</li>
+    </ul>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">선택은 표현형에 작용해서 열성 대립유전자가 이형접합자 안에 숨고, 말라리아 지역에서는 AS가 가장 유리해 S가 남아요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>이배체와 표현형 선택</dt><dd>이배체라 대립유전자가 두 개이고, 자연선택은 표현형에 작용해요. 이형접합자는 우성 동형접합자와 표현형이 같아 열성 대립유전자가 그 안에 숨어 선택을 피해요. 숨는 것은 열성 동형접합자가 아니라 열성 대립유전자예요. 드문 열성 대립유전자(q = 0.01)는 약 99%가 이형접합자 안에 있어요.</dd>
+      <dt>평형 다형성(balanced polymorphism)</dt><dd>여러 대립유전자가 한쪽으로 쏠리지 않고 평형을 유지하는 것이에요. 한쪽이 많아지면 불리해지고 다른 쪽이 다시 많아지는 식이에요.</dd>
+      <dt>이형접합자 이점(heterozygote advantage)</dt><dd>이형접합자의 상대적 적응도가 가장 높아 불리한 대립유전자도 유지되는 경우예요.</dd>
+      <dt>낫모양 적혈구와 말라리아</dt><dd>AA는 빈혈 없음·말라리아 위험, SS는 심한 빈혈·저항성, AS는 약한 빈혈(불완전 우성)·저항성(S 하나로 충분)이라 말라리아 지역에서 AS가 가장 유리해요.</dd>
+      <dt>숨은 조건</dt><dd>AS의 이점은 말라리아가 있어야 성립해요. 말라리아는 모기가 옮기고(원충이 적혈구와 모기 장을 오감), 모기가 잘 사는 따뜻하고 웅덩이 많은 아프리카에서 유행해 S 빈도가 높아요. 말라리아가 없는 미국에서는 이점이 사라져 S 빈도가 낮아요. 인종이 아니라 환경이 차이를 만들어요.</dd>
+    </dl>
+  </div>
+</article>
+    </section>
+    <section id="s2"><h2>2. [8장] 종이란 무엇인가와 생식적 격리</h2>
+<article class="topic" id="s2-species"><h3>종 개념과 아종</h3><div class="tags"><span class="tag date">1029 수업</span><span class="tag slide">8장 p1</span></div>
+<div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">생김새가 아니라, 서로 짝이 되어 새끼를 낳고 그 새끼도 커서 새끼를 낳을 수 있는지로 같은 무리인지 정해요.</p>
+<figure class="figure"><svg id="fig-s2-dragonfly-dog" viewBox="0 0 600 220" role="img" aria-label="왼쪽 테두리 상자에는 닮은 잠자리 두 마리가 있고 짝이 안 되어 다른 무리예요. 오른쪽 테두리 상자에는 크기가 아주 다른 개 두 마리가 있고 짝이 되어 같은 무리예요.">
+<rect class="fig-danger" x="15" y="15" width="275" height="190" rx="10"/>
+<text class="fig-text" x="152" y="40" text-anchor="middle" font-size="14">잠자리 두 마리</text>
+<line class="fig-ink" x1="70" y1="65" x2="70" y2="125"/>
+<ellipse class="fig-ink" cx="52" cy="80" rx="18" ry="6"/><ellipse class="fig-ink" cx="88" cy="80" rx="18" ry="6"/>
+<ellipse class="fig-ink" cx="54" cy="94" rx="15" ry="5"/><ellipse class="fig-ink" cx="86" cy="94" rx="15" ry="5"/>
+<line class="fig-ink" x1="230" y1="65" x2="230" y2="125"/>
+<ellipse class="fig-ink" cx="212" cy="80" rx="18" ry="6"/><ellipse class="fig-ink" cx="248" cy="80" rx="18" ry="6"/>
+<ellipse class="fig-ink" cx="214" cy="94" rx="15" ry="5"/><ellipse class="fig-ink" cx="246" cy="94" rx="15" ry="5"/>
+<text class="fig-muted" x="152" y="145" text-anchor="middle" font-size="13">생김새: 거의 같음</text>
+<text class="fig-text" x="152" y="168" text-anchor="middle" font-size="13">짝이 안 돼요</text>
+<text class="fig-text" x="152" y="192" text-anchor="middle" font-size="14">다른 무리</text>
+<rect class="fig-accent" x="310" y="15" width="275" height="190" rx="10"/>
+<text class="fig-text" x="447" y="40" text-anchor="middle" font-size="14">개 두 마리</text>
+<ellipse class="fig-ink" cx="365" cy="95" rx="35" ry="18"/><circle class="fig-ink" cx="408" cy="70" r="13"/>
+<line class="fig-ink" x1="345" y1="110" x2="345" y2="128"/><line class="fig-ink" x1="385" y1="110" x2="385" y2="128"/>
+<ellipse class="fig-ink" cx="520" cy="115" rx="14" ry="8"/><circle class="fig-ink" cx="538" cy="104" r="6"/>
+<line class="fig-ink" x1="512" y1="122" x2="512" y2="128"/><line class="fig-ink" x1="528" y1="122" x2="528" y2="128"/>
+<text class="fig-muted" x="447" y="145" text-anchor="middle" font-size="13">생김새: 아주 다름</text>
+<text class="fig-text" x="447" y="168" text-anchor="middle" font-size="13">짝이 되고, 새끼도 새끼를 낳아요</text>
+<text class="fig-text" x="447" y="192" text-anchor="middle" font-size="14">같은 무리</text>
+</svg><figcaption>닮은 잠자리는 다른 무리이고, 달라 보이는 개는 같은 무리예요.</figcaption></figure></div>
+<div class="layer formal"><span class="layer-title">정확히 말하면</span>
+<p>8장은 <strong>종분화(speciation)</strong>를 다뤄요. 강의노트는 종분화를 한 종이 두 종 이상으로 갈라지는 과정이라고 적었어요. 그러려면 먼저 '종(種, 씨 종)'이 무엇인지 정해야 해요. 종을 가르는 기준은 세 가지로 소개됐어요.</p>
+<div class="table-wrap"><table><thead><tr><th>개념</th><th>무엇으로 가르나</th><th>수업에서 짚은 점</th></tr></thead><tbody>
+<tr><td><strong>형태학적 종 개념</strong>(morphological species concept)</td><td>눈에 보이는 형태·해부학적 특징</td><td>분류학의 아버지 린네가 쓴 방법이에요. 린네는 눈으로 본 형태만으로 판단했어요.</td></tr>
+<tr><td><strong>생물학적 종 개념</strong>(biological species concept)</td><td>생식 여부만</td><td>가장 중요하다고 강조했어요. 아래에서 자세히 봐요.</td></tr>
+<tr><td><strong>계통발생적 종 개념</strong>(phylogenetic species concept)</td><td>진화 역사를 공유하는가</td><td>계통수의 가장 작은 가지 하나, 즉 공통조상을 공유하는 가장 작은 무리예요. 실제 종보다 조금 작아 개체군에 가까운 개념이에요. "이런 게 있구나" 정도만 알면 된다고 했어요.</td></tr>
+</tbody></table></div>
+<p><strong>생물학적 종 개념</strong>의 정의는 이래요. <strong>자연 상태</strong>에서 서로 교배가 가능하고, 낳은 자손이 또 자손을 낳을 수 있는 <strong>생식력 있는 자손</strong>을 낳으면 같은 종이에요. 아예 교배를 못 하거나, 자손을 낳아도 그 자손이 불임이면 다른 종이에요. 그래서 이 개념의 근거는 생식적 특징이에요. 생김새나 분자 자료가 얼마나 비슷한지는 이 개념의 기준이 아니에요.</p>
+<p>조건 두 개가 왜 다 필요한지는 반례로 보면 연결돼요.</p>
+<ol class="steps">
+<li><strong>'자연 상태'가 빠지면</strong>: 사자와 호랑이는 동물원에서 함께 두면 새끼가 태어나요. 이것까지 세면 둘을 같은 종이라고 해야 해요. 하지만 자연에서는 사자는 초원에, 호랑이는 깊은 숲에 살아 만날 일이 없어요. 자연에서 두 무리의 유전자가 실제로 섞이는지를 묻는 것이므로, 사람이 억지로 만든 짝짓기는 기준이 되지 않아요.</li>
+<li><strong>'생식력 있는 자손'이 빠지면</strong>: 말과 당나귀 사이에서는 노새가 태어나 오래 살아요. "자손이 태어난다"까지만 보면 말과 당나귀가 같은 종이 돼요. 하지만 노새는 정자·난자를 만들지 못하는 불임이라, 두 부모의 유전자가 노새에서 멈추고 다음 세대로 이어지지 않아요. 그래서 살아 있는 잡종이 태어나도 그 잡종이 불임이면 두 무리는 다른 종이에요(<a href="#s2-postzygotic">접합 후 장벽: 잡종 생존불능·불임·붕괴</a>).</li>
+</ol>
+<figure class="figure"><svg id="fig-s2-species-test" viewBox="0 0 600 250" role="img" aria-label="세 단계 판별 흐름도예요. 자연 상태에서 짝짓기하는지, 자손이 생기는지, 그 자손도 생식력이 있는지를 차례로 묻고, 셋 다 예이면 같은 종, 하나라도 아니오이면 다른 종이에요.">
+<rect class="fig-ink" x="10" y="20" width="170" height="56" rx="8"/>
+<text class="fig-text" x="95" y="44" text-anchor="middle" font-size="13">자연 상태에서</text>
+<text class="fig-text" x="95" y="62" text-anchor="middle" font-size="13">짝짓기하나?</text>
+<rect class="fig-ink" x="215" y="20" width="170" height="56" rx="8"/>
+<text class="fig-text" x="300" y="53" text-anchor="middle" font-size="13">자손이 생기나?</text>
+<rect class="fig-ink" x="420" y="20" width="170" height="56" rx="8"/>
+<text class="fig-text" x="505" y="44" text-anchor="middle" font-size="13">그 자손도</text>
+<text class="fig-text" x="505" y="62" text-anchor="middle" font-size="13">생식력이 있나?</text>
+<line class="fig-ink" x1="180" y1="48" x2="213" y2="48"/><polyline class="fig-ink" points="206,43 213,48 206,53"/>
+<text class="fig-muted" x="197" y="40" text-anchor="middle" font-size="12">예</text>
+<line class="fig-ink" x1="385" y1="48" x2="418" y2="48"/><polyline class="fig-ink" points="411,43 418,48 411,53"/>
+<text class="fig-muted" x="402" y="40" text-anchor="middle" font-size="12">예</text>
+<line class="fig-ink" x1="95" y1="76" x2="95" y2="120"/><line class="fig-ink" x1="300" y1="76" x2="300" y2="120"/><line class="fig-ink" x1="505" y1="76" x2="505" y2="120"/>
+<text class="fig-muted" x="108" y="102" font-size="12">아니오</text><text class="fig-muted" x="313" y="102" font-size="12">아니오</text><text class="fig-muted" x="518" y="102" font-size="12">아니오</text>
+<rect class="fig-danger" x="10" y="122" width="580" height="44" rx="8"/>
+<text class="fig-text" x="300" y="149" text-anchor="middle" font-size="14">다른 종(생식적으로 격리됨)</text>
+<text class="fig-muted" x="95" y="186" text-anchor="middle" font-size="12">동물원 사자·호랑이 잡종은</text>
+<text class="fig-muted" x="95" y="202" text-anchor="middle" font-size="12">자연 상태가 아님</text>
+<text class="fig-muted" x="505" y="186" text-anchor="middle" font-size="12">노새: 살아 있지만 불임</text>
+<rect class="fig-accent" x="420" y="210" width="170" height="34" rx="8"/>
+<text class="fig-text" x="505" y="232" text-anchor="middle" font-size="13">셋 다 예: 같은 종</text>
+</svg><figcaption>세 질문 중 하나라도 '아니오'이면 생식적으로 격리된 다른 종이에요.</figcaption></figure>
+<p>이 정의에서 바로 따라 나오는 판단이 있어요.</p>
+<ul>
+<li><strong>같은 종인지 확인하려면</strong> 자연 상태에서 교배해 생식력 있는 자손을 낳는지, 즉 그 자손이 다시 자손을 낳는지까지 봐요. 생김새·먹이·분자 자료가 비슷한지는 생식 여부를 직접 보여 주지 않아요.</li>
+<li><strong>두 무리가 같은 종인 이유를 물으면</strong> 답의 근거는 서로 교배해 생식력 있는 자손을 낳을 수 있다는 점이에요. 사는 지역에 따라 생김새가 조금 달라도 이 조건을 만족하면 같은 종이에요.</li>
+<li><strong>두 무리가 별개의 생물학적 종이 되려면</strong> 생식적으로 격리되어야 해요. 기준은 생식이지, 조상이나 겉모습이 얼마나 다른지가 아니에요. 잡종이 살아서 태어나더라도 그 잡종이 불임이면 생식적 격리가 있는 거예요. 그래서 "살아 있는 자손이 아예 안 나와야 다른 종"이라고 하면 지나친 조건이에요.</li>
+<li><strong>같은 종 안의 품종·색 변이와 서로 다른 종을 구별해요.</strong> 수업의 사자와 호랑이는 서로 다른 종이라 둘의 교배는 종간 교배예요. 개 품종끼리처럼 한 종 안에서 모습이 다른 무리끼리의 교배는 종간 교배가 아니에요.</li>
+</ul>
+<p>생물학적 종 개념에도 한계가 있어요. 세균처럼 <strong>무성생식</strong>을 하는 생물은 원래 교배를 하지 않으니 적용할 수 없어요. 화석만 남은 <strong>멸종한 종</strong>도 교배를 시켜 볼 수 없으니 적용할 수 없어요.</p>
+<p><strong>아종(subspecies)</strong>은 강의노트 정의로 지리적으로 멀리 떨어진 개체군들 사이에 나타나는 표현형 변이, 즉 종의 지역적 변이예요. 넓은 지역에 떨어져 오래 살면서 색깔 같은 특징이 조금 달라졌지만, 같은 종이라 함께 두면 교배해 생식력 있는 자손을 낳을 수 있어요. 아종은 한 개체의 특징이 아니라 지리적으로 떨어진 개체군 사이의 표현형 차이예요. 또 같은 종이므로, 서로 교배하지 못하는 무리라면 아종이 아니라 생식적으로 격리된 경우예요.</p>
+</div>
+<div class="layer prof"><span class="layer-title">교수님 말씀</span>
+<p>교수님은 '종'이 씨앗 종(種) 자라고 짚고 시작했어요. 학교 종의 종도, 노비 종의 종도 아니에요.</p>
+<p>린네는 다윈 이전에 분류를 시도한 분류학의 아버지이고, 지금도 그 분류 체계를 써요. 그렇지만 진화론자가 아니라 "골수 창조론자"였다고 했어요.</p>
+<p>잠자리와 개 사진으로 형태와 생식을 대비했어요. 모양은 비슷해도 교배가 안 되면 다른 종이라는 거예요.</p>
+<blockquote>중요한 거는 생물학적 종 개념입니다. 오로지 생식 여부로만 판단하는 겁니다.</blockquote>
+<p>개와 늑대가 같은 종이라는 예도 들었어요. 품종이 다를 뿐이고, 품종을 아종이라고도 한다고 말했어요.</p>
+</div>
+<div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+<p><strong>생김새가 비슷하면 같은 종, 다르면 다른 종이라고 생각하기 쉬워요.</strong> 생물학적 종 개념에서는 반대 사례가 둘 다 있어요. 닮은 잠자리 두 마리는 교배가 안 되어 다른 종이고, 크기와 모양이 아주 다른 개 두 마리는 교배가 되어 같은 종이에요. 린네의 분류는 형태 기준이라 생물학적 종 개념에 기초한 것이 아니에요.</p>
+<p><strong>동물원에서 새끼가 태어났으니 같은 종이라고 보기 쉬워요.</strong> 기준은 자연 상태예요. 사자와 호랑이는 동물원에서 새끼가 태어나도 자연에서는 만나지 않고, 그 새끼는 보통 건강하지 못하고 불임이라 다른 종이에요.</p>
+<p><strong>잡종이 살아서 태어나면 격리가 아니라고 보기 쉬워요.</strong> 자손이 생식력까지 있어야 같은 종이에요. 살아 있어도 불임인 잡종(노새)이 나오면 생식적 격리예요.</p>
+<p><strong>교수님이 품종·아종·변종을 같은 말처럼 섞어 썼어요.</strong> 시험에서는 강의노트 정의를 써요. 아종은 지리적으로 떨어진 개체군 사이의 표현형 차이(종의 지역적 변이)이고, 다른 아종끼리도 교배해 생식력 있는 자손을 낳을 수 있어요. 개 품종처럼 사람이 골라 기른 차이와는 엄밀히 같은 개념이 아니에요.</p>
+<p><strong>생물학적 종 개념이 모든 생물에 쓰인다고 보기 쉬워요.</strong> 종 개념은 여러 가지이고, 생물학적 종 개념은 무성생식 생물과 멸종한 종(화석)에는 적용할 수 없어요.</p>
+</div>
+<div class="sum" hidden>
+<p class="sum-lead">생물학적 종 개념은 자연 상태에서 교배해 생식력 있는 자손을 낳는지, 즉 생식 여부로만 종을 가르고, 생김새는 기준이 아니에요.</p>
+<p class="panel-label">용어</p>
+<dl class="terms">
+<dt>종분화(speciation)</dt><dd>강의노트 정의: 한 종이 두 종 이상으로 갈라지는 과정이에요.</dd>
+<dt>형태학적 종 개념</dt><dd>눈에 보이는 형태로 종을 가르는 방법으로, 린네가 썼어요. 린네의 분류는 형태 기준이라 생물학적 종 개념에 기초하지 않아요.</dd>
+<dt>생물학적 종 개념</dt><dd>자연 상태에서 교배가 가능하고 생식력 있는 자손을 낳으면 같은 종이에요. 교배를 못 하거나 자손이 불임이면 다른 종이에요. 근거는 생식적 특징이고, 생김새나 분자 자료의 비슷함은 기준이 아니에요.</dd>
+<dt>왜 '자연 상태'인가</dt><dd>동물원의 사자·호랑이 잡종까지 세면 다른 종이 같은 종이 돼요. 자연에서 실제로 유전자가 섞이는지를 묻는 기준이에요.</dd>
+<dt>왜 '생식력 있는 자손'인가</dt><dd>노새는 살아 있지만 불임이라 유전자가 다음 세대로 이어지지 않아요. 살아 있는 잡종이 나와도 불임이면 다른 종이에요.</dd>
+<dt>판별 적용</dt><dd>같은 종인지는 교배해 자손이 다시 자손을 낳는지까지 봐서 판단해요. 같은 종인 근거는 서로 교배해 생식력 있는 자손을 낳는다는 점이고, 별개의 종이 되는 조건은 생식적 격리예요. 살아 있지만 불임인 잡종이 나와도 격리예요. 같은 종 안의 품종·색 변이와 서로 다른 종(사자·호랑이)을 구별해요.</dd>
+<dt>한계</dt><dd>무성생식 생물(세균)과 멸종한 종(화석)에는 적용할 수 없어요.</dd>
+<dt>계통발생적 종 개념</dt><dd>진화 역사를 공유하는 가장 작은 무리(계통수의 가장 작은 가지)로, 개체군에 가까워요. "이런 게 있구나" 정도로 알면 돼요.</dd>
+<dt>아종(subspecies)</dt><dd>지리적으로 떨어진 개체군 사이의 표현형 차이(종의 지역적 변이)예요. 같은 종이라 다른 아종끼리 교배해 생식력 있는 자손을 낳을 수 있어요. 한 개체의 특징이나 서로 교배하지 못하는 무리는 아종이 아니에요. 교수님의 품종·변종 혼용 대신 이 정의를 써요.</dd>
+<dt>형태와 종은 어긋날 수 있음</dt><dd>닮은 잠자리 두 마리는 다른 종, 아주 다른 개 두 마리는 같은 종이에요.</dd>
+</dl>
+</div>
+</article>
+
+<article class="topic" id="s2-prezygotic"><h3>접합 전 장벽 다섯 가지</h3><div class="tags"><span class="tag date">1029 수업</span><span class="tag slide">8장 p1–2</span></div>
+<div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">다른 무리끼리는 아기씨가 아예 생기지 않도록 막는 벽이 다섯 가지 있어요.</p>
+<figure class="figure"><svg id="fig-s2-prezygotic-gates" viewBox="0 0 600 230" role="img" aria-label="만나기, 짝짓기, 아기씨 생김의 세 테두리 상자가 화살표로 이어져 있어요. 만나기 앞에는 사는 곳이 다름과 때가 다름, 짝짓기 앞에는 신호를 못 알아봄과 몸 모양이 안 맞음, 아기씨 앞에는 아빠 세포와 엄마 세포가 서로 못 알아봄이라는 막힘 선이 있어요.">
+<rect class="fig-ink" x="30" y="25" width="140" height="50" rx="8"/><text class="fig-text" x="100" y="55" text-anchor="middle" font-size="14">만나기</text>
+<rect class="fig-ink" x="230" y="25" width="140" height="50" rx="8"/><text class="fig-text" x="300" y="55" text-anchor="middle" font-size="14">짝짓기</text>
+<rect class="fig-accent" x="430" y="25" width="140" height="50" rx="8"/><text class="fig-text" x="500" y="55" text-anchor="middle" font-size="14">아기씨 생김</text>
+<line class="fig-ink" x1="170" y1="50" x2="228" y2="50"/><polyline class="fig-ink" points="221,45 228,50 221,55"/>
+<line class="fig-ink" x1="370" y1="50" x2="428" y2="50"/><polyline class="fig-ink" points="421,45 428,50 421,55"/>
+<line class="fig-danger" x1="20" y1="90" x2="180" y2="90"/>
+<text class="fig-text" x="100" y="115" text-anchor="middle" font-size="13">사는 곳이 다름</text>
+<text class="fig-text" x="100" y="138" text-anchor="middle" font-size="13">때가 다름</text>
+<line class="fig-danger" x1="220" y1="90" x2="380" y2="90"/>
+<text class="fig-text" x="300" y="115" text-anchor="middle" font-size="13">신호를 못 알아봄</text>
+<text class="fig-text" x="300" y="138" text-anchor="middle" font-size="13">몸 모양이 안 맞음</text>
+<line class="fig-danger" x1="420" y1="90" x2="580" y2="90"/>
+<text class="fig-text" x="500" y="115" text-anchor="middle" font-size="13">아빠 세포와 엄마 세포가</text>
+<text class="fig-text" x="500" y="138" text-anchor="middle" font-size="13">서로 못 알아봄</text>
+<text class="fig-muted" x="300" y="185" text-anchor="middle" font-size="13">어느 하나만 막혀도 아기씨가 생기지 않아요</text>
+</svg><figcaption>못 만나거나, 만나도 짝이 안 되거나, 짝이 되어도 세포끼리 못 알아보면 막혀요.</figcaption></figure></div>
+<div class="layer formal"><span class="layer-title">정확히 말하면</span>
+<p><strong>생식적 격리(reproductive isolation)</strong>는 다른 종 사이에 교배가 안 되거나, 교배해도 생식력 있는 자손을 낳지 못하게 하는 장벽이에요. 생물학적 종 개념에서 두 무리가 다른 종인 이유가 바로 이것이에요. 생식적 격리는 수정란(접합자)이 생기는지를 기준으로 둘로 나눠요.</p>
+<ul>
+<li><strong>접합 전 장벽(prezygotic barrier)</strong>: 수정란 자체가 생기지 않아요. 아예 만나지 못하거나, 정자와 난자를 같이 두어도 수정이 안 돼요.</li>
+<li><strong>접합 후 장벽(postzygotic barrier)</strong>: 수정란은 생기지만 그 뒤에 문제가 생겨요(<a href="#s2-postzygotic">접합 후 장벽: 잡종 생존불능·불임·붕괴</a>).</li>
+</ul>
+<p>수업에서는 '수정 전 격리 / 수정 후 격리'라고 불렀고, 강의노트에는 '접합 전 장벽 / 접합 후 장벽'이라고 적혀 있어요. 같은 말이에요. 접합 전 장벽은 다섯 가지이고, 교수님 말대로 이름의 한국말 뜻에 내용이 다 들어 있어요.</p>
+<div class="table-wrap"><table><thead><tr><th>이름</th><th>무엇이 달라서 막히나</th><th>수업 예</th></tr></thead><tbody>
+<tr><td><strong>생태적 격리</strong>(ecological isolation)</td><td>사는 곳(서식지)이 달라 만날 일이 없어요.</td><td>사자는 초원, 호랑이는 깊은 숲에 살아요.</td></tr>
+<tr><td><strong>시간적 격리</strong>(temporal isolation)</td><td>같은 곳에 살아도 교배 시기가 달라요.</td><td>봄에 피는 꽃과 가을에 피는 꽃은 꽃가루와 암술이 만날 일이 없어요.</td></tr>
+<tr><td><strong>행동적 격리</strong>(behavioral isolation)</td><td>구애 행동(신호)이 종마다 달라 다른 종의 신호를 알아보지 못해요.</td><td><strong>반딧불이</strong>는 종마다 빛을 내는 패턴이 달라요. 금조가 참새 앞에서 춤춰도 참새는 알아듣지 못해요.</td></tr>
+<tr><td><strong>기계적 격리</strong>(mechanical isolation)</td><td>생식 기관 같은 몸 구조의 물리적 차이로 교배가 안 돼요.</td><td>생쥐와 코끼리, 맞물려야 교미하는 곤충의 생식 기관, 매개 동물이 다른 꽃</td></tr>
+<tr><td><strong>배우자 격리</strong>(gametic isolation)</td><td>정자와 난자가 만나도 표면 단백질이 맞지 않아 수정이 안 돼요.</td><td>여러 종의 개구리 정자가 섞인 연못에서도 같은 종끼리만 수정돼요.</td></tr>
+</tbody></table></div>
+<p>식물의 기계적 격리는 꽃 구조에서 시작해요. 식물의 교배는 꽃가루가 암술머리에 앉는 꽃가루받이(수분)이고, 많은 꽃은 곤충·박쥐·벌새 같은 매개 동물이 꽃가루를 옮겨 줘요. 시각이 발달한 새가 매개하는 꽃은 화려한 빨간색이 많고, 곤충이 매개하는 꽃은 냄새로 유혹하는 경우가 많아요. 미물루스 루이시(<i>Mimulus lewisii</i>)는 넓은 꽃을 가져 벌이 매개하고, 빨간 미물루스 카르디날리스(<i>M. cardinalis</i>)는 벌새가 매개해요. 꽃 구조 때문에 매개 동물이 달라지니 두 종은 각자 자기 종끼리만 수분돼요.</p>
+<p>배우자 격리는 열쇠와 자물쇠처럼 작동해요. 개구리는 체외 수정을 해서, 암컷이 물속에 알을 뿌리면 수컷이 그 위에 정자를 뿌려요. 한 연못에 여러 종의 정자가 섞여 있어도, 난자 표면의 수용체 단백질과 정자 표면의 단백질이 딱 맞는 같은 종끼리만 수정이 일어나요.</p>
+<p>새 사례는 "무엇이 수정을 막는가"를 물어 이름을 고르면 돼요.</p>
+<ul>
+<li>사는 장소(서식지)가 달라 만나지 않으면 생태적 격리예요(사자·호랑이).</li>
+<li>번식·개화 시기가 어긋나면 시간적 격리예요(봄꽃·가을꽃). 시기를 어긋나게 만든 원인이 생활사의 길이든, 낮·밤 길이에 따라 꽃 피는 때가 정해지는 것이든, 결과가 시기 차이면 시간적 격리예요.</li>
+<li>구애 신호나 구애 동작을 다른 종이 알아보지 못하면 행동적 격리예요(반딧불이 빛 패턴, 금조의 춤).</li>
+<li>생식 기관·꽃 같은 몸의 구조가 맞지 않거나, 꽃 구조 때문에 매개 동물이 달라지면 기계적 격리예요(생쥐·코끼리, 미물루스 두 종).</li>
+<li>정자·난자가 만나도 표면 단백질이 맞지 않아 수정이 안 되면 배우자 격리예요(개구리 체외 수정). 식물에서도 꽃가루가 정자를 난자에게 전해야 수정되므로, 다른 종의 꽃가루·정자를 난자가 인식하지 못하면 배우자 격리예요.</li>
+</ul>
+</div>
+<div class="layer prof"><span class="layer-title">교수님 말씀</span>
+<blockquote>한국말만 알면은 뜻이 다 들어 있단다.</blockquote>
+<p>교수님은 대학 <strong>CC</strong>(캠퍼스 커플) 이야기로 세 가지를 이었어요.</p>
+<ul>
+<li>졸업 후 한 사람이 부산으로 직장을 가 멀어지고 헤어지면 생태적 격리라고 했어요.</li>
+<li>수원으로 돌아와 옆집에 살아도 한 사람이 밤에 일하고 낮에 자서 데이트할 시간이 없으면 시간적 격리예요.</li>
+<li>성호관 옥상에서 혼자 춤추는 프러포즈를 상대가 알아듣지 못하면 행동적 격리예요.</li>
+</ul>
+<p>사자와 호랑이 이야기로는 이렇게 말했어요.</p>
+<blockquote>싸울 일이 없다. 만나야 싸우지.</blockquote>
+<p>동물원에서는 둘 사이에 새끼가 나오지만 보통 건강하지 못하고 불임이라며 다시 강조했어요.</p>
+<blockquote>자연 상태에서의 이야기입니다, 자연 상태.</blockquote>
+<p>구애는 보통 수컷이 하고 암컷이 선택하며, 그 구애 신호가 종마다 다르다고 했어요. '배우자'에는 "좀 배우자" 말장난을 붙이고, 정자와 난자를 뜻한다고 바로 짚었어요.</p>
+</div>
+<div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+<p><strong>생태적 격리를 지리적 격리와 같은 것으로 보기 쉬워요.</strong> 교수님은 생태적 격리를 "지리적으로 다른 장소에서 살고 있기 때문에"라고 설명하고 부산·수원 예를 들었어요. 하지만 생태적 격리는 같은 지역 안에서도 사는 곳(서식지)이 달라 만나지 않는 경우예요. 사자(초원)와 호랑이(숲)처럼 서식지 차이로 정리해요. 산·바다 같은 지리적 장벽으로 개체군이 갈라지는 지리적 격리는 이소적 종분화의 원인이에요(<a href="#s3-allopatric">이소적 종분화: 지리적 격리 뒤의 생식적 격리</a>).</p>
+<p><strong>기계적 격리의 '기계'를 진짜 기계로 읽기 쉬워요.</strong> 물리적·구조적 차이, 즉 생식 기관이나 꽃 구조의 차이예요. 꽃과 매개 동물 예는 "꽃 구조 때문에 매개 동물이 달라진다"는 연결로 기계적 격리에 들어가요.</p>
+<p><strong>배우자 격리의 '배우자'를 결혼 상대로 읽기 쉬워요.</strong> 배우자는 정자와 난자예요. 구애 신호를 못 알아보는 것은 행동적 격리이고, 정자·꽃가루와 난자가 표면 단백질을 인식하지 못하는 것이 배우자 격리예요.</p>
+<p><strong>꽃가루가 관련되면 모두 같은 격리로 보기 쉬워요.</strong> 매개 동물이 달라 꽃가루가 다른 종 꽃에 아예 가지 않으면 기계적 격리예요. 개화 시기가 달라 꽃가루와 암술이 만날 때가 없으면 시간적 격리예요. 꽃가루가 도착했는데 난자가 인식하지 못하면 배우자 격리예요.</p>
+<p><strong>시기 차이의 원인이 다양하면 다른 격리로 보기 쉬워요.</strong> 생활사의 길이든 낮·밤 길이에 따른 개화든, 결과가 "번식 시기가 다르다"면 시간적 격리예요.</p>
+<p><strong>사자·호랑이 잡종이 동물원에서 나오니 같은 종이라고 보기 쉬워요.</strong> 기준은 자연 상태이고, 그 잡종은 건강하지 못하고 불임이에요.</p>
+<p><strong>접합 전과 접합 후를 섞기 쉬워요.</strong> 접합 전은 수정란이 생기지 않는 경우, 접합 후는 수정란은 생기는 경우예요. 잡종이 불임이거나 잡종 배아가 발달하지 못하는 것은 수정란이 생긴 뒤의 일이라 접합 전 장벽의 예가 아니에요.</p>
+<p><strong>이름은 수업과 강의노트의 다섯 개로 판단해요.</strong> 뜻이 비슷해 보이는 다른 이름을 보면 같은 말이라고 단정하지 말고, 설명된 원인이 장소·시기·신호·구조·배우자 표면 단백질 중 무엇인지로 판단해요.</p>
+</div>
+<div class="layer supp" id="s2-prezygotic-supp-1"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+<p>교재는 수업 예 말고도 같은 기준이 적용되는 예를 더 들어요. 시간적 격리의 예로, 분포가 겹치는 초파리 두 종(<i>Drosophila persimilis</i>, <i>D. pseudoobscura</i>)은 한 종은 아침에, 다른 종은 오후에 교배해요. 캘리포니아의 소나무 두 종도 꽃가루가 날리는 때가 2월과 4월로 달라 서로 격리돼요. 행동적 격리의 예로는 암컷 새가 수컷의 울음소리·깃털 색·춤을 보고 짝을 알아본다고 적었어요. 배우자 격리에 대해서는 체외 수정하는 해양 무척추동물의 정자와 난자가 같은 종의 표면 단백질만 인지하고, 어떤 식물 종도 종간 수정을 막는 비슷한 생리적 불화합성을 보인다고 적었어요.</p>
+<p>출처: 교재 8장 p.160–161</p>
+</div>
+<div class="sum" hidden>
+<p class="sum-lead">접합 전 장벽은 수정란 자체가 생기지 않게 막는 생식적 격리로, 생태적·시간적·행동적·기계적·배우자 격리의 다섯 가지예요.</p>
+<p class="panel-label">용어</p>
+<dl class="terms">
+<dt>생식적 격리(reproductive isolation)</dt><dd>다른 종 사이에 교배가 안 되거나, 해도 생식력 있는 자손을 못 낳게 하는 장벽이에요. 수정란이 생기는지로 접합 전과 접합 후로 나눠요.</dd>
+<dt>접합 전 장벽(prezygotic barrier)</dt><dd>수정란이 생기지 않아요. 수업의 '수정 전 격리'와 같은 말이에요. 접합 후 장벽('수정 후 격리')은 수정란은 생겨요.</dd>
+<dt>생태적 격리</dt><dd>서식지가 달라 만나지 않아요(사자 초원, 호랑이 숲). 지리적 장벽에 의한 지리적 격리(이소적 종분화의 원인)와 구별해요.</dd>
+<dt>시간적 격리</dt><dd>같은 곳에 살아도 교배·개화 시기가 달라요(봄꽃과 가을꽃). 원인이 생활사 길이든 낮·밤 길이에 따른 개화든, 결과가 시기 차이면 시간적 격리예요.</dd>
+<dt>행동적 격리</dt><dd>구애 신호·동작이 종마다 달라 다른 종이 알아보지 못해요(반딧불이 빛 패턴, 금조의 춤).</dd>
+<dt>기계적 격리</dt><dd>생식 기관·꽃 같은 물리적 구조 차이예요. 꽃 구조에 따라 매개 동물이 달라지는 것도 여기에 들어가요(미물루스 루이시는 벌, 카르디날리스는 벌새).</dd>
+<dt>배우자 격리</dt><dd>배우자는 정자·난자예요. 난자 표면 수용체 단백질과 정자 표면 단백질이 열쇠와 자물쇠처럼 맞아야 수정돼요(체외 수정 개구리). 다른 종의 꽃가루·정자를 난자가 인식하지 못하면 배우자 격리예요.</dd>
+<dt>이름 판단</dt><dd>"무엇이 수정을 막는가"(장소·시기·신호·구조·배우자 표면 단백질)로 골라요. 수업·강의노트에 없는 비슷한 이름을 동의어로 단정하지 않아요.</dd>
+<dt>자연 상태 기준</dt><dd>사자·호랑이는 동물원에서 새끼가 나와도 자연에서는 만나지 않고, 그 새끼는 건강하지 못하고 불임이에요.</dd>
+</dl>
+<div class="sum-supp" data-supp-source="s2-prezygotic-supp-1" data-supp-label="보충 · 수업에서 다루지 않았어요">
+<dl class="terms"><dt>(보충) 교재의 추가 예</dt><dd>교재 8장 p.160–161의 예예요. 교배 시간대가 아침·오후로 다른 초파리 두 종, 꽃가루가 날리는 달이 다른 소나무 두 종은 시간적 격리예요. 수컷의 울음소리·깃털·춤으로 짝을 알아보는 암컷 새는 행동적 격리예요. 해양 무척추동물의 표면 단백질 인지와 식물의 종간 수정 불화합성은 배우자 격리예요.</dd></dl>
+</div>
+</div>
+</article>
+
+<article class="topic" id="s2-postzygotic"><h3>접합 후 장벽: 잡종 생존불능·불임·붕괴</h3><div class="tags"><span class="tag date">1029 수업</span><span class="tag slide">8장 p2</span></div>
+<div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">아기씨가 생겨도, 아기가 일찍 죽거나, 자라도 아기를 못 낳거나, 손주 대에서 약해져 끊기면 두 무리는 결국 섞이지 못해요.</p>
+<figure class="figure"><svg id="fig-s2-postzygotic-steps" viewBox="0 0 600 210" role="img" aria-label="아기씨 생김, 아기로 자람, 어른이 되어 아기를 낳음, 손주도 이어짐의 네 테두리 상자가 화살표로 이어져 있어요. 각 화살표 아래에 일찍 죽음, 자라도 아기를 못 낳음, 손주 대에서 약해져 끊김이라는 막힘이 적혀 있어요.">
+<rect class="fig-accent" x="10" y="25" width="120" height="50" rx="8"/><text class="fig-text" x="70" y="55" text-anchor="middle" font-size="13">아기씨 생김</text>
+<rect class="fig-ink" x="165" y="25" width="120" height="50" rx="8"/><text class="fig-text" x="225" y="55" text-anchor="middle" font-size="13">아기로 자람</text>
+<rect class="fig-ink" x="320" y="25" width="120" height="50" rx="8"/><text class="fig-text" x="380" y="47" text-anchor="middle" font-size="13">어른이 되어</text><text class="fig-text" x="380" y="65" text-anchor="middle" font-size="13">아기를 낳음</text>
+<rect class="fig-ink" x="475" y="25" width="115" height="50" rx="8"/><text class="fig-text" x="532" y="55" text-anchor="middle" font-size="13">손주도 이어짐</text>
+<line class="fig-ink" x1="130" y1="50" x2="163" y2="50"/><polyline class="fig-ink" points="156,45 163,50 156,55"/>
+<line class="fig-ink" x1="285" y1="50" x2="318" y2="50"/><polyline class="fig-ink" points="311,45 318,50 311,55"/>
+<line class="fig-ink" x1="440" y1="50" x2="473" y2="50"/><polyline class="fig-ink" points="466,45 473,50 466,55"/>
+<line class="fig-danger" x1="147" y1="80" x2="147" y2="110"/><text class="fig-text" x="147" y="130" text-anchor="middle" font-size="13">일찍 죽음</text>
+<line class="fig-danger" x1="302" y1="80" x2="302" y2="110"/><text class="fig-text" x="302" y="130" text-anchor="middle" font-size="13">자라도</text><text class="fig-text" x="302" y="148" text-anchor="middle" font-size="13">아기를 못 낳음</text>
+<line class="fig-danger" x1="457" y1="80" x2="457" y2="110"/><text class="fig-text" x="457" y="130" text-anchor="middle" font-size="13">손주 대에서</text><text class="fig-text" x="457" y="148" text-anchor="middle" font-size="13">약해져 끊김</text>
+<text class="fig-muted" x="300" y="190" text-anchor="middle" font-size="13">어디에서 멈추는지로 셋을 나눠요</text>
+</svg><figcaption>어느 단계에서 멈추는지에 따라 이름이 달라져요.</figcaption></figure></div>
+<div class="layer formal"><span class="layer-title">정확히 말하면</span>
+<p><strong>접합 후 장벽(postzygotic barrier)</strong>은 다른 종의 정자와 난자가 수정해 수정란(접합자)까지는 생겼지만, 그 뒤 과정에 문제가 생겨 두 종이 섞이지 못하는 경우예요. 수업에서는 '수정 후 격리'라고도 불렀어요. 세 가지는 멈추는 단계로 구별해요.</p>
+<div class="table-wrap"><table><thead><tr><th>이름</th><th>어디서 멈추나</th><th>수업 예·설명</th></tr></thead><tbody>
+<tr><td><strong>잡종 생존불능</strong>(reduced hybrid viability)</td><td>잡종이 살아남지 못해요.</td><td>배 발생 동안 배아 단계에서 죽거나, 태어나자마자 죽어요.</td></tr>
+<tr><td><strong>잡종 불임</strong>(hybrid sterility)</td><td>잡종(1대)이 건강하게 자라도 정자·난자를 만들지 못해 자손을 남기지 못해요.</td><td><strong>노새</strong>(말 × 당나귀)</td></tr>
+<tr><td><strong>잡종 붕괴</strong>(hybrid breakdown)</td><td>1대 잡종은 정상이고 자손도 낳지만, 다음 세대부터 생존력·생식력이 떨어져 결국 대가 끊겨요.</td><td>"<strong>손자</strong>까지 봤는데" 세대가 지날수록 약해져 끊기는 경우</td></tr>
+</tbody></table></div>
+<p><strong>노새가 불임인 이유</strong>는 감수분열의 짝짓기 단계에서 막히기 때문이에요. 아래는 수업에서 단순화해 설명한 방식이에요. 감수분열 전기에는 비슷한 염색체끼리 짝을 지어 <strong>4분염색체</strong>(2가 염색체)를 만들어야 다음 단계로 나아갈 수 있어요. 4분염색체가 무엇인지는 <a href="../0922/정리노트_0922_Cell_Division_and_Heredity.html#s2-tetrad">4분염색체 이전 노트</a>에서 다시 볼 수 있어요.</p>
+<ol class="steps">
+<li>말은 2n = 64라 정자·난자에 n = 32개를 넣고, 당나귀는 2n = 62라 n = 31개를 넣어요.</li>
+<li>둘이 수정해 태어난 노새의 염색체는 32 + 31 = <strong>63</strong>개예요. 노새는 이 상태로 건강하게 자라요.</li>
+<li>노새가 정자나 난자를 만들려고 감수분열을 시작하면, 말과 당나귀는 다른 종이라 정확한 상동염색체는 없지만 비슷한 염색체끼리 모아 4분염색체를 만들어요.</li>
+<li>63개로는 31쌍(4분염색체 31개)을 만들고 1개가 남아요. 염색체 수가 홀수라 이 1개는 짝이 없어요.</li>
+<li>짝 없는 염색체 때문에 감수분열이 멈추고, 정자와 난자가 만들어지지 않아요. 그래서 노새는 불임이에요.</li>
+</ol>
+<figure class="figure"><svg id="fig-s2-mule-pairing" viewBox="0 0 600 220" role="img" aria-label="말에게서 온 염색체 32개와 당나귀에게서 온 31개가 합쳐져 노새는 63개예요. 짝지은 선 쌍이 31개이고, 강조한 선 하나는 짝이 없어 감수분열이 멈추고 정자와 난자가 생기지 않아요.">
+<text class="fig-text" x="20" y="30" font-size="13">말 2n=64, 정자·난자에 32개</text>
+<text class="fig-text" x="20" y="52" font-size="13">당나귀 2n=62, 정자·난자에 31개</text>
+<text class="fig-text" x="20" y="80" font-size="14">노새: 32 + 31 = 63개</text>
+<line class="fig-ink" x1="40" y1="110" x2="40" y2="150"/><line class="fig-ink" x1="48" y1="110" x2="48" y2="150"/>
+<line class="fig-ink" x1="80" y1="110" x2="80" y2="150"/><line class="fig-ink" x1="88" y1="110" x2="88" y2="150"/>
+<line class="fig-ink" x1="120" y1="110" x2="120" y2="150"/><line class="fig-ink" x1="128" y1="110" x2="128" y2="150"/>
+<line class="fig-ink" x1="160" y1="110" x2="160" y2="150"/><line class="fig-ink" x1="168" y1="110" x2="168" y2="150"/>
+<text class="fig-text" x="215" y="135" font-size="14">…</text>
+<line class="fig-ink" x1="250" y1="110" x2="250" y2="150"/><line class="fig-ink" x1="258" y1="110" x2="258" y2="150"/>
+<text class="fig-muted" x="150" y="175" text-anchor="middle" font-size="13">짝지은 쌍 31개(4분염색체 31개)</text>
+<line class="fig-danger" x1="330" y1="110" x2="330" y2="150"/>
+<text class="fig-text" x="330" y="175" text-anchor="middle" font-size="13">짝 없음 1개</text>
+<line class="fig-ink" x1="360" y1="130" x2="398" y2="130"/><polyline class="fig-ink" points="391,125 398,130 391,135"/>
+<rect class="fig-danger" x="405" y="100" width="185" height="62" rx="8"/>
+<text class="fig-text" x="497" y="124" text-anchor="middle" font-size="13">감수분열 멈춤</text>
+<text class="fig-text" x="497" y="146" text-anchor="middle" font-size="13">정자·난자 없음, 불임</text>
+<text class="fig-muted" x="300" y="205" text-anchor="middle" font-size="12">원인은 염색체가 많아서가 아니라 짝이 맞지 않아서예요</text>
+</svg><figcaption>63개는 31쌍과 짝 없는 1개라 감수분열이 끝나지 못해요.</figcaption></figure>
+<p>이 설명의 핵심은 홀수라는 점보다, 두 부모 종의 염색체가 서로 짝을 정상적으로 맞추지 못해 정상적인 정자·난자를 만들지 못한다는 점이에요. 그래서 염색체 수가 짝수인 잡종이라도 짝이 맞지 않으면 불임일 수 있어요.</p>
+<p>잡종 불임과 잡종 붕괴는 "1대 잡종이 자손을 남기는가"로 갈라요. 노새처럼 1대 잡종이 정자·난자를 못 만들면 잡종 불임이에요. 1대 잡종은 정상으로 태어나 자손을 낳았는데, 그다음 세대부터 약해져 대가 끊긴다면 1대는 번식한 것이므로 잡종 붕괴예요.</p>
+</div>
+<div class="layer prof"><span class="layer-title">교수님 말씀</span>
+<p>교수님은 접합 후 격리를 처음 소개할 때 손자 이야기를 했어요.</p>
+<blockquote>우리 언제 손자 볼 수 있니? 손자는 무슨 손자, 끝.</blockquote>
+<p>노새는 잘 달리는 말과 힘센 당나귀를 합치려고 만든 일종의 하이브리드라고 했어요. 노새가 돌잔치를 하고 늙어 죽을 때까지 잘 살아도 자식은 못 남긴다는 거예요. "놀아야겠다, 그래서 노새"는 농담이고, 실제로는 한자에서 온 말이라고 스스로 바로잡았어요.</p>
+<p>잡종 붕괴는 이렇게 그렸어요. 드디어 손자를 봤는데도 같은 종이 되는 건 아니라는 거예요.</p>
+<blockquote>세대가 지나갈수록 점점 빌빌해지더니 결국에는 대가 끊깁니다.</blockquote>
+</div>
+<div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+<p><strong>노새가 불임인 이유를 "염색체 수가 너무 많아서"라고 보기 쉬워요.</strong> 원인은 수가 많은 것이 아니라 짝이 맞지 않는 것이에요. 63 = 31쌍 + 짝 없는 1개라 감수분열이 멈추고 정자·난자를 만들지 못해요. 교수님 말 중 "32는 31 + 1이니까"는 앞뒤가 맞지 않는 말실수이고, 바른 계산은 63 = 31쌍(62개) + 1개예요.</p>
+<p><strong>잡종 불임과 잡종 붕괴를 섞기 쉬워요.</strong> 잡종 불임은 1대 잡종이 자손을 못 남겨요(노새). 잡종 붕괴는 1대 잡종은 정상이고 자손(손자)까지 낳지만, 다음 세대부터 약해져 대가 끊겨요.</p>
+<p><strong>잡종 생존불능의 이름이 흔들렸어요.</strong> 교수님이 "생존 치사라고 부르는 거 같아"라고 말했지만, 강의노트 용어는 '잡종 생존불능'이에요. 배아 단계에서 죽거나 태어나자마자 죽는 경우예요.</p>
+<p><strong>접합 후 장벽을 접합 전 장벽과 섞기 쉬워요.</strong> 세 가지 모두 수정란은 이미 생긴 뒤의 일이에요. 잡종 배아가 발달하지 못함, 잡종 불임, 다음 세대의 쇠퇴는 접합 후 장벽이에요.</p>
+</div>
+<div class="sum" hidden>
+<p class="sum-lead">접합 후 장벽은 수정란은 생기지만 잡종이 죽거나(생존불능), 자손을 못 남기거나(불임), 다음 세대부터 약해져 끊기는(붕괴) 경우예요.</p>
+<p class="panel-label">용어</p>
+<dl class="terms">
+<dt>접합 후 장벽(postzygotic barrier)</dt><dd>수정란(접합자)은 생기지만 이후 과정에 문제가 생겨 두 종이 섞이지 못해요. 수업의 '수정 후 격리'와 같은 말이에요.</dd>
+<dt>잡종 생존불능</dt><dd>잡종이 배 발생 중 배아 단계에서 죽거나 태어나자마자 죽어요. 교수님이 말한 '생존 치사' 대신 이 용어를 써요.</dd>
+<dt>잡종 불임</dt><dd>1대 잡종이 자라도 정자·난자를 만들지 못해 자손을 못 남겨요. 예는 노새(말 × 당나귀)예요.</dd>
+<dt>노새가 불임인 이유</dt><dd>말 n=32 + 당나귀 n=31 = 63개예요. 감수분열 전기에 비슷한 염색체끼리 4분염색체 31개를 만들고 1개가 짝이 없어 감수분열이 멈추고, 정자·난자가 안 만들어져요(수업의 단순화한 설명). 핵심은 두 부모의 염색체가 짝을 정상적으로 맞추지 못한다는 점이라, 염색체가 많아서가 아니고 짝수라도 짝이 안 맞으면 불임일 수 있어요.</dd>
+<dt>잡종 붕괴</dt><dd>1대 잡종은 정상이고 자손(손자)도 낳지만, 다음 세대부터 생존력·생식력이 떨어져 결국 대가 끊겨요.</dd>
+<dt>불임과 붕괴의 구분</dt><dd>1대 잡종이 자손을 남기지 못하면 불임, 1대는 번식하고 그 뒤 세대가 쇠퇴하면 붕괴예요.</dd>
+</dl>
+</div>
+</article>
+    </section>
+    <section id="s3"><h2>3. [8장] 종분화의 지리학</h2>
+<article class="topic" id="s3-allopatric"><h3>이소적 종분화: 지리적 격리 뒤의 생식적 격리</h3><div class="tags"><span class="tag date">1029 수업</span><span class="tag slide">8장 p2</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">바다 한가운데에 땅이 솟아 물고기 무리가 둘로 갈리면, 두 무리는 오랫동안 만나지 못해 조금씩 달라져요.</p>
+    <figure class="figure"><svg id="fig-allopatric-split" viewBox="0 0 600 250" role="img" aria-label="물고기 무리를 세 칸으로 그렸어요. 첫 칸은 하나로 이어진 바다에 테두리만 있는 동그라미 여덟 개가 섞여 있어요. 둘째 칸은 가운데에 솟은 땅이 생겨 동그라미가 왼쪽 태평양 쪽과 오른쪽 대서양 쪽으로 나뉘어요. 셋째 칸은 오랜 세월 뒤로, 왼쪽 동그라미는 색칠된 동그라미로 바뀌었고 오른쪽은 테두리 동그라미 그대로예요.">
+      <text class="fig-text" x="300" y="22" text-anchor="middle" font-size="14">한 무리가 땅 때문에 둘로 갈리는 과정</text>
+      <rect class="fig-ink" x="20" y="40" width="170" height="130" rx="10"/>
+      <rect class="fig-ink" x="215" y="40" width="170" height="130" rx="10"/>
+      <rect class="fig-ink" x="410" y="40" width="170" height="130" rx="10"/>
+      <circle class="fig-accent" cx="45" cy="75" r="9"/><circle class="fig-accent" cx="85" cy="95" r="9"/><circle class="fig-accent" cx="125" cy="70" r="9"/><circle class="fig-accent" cx="165" cy="92" r="9"/>
+      <circle class="fig-accent" cx="55" cy="135" r="9"/><circle class="fig-accent" cx="100" cy="140" r="9"/><circle class="fig-accent" cx="140" cy="128" r="9"/><circle class="fig-accent" cx="170" cy="150" r="9"/>
+      <rect class="fig-ink" x="287" y="40" width="26" height="130"/>
+      <text class="fig-muted" x="300" y="58" text-anchor="middle" font-size="12">땅</text>
+      <circle class="fig-accent" cx="238" cy="80" r="9"/><circle class="fig-accent" cx="265" cy="110" r="9"/><circle class="fig-accent" cx="240" cy="145" r="9"/><circle class="fig-accent" cx="268" cy="150" r="9"/>
+      <circle class="fig-accent" cx="335" cy="80" r="9"/><circle class="fig-accent" cx="362" cy="108" r="9"/><circle class="fig-accent" cx="335" cy="140" r="9"/><circle class="fig-accent" cx="365" cy="150" r="9"/>
+      <rect class="fig-ink" x="482" y="40" width="26" height="130"/>
+      <text class="fig-muted" x="495" y="58" text-anchor="middle" font-size="12">땅</text>
+      <circle class="fig-dot" cx="433" cy="80" r="9"/><circle class="fig-dot" cx="460" cy="110" r="9"/><circle class="fig-dot" cx="435" cy="145" r="9"/><circle class="fig-dot" cx="463" cy="150" r="9"/>
+      <circle class="fig-accent" cx="530" cy="80" r="9"/><circle class="fig-accent" cx="557" cy="108" r="9"/><circle class="fig-accent" cx="530" cy="140" r="9"/><circle class="fig-accent" cx="560" cy="150" r="9"/>
+      <path class="fig-ink" d="M193 105 L211 105 M204 99 L211 105 L204 111"/>
+      <path class="fig-ink" d="M388 105 L406 105 M399 99 L406 105 L399 111"/>
+      <text class="fig-text" x="105" y="190" text-anchor="middle" font-size="13">처음: 이어진 바다</text>
+      <text class="fig-text" x="300" y="190" text-anchor="middle" font-size="13">땅이 솟아 갈림</text>
+      <text class="fig-text" x="495" y="190" text-anchor="middle" font-size="13">오랜 세월 뒤</text>
+      <text class="fig-muted" x="252" y="207" text-anchor="middle" font-size="12">태평양 쪽</text>
+      <text class="fig-muted" x="350" y="207" text-anchor="middle" font-size="12">대서양 쪽</text>
+      <circle class="fig-accent" cx="150" cy="232" r="7"/>
+      <text class="fig-text" x="163" y="236" font-size="12">테두리 동그라미: 원래 모습</text>
+      <circle class="fig-dot" cx="350" cy="232" r="7"/>
+      <text class="fig-text" x="363" y="236" font-size="12">색칠된 동그라미: 달라진 모습</text>
+    </svg><figcaption>다시 만나도 서로 짝을 짓지 않을 만큼 달라져야 비로소 다른 무리가 된 거예요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p><strong>이소적 종분화(allopatric speciation)</strong>는 한 개체군이 지리적으로 떨어진 아개체군으로 나뉘어 유전자 흐름이 끊기고, 그 결과 새 종이 생기는 종분화예요(강의노트 8장 p2). 이소(異所)는 "다른 장소"라는 뜻이에요.</p>
+    <p><strong>왜 지리적 격리만으로는 종분화가 아닐까요?</strong> 같은 종인지 다른 종인지는 <a href="#s2-species">생물학적 종 개념</a>으로 판정해요. 자연 상태에서 교배해 생식력 있는 자손을 낳으면 같은 종이에요. 땅이나 강이 두 무리를 갈라놓으면 서로 만나지 못할 뿐이에요. 막 갈라진 두 무리를 다시 한곳에 모으면 여전히 교배해 생식력 있는 자손을 낳을 수 있으므로 아직 같은 종이에요. 그래서 <strong>지리적 격리</strong>는 종분화의 원인(출발점)이고, 종분화를 판정하는 기준은 <strong>생식적 격리</strong>예요.</p>
+    <p><strong>그러면 지리적 격리는 무엇을 할까요?</strong> 집단 사이의 <strong>유전자 확산(gene flow, 유전자 흐름)</strong>을 막아요. 두 무리가 오가며 교배하는 동안에는 한쪽에서 생긴 새 대립유전자도 교배를 통해 다른 쪽으로 퍼져서, 두 무리가 하나의 유전자 풀(gene pool)을 함께 써요. 유전자 확산이 끊기면 한쪽에서 생긴 변화가 다른 쪽으로 넘어가지 못하고 그 무리 안에만 쌓여요. 강의노트는 이 과정을 다음 순서로 적었어요.</p>
+    <ol class="steps">
+      <li>지리적 장벽이 생겨 개체군이 나뉘어요. 강의노트는 이 단계를 "지리적 장벽과 생물 이동 능력의 상대적 차이"로 적었어요. 장벽이 그 생물에게 건너기 어려운 것이어야 실제로 무리가 갈라져요.</li>
+      <li>지리적 격리 뒤 두 무리의 유전자 풀이 분리돼요. 유전자 확산이 멈춘 거예요.</li>
+      <li>각기 다른 유전자 풀에서 서로 다른 돌연변이, 자연선택, 유전적 부동이 일어나 대립유전자 빈도가 따로따로 변해요. 이것이 진화적 변화예요.</li>
+      <li>차이가 쌓여 다시 만나도 교배하지 않거나 생식력 있는 자손을 낳지 못하게 되면(생식적 격리), 그때 종분화가 일어난 거예요.</li>
+    </ol>
+    <p>순서를 줄이면 <strong>지리적 격리, 진화적 변화(대립유전자 빈도 변화), 생식적 격리</strong>예요. 지리적 격리는 종분화가 끝난 뒤에 생기는 일이 아니라 맨 처음에 일어나요.</p>
+    <p><strong>증거: 파나마 지협의 놀래기.</strong> 북미와 남미를 잇는 파나마 지협(Isthmus of Panama)은 원래 없었고, 그 자리는 태평양과 대서양이 이어진 바다였어요. 육지가 융기해 지협이 생기자 바다가 완전히 나뉘었고, 원래 한 종이던 물고기 무리도 태평양 쪽과 대서양 쪽으로 갈라져 서로 교류하지 못하게 됐어요. 세월이 지나며 돌연변이가 쌓여 지금은 양쪽에 서로 다른 놀래기(wrasse) 종이 살아요(교수님은 "물고기", 강의노트는 "놀래기"로 적었어요). 두 종을 처음 나눈 요인은 지협의 융기로 생긴 <strong>서식지의 분리, 곧 지리적 격리</strong>예요. 이소적 종분화에서 맨 먼저 일어나는 일은 땅·바다 같은 장벽이 집단을 물리적으로 갈라놓는 것이고, 두 집단 사이의 다른 차이들은 갈라진 뒤에 쌓여요.</p>
+    <p>또 다른 예로 교수님은 한 식물 집단 사이에 빙하가 녹아 강이 생긴 경우를 들었어요. 강 때문에 교류가 끊기고, 오랜 세월 돌연변이가 쌓여 생식적으로 달라지면 나중에 다시 만나도 섞이지 않아요. 이것이 이소적 종분화예요.</p>
+    <p><strong>대부분의 새 종은 언제 생길까요?</strong> 수업의 예는 모두 한 조상종의 집단들이 서로 교배하지 않는 무리로 <strong>격리되는</strong> 데서 시작해요. 파나마와 빙하는 땅과 강이, <a href="#s3-sympatric">사과파리</a>는 다른 나무에서의 끼리끼리 교배가, <a href="#s3-polyploidy">배수성</a>은 염색체 수 차이가 무리를 나눠요. 새 종이 생기는 출발점은 조상종의 집단들이 서로 격리되는 것이에요. 격리된 뒤에는 돌연변이, 자연선택, 유전적 부동이 각 집단을 따로 바꿔요. 종분화는 이런 과정이 낳는 결과이고, 생물이 의도해서 일어나는 일이 아니에요.</p>
+    <p><strong>갈라진 두 무리가 서로 다른 형질을 갖게 되는 이유.</strong> 갈라진 뒤의 차이도 <a href="../1027/정리노트_1027_Evolutionary_Thought_and_Microevolution.html#s1-natural-selection">자연선택의 논리</a>로 설명해요. 핵심은 변이가 선택보다 먼저 있고, 환경은 변이를 만들지 않고 이미 있는 변이 가운데 무엇이 더 많이 남을지만 정한다는 것이에요. 가상의 예로 한 물고기 집단이 남쪽과 북쪽으로 갈렸고, 남쪽에만 있는 먹이를 잡기에 입 모양이 조금 다른 변이가 유리하다고 해 봐요.</p>
+    <ol class="steps">
+      <li>공통 조상 집단 안에 그 입 모양을 만드는 변이가 이미 낮은 빈도로 있었어요. 두 집단은 그 조상 집단에서 갈라졌으므로 처음에는 양쪽 모두 그 변이를 낮은 빈도로 가지고 있어요.</li>
+      <li>남쪽에서는 그 변이를 가진 개체가 먹이를 더 잘 잡아 더 많이 생존하고 번식해요. 그래서 세대가 지나며 남쪽 집단에서 그 변이의 빈도가 높아져요.</li>
+      <li>북쪽에는 그 먹이가 없어 그 변이가 생존에 이점이 되지 않으므로 선택되지 않고 낮은 빈도로 남아요. 북쪽 집단은 원래 모습을 대부분 유지해요.</li>
+    </ol>
+    <p>판단 기준은 자연선택의 재료가 <strong>이미 있던, 유전되는 변이</strong>라는 점이에요. 살면서 사용해 생긴 차이는 유전되지 않으므로(획득형질의 유전) 다음 세대의 비율을 바꾸지 못해요. 환경은 필요한 변이를 만들어 주지 않고, 이미 있는 변이 가운데 무엇이 더 남을지를 정해요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>파나마를 예로 들며, 원래 태평양과 대서양이 뚫려 있어 물이 섞였는데 육지가 융기하면서 바다가 완전히 나뉘었다고 했어요. 그 뒤 돌연변이가 쌓여 "너는 너, 나는 나" 새로운 종으로 분기했다고 설명했어요.</p>
+    <blockquote>지리적으로 격리됐다고 해서 무조건 종 분화가 일어나는 게 아니죠.</blockquote>
+    <blockquote>생식적 격리가 돼야만 종 분화가 일어나는 겁니다.</blockquote>
+    <p>빙하가 녹아 생긴 강의 예에서도 "서로 만난다 하더라도 생식적으로 격리가 있어 버리면" 섞일 수 없다고 같은 기준을 다시 강조했어요.</p>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <p><strong>지리적 격리를 종분화 그 자체로 착각하기 쉬워요.</strong> 지리적 격리는 원인이고, 종분화의 판정 기준은 생식적 격리예요. 갈라져 있기만 하고 다시 만났을 때 교배해 생식력 있는 자손을 낳으면 아직 같은 종이에요. 교수님이 여러 번 되풀이한 내용이에요.</p>
+    <p><strong>지리적 분리가 하는 일과 나중에 생기는 일을 섞기 쉬워요.</strong> 지리적 격리의 일은 두 집단 사이의 유전자 확산을 끊는 것이에요. 잡종이 약하거나 불임이 되는 것(<a href="#s2-postzygotic">접합 후 장벽</a>)은 갈라진 뒤 차이가 쌓여서 나중에 나타나는 생식적 격리의 한 모습이에요.</p>
+    <p><strong>종분화 순서를 뒤바꾸기 쉬워요.</strong> 지리적 격리가 먼저이고, 그다음 진화적 변화(대립유전자 빈도 변화), 마지막이 생식적 격리예요. 지리적 격리가 종분화가 끝난 뒤에 일어나는 것이 아니에요.</p>
+    <p><strong>지리적 격리와 생태적 격리를 섞기 쉬워요.</strong> 교수님은 <a href="#s2-prezygotic">생태적 격리</a>를 "지리적으로 다른 장소"라고 말하며 부산·수원 예를 들었어요. 생태적 격리는 사자(초원)와 호랑이(깊은 숲)처럼 사는 서식지가 달라 만나지 않는 접합 전 장벽이에요. 지리적 격리는 산·바다·강 같은 장벽이 한 개체군을 갈라놓는 일이고, 이소적 종분화의 출발점이에요.</p>
+    <p><strong>"파나마 운하"와 "파나마 지협"을 섞기 쉬워요.</strong> 교수님은 "파나마 운하"로 말을 꺼냈지만, 바다를 가른 것은 땅이 솟아 생긴 지협이에요. 운하는 사람이 판 물길이에요.</p>
+    <p><strong>갈라진 집단의 새 형질이 쓰면서 생기거나 필요해서 생겼다고 착각하기 쉬워요.</strong> 공통 조상에게서 받은 변이가 양쪽에 낮은 빈도로 있었고, 그 변이가 유리한 환경에서만 자연선택으로 늘어나요. 다른 쪽 집단에도 그 변이는 낮은 빈도로 남아 있을 수 있어요.</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">지리적 격리로 유전자 확산이 끊긴 집단들이 따로 변하다가 생식적 격리가 생기면 이소적 종분화예요. 지리적 격리는 원인이고 판정 기준은 생식적 격리예요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>이소적 종분화(allopatric speciation)</dt><dd>한 개체군이 지리적으로 떨어진 아개체군으로 나뉘어 유전자 흐름이 끊기고 새 종이 생기는 종분화예요.</dd>
+      <dt>지리적 격리의 역할</dt><dd>집단 사이의 유전자 확산을 끊어 유전자 풀을 나눠요. 분리만으로 종분화가 끝나지 않고, 잡종이 약해지는 접합 후 장벽은 갈라진 뒤 쌓인 차이로 나중에 나타나요.</dd>
+      <dt>판정 기준</dt><dd>생물학적 종 개념에 따라, 다시 만나도 교배하지 않거나 생식력 있는 자손을 못 낳는 생식적 격리가 생겨야 종분화예요.</dd>
+      <dt>순서</dt><dd>지리적 격리, 유전자 풀 분리, 서로 다른 돌연변이·자연선택·유전적 부동에 의한 대립유전자 빈도 변화, 생식적 격리 순이에요.</dd>
+      <dt>파나마 지협의 놀래기</dt><dd>지협이 융기해 태평양과 대서양이 나뉘자 한 종이던 물고기 무리가 갈라졌어요. 두 종을 나눈 요인은 서식지의 분리(지리적 격리)예요.</dd>
+      <dt>새 종이 생기는 조건</dt><dd>대부분의 새 종은 조상종의 집단들이 서로 격리될 때 생겨요. 격리 뒤 돌연변이·자연선택·유전적 부동이 각 집단을 따로 바꿔요.</dd>
+      <dt>갈라진 집단의 형질 차이</dt><dd>공통 조상 집단의 변이가 양쪽에 낮은 빈도로 있었고, 그 변이가 유리한 환경에서만 자연선택으로 늘어나요. 재료는 이미 있던 유전되는 변이이고, 사용으로 생긴 차이는 유전되지 않으며 환경은 변이를 만들지 않고 골라요.</dd>
+      <dt>생태적 격리와 구분</dt><dd>생태적 격리는 서식지가 달라 만나지 않는 접합 전 장벽이고, 지리적 격리는 장벽이 개체군을 갈라놓는 이소적 종분화의 출발점이에요.</dd>
+    </dl>
+  </div>
+</article>
+<article class="topic" id="s3-sympatric"><h3>동소적 종분화: 사과파리</h3><div class="tags"><span class="tag date">1029 수업</span><span class="tag slide">8장 p2</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">같은 동네에 살아도 어떤 파리는 산사나무에서만, 어떤 파리는 사과나무에서만 지내면 짝을 짓는 때가 어긋나요.</p>
+    <figure class="figure"><svg id="fig-applefly-timing" viewBox="0 0 600 290" role="img" aria-label="같은 지역에 산사나무와 사과나무가 나란히 있어요. 산사나무에는 테두리만 있는 작은 동그라미 파리가, 사과나무에는 색칠된 작은 동그라미 파리가 앉아 있어요. 아래 시간 막대에서 사과나무 열매 기간과 산사나무 열매 기간이 약 한 달 어긋나 있어요.">
+      <text class="fig-text" x="300" y="22" text-anchor="middle" font-size="14">같은 지역, 다른 나무</text>
+      <rect class="fig-ink" x="20" y="34" width="560" height="140" rx="10" stroke-dasharray="6 5"/>
+      <text class="fig-muted" x="300" y="50" text-anchor="middle" font-size="12">한 지역 (땅이나 강이 가르지 않아요)</text>
+      <circle class="fig-ink" cx="160" cy="88" r="32"/>
+      <line class="fig-ink" x1="160" y1="120" x2="160" y2="144"/>
+      <circle class="fig-accent" cx="145" cy="80" r="5"/><circle class="fig-accent" cx="170" cy="92" r="5"/><circle class="fig-accent" cx="155" cy="102" r="5"/><circle class="fig-accent" cx="176" cy="74" r="5"/>
+      <text class="fig-text" x="160" y="164" text-anchor="middle" font-size="13">산사나무</text>
+      <circle class="fig-ink" cx="440" cy="88" r="32"/>
+      <line class="fig-ink" x1="440" y1="120" x2="440" y2="144"/>
+      <circle class="fig-dot" cx="425" cy="80" r="5"/><circle class="fig-dot" cx="450" cy="92" r="5"/><circle class="fig-dot" cx="435" cy="102" r="5"/><circle class="fig-dot" cx="456" cy="74" r="5"/>
+      <text class="fig-text" x="440" y="164" text-anchor="middle" font-size="13">사과나무</text>
+      <text class="fig-text" x="20" y="202" font-size="13">열매 맺는 때</text>
+      <rect class="fig-dot" x="150" y="210" width="190" height="14" rx="4"/>
+      <text class="fig-text" x="350" y="222" font-size="12">사과나무</text>
+      <rect class="fig-accent" x="270" y="234" width="190" height="14" rx="4"/>
+      <text class="fig-text" x="470" y="246" font-size="12">산사나무</text>
+      <line class="fig-ink" x1="150" y1="266" x2="560" y2="266"/>
+      <path class="fig-ink" d="M553 260 L560 266 L553 272"/>
+      <text class="fig-muted" x="150" y="284" font-size="12">시간 흐름</text>
+      <path class="fig-danger" d="M150 256 L270 256"/>
+      <text class="fig-text" x="210" y="252" text-anchor="middle" font-size="12">약 한 달 차이</text>
+    </svg><figcaption>그래서 끼리끼리만 짝을 짓고, 아직 완전히 다른 무리가 된 것은 아니에요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p><strong>동소적 종분화(sympatric speciation)</strong>는 한 지리적 지역에 사는 개체군 안에서 일어나는 종분화예요. 생식적 격리가 한 개체군 안의 하위 집단 사이에서 <strong>지리적 격리 없이</strong> 생겨요(강의노트 8장 p2). 동소(同所)는 "같은 장소"라는 뜻이에요.</p>
+    <p><strong>같은 장소인데 어떻게 갈라질까요?</strong> <a href="#s3-allopatric">이소적 종분화</a>에서는 땅이나 강이 유전자 확산을 막았어요. 같은 장소에서는 그런 장벽이 없으므로, 하위 집단끼리만 교배하게 만드는 다른 이유가 있어야 유전자 확산이 줄어들어요. 교수님은 "여러 가지 이유가 있다"며 그 하나로 사과파리를 들었어요. 강의노트는 이 경우를 <strong>서식지 분화</strong>(habitat differentiation)라는 표제로 묶었어요.</p>
+    <ol class="steps">
+      <li>이 파리들은 평생 한 나무에서 살아요. 그 나무에서 자라고, 교배도 그 나무의 열매 위에서 해요.</li>
+      <li>원래는 북미 토착 <strong>산사나무</strong>(hawthorn)의 열매를 먹고 사는 파리였어요.</li>
+      <li>북미에 사과나무가 들어오자 파리 일부가 사과나무로 옮겨 가 사과나무 열매에서 살기 시작했어요.</li>
+      <li>두 나무는 열매 맺는 시기가 약 한 달 차이 나요. 교배를 열매 위에서 하므로 교배 시기도 어긋나요. 교수님은 이것을 <strong>시간적 격리</strong>로 설명했어요.</li>
+      <li>그래서 사과나무 파리는 사과나무 파리끼리, 산사나무 파리는 산사나무 파리끼리만 교배해요. 같은 지역에 있지만 나무 선호 차이 때문에 두 집단 사이의 유전자 확산이 줄어드는 거예요.</li>
+      <li>오랜 시간이 지나 돌연변이가 쌓여 생식적 격리가 생기면 다른 종이 될 수 있어요. 하지만 <strong>아직은 다른 종이 아니에요</strong>. 강의노트도 "동소 종분화가 진행 중"이라고 적었어요.</li>
+    </ol>
+    <p>사과나무와 산사나무가 다르다는 것은 같은 지역 안에서 쓰는 서식지(나무)가 다르다는 뜻이에요. 산이나 바다가 두 집단을 갈라놓은 지리적 격리가 아니므로 이 예는 동소적 종분화로 분류해요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>파리의 일생을 사람에 빗댔어요. 이 나무에서 자라 학교 다니고, 결혼하고, 자식 낳고 죽는다고 했어요. 사과나무가 들어오자 일부 파리가 "나 저쪽으로 한번 가 볼까?" 하고 옮겨 갔다고 설명했어요.</p>
+    <blockquote>오, 사과나무 더 좋은데? 아니 나 여기서 살아야겠다.</blockquote>
+    <blockquote>아직은 다른 종이 안 됐답니다.</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <p><strong>사과파리를 어떤 격리로 볼지 자료마다 표현이 달라요.</strong> 교수님은 열매 시기가 약 한 달 차이 나서 교배 시기가 어긋난다는 <strong>시간적 격리</strong>로 설명했어요. 시간적 격리는 수정 전에 작용하는 <a href="#s2-prezygotic">접합 전 장벽</a>이에요. 강의노트 8장 p2는 이 예를 "<strong>서식지 분화</strong>" 표제 아래 두고 "생식에 대한 <strong>접합 후 장벽</strong>"이라고 적었어요. 두 설명은 장벽이 작용하는 단계가 서로 달라요. 이 노트는 어느 쪽이 맞다고 정하지 않아요. 두 자료가 함께 말하는 것은 같은 지역에서 숙주 나무가 갈라져(서식지 분화) 끼리끼리 교배하고, 아직 종분화가 진행 중이라는 점이에요.</p>
+    <p><strong>사과파리가 이미 다른 종이 되었다고 착각하기 쉬워요.</strong> 사과파리는 <strong>진행 중</strong>인 종분화예요. 끼리끼리 교배하고 있을 뿐이고, 생식적 격리가 완성되어야 다른 종이 돼요.</p>
+    <p><strong>같은 장소에 살면 종분화가 일어날 수 없다고 착각하기 쉬워요.</strong> 동소적 종분화는 지리적 격리 없이 일어나요. 나무 선호, 교배 시기, <a href="#s3-polyploidy">배수성</a> 같은 이유로 같은 장소에서도 하위 집단 사이의 교배가 줄거나 막힐 수 있어요.</p>
+    <p><strong>다른 나무에 사는 것을 지리적 격리로 착각하기 쉬워요.</strong> 두 나무는 같은 지역 안에 있어요. 이것은 서식지 분화이고, 이소적 종분화를 일으키는 지리적 격리와 달라요.</p>
+  </div>
+  <div class="layer supp" id="s3-sympatric-supp-1"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
+    <p>교재는 사과파리를 동소적 종분화의 동물 모델 가운데 가장 잘 연구된 예로 소개해요. 원래 숙주식물은 북아메리카 동쪽의 산사나무였고, 각 숙주종의 개체가 다른 숙주종의 구성원보다 자기 숙주종의 구성원과 더 많이 교배한다면 숙주종 사이에 생식적 격리가 발달할 수 있다고 적었어요. 교재는 이것이 어떤 종류의 장벽인지는 밝히지 않았어요.</p>
+    <p>서식지 차이로 보면 이 노트의 <a href="#s2-prezygotic">생태적 격리</a> 정의(같은 지역 안에서 서식지가 달라 만나지 않음)와도 닿아요. 다만 이 노트는 사과파리의 격리 유형을 하나로 확정하지 않아요.</p>
+    <p>출처: 교재 8장 p.163–164</p>
+  </div>
+  <div class="layer supp" id="s3-sympatric-supp-2"><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>
+    <p>강의노트에는 사과나무가 약 200년 전에 도입되었고, 일부 집단이 "더 빨리 성숙하는 사과나무"를 먹는다고 적혀 있어요. 두 나무의 열매가 익는 시기가 다르다는 점에서 교수님의 "열매 시기 약 한 달 차이" 설명과 같은 방향이에요. 수업에서는 이 수치와 표현을 말하지 않았어요.</p>
+    <p>출처: 1029 수업, 강의노트 8장 p2</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">같은 지역에서 지리적 격리 없이 하위 집단 사이에 생식적 격리가 생기는 것이 동소적 종분화이고, 사과파리는 그 진행 중인 예예요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>동소적 종분화(sympatric speciation)</dt><dd>한 지리적 지역에 사는 개체군 안에서, 지리적 격리 없이 하위 집단 사이에 생식적 격리가 생겨 일어나는 종분화예요.</dd>
+      <dt>사과파리</dt><dd>평생 한 나무에서 살고 열매 위에서 교배해요. 북미 토착 산사나무에 살던 파리 일부가 들어온 사과나무로 옮겨 갔고, 열매 시기가 약 한 달 차이 나 끼리끼리 교배해요.</dd>
+      <dt>진행 중</dt><dd>사과파리는 아직 다른 종이 아니에요. 돌연변이가 쌓여 생식적 격리가 생겨야 다른 종이 돼요.</dd>
+      <dt>격리 종류의 자료 차이</dt><dd>교수님은 시간적 격리(접합 전 장벽)로, 강의노트는 서식지 분화 아래 "접합 후 장벽"으로 적었어요. 이 노트는 어느 쪽인지 정하지 않고, 공통점은 같은 지역의 숙주 나무 차이로 끼리끼리 교배한다는 것이에요.</dd>
+      <dt>서식지 분화와 지리적 격리</dt><dd>같은 지역 안에서 쓰는 나무가 다른 것은 서식지 분화예요. 장벽이 개체군을 갈라놓는 지리적 격리와 달라요.</dd>
+    </dl>
+    <div class="sum-supp" data-supp-source="s3-sympatric-supp-1" data-supp-label="보충 · 수업에서 다루지 않았어요">
+      <dl class="terms"><dt>(보충) 교재의 사과파리</dt><dd>교재는 숙주종마다 자기 숙주종 구성원과 더 많이 교배하면 생식적 격리가 발달할 수 있다고만 적고 장벽 종류는 밝히지 않아요. 서식지 차이로 보면 생태적 격리 정의와도 닿지만 격리 유형은 확정하지 않아요.</dd></dl>
+    </div>
+    <div class="sum-supp" data-supp-source="s3-sympatric-supp-2" data-supp-label="보충 · 노트에 빠졌던 수업 내용">
+      <dl class="terms"><dt>(보충) 강의노트의 도입 시기</dt><dd>강의노트에는 사과나무가 약 200년 전 도입되었고 일부 집단이 더 빨리 성숙하는 사과나무를 먹는다고 적혀 있어, 열매 시기 차이 설명과 같은 방향이에요.</dd></dl>
+    </div>
+  </div>
+</article>
+<article class="topic" id="s3-polyploidy"><h3>배수성: 한 세대 만의 종분화</h3><div class="tags"><span class="tag date">1029 수업</span><span class="tag slide">8장 p2</span></div>
+  <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">식물 하나가 실수로 유전 정보 묶음을 두 배로 갖게 되면, 원래 무리와 낳은 아이는 묶음의 짝이 맞지 않아 아이를 못 낳아요.</p>
+    <figure class="figure"><svg id="fig-polyploid-gen" viewBox="0 0 660 330" role="img" aria-label="염색체 한 세트를 n이라고 적은 테두리 상자로 그렸어요. 첫 줄은 n 상자 두 개인 2n 식물이 복제 뒤 세포분열을 하지 않아 n 상자 네 개인 4n 식물이 되는 모습이에요. 둘째 줄은 4n의 배우자 2n과 원래 집단의 배우자 n이 만나 n 상자 세 개인 3n 자손이 되고, 두 상자는 짝으로 묶였지만 남은 한 상자는 짝이 없어 정상 배우자를 거의 만들지 못하고 불임이에요. 셋째 줄은 4n의 배우자 2n끼리 만나 4n 자손이 되고, 상자 네 개가 두 짝으로 묶여 감수분열이 가능해요.">
+      <text class="fig-text" x="20" y="22" font-size="14">염색체 한 세트 = 상자 하나(n)</text>
+      <text class="fig-text" x="20" y="68" font-size="13">2n 식물</text>
+      <rect class="fig-ink" x="100" y="45" width="30" height="36" rx="4"/><text class="fig-text" x="115" y="68" text-anchor="middle" font-size="13">n</text>
+      <rect class="fig-ink" x="138" y="45" width="30" height="36" rx="4"/><text class="fig-text" x="153" y="68" text-anchor="middle" font-size="13">n</text>
+      <path class="fig-ink" d="M182 63 L320 63 M313 57 L320 63 L313 69"/>
+      <text class="fig-muted" x="251" y="52" text-anchor="middle" font-size="12">복제 후 세포분열 안 함</text>
+      <text class="fig-text" x="335" y="68" font-size="13">4n 식물</text>
+      <rect class="fig-ink" x="400" y="45" width="30" height="36" rx="4"/><text class="fig-text" x="415" y="68" text-anchor="middle" font-size="13">n</text>
+      <rect class="fig-ink" x="438" y="45" width="30" height="36" rx="4"/><text class="fig-text" x="453" y="68" text-anchor="middle" font-size="13">n</text>
+      <rect class="fig-ink" x="476" y="45" width="30" height="36" rx="4"/><text class="fig-text" x="491" y="68" text-anchor="middle" font-size="13">n</text>
+      <rect class="fig-ink" x="514" y="45" width="30" height="36" rx="4"/><text class="fig-text" x="529" y="68" text-anchor="middle" font-size="13">n</text>
+      <line class="fig-ink" x1="20" y1="102" x2="640" y2="102" stroke-dasharray="4 5"/>
+      <text class="fig-text" x="20" y="148" font-size="13">4n × 원래 2n</text>
+      <text class="fig-text" x="20" y="166" font-size="12">배우자 2n + 배우자 n</text>
+      <text class="fig-text" x="205" y="152" font-size="13">3n 자손</text>
+      <rect class="fig-ink" x="270" y="128" width="30" height="36" rx="4"/><text class="fig-text" x="285" y="151" text-anchor="middle" font-size="13">n</text>
+      <rect class="fig-ink" x="308" y="128" width="30" height="36" rx="4"/><text class="fig-text" x="323" y="151" text-anchor="middle" font-size="13">n</text>
+      <rect class="fig-danger" x="356" y="128" width="30" height="36" rx="4"/><text class="fig-text" x="371" y="151" text-anchor="middle" font-size="13">n</text>
+      <path class="fig-accent" d="M285 168 L285 176 L323 176 L323 168"/>
+      <text class="fig-muted" x="304" y="192" text-anchor="middle" font-size="12">짝</text>
+      <text class="fig-muted" x="371" y="182" text-anchor="middle" font-size="12">짝 없음</text>
+      <text class="fig-text" x="420" y="144" font-size="13">짝이 맞지 않음</text>
+      <text class="fig-text" x="420" y="164" font-size="13">정상 배우자 거의 없음, 불임</text>
+      <line class="fig-ink" x1="20" y1="210" x2="640" y2="210" stroke-dasharray="4 5"/>
+      <text class="fig-text" x="20" y="256" font-size="13">4n × 4n</text>
+      <text class="fig-text" x="20" y="274" font-size="12">배우자 2n + 배우자 2n</text>
+      <text class="fig-text" x="205" y="260" font-size="13">4n 자손</text>
+      <rect class="fig-ink" x="270" y="236" width="30" height="36" rx="4"/><text class="fig-text" x="285" y="259" text-anchor="middle" font-size="13">n</text>
+      <rect class="fig-ink" x="308" y="236" width="30" height="36" rx="4"/><text class="fig-text" x="323" y="259" text-anchor="middle" font-size="13">n</text>
+      <rect class="fig-ink" x="356" y="236" width="30" height="36" rx="4"/><text class="fig-text" x="371" y="259" text-anchor="middle" font-size="13">n</text>
+      <rect class="fig-ink" x="394" y="236" width="30" height="36" rx="4"/><text class="fig-text" x="409" y="259" text-anchor="middle" font-size="13">n</text>
+      <path class="fig-accent" d="M285 276 L285 284 L323 284 L323 276"/>
+      <path class="fig-accent" d="M371 276 L371 284 L409 284 L409 276"/>
+      <text class="fig-muted" x="347" y="302" text-anchor="middle" font-size="12">모두 짝이 있음</text>
+      <text class="fig-text" x="450" y="252" font-size="13">감수분열 가능</text>
+      <text class="fig-text" x="450" y="272" font-size="13">자손을 남김</text>
+    </svg><figcaption>두 배가 된 식물끼리는 짝이 맞아서, 곧바로 원래 무리와 다른 새 무리가 생겨요.</figcaption></figure>
+  </div>
+  <div class="layer formal"><span class="layer-title">정확히 말하면</span>
+    <p><strong>배수성(polyploidy)</strong>은 염색체 <strong>세트 전체</strong>가 늘어난 상태예요. 3n, 4n처럼 세트가 통째로 많아진 개체를 <strong>배수체</strong>(polyploid)라고 해요. 이와 달리 <strong>이수체</strong>(aneuploid)는 세트 전체가 아니라 일부 염색체의 수만 달라진 개체예요. 다운 증후군(2n+1)이 이수체의 예예요. 두 개념은 염색체 변화 단원에서 배웠어요(<a href="../1001/정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s1-polyploidy">1001 정리노트의 배수성</a>).</p>
+    <p>강의노트 8장 p2는 다배수성(polyploidy)이 "동물보다 <strong>식물</strong>에서 훨씬 더 흔함"이라고 적었어요. 교수님은 배수성을 식물에서 매우 강력한 <a href="#s3-sympatric">동소적 종분화</a> 메커니즘이라고 두 번 강조했어요. 땅이나 강이 갈라놓지 않아도 같은 장소에서 일어나요.</p>
+    <p><strong>어떻게 한 세대 만에 다른 종이 될까요?</strong> <a href="#s2-species">생물학적 종 개념</a>에서 다른 종인지는 교배해 생식력 있는 자손을 낳는지로 판정해요. 배수체는 원래 집단과 교배해도 생식력 있는 자손을 낳지 못하므로, 돌연변이가 오래 쌓이기를 기다리지 않고 곧바로 생식적 격리가 생겨요. 과정을 순서대로 보면 다음과 같아요.</p>
+    <ol class="steps">
+      <li>보통 이 식물들은 나도, 가족도, 교배 상대도 모두 2n이에요. 그런데 한 개체가 DNA를 복제한 뒤 세포분열을 하지 않아 4n이 되었어요. 배수체가 생기는 구체적 기작은 복잡하다며 수업에서는 이 예만 들었어요.</li>
+      <li>4n 개체가 감수분열하면 염색체 수가 반으로 줄어 <strong>배우자(정자·난자)가 2n</strong>이 돼요. 원래 집단의 2n 개체가 만드는 배우자는 n이에요.</li>
+      <li>4n의 2n 배우자와 원래 집단의 n 배우자가 수정하면 <strong>3n</strong> 자손이 생겨요.</li>
+      <li>3n 자손이 감수분열을 하려고 비슷한 염색체끼리 짝지어 4분염색체(tetrad)를 만들 때, 세 세트 가운데 두 세트는 짝이 맞지만 나머지 한 세트는 짝이 없어요. 수업에서는 이것을 "감수분열이 진행되지 않는다"로 단순화해 설명했어요. 핵심은 세 세트가 짝을 정상적으로 맞추지 못해, 감수분열이 일어나더라도 염색체 수가 고르지 않은 배우자가 생겨 정상 자손을 거의 남기지 못한다(불임)는 것이에요.</li>
+      <li>4n 개체와 원래 2n 집단은 교배해도 생식력 있는 자손을 남기지 못해요. 생식적 격리가 생겨, 4n 개체는 <strong>단 한 세대</strong> 만에 원래 집단과 다른 종이 돼요.</li>
+      <li>어쩌다 4n이 된 다른 개체가 있으면, 4n끼리는 2n 배우자끼리 수정해 4n 자손을 낳아요. 이 4n 자손은 모든 세트가 짝이 있어 다시 감수분열을 할 수 있으므로, 4n 개체들끼리는 하나의 종이 될 수 있어요.</li>
+    </ol>
+    <p><strong>배수성이 생식적 격리를 일으키는 방식은 생식세포(배우자)의 염색체 수가 달라지는 것</strong>이에요. 배수체는 원래 집단과 만나 교배하더라도 그 자손의 염색체 세트가 짝이 맞지 않아 불임이 돼요. 이 점에서 교배 상대를 만나는 일 자체가 줄어드는 <a href="#s3-sympatric">사과파리</a> 예와 구별돼요.</p>
+    <p>3n이 불임인 이유는 <a href="#s2-postzygotic">접합 후 장벽</a>의 노새와 같은 논리예요. 수업에서는 노새가 염색체 63개 가운데 31쌍을 짓고 1개가 짝이 없어 감수분열이 멈춘다고 설명했어요. 3n은 짝이 없는 것이 염색체 한 세트 전체이고, 두 경우 모두 짝이 맞지 않는 염색체 때문에 정상 배우자를 거의 만들지 못해요.</p>
+    <p><a href="#s3-allopatric">이소적 종분화</a>가 오랜 세월 돌연변이가 쌓여야 하는 것과 달리, 배수성은 한 세대 안에 생식적 격리를 만들어요. 그래서 "강력한" 메커니즘이라고 불러요.</p>
+  </div>
+  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+    <p>2n 식물 가족을 사람처럼 그렸어요. 나도, 엄마·아빠도, 약혼자도 2n인데, DNA를 복제해 놓고 세포분열을 "까먹어 버려서" 나만 4n이 되었다고 했어요. 4n이 감수분열하니 "정자인데도 2n"이 되고, 약혼자의 n과 만나 3n 자식이 태어난다고 설명했어요.</p>
+    <blockquote>매우 강력한 동소적 종분화의 메커니즘이다, 식물에서.</blockquote>
+    <blockquote>중요한 거는 배수체가 됐으면은 다른 종이 될 수가 있다는 겁니다.</blockquote>
+    <blockquote>엄마, 아빠, 가족, 약혼녀, 친구들, 안녕. 나는 다른 종이다.</blockquote>
+  </div>
+  <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
+    <p><strong>이수체와 배수체를 섞기 쉬워요.</strong> 이수체는 일부 염색체의 수만 달라진 개체예요(2n+1, 다운 증후군). 배수체는 염색체 세트 전체가 늘어난 개체예요(3n, 4n).</p>
+    <p><strong>4n × 2n과 4n × 4n의 결과를 섞기 쉬워요.</strong> 4n × 2n은 2n 배우자와 n 배우자가 만나 3n 자손이 되고, 한 세트가 짝이 없어 불임이에요. 4n × 4n은 2n 배우자끼리 만나 4n 자손이 되고, 감수분열이 가능해 번식할 수 있어요.</p>
+    <p><strong>3n이 왜 불임인지 놓치기 쉬워요.</strong> 노새와 같은 논리예요. 짝 없는 염색체가 생기면 4분염색체 형성 때 짝이 정상적으로 맞지 않아요. 수업은 이를 "감수분열이 멈춘다"로 단순화했고, 감수분열이 일어나더라도 염색체 수가 고르지 않은 배우자가 생겨 정상 자손을 거의 못 남겨요.</p>
+    <p><strong>배수성이 격리를 만드는 방식을 정확히 잡아요.</strong> 배수성이 격리를 만드는 방식은 배우자의 염색체 수가 달라지는 것이에요. 그래서 원래 집단과 교배해도 자손이 불임이 돼요.</p>
+    <p><strong>배수성에도 지리적 격리가 필요하다고 착각하기 쉬워요.</strong> 배수성은 같은 장소에서 일어나는 동소적 종분화이고, 오랜 세월이 아니라 한 세대 만에 생식적 격리를 만들어요.</p>
+  </div>
+  <div class="sum" hidden>
+    <p class="sum-lead">배수체는 배우자의 염색체 수가 달라져 원래 집단과의 자손이 불임이 되므로, 단 한 세대 만에 다른 종이 될 수 있어요. 식물에서 흔하고 강력한 동소적 종분화 메커니즘이에요.</p>
+    <p class="panel-label">용어</p>
+    <dl class="terms">
+      <dt>배수성(polyploidy)</dt><dd>염색체 세트 전체가 늘어난 상태예요(3n, 4n). 동물보다 식물에서 훨씬 흔하고, 식물에서 매우 강력한 동소적 종분화 메커니즘이에요.</dd>
+      <dt>배수체와 이수체</dt><dd>배수체는 세트 전체가 늘어난 개체(3n, 4n)이고, 이수체는 일부 염색체 수만 달라진 개체(2n+1, 다운 증후군)예요.</dd>
+      <dt>4n이 되는 예</dt><dd>2n 개체가 DNA를 복제한 뒤 세포분열을 하지 않으면 4n이 돼요. 4n의 배우자는 2n이에요.</dd>
+      <dt>4n × 2n</dt><dd>2n 배우자 + n 배우자로 3n 자손이 생겨요. 세 세트가 짝을 정상적으로 맞추지 못해, 감수분열이 일어나더라도 염색체 수가 고르지 않은 배우자가 생겨 정상 자손을 거의 못 남기므로 불임이에요(노새와 같은 논리, 수업은 "감수분열이 멈춘다"로 단순화).</dd>
+      <dt>4n × 4n</dt><dd>2n 배우자끼리 만나 4n 자손이 되고, 모든 세트가 짝이 있어 감수분열이 가능하므로 4n끼리 한 종이 될 수 있어요.</dd>
+      <dt>격리 방식과 속도</dt><dd>배우자(생식세포)의 염색체 수가 달라져 원래 집단과의 자손이 불임이 되므로 생식적 격리가 생겨요. 지리적 격리 없이 한 세대 만에 일어나요.</dd>
+    </dl>
+  </div>
+</article>
+    </section>
+    <section id="s4"><h2>4. 요약 · 예고</h2>
+<article class="topic" id="s4-cheatsheet"><h3>시험 직전 한 줄</h3><div class="tags"><span class="tag date">1029 수업</span><span class="tag slide">7장 p4–5, 8장 p1–2</span></div>
+<div class="table-wrap"><table><thead><tr><th>주제</th><th>시험 직전 한 줄</th></tr></thead><tbody>
+<tr><td><a href="#s0-hw-practice">하디-바인베르크 계산 함정</a></td><td>문제는 1세대가 평형이 깨진 상태로 출발한다고 가정해요. "평형 조건이 적용되면 다음 세대는?"에 1세대 유전자형 빈도를 그대로 쓰면 틀리고, 1세대에서 p, q를 먼저 구한 뒤 p², 2pq, q²로 2세대를 계산해요. 평형 유지는 2세대부터의 이야기예요.</td></tr>
+<tr><td><a href="#s0-hw-practice">열성 질환 역산</a></td><td>집단이 평형이라고 가정할 때, 열성 동형접합자(aa)만 환자이므로 환자 비율 = q²예요. 1만 명 중 1명이면 q² = 0.0001이고, 제곱근을 취해 q = 0.01, p = 0.99, 보인자(Aa) = 2pq = 2 × 0.99 × 0.01, AA = p²예요. q²(환자 비율)와 q(대립유전자 빈도)를 섞지 않아요.</td></tr>
+<tr><td><a href="#s0-factors">다섯 조건과 소진화 요인</a></td><td>다섯 조건 중 하나라도 깨지면 빈도가 변해 소진화가 일어나요. 조건을 뒤집은 것이 요인이에요: 돌연변이 없음은 돌연변이, 이동 없음은 유전자 확산(gene flow), 무한 크기는 작은 집단의 유전적 부동, 자연선택 없음은 자연선택, 무작위 교배는 비무작위(선택적) 교배로 뒤집혀요. 선택적 교배는 수업에서 성선택과 묶어 대립유전자 빈도를 바꾼다고 설명했고, 강의노트의 근친교배는 유전자형 빈도에 영향을 줘 동형접합자를 늘리고 이형접합자를 줄여요(수업에서는 다루지 않음).</td></tr>
+<tr><td><a href="#s0-factors">돌연변이 세 종류</a></td><td>돌연변이는 DNA 염기서열의 자발적 변화이고(자외선·화학물질이 빈도를 높임) 대부분 유해하거나 중립이에요. 생존·생식에 도움이 되면 유익돌연변이이고 자연선택으로 자손이 늘어요. 생기면 대립유전자 빈도가 변해요.</td></tr>
+<tr><td><a href="#s0-factors">유전자 확산</a></td><td>다른 집단과의 이동으로 대립유전자 빈도가 바뀌는 것이에요. 옆 동네 빨간 꽃 종자가 날아오면 빨간 대립유전자가 늘고(유입), 흰 종자가 날아가면 줄어요(유출). 들어오는 것과 나가는 것 둘 다 유전자 확산이에요.</td></tr>
+<tr><td><a href="#s0-drift">유전적 부동</a></td><td>형질의 유리함과 상관없이 우연한 사건으로 대립유전자 빈도가 변하는 것이에요. 집단이 작을수록 영향이 크고, 보통 유전적 다양성을 줄여 작은 집단을 멸종에 취약하게 만들어요(보전: 다른 지역 개체를 데려와 교배). 우연이어도 빈도가 변했으면 진화(소진화)예요.</td></tr>
+<tr><td><a href="#s0-drift">병목 현상 vs 창시자 효과</a></td><td>둘 다 유전적 부동이에요. 병목 현상은 폭풍·지진·사냥 같은 사건으로 그 자리의 개체 수가 급감하고 우연히 남은 소수가 다시 번식하는 것(수가 회복돼도 조성은 달라지고 일부 대립유전자는 사라짐), 창시자 효과는 큰 집단에서 소수가 떨어져 나와 새 지역에 새 집단을 만들어 창시자들의 유전자가 조성을 정하는 것이에요.</td></tr>
+<tr><td><a href="#s0-drift">자연선택 vs 유전적 부동</a></td><td>판별 기준은 "그 형질 때문에 남았나, 우연히 남았나"예요. "70점 이하는 나가"처럼 형질에 따라 남으면 자연선택, "이 줄만 남아"처럼 형질과 무관하게 남으면 유전적 부동이에요. 마션의 짧은 다리 개처럼 처음 온 개체가 우연히 그랬던 것은 적응이 아니에요.</td></tr>
+<tr><td><a href="#s1-fitness">상대적 적응도</a></td><td>남과 비교해 자식(자기 유전자)을 다음 세대에 얼마나 많이 남기는가예요. 돈·행복·건강이 아니라 자식 수로만 재고, 가장 많이 남긴 개체를 1.0으로 놓고 비교해요(흥부 자식 10명 = 1.0이면 1명인 놀부 = 0.1).</td></tr>
+<tr><td><a href="#s1-fitness">방향성 · 안정화 · 분단성 선택</a></td><td>정량적 형질 분포에서 한쪽 극단이 불리하면 방향성 선택(평균이 한쪽으로 이동, 예: 항생제 내성 획득), 양 극단이 모두 불리하면 안정화 선택(평균은 그대로, 분포 폭이 좁아짐, 예: 너무 작거나 큰 출생 체중의 높은 사망률), 중간이 불리하면 분단성(다형화) 선택(봉우리가 둘)이에요. 내성 획득은 분단성이 아니라 방향성 선택이에요.</td></tr>
+<tr><td><a href="#s1-sexual">성선택</a></td><td>짝을 골라 교배하는 것으로, 자연계에서는 보통 암컷이 수컷을 골라요. 선택받는 형질의 대립유전자가 늘어 빈도가 변하고, 공작 수컷의 화려한 깃처럼 생존에 불리해도 유지되며, 암수 차이가 커진 성적이형성(사자 갈기는 수컷만)이 생겨요.</td></tr>
+<tr><td><a href="#s1-balanced">불리한 대립유전자가 남는 이유</a></td><td>자연선택은 표현형에 작용하므로 열성 대립유전자는 이형접합자 안에 숨어 남아요(이배체성). 이형접합자 이점은 말라리아가 있는 지역에서만 성립해요: AS는 약한 빈혈(불완전 우성)이지만 S 하나로 말라리아 저항성이 생겨 적응도가 가장 높으므로 S가 사라지지 않고, 말라리아가 유행하는 아프리카에서 S 빈도가 높고 미국에서는 낮아요.</td></tr>
+<tr><td><a href="#s2-species">형태학적 vs 생물학적 종 개념</a></td><td>형태학적 종 개념은 눈으로 본 형태만으로 판단해요. 생물학적 종 개념은 생식 여부만 보아, 자연 상태에서 교배해 생식력 있는 자손을 낳으면 같은 종이에요(닮은 잠자리 두 마리는 다른 종, 전혀 다른 개 두 마리는 같은 종). 동물원의 사자·호랑이 잡종은 자연 상태가 아니고 불임이라 다른 종이에요. 무성생식 생물(세균)과 멸종한 종(화석)에는 쓸 수 없어요.</td></tr>
+<tr><td><a href="#s2-species">아종</a></td><td>강의노트 정의로는 지리적으로 떨어진 개체군 사이에 나타나는 표현형 변이, 곧 종의 지역적 변이예요. 같은 종이므로 만나면 교배해 생식력 있는 자손을 낳을 수 있어요. 다른 종이 아니라 같은 종 안의 구분이에요.</td></tr>
+<tr><td><a href="#s2-prezygotic">접합 전 격리 다섯</a></td><td>수정란 자체가 생기지 않는 격리예요. 생태적(사는 곳이 달라 못 만남, 사자·호랑이), 시간적(교배 시기가 다름, 봄꽃·가을꽃), 행동적(구애 신호가 다름, 반딧불이), 기계적(기계가 아니라 생식기관·꽃 구조의 물리적 차이), 배우자(정자·난자 표면 단백질이 맞지 않아 수정 안 됨) 격리예요.</td></tr>
+<tr><td><a href="#s2-postzygotic">접합 후 격리 셋</a></td><td>수정란은 생기지만 그 뒤에 문제가 생기는 격리예요. 잡종 생존불능(발생 중이나 태어나자마자 죽음), 잡종 불임(노새: 63개 염색체가 감수분열에서 짝이 정상적으로 맞지 않아 정상 배우자를 못 만듦), 잡종 붕괴(1대는 번식하지만 세대를 거듭하며 생존력·생식력이 떨어져 대가 끊김)예요. 불임은 1대가 자손을 못 남기고, 붕괴는 1대는 남겨요.</td></tr>
+<tr><td><a href="#s3-allopatric">이소적 종분화</a></td><td>다른 장소에 갈라져 생기는 종분화예요(파나마 지협 융기로 나뉜 물고기). 지리적 격리는 원인일 뿐이고, 갈라진 뒤 돌연변이가 쌓여 생식적 격리가 생겨야 종분화라고 판정해요. 지리적 격리만으로는 종분화가 아니에요.</td></tr>
+<tr><td><a href="#s3-sympatric">동소적 종분화: 사과파리</a></td><td>같은 장소에 살면서 일어나는 종분화예요. 산사나무 파리 일부가 사과나무로 옮겨 열매 시기 약 한 달 차이로 끼리끼리 교배하지만(교수님은 시간적 격리로 설명했고, 강의노트는 서식지 분화 항목에 "생식에 대한 접합 후 장벽"이라고 적어 자료 사이에 차이가 있어요. 어느 쪽으로 확정하지 않아요), 아직 다른 종이 아닌 진행 중인 종분화예요.</td></tr>
+<tr><td><a href="#s3-polyploidy">배수성: 한 세대 만의 종분화</a></td><td>식물에서 매우 강력한 동소적 종분화 기작이에요. 2n이 복제 후 분열하지 않아 4n이 되면, 4n × 2n의 3n 자손은 감수분열에서 짝이 정상적으로 맞지 않아 정상 배우자를 못 만들므로 불임이고 4n × 4n은 4n 자손을 낳으므로, 4n은 단 한 세대 만에 원래 2n과 다른 종이 돼요. 배수체(3n, 4n, 세트 전체 증가)와 이수체(2n+1, 일부 염색체)는 달라요.</td></tr>
+</tbody></table></div></article>
+<article class="topic" id="s4-next"><h3>다음 수업 예고</h3><div class="tags"><span class="tag date">1029 수업</span><span class="tag slide">8장 p2–6</span></div>
+<p>수업은 8.1 종분화의 배수성까지 마치고, 절이 끝나는 곳에서 깔끔하게 끝났어요.</p>
+<blockquote>같은 장소에 산다 하더라도 새로운 종으로 분화를 할 수가 있다. 여기까지가 종분화였고, 나머지는 대진화인데 다음 시간에 하겠습니다.</blockquote>
+<p>7장은 여기까지예요. 교수님은 7장을 (1) 다윈 이전 사상, (2) 다윈에 영향을 준 사상, (3) 다윈의 주장, (4) 다윈 이후 진화의 정의, (5) 소진화 요인, (6) 하디-바인베르크 원리 순서로 정리하라고 했어요.</p>
+<p>다음 시간에는 대진화가 이어져요(강의노트 진도 기준).</p>
+<ul>
+<li>8.2 고생물학과 대진화</li>
+<li>화석기록</li>
+<li>상대 연대와 방사성 연대측정, 반감기</li>
+<li>지질시대와 캄브리아기 대폭발</li>
+<li>판구조론과 판게아</li>
+<li>수렴진화</li>
+<li>진화의 경향, 단속 평형과 점진주의</li>
+<li>적응방산</li>
+<li>멸종과 대멸종</li>
+<li>진화발달생물학, 호미오 유전자</li>
+<li>8.3 생물의 분류와 계통</li>
+<li>계통수</li>
+<li>이명법</li>
+<li>분류 계급</li>
+<li>계통 형질</li>
+</ul></article>
+<article class="topic" id="s4-links"><h3>함께 보면 좋은 자료</h3><div class="tags"><span class="tag date">1029 수업</span><span class="tag slide">7장 p4–5, 8장 p1–2</span></div>
+<ul>
+<li><a href="복습문제_1029_Microevolution_and_Speciation.html">1029 복습문제</a></li>
+<li><a href="../1027/정리노트_1027_Evolutionary_Thought_and_Microevolution.html#s4-links">1027: 지난 수업 정리노트(진화 사상과 소진화, 하디-바인베르크 원리)</a></li>
+<li><a href="../0929/정리노트_0929_Heredity.html#s1-incomplete">0929: 불완전우성과 낫모양적혈구(이형접합자 이점의 바탕)</a></li>
+<li><a href="../0922/정리노트_0922_Cell_Division_and_Heredity.html#s2-tetrad">0922: 4분염색체와 중기 배열(노새와 3n이 불임인 이유의 바탕)</a></li>
+<li><a href="../1001/정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s1-polyploidy">1001: 한 개의 오류와 세트 전체의 증가(이수체와 배수체)</a></li>
+</ul></article>
+    </section>
+  </main>
+  <footer>출처: 이영만 교수님 강의노트(7장 p4–5, 8장 p1–2) · 수업 녹음 전사(1029) · 『생명과학: 기초와 응용』 2판 7장·8장.</footer>
+    </div>
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="panel-right-title">
+      <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-right-title">페이지 요약</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-empty" id="sum-empty">페이지를 넘기면 그 페이지의 핵심 식과 용어가 여기에 나옵니다.</p>
+        <div class="sums" id="sum-for"></div>
+      </div>
+    </aside>
+  </div>
+  <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
+  <nav class="pager" aria-label="화면 이동">
+    <div class="pager-inner">
+      <button class="btn btn-ghost" id="pager-prev" type="button">이전</button>
+      <span class="pager-count" id="pager-count"></span>
+      <button class="btn btn-primary" id="pager-next" type="button">시작하기</button>
+    </div>
+  </nav>
+  <p class="sr-only" id="pager-status" aria-live="polite"></p>
+  <script id="widget-drift-ui">(function () {
+  var DRIFT_NS = [10, 50, 500];          // 개체 수 N (대립유전자 2N개)
+  var DRIFT_GMAX = 100;                  // 미리 계산하는 최대 세대
+  var DRIFT_REPS = 5;                    // 반복 집단 수
+
+  function driftRound(x, d) { var k = Math.pow(10, d); return Math.round(x * k) / k; }
+
+  // 결정적 PRNG(mulberry32): 같은 시드면 브라우저와 node에서 같은 수열이 나온다.
+  function driftRng(seed) {
+    var a = seed >>> 0;
+    return function () {
+      a = (a + 0x6D2B79F5) >>> 0;
+      var t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  // 한 집단: 매 세대 부모 세대 빈도 p로 대립유전자 2N개를 무작위로 다시 뽑는다(라이트-피셔 모형).
+  function driftRun(N, rep) {
+    var rand = driftRng(4242 + rep * 7919 + N * 104729);
+    var M = 2 * N, k = N, traj = [0.5];
+    for (var g = 1; g <= DRIFT_GMAX; g++) {
+      var p = k / M, nk = 0;
+      if (k > 0 && k < M) { for (var i = 0; i < M; i++) if (rand() < p) nk++; }
+      else nk = k;                       // 0 또는 1에 닿으면 돌연변이·이동 없이는 그대로
+      k = nk;
+      traj.push(k / M);
+    }
+    return traj;
+  }
+
+  function driftModel(N, G) {
+    var runs = [], fixed = 0, lost = 0;
+    for (var r = 0; r < DRIFT_REPS; r++) {
+      var t = driftRun(N, r).slice(0, G + 1);
+      var last = t[G];
+      if (last === 1) fixed++;
+      if (last === 0) lost++;
+      runs.push(t);
+    }
+    return { N: N, G: G, runs: runs, fixed: fixed, lost: lost,
+             ends: runs.map(function (t) { return t[G]; }) };
+  }
+
+  function driftShapes(s) {
+    var L = 60, R = 540, T = 54, B = 250, out = [];
+    var x = function (g) { return driftRound(L + (R - L) * g / s.G, 1); };
+    var y = function (v) { return driftRound(B - (B - T) * v, 1); };
+    out.push(['text', { x: 16, y: 20, class: 'fig-text' }, '개체 ' + s.N + '마리 · ' + s.G + '세대 · 반복 집단 5개']);
+    out.push(['path', { d: 'M' + L + ' ' + T + 'V' + B + 'H' + R, class: 'axis' }]);
+    out.push(['path', { d: 'M' + L + ' ' + y(0.5) + 'H' + R, class: 'axis', 'stroke-dasharray': '4 4' }]);
+    [[0, '0'], [0.5, '0.5'], [1, '1']].forEach(function (t) {
+      out.push(['text', { x: L - 6, y: y(t[0]) + 4, 'text-anchor': 'end', class: 'tick' }, t[1]]);
+    });
+    [0, s.G / 2, s.G].forEach(function (g) {
+      out.push(['text', { x: x(g), y: B + 16, 'text-anchor': 'middle', class: 'tick' }, String(g)]);
+    });
+    out.push(['text', { x: (L + R) / 2, y: B + 34, 'text-anchor': 'middle', class: 'tick' }, '세대']);
+    out.push(['text', { x: 16, y: T - 10, class: 'tick' }, 'A 빈도']);
+    s.runs.forEach(function (t) {
+      var d = t.map(function (v, g) { return (g ? 'L' : 'M') + x(g) + ' ' + y(v); }).join('');
+      out.push(['path', { d: d, class: 'fig-accent' }]);
+      var e = t[s.G];
+      if (e === 0 || e === 1) out.push(['circle', { cx: x(s.G), cy: y(e), r: 6, class: 'fig-danger' }]);
+    });
+    out.push(['text', { x: R, y: T - 6, 'text-anchor': 'end', class: 'fig-text' },
+      'A 고정 ' + s.fixed + ' · A 소실 ' + s.lost]);
+    return out;
+  }
+
+  function driftSvg(shapes) {
+    var esc = function (v) { return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
+    return shapes.map(function (s) {
+      var attrs = Object.keys(s[1]).map(function (k) { return k + '="' + esc(s[1][k]) + '"'; }).join(' ');
+      return s[2] !== undefined ? '<' + s[0] + ' ' + attrs + '>' + esc(s[2]) + '</' + s[0] + '>' : '<' + s[0] + ' ' + attrs + '/>';
+    }).join('');
+  }
+
+  function driftLabel(s) {
+    var lo = Math.min.apply(null, s.ends), hi = Math.max.apply(null, s.ends);
+    return '개체 ' + s.N + '마리, ' + s.G + '세대 뒤 5개 집단 중 A가 고정되거나 소실된 집단 ' + (s.fixed + s.lost) +
+      '개(고정 ' + s.fixed + ', 소실 ' + s.lost + '), A 빈도 범위 ' + lo.toFixed(2) + '~' + hi.toFixed(2);
+  }
+  var nEl = document.getElementById('drift-n'), gEl = document.getElementById('drift-g');
+  var nVal = document.getElementById('drift-n-val'), gVal = document.getElementById('drift-g-val');
+  var plot = document.getElementById('drift-plot'), out = document.getElementById('drift-out');
+  if (!nEl || !gEl || !plot || !out) return;
+  function draw() {
+    var N = DRIFT_NS[Math.round(+nEl.value)] || DRIFT_NS[0];
+    var G = Math.round(+gEl.value);
+    var s = driftModel(N, G);
+    nVal.textContent = N + '마리';
+    gVal.textContent = G + '세대';
+    plot.innerHTML = driftSvg(driftShapes(s));
+    plot.setAttribute('aria-label', driftLabel(s));
+    out.textContent = driftLabel(s);
+  }
+  nEl.addEventListener('input', draw);
+  gEl.addEventListener('input', draw);
+  draw();
+})();</script>
+  <script id="widget-selection-ui">(function () {
+function selRound(x, d) { var k = Math.pow(10, d); return Math.round(x * k) / k; }
+var SEL_NAMES = { directional: '방향성 선택', stabilizing: '안정화 선택', disruptive: '분단성 선택' };
+function selFitness(mode, x) {
+  // 상대적 적응도(자식 수의 상대 비). 선택 전 평균 10 cm 기준.
+  if (mode === 'directional') return Math.exp(0.1 * (x - 10));            // 짧은 쪽 불리, 긴 쪽 유리
+  if (mode === 'stabilizing') return Math.exp(-Math.pow(x - 10, 2) / 72);  // 양 극단 불리
+  return 1 - 0.5 * Math.exp(-Math.pow(x - 10, 2) / 8);                     // 중간 불리
+}
+function selStats(xs, f) {
+  var dx = xs[1] - xs[0], m = 0, v = 0, i;
+  for (i = 0; i < xs.length; i++) m += xs[i] * f[i] * dx;
+  for (i = 0; i < xs.length; i++) v += Math.pow(xs[i] - m, 2) * f[i] * dx;
+  var mx = Math.max.apply(null, f), peaks = 0;
+  for (i = 1; i < xs.length - 1; i++) if (f[i] > f[i - 1] && f[i] >= f[i + 1] && f[i] > 0.05 * mx) peaks++;
+  return { mean: selRound(m, 1), sd: selRound(Math.sqrt(v), 1), peaks: peaks, max: mx };
+}
+function selModel(mode, gIn) {
+  var g = Math.round(gIn), xs = [], f0 = [], fg = [], i, s0 = 0, sg = 0;
+  for (i = 0; i <= 300; i++) xs.push(selRound(-5 + i * 0.1, 1));  // 계산은 -5~25 cm(끝 잘림 없이), 그림은 0~20 cm
+  for (i = 0; i < xs.length; i++) {
+    var b = Math.exp(-Math.pow(xs[i] - 10, 2) / 18);  // 선택 전: 평균 10 cm, 표준편차 3 cm
+    f0.push(b); fg.push(b * Math.pow(selFitness(mode, xs[i]), g));
+  }
+  for (i = 0; i < xs.length; i++) { s0 += f0[i] * 0.1; sg += fg[i] * 0.1; }
+  for (i = 0; i < xs.length; i++) { f0[i] /= s0; fg[i] /= sg; }  // 곡선 아래 넓이를 같게(전체 개체 = 1)
+  return { mode: mode, name: SEL_NAMES[mode], g: g, xs: xs, f0: f0, fg: fg, before: selStats(xs, f0), after: selStats(xs, fg) };
+}
+function selText(s) {
+  return s.name + ', ' + s.g + '세대 뒤: 평균 ' + s.before.mean.toFixed(1) + ' cm에서 ' + s.after.mean.toFixed(1) + ' cm로, 표준편차 ' +
+    s.before.sd.toFixed(1) + ' cm에서 ' + s.after.sd.toFixed(1) + ' cm로, 봉우리 ' + s.before.peaks + '개에서 ' + s.after.peaks + '개로';
+}
+function selShapes(s) {
+  var L = 50, R = 540, B = 250, H = 190, out = [];
+  var ymax = Math.max(s.before.max, s.after.max) * 1.08;
+  var X = function (x) { return selRound(L + (R - L) * x / 20, 1); };
+  var Y = function (v) { return selRound(B - H * v / ymax, 1); };
+  var path = function (f) {
+    var d = '';
+    for (var i = 50; i <= 250; i += 2) d += (i > 50 ? 'L' : 'M') + X(s.xs[i]) + ' ' + Y(f[i]);
+    return d;
+  };
+  out.push(['text', { x: 16, y: 24, class: 'fig-text' }, s.name + ' · ' + s.g + '세대 뒤']);
+  out.push(['path', { d: 'M' + L + ' ' + B + 'H' + R, class: 'axis' }]);
+  out.push(['path', { d: 'M' + L + ' 50V' + B, class: 'axis' }]);
+  [0, 5, 10, 15, 20].forEach(function (t) {
+    out.push(['text', { x: X(t), y: B + 16, 'text-anchor': 'middle', class: 'tick' }, String(t)]);
+  });
+  out.push(['text', { x: (L + R) / 2, y: B + 38, 'text-anchor': 'middle', class: 'tick' }, '꼬리 길이 (cm)']);
+  out.push(['text', { x: L - 8, y: 46, 'text-anchor': 'end', class: 'tick' }, '빈도']);
+  out.push(['path', { d: path(s.f0), class: 'fig-ink', 'stroke-dasharray': '6 5' }]);
+  out.push(['path', { d: path(s.fg), class: 'fig-accent' }]);
+  var mb = X(s.before.mean), ma = X(s.after.mean);
+  out.push(['path', { d: 'M' + mb + ' 56V' + B, class: 'fig-ink', 'stroke-dasharray': '2 4' }]);
+  out.push(['path', { d: 'M' + ma + ' 70V' + B, class: 'fig-accent', 'stroke-dasharray': '2 4' }]);
+  var same = Math.abs(ma - mb) < 40;
+  out.push(['text', { x: mb + (same ? -6 : -6), y: 52, 'text-anchor': 'end', class: 'fig-muted' }, '선택 전 평균 ' + s.before.mean.toFixed(1)]);
+  out.push(['text', { x: ma + 6, y: 66, 'text-anchor': 'start', class: 'fig-text' }, '선택 후 평균 ' + s.after.mean.toFixed(1)]);
+  out.push(['text', { x: R, y: 24, 'text-anchor': 'end', class: 'fig-muted' }, '표준편차 ' + s.after.sd.toFixed(1) + ' cm · 봉우리 ' + s.after.peaks + '개']);
+  return out;
+}
+function selAria(s) {
+  return s.name + ' ' + s.g + '세대 뒤 꼬리 길이 분포. 점선은 선택 전 곡선(평균 ' + s.before.mean.toFixed(1) + ' cm, 표준편차 ' + s.before.sd.toFixed(1) +
+    ' cm), 실선은 선택 후 곡선(평균 ' + s.after.mean.toFixed(1) + ' cm, 표준편차 ' + s.after.sd.toFixed(1) + ' cm, 봉우리 ' + s.after.peaks + '개)';
+}
+function selEsc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function selSvgString(s) {
+  return selShapes(s).map(function (sh) {
+    var a = Object.keys(sh[1]).map(function (k) { return k + '="' + selEsc(sh[1][k]) + '"'; }).join(' ');
+    return sh[2] === undefined ? '<' + sh[0] + ' ' + a + '/>' : '<' + sh[0] + ' ' + a + '>' + selEsc(sh[2]) + '</' + sh[0] + '>';
+  }).join('');
+}
+
+  var NS = 'http://www.w3.org/2000/svg';
+  var modeEl = document.getElementById('selection-mode'), gEl = document.getElementById('selection-g');
+  var gVal = document.getElementById('selection-g-val'), plot = document.getElementById('selection-plot'), out = document.getElementById('selection-out');
+  if (!modeEl || !gEl || !plot) return;
+  function draw() {
+    var s = selModel(modeEl.value, Number(gEl.value));
+    while (plot.firstChild) plot.removeChild(plot.firstChild);
+    selShapes(s).forEach(function (sh) {
+      var el = document.createElementNS(NS, sh[0]);
+      Object.keys(sh[1]).forEach(function (k) { el.setAttribute(k, sh[1][k]); });
+      if (sh[2] !== undefined) el.textContent = sh[2];
+      plot.appendChild(el);
+    });
+    plot.setAttribute('aria-label', selAria(s));
+    gVal.textContent = String(s.g);
+    out.textContent = selText(s);
+  }
+  modeEl.addEventListener('change', draw);
+  gEl.addEventListener('input', draw);
+  draw();
+})();</script>
+  <script id="theme-ui">
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const sysDark = matchMedia('(prefers-color-scheme: dark)');
+      const KEY = 'od-theme';
+      const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+      function label() {
+        const next = isDark() ? '라이트 모드로 전환' : '다크 모드로 전환';
+        btn.setAttribute('aria-label', next);
+        btn.title = next;
+      }
+      btn.addEventListener('click', () => {
+        const t = isDark() ? 'light' : 'dark';
+        // 시스템 설정과 같아지면 저장을 지워 다시 시스템을 따른다
+        if ((t === 'dark') === sysDark.matches) { delete root.dataset.theme; try { localStorage.removeItem(KEY); } catch (e) {} }
+        else { root.dataset.theme = t; try { localStorage.setItem(KEY, t); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+        label();
+      });
+      sysDark.addEventListener('change', label);
+      window.addEventListener('storage', (e) => {
+        if (e.key !== KEY) return;
+        if (e.newValue === 'light' || e.newValue === 'dark') root.dataset.theme = e.newValue; else delete root.dataset.theme;
+        label();
+      });
+      label();
+    })();
+  </script>
+  <script id="panels-ui">
+    (function () {
+      const body = document.body;
+      const layout = document.querySelector('.layout');
+      const kind = body.dataset.panels;
+      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const scrim = document.getElementById('panel-scrim');
+      const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
+      const wideMq = matchMedia('(min-width: 1024px)');
+      const roomyMq = matchMedia('(min-width: 1280px)');
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      // 푼 기록은 탭(세션) 단위로만 유지: 뒤로가기·새로고침엔 남고, 창을 닫고 다시 열면 초기화
+      const tabStore = {
+        get(k, d) { try { const v = sessionStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      const PREF = 'od-panels:' + kind;
+      // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
+      const RANGE = body.dataset.range || '';
+      const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+      const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+      let overlay = null;
+
+      // ---------- 열고 닫기 ----------
+      function docked() {
+        const pref = store.get(PREF, {});
+        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+      }
+      function sync() {
+        const wide = wideMq.matches;
+        const d = docked();
+        ['left', 'right'].forEach((side) => {
+          const open = wide ? d[side] : overlay === side;
+          const p = panels[side];
+          layout.dataset[side] = open ? 'open' : 'closed';
+          p.classList.toggle('is-open', !wide && open);
+          p.inert = !open;
+          if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
+          toggles[side].setAttribute('aria-expanded', String(open));
+        });
+        const drawer = !wide && overlay !== null;
+        scrim.classList.toggle('is-on', drawer);
+        body.classList.toggle('drawer-open', drawer);
+        blockers.forEach((el) => { el.inert = drawer; });
+      }
+      function openDrawer(side) {
+        overlay = side;
+        sync();
+        requestAnimationFrame(() => panels[side].querySelector('[data-panel-close]').focus());
+      }
+      function closeDrawer(refocus) {
+        if (overlay === null) return;
+        const side = overlay;
+        overlay = null;
+        sync();
+        if (refocus) toggles[side].focus();
+      }
+      function toggle(side) {
+        if (wideMq.matches) {
+          const d = docked();
+          d[side] = !d[side];
+          store.set(PREF, d);
+          sync();
+          if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+        } else if (overlay === side) closeDrawer(true);
+        else openDrawer(side);
+      }
+
+      toggles.left.addEventListener('click', () => toggle('left'));
+      toggles.right.addEventListener('click', () => toggle('right'));
+      scrim.addEventListener('click', () => closeDrawer(true));
+      document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
+      panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
+
+      // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      function applyWidths() {
+        const w = store.get(PREF + ':w', {});
+        ['left', 'right'].forEach((side) => {
+          if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
+          else layout.style.removeProperty(WIDTH[side].prop);
+        });
+      }
+      function maxFor(side) {
+        const other = side === 'left' ? panels.right : panels.left;
+        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
+      }
+      function setWidth(side, px, save) {
+        const v = Math.round(Math.min(Math.max(px, WIDTH[side].min), maxFor(side)));
+        layout.style.setProperty(WIDTH[side].prop, v + 'px');
+        panels[side].querySelector('.panel-resize').setAttribute('aria-valuenow', String(v));
+        if (save) { const w = store.get(PREF + ':w', {}); w[side] = v; store.set(PREF + ':w', w); }
+      }
+      function resetWidth(side) {
+        const w = store.get(PREF + ':w', {});
+        delete w[side];
+        store.set(PREF + ':w', w);
+        layout.style.removeProperty(WIDTH[side].prop);
+      }
+      document.querySelectorAll('.panel-resize').forEach((handle) => {
+        const side = handle.dataset.side;
+        const dir = side === 'left' ? 1 : -1;
+        handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
+        handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
+        handle.addEventListener('pointerdown', (e) => {
+          if (!wideMq.matches || e.button !== 0) return;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startW = panels[side].getBoundingClientRect().width;
+          handle.setPointerCapture(e.pointerId);
+          body.classList.add('is-resizing');
+          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const up = () => {
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', up);
+            handle.removeEventListener('pointercancel', up);
+            body.classList.remove('is-resizing');
+            setWidth(side, panels[side].getBoundingClientRect().width, true);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', up);
+          handle.addEventListener('pointercancel', up);
+        });
+        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('keydown', (e) => {
+          const step = e.shiftKey ? 64 : 16;
+          const cur = panels[side].getBoundingClientRect().width;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+        });
+      });
+      applyWidths();
+      const onMq = () => { overlay = null; sync(); };
+      wideMq.addEventListener('change', onMq);
+      roomyMq.addEventListener('change', onMq);
+
+      // ---------- 목차의 진행 표시 ----------
+      const progressN = document.getElementById('progress-n');
+      const progressBar = document.getElementById('progress-bar');
+      const progressTotal = document.getElementById('progress-total');
+      function markToc(done, total, doneLabel) {
+        panels.left.querySelectorAll('.toc-list a').forEach((a) => {
+          const id = decodeURIComponent(a.getAttribute('href').slice(1));
+          let mark = a.querySelector('.toc-mark');
+          if (!mark) {
+            mark = document.createElement('span');
+            mark.className = 'toc-mark';
+            mark.setAttribute('aria-hidden', 'true');
+            const state = document.createElement('span');
+            state.className = 'sr-only toc-state';
+            a.append(mark, state);
+          }
+          const isDone = done.has(id);
+          mark.classList.toggle('is-done', isDone);
+          mark.innerHTML = isDone ? ICON_DONE : ICON_TODO;
+          a.querySelector('.toc-state').textContent = isDone ? ' (' + doneLabel + ')' : '';
+        });
+        progressN.textContent = String(done.size);
+        progressTotal.textContent = String(total);
+        progressBar.style.transform = 'scaleX(' + (total ? done.size / total : 0) + ')';
+      }
+      function revealCurrent() {
+        const link = panels.left.querySelector('.toc-list a[aria-current="true"]');
+        if (link && layout.dataset.left === 'open') link.scrollIntoView({ block: 'nearest' });
+      }
+
+      // ---------- 복습문제: 오른쪽 = 원문 · 힌트 · 풀이 ----------
+      function setupReview() {
+        const KEY = 'od-review-solved:' + RANGE;
+        const cards = Array.from(document.querySelectorAll('main article.card'));
+        const aids = panels.right.querySelector('.aids');
+        const empty = panels.right.querySelector('.panel-empty');
+        const btn = document.getElementById('solved-btn');
+        const groups = {};
+        const solved = new Set(tabStore.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        cards.forEach((card) => {
+          const g = document.createElement('div');
+          g.className = 'aid';
+          g.hidden = true;
+          card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
+          aids.appendChild(g);
+          groups[card.id] = g;
+        });
+        let curId = null;
+        function paintBtn() {
+          const on = solved.has(curId);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.innerHTML = (on ? ICON_DONE : ICON_TODO) + '<span>' + (on ? '푼 문제 · 표시 해제' : '푼 문제로 표시') + '</span>';
+        }
+        btn.addEventListener('click', () => {
+          if (!curId) return;
+          if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
+          tabStore.set(KEY, Array.from(solved));
+          paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          curId = s.matches('article.card') ? s.id : null;
+          Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
+          empty.hidden = Boolean(curId);
+          btn.hidden = !curId;
+          if (curId) paintBtn();
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(solved, cards.length, '푼 문제');
+          revealCurrent();
+        });
+      }
+
+      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
+      function setupNote() {
+        const KEY = 'od-note-read:' + RANGE;
+        const topics = Array.from(document.querySelectorAll('main article.topic'));
+        const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
+        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
+        const box = panels.right.querySelector('.sums');
+        const sums = {};
+        topics.forEach((t) => {
+          const el = t.querySelector(':scope > .sum');
+          if (!el) return;
+          el.hidden = true;
+          box.appendChild(el);
+          sums[t.id] = el;
+        });
+        const empty = document.getElementById('sum-empty');
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          const key = s.matches('article.topic') ? s.id : 'intro';
+          Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
+          empty.hidden = Boolean(sums[key]);
+          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(read, topics.length, '읽음');
+          revealCurrent();
+        });
+      }
+
+      if (kind === 'review') setupReview();
+      if (kind === 'note') setupNote();
+      sync();
+    })();
+  </script>
+  <script id="pager-ui">
+    (function () {
+      const root = document.documentElement;
+      const main = document.querySelector('main');
+      const hero = main.querySelector('.hero');
+      const screens = [hero].concat(Array.from(main.querySelectorAll(document.body.dataset.screens)));
+      if (screens.length < 2) { root.classList.remove('js'); return; }
+      screens.forEach((s) => s.classList.add('screen'));
+
+      const last = screens.length - 1;
+      const prevBtn = document.getElementById('pager-prev');
+      const nextBtn = document.getElementById('pager-next');
+      const count = document.getElementById('pager-count');
+      const bar = document.getElementById('pager-bar');
+      const status = document.getElementById('pager-status');
+      const toc = document.querySelector('#panel-left .toc');
+      const scroller = document.querySelector('.content');
+      const titleOf = (s) => ((s.querySelector('h3') || s.querySelector('h1') || {}).textContent || '').trim();
+      let cur = -1;
+
+      // 목차: 섹션 링크 아래에 화면(토픽·카드) 목록을 붙인다
+      const tocLinks = [];
+      Array.from(toc.querySelectorAll(':scope > a')).forEach((a) => {
+        const sec = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+        const group = document.createElement('div');
+        group.className = 'toc-group';
+        a.replaceWith(group);
+        group.appendChild(a);
+        if (!sec) return;
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        screens.forEach((s, i) => {
+          if (!sec.contains(s)) return;
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#' + s.id;
+          link.innerHTML = '<span class="toc-title"></span>';
+          link.firstChild.textContent = titleOf(s);
+          li.appendChild(link);
+          list.appendChild(li);
+          tocLinks[i] = link;
+        });
+        group.appendChild(list);
+      });
+
+      function indexFor(hash) {
+        const id = decodeURIComponent((hash || '').replace(/^#/, ''));
+        const el = id && document.getElementById(id);
+        if (!el || !main.contains(el)) return { i: 0 };
+        const i = screens.findIndex((s) => s.contains(el) || el.contains(s));
+        return { i: Math.max(i, 0), target: i >= 0 && screens[i].contains(el) && screens[i] !== el ? el : null };
+      }
+
+      function render(i, target) {
+        const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
+        if (i !== cur) {
+          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
+          main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
+          const s = screens[i];
+          const sec = s.closest('section');
+          if (sec) sec.classList.add('is-on');
+          s.classList.add('is-current');
+          if (dir) { s.classList.remove('enter-next', 'enter-prev'); void s.offsetWidth; s.classList.add(dir); }
+          cur = i;
+          document.body.classList.toggle('at-end', i === last);
+          prevBtn.disabled = i === 0;
+          nextBtn.textContent = i === 0 ? '시작하기' : i === last ? '처음으로' : '다음';
+          count.textContent = i === 0 ? '' : i + ' / ' + last;
+          bar.style.transform = 'scaleX(' + (i / last) + ')';
+          status.textContent = i === 0 ? titleOf(s) : i + ' / ' + last + ', ' + titleOf(s);
+          tocLinks.forEach((link, k) => link && link.setAttribute('aria-current', String(k === i)));
+          document.dispatchEvent(new CustomEvent('od:screen', { detail: { index: i, screen: s } }));
+        }
+        if (target) target.scrollIntoView({ block: 'start' });
+        else scroller.scrollTo(0, 0);
+      }
+
+      function go(i) {
+        i = Math.min(Math.max(i, 0), last);
+        if (i === cur) return;
+        const url = i === 0 ? location.pathname + location.search : '#' + screens[i].id;
+        history.pushState(null, '', url);
+        render(i);
+      }
+
+      prevBtn.addEventListener('click', () => go(cur - 1));
+      nextBtn.addEventListener('click', () => go(cur === last ? 0 : cur + 1));
+      const fromUrl = () => { const r = indexFor(location.hash); render(r.i, r.target); };
+      window.addEventListener('hashchange', fromUrl);
+      window.addEventListener('popstate', fromUrl);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+
+      // 좌우로 밀어서 넘기기 (가로로 스크롤되는 영역은 제외)
+      let sx = 0, sy = 0, skip = true;
+      main.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (skip) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 64 && Math.abs(dx) > 2 * Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      fromUrl();
+    })();
+  </script>
+</body>
+</html>
