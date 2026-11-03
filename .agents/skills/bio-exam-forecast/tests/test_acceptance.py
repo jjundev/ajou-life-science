@@ -29,6 +29,8 @@ for p in item['pack'].problems:(item['folder']/'explanations'/f'{p.id}.html').wr
  r=subprocess.run([sys.executable,'-c',code2,str(scripts),str(scripts.parent/'tests'),str(run)],capture_output=True,text=True);assert r.returncode==0,r.stderr
  call('publish','--run',run)
  explanation=question.parent/'문제해설_1장-6장_시험예상_v1.html'
+ from urllib.parse import unquote
+ assert '시험예상문제_1장-6장_연습형_v1.html' in unquote(explanation.read_text())
  status=completion_status(question,explanation,dict(repairs_used=0));assert status['status']=='complete',status
  with sync_playwright() as pw:
   browser=pw.chromium.launch(headless=True)

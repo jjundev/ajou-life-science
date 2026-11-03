@@ -56,12 +56,17 @@ def write_pack(src,selection,scope_data,manifest,policy_notes,policy_summary):
 
 def question_input_hash(src,question):
  src=Path(src);files=[src/name for name in BINDINGS]+[Path(question)]
+ from exam_presentations import pair_paths
+ files += [p for p in pair_paths(src) if p not in files]
  for folder in ('cards','vendor','assets'):
   if (src/folder).exists():files+=sorted(p for p in (src/folder).rglob('*') if p.is_file())
  return digest([(os.path.relpath(p,src),sha(p)) for p in files])
 
 def initial_question_review(src,question):
- return dict(input_hash=question_input_hash(src,question),reviews={k:dict(status='not_run',reviewer='',evidence='',items={}) for k in REVIEW_NAMES})
+ review=dict(input_hash=question_input_hash(src,question),reviews={k:dict(status='not_run',reviewer='',evidence='',items={}) for k in REVIEW_NAMES})
+ if (Path(src)/'presentations.json').exists():
+  review['reviews']['browser']['presentations']={mode:dict(status='not_run',reviewer='',evidence='') for mode in ('practice','exam')}
+ return review
 
 def _resources(repo,src,markup,id_,manifest,*,copy_assets=True):
  # Reuse the existing Node parser without altering global search paths.
@@ -152,5 +157,8 @@ def build_exam(repo,src):
  src=Path(src)
  review=src/'question-review.json'
  if review.exists() and all(r.get('status')=='pass' for r in load(review)['reviews'].values()):raise ExamError('완료 버전은 새 버전으로 생성하세요')
- rendered=render_exam(repo,src);p=load(src/'pack.json');target=src.parent.parent/f'시험예상문제_{p["range"]}_v{p["version"]}.html'
- target.write_text(rendered,encoding='utf-8');dump(review,initial_question_review(src,target));return target
+ from exam_presentations import names,set_hash,decorate,practice_from_exam,write_pair
+ rendered=render_exam(repo,src);p=load(src/'pack.json');target=src.parent.parent/names(p)['exam']
+ question_hash=set_hash(src)
+ write_pair(src,dict(exam=decorate(rendered,p,'exam',question_hash),practice=practice_from_exam(rendered,p,question_hash)))
+ dump(review,initial_question_review(src,target));return target

@@ -56,6 +56,18 @@ def build_model(source: str, document_id: str, overrides: dict | None = None) ->
             if not cid or cid in seen:
                 raise ValueError('문항 id 누락 또는 중복')
             seen.add(cid)
+            if card.attrs.get('data-format') == 'short':
+                answer = json.loads(card.attrs.get('data-short-answer', '{}'))
+                if (not isinstance(answer, dict) or not isinstance(answer.get('canonical'), str)
+                    or not answer['canonical'].strip() or not isinstance(answer.get('accepted'), list)
+                    or not all(isinstance(x, str) and x.strip() for x in answer['accepted'])
+                    or type(answer.get('case_sensitive')) is not bool):
+                    raise ValueError('단답형 정답/허용답 형식 오류')
+                if len(find(card, 'solution')) != 1:
+                    raise ValueError('단답형 풀이 누락 또는 중복')
+                result['cards'][cid] = dict(format='short', answer=answer,
+                    version=hashlib.sha256(json.dumps(snapshot(card), ensure_ascii=False).encode()).hexdigest())
+                continue
             lists = find(card, 'choices')
             if not lists:
                 result['skipped'].append(cid)
@@ -184,6 +196,8 @@ def install(source: str, document_id: str, overrides: dict | None = None, strict
     css = (SKILL / 'assets/review-interaction.css').read_text(encoding='utf-8')
     js = ((SKILL / 'assets/review-prompt.js').read_text(encoding='utf-8') + '\n'
           + (SKILL / 'assets/review-interaction.js').read_text(encoding='utf-8'))
+    if not any(card.get('format') == 'short' for card in model['cards'].values()):
+        js = re.sub(r'^// short-support:start\n.*?^// short-support:end\n', '', js, flags=re.S | re.M)
     boot = """(function () {
       function start() {
         try {

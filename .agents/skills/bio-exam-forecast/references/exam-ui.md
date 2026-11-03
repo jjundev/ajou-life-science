@@ -1,10 +1,12 @@
 # 확정된 시험예상문제 화면과 동작
 
+새 실행은 [두 풀이형 공통 계약](dual-html.md)에 따라 별도 연습형·시험형 HTML을 모두 만든다. 아래 v9 동작은 **시험형** 기준이다. 연습형은 기존 웹과제 복습문제의 템플릿과 상호작용을 사용한다. 객관식 보기별 설명·다시 풀기·애매함 표시, 단답형 입력과 `답 확인`, 마지막 문항의 복기 프롬프트를 제공한다. 연습형에는 시험식 전체 결과와 추가 기능 바를 두지 않는다. 파일 간 답안은 공유하지 않는다.
+
 ## 기준과 적용 범위
 
 사용자가 확정한 기준은 [1장~6장 확정 문제 HTML](../../../../시험예상/1장-6장/시험예상문제_1장-6장.html)이다. 향후 모든 범위의 시험예상문제에 같은 화면 구성과 동작을 적용한다. v9의 문제·정답·출제 비율을 새 범위의 저작 근거로 복사하지 않는다. 매 실행의 원자료·최신 경향 읽기, 범위 검토, 독립 풀이와 해설 검토는 별도로 수행한다.
 
-구현은 `../assets/exam-template.html`, `../assets/exam-runtime.js`, `../assets/exam-results.html`, `../scripts/exam_build.py`에 있다. 공통 화면은 `../../bio-review-pack/assets/review-template.html`을 사용하고 시험 확장은 이 스킬에서 적용한다. 공통 복습문제의 선택 즉시 채점 런타임을 붙이지 않는다. v9는 시각·동작 비교 기준이며, 앞으로 공통 화면을 수정하면 아래 동작과 레퍼런스 화면을 비교한다.
+구현은 `../assets/exam-template.html`, `../assets/exam-runtime.js`, `../assets/exam-results.html`, `../scripts/exam_build.py`에 있다. 공통 화면은 `../../bio-review-pack/assets/review-template.html`을 사용하고 시험 확장은 이 스킬에서 적용한다. 시험형에는 공통 복습문제의 선택 즉시 채점 런타임을 붙이지 않는다. v9는 시각·동작 비교 기준이며, 앞으로 공통 화면을 수정하면 아래 동작과 레퍼런스 화면을 비교한다.
 
 대표 화면: [데스크톱 결과·채점표](../../../../시험예상/1장-6장/.pack/v9/presentation-review/1280-light-results.png), [모바일 결과·채점표](../../../../시험예상/1장-6장/.pack/v9/presentation-review/375-dark-results.png), [모바일 문항 제목·툴바](../../../../시험예상/1장-6장/.pack/v9/presentation-review/375-dark-concept-title.png). 다른 밝기·크기의 캡처와 실제 검증 기록은 같은 `presentation-review/` 폴더에 있다.
 

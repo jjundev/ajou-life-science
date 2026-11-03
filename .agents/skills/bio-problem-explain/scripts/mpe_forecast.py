@@ -33,6 +33,14 @@ def load_forecast_source(path: Path, repo: Path) -> SourcePack:
     try:
         src = path.parent / PACK / f'v{version}'
         contexts = [inside(existing_path(src / name), repo) for name in ('pack.json', 'blueprint.md')]
+        if (src / 'presentations.json').exists() or 'id="presentation-meta"' in path.read_text(encoding='utf-8'):
+            from mpe_exam import exam_api
+            exam_api()
+            from exam_presentations import check_pair, pair_paths
+            errors = check_pair(src)
+            if errors:
+                raise ExplainError('두 풀이형 입력 재추출 필요: ' + ' / '.join(errors))
+            contexts += [inside(existing_path(p), repo) for p in pair_paths(src)]
         manifest = json.loads(contexts[0].read_text(encoding='utf-8'))
         if not isinstance(manifest, dict) or any(type(manifest.get(k)) is not int or manifest[k] != value
                                                for k, value in [('chapter', chapter), ('version', version)]):

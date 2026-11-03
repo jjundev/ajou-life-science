@@ -66,8 +66,22 @@ def check(html_path: Path | str) -> list[str]:
     src = html_path.parent / build.PACK / f"v{m.group(1)}"
     repo = html_path.parents[2]
     pack = build.load_pack(src)
+    if '_시험형_v' in html_path.name:
+        from exam_presentations import check_pair, names
+        if html_path.name != names(pack)['exam'] or not (src / 'presentations.json').is_file():
+            return ['[checker] 시험형 파일명/두 풀이형 기록 불일치']
+        errors = check_pair(src)
+        primary = src.parent.parent / names(pack)['practice']
+        return errors + check(primary)
     source = html_path.read_text(encoding="utf-8")
     probs = [f"[checker] {p}" for p in check_html.check_file(html_path)]
+    probs.extend(build.exam_presentations.check_pair(src))
+    if (src / 'presentations.json').exists():
+        _, raw = build.render(src, dual=False)
+        expected = build.exam_presentations.decorate(build.exam_presentations.web_exam(raw, pack), pack, 'exam', build.exam_presentations.set_hash(src))
+        exam = src.parent.parent / build.exam_presentations.names(pack)['exam']
+        if not exam.is_file() or exam.read_text(encoding='utf-8') != expected:
+            probs.append('[stale] 시험형: 원본으로 다시 빌드한 결과와 다름')
 
     name, fresh = build.render(src)
     if name != html_path.name or fresh != source:
