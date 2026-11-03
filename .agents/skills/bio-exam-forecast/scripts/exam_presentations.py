@@ -151,14 +151,12 @@ def web_exam(practice, pack):
     from exam_build import casefold_map
     text = re.sub(r'<!-- review-interaction:start -->.*?<!-- review-interaction:end -->\n?', '', practice, flags=re.S)
     models = {}
-    overview = []
 
     def convert(match):
         markup = match[0]
         node = next(parse(markup).find_all(lambda n:n.tag == 'article'))
         id_ = node.attrs['id']
         if id_.startswith('o'):
-            overview.append(re.sub(r'<(/?)article\b', r'<\1div', markup))
             return ''
         problem = next(node.find_all(lambda n:'problem' in n.classes))
         choices = next(problem.find_all(lambda n:'choices' in n.classes))
@@ -186,11 +184,6 @@ def web_exam(practice, pack):
     text = text.replace('</main>', (ASSETS / 'exam-results.html').read_text(encoding='utf-8') + '</main>')
     controls = '<div class="exam-actions"><button class="btn btn-primary" id="submit-exam" type="button" hidden>전체 제출</button><p id="summary" role="status" aria-live="polite"></p></div>'
     text = text.replace('<div class="pager-inner">', controls + '<div class="pager-inner">')
-    if overview:
-        dialog = '<dialog id="forecast-overview"><button type="button" id="close-overview">닫기</button>' + ''.join(overview) + '</dialog>'
-        text = text.replace('</main>', '<button type="button" class="text-btn" id="show-overview">출제 개요 보기</button></main>')
-        text = text.replace('</body>', dialog + '<script>document.getElementById("show-overview").onclick=()=>document.getElementById("forecast-overview").showModal();document.getElementById("close-overview").onclick=()=>document.getElementById("forecast-overview").close();</script></body>')
-        text = text.replace('</head>', '<style>#forecast-overview{max-width:min(90vw,800px);max-height:85vh;overflow:auto;background:var(--bg);color:var(--ink);border:1px solid var(--line);padding:24px}#forecast-overview .card{display:block!important}#forecast-overview::backdrop{background:#0008}</style></head>')
     meta = dict(documentId=names(pack)['exam'],range=f'{pack["chapter"]}장',examVersion=pack['version'])
     def data(id_,value):
         return '<script type="application/json" id="'+id_+'">'+json.dumps(value,ensure_ascii=False).replace('<','\\u003c')+'</script>'
