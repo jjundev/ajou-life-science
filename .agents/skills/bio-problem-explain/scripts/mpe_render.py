@@ -187,8 +187,15 @@ def build_explanation(pack, fragments, stage: Path, repo: Path) -> Artifacts:
         if p.short_answer:
             explanation += short_answer_html(p)
         original_link = quote(pack.path.name, safe='') + '#' + p.id
+        problem_links = f'<a href="{original_link}">원 문제 보기</a>'
+        version = pack.slug.rsplit('_v', 1)[-1]
+        presentation_record = pack.path.parent / '.pack' / ('v' + version) / 'presentations.json'
+        if pack.profile in ('forecast', 'exam') and presentation_record.is_file():
+            record = json.loads(presentation_record.read_text(encoding='utf-8'))
+            problem_links = ' · '.join(f'<a href="{quote(record["files"][mode]["name"], safe="")}#{p.id}">{label} 문제 보기</a>'
+                                       for mode,label in (('practice','연습형'),('exam','시험형')))
         articles.append(f'<article class="topic" id="{p.id}"><h3>{html.escape(p.title)}</h3>'
-                        + f'<p class="panel-meta">{html.escape(p.source)} · <a href="{original_link}">원 문제 보기</a></p>'
+                        + f'<p class="panel-meta">{html.escape(p.source)} · {problem_links}</p>'
                         + reading + explanation + '</article>')
         toc.append(f'<li><a href="#{p.id}">{html.escape(p.title)}</a></li>')
         (data_dir / 'fragments').mkdir(exist_ok=True)

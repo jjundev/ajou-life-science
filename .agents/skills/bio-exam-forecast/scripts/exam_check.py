@@ -60,6 +60,8 @@ def check_set(html,*,require_reviews=False):
    for fmt in ('mcq','short'):
     if actual[ch,fmt]!=quota[fmt]:errors.append('장/형식 배정 불일치')
   text=html.read_text(encoding='utf-8');root=parse(text)
+  from exam_presentations import check_pair
+  errors.extend(check_pair(src))
   cards=list(root.find_all(lambda n:n.tag=='article' and 'card' in n.classes))
   if [c.attrs.get('id') for c in cards]!=[f'p{i}' for i in range(1,76)]:errors.append('HTML 75 카드 누락/중복')
   ids=[n.attrs['id'] for n in root.find_all(lambda n:'id' in n.attrs)]
@@ -88,6 +90,11 @@ def check_set(html,*,require_reviews=False):
    for name in REVIEW_NAMES:
     r=review.get('reviews',{}).get(name,{})
     if r.get('status')!='pass' or not r.get('reviewer') or not r.get('evidence') or set(r.get('items',{}))!={f'p{i}' for i in range(1,76)} or not all(isinstance(x,str) and x.strip() for x in r.get('items',{}).values()):errors.append('미완료 문항 검토: '+name)
+   if (src/'presentations.json').exists():
+    modes=review.get('reviews',{}).get('browser',{}).get('presentations',{})
+    for mode in ('practice','exam'):
+     r=modes.get(mode,{})
+     if r.get('status')!='pass' or not r.get('reviewer') or not r.get('evidence'):errors.append('미완료 풀이형 브라우저 검토: '+mode)
  except (OSError,ValueError,KeyError,TypeError,IndexError,StopIteration) as exc:errors.append(str(exc))
  return errors
 

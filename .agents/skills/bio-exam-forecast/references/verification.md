@@ -1,8 +1,10 @@
 # 문제 검토와 불변성
 
-`check`는 구조를, `check --final`은 현재 입력에 묶인 검토 완료를 검사한다. 구조 성공을 학술 검증으로 보고하지 않는다. question-review.json은 build 시 모두 not_run이다. 현재 input_hash는 pack/blueprint/scope/policy/candidates/manifest/report/75 cards/HTML/vendor/assets에 묶인다. 원본 근거는 별도 freshness로 검사한다. MD 수정·삭제·부재 파일 신규 등장 시 이전 pass로 진행하지 않는다.
+`check`는 구조를, `check --final`은 현재 입력에 묶인 검토 완료를 검사한다. 구조 성공을 학술 검증으로 보고하지 않는다. question-review.json은 build 시 모두 not_run이다. 현재 input_hash는 pack/blueprint/scope/policy/candidates/manifest/report/75 cards/두 문제 HTML/presentations.json/vendor/assets에 묶인다. 원본 근거는 별도 freshness로 검사한다. MD 수정·삭제·부재 파일 신규 등장 시 이전 pass로 진행하지 않는다.
 
 네 검토 모두 status=pass, reviewer, 구체적 evidence, items의 p1~p75 각각 비어 있지 않은 근거가 필요하다.
+
+새 버전은 [공통 계약](dual-html.md)의 두 문제판을 모두 확인한다. `reviews.browser.presentations.practice`와 `.exam` 각각 status=pass, reviewer, evidence가 필요하다. 학술·독립 풀이 검토는 공통 원본에 한 번 수행하고, 표시 일치와 브라우저 동작은 두 판 각각 확인한다. 아래 자동 이동·전체 제출·입력 잠금 기준은 시험형에 적용한다. 연습형은 기존 복습문제의 객관식 비이동·즉시 판정·보기별 설명·다시 풀기·애매함 표시를 확인한다. 단답형은 입력 후 `답 확인`으로 판정·입력 잠금, `다시 풀기`로 초기화하며 마지막 문항의 복기 프롬프트에 함께 포함되는지 확인한다. 추가 기능 바·시험식 전체 결과가 없고 새로고침 시 모두 초기화되는지도 검사한다.
 
 - source_visual: 발문·수치·조건·보기 순서·원본 그림/PDF 페이지, 분석/공식 답 구별. PDF는 필요한 실제 페이지를 렌더해 읽는다.
 - content_scope_style: 모든 보기의 required_chapters, included topic, 최신 policy-notes/style_basis의 실제 적용, 난이도·오답의 타당성, 중복 개념 과집중·문항 간 답 노출.

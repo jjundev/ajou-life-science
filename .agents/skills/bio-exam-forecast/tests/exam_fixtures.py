@@ -32,6 +32,7 @@ def make_candidates(repo,chapters=(1,2,3,4,5,6)):
     answer=dict(kind='choice',option_id='B') if fmt=='mcq' else dict(kind='short',canonical='Aa',accepted=['Aa','합성 답'],case_sensitive=True)
     origin=['web','past','new'][i%3] if ch<6 else ['past','new'][i%2]
     out.append(dict(id=id_,family_id=id_,format=fmt,origin=origin,mode='generated' if origin=='new' else 'variant',primary_chapter=ch,required_chapters=[ch],topic_ids=[f't{ch}'],level=1,priority=[False]*5,types=['새로운 유형'],selection_reason='TEST ONLY 적용',problem_html=markup,options=options,answer=answer,rejected_answers=[dict(text='aa',reason='대소문자 차이')],solution_steps=['조건을 확인해요.','대상을 구별해요.'],source_refs=[copy.deepcopy(ref)],style_basis=[copy.deepcopy(ref)],transformation='합성 변형',minimum_steps=2,original_payload_sha256=None,review={x:dict(status='pass',evidence='TEST ONLY') for x in ['scope','key','source','style','family']}))
+    if fmt=='mcq': out[-1]['option_explanations']={o['id']:f'합성 보기 {o["id"]}의 판별 근거: '+('조건과 일치한다.' if o['id']=='B' else '조건과 일치하지 않는다.') for o in options}
  return out
 
 def make_pack(repo):
@@ -50,4 +51,6 @@ def approve_questions(html):
  rev=initial_question_review(src,html)
  for value in rev['reviews'].values():
   value.update(status='pass',reviewer='TEST ONLY',evidence='TEST ONLY synthetic review',items={f'p{i}':'TEST ONLY' for i in range(1,76)})
+ for value in rev['reviews']['browser'].get('presentations',{}).values():
+  value.update(status='pass',reviewer='TEST ONLY',evidence='TEST ONLY synthetic browser review')
  dump(src/'question-review.json',rev)

@@ -9,6 +9,20 @@ CARD = '''<article class="card" id="p1"><div class="problem"><p>틀린 것을 �
 <li>수업과의 연결: 분류</li></ol><p class="answer">정답: (2)</p></details></article>'''
 
 class TestModel(unittest.TestCase):
+    def test_short_model_requires_answer_and_solution(self):
+        import json
+        import html
+        answer = dict(canonical='Aa', accepted=['대립유전자'], case_sensitive=True)
+        source = ('<article class="card" id="p1" data-format="short" data-short-answer="'
+                  + html.escape(json.dumps(answer), quote=True) + '">'
+                  + '<div class="problem">발문</div><details class="solution">풀이</details></article>')
+        model = ri.build_model(source, 'short.html')
+        self.assertEqual(model['errors'], [])
+        self.assertEqual(model['cards']['p1']['answer'], answer)
+        self.assertEqual(model['cards']['p1']['format'], 'short')
+        self.assertTrue(ri.build_model(source.replace('class="solution"', ''), 'short.html')['errors'])
+        self.assertTrue(ri.build_model(source.replace('Aa', ''), 'short.html')['errors'])
+
     def test_negative(self):
         m = ri.build_model(CARD, 'test.html')
         self.assertEqual(m['errors'], [])

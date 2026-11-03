@@ -22,6 +22,14 @@ def test_exam_title_requires_explicit_metadata():
 def test_public_exam_filename_resolves_explicit_version(approved_exam,repo):
  import json
  from exam_check import locate,check_set
+ # The public name mapping is the preserved single-presentation contract.
+ from exam_build import render_exam
+ from exam_helpers import fixtures
+ src=approved_exam.parent/'.pack/v1'
+ approved_exam.write_text(render_exam(repo,src))
+ approved_exam.with_name(approved_exam.name.replace('_v','_연습형_v')).unlink()
+ (src/'presentations.json').unlink()
+ fixtures.approve_questions(approved_exam)
  public=approved_exam.with_name('시험예상문제_1장-6장.html')
  approved_exam.rename(public)
  mapping=public.parent/'.pack/publication.json'

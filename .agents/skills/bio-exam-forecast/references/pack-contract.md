@@ -21,8 +21,12 @@ scripts/exam_contract.py가 기계 계약을 검사한다. `parse_scope`는 단�
 
 `pack.json`: schema_version=1, profile=exam, scope, range, version, counts(55/20), targets(생성 정책), policy_summary, scope_data, source_manifest, problems. problems는 p1..p55(mcq), p56..p75(short), 원래 id는 candidate_id. scope/pack/blueprint/candidates/cards/HTML이 서로 일치해야 한다.
 
+새 build는 같은 pack에서 연습형·시험형 문제판을 생성한다. `presentations.json`은 두 파일의 이름·SHA-256·공통 문제 집합과 원본 해시를 기록하며 문제 검토와 해설 문맥에 함께 묶인다. [두 풀이형 계약](dual-html.md)을 따른다. 문항 수나 출제 이력은 두 배로 세지 않는다.
+
 policy_summary는 type_targets[{chapter,type,target,reason,source_ref}], difficulty_targets[{chapter,basic,advanced,reason,source_ref}], reason을 가진다. 불명확한 target은 null/이유를 쓴다. 코드가 경향 본문을 통계로 해석하지 않는다.
 
 source-manifest는 sources[{path,role,status:present|missing,sha256:null 또는 digest}],warnings. 실제 사용한 PDF·원본 이미지·그림·근거도 등록한다. prepare 후 에이전트가 추가한 근거는 build에서 현재 해시와 대조한다.
 
 단답형 정규화는 NFC+양끝 공백 제거뿐이다. case_sensitive=false일 때만 casefold. 내부 공백/단위/분수/소수는 동치화하지 않는다. 허용하려면 accepted에 직접 적는다. 빈 답은 미응답이며 낯선 답은 자기채점 대기다.
+
+새로 생성하는 두 문제판의 객관식은 `option_explanations`(보기 ID → 검토된 설명 HTML)를 모든 보기에 제공한다. 일반 `solution_steps`와 구분하며 연습형 생성기가 누락·빈 설명을 거부한다. 기존 발행 단일 HTML의 정답·문항 계약은 유지한다.

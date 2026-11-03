@@ -19,6 +19,8 @@ REVIEW_PACK = Path(__file__).resolve().parents[2] / "bio-review-pack" / "scripts
 sys.path.insert(0, str(REVIEW_PACK))
 import assemble  # noqa: E402
 import manifest as manifest_mod  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'bio-exam-forecast' / 'scripts'))
+import exam_presentations
 
 PACK = ".pack"  # 장 폴더의 숨김 소스 폴더(해설 부속 파일도 여기에 둔다)
 VERSION_RE = re.compile(r"v(\d+)")
@@ -45,7 +47,7 @@ def _once(html: str, old: str, new: str) -> str:
     return html.replace(old, new)
 
 
-def render(src: Path | str) -> tuple[str, str]:
+def render(src: Path | str, *, dual: bool | None = None) -> tuple[str, str]:
     src = Path(src)
     m = load_pack(src)
     try:
@@ -54,14 +56,23 @@ def render(src: Path | str) -> tuple[str, str]:
         raise BuildError(str(e)) from e
     html = _once(html, f'href="{manifest_mod.note_name(m)}"', f'href="{m["note_href"]}"')
     html = _once(html, f'data-range="{m["range"]}"', f'data-range="{m["range"]}-v{m["version"]}"')
+    if dual is None:
+        dual = (src / 'presentations.json').is_file()
+    if dual:
+        html = exam_presentations.decorate(html, m, 'practice', exam_presentations.set_hash(src))
     return manifest_mod.review_name(m), html
 
 
 def build(src: Path | str) -> Path:
     src = Path(src).resolve()
-    name, html = render(src)
+    name, raw = render(src, dual=False)
     out = src.parents[1] / name
-    out.write_text(html, encoding="utf-8", newline="\n")
+    m = load_pack(src)
+    question_hash = exam_presentations.set_hash(src)
+    exam = exam_presentations.web_exam(raw, m)
+    texts = dict(practice=exam_presentations.decorate(raw, m, 'practice', question_hash),
+                 exam=exam_presentations.decorate(exam, m, 'exam', question_hash))
+    exam_presentations.write_pair(src, texts)
     return out
 
 

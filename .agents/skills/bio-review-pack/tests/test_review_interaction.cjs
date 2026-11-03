@@ -115,3 +115,18 @@ test('API에 JSON 내보내기 함수가 없다', () => {
   assert.ok(['saveExport','buildExport','exportFilename','resolveExportDir','handleStore','updateSnapshot'].every(k => !(k in api)));
   assert.equal(typeof api.captureCardText, 'function');
 });
+
+test('단답형은 입력 확인 전 미응답, 일치 또는 자기채점 대기', () => {
+  const short = {format:'short',answer:{canonical:'Aa',accepted:['대립유전자'],case_sensitive:true}};
+  assert.equal(api.grade(short,undefined), null);
+  assert.equal(api.grade(short,' '), null);
+  assert.equal(api.grade(short,' Aa '), 'correct');
+  assert.equal(api.grade(short,'대립유전자'), 'correct');
+  assert.equal(api.grade(short,'aa'), 'pending');
+  assert.equal(api.grade({...short,answer:{...short.answer,case_sensitive:false}},'aa'), 'correct');
+  const record = api.buildPromptRecord({cards:{p1:short}}, {p1:{title:'단답',stem:'발문',extras:['풀이 근거']}}, ['p1'], {p1:'Aa'}, {}, '시험범위');
+  assert.equal(record.items[0].format, 'short');
+  assert.equal(record.items[0].answer, 'Aa');
+  assert.equal(record.items[0].status, 'correct');
+  assert.equal(record.items[0].explanations[0].text, '풀이 근거');
+});

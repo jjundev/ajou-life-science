@@ -22,8 +22,8 @@ def exam_problem_title(problem):
 
 def exam_api():
     scripts=Path(__file__).resolve().parents[2]/'bio-exam-forecast/scripts'
-    # Globally unique exam_* modules; no mutation of sys.path and no generic helper imports.
-    for name in ('exam_contract','exam_sources','exam_selection','exam_dom','exam_build','exam_check'):
+    # Load exam adapters explicitly; the practice renderer also uses the shared review generator.
+    for name in ('exam_contract','exam_sources','exam_selection','exam_dom','exam_practice','exam_presentations','exam_build','exam_check'):
         if name not in sys.modules:
             spec=importlib.util.spec_from_file_location(name,scripts/(name+'.py'))
             mod=importlib.util.module_from_spec(spec);sys.modules[name]=mod;spec.loader.exec_module(mod)
@@ -59,6 +59,8 @@ def load_exam_source(path,repo):
             ref=answer['option_id'] if choice else answer['canonical']
             problems.append(Problem(p['id'],int(p['id'][1:]),exam_problem_title(p),source,'',inner(problem),'',(),tuple(p['solution_steps']),ref,('main',),choice,short))
         files=[src/name for name in (*checker.BINDINGS,'question-review.json')]
+        from exam_presentations import pair_paths
+        files += pair_paths(src)
         files += [sources.local(repo,row['path']) for row in json.loads((src/'source-manifest.json').read_text(encoding='utf-8'))['sources'] if row['status']=='present']
         # Bind authored cards and copied visual assets too.
         for folder in ('cards','assets','vendor'):

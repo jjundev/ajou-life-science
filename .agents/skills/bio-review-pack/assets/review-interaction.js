@@ -21,6 +21,16 @@
     scroller.scrollTop += (target.top + target.bottom - viewport.top - viewport.bottom) / 2;
   }
   function grade(card, selected) {
+// short-support:start
+    if (card.format === 'short') {
+      if (typeof selected !== 'string' || !selected.trim()) return null;
+      const normalize = value => {
+        const text = value.normalize('NFC').trim();
+        return card.answer.case_sensitive ? text : Array.from(text).map(c => (scope.ReviewShortCasefold || {})[c] ?? c.toLowerCase()).join('');
+      };
+      return [card.answer.canonical, ...card.answer.accepted].some(x => normalize(x) === normalize(selected)) ? 'correct' : 'pending';
+    }
+// short-support:end
     if (!card.options.some(o => o.id === selected)) return null;
     if (card.mode === 'ambiguous') return 'ambiguous';
     return selected === card.answer ? 'correct' : 'incorrect';
@@ -78,6 +88,13 @@
       const t = texts[id] || {title:'', stem:'', options:[], diagnostics:{}, extras:[]};
       const raw = selectedById[id];
       const result = grade(data, raw);
+// short-support:start
+      if (data.format === 'short') return {
+        id, title:t.title, stem:t.stem, format:'short', options:[], selected:result === null ? null : raw,
+        answer:data.answer.canonical, accepted:data.answer.accepted, status:result === null ? 'unanswered' : result,
+        explanations:t.extras.map(text => ({label:'풀이', text}))
+      };
+// short-support:end
       const selected = result === null ? null : raw;
       const status = result === null ? 'unanswered'
         : result === 'correct' && unsureById && unsureById[id] === true ? 'unsure' : result;
@@ -145,6 +162,39 @@
       const diagnostics = solution ? Array.from(solution.querySelectorAll('ol.steps > li')) : [];
       const options = data.options;
       try { texts[id] = captureCardText(card, choices, diagnostics, options, solution); } catch {}
+// short-support:start
+      if (data.format === 'short' && solution) {
+        const input = card.querySelector('input[type=text]');
+        const check = card.querySelector('.check-answer');
+        if (!input || !check) continue;
+        texts[id].extras = diagnostics.map(n => n.textContent.replace(/\s+/g, ' ').trim());
+        const status = element('p', 'review-status'); status.setAttribute('role', 'status');
+        const reset = element('button', 'review-reset text-btn', '다시 풀기'); reset.type = 'button';
+        card.querySelector('.short-input').append(status, reset);
+        input.value = ''; input.autocomplete = 'off';
+        selectedById[id] = null;
+        solution.hidden = true; reset.hidden = true;
+        const reveal = () => {
+          if (!input.value.trim() || input.disabled) return;
+          selectedById[id] = input.value;
+          const result = grade(data, input.value);
+          input.disabled = true; check.hidden = true; reset.hidden = false;
+          status.textContent = result === 'correct' ? '자동 일치' : '자기채점 대기';
+          solution.hidden = false; solution.open = true;
+          emit(id, input.value, result);
+        };
+        check.addEventListener('click', reveal);
+        input.addEventListener('keydown', e => {if (e.key === 'Enter') {e.preventDefault(); reveal();}});
+        reset.addEventListener('click', () => {
+          selectedById[id] = null; input.disabled = false; input.value = '';
+          check.hidden = false; reset.hidden = true; status.textContent = '';
+          solution.hidden = true; solution.open = false;
+          emit(id, null, null); input.focus();
+        });
+        card.classList.add('review-ready');
+        continue;
+      }
+// short-support:end
       // Validate every reference before moving a single original node.
       if (!solution || !Array.isArray(options) || choices.length !== options.length ||
           !options.length || !options.some(o => o.id === data.answer) ||

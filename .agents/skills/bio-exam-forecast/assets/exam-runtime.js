@@ -30,6 +30,16 @@
   const normalize = (s, sensitive) => { const n = s.normalize('NFC').trim(); return sensitive ? n : Array.from(n).map(c => fold[c] ?? c.toLowerCase()).join(''); };
   let submitted = false, current = null, attempt = null;
   const meta = JSON.parse(document.getElementById('exam-meta').textContent);
+  const presentation = document.getElementById('presentation-meta');
+  const mode = presentation ? JSON.parse(presentation.textContent) : {mode:'exam'};
+  const practice = mode.mode === 'practice';
+  document.querySelectorAll('.exam-input input').forEach(input => {
+    input.autocomplete = 'off'; input.disabled = false;
+    if (input.type === 'radio') input.checked = false;
+    else input.value = '';
+  });
+  if (presentation) Object.assign(meta, {documentId:mode.documentId, mode:mode.mode, questionSetHash:mode.questionSetHash});
+  const checked = new Set();
   const results = document.getElementById('exam-results');
   const filter = document.getElementById('results-filter');
   const labels = {correct:'정답', incorrect:'오답', matched:'자동 일치', pending:'자기채점 대기', unanswered:'미응답'};
@@ -48,8 +58,12 @@
   function syncControls() {
     const button = document.getElementById('submit-exam');
     const ids = Object.keys(models);
-    button.hidden = !submitted && current !== ids[ids.length - 1];
-    document.body.classList.toggle('exam-last-unsubmitted', !submitted && current === ids[ids.length - 1]);
+    button.hidden = practice || (!submitted && current !== ids[ids.length - 1]);
+    document.body.classList.toggle('exam-last-unsubmitted', !practice && !submitted && current === ids[ids.length - 1]);
+    const explanation = document.getElementById('open-explanation');
+    if (explanation) explanation.hidden = !practice && !submitted;
+    const tools = document.querySelector('.presentation-links');
+    if (tools) tools.hidden = !practice && !submitted;
   }
   function openResults() {
     if (location.hash === '#exam-results') resultRoute();
@@ -175,9 +189,9 @@
       return;
     }
     const card = current && document.getElementById(current);
-    const show = submitted && Boolean(card);
+    const show = Boolean(card) && (practice ? checked.has(card.id) : submitted);
     empty.hidden = show;
-    empty.textContent = submitted ? '문제를 선택하면 정답과 풀이가 여기에 나옵니다.' : '전체 제출 후 현재 문제의 정답과 풀이를 확인할 수 있습니다.';
+    empty.textContent = practice ? '답을 확인하면 현재 문제의 정답과 풀이가 나옵니다.' : submitted ? '문제를 선택하면 정답과 풀이가 여기에 나옵니다.' : '전체 제출 후 현재 문제의 정답과 풀이를 확인할 수 있습니다.';
     if (!show) return;
     const result = card.querySelector('.result').cloneNode(true);
     const solution = card.querySelector('.solution').cloneNode(true);
@@ -197,10 +211,50 @@
     progress(); syncControls(); showAid();
     document.querySelector('.toc-list a[aria-current="true"]')?.scrollIntoView({block:'nearest'});
   });
-  document.querySelector('main').addEventListener('input', progress);
+  function gradeValue(value, model) {
+    if (!value.trim()) return 'unanswered';
+    const answer = model.answer;
+    if (model.format === 'mcq') return value === answer.option_id ? 'correct' : 'incorrect';
+    return [answer.canonical, ...answer.accepted].some(x => normalize(x, answer.case_sensitive) === normalize(value, answer.case_sensitive)) ? 'matched' : 'pending';
+  }
+  function checkPractice(card) {
+    const value = valueOf(card, models[card.id]);
+    if (!value.trim()) return;
+    submitted = false; attempt = null; summary.textContent = '';
+    checked.add(card.id);
+    card.querySelector('.result').textContent = labels[gradeValue(value, models[card.id])];
+    card.querySelectorAll('.solution,.provenance').forEach(n => { n.hidden = false; });
+    showAid(); syncControls();
+    const toggle = document.getElementById('toggle-right');
+    if (toggle.getAttribute('aria-expanded') !== 'true') toggle.click();
+  }
+  if (practice) {
+    for (const [id, model] of Object.entries(models)) {
+      if (model.format !== 'short') continue;
+      const card = document.getElementById(id), button = document.createElement('button');
+      button.className = 'btn check-answer'; button.type = 'button'; button.textContent = '답 확인';
+      card.querySelector('.exam-input').append(button);
+      button.addEventListener('click', () => checkPractice(card));
+    }
+    const resultsButton = document.createElement('button');
+    resultsButton.className = 'text-btn'; resultsButton.type = 'button'; resultsButton.id = 'practice-results'; resultsButton.textContent = '학습 결과 보기';
+    document.querySelector('.presentation-links').append(resultsButton);
+    resultsButton.addEventListener('click', () => document.getElementById('submit-exam').click());
+  }
+  document.querySelector('main').addEventListener('input', e => {
+    if (practice && e.target.matches('.exam-input input')) {
+      submitted = false; attempt = null;
+      const card = e.target.closest('article.card'); checked.delete(card.id);
+      card.querySelector('.result').textContent = '';
+      card.querySelectorAll('.solution,.provenance').forEach(n => { n.hidden = true; });
+      summary.textContent = ''; showAid(); syncControls();
+    }
+    progress();
+  });
   document.querySelector('main').addEventListener('change', e => {
     if (submitted || !e.target.matches('.exam-input input[type=radio]:checked')) return;
     const card = e.target.closest('article.card');
+    if (practice) { checkPractice(card); return; }
     const ids = Object.keys(models);
     if (card.id !== current || ids.indexOf(current) === ids.length - 1) return;
     document.getElementById('pager-next').click();
@@ -209,17 +263,13 @@
   });
   document.getElementById('submit-exam').addEventListener('click', () => {
     if (submitted) { openResults(); return; }
-    if (current !== Object.keys(models).at(-1)) return;
+    if (!practice && current !== Object.keys(models).at(-1)) return;
     const cards = Object.entries(models).map(([id, model]) => {
       const card = document.getElementById(id), answer = model.answer;
-      const value = valueOf(card, model);
-      let result = 'unanswered';
-      if (value.trim()) {
-        if (model.format === 'mcq') result = value === answer.option_id ? 'correct' : 'incorrect';
-        else result = [answer.canonical, ...answer.accepted].some(x => normalize(x, answer.case_sensitive) === normalize(value, answer.case_sensitive)) ? 'matched' : 'pending';
-      }
+      const value = practice && !checked.has(id) ? '' : valueOf(card, model);
+      const result = gradeValue(value, model);
       card.querySelector('.result').textContent = labels[result];
-      card.querySelectorAll('.solution,.provenance').forEach(n => { n.hidden = false; });
+      card.querySelectorAll('.solution,.provenance').forEach(n => { n.hidden = practice && !checked.has(id); });
       return {id, format:model.format, selected:value.trim() ? value : null, answer, result};
     });
     const count = (format, result) => cards.filter(c => c.format === format && (!result || c.result === result)).length;
@@ -231,14 +281,14 @@
         mcq:{total:count('mcq'), correct:count('mcq','correct'), incorrect:count('mcq','incorrect'), unanswered:count('mcq','unanswered')},
         short:{total:count('short'), matched:count('short','matched'), pending:count('short','pending'), unanswered:count('short','unanswered')}}, cards};
     submitted = true;
-    document.querySelectorAll('.exam-input input').forEach(n => { n.disabled = true; });
+    if (!practice) document.querySelectorAll('.exam-input input').forEach(n => { n.disabled = true; });
     document.getElementById('submit-exam').textContent = '전체 결과';
     renderResults(); showAid(); openResults();
 
   });
   function resetExam() {
-    if (submitted && !window.confirm('제출한 답안과 결과를 초기화하고 다시 풀까요? 복기하려면 먼저 복기 프롬프트를 복사하세요.')) return;
-    submitted = false; attempt = null;
+    if ((submitted || checked.size) && !window.confirm('답안과 결과를 초기화하고 다시 풀까요? 복기하려면 먼저 복기 프롬프트를 복사하세요.')) return;
+    submitted = false; attempt = null; checked.clear();
     document.querySelectorAll('.exam-input input').forEach(n => { n.disabled = false; if (n.type === 'radio') n.checked = false; else n.value = ''; });
     document.querySelectorAll('.solution,.provenance').forEach(n => { n.hidden = true; });
     document.querySelectorAll('.result').forEach(n => { n.textContent = ''; });
