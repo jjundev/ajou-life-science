@@ -73,7 +73,7 @@ def decorate(text, pack, mode, question_hash):
     # Some preserved review shells have a class on main rather than an id.
     if mode == 'exam' and 'class="presentation-links"' not in text:
         text = re.sub(r'(<main\b[^>]*>)', lambda m:m[1]+nav, text, count=1)
-    css = '<style>.presentation-links{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 0;font-size:var(--fs-small);}.presentation-links button{min-height:44px;display:inline-flex;align-items:center;}.presentation-links[hidden],#open-explanation[hidden]{display:none!important}.check-answer{min-height:44px;margin:8px 0}</style>'
+    css = '<style>.topbar .brand{overflow:hidden;text-overflow:ellipsis}.presentation-links{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 0;font-size:var(--fs-small);}.presentation-links button{min-height:44px;display:inline-flex;align-items:center;}.presentation-links[hidden],#open-explanation[hidden]{display:none!important}.check-answer{min-height:44px;margin:8px 0}</style>'
     text = text.replace('</head>', css + '</head>')
     # Clear only this forecast's progress before the shared pager reads it.
     bootstrap = """<script>(()=>{try{sessionStorage.removeItem('od-review-solved:'+document.body.dataset.range);}catch{}if(location.hash==='#exam-results')history.replaceState(null,'',location.pathname+location.search+'#p1');})();</script>"""
