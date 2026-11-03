@@ -9,6 +9,7 @@ from collections import Counter
 from pathlib import Path
 from urllib.parse import unquote, urlsplit, quote
 from mpe_contract import validate_fragment, payload_hash, markup_errors
+from mpe_citations import clean_explanation_citations
 from mpe_shared import Node, parse, inner, outer, compact, Ctx, convert, check_md, SIDE, PACK, rebase_md
 from mpe_source import sha256, inside, existing_path
 from mpe_types import ExplainError, Artifacts
@@ -182,7 +183,7 @@ def build_explanation(pack, fragments, stage: Path, repo: Path) -> Artifacts:
             choices[p.id] = {'answer': p.choice.answer, 'mode': p.choice.mode, 'options': list(p.choice.option_ids)}
             if pack.profile == 'exam':
                 choices[p.id]['showOptionIds'] = True
-        explanation = resources(fragments[p.id], p, pack, repo, stage, fig_name, pack.path.parent, 'explain')
+        explanation = resources(clean_explanation_citations(fragments[p.id]), p, pack, repo, stage, fig_name, pack.path.parent, 'explain')
         if p.short_answer:
             explanation += short_answer_html(p)
         original_link = quote(pack.path.name, safe='') + '#' + p.id
