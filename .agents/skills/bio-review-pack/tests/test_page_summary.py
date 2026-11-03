@@ -41,6 +41,61 @@ class TestPageSummary(unittest.TestCase):
         self.assertEqual(self.codes('<div class="sum" hidden><p class="sum-lead">핵심</p>'
             '<p class="panel-label">용어</p><dl class="terms">' + terms + '</dl></div>'), [])
 
+    def test_lead_repeating_any_term_fails(self):
+        for terms in (
+            '<dt>점진주의</dt><dd>작은 변화가 누적돼요.</dd><dt>단속평형</dt><dd>정체와 변화가 번갈아요.</dd>',
+            '<dt>단속평형</dt><dd>정체와 변화가 번갈아요.</dd><dt>점진주의</dt><dd>작은 변화가 누적돼요.</dd>',
+        ):
+            with self.subTest(terms=terms):
+                self.assertIn('sum-lead-repeats-term', self.codes(
+                    '<div class="sum" hidden><p class="sum-lead">작은 변화가 누적돼요.</p>'
+                    '<p class="panel-label">용어</p><dl class="terms">' + terms + '</dl></div>'))
+
+    def test_repetition_ignores_inline_markup_entities_whitespace_and_unicode_form(self):
+        self.assertIn('sum-lead-repeats-term', self.codes(
+            '<div class="sum" hidden><p class="sum-lead">가 나 다.</p>'
+            '<p class="panel-label">용어</p><dl class="terms"><dt>표지</dt>'
+            '<dd><b>가</b>&nbsp; 나\n 다.</dd></dl></div>'))
+
+    def test_repeat_diagnostic_identifies_topic_and_term(self):
+        source = ('<div id="sum-for"></div><article class="topic" id="rates">'
+                  '<div class="sum" hidden><p class="sum-lead">작은 변화가 누적돼요.</p>'
+                  '<dl class="terms"><dt>점진주의</dt><dd>작은 변화가 누적돼요.</dd></dl>'
+                  '</div></article>')
+        problems = check_html.page_summary_problems(source)
+        repeats = [p for p in problems if p.code == 'sum-lead-repeats-term']
+        self.assertEqual(len(repeats), 1)
+        self.assertEqual(repeats[0].where, 'rates')
+        self.assertIn('점진주의', repeats[0].detail)
+
+    def test_distinct_lead_and_partial_matches_are_allowed(self):
+        for lead in ('점진주의와 단속평형은 변화 속도의 양상이에요.',
+                     '작은 변화가 누적돼요. 점진주의의 설명이에요.',
+                     '작은 변화가 누적돼요!'):
+            with self.subTest(lead=lead):
+                self.assertEqual(self.codes(
+                    '<div class="sum" hidden><p class="sum-lead">' + lead + '</p>'
+                    '<p class="panel-label">용어</p><dl class="terms">'
+                    '<dt>점진주의</dt><dd>작은 변화가 누적돼요.</dd></dl></div>'), [])
+
+    def test_lead_without_terms_is_allowed(self):
+        self.assertEqual(self.codes(
+            '<div class="sum" hidden><p class="sum-lead">핵심 관계예요.</p></div>'), [])
+
+    def test_repeated_term_in_another_topic_is_allowed(self):
+        source = ('<div id="sum-for"></div><article class="topic" id="a">'
+                  '<div class="sum" hidden><p class="sum-lead">공통 개념이에요.</p></div>'
+                  '</article><article class="topic" id="b"><div class="sum" hidden>'
+                  '<p class="sum-lead">다른 핵심이에요.</p><dl class="terms">'
+                  '<dt>개념</dt><dd>공통 개념이에요.</dd></dl></div></article>')
+        self.assertEqual(check_html.page_summary_problems(source), [])
+
+    def test_repeated_lead_without_panel_is_unaffected(self):
+        self.assertEqual(self.codes(
+            '<div class="sum" hidden><p class="sum-lead">핵심이에요.</p>'
+            '<p class="panel-label">용어</p><dl class="terms">'
+            '<dt>핵심</dt><dd>핵심이에요.</dd></dl></div>', panel=False), [])
+
     def test_legacy_without_panel_is_unaffected(self):
         self.assertEqual(self.codes('<div class="sum"></div>', panel=False), [])
 

@@ -19,6 +19,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 import re
 import sys
+import unicodedata
 from urllib.parse import unquote
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -259,7 +260,7 @@ TERMS_RE = re.compile(r'(<p class="panel-label">용어</p>\s*|<div class="sum-su
 
 
 def page_summary_problems(source: str) -> list[Problem]:
-    """패널 요약의 구조만 검사한다. 핵심·조건의 보존은 본문 대조로 검토한다."""
+    """패널 요약의 구조·용어 설명과의 완전 반복을 검사한다. 의미는 본문 대조로 검토한다."""
     from html2md import Builder, Node
     tree = Builder()
     tree.feed(source)
@@ -282,6 +283,19 @@ def page_summary_problems(source: str) -> list[Problem]:
                 out.append(Problem('sum-lead-duplicate', where, '핵심 문장은 하나만 필요'))
             if any(not n.text().strip() for n in leads):
                 out.append(Problem('sum-lead-empty', where, '핵심 문장 내용 없음'))
+            lead_texts = {' '.join(unicodedata.normalize('NFC', n.text()).split()) for n in leads}
+            lead_texts.discard('')
+            for terms in summary.find_all(lambda n: n.tag == 'dl' and 'terms' in n.classes):
+                term_name = '이름 없는 용어'
+                for entry in terms.children:
+                    if not isinstance(entry, Node):
+                        continue
+                    text = ' '.join(unicodedata.normalize('NFC', entry.text()).split())
+                    if entry.tag == 'dt':
+                        term_name = text or '이름 없는 용어'
+                    elif entry.tag == 'dd' and text in lead_texts:
+                        out.append(Problem('sum-lead-repeats-term', where,
+                                           f'핵심 문장이 용어 설명과 동일함: {term_name}'))
     return out
 
 
