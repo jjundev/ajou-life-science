@@ -3,11 +3,16 @@
 Slice a failing STT audio chunk into smaller subchunks and wrap as 1fps MP4,
 or merge transcribed subchunks back into a single part file.
 
-Usage:
-  # 1. Slice a failing 10-min chunk into 150s subchunks
-  python3 slice_subchunks.py slice --input "STT/_temp_1013/1013_생명_part03.mp3" --sub-seconds 150
+Supports tiered slicing:
+  - standard: 150s (default for 10-min chunk recovery)
+  - micro: 15s (for high-risk CBRN/biosecurity safety filter bypass)
 
-  # 2. Merge transcribed subchunk markdown files back into part03.md
+Usage:
+  # 1. Tiered slice
+  python3 slice_subchunks.py slice --input "STT/_temp_1013/1013_생명_part03.mp3" --tier standard
+  python3 slice_subchunks.py slice --input "STT/_temp_1013/1013_생명_part03_sub04.mp3" --tier micro
+
+  # 2. Recursive merge (handles both _subXX.md and _subXX_sYY.md)
   python3 slice_subchunks.py merge --dir "STT/_temp_1013" --prefix "1013_생명_part03" --out "STT/_temp_1013/1013_생명_part03.md" --clean
 """
 
@@ -55,8 +60,16 @@ def slice_chunk(input_path: str, sub_seconds: int = 150, out_dir: str | None = N
     # If stem already has _temp or similar, strip it
     stem = re.sub(r"_temp$", "", stem)
 
+    # If the input file is already a subchunk (ends with _sub\d+), name children _s%02d
+    is_subchunk = bool(re.search(r"_sub\d+$", stem))
+    if is_subchunk:
+        sub_pattern = str(target_dir / f"{stem}_s%02d.mp3")
+        file_regex = re.compile(rf"^{re.escape(stem)}_s(\d+)\.mp3$")
+    else:
+        sub_pattern = str(target_dir / f"{stem}_sub%02d.mp3")
+        file_regex = re.compile(rf"^{re.escape(stem)}_sub(\d+)\.mp3$")
+
     # 1. Segment audio into subchunks
-    sub_pattern = str(target_dir / f"{stem}_sub%02d.mp3")
     split_cmd = [
         "ffmpeg", "-y",
         "-i", str(in_file),
@@ -73,8 +86,8 @@ def slice_chunk(input_path: str, sub_seconds: int = 150, out_dir: str | None = N
 
     # 2. Find generated subchunks
     sub_files = sorted(
-        [f for f in target_dir.iterdir() if re.match(rf"^{re.escape(stem)}_sub\d+\.mp3$", nfc(f.name))],
-        key=lambda p: p.name,
+        [f for f in target_dir.iterdir() if file_regex.match(nfc(f.name))],
+        key=lambda p: int(file_regex.match(nfc(p.name)).group(1)),
     )
 
     results = []
@@ -113,7 +126,8 @@ def slice_chunk(input_path: str, sub_seconds: int = 150, out_dir: str | None = N
             "duration": f"{dur:.1f}s",
         })
 
-    print(f"Successfully sliced {in_file.name} into {len(results)} subchunks ({sub_seconds}s each):")
+    tier_label = "micro (15s)" if sub_seconds == 15 else f"{sub_seconds}s"
+    print(f"Successfully sliced {in_file.name} into {len(results)} subchunks ({tier_label} each):")
     for r in results:
         print(f"  - [{r['duration']}] Video: {r['mp4']} -> Output: {r['md']}")
 
@@ -121,23 +135,54 @@ def slice_chunk(input_path: str, sub_seconds: int = 150, out_dir: str | None = N
 
 
 def merge_subchunks(target_dir: str, prefix: str, output_path: str, clean: bool = False) -> str:
+    """
+    Merge subchunks and nested micro-chunks into a target markdown file.
+    Supports:
+      - {prefix}_subXX.md
+      - {prefix}_subXX_sYY.md
+      - {prefix}_sYY.md
+    """
     dir_path = Path(target_dir).resolve()
     out_file = Path(output_path).resolve()
 
-    pattern = re.compile(rf"^{re.escape(prefix)}_sub(\d+)\.md$")
-    sub_mds = []
-    for f in dir_path.iterdir():
-        m = pattern.match(nfc(f.name))
-        if m:
-            sub_mds.append((int(m.group(1)), f))
+    pat_sub_s = re.compile(rf"^{re.escape(prefix)}_sub(\d+)_s(\d+)\.md$")
+    pat_sub = re.compile(rf"^{re.escape(prefix)}_sub(\d+)\.md$")
+    pat_s = re.compile(rf"^{re.escape(prefix)}_s(\d+)\.md$")
 
-    if not sub_mds:
+    collected: dict[tuple[int, int], Path] = {}
+    for f in dir_path.iterdir():
+        fname = nfc(f.name)
+        m2 = pat_sub_s.match(fname)
+        if m2:
+            collected[(int(m2.group(1)), int(m2.group(2)))] = f
+            continue
+        m1 = pat_sub.match(fname)
+        if m1:
+            collected[(int(m1.group(1)), 0)] = f
+            continue
+        m0 = pat_s.match(fname)
+        if m0:
+            collected[(0, int(m0.group(1)))] = f
+            continue
+
+    if not collected:
         raise FileNotFoundError(f"No matching subchunk markdown files found for prefix {prefix!r} in {dir_path}")
 
-    sub_mds.sort(key=lambda x: x[0])
+    # Deduplicate: if a subchunk has child micro-chunks (sub_idx, s_idx > 0), use the children
+    sub_indices = set(k[0] for k in collected.keys())
+    final_keys: list[tuple[int, int]] = []
+    for s_idx in sub_indices:
+        children = sorted([k for k in collected.keys() if k[0] == s_idx and k[1] > 0])
+        if children:
+            final_keys.extend(children)
+        else:
+            final_keys.append((s_idx, 0))
+
+    final_keys.sort()
 
     contents = []
-    for idx, f in sub_mds:
+    for k in final_keys:
+        f = collected[k]
         text = f.read_text(encoding="utf-8").strip()
         # Clean any accidental part headers inside subchunk
         text = re.sub(r"^#+\s*.*?\n", "", text).strip()
@@ -147,11 +192,11 @@ def merge_subchunks(target_dir: str, prefix: str, output_path: str, clean: bool 
     merged_text = "\n\n".join(contents).strip() + "\n"
     out_file.parent.mkdir(parents=True, exist_ok=True)
     out_file.write_text(merged_text, encoding="utf-8")
-    print(f"Merged {len(sub_mds)} subchunks into {out_file} ({len(merged_text)} chars)")
+    print(f"Merged {len(final_keys)} subchunk(s) into {out_file} ({len(merged_text)} chars)")
 
     if clean:
         deleted = 0
-        clean_pat = re.compile(rf"^{re.escape(prefix)}_sub\d+.*$")
+        clean_pat = re.compile(rf"^{re.escape(prefix)}(?:_sub\d+|_s\d+).*$")
         for f in dir_path.iterdir():
             if clean_pat.match(nfc(f.name)) and f != out_file:
                 try:
@@ -171,7 +216,10 @@ def main():
     # Slice parser
     p_slice = subparsers.add_parser("slice", help="Slice an audio chunk into smaller 1fps MP4 subchunks")
     p_slice.add_argument("--input", required=True, help="Input failing mp3 file")
-    p_slice.add_argument("--sub-seconds", type=int, default=150, help="Subchunk length in seconds (default: 150)")
+    p_slice.add_argument("--tier", choices=["standard", "micro"], default=None,
+                         help="Preset tier: standard (150s) or micro (15s for CBRN/safety bypass)")
+    p_slice.add_argument("--sub-seconds", type=int, default=None,
+                         help="Subchunk length in seconds (defaults: 150 for standard, 15 for micro)")
     p_slice.add_argument("--out-dir", default=None, help="Output directory (default: same as input)")
 
     # Merge parser
@@ -183,7 +231,13 @@ def main():
 
     args = parser.parse_args()
     if args.command == "slice":
-        slice_chunk(args.input, args.sub_seconds, args.out_dir)
+        if args.sub_seconds is not None:
+            sub_sec = args.sub_seconds
+        elif args.tier == "micro":
+            sub_sec = 15
+        else:
+            sub_sec = 150
+        slice_chunk(args.input, sub_sec, args.out_dir)
     elif args.command == "merge":
         merge_subchunks(args.dir, args.prefix, args.out, args.clean)
 

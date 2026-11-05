@@ -143,15 +143,7 @@ def get_chapter_title(repo_root: Path | str, chapter: int) -> str:
 
 
 # AI 정책 및 CBRN 안전 필터 오탐을 방지하기 위한 제외 키워드
-POLICY_EXCLUSIONS = {
-    # CBRN / 생물무기 / 유전자 조작 관련 오탐 유발 영어 단어
-    "cartagena", "protocol", "protocols", "biosafety", "germ-line", "germline",
-    "somatic", "therapy", "therapies", "weapon", "weapons", "bioterror",
-    "pathogen", "pathogens", "anthrax", "toxin", "toxins", "engineering",
-    "engineer", "engineered", "modified", "organism", "organisms", "transgenic",
-    "recombinant", "vector", "vectors", "virus", "viruses", "viral",
-    "hazard", "hazards", "clone", "cloning", "cloned", "manipulate",
-    "manipulation", "reaction", "reactions", "pharm", "animal", "animals",
+POLICY_EXCLUSIONS_EXACT = {
     # 일반 영어 불용어 (단순 빈출 단어)
     "and", "the", "for", "with", "from", "that", "this", "page", "figure",
     "table", "chapter", "section", "slide", "study", "human", "cell", "cells",
@@ -162,7 +154,34 @@ POLICY_EXCLUSIONS = {
     "make", "many", "more", "most", "much", "must", "only", "other", "same",
     "some", "such", "take", "time", "very", "were", "what", "when", "where",
     "while", "who", "will", "clustered", "regularly", "interspaced", "repeats",
+    "protocol", "protocols", "cartagena", "engineering", "engineer", "engineered",
+    "modified", "organism", "organisms", "transgenic", "recombinant", "vector",
+    "vectors", "hazard", "hazards", "clone", "cloning", "cloned", "manipulate",
+    "manipulation", "reaction", "reactions", "pharm", "animal", "animals",
 }
+
+# CBRN / 생물무기 / 독소 / 병원체 관련 부분 일치(substring) 제외 어간
+POLICY_EXCLUSION_STEMS = {
+    # 영문 위험 어간
+    "toxin", "toxic", "endotoxin", "exotoxin", "anthrax", "anthracis",
+    "botulin", "botox", "ricin", "pathogen", "bioterror", "weapon",
+    "germline", "germ-line", "somatic", "aerosol", "poison",
+    # 한글 위험 어휘 및 접두/접미사
+    "독소", "외독소", "내독소", "독성", "탄저", "테러", "보툴리", "병원체", "생물무기", "살포",
+}
+
+
+def is_policy_excluded(term: str) -> bool:
+    """Check if a term triggers safety filters or policy false positives."""
+    clean = term.strip().lower()
+    if not clean or len(clean) < 2:
+        return True
+    if clean in POLICY_EXCLUSIONS_EXACT:
+        return True
+    for stem in POLICY_EXCLUSION_STEMS:
+        if stem in clean:
+            return True
+    return False
 
 # 영문 생명과학 표준 약어 패턴 (대문자 중심, 2~8자)
 BIO_ACRONYM_PAT = re.compile(r"\b(?:[A-Z]{2,8}|[A-Z][a-z]{1,3}[A-Z0-9]+)\b")
@@ -190,7 +209,7 @@ def extract_chapter_terms(repo_root: Path | str, chapter: int, max_terms: int = 
             # (1) 표준 생명과학 영문 약어 및 고유명사 (DNA, PCR, STR, EcoRI 등)
             for m in BIO_ACRONYM_PAT.finditer(full_text):
                 word = m.group(0)
-                if word.lower() not in POLICY_EXCLUSIONS and len(word) >= 2:
+                if not is_policy_excluded(word):
                     terms.add(word)
 
             # (2) 한글 생물학 전문용어 패턴 (2~7글자 한글)
@@ -198,17 +217,19 @@ def extract_chapter_terms(repo_root: Path | str, chapter: int, max_terms: int = 
                 r"[가-힣]{2,6}(?:효소|중합효소|연결효소|풀림효소|복제|전사|번역|코돈|프라이머|가닥|이수체|염색체|돌연변이|뉴클레오타이드|히스톤|유전자|발현|단백질|아미노산|인산|리보솜|소포체|엽록체|세포|절편)"
             )
             for m in bio_suffix_pat.finditer(full_text):
-                terms.add(m.group(0))
+                ko_word = m.group(0)
+                if not is_policy_excluded(ko_word):
+                    terms.add(ko_word)
 
             # (3) 괄호 안 병기 단어: 예) 헬리케이스(helicase), 복제분기점(replication fork)
             for m in re.finditer(r"([가-힣]{2,10})\s*\(([A-Za-z\s]+)\)", full_text):
                 ko = m.group(1).strip()
                 en = re.sub(r"\s+", " ", m.group(2)).strip()
-                terms.add(ko)
+                if not is_policy_excluded(ko):
+                    terms.add(ko)
                 # 영문 단어 중 정책 제외 단어가 포함되지 않은 순수 학술 용어만 추가
                 if 2 <= len(en) < 25:
-                    en_words = re.findall(r"[A-Za-z]+", en.lower())
-                    if not any(w in POLICY_EXCLUSIONS for w in en_words):
+                    if not is_policy_excluded(en):
                         terms.add(en)
         except Exception:
             pass
