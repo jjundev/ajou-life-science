@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>생명과학 1105 학습만화</title>
+  <meta name="description" content="1105 수업 학습만화. 15페이지 · 페이지마다 4~8컷">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('od-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']})"></script>
+  <style>
+    /* ---------- 토큰 ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #b54708; --prof: #6941c6; --supp: #067647; --danger: #d92d20;
+      --scroll: #c9d0db; --scroll-hover: #9aa3b2;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --fs-title: clamp(28px, 6vw, 36px); --fs-h3: clamp(26px, 5.4vw, 32px); --fs-layer: 19px; --fs-lead: 22px; --fs-body: 17px; --fs-sub: 15px; --fs-small: 14px; --fs-label: 13px; --fs-fig: 12px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+      --radius: 8px; --measure: 680px; --tap: 48px; --btn-min: 160px;
+      --dur: 220ms; --dur-exit: 150ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+      /* 예전 조각이 참조할 수 있는 이름 */
+      --surface-2: var(--surface); --accent-soft: var(--surface); --warn-soft: var(--surface);
+      --prof-soft: var(--surface); --supp-soft: var(--surface); --eli5: var(--accent-ink); --eli5-soft: var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+        --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+        --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+        --scroll: #3f414b; --scroll-hover: #5b5e6a;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+      --scroll: #3f414b; --scroll-hover: #5b5e6a;
+    }
+
+    /* ---------- 기본 ---------- */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent-ink); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+
+    /* ---------- 상단 바 ---------- */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s2) var(--s4); display: flex; align-items: center; gap: var(--s3); min-height: 56px; }
+    .brand { flex: 1 1 auto; min-width: 0; font-size: var(--fs-body); font-weight: 700; white-space: nowrap; }
+    .text-btn { flex: none; min-height: 44px; min-width: 44px; padding: 0 var(--s3); border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); font: 600 var(--fs-small)/1 var(--font); cursor: pointer; }
+    .bar { height: 2px; background: var(--line); overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+
+    /* ---------- 본문 ---------- */
+    main { flex: 1 0 auto; width: 100%; max-width: var(--measure); margin: 0 auto; padding: var(--s6) var(--s5) var(--s7); }
+    .hero h1 { font-size: var(--fs-title); line-height: 1.3; margin: 0 0 var(--s3); letter-spacing: -0.02em; }
+    .hero p { color: var(--ink-2); margin: 0; }
+    section { margin-top: var(--s7); }
+    section > h2 { font-size: 22px; line-height: 1.4; margin: 0 0 var(--s4); }
+    .topic { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .topic h3 { margin: 0 0 var(--s2); font-size: var(--fs-h3); font-weight: 800; line-height: 1.3; letter-spacing: -0.02em; }
+    .tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+    .tag { font-size: var(--fs-label); line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+
+    /* 레이어: 배경 없이 라벨과 구분선으로 나눈다 */
+    .layer { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .layer.eli5 { margin-top: 0; padding-top: 0; border-top: 0; }
+    .layer > :first-child { margin-top: 0; }
+    .layer > :last-child { margin-bottom: 0; }
+    .layer-title { display: block; font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; color: var(--ink); margin-bottom: var(--s3); }
+    .layer.eli5 .layer-title { color: var(--accent-ink); }
+    .layer.eli5 .lead { font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; letter-spacing: -0.01em; margin: 0 0 var(--s4); }
+    /* 정확히 말하면: 본문 크기 그대로, 굵은 첫머리만 진하게 */
+    .layer.formal b { font-weight: 700; color: var(--ink); }
+    /* 교수님 말씀 · 주의: 보조 정보는 한 단계 작게 */
+    .layer.prof, .layer.warn, .layer.listen { font-size: var(--fs-sub); line-height: 1.7; }
+    .layer.prof blockquote { font-size: var(--fs-sub); }
+    .layer.prof .layer-title { color: var(--prof); }
+    .layer.warn, .layer.listen { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn .layer-title { color: var(--warn); font-size: var(--fs-body); }
+    .layer.listen .layer-title { color: var(--accent-ink); font-size: var(--fs-body); }
+    .layer.supp .badge.supp { margin-bottom: var(--s2); }
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
+    .badge.supp { color: var(--supp); }
+    .badge.exam { color: var(--warn); margin-right: var(--s1); }
+    blockquote { margin: var(--s3) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
+    ol.steps { padding-left: 1.4em; }
+    ol.steps li { margin: var(--s2) 0; }
+
+    /* 그림 · 수식 · 표 */
+    .figure { margin: var(--s4) 0; text-align: center; }
+    .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
+    .figure img { max-width: 100%; height: auto; }
+    .figure figcaption { font-size: var(--fs-small); color: var(--ink-2); margin-top: var(--s1); }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: var(--s1) 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+    th, td { border-bottom: 1px solid var(--line); padding: var(--s2); text-align: left; vertical-align: top; }
+    th { color: var(--ink-2); font-weight: 600; }
+    td:first-child, th:first-child { min-width: 6em; }
+
+    /* 위젯 */
+    .widget { background: var(--surface); border-radius: var(--radius); padding: var(--s4); margin: var(--s5) 0; }
+    .widget h4 { margin: 0 0 var(--s1); font-size: var(--fs-layer); line-height: 1.4; }
+    .widget-help { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s3); }
+    .controls { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--s2); font-size: var(--fs-small); }
+    .controls label { display: flex; align-items: center; gap: var(--s2); min-height: 44px; }
+    .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .widget svg { width: 100%; height: auto; background: var(--bg); border-radius: var(--radius); }
+    .readout { font-size: var(--fs-small); margin-top: var(--s2); }
+    .legend { font-size: var(--fs-label); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .sw { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: var(--s1); border-radius: 2px; }
+    .sw.truth { background: var(--ink-2); } .sw.fit { background: var(--accent); } .sw.train { background: var(--accent); height: 10px; width: 10px; border-radius: 50%; }
+    .sw.test { background: var(--warn); height: 10px; width: 10px; border-radius: 50%; } .sw.like { background: var(--accent); } .sw.prior { background: var(--prof); } .sw.post { background: var(--supp); }
+    .axis { stroke: var(--line); stroke-width: 1.5; }
+    .tick { fill: var(--ink-2); font-size: 11px; }
+    .plot-truth { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .plot-fit { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+    .pt-train { fill: var(--accent); }
+    .pt-test { fill: var(--warn); }
+    .plot-like { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .plot-prior { fill: none; stroke: var(--prof); stroke-width: 2; stroke-dasharray: 6 4; }
+    .plot-post { fill: none; stroke: var(--supp); stroke-width: 3; }
+    .mark-ml { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .mark-map { stroke: var(--supp); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 2; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 2.5; }
+    .fig-danger { stroke: var(--danger); fill: none; stroke-width: 2.5; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: 13px; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-fig); font-family: inherit; }
+
+    footer { width: 100%; max-width: var(--measure); margin: 0 auto; padding: 0 var(--s5) var(--s6); color: var(--ink-2); font-size: var(--fs-small); }
+
+    /* ---------- 하단 이동 바 ---------- */
+    .pager { position: sticky; bottom: 0; z-index: 10; background: var(--bg); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .pager-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s3) var(--s4); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); }
+    .pager-count { font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; min-width: 4em; }
+    .btn { min-height: var(--tap); min-width: var(--btn-min); padding: 0 var(--s6); border-radius: var(--radius); border: 0; font: 700 var(--fs-body)/1 var(--font); cursor: pointer; white-space: nowrap;
+      transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+    .btn-ghost { justify-self: start; background: var(--surface); color: var(--ink); }
+    .btn-primary { justify-self: end; background: var(--btn-bg); color: var(--on-btn); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    @media (hover: hover) {
+      .text-btn:hover, .btn-ghost:not(:disabled):hover { background: var(--line); }
+      .btn-primary:not(:disabled):hover { box-shadow: inset 0 0 0 100px rgba(0, 0, 0, .14); }
+    }
+
+    /* ---------- 목차 시트 ---------- */
+    .sheet { width: min(100%, var(--measure)); max-width: 100%; max-height: 80dvh; margin: auto auto 0; padding: 0; border: 0;
+      border-radius: 16px 16px 0 0; background: var(--bg); color: var(--ink); }
+    .sheet::backdrop { background: rgba(0, 0, 0, .4); }
+    .sheet-inner { padding: var(--s4) var(--s5) calc(var(--s5) + env(safe-area-inset-bottom)); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s2); }
+    .sheet-head h2 { margin: 0; font-size: var(--fs-lead); }
+    .toc { display: flex; flex-direction: column; }
+    .toc > a, .toc-group > a { display: block; padding: var(--s3) 0 var(--s1); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); text-decoration: none; }
+    .toc-list { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+    .toc-list a { display: flex; align-items: center; gap: var(--s3); min-height: var(--tap); padding: var(--s2) var(--s3); margin: 0 calc(-1 * var(--s3));
+      border-radius: var(--radius); color: var(--ink); text-decoration: none; line-height: 1.4; }
+    .toc-list a[aria-current="true"] { background: var(--surface); font-weight: 700; color: var(--accent-ink); }
+    .toc-list .toc-title { flex: 1 1 0; min-width: 0; }
+    @media (hover: hover) { .toc-list a:hover { background: var(--surface); } }
+
+    /* ---------- 한 화면에 하나씩 (JS가 켤 때만) ---------- */
+    html:not(.js) .pager, html:not(.js) #toc-open { display: none; }
+    html:not(.js) .sheet { display: block; position: static; width: 100%; max-height: none; margin: 0 auto; border-radius: 0; border-bottom: 1px solid var(--line); }
+    html:not(.js) .sheet-close { display: none; }
+    .js main > .hero:not(.is-current), .js main > section:not(.is-on), .js .screen:not(.is-current) { display: none; }
+    .js main > section { margin-top: 0; }
+    .js main > section > h2 { font-size: var(--fs-small); font-weight: 600; color: var(--accent-ink); margin: 0 0 var(--s2); }
+    .js .topic { padding: 0; border-top: 0; }
+    .js .hero { padding-top: 12vh; }
+    .js footer { display: none; }
+    .js body.at-end footer { display: block; }
+    .screen.enter-next { animation: enter-next var(--dur) var(--ease-out); }
+    .screen.enter-prev { animation: enter-prev var(--dur) var(--ease-out); }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .screen.enter-next, .screen.enter-prev { animation: none; }
+      .bar > span, .btn { transition: none; }
+    }
+    @media (max-width: 480px) {
+      main { padding: var(--s5) var(--s4) var(--s6); }
+      footer { padding: 0 var(--s4) var(--s5); }
+      .btn { min-width: 120px; padding: 0 var(--s5); }
+    }
+    @media print {
+      .topbar, .pager, .sheet { display: none !important; }
+      .js main > .hero, .js main > section, .js .screen, .js footer { display: block !important; }
+    }
+
+    /* ---------- 좌우 패널 (drawer) ---------- */
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
+    .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
+    .panel-toggle svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-toggle .strip { fill: transparent; stroke: none; transition: fill 150ms ease-out; }
+    .panel-toggle[aria-expanded="true"] { color: var(--accent-ink); }
+    .panel-toggle[aria-expanded="true"] .strip { fill: currentColor; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .i-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .theme-toggle .i-sun { display: block; }
+      :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
+    }
+
+    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
+    .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
+    .content { grid-column: 2; }
+    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
+    .content::-webkit-scrollbar, .panel-inner::-webkit-scrollbar { width: 8px; }
+    .content::-webkit-scrollbar-track, .panel-inner::-webkit-scrollbar-track { background: transparent; }
+    .content::-webkit-scrollbar-thumb, .panel-inner::-webkit-scrollbar-thumb { background: var(--scroll); border-radius: 8px; border: 2px solid var(--bg); }
+    .content::-webkit-scrollbar-thumb:hover, .panel-inner::-webkit-scrollbar-thumb:hover { background: var(--scroll-hover); }
+    @supports (scrollbar-color: auto) { .content, .panel-inner { scrollbar-width: thin; scrollbar-color: var(--scroll) transparent; } }
+    .panel-resize { display: none; }
+    .panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 44px; margin-bottom: var(--s2); }
+    .panel-head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-lead); line-height: 1.4; }
+    .panel-sub { margin: 0 0 var(--s4); font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; }
+    .panel-empty { margin: 0; color: var(--ink-2); }
+    .panel-label { display: block; margin: var(--s5) 0 var(--s2); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+
+    /* 진행 상태 */
+    .panel-meta { margin: 0 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .panel-meta b { color: var(--ink); }
+    .progress { height: 4px; margin-bottom: var(--s3); border-radius: 2px; background: var(--line); overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+    .panel .toc-list a { margin: 0 calc(-1 * var(--s2)); padding: var(--s2); font-size: var(--fs-panel); }
+    .toc-mark { flex: none; display: block; width: 20px; height: 20px; color: var(--ink-2); }
+    .toc-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .toc-mark.is-done { color: var(--accent-ink); }
+
+    /* 복습문제: 원문 · 힌트 · 풀이 */
+    .aid details:last-of-type { border-bottom: 1px solid var(--line); }
+    .aid details.original > summary { font-size: var(--fs-panel); }
+    .solved-btn { display: flex; align-items: center; justify-content: center; gap: var(--s2); width: 100%; min-height: var(--tap); margin-top: var(--s5); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .solved-btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
+
+    /* 정리노트: 페이지 요약 */
+    .sum-supp { margin-top: var(--s4); }
+    .sum-lead { margin: 0; font-size: var(--fs-body); font-weight: 700; line-height: 1.6; }
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+    .eq-list li:first-child { padding-top: 0; }
+    .eq-name { display: block; font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+    .eq-list .katex-display { margin: var(--s1) 0 0; text-align: left; }
+    .eq-list .katex-display > .katex { text-align: left; }
+    .terms { margin: 0; }
+    .terms dt { font-size: var(--fs-panel); font-weight: 700; margin-top: var(--s4); }
+    .terms dt:first-child { margin-top: 0; }
+    .terms dd { margin: var(--s1) 0 0; font-size: var(--fs-sub); line-height: 1.6; color: var(--ink-2); }
+    .flow { margin: 0; padding-left: 1.4em; font-size: var(--fs-sub); }
+    .flow li { margin: var(--s2) 0; }
+
+    @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
+
+    /* 넓은 화면: 본문 옆에 붙는 패널 */
+    @media (min-width: 1024px) {
+      .layout { --l: var(--panel-l-user, var(--panel-l)); }
+      .layout[data-left="closed"] { --l: 0px; }
+      .panel-left { width: var(--l); }
+      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
+      .panel-left .panel-resize { right: 0; }
+      .panel-right .panel-resize { left: 0; }
+      .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
+      .panel-left .panel-resize::after { right: 0; }
+      .panel-right .panel-resize::after { left: 0; }
+      .panel-resize:focus-visible { outline: none; }
+      .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
+      @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
+      body.is-resizing { cursor: col-resize; user-select: none; }
+      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
+      .scrim, .panel-close { display: none; }
+    }
+    @keyframes panel-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 좁은 화면: 가장자리에서 밀려 나오는 drawer */
+    @media (max-width: 1023.98px) {
+      .panel { position: fixed; top: 0; bottom: 0; z-index: 40; visibility: hidden;
+        transition: transform var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .panel-left { left: 0; width: min(var(--drawer-l), 88vw); transform: translateX(-100%); }
+      .panel-right { right: 0; width: min(var(--drawer-r), 88vw); transform: translateX(100%); }
+      .panel.is-open { visibility: visible; transform: none; transition: transform var(--dur) var(--ease-out); }
+      .panel-inner { padding-top: calc(var(--s3) + env(safe-area-inset-top)); padding-bottom: calc(var(--s6) + env(safe-area-inset-bottom)); }
+      .scrim { position: fixed; inset: 0; z-index: 35; background: var(--scrim); opacity: 0; visibility: hidden;
+        transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
+      html:not(.js) .panel-left { display: none; }
+    }
+    @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
+      .panel.is-shown { animation: none; }
+      .panel-resize::after { transition: none; }
+    }
+    @media print {
+      body { display: block; height: auto; overflow: visible; }
+      .layout { display: block; }
+      .content { overflow: visible; }
+      .panel, .scrim { display: none !important; }
+    }
+  </style>
+<style id="comic-style">
+/* Extends the note shell; its tokens and behavior remain the visual authority. */
+.comic-question { margin: var(--s3) 0 var(--s5); font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; }
+.comic-strip { display: grid; gap: var(--s6); list-style: none; margin: 0; padding: 0; }
+.comic-panel { min-width: 0; }
+.comic-panel figure { margin: 0; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.comic-scene { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; position: relative; isolation: isolate; background: #faf8f2; color: #162438; }
+.comic-panel img { grid-column: 1; grid-row: 1 / 3; align-self: end; display: block; width: 100%; height: auto; background: #faf8f2; }
+.comic-art-space { grid-column: 1; grid-row: 2; width: 100%; pointer-events: none; }
+.comic-balloon-layer { grid-column: 1; grid-row: 1; z-index: 1; display: flex; flex-direction: column; gap: var(--s3); padding: var(--s4) var(--s5); min-width: 0; }
+.comic-panel figcaption { padding: var(--s4); background: var(--bg); }
+.comic-number { display: block; margin-bottom: var(--s2); font-size: var(--fs-label); font-weight: 700; color: var(--ink-2); }
+.comic-caption { margin: 0; line-height: 1.7; }
+.comic-dialogue { position: relative; width: fit-content; max-width: 88%; margin: 0; padding: var(--s3) var(--s4); border: 1.5px solid #566477; border-radius: 18px; background: #fffefb; color: #162438; font-size: var(--fs-body); line-height: 1.6; box-shadow: 0 2px 0 #1624380d; }
+.comic-voice-left { align-self: flex-start; border-bottom-left-radius: 4px; }
+.comic-voice-right { align-self: flex-end; border-bottom-right-radius: 4px; background: #f0f5fc; }
+.comic-dialogue::after { content: ''; position: absolute; top: 18px; width: 10px; height: 10px; background: inherit; border: solid #566477; transform: rotate(45deg); }
+.comic-voice-left::after { left: -6px; border-width: 0 0 1.5px 1.5px; }
+.comic-voice-right::after { right: -6px; border-width: 1.5px 1.5px 0 0; }
+.comic-speaker { display: block; margin-bottom: var(--s1); font-size: var(--fs-label); font-weight: 700; color: #1b64da; }
+@media (max-width: 480px) {
+  .comic-balloon-layer { padding: var(--s3) var(--s4); gap: var(--s2); }
+  .comic-dialogue { max-width: 94%; padding: var(--s2) var(--s3); }
+}
+.comic-source { margin: var(--s6) 0 0; }
+.comic-source a { display: inline-flex; align-items: center; min-height: var(--tap); }
+.comic-panel .badge { display: block; width: fit-content; max-width: 100%; white-space: normal; margin: 0 0 var(--s2); }
+.sum > .badge { white-space: normal; margin-bottom: var(--s2); }
+@media print {
+  .comic-panel { break-inside: avoid; }
+  .comic-source { display: none; }
+}
+.comic-analogy, .comic-limit { margin: var(--s4) 0 0; padding-top: var(--s3); border-top: 1px solid var(--line); font-size: var(--fs-small); line-height: 1.7; color: var(--ink-2); }
+.comic-analogy strong, .comic-limit strong { display: block; margin-bottom: var(--s1); color: var(--ink); }
+
+</style>
+</head>
+<body data-screens="article.topic" data-panels="note" data-range="1105">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <strong class="brand">학습만화</strong>
+      <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>요약</span></button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
+  </header>
+  <div class="layout" data-left="open" data-right="closed">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
+      <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-left-title">목차</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-meta">읽은 토픽 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <nav class="toc" aria-label="목차"><a href="#comic-section-1">1. 생명은 어떻게 시작했을까</a><a href="#comic-section-2">2. 세포가 복잡해진 과정</a><a href="#comic-section-3">3. 세균과 고세균을 구별하는 기준</a><a href="#comic-section-4">4. 바이러스는 왜 숙주가 필요할까</a><a href="#comic-section-5">5. 요약 · 예고</a></nav>
+      </div>
+    </aside>
+    <div class="content">
+  <main>
+    <div class="hero">
+      <h1>생명과학 1105 학습만화</h1>
+      <p>15페이지 · 페이지마다 4~8컷. 그림과 대사를 따라 읽고 원본 정리노트에서 확인해요.</p>
+    </div>
+<section id="comic-section-1"><h2>1. 생명은 어떻게 시작했을까</h2><article class="topic" id="s0-miller"><h3>실험에서 나온 것은 생명이 아니라 유기물</h3><p class="comic-question">생명 재료를 검출하면 생명을 만든 걸까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>벽돌이 나왔으니 집도 만든 건가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>재료를 만든 것과 완성 체계를 만든 것은 달라. 생명 기원 실험도 그 질문부터 나눠 보자.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s0-miller/01.png" alt="생물과 주변 물질은 탄소·산소·질소·수소 같은 공통 원소로 이루어져요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">생물과 주변 물질은 탄소·산소·질소·수소 같은 공통 원소로 이루어져요.</p><p class="comic-analogy"><strong>비유 연결</strong> 구워진 벽돌 → 비생물적으로 합성된 간단한 유기물 · 완성된 집과 구별되는 재료 → 유기물 검출과 생명 생성의 구별</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>어떤 조건을 준비했어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>오파린–할데인 가설의 환원 조건을 모형화했어. 수소·메탄·암모니아·수증기를 썼지만 실제 과거 대기 전체의 확정 조성은 아니야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s0-miller/02.png" alt="환원은 전자를 받는 과정이고, 환원성 물질은 전자를 줄 수 있어요. 메탄은 유기물이므로 입력 전체를 무기물이라 하지 않아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">환원은 전자를 받는 과정이고, 환원성 물질은 전자를 줄 수 있어요. 메탄은 유기물이므로 입력 전체를 무기물이라 하지 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>전기는 왜 넣어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>번개의 에너지를 흉내 내는 거야. 물을 데우고 기체를 순환시키며 방전한 뒤 식혀 시료를 모았어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s0-miller/03.png" alt="약 일주일 뒤 수집한 용액의 성분을 분석했어요. 물의 색만으로 성분을 판정하지 않았어요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">약 일주일 뒤 수집한 용액의 성분을 분석했어요. 물의 색만으로 성분을 판정하지 않았어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그래서 무엇이 확인됐죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>아미노산 같은 간단한 유기물이 검출됐어. 특정 조건의 비생물적 합성을 보여 줬지만 살아 있는 세포는 만들지 않았어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s0-miller/04.png" alt="분자 합성과 유전정보를 복제하는 세포의 출현은 다른 단계예요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">분자 합성과 유전정보를 복제하는 세포의 출현은 다른 단계예요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>다른 장소나 용기도 영향을 주나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>환원적인 열수구나 운석을 통한 재료 유입도 제안돼. 유리의 규산염이 반응에 영향을 줄 수 있다는 해석도 소개됐지.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s0-miller/05.png" alt="모두 가설·소개된 해석의 범위를 유지해요. 우주 유입을 가정해도 최초 재료 합성의 질문은 남아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">모두 가설·소개된 해석의 범위를 유지해요. 우주 유입을 가정해도 최초 재료 합성의 질문은 남아요. 운석에서 아미노산이 발견된 관찰을 재료 유입 가능성과 연결해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>재료 합성의 가능성을 확인한 거군요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>맞아. 용기 영향이 가능하다고 실험 전체가 무효인 것도 아니야. 자연선택 관찰과 생명 기원의 모든 단계 확정도 구별해야 해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s0-miller/06.png" alt="실험의 관찰값을 실제 초기 대기나 최초 생명의 탄생 경로 전체에 대한 증명으로 넓히지 않아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><p class="comic-caption">실험의 관찰값을 실제 초기 대기나 최초 생명의 탄생 경로 전체에 대한 증명으로 넓히지 않아요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 벽돌은 재료와 완성 체계를 나누기 위한 비유예요. 화학반응이나 세포의 작동을 건축 과정과 같다고 보지 않아요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1105_Origin_of_Life_and_Prokaryotes.html#s0-miller" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">가정한 조건에서 아미노산 등 유기물이 생겼지만, 살아 있는 세포나 실제 생명 탄생 경로를 입증한 것은 아니에요.</p></div></article><article class="topic" id="s0-protocell"><h3>작은 분자에서 막으로 둘러싸인 공간으로</h3><p class="comic-question">막 주머니가 닫히면 바로 생명인가요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>재료가 있으면 큰 분자도 이미 있는 거죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>흩어진 구슬과 이어진 목걸이는 달라. 아미노산이 이어지면 폴리펩티드, 뉴클레오타이드가 이어지면 DNA나 RNA가 돼.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s0-protocell/01.png" alt="작은 유기분자 합성과 거대분자 조립을 나눠요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">작은 유기분자 합성과 거대분자 조립을 나눠요.</p><p class="comic-analogy"><strong>비유 연결</strong> 따로 있는 구슬과 이어진 목걸이 → 작은 유기분자와 거대분자의 차이 · 구슬을 모으는 주머니 → 막이 만드는 구획화</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그 연결은 아무 조건에서나 되나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>아니. 수업에서는 진흙의 금속 이온이 촉매로 작용해 조건에 따라 연결을 도울 수 있다고 했어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s0-protocell/02.png" alt="촉매가 연결을 도울 수 있다는 설명이지, 모든 재료가 자동으로 완성된다는 뜻은 아니에요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">촉매가 연결을 도울 수 있다는 설명이지, 모든 재료가 자동으로 완성된다는 뜻은 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>막의 안쪽도 물인데 머리가 어디로 향하죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>양쪽 머리가 각각 물을 향해. 물을 피하는 꼬리는 이중층 가운데에서 서로 마주 봐.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s0-protocell/03.png" alt="인지질의 친수성 머리와 소수성 꼬리의 방향을 양쪽에서 확인해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">인지질의 친수성 머리와 소수성 꼬리의 방향을 양쪽에서 확인해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>이중층이 닫히면 무엇이 달라져요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>안과 밖이 나뉘어 물질이 한 공간에 모일 수 있어. 이런 경계와 내부 물질을 가진 초기 모형을 원시세포라고 불러.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s0-protocell/04.png" alt="물질을 모으는 소낭과 살아 있는 세포를 동일시하지 않아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">물질을 모으는 소낭과 살아 있는 세포를 동일시하지 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그럼 무엇이 더 필요해요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>정보를 복제하고 세대를 이어 갈 체계가 더 필요해. 재료 합성·거대분자 조립·구획화·복제와 분열은 구별되는 과제야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s0-protocell/05.png" alt="수업의 큰 흐름이며 실제 최초 생명에 이른 구체적 경로는 모두 밝혀지지 않았어요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">수업의 큰 흐름이며 실제 최초 생명에 이른 구체적 경로는 모두 밝혀지지 않았어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>주머니에 담았다고 스스로 복제되지는 않네요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>그렇지. 막의 자가 조립을 생명의 자가 생성으로 바꾸면 안 돼. 정보와 촉매를 함께 맡을 수 있는 RNA의 문제로 이어 가자.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s0-protocell/06.png" alt="비유는 구획화까지만 설명해요. 원본의 인지질 모형 링크에서 방향을 더 살펴볼 수 있어요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><p class="comic-caption">비유는 구획화까지만 설명해요. 원본의 인지질 모형 링크에서 방향을 더 살펴볼 수 있어요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 주머니는 안팎의 구별만 설명해요. 인지질은 사람이 꿰매지 않고 물속에서 자가 조립하며, 경계가 생겨도 유전정보 복제가 자동으로 생기지는 않아요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1105_Origin_of_Life_and_Prokaryotes.html#s0-protocell" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">작은 분자를 잇고 막 안에 모아도 복제와 세대 유지까지 자동으로 완성되지는 않아요.</p></div></article><article class="topic" id="s0-rna"><h3>정보와 촉매를 함께 맡을 수 있는 RNA</h3><p class="comic-question">RNA는 어떻게 기록과 촉매를 함께 맡을까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>설계 정보가 있어야 효소를 만들고, 효소가 있어야 시작한다면요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>현재 세포는 DNA가 정보를 저장하고 RNA와 단백질이 발현에 참여해. 처음부터 그 체계가 다 필요했는지가 시작의 문제지.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s0-rna/01.png" alt="현재의 역할 분담을 그대로 최초 단계에 요구하면 시작을 설명하기 어려워요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">현재의 역할 분담을 그대로 최초 단계에 요구하면 시작을 설명하기 어려워요.</p><p class="comic-analogy"><strong>비유 연결</strong> 기록이 있는 재료 → RNA 염기서열의 정보 저장 · 같은 재료가 도구 모양으로 접힘 → 일부 RNA의 촉매 기능</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>한 재료가 두 역할을 맡을 수도 있어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>RNA는 서열에 정보를 담고, 일부는 접혀 반응을 촉진할 수 있어. 촉매 RNA가 리보자임이야. 단백질이라는 뜻이 아니지.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s0-rna/02.png" alt="RNA 우선 가설은 정보와 촉매 기능의 결합 가능성에서 출발해요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">RNA 우선 가설은 정보와 촉매 기능의 결합 가능성에서 출발해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>RNA가 촉매면 완전 자기복제도 입증됐나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>그건 별개의 질문이야. RNA가 RNA 생성을 도울 가능성과 최초 완전한 복제 체계가 어떤 조건에서 생겼는지는 구별해야 해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s0-rna/03.png" alt="모든 RNA가 재료 없이 저절로 자신을 완성한다는 주장이 아니에요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">모든 RNA가 재료 없이 저절로 자신을 완성한다는 주장이 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>왜 지금은 DNA가 오래 보관하는 일을 맡아요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>수업에서는 RNA의 OH기와 반응성을 안정성 문제에 연결했어. 상대적으로 안정적인 DNA가 장기 저장, RNA가 발현을 맡는 설명이지.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s0-rna/04.png" alt="반응성이 촉매 역할과 연결돼도 장기 보관에는 불리할 수 있어요. DNA도 전혀 변하지 않는 것은 아니에요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">반응성이 촉매 역할과 연결돼도 장기 보관에는 불리할 수 있어요. DNA도 전혀 변하지 않는 것은 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그 초기 세포의 시점도 정확히 알 수 있나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>강의노트는 지구 약 46억 년, 원시세포 약 36억 년, 오래된 원핵생물 화석 약 35억 년 전을 제시해. 수업의 최초 세포 약 36억~37억 년도 근사치야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s0-rna/05.png" alt="초기 생명은 원핵세포와 비슷한 단순한 형태로 설명했어요. 탄생 날짜를 확정한 숫자는 아니에요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">초기 생명은 원핵세포와 비슷한 단순한 형태로 설명했어요. 탄생 날짜를 확정한 숫자는 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>두 역할의 가능성이 가설을 뒷받침하는 거군요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>맞아. 단백질 우선 가설도 소개됐어. RNA 우선을 실제 초기 역사의 완전한 재현으로 단정하지 않아야 해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s0-rna/06.png" alt="리보자임의 존재와 최초 자기복제 경로의 확정은 달라요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><p class="comic-caption">리보자임의 존재와 최초 자기복제 경로의 확정은 달라요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 기록과 도구는 두 역할을 나누는 비유예요. 모든 RNA가 촉매이거나 재료 없이 자신을 완전 복제한다는 뜻은 아니고, 실제 초기 역사가 재현됐다는 뜻도 아니에요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1105_Origin_of_Life_and_Prokaryotes.html#s0-rna" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">일부 RNA는 정보 저장과 촉매 기능을 함께 맡을 수 있어 RNA 우선 가설을 뒷받침하지만 완전한 최초 복제 경로를 입증하지는 않아요.</p></div></article></section>
+<section id="comic-section-2"><h2>2. 세포가 복잡해진 과정</h2><article class="topic" id="s1-oxygen"><h3>남세균이 물을 쓰자 산소가 생겼어요</h3><p class="comic-question">빛을 쓰면 모두 산소를 만들까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>둘 다 빛을 쓰는데 결과가 왜 다르죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>전원이 같아도 처리 재료가 다를 수 있어. 광합성도 빛만 보지 말고 전자공여체를 확인해야 해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s1-oxygen/01.png" alt="초기 산소 부족 환경의 세포는 발효나 산소를 쓰지 않는 호흡과 연결해 설명해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">초기 산소 부족 환경의 세포는 발효나 산소를 쓰지 않는 호흡과 연결해 설명해요.</p><p class="comic-analogy"><strong>비유 연결</strong> 같은 전원 → 두 경로 모두 빛을 사용함 · 다른 투입 재료 → 물과 황화수소 등 전자공여체 차이</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>남세균의 산소는 어디서 와요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>명반응에서 물이 전자를 주며 분해될 때 나와. 빛은 에너지, 물은 전자 공급 재료야. CO₂는 탄소원이야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s1-oxygen/02.png" alt="남세균은 광독립영양 세균이에요. 산소는 CO₂나 캘빈 회로 자체에서 나오는 것이 아니에요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">남세균은 광독립영양 세균이에요. 산소는 CO₂나 캘빈 회로 자체에서 나오는 것이 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>물 분해만 막으면 다른 경로도 바뀌나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>물 쓰던 경로의 산소 생성이 줄어. 황화수소 같은 다른 전자공여체를 쓰던 경로가 자동으로 산소발생형이 되지는 않아.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s1-oxygen/03.png" alt="광합성 전체와 산소발생형 광합성을 같은 말로 외우지 않아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">광합성 전체와 산소발생형 광합성을 같은 말로 외우지 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>층상 암석은 세균 한 개의 화석인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>미생물 활동과 퇴적물이 관련된 구조야. 강의의 약 30억 년은 근사 연대이고, 산소 생성 시작과 대기 축적은 같은 순간이 아니야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s1-oxygen/04.png" alt="산소 증가는 산소 호흡이 발달할 환경과 연결돼요. 암석의 구멍만으로 산소 발생이나 연대를 확정하지 않아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">산소 증가는 산소 호흡이 발달할 환경과 연결돼요. 암석의 구멍만으로 산소 발생이나 연대를 확정하지 않아요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 공정 비유는 에너지와 재료를 나누기 위한 것이에요. 실제 광합성 장치의 형태를 뜻하지 않으며, 방출 산소의 직접 기원은 물이에요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1105_Origin_of_Life_and_Prokaryotes.html#s1-oxygen" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">빛 이용 여부와 물을 전자공여체로 쓰는지를 나눠야 산소 발생을 설명할 수 있어요.</p></div></article><article class="topic" id="s1-endosymbiosis"><h3>삼킨 세균이 소기관이 되었다는 증거</h3><p class="comic-question">막이 있는 소기관은 모두 같은 기원일까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>집 안에 방이 있으면 모두 같은 방식으로 생겼나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>원래 경계가 접힌 것과 별도 작업장이 들어온 것은 달라. 소기관의 기원도 그 차이를 보자.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s1-endosymbiosis/01.png" alt="A 막 함입은 핵막·소포체 등, B 세균 유입과 공생은 미토콘드리아·엽록체와 연결해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">A 막 함입은 핵막·소포체 등, B 세균 유입과 공생은 미토콘드리아·엽록체와 연결해요.</p><p class="comic-analogy"><strong>비유 연결</strong> 기존 벽을 접어 공간 나누기 → 막 함입에 의한 내부막 기원 모형 · 자체 장비가 있는 작업장의 합류 → 별도 세균에서 유래한 소기관</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>A에서 바뀌는 것은 뭐죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>기존 막이 안쪽으로 접혀 내부막을 만드는 모형이야. 핵막·소포체·골지체 등 내부막의 설명과 연결했어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s1-endosymbiosis/02.png" alt="막이 있다는 공통점만으로 소기관의 기원까지 같다고 판정하지 않아요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">막이 있다는 공통점만으로 소기관의 기원까지 같다고 판정하지 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>B는 기존 막만 접힌 건가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>별도 산소 호흡 세균이 들어와 소화되지 않고 공생한 것이 미토콘드리아의 기원이라는 설명이야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s1-endosymbiosis/03.png" alt="별도 세포의 유입과 내부막 함입을 구별해요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">별도 세포의 유입과 내부막 함입을 구별해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그 뒤 모든 세포가 엽록체도 얻나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>남세균과의 추가 공생이 엽록체를 가진 계통으로 이어진 거야. 모든 진핵세포가 엽록체를 가진다는 뜻은 아니야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s1-endosymbiosis/04.png" alt="산소 호흡 세균과 광합성 세균의 유래를 나눠요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">산소 호흡 세균과 광합성 세균의 유래를 나눠요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>세균이 들어왔다는 단서는요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>두 소기관의 환형 DNA, 세균형 리보솜의 크기와 rRNA 서열이 함께 가리켜. 핵의 선형 염색체와도 구별되지.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s1-endosymbiosis/05.png" alt="수업은 DNA를 긴 선과 고무줄 같은 고리로 대비했어요. 여러 독립적인 단서가 같은 기원을 뒷받침해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">수업은 DNA를 긴 선과 고무줄 같은 고리로 대비했어요. 여러 독립적인 단서가 같은 기원을 뒷받침해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>지금 보는 공생이 과거 장면을 찍은 것은 아니군요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>그렇지. 마굴리스가 제안한 설명은 증거가 축적돼 받아들여졌어. 소기관의 일부 단백질 합성도 완전한 독립 생활을 뜻하지 않아.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s1-endosymbiosis/06.png" alt="현재 공생 사례는 가능성을 뒷받침해요. 막만 보는 대신 DNA·리보솜의 단서를 연결해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><p class="comic-caption">현재 공생 사례는 가능성을 뒷받침해요. 막만 보는 대신 DNA·리보솜의 단서를 연결해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 집은 기원 경로를 나누는 비유예요. 소기관은 완전히 독립된 작업장이 아니며, 모든 막성 소기관이 삼킨 세균에서 온 것도 아니에요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1105_Origin_of_Life_and_Prokaryotes.html#s1-endosymbiosis" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">막 함입과 세균 유입은 다른 기원 모형이에요. 미토콘드리아·엽록체의 자체 DNA와 세균형 리보솜·rRNA가 공생설을 뒷받침해요.</p></div></article><article class="topic" id="s1-multicell"><h3>같이 살기에서 역할 나누기로</h3><p class="comic-question">세포 수가 많으면 분화도 일어난 걸까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>도구가 많아지면 맡는 일도 달라지나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>같은 도구만 늘어난 것과 다른 도구가 협력하는 것은 달라. 세포 수와 역할 차이를 따로 보자.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s1-multicell/01.png" alt="수업은 같은 종의 비슷한 세포가 모인 단순 군체 모형에서 출발해요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">수업은 같은 종의 비슷한 세포가 모인 단순 군체 모형에서 출발해요.</p><p class="comic-analogy"><strong>비유 연결</strong> 같은 도구 여러 개 → 수업의 비슷한 세포로 된 단순 군체 · 서로 다른 기능을 가진 도구 묶음 → 분화한 세포의 특수화와 협력</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>여기서는 모두 비슷한 일을 하네요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>이 수업의 단순 군체 비교야. 숫자만 늘었다고 분화가 생겼다고 할 수는 없어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s1-multicell/02.png" alt="실제 군체에는 분화 정도가 다양하므로 모든 군체에 분화가 전혀 없다고 일반화하지 않아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">처음 진핵생물은 단세포였다고 설명해요. 실제 군체에는 분화 정도가 다양하므로 모든 군체에 분화가 전혀 없다고 일반화하지 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그럼 분화는 무엇이 달라진 거죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>구조와 기능이 특수화되는 거야. 신경세포의 전달, 근육세포의 수축, 경계 세포의 보호처럼 서로 다른 일을 함께 하지.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s1-multicell/03.png" alt="모양만으로 기능이 확정되지 않으면 제시된 역할 조건도 읽어요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">모양만으로 기능이 확정되지 않으면 제시된 역할 조건도 읽어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>분화한 협력이 핵심이지, 모두 다세포가 돼야 하는 건 아니군요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>맞아. 가능한 발달 과정의 설명이야. 단세포생물이 미완성인 것도, 세포가 계획해 역할을 고른 것도 아니야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s1-multicell/04.png" alt="분화·협력의 적응상 이점과 목적을 가진 진화를 구별해요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">분화·협력의 적응상 이점과 목적을 가진 진화를 구별해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 도구 비유는 기능 차이를 설명해요. 세포가 의도적으로 직업을 고르는 것은 아니고, 실제 군체의 분화 정도도 다양해요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1105_Origin_of_Life_and_Prokaryotes.html#s1-multicell" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">세포의 개수와 구조·기능의 특수화는 달라요. 다세포성 발달의 핵심은 분화와 협력이에요.</p></div></article></section>
+<section id="comic-section-3"><h2>3. 세균과 고세균을 구별하는 기준</h2><article class="topic" id="s2-structure"><h3>작은 세포의 필수 장비</h3><p class="comic-question">핵이 없다는 말은 무엇이 없다는 뜻일까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>별도 방이 없으면 생활 장비도 없나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>작은 텐트에도 필수품은 있어. 원핵세포도 핵막으로 닫힌 핵이 없을 뿐 DNA와 리보솜은 있지.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-structure/01.png" alt="원핵세포는 일반적으로 더 작고 내부 구조가 단순해요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">원핵세포는 일반적으로 더 작고 내부 구조가 단순해요.</p><p class="comic-analogy"><strong>비유 연결</strong> 별도 방이 없는 텐트 → 핵막으로 닫힌 핵이 없음 · 텐트 안 필수품 → DNA와 리보솜이 있음</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>핵양체는 막으로 닫힌 작은 핵인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>아니. DNA가 단백질과 함께 모인 영역이야. 대부분 주 염색체가 환형이고 리보솜에서 단백질을 합성해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-structure/02.png" alt="미토콘드리아·엽록체·소포체·골지체 같은 막성 소기관은 없어요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">미토콘드리아·엽록체·소포체·골지체 같은 막성 소기관은 없어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>겉의 층은 모두 같은 구조인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>세포막은 안팎 경계, 전형적 세균의 벽은 펩티도글리칸이야. 일부의 외막과 추가 보호층인 협막도 서로 달라.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-structure/03.png" alt="식물의 셀룰로스 벽과 구별하고 고세균까지 펩티도글리칸 벽으로 묶지 않아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">식물의 셀룰로스 벽과 구별하고 고세균까지 펩티도글리칸 벽으로 묶지 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>짧은 털과 긴 꼬리는 같은 일을 하나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>수업의 짧은 섬모는 부착, 편모는 헤엄치는 데 연결했어. 외막·협막·섬모·편모는 모든 세균의 공통 필수품은 아니야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-structure/04.png" alt="구조의 존재와 역할, 보편성까지 따로 확인해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">구조의 존재와 역할, 보편성까지 따로 확인해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>겉모양이나 세포 수가 기준인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>구균·간균·나선균은 모양 구분이야. 원핵·진핵의 기준은 핵막으로 둘러싸인 핵이고, 진핵에도 단세포가 있어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-structure/05.png" alt="작고 단순하다는 말은 생명 활동을 하지 않는다는 뜻이 아니에요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">작고 단순하다는 말은 생명 활동을 하지 않는다는 뜻이 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>세대가 짧으면 복제 한 번의 오류율도 높은 건가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>같은 시간에 세대와 복제 기회가 더 많아질 수 있다는 뜻이야. 집단의 변이·선택 기회와 복제 한 번의 돌연변이율은 달라.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-structure/06.png" alt="전형적인 비교이며 모든 원핵·다른 생물 사이에 예외 없이 성립하지는 않아요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">원핵생물은 전형적으로 진핵생물보다 세대기간이 짧다는 비교예요. 전형적인 비교이며 모든 원핵·다른 생물 사이에 예외 없이 성립하지는 않아요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 텐트는 별도 방과 필수 장비를 나누는 비유예요. 세포의 분자 구조와 같지 않으며, 구조가 단순하다고 생명 활동이 없는 것도 아니에요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1105_Origin_of_Life_and_Prokaryotes.html#s2-structure" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="sum-lead">원핵세포는 핵막으로 닫힌 핵이 없지만 DNA와 리보솜이 있는 세포예요. 부가 구조는 종류에 따라 달라요.</p></div></article><article class="topic" id="s2-nutrition"><h3>에너지원과 탄소원은 서로 다른 질문</h3><p class="comic-question">빛을 쓰면 독립영양이라고 할 수 있을까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>전기가 어디서 오는지 알면 재료도 알 수 있나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>둘은 별개야. 생물도 에너지는 빛인지 화학반응인지, 탄소는 CO₂인지 다른 생물이 만든 유기물인지 따로 물어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-nutrition/01.png" alt="광·화학은 에너지 축, 독립·종속은 탄소 축이에요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">광·화학은 에너지 축, 독립·종속은 탄소 축이에요.</p><p class="comic-analogy"><strong>비유 연결</strong> 전원선 → 활동의 에너지원 · 건축 재료 상자 → 몸을 구성할 탄소원</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>빛을 쓰는 두 대상도 탄소원이 다를 수 있네요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>빛과 CO₂면 광독립영양으로 식물·남세균이 예야. 빛과 유기물이면 광종속영양인 일부 세균이지.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-nutrition/02.png" alt="식물은 빛에너지를 이용하고 캘빈 회로로 CO₂를 고정해요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">식물은 빛에너지를 이용하고 캘빈 회로로 CO₂를 고정해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>화학반응을 쓰는 쪽도 둘로 나뉘나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>화학물질의 산화로 에너지를 얻고 CO₂를 쓰면 화학독립영양, 유기물을 탄소원으로 쓰면 화학종속영양이야. 동물과 많은 세균은 뒤쪽이지.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-nutrition/03.png" alt="동물은 먹은 유기물에서 탄소와 화학에너지를 함께 얻어요. CO₂를 쓴다고 빛이 에너지원인 것은 아니에요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">동물은 먹은 유기물에서 탄소와 화학에너지를 함께 얻어요. CO₂를 쓴다고 빛이 에너지원인 것은 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>세균 한 종이 네 유형을 모두 한다는 뜻인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>세균 집단 전체의 대사가 다양하다는 뜻이야. 기름 분해 세균 같은 유용한 종류도 찾을 수 있고 몸속부터 구름까지 널리 분포하지.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-nutrition/04.png" alt="이름을 조합하기 전에 에너지원과 탄소원 두 칸을 각각 확인해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">이름을 조합하기 전에 에너지원과 탄소원 두 칸을 각각 확인해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 전원과 자재는 두 질문을 분리하는 비유예요. 실제 유기물은 탄소와 에너지를 함께 줄 수도 있어 두 축이 항상 서로 다른 물질을 뜻하지는 않아요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1105_Origin_of_Life_and_Prokaryotes.html#s2-nutrition" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">빛·화학반응과 CO₂·유기물이라는 별개의 두 축을 조합해 네 영양 유형을 구별해요.</p></div></article><article class="topic" id="s2-groups"><h3>세균의 여러 무리와 오래 버티는 형태</h3><p class="comic-question">세균이 오래 버티면 개체 수도 늘어난 걸까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>보호 케이스에 넣으면 원본도 두 개가 되나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>하나를 보호하는 것과 복제는 달라. 내생포자도 개체 수 증가보다 불리한 환경을 견디는 휴면 구조로 봐야 해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-groups/01.png" alt="탄저균은 내생포자를 형성하는 예예요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">탄저균은 내생포자를 형성하는 예예요.</p><p class="comic-analogy"><strong>비유 연결</strong> 단단한 보호 케이스 → 불리한 환경에 견디는 내생포자 · 보호된 물건이 다시 사용됨 → 조건 회복 뒤 성장·분열</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>조건이 좋아지면 어떻게 되죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>다시 성장하고 분열해. 건조·열 등에 저항성이 커도 모든 멸균 조건에서 죽지 않는다는 뜻은 아니야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-groups/02.png" alt="휴면 구조 형성과 나중의 세포 분열을 나눠요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">휴면 구조 형성과 나중의 세포 분열을 나눠요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그 밖의 무리는 무엇으로 나눠요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>rRNA 서열로 여러 무리를 비교해. 프로테오박테리아는 다양하고, 녹색세균의 수업 예는 비산소발생형, 남세균은 물을 써 산소를 내는 광합성이야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-groups/03.png" alt="그람은 사람 이름이며 염색과 세포벽 구조로 구별해요. 대장균·질소고정세균·임질균·헬리코박터는 수업의 프로테오박테리아 예, 매독 세균은 나선형의 예예요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">그람은 사람 이름이며 염색과 세포벽 구조로 구별해요. 대장균·질소고정세균·임질균·헬리코박터는 수업의 프로테오박테리아 예, 매독 세균은 나선형의 예예요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>세포 안에 기생하면 바이러스인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>클라미디아는 세포 내 기생 세균이야. 락토바실루스는 유산균의 예고, 황색포도상구균은 피부에 살다가 조건에 따라 감염을 일으킬 수 있어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-groups/04.png" alt="그람양성 예에 탄저균·스타필로코커스·스트렙토코커스·락토바실루스가 있어요. 충치 관련 스트렙토코커스도 소개됐지만 세부 목록 통암기가 목표는 아니에요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">그람양성 예에 탄저균·스타필로코커스·스트렙토코커스·락토바실루스가 있어요. 충치 관련 스트렙토코커스도 소개됐지만 세부 목록 통암기가 목표는 아니에요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 케이스는 휴면 보호만 설명해요. 내생포자가 모든 멸균 조건에서 살아남는 것도 아니며, 보호 구조를 만드는 것만으로 개체 수가 늘어나는 것도 아니에요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1105_Origin_of_Life_and_Prokaryotes.html#s2-groups" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">분류는 분자 자료와 특징으로, 내생포자는 저항성 있는 휴면 형태로 구별해요. 숙주 안에서 증식하는 세균도 있어요.</p></div></article><article class="topic" id="s2-toxins"><h3>독소와 항생제 내성은 다른 문제</h3><p class="comic-question">독소가 남는 것과 내성 세균이 늘어나는 것은 같을까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>원인을 치우면 남긴 물질도 없어지나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>별개야. 세균을 죽이는 일과 이미 만들어진 독소를 제거하는 일을 먼저 나누자.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-toxins/01.png" alt="질병으로 유명한 세균은 전체 세균의 일부예요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">질병으로 유명한 세균은 전체 세균의 일부예요.</p><p class="comic-analogy"><strong>비유 연결</strong> 쓰레기를 만든 물건의 제거 → 세균 제거와 이미 생긴 독소 제거의 차이 · 체에서 잘 남는 종류의 비율 증가 → 항생제 선택 뒤 내성 비율 증가</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>외독소와 내독소는 어디가 달라요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>외독소는 밖으로 분비하는 독성 단백질, 내독소는 일부 세균 외막의 LPS 성분이야. 내독소를 세포 안에 숨겨 둔 분비물로 읽지 마.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-toxins/02.png" alt="용균될 때 내독소 성분이 방출될 수 있어요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">용균될 때 내독소 성분이 방출될 수 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>보툴리눔 독소도 외독소인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>맞아. 근육 마비를 일으키고 호흡근 영향은 위험해. 정제하고 양을 조절한 의료용 제제에도 쓰지만, 끓였다고 모든 독소가 사라진다는 뜻은 아니야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-toxins/03.png" alt="의료 이용의 조건과 독소의 위험을 함께 남겨요. 음식 처리 지침을 제시하는 장면은 아니에요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">의료 이용의 조건과 독소의 위험을 함께 남겨요. 음식 처리 지침을 제시하는 장면은 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>항생제가 필요하면 세균이 목표를 정해 변하나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>아니. 집단에 유전적 차이가 있을 때 항생제가 선택압이 돼. 세균을 죽이거나 생장을 억제하는 작용이지.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-toxins/04.png" alt="내성을 가진 세균의 차이와 약의 선택 작용을 구별해요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">내성을 가진 세균의 차이와 약의 선택 작용을 구별해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그 뒤 왜 내성 비율이 높아지죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>약한 세균이 억제되고 내성 세균이 상대적으로 더 살아남아 증식하기 때문이야. 이게 자연선택이지 사람이 내성을 얻은 게 아니야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-toxins/05.png" alt="슈퍼박테리아도 모든 항생제가 항상 안 듣는다는 절대 표현은 아니에요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">슈퍼박테리아도 모든 항생제가 항상 안 듣는다는 절대 표현은 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>독소와 내성은 서로 다른 문제군요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>맞아. 약은 원인 세균과 반응에 맞춰 선택해. 처방한 의료진의 지시를 따르며 임의 중단·증량과 구별해야 해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-toxins/06.png" alt="남용은 내성 선택 문제를 키울 수 있어요. 여기서는 사용 방법을 새로 처방하지 않고 선택압의 원리를 연결해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">남용은 내성 선택 문제를 키울 수 있어요. 여기서는 사용 방법을 새로 처방하지 않고 선택압의 원리를 연결해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 쓰레기와 체는 남은 물질과 선택된 개체를 나누는 비유예요. 독소의 실제 화학 성질이나 항생제의 작동이 체와 같다는 뜻은 아니에요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1105_Origin_of_Life_and_Prokaryotes.html#s2-toxins" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="sum-lead">독소의 성질과 항생제 내성은 달라요. 세균 제거가 독소 제거를 보장하지 않으며, 내성 비율 증가는 유전적 차이에 작용하는 선택으로 설명해요.</p></div></article><article class="topic" id="s2-archaea"><h3>고세균도 핵이 없는 세포예요</h3><p class="comic-question">핵이 없으면 모두 같은 영역인가요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>방 구조가 같으면 같은 집안인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>그것만으로는 몰라. 세균과 고세균은 모두 원핵이지만 rRNA 차이 등으로 다른 영역으로 구별해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-archaea/01.png" alt="워즈의 분자 자료와 3영역 체계를 연결해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">워즈의 분자 자료와 3영역 체계를 연결해요.</p><p class="comic-analogy"><strong>비유 연결</strong> 별도 방이 없는 두 집 → 세균과 고세균 모두 핵막으로 닫힌 핵 없음 · 다른 계보의 집 → rRNA 자료로 구별되는 서로 다른 영역</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>효모도 작고 단세포니까 원핵인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>효모는 단세포 균류라 진핵이야. 남세균·대장균은 세균, 메탄생성균은 고세균이지. 전통적 원생생물·식물·균류·동물계는 진핵에 속해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-archaea/02.png" alt="고세균이 진핵과 일부 단백질 합성 기작이 닮아도 핵이 있다는 뜻은 아니에요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">고세균이 진핵과 일부 단백질 합성 기작이 닮아도 핵이 있다는 뜻은 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>고세균은 극한 환경에만 사나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>아니. 염호의 극호염, 온천·열수구의 극호열은 대표 사례야. 막 지질과 벽도 세균과 달라서 펩티도글리칸 벽으로 같게 묶지 않아.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-archaea/03.png" alt="호염은 짠 환경, 호열은 뜨거운 환경과 연결해요. 극은 조건이 매우 강함을 뜻해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">호염은 짠 환경, 호열은 뜨거운 환경과 연결해요. 극은 조건이 매우 강함을 뜻해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>메탄생성균은 무엇을 주고받죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>수업의 반응에서는 수소가 전자를 주고 CO₂가 받아 메탄이 생겨. 산소 없는 늪이나 동물의 장에 사는 고세균이야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-archaea/04.png" alt="사람의 포도당 전자 공여·산소 전자 수용과 다르고, 산소를 발생시키는 남세균과도 영역이 달라요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">사람의 포도당 전자 공여·산소 전자 수용과 다르고, 산소를 발생시키는 남세균과도 영역이 달라요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그 메탄이 기후와도 연결돼요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>메탄은 온실가스라 장내 생성과 가스 배출이 연결돼. 메탄 생성을 줄이는 사료 연구도 그 사례로 소개됐어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-archaea/05.png" alt="이 장면은 수업의 연결 사례이며 구체적 사료의 효과를 단정하지 않아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">이 장면은 수업의 연결 사례이며 구체적 사료의 효과를 단정하지 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>핵처럼 보이는 모습이나 이름만으로 판정하면 안 되겠네요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>맞아. 아스가르드는 분자 자료로 진핵 기원을 연구하는 사례야. 일부 호열성 고세균의 열 안정 DNA 중합효소는 PCR에 활용돼.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s2-archaea/06.png" alt="로키·헤임달·토르·오딘 이름이 소개됐어요. 세부 분류 통암기보다 메탄생성균과 분류 기준이 핵심이며, 종과 문 발견의 규모도 달라요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><p class="comic-caption">로키·헤임달·토르·오딘 이름이 소개됐어요. 세부 분류 통암기보다 메탄생성균과 분류 기준이 핵심이며, 종과 문 발견의 규모도 달라요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 집 비유는 구조 기준과 분류 기준을 나눠요. 분자 기작이 진핵생물과 닮아도 고세균에 핵이 생기는 것은 아니며 서식지만으로 분류를 확정하지 않아요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1105_Origin_of_Life_and_Prokaryotes.html#s2-archaea" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">고세균은 핵이 없는 세포지만 세균과 별도 영역이에요. 분자 자료·막과 벽·대사를 보며 극한 서식지 하나로 일반화하지 않아요.</p></div></article></section>
+<section id="comic-section-4"><h2>4. 바이러스는 왜 숙주가 필요할까</h2><article class="topic" id="s3-structure"><h3>정보와 복사 장치는 달라요</h3><p class="comic-question">바이러스는 유전정보가 있는데, 왜 혼자 증식하지 못할까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="false"><span class="comic-speaker">학생</span>USB 안에 파일이 있으면, 혼자 복사본도 만들 수 있나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="false"><span class="comic-speaker">안내자</span>정보는 들어 있지만 복사를 실행할 컴퓨터가 필요하지. 바이러스도 정보와 장치를 나눠 생각해 보자.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s3-structure/01.png" alt="학생이 USB를 들고 질문하고 안내자가 닫힌 노트북을 가리킨다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">정보를 가지고 있다는 것과, 정보를 복사하는 장치가 있다는 것은 달라요.</p><p class="comic-analogy"><strong>비유 연결</strong> USB에 담긴 파일 → 바이러스 핵산의 유전정보 · 컴퓨터가 제공하는 복사 장치 → 증식에 이용하는 숙주세포의 장치</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="false"><span class="comic-speaker">학생</span>복사할 정보만으로는 부족하고, 일할 장치도 있어야 하네요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="false"><span class="comic-speaker">안내자</span>맞아. 바이러스는 핵산이 있지만 혼자 증식하지 못해. 세균처럼 독립적인 세포로 보면 안 돼.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s3-structure/02.png" alt="학생과 안내자가 USB를 연결한 컴퓨터를 보며 정보와 작동 장치를 구별한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">바이러스는 숙주세포의 장치를 이용해 증식해요. 독립적인 에너지 생산계와 리보솜을 갖춘 세포가 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="false"><span class="comic-speaker">학생</span>겉을 감싼 층이면 모두 같은 외피 아닌가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="false"><span class="comic-speaker">안내자</span>재료를 봐야 해. 캡시드는 단백질, envelope는 지질막이야. coat를 외피라고 번역한 문장에서는 단백질 껍질을 뜻할 수도 있어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s3-structure/03.png" alt="지질 외피가 없는 모형과 있는 모형을 나란히 두고 단백질 껍질과 바깥막을 비교한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">핵산을 감싼 단백질 껍질이 캡시드예요. 일부 바이러스만 그 바깥에 숙주 유래 지질 외피를 가져요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="false"><span class="comic-speaker">학생</span>DNA와 RNA를 전부 한 입자에 넣은 건 아니죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="false"><span class="comic-speaker">안내자</span>그래. 단일가닥 DNA·이중가닥 DNA·단일가닥 RNA·이중가닥 RNA는 종류에 따른 구분이야. 네 유형을 한 입자의 구성품 목록으로 읽지 않아야 해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s3-structure/04.png" alt="서로 분리된 네 가지 핵산 유형의 모형을 두 캐릭터가 비교한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">바이러스 종류에 따라 DNA 또는 RNA 유전체를 가지며, 각각 단일가닥이나 이중가닥일 수 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="false"><span class="comic-speaker">학생</span>바이러스는 모두 사람에게 병을 일으키나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="false"><span class="comic-speaker">안내자</span>아니. 동물·식물·세균을 감염시키는 바이러스가 다양해. TMV는 나선형의 예고, 수업의 복합형 파지는 머리에 DNA가 있고 꼬리로 세균에 접촉해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s3-structure/05.png" alt="TMV형 막대, 다면체 입자, 세균 표면에 접촉한 복합형 파지 모형을 비교한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">나선형·다면체형·복합형처럼 모양도 다양해요. 세균을 감염시키는 바이러스가 박테리오파지예요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="false"><span class="comic-speaker">학생</span>핵산이나 바깥막이 있다고 독립적인 세포가 되는 건 아니네요. 복제에 필요한 장치가 있는지가 핵심이에요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="false"><span class="comic-speaker">안내자</span>맞아. 바이러스에 세균의 펩티도글리칸 세포벽을 붙이면 안 돼. 또 독립적인 대사계가 없다는 말은 효소가 전혀 없다는 뜻도 아니야. 일부는 효소를 암호화하거나 입자에 지니기도 해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s3-structure/06.png" alt="학생이 USB와 바이러스 모형을 구별하고 안내자가 비유의 한계를 정리한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><p class="comic-caption">USB 비유는 숙주 의존성을 설명해요. 실제 바이러스의 구조와 감염 과정을 USB와 동일하게 생각하지 않아요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> USB와 컴퓨터는 숙주 의존성만 설명하는 비유예요. 바이러스가 USB처럼 꽂히는 것은 아니며, 실제 감염·복제 과정은 종류마다 달라요. 독립적인 대사계가 없다는 말도 효소가 전혀 없다는 뜻은 아니에요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1105_Origin_of_Life_and_Prokaryotes.html#s3-structure" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">바이러스는 유전정보를 가진 비세포성 입자지만 독립적인 대사계와 리보솜이 없어 숙주 장치를 이용해 증식해요.</p><p class="panel-label">용어</p><dl class="terms"><dt>핵산과 캡시드</dt><dd>DNA 또는 RNA 유전체를 단백질 캡시드가 감싸요. 종류에 따라 유전체가 단일가닥 또는 이중가닥일 수 있어요.</dd><dt>지질 외피</dt><dd>일부 바이러스만 숙주 유래 지질 외피를 가져요. coat가 단백질 캡시드를 뜻하는지, envelope가 지질막을 뜻하는지 문맥과 재료로 구별해요.</dd><dt>효소의 범위</dt><dd>독립적인 대사계가 없다는 말은 효소가 하나도 없다는 뜻이 아니에요.</dd></dl></div></article><article class="topic" id="s3-infection"><h3>침입·복제·방출의 서로 다른 표적</h3><p class="comic-question">출구를 막으면 세포 안 복사도 멈출까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>문·복사기·출구를 막는 게 모두 같나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>연결된 과정이어도 다른 단계야. 바이러스 증식 억제도 침입·유전체 복제·방출 중 어디를 막았는지 봐야 해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s3-infection/01.png" alt="항생제는 세균 표적이며 바이러스 자체 감염을 없애는 약이 아니에요. 항바이러스제는 별도로 있어요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">항생제는 세균 표적이며 바이러스 자체 감염을 없애는 약이 아니에요. 항바이러스제는 별도로 있어요.</p><p class="comic-analogy"><strong>비유 연결</strong> 맞는 열쇠가 필요한 입구 → 수용체 등 진입 조건 · 재료를 이어 복사하는 장치 → 뉴클레오타이드로 핵산을 합성하는 중합효소 · 출구에서 풀려나기 → 인플루엔자 방출에 관여하는 뉴라미니다아제</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>수용체 하나만 맞으면 늘 감염되나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>맞는 수용체는 중요하지만 추가 조건도 있어. 코로나19에는 ACE2, HIV에는 CD4 수용체와 CCR5 같은 공동수용체가 관여해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s3-infection/02.png" alt="필요한 결합이나 진입을 막으면 새 세포 감염을 억제할 수 있어요. 아무 세포나 감염하는 것이 아니에요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">필요한 결합이나 진입을 막으면 새 세포 감염을 억제할 수 있어요. 아무 세포나 감염하는 것이 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>재료와 닮은 물질이 복사를 방해하나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>중합효소가 뉴클레오타이드로 핵산을 합성할 때 유사 물질이 방해할 수 있어. 기존 유전체를 가위로 직접 잘라내는 뜻은 아니야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s3-infection/03.png" alt="침입 억제와 세포 안 핵산 합성 억제를 구별해요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">침입 억제와 세포 안 핵산 합성 억제를 구별해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>뉴라미니다아제는 무슨 역할이죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>인플루엔자의 새 입자가 세포 표면의 결합에서 떨어져 나오는 데 관여해. 억제하면 다음 세포로 퍼지는 것이 줄 수 있어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s3-infection/04.png" alt="보충 예인 자나미비르는 이 방출 단계의 효소를 억제해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">보충 예인 자나미비르는 이 방출 단계의 효소를 억제해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>방출만 막았으면 안의 복제도 멈췄나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>그 조건만으로는 말할 수 없어. 결합과 핵산 복제가 정상인 가상 실험이라면 안의 복제는 계속돼도 다음 세포 감염은 줄 수 있지.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s3-infection/05.png" alt="관찰된 단계의 변화를 다른 모든 단계 억제로 넓히지 않아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">관찰된 단계의 변화를 다른 모든 단계 억제로 넓히지 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>막은 위치를 먼저 확인해야겠네요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>맞아. 약 이름을 같은 기전으로 묶지 말자. 감기는 여러 바이러스가, 독감은 인플루엔자가 원인이므로 병원체도 같다고 하면 안 돼.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s3-infection/06.png" alt="뉴라미니다아제의 예를 모든 바이러스의 방출 방식으로 일반화하지 않아요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">뉴라미니다아제의 예를 모든 바이러스의 방출 방식으로 일반화하지 않아요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 작업장은 단계 구별을 돕는 비유예요. 실제 바이러스가 문·복사기를 갖는 것은 아니며, 뉴라미니다아제는 인플루엔자의 예로 모든 바이러스에 일반화하지 않아요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1105_Origin_of_Life_and_Prokaryotes.html#s3-infection" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="sum-lead">침입·복제·방출은 다른 표적이에요. 방출 억제만으로 이미 감염된 세포 안의 모든 복제가 멈췄다고 결론내리지 않아요.</p></div></article><article class="topic" id="s3-evolution"><h3>빠른 변이와 숙주 의존성</h3><p class="comic-question">복사 실수가 많으면 혼자 증식할 수 있을까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>실수가 잘 남는 것과 혼자 복사하는 것은 다른가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>다른 질문이야. 많은 RNA 바이러스는 정확도가 낮고 교정이 제한돼 차이가 남기 쉽지만 종류별 교정 능력까지 모두 같진 않아.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s3-evolution/01.png" alt="복제 차이가 다음 세대로 전달되면 새로운 변이가 생길 수 있어요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">복제 차이가 다음 세대로 전달되면 새로운 변이가 생길 수 있어요.</p><p class="comic-analogy"><strong>비유 연결</strong> 덜 고친 복사본의 차이 → 많은 RNA 바이러스에서 남는 복제 오류 · 간단한 USB가 컴퓨터를 필요로 함 → 단순한 바이러스의 숙주 장치 의존</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그 차이가 면역에도 영향을 줘요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>표면 단백질이 바뀌면 기존 항체의 인식과 효과가 낮아질 수 있어. 모든 변이가 더 위험하거나 면역을 완전히 없앤다는 뜻은 아니야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s3-evolution/02.png" alt="변이의 발생, 집단에서 퍼지는 과정, 면역 효과는 따로 판단해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">변이의 발생, 집단에서 퍼지는 과정, 면역 효과는 따로 판단해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>단순한 바이러스가 세포보다 먼저였을까요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>단순하다는 것만으로는 결론낼 수 없어. USB가 컴퓨터를 필요로 하듯 바이러스도 숙주 리보솜과 장치를 써야 단백질을 만들고 증식해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s3-evolution/03.png" alt="핵산을 가졌다는 사실이 숙주 없이 단백질을 합성한다는 뜻은 아니에요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">핵산을 가졌다는 사실이 숙주 없이 단백질을 합성한다는 뜻은 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>세포에서 나온 절편이라는 설명은요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>수업에 소개된 기원 가설이야. 세포 DNA·RNA 절편이 단백질에 싸여 전파됐을 가능성이지 단 하나의 기원이 확정된 것은 아니야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s3-evolution/04.png" alt="현재 숙주 의존성만으로 과거 경로 전체를 입증하지 않아요. 이번 자료로 RNA 바이러스 종류별 교정장치를 전수 판정하지도 않아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">현재 숙주 의존성만으로 과거 경로 전체를 입증하지 않아요. 이번 자료로 RNA 바이러스 종류별 교정장치를 전수 판정하지도 않아요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 복사·USB는 오류와 장치 의존을 나누는 비유예요. 모든 RNA 바이러스의 교정 능력이 같거나 모든 바이러스 기원이 확정됐다는 뜻은 아니에요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1105_Origin_of_Life_and_Prokaryotes.html#s3-evolution" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="sum-lead">많은 RNA 바이러스의 복제 오류와 숙주 의존성은 별개예요. 단순한 외형으로 최초 기원을 결론내리지 않아요.</p></div></article></section>
+<section id="comic-section-5"><h2>5. 요약 · 예고</h2><article class="topic" id="s4-cheatsheet"><h3>시험 직전 한 장 요약</h3><p class="comic-question">시험에서 섞기 쉬운 질문을 어떻게 나눌까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>관련된 말들이 나오면 한 사건으로 묶어도 되나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>서랍의 기준을 나누듯 질문부터 나눠. 밀러–유레이는 가정한 조건의 유기물 합성, 원시세포는 구획화까지도 별도 과제야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s4-cheatsheet/01.png" alt="아미노산 검출이 생명 생성은 아니고, 막 형성이 정보 복제까지 보장하지 않아요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">아미노산 검출이 생명 생성은 아니고, 막 형성이 정보 복제까지 보장하지 않아요.</p><p class="comic-analogy"><strong>비유 연결</strong> 재료·조립·구획·복사의 별도 서랍 → 생명 기원의 구별되는 과제 · 전원과 자재를 따로 확인 → 에너지원·탄소원의 독립된 질문</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>RNA 기능과 산소 기원에서는요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>리보자임은 촉매 RNA라 정보와 촉매의 결합 가능성을 보여 줘. 남세균의 방출 산소는 명반응에서 전자를 주는 물에서 와.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s4-cheatsheet/02.png" alt="모든 RNA가 완전 자기복제한다는 뜻은 아니에요. 산소의 직접 기원은 CO₂가 아니에요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">모든 RNA가 완전 자기복제한다는 뜻은 아니에요. 산소의 직접 기원은 CO₂가 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>소기관은 막만 보면 되나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>핵막·소포체의 막 함입 모형과, 미토콘드리아·엽록체의 세균 기원을 구별해. 환형 DNA와 세균형 리보솜·rRNA가 공생의 단서야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s4-cheatsheet/03.png" alt="겉의 막이라는 공통점만으로 같은 기원을 판정하지 않아요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">겉의 막이라는 공통점만으로 같은 기원을 판정하지 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>세포 수나 핵의 말도 기준이 다르네요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>다세포성은 분화와 역할 분담, 원핵·진핵은 핵막의 유무를 보자. 세균·고세균은 DNA와 리보솜이 있고 모두 병원성인 것도 아니야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s4-cheatsheet/04.png" alt="수업의 단순 군체와 분화된 체계를 세포 수만으로 구별하지 않아요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">수업의 단순 군체와 분화된 체계를 세포 수만으로 구별하지 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>빛을 쓰면 독립영양이죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>에너지와 탄소 서랍을 나눠야 해. 빛·화학물질은 에너지원, CO₂·유기물은 탄소원이라 두 답을 조합해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s4-cheatsheet/05.png" alt="한 축의 답으로 다른 축을 자동 추론하지 않아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">한 축의 답으로 다른 축을 자동 추론하지 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>독소와 내성에서는 무엇을 나누죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>외독소는 분비 단백질, 내독소는 일부 외막 LPS야. 약 노출 뒤 내성 비율 증가는 변이의 의도적 생성이 아니라 선택이지.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s4-cheatsheet/06.png" alt="세균 사멸과 독소 제거는 같은 사건이 아니에요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><p class="comic-caption">세균 사멸과 독소 제거는 같은 사건이 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="7">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>고세균과 바이러스도 작은 생물로 묶나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>고세균은 핵이 없는 별도 영역의 세포야. 바이러스는 유전체·캡시드, 일부의 숙주 유래 외피를 가지지만 독립 대사·단백질 합성 없이 숙주에 의존해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s4-cheatsheet/07.png" alt="고세균의 극한 환경 사례를 모든 고세균에 일반화하지 않아요. 메탄생성균은 산소 없는 곳에서 메탄을 만들어요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">7컷</span><p class="comic-caption">고세균의 극한 환경 사례를 모든 고세균에 일반화하지 않아요. 메탄생성균은 산소 없는 곳에서 메탄을 만들어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="8">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>마지막으로 어떤 결론을 조심해야 하죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>방출만 막았다고 세포 안 복제까지 멈춘 건 아니야. 많은 RNA 바이러스의 오류 축적과 단순한 외형도 최초 기원을 확정해 주지는 않아.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1105_Origin_of_Life_and_Prokaryotes/versions/20261109T095342-696e7fd5/images/s4-cheatsheet/08.png" alt="판단 기준·조건·결론의 범위를 하나씩 확인하면 연결된 현상도 구별할 수 있어요." width="1672" height="941" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1672 / 602.24" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">8컷</span><p class="comic-caption">판단 기준·조건·결론의 범위를 하나씩 확인하면 연결된 현상도 구별할 수 있어요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 서랍은 질문을 구별하는 비유예요. 생명 현상이 서로 무관하다는 뜻은 아니고 실제 역사가 정해진 서랍 순서로 진행됐다는 주장도 아니에요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1105_Origin_of_Life_and_Prokaryotes.html#s4-cheatsheet" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">기원의 과제, 분류 기준, 영양의 두 축, 독소·내성, 바이러스 증식 단계를 각각 나눠 조건에 맞게 판단해요.</p></div></article></section>
+  </main>
+  <footer>정리노트의 수업 내용을 바탕으로 만든 학습만화</footer>
+    </div>
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="panel-right-title">
+      <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-right-title">페이지 요약</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-empty" id="sum-empty">페이지를 넘기면 그 페이지의 핵심 식과 용어가 여기에 나옵니다.</p>
+        <div class="sums" id="sum-for"></div>
+      </div>
+    </aside>
+  </div>
+  <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
+  <nav class="pager" aria-label="화면 이동">
+    <div class="pager-inner">
+      <button class="btn btn-ghost" id="pager-prev" type="button">이전</button>
+      <span class="pager-count" id="pager-count"></span>
+      <button class="btn btn-primary" id="pager-next" type="button">시작하기</button>
+    </div>
+  </nav>
+  <p class="sr-only" id="pager-status" aria-live="polite"></p>
+
+  <script id="theme-ui">
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const sysDark = matchMedia('(prefers-color-scheme: dark)');
+      const KEY = 'od-theme';
+      const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+      function label() {
+        const next = isDark() ? '라이트 모드로 전환' : '다크 모드로 전환';
+        btn.setAttribute('aria-label', next);
+        btn.title = next;
+      }
+      btn.addEventListener('click', () => {
+        const t = isDark() ? 'light' : 'dark';
+        // 시스템 설정과 같아지면 저장을 지워 다시 시스템을 따른다
+        if ((t === 'dark') === sysDark.matches) { delete root.dataset.theme; try { localStorage.removeItem(KEY); } catch (e) {} }
+        else { root.dataset.theme = t; try { localStorage.setItem(KEY, t); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+        label();
+      });
+      sysDark.addEventListener('change', label);
+      window.addEventListener('storage', (e) => {
+        if (e.key !== KEY) return;
+        if (e.newValue === 'light' || e.newValue === 'dark') root.dataset.theme = e.newValue; else delete root.dataset.theme;
+        label();
+      });
+      label();
+    })();
+  </script>
+  <script id="panels-ui">
+    (function () {
+      const body = document.body;
+      const layout = document.querySelector('.layout');
+      const kind = body.dataset.panels;
+      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const scrim = document.getElementById('panel-scrim');
+      const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
+      const wideMq = matchMedia('(min-width: 1024px)');
+      const roomyMq = matchMedia('(min-width: 1280px)');
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      // 푼 기록은 탭(세션) 단위로만 유지: 뒤로가기·새로고침엔 남고, 창을 닫고 다시 열면 초기화
+      const tabStore = {
+        get(k, d) { try { const v = sessionStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      const PREF = 'od-panels:' + kind;
+      // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
+      const RANGE = body.dataset.range || '';
+      const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+      const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+      let overlay = null;
+
+      // ---------- 열고 닫기 ----------
+      function docked() {
+        const pref = store.get(PREF, {});
+        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+      }
+      function sync() {
+        const wide = wideMq.matches;
+        const d = docked();
+        ['left', 'right'].forEach((side) => {
+          const open = wide ? d[side] : overlay === side;
+          const p = panels[side];
+          layout.dataset[side] = open ? 'open' : 'closed';
+          p.classList.toggle('is-open', !wide && open);
+          p.inert = !open;
+          if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
+          toggles[side].setAttribute('aria-expanded', String(open));
+        });
+        const drawer = !wide && overlay !== null;
+        scrim.classList.toggle('is-on', drawer);
+        body.classList.toggle('drawer-open', drawer);
+        blockers.forEach((el) => { el.inert = drawer; });
+      }
+      function openDrawer(side) {
+        overlay = side;
+        sync();
+        requestAnimationFrame(() => panels[side].querySelector('[data-panel-close]').focus());
+      }
+      function closeDrawer(refocus) {
+        if (overlay === null) return;
+        const side = overlay;
+        overlay = null;
+        sync();
+        if (refocus) toggles[side].focus();
+      }
+      function toggle(side) {
+        if (wideMq.matches) {
+          const d = docked();
+          d[side] = !d[side];
+          store.set(PREF, d);
+          sync();
+          if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+        } else if (overlay === side) closeDrawer(true);
+        else openDrawer(side);
+      }
+
+      toggles.left.addEventListener('click', () => toggle('left'));
+      toggles.right.addEventListener('click', () => toggle('right'));
+      scrim.addEventListener('click', () => closeDrawer(true));
+      document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
+      panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
+
+      // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      function applyWidths() {
+        const w = store.get(PREF + ':w', {});
+        ['left', 'right'].forEach((side) => {
+          if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
+          else layout.style.removeProperty(WIDTH[side].prop);
+        });
+      }
+      function maxFor(side) {
+        const other = side === 'left' ? panels.right : panels.left;
+        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
+      }
+      function setWidth(side, px, save) {
+        const v = Math.round(Math.min(Math.max(px, WIDTH[side].min), maxFor(side)));
+        layout.style.setProperty(WIDTH[side].prop, v + 'px');
+        panels[side].querySelector('.panel-resize').setAttribute('aria-valuenow', String(v));
+        if (save) { const w = store.get(PREF + ':w', {}); w[side] = v; store.set(PREF + ':w', w); }
+      }
+      function resetWidth(side) {
+        const w = store.get(PREF + ':w', {});
+        delete w[side];
+        store.set(PREF + ':w', w);
+        layout.style.removeProperty(WIDTH[side].prop);
+      }
+      document.querySelectorAll('.panel-resize').forEach((handle) => {
+        const side = handle.dataset.side;
+        const dir = side === 'left' ? 1 : -1;
+        handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
+        handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
+        handle.addEventListener('pointerdown', (e) => {
+          if (!wideMq.matches || e.button !== 0) return;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startW = panels[side].getBoundingClientRect().width;
+          handle.setPointerCapture(e.pointerId);
+          body.classList.add('is-resizing');
+          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const up = () => {
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', up);
+            handle.removeEventListener('pointercancel', up);
+            body.classList.remove('is-resizing');
+            setWidth(side, panels[side].getBoundingClientRect().width, true);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', up);
+          handle.addEventListener('pointercancel', up);
+        });
+        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('keydown', (e) => {
+          const step = e.shiftKey ? 64 : 16;
+          const cur = panels[side].getBoundingClientRect().width;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+        });
+      });
+      applyWidths();
+      const onMq = () => { overlay = null; sync(); };
+      wideMq.addEventListener('change', onMq);
+      roomyMq.addEventListener('change', onMq);
+
+      // ---------- 목차의 진행 표시 ----------
+      const progressN = document.getElementById('progress-n');
+      const progressBar = document.getElementById('progress-bar');
+      const progressTotal = document.getElementById('progress-total');
+      function markToc(done, total, doneLabel) {
+        panels.left.querySelectorAll('.toc-list a').forEach((a) => {
+          const id = decodeURIComponent(a.getAttribute('href').slice(1));
+          let mark = a.querySelector('.toc-mark');
+          if (!mark) {
+            mark = document.createElement('span');
+            mark.className = 'toc-mark';
+            mark.setAttribute('aria-hidden', 'true');
+            const state = document.createElement('span');
+            state.className = 'sr-only toc-state';
+            a.append(mark, state);
+          }
+          const isDone = done.has(id);
+          mark.classList.toggle('is-done', isDone);
+          mark.innerHTML = isDone ? ICON_DONE : ICON_TODO;
+          a.querySelector('.toc-state').textContent = isDone ? ' (' + doneLabel + ')' : '';
+        });
+        progressN.textContent = String(done.size);
+        progressTotal.textContent = String(total);
+        progressBar.style.transform = 'scaleX(' + (total ? done.size / total : 0) + ')';
+      }
+      function revealCurrent() {
+        const link = panels.left.querySelector('.toc-list a[aria-current="true"]');
+        if (link && layout.dataset.left === 'open') link.scrollIntoView({ block: 'nearest' });
+      }
+
+      // ---------- 복습문제: 오른쪽 = 원문 · 힌트 · 풀이 ----------
+      function setupReview() {
+        const KEY = 'od-review-solved:' + RANGE;
+        const cards = Array.from(document.querySelectorAll('main article.card'));
+        const aids = panels.right.querySelector('.aids');
+        const empty = panels.right.querySelector('.panel-empty');
+        const btn = document.getElementById('solved-btn');
+        const groups = {};
+        const solved = new Set(tabStore.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        cards.forEach((card) => {
+          const g = document.createElement('div');
+          g.className = 'aid';
+          g.hidden = true;
+          card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
+          aids.appendChild(g);
+          groups[card.id] = g;
+        });
+        let curId = null;
+        function paintBtn() {
+          const on = solved.has(curId);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.innerHTML = (on ? ICON_DONE : ICON_TODO) + '<span>' + (on ? '푼 문제 · 표시 해제' : '푼 문제로 표시') + '</span>';
+        }
+        btn.addEventListener('click', () => {
+          if (!curId) return;
+          if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
+          tabStore.set(KEY, Array.from(solved));
+          paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          curId = s.matches('article.card') ? s.id : null;
+          Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
+          empty.hidden = Boolean(curId);
+          btn.hidden = !curId;
+          if (curId) paintBtn();
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(solved, cards.length, '푼 문제');
+          revealCurrent();
+        });
+      }
+
+      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
+      function setupNote() {
+        const KEY = 'od-comic-read:' + RANGE;
+        const topics = Array.from(document.querySelectorAll('main article.topic'));
+        const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
+        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
+        const box = panels.right.querySelector('.sums');
+        const sums = {};
+        topics.forEach((t) => {
+          const el = t.querySelector(':scope > .sum');
+          if (!el) return;
+          el.hidden = true;
+          box.appendChild(el);
+          sums[t.id] = el;
+        });
+        const empty = document.getElementById('sum-empty');
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          const key = s.matches('article.topic') ? s.id : 'intro';
+          Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
+          empty.hidden = Boolean(sums[key]);
+          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(read, topics.length, '읽음');
+          revealCurrent();
+        });
+      }
+
+      if (kind === 'review') setupReview();
+      if (kind === 'note') setupNote();
+      sync();
+    })();
+  </script>
+  <script id="pager-ui">
+    (function () {
+      const root = document.documentElement;
+      const main = document.querySelector('main');
+      const hero = main.querySelector('.hero');
+      const screens = [hero].concat(Array.from(main.querySelectorAll(document.body.dataset.screens)));
+      if (screens.length < 2) { root.classList.remove('js'); return; }
+      screens.forEach((s) => s.classList.add('screen'));
+
+      const last = screens.length - 1;
+      const prevBtn = document.getElementById('pager-prev');
+      const nextBtn = document.getElementById('pager-next');
+      const count = document.getElementById('pager-count');
+      const bar = document.getElementById('pager-bar');
+      const status = document.getElementById('pager-status');
+      const toc = document.querySelector('#panel-left .toc');
+      const scroller = document.querySelector('.content');
+      const titleOf = (s) => ((s.querySelector('h3') || s.querySelector('h1') || {}).textContent || '').trim();
+      let cur = -1;
+
+      // 목차: 섹션 링크 아래에 화면(토픽·카드) 목록을 붙인다
+      const tocLinks = [];
+      Array.from(toc.querySelectorAll(':scope > a')).forEach((a) => {
+        const sec = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+        const group = document.createElement('div');
+        group.className = 'toc-group';
+        a.replaceWith(group);
+        group.appendChild(a);
+        if (!sec) return;
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        screens.forEach((s, i) => {
+          if (!sec.contains(s)) return;
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#' + s.id;
+          link.innerHTML = '<span class="toc-title"></span>';
+          link.firstChild.textContent = titleOf(s);
+          li.appendChild(link);
+          list.appendChild(li);
+          tocLinks[i] = link;
+        });
+        group.appendChild(list);
+      });
+
+      function indexFor(hash) {
+        const id = decodeURIComponent((hash || '').replace(/^#/, ''));
+        const el = id && document.getElementById(id);
+        if (!el || !main.contains(el)) return { i: 0 };
+        const i = screens.findIndex((s) => s.contains(el) || el.contains(s));
+        return { i: Math.max(i, 0), target: i >= 0 && screens[i].contains(el) && screens[i] !== el ? el : null };
+      }
+
+      function render(i, target) {
+        const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
+        if (i !== cur) {
+          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
+          main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
+          const s = screens[i];
+          const sec = s.closest('section');
+          if (sec) sec.classList.add('is-on');
+          s.classList.add('is-current');
+          if (dir) { s.classList.remove('enter-next', 'enter-prev'); void s.offsetWidth; s.classList.add(dir); }
+          cur = i;
+          document.body.classList.toggle('at-end', i === last);
+          prevBtn.disabled = i === 0;
+          nextBtn.textContent = i === 0 ? '시작하기' : i === last ? '처음으로' : '다음';
+          count.textContent = i === 0 ? '' : i + ' / ' + last;
+          bar.style.transform = 'scaleX(' + (i / last) + ')';
+          status.textContent = i === 0 ? titleOf(s) : i + ' / ' + last + ', ' + titleOf(s);
+          tocLinks.forEach((link, k) => link && link.setAttribute('aria-current', String(k === i)));
+          document.dispatchEvent(new CustomEvent('od:screen', { detail: { index: i, screen: s } }));
+        }
+        if (target) target.scrollIntoView({ block: 'start' });
+        else scroller.scrollTo(0, 0);
+      }
+
+      function go(i) {
+        i = Math.min(Math.max(i, 0), last);
+        if (i === cur) return;
+        const url = i === 0 ? location.pathname + location.search : '#' + screens[i].id;
+        history.pushState(null, '', url);
+        render(i);
+      }
+
+      prevBtn.addEventListener('click', () => go(cur - 1));
+      nextBtn.addEventListener('click', () => go(cur === last ? 0 : cur + 1));
+      const fromUrl = () => { const r = indexFor(location.hash); render(r.i, r.target); };
+      window.addEventListener('hashchange', fromUrl);
+      window.addEventListener('popstate', fromUrl);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+
+      // 좌우로 밀어서 넘기기 (가로로 스크롤되는 영역은 제외)
+      let sx = 0, sy = 0, skip = true;
+      main.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (skip) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 64 && Math.abs(dx) > 2 * Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      fromUrl();
+    })();
+  </script>
+</body>
+</html>
