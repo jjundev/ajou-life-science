@@ -73,6 +73,7 @@ class ComicPipeline(unittest.TestCase):
 
     def ready(self, held=False):
         book, src = self.read('storyboard.json'), self.read('source.json')
+        book['characters'] = [{'id': 'guide', 'name': '안내자', 'role': '관계 설명', 'appearance': '남색 조끼와 둥근 안경', 'voice': '짧고 정확한 설명'}, {'id': 'student', 'name': '학생', 'role': '질문과 자기수정', 'appearance': '노란 후드와 검은 단발', 'voice': '구체적인 질문'}]
         book['style'] = '생물의 실제 구조를 살린 절제된 학습만화. 같은 대상의 색과 모양 유지.'
         for index, page in enumerate(book['pages']):
             if held and index == 1:
@@ -80,9 +81,10 @@ class ComicPipeline(unittest.TestCase):
                 continue
             evidence = src['topics'][index]['evidence']
             refs = [e['id'] for e in evidence]
+            page.update(clarification={'confusion': '재료 검출과 생명 생성의 혼동', 'understanding': '두 성과를 구별한다', 'evidence': refs}, analogy={'familiar': '부품과 완성품', 'mapping': [{'familiar': '부품', 'biology': '작은 유기물', 'evidence': refs}], 'limit': '생명은 사람이 조립하는 기계와 같지 않다', 'panels': [1], 'limit_panel': 4}, narrative={'mode': 'dialogue', 'cast': ['guide', 'student']}, note_link={'before': '재료와 완성품의 차이를 ', 'label': '재료와 생명 만화', 'after': '에서 비교해 보세요.'})
             page.update(status='ready', question='무엇이 검출되었을까?', summary={'text': '재료와 살아 있는 세포를 구별해요.', 'evidence': refs}, terms=[],
                         coverage=[{'evidence': ref, 'panels': [1], 'reason': ''} for ref in refs],
-                        panels=[{'scene': f'실험의 관찰 상태 {n}', 'caption': '검출 결과를 확인해요.', 'dialogue': [{'speaker': '관찰자', 'text': '세포가 만들어진 것은 아니야.'}], 'alt': f'실험 결과를 비교하는 장면 {n}', 'evidence': refs} for n in range(1, 5)])
+                        panels=[{'scene': f'실험의 관찰 상태 {n}', 'caption': '검출 결과를 확인해요.', 'characters': ['guide', 'student'], 'dialogue': [{'speaker': 'guide', 'text': '세포가 만들어진 것은 아니야.'}, {'speaker': 'student', 'text': '재료 검출과 구별해야겠네요.'}], 'alt': f'실험 결과를 비교하는 장면 {n}', 'evidence': refs} for n in range(1, 5)])
         self.write('storyboard.json', book)
         return book
 
@@ -188,6 +190,7 @@ class ComicPipeline(unittest.TestCase):
         self.assertEqual(self.api.check(self.run, 'reviewed')['status'], 'complete')
         book = self.read('storyboard.json'); book['pages'][0]['panels'][0]['dialogue'][0]['text'] += ' 새 설명'
         self.write('storyboard.json', book)
+        self.images()
         with self.assertRaisesRegex(ValueError, '검토'):
             self.api.check(self.run, 'reviewed')
 
@@ -202,7 +205,7 @@ class ComicPipeline(unittest.TestCase):
         result2 = self.api.publish(self.run)
         self.assertEqual(result['version'], result2['version'])
         self.assertEqual(Path(result2['html']).read_bytes(), old_html)
-        self.assertEqual(self.note.read_text().count('학습만화'), 0)
+        self.assertIn('data-bio-comic', self.note.read_text())
 
     def test_held_pages_stay_visible_and_are_not_complete(self):
         self.ready(held=True); self.images()
@@ -240,6 +243,7 @@ class ComicPipeline(unittest.TestCase):
         first = self.api.publish(self.run)
         book = self.read('storyboard.json'); book['pages'][0]['panels'][0]['dialogue'][0]['text'] += ' 한 번 더 확인하자.'
         self.write('storyboard.json', book)
+        self.images()
         self.api.build(self.run); self.reviews()
         second = self.api.publish(self.run)
         self.assertNotEqual(first['version'], second['version'])
@@ -265,6 +269,189 @@ class ComicPipeline(unittest.TestCase):
         latest = Path(recovered['version']).parent.parent / 'latest.json'
         self.assertTrue(latest.is_file(), 'A successful retry must restore the publication index')
         self.assertEqual(json.loads(latest.read_text())['version'], recovered['version'])
+
+    def test_clarification_analogy_and_speaker_contract(self):
+        for field in ('clarification', 'analogy', 'narrative'):
+            with self.subTest(field=field):
+                book = self.ready(); del book['pages'][0][field]
+                self.write('storyboard.json', book)
+                with self.assertRaises(ValueError): self.api.check(self.run, 'storyboard')
+        for mutation in ('unknown', 'no_dialogue', 'only_one', 'limit'):
+            with self.subTest(mutation=mutation):
+                book = self.ready(); page = book['pages'][0]
+                if mutation == 'unknown': page['panels'][0]['dialogue'][0]['speaker'] = 'ghost'
+                elif mutation == 'no_dialogue':
+                    for panel in page['panels']: panel['dialogue'] = []
+                elif mutation == 'only_one':
+                    for panel in page['panels']: panel['dialogue'] = panel['dialogue'][:1]
+                else: page['analogy']['limit'] = ''
+                self.write('storyboard.json', book)
+                with self.assertRaises(ValueError): self.api.check(self.run, 'storyboard')
+
+    def test_character_and_dialogue_change_invalidates_image_prompt(self):
+        self.ready(); self.images()
+        book = self.read('storyboard.json'); book['characters'][0]['appearance'] += ' 빨간 가방'
+        self.write('storyboard.json', book)
+        self.assertFalse(self.api.prompts(self.run)['jobs'][0]['reusable'])
+        self.images(); book['pages'][0]['panels'][0]['dialogue'][0]['text'] += ' 새 의미'
+        self.write('storyboard.json', book)
+        self.assertFalse(self.api.prompts(self.run)['jobs'][0]['reusable'])
+
+    def test_object_only_page_keeps_registered_offscreen_conversation(self):
+        book = self.ready()
+        for page in book['pages']:
+            for panel in page['panels']:
+                panel['characters'] = []
+                panel['scene'] = '책상 위 부품과 완성품만 확대한다. 사람은 화면 밖에 있다.'
+        self.write('storyboard.json', book)
+        self.assertEqual(self.api.check(self.run, 'storyboard')['status'], 'complete')
+        self.assertIn('No humans, faces, hands', self.api.prompts(self.run)['jobs'][0]['prompt'])
+
+    def test_dialogue_is_inside_scene_before_art_and_outside_caption(self):
+        self.ready(); self.images()
+        from comic_source import parse
+        root = parse(self.api.build(self.run).read_text())
+        scenes = [n for n in root.walk() if 'comic-scene' in n.classes]
+        self.assertEqual(len(scenes), 12)
+        for scene in scenes:
+            nodes = list(scene.walk())
+            balloons = [n for n in nodes if 'comic-dialogue' in n.classes]
+            self.assertEqual(len(balloons), 2)
+            self.assertLess(nodes.index(balloons[0]), next(i for i, n in enumerate(nodes) if n.tag == 'img'))
+        for caption in [n for n in root.walk() if n.tag == 'figcaption']:
+            self.assertFalse(any('comic-dialogue' in n.classes for n in caption.walk()))
+
+    def test_links_dry_run_preserve_bytes_and_do_not_change_evidence(self):
+        self.ready(); self.images(); self.api.build(self.run); self.reviews()
+        before = self.note.read_bytes(); inventory = self.read('source.json')
+        result = self.api.publish(self.run, link_notes=False)
+        self.assertEqual(self.note.read_bytes(), before)
+        dry = self.api.link_notes(self.run, dry_run=True)
+        self.assertTrue(dry['changed']); self.assertEqual(self.note.read_bytes(), before)
+        linked = self.api.link_notes(self.run)
+        self.assertTrue(linked['changed'])
+        from comic_links import strip_links
+        self.assertEqual(strip_links(self.note.read_text()).encode(), before)
+        self.assertEqual(self.api.check(self.run, 'browser')['status'], 'complete')
+        self.assertFalse(self.api.link_notes(self.run)['changed'])
+        newer = Path(self.tmp.name) / 'linked-new'
+        self.api.extract(self.repo, '1105', newer)
+        extracted = json.loads((newer / 'source.json').read_text())
+        self.assertEqual(extracted['content_sha256'], inventory['content_sha256'])
+        self.assertEqual(extracted['topics'], inventory['topics'])
+        # Actual prose changes remain blocked even after linking.
+        self.note.write_text(self.note.read_text().replace('유기물이 검출', '세포가 검출'))
+        with self.assertRaisesRegex(ValueError, '원본.*변경'):
+            self.api.link_notes(self.run)
+
+    def test_links_exact_fragments_and_held_pages(self):
+        self.ready(held=True); self.images(); self.api.build(self.run); self.reviews()
+        result = self.api.publish(self.run)
+        note = self.note.read_text()
+        self.assertIn('#s0-miller', note); self.assertIn('#s1-cheatsheet', note)
+        self.assertNotIn('#s0-recap', note)
+        self.assertEqual(note.count('data-bio-comic='), 2)
+        self.assertEqual([x['status'] for x in result['note_links']['results']], ['added', 'skipped', 'added'])
+
+    def test_missing_anchor_does_not_insert_in_wrong_place(self):
+        book = self.ready(); book['pages'][0]['note_link']['anchor_id'] = 'absent'
+        self.write('storyboard.json', book); self.images(); self.api.build(self.run); self.reviews()
+        result = self.api.publish(self.run)
+        self.assertEqual(result['note_links']['results'][0]['reason'], 'ANCHOR_MISSING')
+        self.assertNotIn('#s0-miller', self.note.read_text())
+        self.assertIn('#s1-cheatsheet', self.note.read_text())
+
+    def test_managed_block_tampering_is_not_ignored(self):
+        self.ready(); self.images(); self.api.build(self.run); self.reviews(); self.api.publish(self.run)
+        self.note.write_text(self.note.read_text().replace('에서 비교해 보세요.', '다른 사실로 바뀌었어요.'))
+        with self.assertRaises(ValueError): self.api.check(self.run, 'storyboard')
+
+    def test_explicit_single_page_scope_and_v1_reuse(self):
+        run = Path(self.tmp.name) / 'sample'
+        self.api.extract(self.repo, '1105', run, page='s0-miller')
+        src = json.loads((run / 'source.json').read_text())
+        self.assertEqual([t['id'] for t in src['topics'] if t['include']], ['s0-miller'])
+        self.assertEqual(src['selection'], ['s0-miller'])
+        old = self.read('storyboard.json'); old['schema_version'] = 1
+        self.write('storyboard.json', old)
+        new = Path(self.tmp.name) / 'v2'
+        self.api.extract(self.repo, '1105', new, reuse=self.run)
+        self.assertEqual(json.loads((new / 'storyboard.json').read_text())['schema_version'], 2)
+
+    def test_one_character_explanation_and_silent_detail_panel(self):
+        book = self.ready()
+        for page in book['pages']:
+            page['narrative'] = {'mode': 'explanation', 'cast': ['guide']}
+            for panel in page['panels']:
+                panel['characters'] = ['guide']; panel['dialogue'] = panel['dialogue'][:1]
+            page['panels'][2]['characters'] = []; page['panels'][2]['dialogue'] = []
+        self.write('storyboard.json', book)
+        self.assertEqual(self.api.check(self.run, 'storyboard')['ready'], 3)
+
+    def test_crlf_note_bytes_and_user_links_are_preserved(self):
+        raw = self.note.read_bytes().replace(b'\n', b'\r\n')
+        raw = raw.replace(b'</h3>', b'</h3><a title="a target=original" rel="bookmark" target="_blank" href="manual.html">manual</a>', 1)
+        self.note.write_bytes(raw)
+        self.run = Path(self.tmp.name) / 'crlf'
+        self.api.extract(self.repo, '1105', self.run)
+        self.ready(); self.images(); self.api.build(self.run); self.reviews(); self.api.publish(self.run)
+        from comic_links import strip_links
+        self.assertEqual(strip_links(self.note.read_bytes().decode()).encode(), raw)
+        self.assertFalse(self.api.link_notes(self.run)['changed'])
+
+    def test_hidden_anchor_is_skipped(self):
+        self.note.write_text(self.note.read_text().replace('<div class="sum" hidden>', '<div id="hidden-summary" class="sum" hidden>', 1))
+        self.run = Path(self.tmp.name) / 'hidden'
+        self.api.extract(self.repo, '1105', self.run)
+        book = self.ready(); book['pages'][0]['note_link']['anchor_id'] = 'hidden-summary'
+        self.write('storyboard.json', book); self.images(); self.api.build(self.run); self.reviews()
+        result = self.api.publish(self.run)
+        self.assertEqual(result['note_links']['results'][0].get('reason'), 'ANCHOR_INVALID')
+
+    def test_link_write_failure_keeps_published_comic_and_retries(self):
+        self.ready(); self.images(); self.api.build(self.run); self.reviews()
+        import comic_links
+        actual = comic_links.os.replace
+        def fail_note(src, dest):
+            if Path(dest).resolve() == self.note.resolve(): raise OSError('note write denied')
+            return actual(src, dest)
+        with patch.object(comic_links.os, 'replace', side_effect=fail_note):
+            result = self.api.publish(self.run)
+        self.assertTrue(Path(result['html']).is_file())
+        self.assertEqual(result['note_links']['status'], 'failed')
+        self.assertTrue(self.api.link_notes(self.run)['changed'])
+        self.assertFalse(self.api.link_notes(self.run)['changed'])
+
+    def test_archived_version_supports_link_only(self):
+        self.ready(); self.images(); self.api.build(self.run); self.reviews()
+        result = self.api.publish(self.run, link_notes=False)
+        linked = self.api.link_notes(Path(result['version']))
+        self.assertTrue(linked['changed'])
+        self.assertFalse(self.api.link_notes(Path(result['version']))['changed'])
+
+    def test_link_only_rejects_missing_or_changed_published_art(self):
+        self.ready(); self.images(); self.api.build(self.run); self.reviews()
+        result = self.api.publish(self.run, link_notes=False)
+        art = Path(result['version']) / 'images' / 's0-miller' / '01.png'
+        art.unlink()
+        before = self.note.read_bytes()
+        with self.assertRaises(ValueError): self.api.link_notes(self.run)
+        self.assertEqual(self.note.read_bytes(), before)
+
+    def test_analogy_supplement_cannot_be_omitted_or_lose_badge(self):
+        book = self.ready(); page = book['pages'][0]
+        supplementary = page['panels'][0]['evidence'][-1]
+        page['analogy']['mapping'] = [{'familiar': '작동 조건', 'biology': '반응 조건', 'evidence': [supplementary]}]
+        for panel in page['panels']: panel['evidence'] = panel['evidence'][:-1]
+        page['coverage'][-1] = {'evidence': supplementary, 'panels': [], 'reason': '주변 설명 생략'}
+        self.write('storyboard.json', book)
+        with self.assertRaises(ValueError): self.api.check(self.run, 'storyboard')
+        page['panels'][2]['evidence'].append(supplementary)
+        page['coverage'][-1] = {'evidence': supplementary, 'panels': [3], 'reason': ''}
+        self.write('storyboard.json', book); self.images()
+        text = self.api.build(self.run).read_text()
+        analogy = text.split('class="comic-analogy"', 1)[1].split('</p>', 1)[0]
+        self.assertIn('badge supp', analogy)
 
 
 if __name__ == '__main__':

@@ -31,6 +31,7 @@ def render(run, output, image_root=None):
     sections, titles, section_ids = {}, {}, {}
     topics = {t['id']: t for t in src['topics']}
     held = sum(p['status'] == 'held' for p in book['pages'])
+    characters = {c['id']: c for c in book.get('characters', [])}
     for page in book['pages']:
         topic = topics[page['id']]
         section = topic['section']
@@ -54,10 +55,26 @@ def render(run, output, image_root=None):
             for n, panel in enumerate(page['panels'], 1):
                 asset = assets[f"{page['id']}/{n:02}"]
                 image_href = relative(image_root / asset['file'], output.parent)
-                dialogue = ''.join(f'<p class="comic-dialogue"><span class="comic-speaker">{esc(line["speaker"])}</span>{esc(line["text"])}</p>' for line in panel.get('dialogue', []))
+                dialogue = []
+                for line in panel.get('dialogue', []):
+                    speaker = line['speaker']
+                    side = 'left' if page['narrative']['cast'].index(speaker) % 2 == 0 else 'right'
+                    offscreen = speaker not in panel.get('characters', [])
+                    dialogue.append(f'<p class="comic-dialogue comic-voice-{side}" data-speaker="{esc(speaker)}" data-offscreen="{str(offscreen).lower()}"><span class="comic-speaker">{esc(characters[speaker]["name"])}</span>{esc(line["text"])}</p>')
+                balloons = '<div class="comic-balloon-layer">' + ''.join(dialogue) + '</div>' if dialogue else ''
+                # A growing top row keeps readable speech clear of the lower 60% art.
+                # Unlike fixed absolute coordinates this also works at 375px and zoom.
+                space = f'<div class="comic-art-space" style="aspect-ratio:{asset["width"]} / {asset["height"] * 0.64:g}" aria-hidden="true"></div>' if dialogue else ''
+                analogy = page['analogy']
+                explanation = ''
+                if n == analogy['panels'][0]:
+                    pairs = ' · '.join(labels(m['evidence']) + esc(f"{m['familiar']} → {m['biology']}") for m in analogy['mapping'])
+                    explanation += '<p class="comic-analogy"><strong>비유 연결</strong> ' + pairs + '</p>'
+                if n == analogy['limit_panel']:
+                    explanation += '<p class="comic-limit"><strong>여기까지의 비유예요</strong> ' + esc(analogy['limit']) + '</p>'
                 panels.append(f'''<li class="comic-panel" data-panel="{n}">
-<figure><img src="{esc(image_href)}" alt="{esc(panel['alt'])}" width="{asset['width']}" height="{asset['height']}" loading="lazy" decoding="async">
-<figcaption><span class="comic-number">{n}컷</span>{labels(panel['evidence'])}<p class="comic-caption">{esc(panel['caption'])}</p>{dialogue}</figcaption></figure></li>''')
+<figure><div class="comic-scene">{balloons}<img src="{esc(image_href)}" alt="{esc(panel['alt'])}" width="{asset['width']}" height="{asset['height']}" loading="lazy" decoding="async">{space}</div>
+<figcaption><span class="comic-number">{n}컷</span>{labels(panel['evidence'])}<p class="comic-caption">{esc(panel['caption'])}</p>{explanation}</figcaption></figure></li>''')
             content = '<p class="comic-question">' + esc(page['question']) + '</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화">' + ''.join(panels) + '</ol>'
             terms = ''.join(f'<dt>{esc(t["term"])}</dt><dd>{labels(t["evidence"])}{esc(t["text"])}</dd>' for t in page.get('terms', []))
             summary = f'<div class="sum" hidden>{labels(page["summary"]["evidence"])}<p class="sum-lead">{esc(page["summary"]["text"])}</p>'
@@ -70,6 +87,8 @@ def render(run, output, image_root=None):
     toc = ''.join(f'<a href="#{section_ids[s]}">{esc(titles[s])}</a>' for s in sections)
     count = len(book['pages'])
     status = f'{count - held}/{count}페이지 완료 · 일부 보류' if held else f'{count}페이지 · 페이지마다 4~8컷'
+    if src.get('selection'):
+        status = '선택 페이지 샘플 · ' + status
     values = {'PAGE_TITLE': esc(book['title']), 'DESCRIPTION': esc(f"{src['range']} 수업 학습만화. {status}"), 'BRAND': '학습만화', 'TITLE': esc(book['title']), 'SUBTITLE': esc(status + '. 그림과 대사를 따라 읽고 원본 정리노트에서 확인해요.'), 'TOC': toc, 'SECTIONS': sections_html, 'FOOTER': esc('일부 페이지 제작 보류' if held else '정리노트의 수업 내용을 바탕으로 만든 학습만화'), 'SCRIPTS': '', 'RANGE': esc(src['range'])}
     template = TEMPLATE.read_text(encoding='utf-8')
     slots = set(re.findall(r'\{\{([A-Z_]+)\}\}', template))
@@ -129,7 +148,7 @@ def archive_html(text, original_directory, archive_directory):
     return re.sub(r'''\b(href|src)=(['"])(.*?)\2''', rebase, text)
 
 
-def publish(run):
+def _publish_comic(run):
     run = Path(run).resolve()
     result = check(run, 'browser')
     if not result['ready']:
@@ -143,6 +162,8 @@ def publish(run):
     note = Path(src['path'])
     suffix = nfc(note.name).removeprefix('정리노트_')
     filename = '학습만화_' + suffix
+    if src.get('selection'):
+        filename = Path(filename).stem + '_샘플_' + src['selection'][0] + '.html'
     root = note.parent / '.assets' / ('자료_' + Path(filename).stem)
     if record.get('fingerprint') == current:
         previous = Path(record['html'])
@@ -155,6 +176,7 @@ def publish(run):
                         raise ValueError('발행 그림 변경')
                 validate_output(previous)
                 # The HTML may have committed before a transient index-write failure.
+                write(version / 'publication.json', record)
                 write(root / 'latest.json', record)
                 return record
             except ValueError:
@@ -196,6 +218,7 @@ def publish(run):
                 temporary.unlink()
         record = {**result, 'html': str(output), 'version': str(version), 'fingerprint': current, 'html_sha256': digest(output.read_bytes())}
         write(run / 'publication.json', record)
+        write(version / 'publication.json', record)
         write(root / 'latest.json', record)
         return record
     except Exception:
@@ -203,3 +226,18 @@ def publish(run):
         if not committed:
             shutil.rmtree(version)
         raise
+
+
+def publish(run, link_notes=True):
+    """Publication commits first; contextual linking is independently retryable."""
+    result = _publish_comic(run)
+    if link_notes:
+        from comic_links import link_notes as connect
+        try:
+            linked = connect(run)
+        except (ValueError, OSError, KeyError) as exc:
+            linked = {'status': 'failed', 'error': str(exc), 'retry': 'link-notes --run RUN'}
+        result = {**result, 'note_links': linked}
+        # Keep evidence of linking beside the archived production inputs.
+        write(Path(result['version']) / 'note-links-result.json', linked)
+    return result

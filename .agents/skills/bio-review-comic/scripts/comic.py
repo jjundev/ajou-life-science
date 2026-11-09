@@ -10,21 +10,22 @@ import sys
 
 from comic_contract import assets_for, check, jobs_for, load, local, raster, read, state, validate_storyboard, write
 from comic_render import build, publish
+from comic_links import link_notes
 from comic_source import digest, inventory, resolve
 
 
-def extract(repo, target, run, reuse=None):
+def extract(repo, target, run, reuse=None, page=None):
     repo, run = Path(repo).resolve(), Path(run).resolve()
     if run.exists() and any(run.iterdir()):
         raise ValueError('실행 폴더에 이미 파일이 있습니다. 새 RUN을 사용하세요.')
     path = resolve(repo, target)
-    src = inventory(path, repo)
+    src = inventory(path, repo, selection=[page] if page else None)
     if run == path.parent or path.is_relative_to(run):
         raise ValueError('RUN은 원본 정리노트 폴더와 분리하세요.')
-    book = {'schema_version': 1, 'source_sha256': src['sha256'], 'title': f"생명과학 {src['range']} 학습만화", 'style': '생물 구조를 살린 학습만화. 밝은 종이색 배경과 절제된 파란 강조. 같은 대상의 모양·색 유지.', 'pages': []}
+    book = {'schema_version': 2, 'characters': [], 'source_sha256': src['sha256'], 'title': f"생명과학 {src['range']} 학습만화", 'style': '생물 구조를 살린 학습만화. 밝은 종이색 배경과 절제된 파란 강조. 같은 대상의 모양·색 유지.', 'pages': []}
     for topic in src['topics']:
         if topic['include']:
-            book['pages'].append({'id': topic['id'], 'title': topic['title'], 'source_topic_sha256': topic['sha256'], 'status': 'draft', 'question': '', 'summary': {'text': '', 'evidence': []}, 'terms': [], 'panels': [], 'coverage': []})
+            book['pages'].append({'id': topic['id'], 'title': topic['title'], 'source_topic_sha256': topic['sha256'], 'status': 'draft', 'question': '', 'summary': {'text': '', 'evidence': []}, 'terms': [], 'panels': [], 'coverage': [], 'clarification': {}, 'analogy': {}, 'narrative': {}, 'note_link': {}})
     run.mkdir(parents=True, exist_ok=True)
     write(run / 'source.json', src)
     shutil.copy2(path, run / 'source.html')
@@ -38,7 +39,8 @@ def extract(repo, target, run, reuse=None):
         if Path(previous_src['path']).resolve() != path:
             raise ValueError('재사용 대상 원본 정리노트가 다릅니다.')
         book['style'] = previous['style']
-        prior = {p['id']: p for p in previous['pages']}
+        book['characters'] = previous.get('characters', [])
+        prior = {p['id']: p for p in previous['pages']} if previous.get('schema_version') == 2 else {}
         for i, page in enumerate(book['pages']):
             found = prior.get(page['id'])
             if found and found.get('source_topic_sha256') == page['source_topic_sha256']:
@@ -105,9 +107,14 @@ def main(argv=None):
     ext.add_argument('--target', required=True)
     ext.add_argument('--run', required=True, type=Path)
     ext.add_argument('--reuse', type=Path)
-    for name in ('prompts', 'build', 'fingerprints', 'publish', 'check'):
+    ext.add_argument('--page', help='명시적으로 한 토픽만 제작하는 샘플 범위')
+    for name in ('prompts', 'build', 'fingerprints', 'publish', 'check', 'link-notes'):
         cmd = commands.add_parser(name)
         cmd.add_argument('--run', required=True, type=Path)
+        if name == 'link-notes':
+            cmd.add_argument('--dry-run', action='store_true')
+        if name == 'publish':
+            cmd.add_argument('--no-link', action='store_true', help='만화만 발행; 이후 link-notes로 연결')
         if name == 'check':
             cmd.add_argument('--phase', choices=('storyboard', 'images', 'reviewed', 'browser'), default='storyboard')
     register = commands.add_parser('register-image', help='이미지 도구가 반환한 실제 로컬 파일 등록')
@@ -118,7 +125,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         if args.command == 'extract':
-            result = extract(args.repo, args.target, args.run, reuse=args.reuse)
+            result = extract(args.repo, args.target, args.run, reuse=args.reuse, page=args.page)
         elif args.command == 'prompts':
             result = prompts(args.run)
             result = {k: v for k, v in result.items() if k != 'jobs'} | {'file': str(args.run / 'prompts.json')}
@@ -128,10 +135,12 @@ def main(argv=None):
             result = {'preview': str(build(args.run)), **check(args.run, 'images')}
         elif args.command == 'check':
             result = check(args.run, args.phase)
+        elif args.command == 'link-notes':
+            result = link_notes(args.run, dry_run=args.dry_run)
         elif args.command == 'fingerprints':
             result = fingerprints(args.run)
         else:
-            result = publish(args.run)
+            result = publish(args.run, link_notes=not args.no_link)
         import json
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return 0

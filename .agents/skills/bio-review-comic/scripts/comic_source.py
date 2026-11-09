@@ -134,9 +134,11 @@ def outer(node):
     return start if node.tag in VOID else start + ''.join(outer(c) for c in node.children) + f'</{node.tag}>'
 
 
-def inventory(path, repo):
+def inventory(path, repo, selection=None, raw=None):
     path, repo = existing(path), existing(repo)
-    raw = path.read_text(encoding='utf-8')
+    from comic_links import strip_links
+    raw_bytes = path.read_bytes() if raw is None else raw
+    raw = strip_links(raw_bytes.decode('utf-8'))
     root = parse(raw)
     body = next((n for n in root.walk() if n.tag == 'body'), None)
     main = next((n for n in root.walk() if n.tag == 'main'), None)
@@ -159,6 +161,8 @@ def inventory(path, repo):
             reason = '미학습 범위 예고'
         elif tid.endswith('-links') or title == '함께 보면 좋은 자료':
             reason = '자료 링크 안내'
+        if not reason and selection and tid not in selection:
+            reason = '명시적 단일 페이지 제작 범위 밖'
         evidence = []
         for block in node.walk():
             ancestors = list(block.ancestors())
@@ -181,5 +185,7 @@ def inventory(path, repo):
         topics.append({'id': tid, 'title': title, 'section': section.attrs.get('id', '') if section else 'topics', 'section_title': sec_title or '학습 내용', 'include': not bool(reason), 'reason': reason, 'sha256': digest(outer(node)), 'body_html': outer(node), 'summary_text': compact(summary.text()) if summary else '', 'evidence': evidence})
     if not topics or not any(t['include'] for t in topics):
         raise ValueError('만화로 만들 학습 토픽 없음')
+    if selection and any(s not in seen for s in selection):
+        raise ValueError('선택한 원본 페이지 없음')
     title = next((compact(n.text()) for n in main.walk() if n.tag == 'h1'), path.stem)
-    return {'schema_version': 1, 'repo': str(repo), 'path': str(path), 'sha256': digest(path.read_bytes()), 'title': title, 'range': body.attrs.get('data-range') or path.parent.name, 'topics': topics}
+    return {'schema_version': 2, 'selection': selection or [], 'content_sha256': digest(raw), 'repo': str(repo), 'path': str(path), 'sha256': digest(raw_bytes), 'title': title, 'range': body.attrs.get('data-range') or path.parent.name, 'topics': topics}

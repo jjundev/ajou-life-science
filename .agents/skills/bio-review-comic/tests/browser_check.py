@@ -29,9 +29,14 @@ def main():
         page = book['pages'][0]
         page['panels'] += [copy.deepcopy(page['panels'][0]) for _ in range(4)]
         page['panels'][3]['caption'] = '가정한 실험 조건에서 얻은 결과와 실제 과거의 사건을 구별해야 해요. ' * 9
+        page['panels'][3]['dialogue'][1]['text'] = '재료가 검출된 관찰과 살아 있는 세포의 생성은 구별해야 해요. ' * 6
+        for panel in page['panels']:
+            panel['characters'] = []
         fixture.write('storyboard.json', book)
         fixture.images()
         preview = fixture.api.build(fixture.run)
+        fixture.reviews()  # Synthetic fixture reports are never production review evidence.
+        fixture.api.publish(fixture.run)
         handler = partial(QuietHandler, directory=fixture.tmp.name)
         server = ThreadingHTTPServer(('127.0.0.1', 0), handler)
         threading.Thread(target=server.serve_forever, daemon=True).start()
@@ -59,6 +64,19 @@ def main():
                                 assert img.evaluate('(img) => img.naturalWidth > 0'), 'Raster did not decode'
                             assert page.locator('.content').evaluate('(el) => el.scrollWidth <= el.clientWidth + 1')
                             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth + 1')
+                            for scene in page.locator(f'#{topic} .comic-scene').all():
+                                assert scene.evaluate('''el => {
+                                  const box=el.getBoundingClientRect(), image=el.querySelector('img').getBoundingClientRect();
+                                  return [...el.querySelectorAll('.comic-dialogue')].every(b => {
+                                    const r=b.getBoundingClientRect();
+                                    const text=document.createRange(); text.selectNodeContents(b);
+                                    return r.left>=box.left && r.right<=box.right+1 && r.top>=box.top &&
+                                      r.bottom<=image.top+image.height*.36+2 &&
+                                      [...text.getClientRects()].every(t=>t.left>=r.left && t.right<=r.right) &&
+                                      parseFloat(getComputedStyle(b).fontSize)>=17;
+                                  });
+                                }'''), 'Speech must stay inside panel and clear of the art, even for long dialogue'
+                            assert page.locator(f'#{topic} figcaption .comic-dialogue').count()==0
                         page.goto(url)
                         # Read state must not create the original note's key.
                         assert page.evaluate("Object.keys(localStorage).some(k => k.startsWith('od-comic-read:'))")
@@ -89,9 +107,20 @@ def main():
                         link.scroll_into_view_if_needed()
                         link.click()
                         assert 'Test.html' in page.url and page.url.endswith('#s1-cheatsheet')
+                        note_link = page.locator('#s1-cheatsheet [data-bio-comic] a')
+                        assert note_link.get_attribute('target') == '_self'
+                        note_link.click()
+                        expect(page.locator('#s1-cheatsheet')).to_be_visible()
+                        page.go_back()
+                        assert 'Test.html' in page.url
                         page.go_back()
                         expect(page.locator('#s1-cheatsheet')).to_be_visible()
                         page.goto(url)
+                        first = page.locator('.comic-panel img').first
+                        first.scroll_into_view_if_needed()
+                        expect(first).to_have_js_property('complete', True)
+                        first.evaluate('(img) => img.decode()')
+                        page.locator('.content').evaluate('(el) => el.scrollTo(0, 0)')
                         page.screenshot(path=str(args.output / f'{width}-{theme}.png'), full_page=True, animations='disabled')
                         assert errors == [], errors
                         results.append({'width': width, 'theme': theme, 'pages': 3, 'images': 16, 'errors': errors})

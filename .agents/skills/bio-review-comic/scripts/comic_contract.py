@@ -82,16 +82,18 @@ def load(run):
         path = existing(src['path'])
     except ValueError as exc:
         raise ValueError('원본 정리노트 없음. 이전 결과를 보존하고 원본 경로를 확인하세요.') from exc
-    if digest(path.read_bytes()) != src['sha256']:
+    if src.get('schema_version') != 2 or book.get('schema_version') != 2:
+        raise ValueError('v1 실행은 보존하고 새 RUN으로 extract --reuse 하세요(v2 계약).')
+    from comic_links import strip_links
+    if digest(strip_links(path.read_bytes().decode('utf-8'))) != src['content_sha256']:
         raise ValueError('원본 정리노트 변경: 새 RUN으로 extract --reuse 이전RUN을 실행하세요.')
-    if book.get('schema_version') != 1 or book.get('source_sha256') != src['sha256']:
+    if book.get('source_sha256') != src['sha256']:
         raise ValueError('콘티와 원본 지문 불일치')
     snapshot = run / 'source.html'
     if not snapshot.is_file() or digest(snapshot.read_bytes()) != src['sha256']:
         raise ValueError('원본 스냅샷 변경 또는 누락')
-    # Also binds extracted evidence/classification to the immutable original snapshot.
     from comic_source import inventory
-    actual = inventory(path, src['repo'])
+    actual = inventory(path, src['repo'], selection=src.get('selection'), raw=snapshot.read_bytes())
     if src != actual:
         raise ValueError('원본 근거 목록 변경: source.json을 편집하지 마세요.')
     return run, src, book
@@ -101,6 +103,13 @@ def validate_storyboard(run):
     run, src, book = load(run)
     if not compact(book.get('style', '')):
         raise ValueError('공통 그림 스타일 없음')
+    characters = book.get('characters', [])
+    cast = {}
+    for character in characters:
+        cid = character.get('id', '')
+        if not isinstance(cid, str) or not cid or cid in cast or any(not compact(character.get(k, '')) for k in ('name', 'role', 'appearance', 'voice')):
+            raise ValueError('등장인물 ID 중복 또는 이름·역할·외형·말투 누락')
+        cast[cid] = character
     expected = [t for t in src['topics'] if t['include']]
     pages = book.get('pages', [])
     if [p.get('id') for p in pages] != [t['id'] for t in expected]:
@@ -127,6 +136,32 @@ def validate_storyboard(run):
             if not isinstance(values, list) or not values or any(v not in refs for v in values):
                 raise ValueError(f'{pid}: {label} 근거 없음 또는 알 수 없는 근거')
 
+        clarification = page.get('clarification', {})
+        if any(not compact(clarification.get(k, '')) for k in ('confusion', 'understanding')):
+            raise ValueError(f'{pid}: 혼동 지점과 도달할 이해 필요')
+        validate_refs(clarification, '혼동 구분')
+        analogy = page.get('analogy', {})
+        if any(not compact(analogy.get(k, '')) for k in ('familiar', 'limit')) or not analogy.get('mapping'):
+            raise ValueError(f'{pid}: 비유·대응·한계 필요')
+        for mapping in analogy['mapping']:
+            if any(not compact(mapping.get(k, '')) for k in ('familiar', 'biology')):
+                raise ValueError(f'{pid}: 비유 대응 비어 있음')
+            validate_refs(mapping, '비유 대응')
+        if not analogy.get('panels') or any(type(n) is not int or not 1 <= n <= len(panels) for n in analogy['panels']) or type(analogy.get('limit_panel')) is not int or not 1 <= analogy['limit_panel'] <= len(panels):
+            raise ValueError(f'{pid}: 비유와 한계를 설명하는 컷 필요')
+        narrative = page.get('narrative', {})
+        participants = narrative.get('cast', [])
+        if not participants or len(set(participants)) != len(participants) or any(c not in cast for c in participants):
+            raise ValueError(f'{pid}: 등록된 등장인물 필요')
+        mode = narrative.get('mode')
+        if mode not in ('explanation', 'dialogue') or (mode == 'explanation' and len(participants) != 1) or (mode == 'dialogue' and len(participants) < 2):
+            raise ValueError(f'{pid}: 설명형 한 명 또는 대화형 두 명 이상 필요')
+        spec = page.get('note_link', {})
+        if any(not isinstance(spec.get(k), str) for k in ('before', 'label', 'after')) or not compact(spec['label']):
+            raise ValueError(f'{pid}: 정리노트 연결 안내·제목 필요')
+        if 'anchor_id' in spec and (not isinstance(spec['anchor_id'], str) or not spec['anchor_id']):
+            raise ValueError(f'{pid}: 연결 블록 ID 오류')
+        spoken = set()
         summary = page.get('summary', {})
         if not compact(summary.get('text', '')):
             raise ValueError(f'{pid}: 페이지 요약 없음')
@@ -139,14 +174,25 @@ def validate_storyboard(run):
             if any(not compact(panel.get(k, '')) for k in ('scene', 'caption', 'alt')):
                 raise ValueError(f'{pid}/{n}: 장면·설명·대체 설명 필요')
             validate_refs(panel, f'{n}컷')
+            appearing = panel.get('characters', [])
+            if not isinstance(appearing, list) or any(c not in participants for c in appearing):
+                raise ValueError(f'{pid}/{n}: 알 수 없는 출연자')
             for line in panel.get('dialogue', []):
                 if not compact(line.get('speaker', '')) or not compact(line.get('text', '')):
                     raise ValueError(f'{pid}/{n}: 화자·대사 필요')
+                if line['speaker'] not in participants:
+                    raise ValueError(f'{pid}/{n}: 등록되지 않은 화자')
+                spoken.add(line['speaker'])
+        if set(participants) - spoken:
+            raise ValueError(f'{pid}: 모든 화자의 발언 필요. 그림 속 출연은 선택 사항입니다.')
         coverage = page.get('coverage', [])
         if len(coverage) != len(refs) or {r.get('evidence') for r in coverage} != refs:
             raise ValueError(f'{pid}: 근거 coverage 누락·중복')
         for row in coverage:
             numbers = row.get('panels', [])
+            mapping_refs = {ref for m in analogy['mapping'] for ref in m['evidence']}
+            if not numbers and row['evidence'] in mapping_refs:
+                raise ValueError(f'{pid}: 독자에게 표시하는 비유 근거를 생략 처리할 수 없습니다.')
             if not numbers and not compact(row.get('reason', '')):
                 raise ValueError(f'{pid}: 근거 생략 이유 없음')
             if any(type(n) is not int or not 1 <= n <= len(panels) or row['evidence'] not in panels[n - 1]['evidence'] for n in numbers):
@@ -168,12 +214,20 @@ def jobs_for(src, book):
                 'Asset: one wordless panel of a Korean biology learning comic.',
                 f"Shared style and continuity: {book['style']}",
                 f"Page: {page['title']} | Learning question: {page['question']}",
+                'Characters visible this panel: ' + json.dumps([c for c in book.get('characters', []) if c['id'] in panel.get('characters', [])], ensure_ascii=False, sort_keys=True),
+                'Show only listed visible characters. Speakers may be off-screen; speech does not require a face in the picture.',
+                'No humans, faces, hands or personified objects: this is an object-only close-up.' if not panel.get('characters') else 'Keep visible people secondary to the concept and concrete objects.',
+                'Dialogue meaning (render no text): ' + json.dumps(panel.get('dialogue', []), ensure_ascii=False, sort_keys=True),
+                'Clarify: ' + json.dumps(page.get('clarification', {}), ensure_ascii=False, sort_keys=True),
+                'Analogy and its limits: ' + json.dumps(page.get('analogy', {}), ensure_ascii=False, sort_keys=True),
+                'Analogy objects are explanatory props, not literal biological structures. Do not turn them into scientific claims.',
                 f"Panel {n}/{len(page['panels'])}: {panel['scene']}",
                 f"Scientific meaning: {panel['caption']}",
                 'Source facts; preserve scope, uncertainty, counts and directions:\n' + facts,
-                'Composition: clearly readable landscape panel; warm light paper background; restrained blue accents.',
+                'Composition: clearly readable landscape panel; warm light paper background; restrained blue accents. Keep the TOP 40% quiet empty paper for HTML speech balloons. Place ALL essential objects and actions in the LOWER 60%, fully visible. No inner panel border.',
                 'No text, letters, digits, labels, speech balloons, arrows with text, UI, or watermarks. Dialogue and precise notation are HTML.',
                 'Show a concrete state or action. Preserve recurring subjects. No goal-directed evolution or intentional molecules.',
+                'Depict ONLY the specified physical scene. Dialogue, analogy and source facts guide meaning; do NOT draw them as extra diagrams, speech/thought bubbles or floating icons. No bubbles of any kind. If using a reference, copy character appearance and art style only, never its bubbles or extra diagrams.',
             ])
             jobs.append({'key': f"{page['id']}/{n:02}", 'page': page['id'], 'panel': n, 'prompt': prompt, 'prompt_sha256': digest(prompt)})
     return jobs
@@ -205,10 +259,10 @@ def state(run):
     for page in book['pages']:
         if page['status'] != 'ready':
             continue
-        content = fingerprint({'page': page, 'style': book['style']})
+        content = fingerprint({'page': page, 'style': book['style'], 'characters': [c for c in book.get('characters', []) if c['id'] in page['narrative']['cast']]})
         images = {j['key']: assets[j['key']]['sha256'] for j in jobs if j['page'] == page['id']}
         pages[page['id']] = {'content': content, 'visual': fingerprint({'content': content, 'images': images})}
-    browser = fingerprint({'book': book, 'source': src['sha256'], 'images': assets, 'template': digest(TEMPLATE.read_bytes()), 'css': digest(CSS.read_bytes())})
+    browser = fingerprint({'book': book, 'source': src['content_sha256'], 'images': assets, 'template': digest(TEMPLATE.read_bytes()), 'css': digest(CSS.read_bytes())})
     return {'pages': pages, 'browser': browser}
 
 
