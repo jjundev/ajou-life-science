@@ -15,6 +15,8 @@
 
 ## 생성자에게 전달할 작업
 
+생성자와 독립 검토자는 `style.md`도 읽고 담당 장면에 가까운 `assets/style/`의 승인 시안을 실제 확인한다. 생성자는 이를 그림체 참조로 사용한다. 원본 도해·반복 대상의 이전 컷·승인 시안의 참조 역할을 구별하고 공통 `style`을 모든 컷에 적용한다.
+
 메시지는 다음 정보만 담는다. 경로는 모두 실제 절대 경로로 치환한다.
 
 > bio-review-comic 페이지 생성 작업. SKILL=<스킬 절대 경로>, RUN=<실행 절대 경로>, PAGE=<토픽 ID>. SKILL/references/agents.md의 생성 계약과 images.md를 읽고 PAGE 하나의 모든 컷을 수행하라. RUN/prompts.json과 storyboard.json에서 해당 페이지·공통 스타일·캐릭터만 읽고 source.html/source.json의 관련 본문·원본 그림을 확인하라. 내장 이미지 도구로 컷마다 생성하고 실제 결과를 확인하라. 참조 의존 컷은 먼저 만든 실제 파일을 확인한 뒤 사용하라. 결과는 RUN/workers/PAGE/generation.json에 기록하라. 공유 파일 수정·register-image·발행은 메인 담당이다. 부모에게 페이지 ID, 성공/실패 컷 수, 결과 파일 경로, 수정 필요 사항만 5줄 이내로 반환하라.
