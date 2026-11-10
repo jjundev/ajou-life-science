@@ -5,16 +5,37 @@
 ## 입력과 실행
 
 1. 형제 스킬 `bio-problem-explain`의 SKILL.md와 저작·검토 references를 읽는다. 입력은 두 판 중 기존 대표 연습형 한 개이며 해설도 한 번만 저작한다. 대상은 `웹과제예상/<N>장/복습문제_<N>장_웹과제예상_v<K>.html`의 **명시 절대 경로**다. 날짜·최신·all로 선택하지 않는다. 새 RUN을 만들고 해설기 1–7단계를 수행한다. `lite` 호출이면 해설 저작에도 lite를 전달하고 네 검토는 유지한다. 모델·저작자와 독립 검산자 분담은 해설기 규칙을 따른다.
-2. 추출은 `python "$EXPLAIN/scripts/mpe_cli.py" extract --repo "$REPO" --target "$HTML" --run "$EXPLAIN_RUN"`으로 한다. EXPLAIN은 형제 스킬의 절대 경로, HTML은 방금 통과한 파일, EXPLAIN_RUN은 비어 있는 고유 경로다. 셸 변수는 같은 호출에서 먼저 설정하거나 실제 절대 경로로 치환한다.
-3. p1–p15 모두의 해설을 저작한다. 필수 구역·선택 구역과 요약은 해설기의 `references/authoring.md`를 따른다. 판단 기준을 먼저 제시하고 모든 선지의 실제 주장에 적용해 선택·제외 이유를 설명하며 불필요한 반복을 덜어낸다. o1·o2는 설명 대상이 아니다. 해당 `.pack/v<K>/pack.json`, `blueprint.md`, 관련 노트·교과서·강의노트·기출을 실제로 대조한다. 설계표·정답키·개요 정답·카드 풀이·해설은 독립 검산자에게 제공하지 않는다. 정답 비공개 문항 사본만 준다.
-4. build/check와 source_visual·content·independent·browser 네 검토를 수행한다. 실제 사용한 참조 파일 path/SHA-256을 review.json의 references에 기록한다. pack.json/blueprint.md와 presentations.json·두 문제판도 문맥 해시로 묶이며 변경하면 재추출이 필요하다. 검토 결과를 현재 input_hash와 artifact_hashes에 대해 승인한 뒤 publish한다.
+2. 준비와 추출은 한 명령으로 한다. `explanation-retry.json`(attempt=0, active_explain_run, history, verified_snapshot = 두 문제판·`.pack/v<K>/` 파일 해시)을 컨트롤러 RUN에 쓰고, `mpe_cli.py extract`를 실행하고, 해설 RUN의 evidence에 retry 기록을 복사한다. 기록이 이미 있으면 attempt·history를 이어 쓴다.
+
+   ```bash
+   python "$SKILL/scripts/explain_handoff.py" init --repo "$REPO" --html "$HTML" --controller-run "$RUN" --explain-run "$EXPLAIN_RUN"
+   ```
+   EXPLAIN은 형제 스킬의 절대 경로, HTML은 방금 통과한 파일, EXPLAIN_RUN은 비어 있는 고유 경로다. 셸 변수는 같은 호출에서 먼저 설정하거나 실제 절대 경로로 치환한다.
+3. p1–p15 모두의 해설을 저작한다. 저작자는 p1–p5, p6–p10, p11–p15 세 명을 한 메시지에서 병렬로 띄우고, 저작자는 build·check를 돌리지 않는다(메인 에이전트가 모은 뒤 한 번 실행). 필수 구역·선택 구역과 요약은 해설기의 `references/authoring.md`를 따른다. 판단 기준을 먼저 제시하고 모든 선지의 실제 주장에 적용해 선택·제외 이유를 설명하며 불필요한 반복을 덜어낸다. o1·o2는 설명 대상이 아니다. 해당 `.pack/v<K>/pack.json`, `blueprint.md`, 관련 노트·교과서·강의노트·기출을 실제로 대조한다. 설계표·정답키·개요 정답·카드 풀이·해설은 독립 검산자에게 제공하지 않는다. 정답 비공개 문항 사본만 준다.
+4. build/check 뒤 네 검토를 수행한다. review.json을 손으로 다시 쓰지 않고 아래 명령으로 기록한다. build를 다시 하지 않는다(build는 네 검토를 not_run으로 초기화한다).
+
+   ```bash
+   python "$EXPLAIN/scripts/mpe_cli.py" build --run "$EXPLAIN_RUN"
+   python "$EXPLAIN/scripts/mpe_cli.py" check --run "$EXPLAIN_RUN"
+   python "$EXPLAIN/scripts/mpe_cli.py" browser --run "$EXPLAIN_RUN" --shots
+   python "$EXPLAIN/scripts/mpe_cli.py" import-blind --run "$EXPLAIN_RUN" --ledger "$RUN/blind-ledger.json"
+   python "$EXPLAIN/scripts/mpe_cli.py" review-merge --run "$EXPLAIN_RUN" --kind content --from "<content 검토 JSON>" --add-reference "<읽은 자료>"
+   python "$EXPLAIN/scripts/mpe_cli.py" review-merge --run "$EXPLAIN_RUN" --kind source_visual --from "<source_visual 검토 JSON>"
+   python "$EXPLAIN/scripts/mpe_cli.py" review-merge --run "$EXPLAIN_RUN" --kind browser --from "<browser 검토 JSON>"
+   python "$EXPLAIN/scripts/mpe_cli.py" publish --run "$EXPLAIN_RUN"
+   ```
+   - **independent:** 7단계 블라인드 리뷰어는 정답·풀이를 보지 않은 별도 에이전트이므로 그 ledger를 승계한다. `import-blind`는 카드 해시가 블라인드 당시와 같고, 15문항 모두 블라인드 답이 answer_key와 같고, 이의가 없을 때만 independent 항목(method·conclusion·evidence)을 채운다. 하나라도 어긋나면 거부하며, 그때는 해설기 규칙대로 정답을 보지 않은 별도 독립 검산자가 다시 푼다.
+   - **source_visual:** forecast에서는 p1–p5 기출 카드의 `23, 24 소스/<N>강 합본.pdf` 해당 쪽만 렌더해 대조하고(최대 5쪽), 6단계 check.py의 원문 대조(`[exam-verbatim]`·`[exam-twin]`·`[exam-number]` 통과)를 함께 기록한다. 새 문제 p6–p15는 blueprint 노트 앵커의 정리노트 절과 텍스트로 대조하며 교과서·강의노트 PDF를 렌더하지 않는다.
+   - **browser:** `mpe_cli.py browser`가 1280×900·1024×768·375×812 × light/dark 조작 결과를 `evidence/explain-browser.json`에 남기고 stage에 동기화한다. 스크린샷을 직접 본 뒤 browser 검토를 기록한다.
+   - evidence 파일을 build 뒤에 추가했으면 `mpe_cli.py sync-evidence`로 stage에 반영한다(위 browser·import-blind는 자동으로 한다). evidence 밖 산출물이 바뀌었으면 거부되므로 build와 검토를 다시 한다.
+   - 실제 사용한 참조 파일 path/SHA-256은 `review-merge --add-reference`로 review.json의 references에 기록한다. pack.json/blueprint.md와 presentations.json·두 문제판도 문맥 해시로 묶이며 변경하면 재추출이 필요하다. 검토 결과를 현재 input_hash와 artifact_hashes에 대해 승인한 뒤 publish한다.
 
 ## 수정·재검토 루프
 
 컨트롤러는 최초 검토 전 `attempt=0`을 기록한다. 최초 검토 이후 **수정·재검토 최대 2회**(최초 1회 + 재검토 최대 2회)다. 실패를 찾으면 아래 원인을 구분하고, 수정에 들어갈 때 attempt를 1 올린다. 원인·바꾼 파일/문항·검토 결과·누적 횟수를 예상문제 컨트롤러 RUN의 `explanation-retry.json`에 남긴다. 필드는 attempt, active_explain_run, history(원인·변경·결과), verified_snapshot이다. 이 기록은 해설 RUN 밖에 두며 새 RUN을 만들 때도 읽고 이어 쓴다. 각 해설 RUN의 evidence에도 해당 기록을 복사한다. 무한 반복하거나 disputed를 pass로 바꾸기만 하지 않는다.
 
-- **해설 오류:** explanations/pN.html을 고친다. build/check를 다시 실행한다. build가 네 검토를 모두 not_run으로 초기화하므로 source_visual/content/independent/browser를 현재 결과물에 대해 다시 검토·승인한다. 모두 pass이면 발행한다.
-- **예상문제 오류:** 해설기는 원본을 수정하지 않는다. 수정 전에 컨트롤러 RUN의 `verified/attempt-<n>/`에 마지막 검증된 연습형·시험형 HTML과 해당 .pack/v<K>/ 전체를 복사해 함께 보관한다. 컨트롤러가 예상문제 작성 단계로 돌아가 이번 호출의 새 버전 cards/pN.html, pack.json 정답키, blueprint.md를 일관되게 고친다. 원문 그대로/변형 여부와 기출 출처도 다시 대조한다. **6–8단계** 빌드·검사·새 리뷰어 블라인드 풀이·브라우저 확인을 다시 통과시킨 후 **새 RUN**에서 해설을 재추출·저작·검토한다. 기존 RUN의 승인 기록은 재사용하지 않는다.
+- **해설 오류:** explanations/pN.html을 고친다. build/check를 다시 실행한다. build가 네 검토를 모두 not_run으로 초기화하므로 source_visual/content/independent/browser를 현재 결과물에 대해 다시 검토·승인한다. 카드를 바꾸지 않았으므로 independent는 `import-blind`를 다시 실행해 승계하고, browser는 `mpe_cli.py browser`를 다시 실행한다. 모두 pass이면 발행한다.
+- **예상문제 오류:** 해설기는 원본을 수정하지 않는다. 수정 전에 컨트롤러 RUN의 `verified/attempt-<n>/`에 마지막 검증된 연습형·시험형 HTML과 해당 .pack/v<K>/ 전체를 복사해 함께 보관한다. 컨트롤러가 예상문제 작성 단계로 돌아가 이번 호출의 새 버전 cards/pN.html, pack.json 정답키, blueprint.md를 일관되게 고친다. 원문 그대로/변형 여부와 기출 출처도 다시 대조한다. **6–8단계** 빌드·검사·새 리뷰어 블라인드 풀이(바뀐 카드만 delta, ledger 병합)·브라우저 확인을 다시 통과시킨 후 **새 RUN**에서 해설을 재추출·저작·검토한다. 기존 RUN의 승인 기록은 재사용하지 않는다.
 - 최초 예상문제 블라인드 수정 횟수와 해설 attempt를 따로 기록한다. 해설 검토 중 문제를 고치는 것도 해설 attempt를 1 소비한다. 6–8단계로 복귀해도 중첩 한도를 **초기화하지** 않는다. 복귀한 검증의 실패로 다시 수정해야 하면 남은 해설 예산을 소비하며, attempt=2 이후 추가 수리를 시작하지 않는다.
 - 참조/문맥/원본/해설/산출물이 승인 후 바뀌면 이전 검토로 발행하지 않는다. 원본·문맥 변경은 새 RUN 재추출, 해설 변경은 재조립, 모든 변경은 현재 해시의 재검토가 필요하다.
 

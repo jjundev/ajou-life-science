@@ -131,5 +131,34 @@ class TestCheck(unittest.TestCase):
         p1 = card_html(1, "A", kind="기출 변형", stem="바뀐 숫자의 기출 발문?", options=["나", "가", "다", "라", "마"])
         self.assertEqual(check.check(self.exam_extra("기출숫자", p1)), [])
 
+    def _titled(self, title, options, answer="A", stem=None):
+        html = card_html(1, answer, options=options, stem=stem)
+        return html.replace("P1. [예상] 제목 1", f"P1. [예상] {title}")
+
+    def test_title_leak_term_answer_fails(self):
+        p1 = self._titled("창시자 효과와 기대 빈도", ["창시자 효과", "병목 효과", "유전자 흐름", "돌연변이", "자연 선택"])
+        problems = check.check(self.built(cards=base_cards(p1=p1)))
+        self.assertIn("title-leak", codes(problems))
+
+    def test_title_leak_two_words_in_sentence_answer_fails(self):
+        opts = ["최근 공통조상을 공유할수록 DNA 유사성이 높다고 본다", "몸 크기가 비슷하면 가깝다",
+                "서식지가 같으면 가깝다", "화석이 많으면 가깝다", "색이 같으면 가깝다"]
+        p1 = self._titled("공통조상과 유사성", opts)
+        self.assertIn("title-leak", codes(check.check(self.built(cards=base_cards(p1=p1)))))
+
+    def test_neutral_or_stem_shared_title_passes(self):
+        opts = ["창시자 효과", "병목 효과", "유전자 흐름", "돌연변이", "자연 선택"]
+        neutral = self._titled("작은 집단이 새로 만든 섬의 빈도", opts)
+        self.assertNotIn("title-leak", codes(check.check(self.built(cards=base_cards(p1=neutral)))))
+        in_stem = self._titled("창시자 효과", opts, stem="다음 중 창시자 효과에 해당하는 것은?")
+        self.assertNotIn("title-leak", codes(check.check(self.built(version=2, cards=base_cards(p1=in_stem)))))
+
+    def test_single_generic_word_in_sentence_answer_passes(self):
+        opts = ["두 종은 서로 다른 시기에 번식해 교배하지 못한다", "두 종은 크기가 같다",
+                "두 종은 먹이가 같다", "두 종은 색이 같다", "두 종은 서식지가 같다"]
+        p1 = self._titled("번식 장벽의 종류", opts)
+        self.assertNotIn("title-leak", codes(check.check(self.built(cards=base_cards(p1=p1)))))
+
+
 if __name__ == "__main__":
     unittest.main()

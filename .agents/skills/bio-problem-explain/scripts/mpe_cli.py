@@ -122,6 +122,161 @@ def build(item, fragments):
     dump(folder / 'review.json', review)
     print('build:', artifacts.html)
 
+REVIEW_KINDS = ('source_visual', 'content', 'independent', 'browser')
+REVIEW_STATUSES = ('pass', 'fail', 'disputed', 'not_run')
+
+def current_review(item, fragments):
+    review = read_json(inside(item['folder'] / 'review.json', item['run']))
+    if review.get('input_hash') != payload_hash(item['pack'], fragments):
+        raise ExplainError('설명 조각 또는 원본 변경: build부터 다시 실행하세요')
+    return review
+
+def sync_evidence(item, fragments):
+    """Copy evidence written after build into the current stage and rebind hashes; reviews stay as recorded.
+
+    Only files under the stage's evidence folder may change. Any other stage change means the
+    rendered output differs from what was reviewed, so the caller must build and review again.
+    """
+    review = current_review(item, fragments)
+    artifacts = load_artifacts(item)
+    stage = artifacts.html.parent
+    evidence_rel = (artifacts.manifest.parent / 'evidence').relative_to(stage).as_posix() + '/'
+    manifest_rel = artifacts.manifest.relative_to(stage).as_posix()
+    recorded = review.get('artifact_hashes')
+    if not isinstance(recorded, dict):
+        raise ExplainError('review.json에 artifact_hashes 없음: build부터 다시 실행하세요')
+    fixed = lambda rel: rel != manifest_rel and not rel.startswith(evidence_rel)
+    now = {p.relative_to(stage).as_posix(): sha256(p) for p in stage.rglob('*') if p.is_file()}
+    changed = sorted(rel for rel in set(recorded) | set(now) if fixed(rel) and recorded.get(rel) != now.get(rel))
+    if changed:
+        raise ExplainError('evidence 밖 stage 파일이 build 이후 바뀜: build와 검토를 다시 하세요: ' + ', '.join(changed[:5]))
+    target = stage / evidence_rel
+    if target.exists():
+        shutil.rmtree(target)
+    source = inside(item['folder'] / 'evidence', item['run'])
+    for path in source.rglob('*') if source.is_dir() else ():
+        inside(path, item['run'])
+        if path.is_file():
+            dest = target / path.relative_to(source)
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(path, dest)
+    manifest = read_json(artifacts.manifest)
+    files = sorted(p for p in stage.rglob('*') if p.is_file() and p != artifacts.manifest)
+    manifest['files'] = {p.relative_to(stage).as_posix(): sha256(p) for p in files}
+    dump(artifacts.manifest, manifest)
+    review['artifact_hashes'] = artifact_hashes(load_artifacts(item))
+    dump(item['folder'] / 'review.json', review)
+    print(f'sync-evidence: evidence {sum(1 for p in target.rglob("*") if p.is_file()) if target.is_dir() else 0}개 반영, 검토 기록 유지')
+
+def _entry_errors(entry, label):
+    if not isinstance(entry, dict):
+        return [f'{label}: 객체가 아님']
+    errors = []
+    if entry.get('status') not in REVIEW_STATUSES:
+        errors.append(f'{label}: status는 {"/".join(REVIEW_STATUSES)} 중 하나')
+    if any(not isinstance(entry.get(k), str) for k in ('reviewer', 'evidence')):
+        errors.append(f'{label}: reviewer·evidence 문자열 필요')
+    return errors
+
+def review_merge(item, fragments, kind, part, add_references=()):
+    """Replace one review kind (and optionally add reference hashes) without rewriting the rest by hand."""
+    review = current_review(item, fragments)
+    if kind is not None:
+        if kind not in REVIEW_KINDS:
+            raise ExplainError(f'검토 종류는 {", ".join(REVIEW_KINDS)} 중 하나')
+        value = part.get(kind, part) if isinstance(part, dict) else part
+        errors = _entry_errors(value, kind)
+        if kind in ('content', 'independent') and not errors:
+            expected = set(review[kind]['items'])
+            items = value.get('items')
+            if not isinstance(items, dict) or set(items) != expected:
+                errors.append(f'{kind}: items 키는 {sorted(expected)}와 같아야 해요')
+            else:
+                for key, entry in items.items():
+                    errors += _entry_errors(entry, f'{kind}.{key}')
+            if kind == 'content' and 'note_link_exceptions' not in value:
+                value = {**value, 'note_link_exceptions': review['content'].get('note_link_exceptions', {})}
+        if errors:
+            raise ExplainError(' / '.join(errors))
+        review[kind] = value
+    references = [r for r in review.get('references', []) if isinstance(r, dict)]
+    for path in add_references:
+        path = inside(Path(path).resolve(), item['repo'])
+        if not path.is_file():
+            raise ExplainError(f'참조 자료 없음: {path}')
+        references = [r for r in references if Path(r.get('path', '')) != path]
+        references.append({'path': str(path), 'sha256': sha256(path)})
+    review['references'] = references
+    dump(item['folder'] / 'review.json', review)
+    print(f'review-merge: {kind or "references"} 기록' + (f', 참조 {len(add_references)}개' if add_references else ''))
+
+def import_blind(item, fragments, ledger_path):
+    """Carry the forecast step-7 blind solve into the independent review when nothing changed since."""
+    pack = item['pack']
+    if pack.profile != 'forecast':
+        raise ExplainError('import-blind는 웹과제 예상(forecast)에만 쓸 수 있어요')
+    review = current_review(item, fragments)
+    match = re.search(r'_v(\d+)\.html$', pack.path.name)
+    src = pack.path.parent / '.pack' / f'v{match.group(1)}'
+    ledger_path = Path(ledger_path).resolve()
+    ledger = read_json(ledger_path)
+    if ledger.get('version') != 1 or Path(ledger.get('src', '')).resolve() != src.resolve():
+        raise ExplainError(f'ledger가 이 세트({src})의 기록이 아니에요')
+    key = read_json(src / 'pack.json')['answer_key']
+    if set(key) != {p.id for p in pack.problems}:
+        raise ExplainError('answer_key와 해설 문항 집합이 달라요')
+    errors, rows, items = [], [], {}
+    for p in pack.problems:
+        entry = ledger['cards'].get(p.id)
+        card = src / 'cards' / f'{p.id}.html'
+        if p.subparts != ('main',):
+            errors.append(f'{p.id}: 소문항이 있는 문항은 승계하지 않아요')
+            continue
+        if entry is None:
+            errors.append(f'{p.id}: 블라인드 기록 없음')
+            continue
+        if entry.get('sha256') != sha256(card):
+            errors.append(f'{p.id}: 블라인드 이후 카드 변경')
+        if entry.get('answer') != key[p.id] or (p.choice is not None and p.choice.answer != key[p.id]):
+            errors.append(f'{p.id}: 블라인드 답 {entry.get("answer") or "없음"} ≠ answer_key {key[p.id]}')
+        if entry.get('objection'):
+            errors.append(f'{p.id}: 이의 — {entry["objection"]}')
+        types = re.search(r'data-types="([^"]*)"', card.read_text(encoding='utf-8'))
+        method = 'exact' if types and '계산' in types.group(1).split() else 'qualitative'
+        reviewer = f'웹과제 예상 7단계 블라인드 리뷰어(정답 비공개, {entry.get("round")}회차)'
+        items[f'{p.id}:main'] = {
+            'status': 'pass', 'reviewer': reviewer, 'evidence': f'evidence/independent-blind.md#{p.id}',
+            'method': method,
+            'conclusion': f'정답을 보지 않은 블라인드 답 {entry.get("answer")} = answer_key {key[p.id]}, 이의 없음'}
+        rows.append(f'| <a id="{p.id}"></a>{p.id} | {entry.get("answer")} | {key[p.id]} | {entry.get("round")} | '
+                    f'{entry.get("basis", "")} | {entry.get("steps", "")} | {entry.get("level", "")} | `{entry.get("sha256", "")[:12]}` |')
+    if errors:
+        raise ExplainError('블라인드 승계 거부(별도 독립 검산자가 다시 풀어야 해요): ' + ' / '.join(errors))
+    evidence = inside(item['folder'] / 'evidence', item['run'])
+    evidence.mkdir(exist_ok=True)
+    shutil.copy2(ledger_path, evidence / 'blind-ledger.json')
+    answer_files = sorted({ledger['cards'][p.id].get('answers_file', '') for p in pack.problems} - {''})
+    for index, name in enumerate(answer_files, 1):
+        if Path(name).is_file():
+            shutil.copy2(name, evidence / f'blind-answers-{index}.md')
+    (evidence / 'independent-blind.md').write_text(
+        '# 독립 검산: 웹과제 예상 7단계 블라인드 풀이 승계\n\n'
+        '정답·풀이를 지운 사본(blind.py)으로 별도 리뷰어가 정리노트만 근거로 풀었다. '
+        '카드 해시가 블라인드 당시와 같고, 답이 answer_key와 같으며, 이의가 없는 경우에만 승계했다.\n\n'
+        '| 카드 | 블라인드 답 | answer_key | 회차 | 근거 | 최소 풀이 단계 | 수준 | 카드 SHA-256 |\n'
+        '|---|---|---|---|---|---|---|---|\n' + '\n'.join(rows) + '\n', encoding='utf-8')
+    review['independent'] = {'status': 'pass', 'reviewer': '웹과제 예상 7단계 블라인드 리뷰어(정답 비공개)',
+                             'evidence': f'evidence/independent-blind.md: {len(items)}/{len(items)} 일치, 이의 0, 카드 해시 일치',
+                             'items': items}
+    references = [r for r in review.get('references', []) if isinstance(r, dict)]
+    cards = {str((src / 'cards' / f'{p.id}.html').resolve()) for p in pack.problems}
+    references = [r for r in references if r.get('path') not in cards]
+    references += [{'path': path, 'sha256': sha256(Path(path))} for path in sorted(cards)]
+    review['references'] = references
+    dump(item['folder'] / 'review.json', review)
+    print(f'import-blind: independent {len(items)}문항 승계')
+    sync_evidence(item, fragments)
+
 # Page code (CSS, executable scripts) is layout; JSON data scripts such as the answer model are content.
 CODE_RE = re.compile(r'<style\b[^>]*>.*?</style>|<script\b(?![^>]*application/json)[^>]*>.*?</script>', re.S | re.I)
 # The .assets migration prefixed relative src/href values in date-folder HTML; the targets are the same files.
@@ -260,9 +415,25 @@ def main(argv=None):
     rerendering.add_argument('--repo', type=Path, required=True)
     rerendering.add_argument('--target', required=True)
     rerendering.add_argument('--run', type=Path, required=True)
-    for name in ('build', 'check', 'publish'):
+    for name in ('build', 'check', 'publish', 'sync-evidence'):
         commands.add_parser(name).add_argument('--run', type=Path, required=True)
+    merging = commands.add_parser('review-merge')
+    merging.add_argument('--run', type=Path, required=True)
+    merging.add_argument('--kind', choices=REVIEW_KINDS)
+    merging.add_argument('--from', dest='part', type=Path, help='해당 검토 객체 JSON(또는 {kind: 객체})')
+    merging.add_argument('--add-reference', action='append', default=[], type=Path,
+                         help='읽은 참조 자료(절대 경로·SHA-256을 references에 기록, 반복 가능)')
+    blinding = commands.add_parser('import-blind')
+    blinding.add_argument('--run', type=Path, required=True)
+    blinding.add_argument('--ledger', type=Path, required=True)
+    browsing = commands.add_parser('browser')
+    browsing.add_argument('--run', type=Path, required=True)
+    browsing.add_argument('--shots', action='store_true', help='뷰포트·테마별 스크린샷 저장')
     args = parser.parse_args(argv)
+    if args.command == 'review-merge' and (args.kind is None) != (args.part is None):
+        parser.error('--kind와 --from은 함께 써요')
+    if args.command == 'review-merge' and args.kind is None and not args.add_reference:
+        parser.error('--kind/--from 또는 --add-reference가 필요해요')
     try:
         if args.command == 'extract':
             return extract(args.repo, args.target, args.run)
@@ -278,6 +449,17 @@ def main(argv=None):
                 fragments = load_fragments(item)
                 if args.command == 'build':
                     build(item, fragments)
+                elif args.command == 'sync-evidence':
+                    sync_evidence(item, fragments)
+                elif args.command == 'review-merge':
+                    part = read_json(args.part) if args.part else None
+                    review_merge(item, fragments, args.kind, part, args.add_reference)
+                elif args.command == 'import-blind':
+                    import_blind(item, fragments, args.ledger)
+                elif args.command == 'browser':
+                    from mpe_browser import run_browser
+                    if run_browser(item, shots=args.shots):
+                        failed = True
                 else:
                     artifacts = load_artifacts(item)
                     if args.command == 'check':

@@ -22,6 +22,48 @@ HELP_PHRASES = ("답을 선택하면", "여기를 눌러", "다른 보기도 눌
 NOTE_LINK_RE = re.compile(r'href="\.\./\.\./복습노트/\d{4}/정리노트_[^"#]+\.html#s\d+-[a-z0-9-]+"')
 
 
+TITLE_PREFIX_RE = re.compile(r"^P\d+\.\s*\[[^\]]*\]\s*")
+TOKEN_RE = re.compile(r"[가-힣A-Za-z0-9]+")
+PARTICLES = ("에서", "으로", "와", "과", "의", "및", "로", "은", "는", "을", "를", "이", "가")
+SHORT_ANSWER = 12  # 정규화한 정답 보기 글자 수(이하이면 용어 선택형)
+GENERIC_TITLE_WORDS = {"서로", "사이", "사이에", "같은", "다른", "변화", "비교", "구별", "구별하기", "관계", "차이",
+                       "개념", "의미", "조건", "결과", "원리", "과정", "구하기", "판단", "해석", "부분"}
+
+
+def _title_tokens(title: str) -> list[str]:
+    out = []
+    for tok in TOKEN_RE.findall(TITLE_PREFIX_RE.sub("", title)):
+        for p in PARTICLES:
+            if tok.endswith(p) and len(tok) - len(p) >= 2:
+                tok = tok[: -len(p)]
+                break
+        hangul = len(re.findall(r"[가-힣]", tok))
+        if hangul >= 2 or (hangul == 0 and len(tok) >= 3 and not tok.isdigit()):
+            out.append(tok)
+    return out
+
+
+def title_leaks(c: dict) -> list[str]:
+    """정답 보기에만 있고 발문·문제 영역·오답 보기에는 없는 제목 낱말."""
+    if c["answer_index"] is None or not c["options"]:
+        return []
+    problem = re.search(r'<div class="problem">(.*?)<ul class="choices">', c["body"], re.S)
+    visible = cards.norm(c["stem"] + " " + (cards.text(problem.group(1)) if problem else ""))
+    answer = cards.norm(c["options"][c["answer_index"]])
+    others = [cards.norm(o) for i, o in enumerate(c["options"]) if i != c["answer_index"]]
+    leaks = []
+    for tok in _title_tokens(c["title"]):
+        t = cards.norm(tok)
+        if tok in GENERIC_TITLE_WORDS or t in visible or any(t in o for o in others):
+            continue
+        if t in answer:
+            leaks.append(tok)
+    # 용어 하나를 고르는 짧은 정답은 낱말 하나로도 답이 드러나고, 문장형 정답은 두 낱말 이상일 때만 단서로 본다.
+    if len(answer) <= SHORT_ANSWER or len(leaks) >= 2:
+        return leaks
+    return []
+
+
 def _webquiz_stems(repo: Path, chapter: int) -> set[str]:
     f = repo / "웹과제" / f"{chapter}장" / "questions.json"
     if not f.is_file():
@@ -106,6 +148,10 @@ def check(html_path: Path | str) -> list[str]:
         kind = TITLE_KIND.get(exams.get(cid, {}).get("mode"), "예상")
         if not c["title"].startswith(f"{cid.upper()}. [{kind}]"):
             probs.append(f"[structure] {cid}: 제목은 '{cid.upper()}. [{kind}]'로 시작해야 함")
+        leaks = title_leaks(c)
+        if leaks:
+            probs.append(f"[title-leak] {cid}: 제목 {', '.join(repr(t) for t in leaks)}가 정답 보기에만 있음"
+                         " — 발문이 묻는 대상만 제목에 쓴다")
         order = re.findall(r'<h3>|<div class="problem">|<details class="(?:original|hint|solution)">', c["body"])
         if order != ["<h3>", '<div class="problem">', '<details class="original">',
                      '<details class="hint">', '<details class="solution">']:

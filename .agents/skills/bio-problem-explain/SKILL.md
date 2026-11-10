@@ -55,8 +55,8 @@ description: 생명과학 복습노트의 기존 복습문제 또는 명시 경�
 
 ## 저작과 독립 검산 분담
 
-- 저작: 문항 10개당 에이전트 1명을 **한 메시지에서 병렬로** 띄운다. 모델은 opus, `lite`이면 sonnet이다. 각 에이전트에게 자기 문항 ID, `source.json` 경로, [저작 규칙](references/authoring.md), 위 참조 자료를 준다. 서브에이전트가 없으면 같은 묶음을 차례로 직접 쓴다.
-- 독립 검산: 저작 에이전트와 **별도인** 에이전트 1명이 맡는다. 이 에이전트에게는 카드의 정답·풀이·설명 조각을 주지 않고 문항(지문·보기·그림)과 정리노트·교과서·강의노트만 준다. 다시 푼 답을 컨트롤러가 카드 정답과 `.pack/key-check.md`(없으면 `.pack/variants.md`의 `의도한 정답과 이유` 열)에 대조한다. forecast에서는 컨트롤러가 해당 버전 pack.json/blueprint.md로 대조한다. 독립 검산자에게 그 정답키·설계표·개요의 정답을 제공하지 않는다. 기준은 [검토 기록](references/verification.md)의 independent 항목이다.
+- 저작: 문항 10개당 에이전트 1명을 **한 메시지에서 병렬로** 띄운다. forecast(p1–p15)는 p1–p5, p6–p10, p11–p15 세 명이다. 모델은 opus, `lite`이면 sonnet이다. 저작 에이전트는 `explanations/pN.html`과 evidence만 쓰고 build·check·브라우저 검사를 돌리지 않는다. 메인 에이전트가 모두 모은 뒤 한 번 실행한다. 각 에이전트에게 자기 문항 ID, `source.json` 경로, [저작 규칙](references/authoring.md), 위 참조 자료를 준다. 서브에이전트가 없으면 같은 묶음을 차례로 직접 쓴다.
+- 독립 검산: 저작 에이전트와 **별도인** 에이전트 1명이 맡는다. 이 에이전트에게는 카드의 정답·풀이·설명 조각을 주지 않고 문항(지문·보기·그림)과 정리노트·교과서·강의노트만 준다. 다시 푼 답을 컨트롤러가 카드 정답과 `.pack/key-check.md`(없으면 `.pack/variants.md`의 `의도한 정답과 이유` 열)에 대조한다. forecast에서는 컨트롤러가 해당 버전 pack.json/blueprint.md로 대조한다. forecast 자동 연결에서는 예상 스킬 7단계 블라인드 리뷰어(정답·풀이를 보지 않은 별도 에이전트)의 ledger를 `mpe_cli.py import-blind`로 승계하며, 카드 해시·답·이의 조건이 맞지 않으면 별도 독립 검산자가 다시 푼다. 독립 검산자에게 그 정답키·설계표·개요의 정답을 제공하지 않는다. 기준은 [검토 기록](references/verification.md)의 independent 항목이다.
 
 ## 실행
 
@@ -75,14 +75,21 @@ description: 생명과학 복습노트의 기존 복습문제 또는 명시 경�
    - (A) 충돌: (C)에 해당하지 않으면서 카드 정답이 인쇄 답안지·기출·웹과제·key-check 판단 답 또는 독립 재풀이 답과 다르면 몰래 수정하거나 정상 답으로 승인하지 않고 disputed로 남기며, 그 팩은 발행을 보류한다.
    - (B) 결함 공개: 카드 정답이 인쇄 답·key-check·독립 재풀이와 모두 같고 문항 표현만 결함(다른 보기도 논쟁 여지, 방향·가닥 누락, 오타)이면 설명을 쓰되 understand에 `<strong>문항 결함:</strong>` 한 줄, solve에서 논쟁 보기를 정직하게 판정("엄밀히는 맞을 수도 있어요 — 이유"), pitfall에 시험 대처를 적는다. content 검토는 공개가 정확한지 확인한다. 이 경우는 disputed가 아니다.
    - (C) 인쇄 정답 오류: 카드 정답이 기출 인쇄 정답과만 다르고, 교과서·강의노트 근거와 독립 재풀이 답(있으면 key-check 판단 답)이 모두 카드 정답과 같으면 설명을 쓰고 발행한다. understand에 `<strong>인쇄 정답 오류:</strong>` 한 줄로 인쇄 정답과 카드 정답을 함께 밝히고, solve에서 인쇄 정답 보기가 왜 틀렸는지 근거 원리를 밝혀 판정하고 상세 자료·쪽은 evidence에 기록하며, pitfall에 시험에서 인쇄 정답을 만났을 때의 대처를 적는다. 이 경우는 disputed가 아니다.
-5. 조립과 기계 검사를 실행한다. build는 새 stage를 만들고 검토 상태를 모두 `not_run`으로 초기화한다.
+5. 조립과 기계 검사를 실행한다. build는 새 stage를 만들고 검토 상태를 모두 `not_run`으로 초기화한다. 검토 증거를 만들려고 build를 두 번 하지 않는다. build 뒤에 생긴 evidence는 `sync-evidence`가 stage에 반영한다(evidence 밖 산출물이 바뀌었으면 거부되므로 build와 검토를 다시 한다).
 
    ```sh
    SKILL=…; RUN=…; python3 "$SKILL/scripts/mpe_cli.py" build --run "$RUN"
    SKILL=…; RUN=…; python3 "$SKILL/scripts/mpe_cli.py" check --run "$RUN"
    ```
 
-6. [검토 기록](references/verification.md)을 읽고 실제 source_visual/content/independent/browser 결과를 `review.json`에 기록한다. 사용한 참조 파일의 절대 path와 SHA-256을 references에 기록한다. 구조 통과를 정답 검증으로 기록하지 않는다. 로컬 브라우저에서 1280×900/375×812, light/dark의 모든 문항·목차·이전/다음·요약·수식·그림·표를 확인한다. 콘솔·KaTeX 오류·누락 자원·외부 요청·문서 가로 넘침은 0이어야 한다. stage의 원 문제/개념 링크는 최종 발행 디렉터리 기준이므로 실제 원 파일과 anchor도 대조한다. 문제는 넓은 화면에서 목차 오른쪽·본문 왼쪽의 문제 패널 [문제 | 원문] 탭(원문 탭은 원문이 있는 문항만)으로 기본 표시되고, 패널 머리 버튼이나 끌어서 붙이기·떼기로 오른쪽에 붙이거나 띄운 창(이동·크기 조절)으로 바꿀 수 있으며 방식·위치는 `od-panels:explain:v2:prob`에 기억된다. 요약은 오른쪽 요약 패널, 좁은 화면에서 해설 위 접힘 버튼으로 표시된다. 템플릿 결함은 근거를 보고하며 임의로 템플릿을 수정하지 않는다. 네 검토는 `lite`에서도 생략하지 않는다.
+6. [검토 기록](references/verification.md)을 읽고 실제 source_visual/content/independent/browser 결과를 `review.json`에 기록한다. review.json 전체를 손으로 다시 쓰지 않고 검토 종류마다 `review-merge --kind <종류> --from <검토 JSON>`으로 넣는다. 사용한 참조 파일의 절대 path와 SHA-256은 `review-merge --add-reference <경로>`로 references에 기록한다.
+
+   ```sh
+   SKILL=…; RUN=…; python3 "$SKILL/scripts/mpe_cli.py" browser --run "$RUN" --shots
+   SKILL=…; RUN=…; python3 "$SKILL/scripts/mpe_cli.py" review-merge --run "$RUN" --kind browser --from "$RUN/browser-review.json"
+   SKILL=…; RUN=…; python3 "$SKILL/scripts/mpe_cli.py" review-merge --run "$RUN" --add-reference "<읽은 자료 절대 경로>"
+   ```
+   브라우저 확인은 일회용 Playwright 스크립트를 짜지 않고 `mpe_cli.py browser`(약 25초)를 쓴다. 결과는 `evidence/explain-browser.json`, 스크린샷은 대상 폴더의 `browser-shots/`에 남는다. PASS는 기계 확인이므로 스크린샷을 직접 보고 간격·겹침·그림을 판단한 뒤 browser 검토를 기록한다. 구조 통과를 정답 검증으로 기록하지 않는다. 로컬 브라우저에서 1280×900/375×812, light/dark의 모든 문항·목차·이전/다음·요약·수식·그림·표를 확인한다. 콘솔·KaTeX 오류·누락 자원·외부 요청·문서 가로 넘침은 0이어야 한다. stage의 원 문제/개념 링크는 최종 발행 디렉터리 기준이므로 실제 원 파일과 anchor도 대조한다. 문제는 넓은 화면에서 목차 오른쪽·본문 왼쪽의 문제 패널 [문제 | 원문] 탭(원문 탭은 원문이 있는 문항만)으로 기본 표시되고, 패널 머리 버튼이나 끌어서 붙이기·떼기로 오른쪽에 붙이거나 띄운 창(이동·크기 조절)으로 바꿀 수 있으며 방식·위치는 `od-panels:explain:v2:prob`에 기억된다. 요약은 오른쪽 요약 패널, 좁은 화면에서 해설 위 접힘 버튼으로 표시된다. 템플릿 결함은 근거를 보고하며 임의로 템플릿을 수정하지 않는다. 네 검토는 `lite`에서도 생략하지 않는다.
 7. 실제 검토 네 가지(source_visual·content·independent·browser)가 모두 pass이고 현재 해시가 일치하면 사용자 호출 범위에서 추가 확인 없이 발행한다. 미검토·변경·실패·disputed는 해당 팩의 발행을 막는다.
 
    ```sh
