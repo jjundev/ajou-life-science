@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>생명과학 1103 학습만화</title>
+  <meta name="description" content="1103 수업 학습만화. 12/13페이지 완료 · 일부 보류">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('od-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']})"></script>
+  <style>
+    /* ---------- 토큰 ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #b54708; --prof: #6941c6; --supp: #067647; --danger: #d92d20;
+      --scroll: #c9d0db; --scroll-hover: #9aa3b2;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --fs-title: clamp(28px, 6vw, 36px); --fs-h3: clamp(26px, 5.4vw, 32px); --fs-layer: 19px; --fs-lead: 22px; --fs-body: 17px; --fs-sub: 15px; --fs-small: 14px; --fs-label: 13px; --fs-fig: 12px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+      --radius: 8px; --measure: 680px; --tap: 48px; --btn-min: 160px;
+      --dur: 220ms; --dur-exit: 150ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+      /* 예전 조각이 참조할 수 있는 이름 */
+      --surface-2: var(--surface); --accent-soft: var(--surface); --warn-soft: var(--surface);
+      --prof-soft: var(--surface); --supp-soft: var(--surface); --eli5: var(--accent-ink); --eli5-soft: var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+        --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+        --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+        --scroll: #3f414b; --scroll-hover: #5b5e6a;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+      --scroll: #3f414b; --scroll-hover: #5b5e6a;
+    }
+
+    /* ---------- 기본 ---------- */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent-ink); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+
+    /* ---------- 상단 바 ---------- */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s2) var(--s4); display: flex; align-items: center; gap: var(--s3); min-height: 56px; }
+    .brand { flex: 1 1 auto; min-width: 0; font-size: var(--fs-body); font-weight: 700; white-space: nowrap; }
+    .text-btn { flex: none; min-height: 44px; min-width: 44px; padding: 0 var(--s3); border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); font: 600 var(--fs-small)/1 var(--font); cursor: pointer; }
+    .bar { height: 2px; background: var(--line); overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+
+    /* ---------- 본문 ---------- */
+    main { flex: 1 0 auto; width: 100%; max-width: var(--measure); margin: 0 auto; padding: var(--s6) var(--s5) var(--s7); }
+    .hero h1 { font-size: var(--fs-title); line-height: 1.3; margin: 0 0 var(--s3); letter-spacing: -0.02em; }
+    .hero p { color: var(--ink-2); margin: 0; }
+    section { margin-top: var(--s7); }
+    section > h2 { font-size: 22px; line-height: 1.4; margin: 0 0 var(--s4); }
+    .topic { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .topic h3 { margin: 0 0 var(--s2); font-size: var(--fs-h3); font-weight: 800; line-height: 1.3; letter-spacing: -0.02em; }
+    .tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+    .tag { font-size: var(--fs-label); line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+
+    /* 레이어: 배경 없이 라벨과 구분선으로 나눈다 */
+    .layer { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .layer.eli5 { margin-top: 0; padding-top: 0; border-top: 0; }
+    .layer > :first-child { margin-top: 0; }
+    .layer > :last-child { margin-bottom: 0; }
+    .layer-title { display: block; font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; color: var(--ink); margin-bottom: var(--s3); }
+    .layer.eli5 .layer-title { color: var(--accent-ink); }
+    .layer.eli5 .lead { font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; letter-spacing: -0.01em; margin: 0 0 var(--s4); }
+    /* 정확히 말하면: 본문 크기 그대로, 굵은 첫머리만 진하게 */
+    .layer.formal b { font-weight: 700; color: var(--ink); }
+    /* 교수님 말씀 · 주의: 보조 정보는 한 단계 작게 */
+    .layer.prof, .layer.warn, .layer.listen { font-size: var(--fs-sub); line-height: 1.7; }
+    .layer.prof blockquote { font-size: var(--fs-sub); }
+    .layer.prof .layer-title { color: var(--prof); }
+    .layer.warn, .layer.listen { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn .layer-title { color: var(--warn); font-size: var(--fs-body); }
+    .layer.listen .layer-title { color: var(--accent-ink); font-size: var(--fs-body); }
+    .layer.supp .badge.supp { margin-bottom: var(--s2); }
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
+    .badge.supp { color: var(--supp); }
+    .badge.exam { color: var(--warn); margin-right: var(--s1); }
+    blockquote { margin: var(--s3) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
+    ol.steps { padding-left: 1.4em; }
+    ol.steps li { margin: var(--s2) 0; }
+
+    /* 그림 · 수식 · 표 */
+    .figure { margin: var(--s4) 0; text-align: center; }
+    .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
+    .figure img { max-width: 100%; height: auto; }
+    .figure figcaption { font-size: var(--fs-small); color: var(--ink-2); margin-top: var(--s1); }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: var(--s1) 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+    th, td { border-bottom: 1px solid var(--line); padding: var(--s2); text-align: left; vertical-align: top; }
+    th { color: var(--ink-2); font-weight: 600; }
+    td:first-child, th:first-child { min-width: 6em; }
+
+    /* 위젯 */
+    .widget { background: var(--surface); border-radius: var(--radius); padding: var(--s4); margin: var(--s5) 0; }
+    .widget h4 { margin: 0 0 var(--s1); font-size: var(--fs-layer); line-height: 1.4; }
+    .widget-help { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s3); }
+    .controls { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--s2); font-size: var(--fs-small); }
+    .controls label { display: flex; align-items: center; gap: var(--s2); min-height: 44px; }
+    .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .widget svg { width: 100%; height: auto; background: var(--bg); border-radius: var(--radius); }
+    .readout { font-size: var(--fs-small); margin-top: var(--s2); }
+    .legend { font-size: var(--fs-label); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .sw { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: var(--s1); border-radius: 2px; }
+    .sw.truth { background: var(--ink-2); } .sw.fit { background: var(--accent); } .sw.train { background: var(--accent); height: 10px; width: 10px; border-radius: 50%; }
+    .sw.test { background: var(--warn); height: 10px; width: 10px; border-radius: 50%; } .sw.like { background: var(--accent); } .sw.prior { background: var(--prof); } .sw.post { background: var(--supp); }
+    .axis { stroke: var(--line); stroke-width: 1.5; }
+    .tick { fill: var(--ink-2); font-size: 11px; }
+    .plot-truth { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .plot-fit { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+    .pt-train { fill: var(--accent); }
+    .pt-test { fill: var(--warn); }
+    .plot-like { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .plot-prior { fill: none; stroke: var(--prof); stroke-width: 2; stroke-dasharray: 6 4; }
+    .plot-post { fill: none; stroke: var(--supp); stroke-width: 3; }
+    .mark-ml { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .mark-map { stroke: var(--supp); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 2; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 2.5; }
+    .fig-danger { stroke: var(--danger); fill: none; stroke-width: 2.5; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: 13px; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-fig); font-family: inherit; }
+
+    footer { width: 100%; max-width: var(--measure); margin: 0 auto; padding: 0 var(--s5) var(--s6); color: var(--ink-2); font-size: var(--fs-small); }
+
+    /* ---------- 하단 이동 바 ---------- */
+    .pager { position: sticky; bottom: 0; z-index: 10; background: var(--bg); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .pager-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s3) var(--s4); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); }
+    .pager-count { font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; min-width: 4em; }
+    .btn { min-height: var(--tap); min-width: var(--btn-min); padding: 0 var(--s6); border-radius: var(--radius); border: 0; font: 700 var(--fs-body)/1 var(--font); cursor: pointer; white-space: nowrap;
+      transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+    .btn-ghost { justify-self: start; background: var(--surface); color: var(--ink); }
+    .btn-primary { justify-self: end; background: var(--btn-bg); color: var(--on-btn); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    @media (hover: hover) {
+      .text-btn:hover, .btn-ghost:not(:disabled):hover { background: var(--line); }
+      .btn-primary:not(:disabled):hover { box-shadow: inset 0 0 0 100px rgba(0, 0, 0, .14); }
+    }
+
+    /* ---------- 목차 시트 ---------- */
+    .sheet { width: min(100%, var(--measure)); max-width: 100%; max-height: 80dvh; margin: auto auto 0; padding: 0; border: 0;
+      border-radius: 16px 16px 0 0; background: var(--bg); color: var(--ink); }
+    .sheet::backdrop { background: rgba(0, 0, 0, .4); }
+    .sheet-inner { padding: var(--s4) var(--s5) calc(var(--s5) + env(safe-area-inset-bottom)); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s2); }
+    .sheet-head h2 { margin: 0; font-size: var(--fs-lead); }
+    .toc { display: flex; flex-direction: column; }
+    .toc > a, .toc-group > a { display: block; padding: var(--s3) 0 var(--s1); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); text-decoration: none; }
+    .toc-list { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+    .toc-list a { display: flex; align-items: center; gap: var(--s3); min-height: var(--tap); padding: var(--s2) var(--s3); margin: 0 calc(-1 * var(--s3));
+      border-radius: var(--radius); color: var(--ink); text-decoration: none; line-height: 1.4; }
+    .toc-list a[aria-current="true"] { background: var(--surface); font-weight: 700; color: var(--accent-ink); }
+    .toc-list .toc-title { flex: 1 1 0; min-width: 0; }
+    @media (hover: hover) { .toc-list a:hover { background: var(--surface); } }
+
+    /* ---------- 한 화면에 하나씩 (JS가 켤 때만) ---------- */
+    html:not(.js) .pager, html:not(.js) #toc-open { display: none; }
+    html:not(.js) .sheet { display: block; position: static; width: 100%; max-height: none; margin: 0 auto; border-radius: 0; border-bottom: 1px solid var(--line); }
+    html:not(.js) .sheet-close { display: none; }
+    .js main > .hero:not(.is-current), .js main > section:not(.is-on), .js .screen:not(.is-current) { display: none; }
+    .js main > section { margin-top: 0; }
+    .js main > section > h2 { font-size: var(--fs-small); font-weight: 600; color: var(--accent-ink); margin: 0 0 var(--s2); }
+    .js .topic { padding: 0; border-top: 0; }
+    .js .hero { padding-top: 12vh; }
+    .js footer { display: none; }
+    .js body.at-end footer { display: block; }
+    .screen.enter-next { animation: enter-next var(--dur) var(--ease-out); }
+    .screen.enter-prev { animation: enter-prev var(--dur) var(--ease-out); }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .screen.enter-next, .screen.enter-prev { animation: none; }
+      .bar > span, .btn { transition: none; }
+    }
+    @media (max-width: 480px) {
+      main { padding: var(--s5) var(--s4) var(--s6); }
+      footer { padding: 0 var(--s4) var(--s5); }
+      .btn { min-width: 120px; padding: 0 var(--s5); }
+    }
+    @media print {
+      .topbar, .pager, .sheet { display: none !important; }
+      .js main > .hero, .js main > section, .js .screen, .js footer { display: block !important; }
+    }
+
+    /* ---------- 좌우 패널 (drawer) ---------- */
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
+    .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
+    .panel-toggle svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-toggle .strip { fill: transparent; stroke: none; transition: fill 150ms ease-out; }
+    .panel-toggle[aria-expanded="true"] { color: var(--accent-ink); }
+    .panel-toggle[aria-expanded="true"] .strip { fill: currentColor; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .i-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .theme-toggle .i-sun { display: block; }
+      :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
+    }
+
+    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
+    .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
+    .content { grid-column: 2; }
+    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
+    .content::-webkit-scrollbar, .panel-inner::-webkit-scrollbar { width: 8px; }
+    .content::-webkit-scrollbar-track, .panel-inner::-webkit-scrollbar-track { background: transparent; }
+    .content::-webkit-scrollbar-thumb, .panel-inner::-webkit-scrollbar-thumb { background: var(--scroll); border-radius: 8px; border: 2px solid var(--bg); }
+    .content::-webkit-scrollbar-thumb:hover, .panel-inner::-webkit-scrollbar-thumb:hover { background: var(--scroll-hover); }
+    @supports (scrollbar-color: auto) { .content, .panel-inner { scrollbar-width: thin; scrollbar-color: var(--scroll) transparent; } }
+    .panel-resize { display: none; }
+    .panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 44px; margin-bottom: var(--s2); }
+    .panel-head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-lead); line-height: 1.4; }
+    .panel-sub { margin: 0 0 var(--s4); font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; }
+    .panel-empty { margin: 0; color: var(--ink-2); }
+    .panel-label { display: block; margin: var(--s5) 0 var(--s2); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+
+    /* 진행 상태 */
+    .panel-meta { margin: 0 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .panel-meta b { color: var(--ink); }
+    .progress { height: 4px; margin-bottom: var(--s3); border-radius: 2px; background: var(--line); overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+    .panel .toc-list a { margin: 0 calc(-1 * var(--s2)); padding: var(--s2); font-size: var(--fs-panel); }
+    .toc-mark { flex: none; display: block; width: 20px; height: 20px; color: var(--ink-2); }
+    .toc-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .toc-mark.is-done { color: var(--accent-ink); }
+
+    /* 복습문제: 원문 · 힌트 · 풀이 */
+    .aid details:last-of-type { border-bottom: 1px solid var(--line); }
+    .aid details.original > summary { font-size: var(--fs-panel); }
+    .solved-btn { display: flex; align-items: center; justify-content: center; gap: var(--s2); width: 100%; min-height: var(--tap); margin-top: var(--s5); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .solved-btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
+
+    /* 정리노트: 페이지 요약 */
+    .sum-supp { margin-top: var(--s4); }
+    .sum-lead { margin: 0; font-size: var(--fs-body); font-weight: 700; line-height: 1.6; }
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+    .eq-list li:first-child { padding-top: 0; }
+    .eq-name { display: block; font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+    .eq-list .katex-display { margin: var(--s1) 0 0; text-align: left; }
+    .eq-list .katex-display > .katex { text-align: left; }
+    .terms { margin: 0; }
+    .terms dt { font-size: var(--fs-panel); font-weight: 700; margin-top: var(--s4); }
+    .terms dt:first-child { margin-top: 0; }
+    .terms dd { margin: var(--s1) 0 0; font-size: var(--fs-sub); line-height: 1.6; color: var(--ink-2); }
+    .flow { margin: 0; padding-left: 1.4em; font-size: var(--fs-sub); }
+    .flow li { margin: var(--s2) 0; }
+
+    @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
+
+    /* 넓은 화면: 본문 옆에 붙는 패널 */
+    @media (min-width: 1024px) {
+      .layout { --l: var(--panel-l-user, var(--panel-l)); }
+      .layout[data-left="closed"] { --l: 0px; }
+      .panel-left { width: var(--l); }
+      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
+      .panel-left .panel-resize { right: 0; }
+      .panel-right .panel-resize { left: 0; }
+      .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
+      .panel-left .panel-resize::after { right: 0; }
+      .panel-right .panel-resize::after { left: 0; }
+      .panel-resize:focus-visible { outline: none; }
+      .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
+      @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
+      body.is-resizing { cursor: col-resize; user-select: none; }
+      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
+      .scrim, .panel-close { display: none; }
+    }
+    @keyframes panel-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 좁은 화면: 가장자리에서 밀려 나오는 drawer */
+    @media (max-width: 1023.98px) {
+      .panel { position: fixed; top: 0; bottom: 0; z-index: 40; visibility: hidden;
+        transition: transform var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .panel-left { left: 0; width: min(var(--drawer-l), 88vw); transform: translateX(-100%); }
+      .panel-right { right: 0; width: min(var(--drawer-r), 88vw); transform: translateX(100%); }
+      .panel.is-open { visibility: visible; transform: none; transition: transform var(--dur) var(--ease-out); }
+      .panel-inner { padding-top: calc(var(--s3) + env(safe-area-inset-top)); padding-bottom: calc(var(--s6) + env(safe-area-inset-bottom)); }
+      .scrim { position: fixed; inset: 0; z-index: 35; background: var(--scrim); opacity: 0; visibility: hidden;
+        transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
+      html:not(.js) .panel-left { display: none; }
+    }
+    @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
+      .panel.is-shown { animation: none; }
+      .panel-resize::after { transition: none; }
+    }
+    @media print {
+      body { display: block; height: auto; overflow: visible; }
+      .layout { display: block; }
+      .content { overflow: visible; }
+      .panel, .scrim { display: none !important; }
+    }
+  </style>
+<style id="comic-style">
+/* Extends the note shell; its tokens and behavior remain the visual authority. */
+.comic-question { margin: var(--s3) 0 var(--s5); font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; }
+.comic-strip { display: grid; gap: var(--s6); list-style: none; margin: 0; padding: 0; }
+.comic-panel { min-width: 0; }
+.comic-panel figure { margin: 0; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.comic-scene { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; position: relative; isolation: isolate; background: #faf8f2; color: #162438; }
+.comic-panel img { grid-column: 1; grid-row: 1 / 3; align-self: end; display: block; width: 100%; height: auto; background: #faf8f2; }
+.comic-art-space { grid-column: 1; grid-row: 2; width: 100%; pointer-events: none; }
+.comic-balloon-layer { grid-column: 1; grid-row: 1; z-index: 1; display: flex; flex-direction: column; gap: var(--s3); padding: var(--s4) var(--s5); min-width: 0; }
+.comic-panel figcaption { padding: var(--s4); background: var(--bg); }
+.comic-number { display: block; margin-bottom: var(--s2); font-size: var(--fs-label); font-weight: 700; color: var(--ink-2); }
+.comic-caption { margin: 0; line-height: 1.7; }
+.comic-dialogue { position: relative; width: fit-content; max-width: 88%; margin: 0; padding: var(--s3) var(--s4); border: 1.5px solid #566477; border-radius: 18px; background: #fffefb; color: #162438; font-size: var(--fs-body); line-height: 1.6; box-shadow: 0 2px 0 #1624380d; }
+.comic-voice-left { align-self: flex-start; border-bottom-left-radius: 4px; }
+.comic-voice-right { align-self: flex-end; border-bottom-right-radius: 4px; background: #f0f5fc; }
+.comic-dialogue::after { content: ''; position: absolute; top: 18px; width: 10px; height: 10px; background: inherit; border: solid #566477; transform: rotate(45deg); }
+.comic-voice-left::after { left: -6px; border-width: 0 0 1.5px 1.5px; }
+.comic-voice-right::after { right: -6px; border-width: 1.5px 1.5px 0 0; }
+.comic-speaker { display: block; margin-bottom: var(--s1); font-size: var(--fs-label); font-weight: 700; color: #1b64da; }
+@media (max-width: 480px) {
+  .comic-balloon-layer { padding: var(--s3) var(--s4); gap: var(--s2); }
+  .comic-dialogue { max-width: 94%; padding: var(--s2) var(--s3); }
+}
+.comic-source { margin: var(--s6) 0 0; }
+.comic-source a { display: inline-flex; align-items: center; min-height: var(--tap); }
+.comic-panel .badge { display: block; width: fit-content; max-width: 100%; white-space: normal; margin: 0 0 var(--s2); }
+.sum > .badge { white-space: normal; margin-bottom: var(--s2); }
+@media print {
+  .comic-panel { break-inside: avoid; }
+  .comic-source { display: none; }
+}
+.comic-analogy, .comic-limit { margin: var(--s4) 0 0; padding-top: var(--s3); border-top: 1px solid var(--line); font-size: var(--fs-small); line-height: 1.7; color: var(--ink-2); }
+.comic-analogy strong, .comic-limit strong { display: block; margin-bottom: var(--s1); color: var(--ink); }
+
+</style>
+</head>
+<body data-screens="article.topic" data-panels="note" data-range="1103">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <strong class="brand">학습만화</strong>
+      <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>요약</span></button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
+  </header>
+  <div class="layout" data-left="open" data-right="closed">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
+      <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-left-title">목차</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-meta">읽은 토픽 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <nav class="toc" aria-label="목차"><a href="#comic-section-1">0. 화석과 지질시대</a><a href="#comic-section-2">1. 지각 변화와 적응</a><a href="#comic-section-3">2. 대진화의 양상</a><a href="#comic-section-4">3. 발생과 생물 분류</a><a href="#comic-section-5">4. 요약 · 예고</a></nav>
+      </div>
+    </aside>
+    <div class="content">
+  <main>
+    <div class="hero">
+      <h1>생명과학 1103 학습만화</h1>
+      <p>12/13페이지 완료 · 일부 보류. 그림과 대사를 따라 읽고 원본 정리노트에서 확인해요.</p>
+    </div>
+<section id="comic-section-1"><h2>0. 화석과 지질시대</h2><article class="topic" id="s0-dating"><h3>화석의 나이는 무엇을 재서 알아낼까요?</h3><p class="comic-question">반감기마다 처음 양의 절반을 빼나요? 오래된 화석도 C-14로 재나요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>아래층이면 몇 년 전인지도 알아요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>벽지처럼 쌓인 순서는 알려 줘. 숫자 나이는 다른 시계로 재야 해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s0-dating/01.png" alt="Object-only analogy: four wallpaper layers peeling back at one corner, earlier layers underneath; no people, no writing." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">변형·뒤집힘 없는 지층의 아래가 더 오래돼요. 상대 연대는 순서, 절대 연대는 수치로 추정한 나이예요. PCR은 남은 DNA 조각을 늘릴 뿐 잃은 유전정보를 복구하지 않아요.</p><p class="comic-analogy"><strong>비유 연결</strong> 뒤에 덧붙인 벽지 아래에 먼저 붙인 벽지가 남는 관계 → 교란·뒤집힘 없는 지층에서 아래층이 먼저 쌓여 더 오래됐다는 상대 연대 순서</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>죽은 뒤에는 무엇이 시계가 돼요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>새 탄소 유입이 멈춘 뒤 C-14가 줄어드는 비율을 생전 기준과 비교해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s0-dating/02.png" alt="Actual biology: living leafy plant taking carbon in with curved arrows; separately a dead leaf with no incoming arrow and a few mustard dots turning teal. No labels." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">동위원소는 양성자 수가 같고 질량수가 달라요. C-14의 14는 질량수이고, C-14는 N-14로 붕괴해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>절반씩이면 두 번 뒤에는 0 아닌가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>처음의 절반을 계속 빼는 게 아니야. 남은 양의 절반이라 100→50→25→12.5%야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s0-dating/03.png" alt="Four separate shallow trays holding precisely 16, 8, 4, 2 mustard beads respectively; uniform tray size, no arrows or labels." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">C-14 반감기 5,730년. 50%는 5,730년, 25%는 11,460년, 12.5%는 17,190년이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>6.25%면 몇 번 지난 거예요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>네 반감기, 22,920년이야. 25% 시료보다 두 반감기인 11,460년 더 오래됐어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s0-dating/04.png" alt="Two trays side by side: 4 mustard beads versus 1 mustard bead against an equal pale reference grid of 16 positions. Empty positions are outlined faintly." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">생전 기준을 동일하게 두고 사후 탄소 교환이 거의 없는 가상 계산이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>공룡 화석도 같은 시계로 재면 돼요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>C-14가 너무 적어져 부적합해. 형성 순서를 아는 화성암층의 다른 동위원소 연대로 범위를 좁혀.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s0-dating/05.png" alt="Actual geology cross section: horizontal lower volcanic ash bed, middle fossil-bearing sediment layer with one shell, upper volcanic ash bed; layers undisturbed, no igneous intrusion." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">아래 화산재층이 1억 2천만 년, 위층이 1억 년 전이면 사이 화석은 1억~1억 2천만 년 전이에요. 퇴적 입자의 형성 나이가 곧 퇴적·화석 나이는 아니에요. 관입암은 단순 위아래 순서로 읽지 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>기록이 없으면 그 생물도 없었던 거죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>보존이 잘 안 됐을 수도 있어. 화석은 행동·환경의 단서지만 기록에는 편향이 있어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s0-dating/06.png" alt="Fossil evidence still life: tooth, pollen grain enlarged in a separate circle, fossil dung, paired footprints, soft-bodied silhouette beside a sparsely filled record strip." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">골격·이빨은 형태·먹이, 화분은 식생·기후, 분화석은 먹이, 발자국은 이동·무리 행동의 간접 단서예요. 실제 연대 추정은 오염·생전 기준 변동을 고려해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 벽지는 선후 순서만 설명한다. 숫자 나이는 별도 시계가 필요하며 지층 교란·관입과 사후 탄소 교환 조건을 확인한다.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1103_Macroevolution_and_Taxonomy.html#s0-dating" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="sum-lead">남은 양이 매번 절반이 된다. C-14 비율은 사후 시간을, 교란 없는 지층의 순서는 상대 연대를 알려 준다.</p><p class="panel-label">용어</p><dl class="terms"><dt>반감기 시계</dt><dd>새 탄소 유입이 멈춘 뒤 C-14/C-12 비율을 생전 기준과 비교해요. 5,730년마다 현재 남은 C-14가 절반이 돼요. 25%는 11,460년, 6.25%는 22,920년이에요.</dd><dt>연대 해석의 조건</dt><dd><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>퇴적 입자의 형성 나이와 화석층 퇴적 나이는 달라요. 화성암층과 화석층의 실제 형성 순서, 교란·관입, 사후 탄소 교환과 오염을 확인해야 해요.</dd><dt>PCR의 한계</dt><dd>남은 DNA 조각의 양은 늘릴 수 있지만 사라진 전체 유전정보는 복구하지 못해요. 반감기 계산의 출제 가능성은 언급됐지만 출제 확정은 아니에요.</dd></dl></div></article><article class="topic" id="s0-geologic"><h3>지구 역사는 큰 사건의 순서로 기억해요</h3><p class="comic-question">생명 출현·진핵생물 출현·캄브리아기 대폭발은 같은 사건인가요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>인류가 지구 이야기의 주인공이면 처음부터 있었나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>긴 수업으로 치면 거의 끝에 등장해. 지구는 약 46억 년, 캄브리아기 시작도 약 5억 4천만 년 전이야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s0-geologic/01.png" alt="Analogy only: long unmarked classroom lesson progress ribbon with a tiny final highlighted segment; no humans, no letters, no ticks suggesting precise dates." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">큰 순서는 명왕→시생→원생→현생이언이에요.</p><p class="comic-analogy"><strong>비유 연결</strong> 아주 긴 수업에서 끝무렵에야 등장하는 마지막 장면 → 큰 사건은 서로 다른 시기에 일어났고, 현재 생물이 한 줄로 차례차례 바뀐 것이 아니다.</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>산소가 늘면 모두에게 좋은 건가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>혐기성 생물에는 해가 되기도 했어. 일부는 무산소 서식지에 남고 산소 호흡도 확산했지.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s0-geologic/02.png" alt="Actual early Earth scientific vignettes in a horizontal row: hot rocky globe, simple cells, photosynthetic cyanobacterial cells releasing small oxygen bubbles, then one nucleated cell; separated scenes no ladder." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">명왕: 불안정한 초기 지구. 시생: 원핵생물과 이후 광합성 생물. 원생: 산소 축적·진핵생물·뒤이은 다세포 생물. 남세균은 세균역의 원핵생물이고 물에서 전자를 얻는 광합성으로 산소를 방출해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>대폭발이면 진짜 터진 거예요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>많은 동물 계열이 짧은 지질 시간에 다양해졌다는 뜻이야. 최초 생명이나 진핵생물 출현과 달라.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s0-geologic/03.png" alt="Three separate fossil assemblages: diverse marine Cambrian-like invertebrates, Mesozoic dinosaur fossil with three small unlabeled time blocks, Cenozoic mammal fossil silhouettes. No explosion imagery." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">고생대: 캄브리아기 대폭발부터 페름기 말 멸종까지, 육상 진출. 중생대: 삼첩·쥐라·백악기, 백악기 말 멸종으로 끝나요. 신생대: 포유류 다양화, 훨씬 뒤 인류.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그럼 지금 어류가 차례로 포유류가 된 건 아니네요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>맞아. 큰 등장 순서를 현생 생물이 줄지어 변한 과정으로 읽으면 안 돼.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s0-geologic/04.png" alt="Branched biological tree with several extant tips at equal height; fish, amphibian, reptile and mammal silhouettes on separate terminal branches, no ancestor-to-descendant ladder." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">초기 이언 경계는 수업·강의노트·교재 근삿값이 달라 섞어 정밀 표처럼 외우지 않아요. 원생이언의 연한 몸 동물이 연체동물문만을 뜻하지 않아요. 세부 기보다 큰 사건의 순서를 우선해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 수업 길이는 시간 비율을 떠올리는 비유다. 모든 사건을 같은 간격으로 그린 연대표나 현재 생물의 진화 사다리가 아니다.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1103_Macroevolution_and_Taxonomy.html#s0-geologic" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="sum-lead">큰 사건은 서로 다른 시기에 일어났고, 현재 생물이 한 줄로 차례차례 바뀐 것이 아니다.</p><p class="panel-label">용어</p><dl class="terms"><dt>사건의 순서</dt><dd>명왕이언→시생이언의 원핵생물→원생이언의 진핵생물→현생이언의 캄브리아기 대폭발을 구별해요. 최초 생명·진핵생물·동물 다양화는 다른 사건이에요.</dd><dt>세부 기의 수업 범위</dt><dd>고생대: 캄브리아기·오르도비스기·실루리아기·데본기·석탄기·페름기. 중생대: 삼첩기·쥐라기·백악기. 신생대는 자료의 전통적 제3기·제4기 표기를 사용해요. 수업은 큰 사건을 우선했어요.</dd><dt>초기 연대의 근삿값</dt><dd><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>수업의 명왕/시생·시생/원생 경계는 약 40억·25억 년 전, 강의노트는 38억·24억 년 전, 교재는 38억·25억 년 전이에요. 섞어 정밀한 하나의 표로 외우지 않아요. 초기 불안정성을 생명 절대 불가능으로 단정하지 않아요.</dd></dl></div></article></section>
+<section id="comic-section-2"><h2>1. 지각 변화와 적응</h2><article class="topic" id="s1-plates"><h3>움직이는 대륙은 서식지와 연결을 바꿔요</h3><p class="comic-question">대륙이 갈라지면 바로 다른 종이 되나요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>다리가 끊긴 순간 다른 종이에요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>아니. 먼저 이동과 유전자 흐름이 줄어드는 조건이 생기는 거야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s1-plates/01.png" alt="Analogy: two island-like neighborhood platforms linked by a bridge; detached bridge segment resting aside, separate unmarked route arrows stop at the gap. No people." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">판게아 형성과 이후 대륙 분리를 구별해요. 분리 자체가 종분화의 완료는 아니에요.</p><p class="comic-analogy"><strong>비유 연결</strong> 다리로 연결된 두 구역 사이의 통행이 다리 철거로 끊기는 장면 → 장벽이 유전자 흐름을 줄이고 차이가 축적되어 생식적 격리가 생겨야 이소적 종분화가 된다.</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>땅이 합쳐져도 환경이 달라져요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>큰 내륙은 바다에서 멀어 건조해질 수 있어. 판의 이동은 연결과 서식지를 바꿔.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s1-plates/02.png" alt="Scientific diagram of tectonic rock plates with continents atop, one broad joined landmass with dry interior and blue coast; subtle mantle below, no floating continents in ocean." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">판구조론은 암석판이 맨틀 위에서 이동한다는 설명이에요. 고생대 말 판게아가 형성됐고 기후·화산 활동도 생존에 영향을 줘요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>떨어진 다음에는요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>집단마다 변이가 다르게 축적되고 생식적 격리가 생기면 이소적 종분화야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s1-plates/03.png" alt="Two separated land patches, each with small beetles sharing a recognizable ancestral shape but differing pattern frequencies; ocean gap in between; no magic transformation arrow." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">유전적 분화와 생식적 격리가 이어지는 과정이에요. 지리적 분리는 그 기회와 조건을 만들어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>같은 바다도 새와 벌레에겐 다르네요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>맞아. 실제로 유전자 흐름을 막는 장벽인지 생물의 이동 능력까지 봐야 해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s1-plates/04.png" alt="Same ocean gap shown twice in separate comparison scenes: land beetle stops at coast, seabird crosses above water. No human actors." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">땅이 갈라졌는지만으로 모든 계열에 같은 결과를 예측하지 않아요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 다리 철거는 이동 차단만 비유한다. 종분화에는 세대를 거친 유전적 차이와 생식적 격리가 필요하며 장벽 효과는 이동 능력에 달린다.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1103_Macroevolution_and_Taxonomy.html#s1-plates" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">장벽이 유전자 흐름을 줄이고 차이가 축적되어 생식적 격리가 생겨야 이소적 종분화가 된다.</p><p class="panel-label">용어</p><dl class="terms"><dt>판과 대륙</dt><dd>대륙은 암석판의 일부이며 판은 벌어지거나 충돌해요. 판게아 형성은 합쳐짐이고, 이후 분리는 이동·유전자 흐름과 서식지를 바꿔요.</dd><dt>종분화 판정</dt><dd>장벽의 효과는 이동 능력에 달려요. 분리 뒤 차이가 축적되고 생식적 격리가 생겨야 이소적 종분화가 이루어져요.</dd></dl></div></article><article class="topic" id="s1-convergence"><h3>같이 닮은 이유가 같지는 않아요</h3><p class="comic-question">모양이 닮으면 공통조상에게서 그 형질을 받은 걸까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>같은 모양이면 같은 설계도를 물려받았나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>같은 기능에 독립적으로 맞아진 걸 수도 있어. 생물에서도 형질의 유래를 물어야 해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s1-convergence/01.png" alt="Analogy: three visually distinct miniature boat hulls independently shaped into streamlined profiles, three separate work surfaces, no people or tools moving intentionally." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">모든 생물이 먼 공통조상을 공유한다는 사실만으로 모든 유사 형질이 상동은 아니에요.</p><p class="comic-analogy"><strong>비유 연결</strong> 서로 다른 제작자가 같은 용도에 맞춰 독립적으로 만든 유선형 배 → 비교하는 바로 그 형질의 유래로 판별한다. 독립 적응은 수렴 과정과 상사 유사성, 공통조상 유래는 상동성이다.</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>상어·펭귄·돌고래도 물에서 닮았네요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>유선형은 먼 계열의 독립 적응이야. 유사성은 상사성, 그 진화 과정은 수렴진화라고 불러.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s1-convergence/02.png" alt="Actual side-by-side shark, penguin swimming, dolphin swimming; accurate fish gills, bird beak and flippers, mammal blowhole and horizontal tail flukes; no hybrid bodies." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">상어는 어류, 펭귄은 조류, 돌고래는 포유류예요. 생물이 원해서 몸을 바꾼다는 뜻은 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그럼 새와 박쥐 앞다리는 전부 상사예요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>뼈의 상대적 배치는 공통조상 유래의 상동이야. 비행용 날개 적응은 독립적으로 생긴 측면이 있어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s1-convergence/03.png" alt="Scientific comparison of eagle wing and bat wing with subtle matching forelimb bone colors; bird feather wing distinct from bat membrane supported by elongated fingers; no labels." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">같은 두 동물이어도 앞다리뼈의 유래와 비행 기능을 비교하는 질문은 달라요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>선인장 닮음과 창시자 효과도 같은 말인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>선인장·대극의 독립 적응은 수렴이야. 소수 창시자의 우연한 빈도와 이형접합자 이점은 다른 기준이지.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s1-convergence/04.png" alt="Three separated comparison groups: cactus and euphorbia succulent silhouettes; small bead sample from large jar; paired red blood cell shapes with one normal and one sickle outline. No shared transformation arrows." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">아미시 사례는 창시자 효과, 말라리아 지역의 낫모양 적혈구 대립유전자 사례는 이형접합자 이점이에요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 배는 기능과 형태의 수렴만 비유한다. 생물은 필요를 느껴 설계하지 않으며 동일 동물도 비교 형질에 따라 상동과 상사 측면을 구별한다.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1103_Macroevolution_and_Taxonomy.html#s1-convergence" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="sum-lead">비교하는 바로 그 형질의 유래로 판별한다. 독립 적응은 수렴 과정과 상사 유사성, 공통조상 유래는 상동성이다.</p><p class="panel-label">용어</p><dl class="terms"><dt>형질의 유래</dt><dd>상동은 비교 형질이 공통조상에서 유래한 관계, 상사는 독립적으로 비슷해진 유사성이에요. 수렴은 상사적 닮음을 만드는 진화 과정이에요.</dd><dt>같은 동물, 다른 비교 단위</dt><dd><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>새와 박쥐의 앞다리뼈 상대적 배치는 상동 구조예요. 비행 날개로서의 적응에는 독립 진화의 상사적 측면이 있어요.</dd><dt>세 사례를 가르는 조건</dt><dd><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>선인장·대극은 먼 계열이 건조 환경에서 다육질 모습을 독립적으로 갖춘 수렴진화예요. 아미시는 소수 창시자의 우연한 유전자 조성으로 집단 빈도가 달라진 창시자 효과예요. 말라리아 유행 지역에서는 낫모양 적혈구 대립유전자의 이형접합자 AS가 두 동형접합자 AA·SS보다 유리한 이형접합자 이점이에요. 뒤의 두 예는 먼 계열의 형질이 독립적으로 닮는 수렴과 달라요.</dd></dl></div></article></section>
+<section id="comic-section-3"><h2>2. 대진화의 양상</h2><article class="topic" id="s2-trends"><h3>진화는 정해진 목표를 향해 가지 않아요</h3><p class="comic-question">현생 말의 특징은 모든 진화가 향하는 목표인가요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>남은 가지 하나만 보면 한 방향으로 자란 것 같아요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>사라진 가지를 빼서 그래. 말의 진화도 현생으로 이어진 한 계열만 보면 오해할 수 있어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s2-trends/01.png" alt="Analogy tree with many branching twigs, several broken-off or faded branches and one highlighted surviving branch, no directional upward progress arrow." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">멸종한 계열과 다른 방향의 변화까지 함께 비교해요.</p><p class="comic-analogy"><strong>비유 연결</strong> 여러 갈래 나무에서 남은 가지 하나만 골라 보는 장면 → 살아남은 한 계열의 경향을 보편 법칙으로 일반화하지 않는다. 유전 변이와 환경의 상호작용에서 유불리가 달라진다.</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>말은 커지고 발가락이 줄었다고 배웠는데요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>Marsh가 주목한 경향이야. 더 많은 화석은 몸집·발가락·이빨이 다양한 가지를 보여 줘.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s2-trends/02.png" alt="Branching horse fossil silhouettes with varied small and large bodies, separate inset hoof outlines with multiple toes and single hoof, varied tooth crowns; no linear ladder." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">대진화는 종 수준을 넘는 큰 양상이에요. 현생 계열에서는 풀을 먹기에 맞는 이빨 변화도 관찰했어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그러면 크면 무조건 유리한 것도 아니겠네요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>환경이 바뀌면 유리한 특징도 바뀌어. 경향이 멈추거나 반대로 바뀔 수 있어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s2-trends/03.png" alt="Two separate environmental patches, soft leafy woodland and open grassland, same range of small and large horse-like silhouettes shown without ranking or crowns." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">몸집 증가는 관찰될 수 있는 경향이지 보편 법칙이나 내재적 목표가 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>복잡해지는 것이 진화의 목표도 아닌가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>응. 환경에 따라 단순해지는 변화도 있어. 복잡성을 진화의 우열 기준으로 삼지 않아.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s2-trends/04.png" alt="Two equal-size branching abstract biological structure diagrams, one elaborated and one simplified; both at equal visual level with no winner symbol." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">유전되는 변이와 환경 사이의 상호작용을 봐요. 더 크고 우월한 완성형을 향하는 사다리로 읽지 않아요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 나무 가지는 계열 분기와 생존 표본을 설명한다. 진화에 의지·내재적 추진력·우열 목표가 있다는 뜻이 아니다.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1103_Macroevolution_and_Taxonomy.html#s2-trends" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="sum-lead">살아남은 한 계열의 경향을 보편 법칙으로 일반화하지 않는다. 유전 변이와 환경의 상호작용에서 유불리가 달라진다.</p><p class="panel-label">용어</p><dl class="terms"><dt>경향과 법칙</dt><dd>몸집·발가락 수·이빨의 경향은 특정 계열의 관찰이에요. 생존한 계열만으로 전체 진화의 필연적 방향을 정하지 않아요. 환경이 달라지면 유불리와 경향도 달라져요.</dd><dt>복잡성도 목표가 아니에요</dt><dd><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>형태학적 복잡성 증가는 일부에서 관찰되지만 모든 계열의 의무는 아니에요. 단순해지는 변화도 가능하고 우열 기준이 아니에요.</dd></dl></div></article><article class="topic" id="s2-tempo"><h3>점진주의와 단속평형은 변화의 시간 양상이에요</h3><p class="comic-question">단속평형이면 한 개체가 하룻밤에 새 종이 되나요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>조금씩 저축하는 것과 로또가 비슷한가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>수업에서는 시간 양상을 그렇게 비유했어. 비유가 실제 종분화 원인인 건 아니야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s2-tempo/01.png" alt="Analogy comparison: evenly spaced small coin piles gradually rising versus several equal low piles followed by one taller pile; separate strips, no numerals or money text." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">비교할 것은 변화가 시간에 걸쳐 어떻게 분포하는지예요.</p><p class="comic-analogy"><strong>비유 연결</strong> 조금씩 쌓이는 저금통과 긴 대기 뒤 한 구간에 잔액이 크게 늘어나는 통장 → 점진주의와 단속평형은 주로 화석 형태 변화의 시간 양상이다. 지질학적으로 짧은 변화도 여러 세대에 걸친다.</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>점진주의는 무엇이 조금씩 쌓여요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>작은 형태 변화가 긴 시간 동안 누적되는 양상이야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s2-tempo/02.png" alt="Scientific fossil morphoseries on an unlabelled vertical time strip: shell shape changes incrementally through several layers, no numeric scale." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">주로 화석 기록에서 형태 변화의 시간적 양상을 비교해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>단속평형은 한 번에 바뀌나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>긴 형태적 정체 사이의 변화가 지질학적으로 짧고 종분화와 연결되는 양상이야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s2-tempo/03.png" alt="Scientific second fossil strip: many layers with similar shells, compact interval with branching shell forms, then stable distinct shell forms; no sudden flash or magic." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">급격함은 긴 지질 시간에 대한 상대적 표현이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>겉모양이 그대로면 유전 변화도 없나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>그렇게 단정할 수 없어. 두 시간 양상은 계열마다 다르게 관찰될 수도 있어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s2-tempo/04.png" alt="Two fossil record strips placed side by side at equal height and emphasis, one gradual one punctuated; subtle DNA helix inset alongside stable shell layers." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">한 개체의 하룻밤 변신이 아니며, 한 모델만 모든 생물에 맞는다고 정하지 않아요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 돈의 증가는 시간 패턴만 비유한다. 단속평형이 로또 같은 단일 사건·개체 변신·유전 변화의 완전 정지를 뜻하지 않는다.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1103_Macroevolution_and_Taxonomy.html#s2-tempo" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">점진주의와 단속평형은 주로 화석 형태 변화의 시간 양상이다. 지질학적으로 짧은 변화도 여러 세대에 걸친다.</p><p class="panel-label">용어</p><dl class="terms"><dt>비교 대상</dt><dd>주로 화석에 보이는 형태 변화의 시간 양상이에요. 긴 시간의 작은 변화 누적과 긴 정체 사이의 짧은 변화·종분화를 구별해요.</dd><dt>짧음의 기준</dt><dd>지질학적으로 짧다는 뜻이에요. 개체의 하룻밤 변신이 아니며 형태적 정체가 유전 변화의 완전 정지를 뜻하지 않아요.</dd></dl></div></article><article class="topic" id="s2-radiation"><h3>빈 생태적 자리는 적응방산의 기회가 돼요</h3><p class="comic-question">같은 종이 많이 늘거나 널리 퍼지면 적응방산인가요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>빈자리를 차지하면 전부 적응방산이에요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>비유는 새로운 기회를 보여 줘. 실제로는 한 조상에서 여러 종과 다른 생태적 지위가 나타나야 해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s2-radiation/01.png" alt="Analogy object-only market: large closed blank storefront next to several smaller separate shops with distinct bread, fruit and tool objects, no signs or people." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">같은 종의 개체 수 증가나 단순한 분포 확장과 구별해요.</p><p class="comic-analogy"><strong>비유 연결</strong> 큰 가게가 떠난 뒤 서로 다른 상품을 다루는 작은 가게들이 빈 공간을 나눠 쓰는 장면 → 기존 계열의 큰 감소 뒤 생존 계열이 이용할 서식지·자원의 새로운 기회가 열릴 수 있다는 관계</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>핀치 부리 차이는 어떻게 연결돼요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>유전 변이에 다른 먹이 조건의 선택이 작용하고 생식적 격리가 누적되며 여러 종으로 분화해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s2-radiation/02.png" alt="Actual finch radiation: central ancestral finch silhouette branching to three separate island scenes, seed-crushing broad beak, slender probing beak, intermediate beak; no tools or personification." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">이소적 종분화는 지리적 방식, 적응방산은 다양한 생태적 역할을 차지하는 결과 양상이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>공룡 다음 포유류도 그 예인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>백악기 말 비조류 공룡의 멸종 뒤 열린 서식지와 자원은 포유류 다양화의 기회가 됐어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s2-radiation/03.png" alt="Separate time scenes: non-avian dinosaur fossil remains, then diverse small mammal silhouettes using trees and ground habitats; living bird visible in separate corner of later scene." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">백악기는 중생대의 마지막이고 뒤가 신생대예요. 강의노트의 고생대 말 표기는 오류로 설명된 부분이에요. 조류 계열까지 모두 사라진 건 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>개체 수가 많은 것보다 갈라진 종과 역할을 봐야겠네요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>맞아. 기회가 열려도 모든 계열이 즉시 번성하는 법칙은 아니야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s2-radiation/04.png" alt="Contrasting groups: one cluster of identical finches, another branching cluster of finches with distinct beaks and distinct food objects; equal-size spaces, no labels." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">육상 식물 확산 뒤 동물이 새로운 육상 환경·먹이를 이용한 것도 수업의 예예요. 필요나 의지가 변이를 만들어 낸다고 설명하지 않아요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 가게는 빈 자원·기회의 비유다. 생물이 계획해 새 종이 되는 것이 아니며, 유전 변이·선택·생식적 격리와 시간이 필요하다.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1103_Macroevolution_and_Taxonomy.html#s2-radiation" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="sum-lead">공통조상에서 여러 종이 갈라져 서로 다른 생태적 지위를 차지해야 한다.</p><p class="panel-label">용어</p><dl class="terms"><dt>방식과 결과</dt><dd>이소적 종분화는 지리적 방식이고 적응방산은 공통조상에서 여러 종·서로 다른 생태적 지위로 다양해진 양상이에요. 변이·선택·생식적 격리를 생략하지 않아요.</dd><dt>시대와 생존 계열</dt><dd><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>비조류 공룡의 멸종은 백악기 말, 중생대 끝이에요. 조류 계열은 이어져요. 강의노트의 고생대 말 표기는 오류로 설명된 부분이며 기회가 모든 계열의 즉시 번성을 보장하지 않아요.</dd></dl></div></article><article class="topic" id="s2-extinction"><h3>배경멸종과 대멸종은 규모와 속도가 달라요</h3><p class="comic-question">많이 사라졌다는 결과만으로 원인까지 알 수 있나요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>평소에도 사라지는데 무엇이 달라요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>짧은 지질 시간에 배경멸종률을 크게 넘는 많은 종이 사라지는 게 대멸종이야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s2-extinction/01.png" alt="Analogy: two grids of empty classroom chairs, first with just two unoccupied chairs indicated by pale seat pads, second with many pale seat pads and storm cloud outside; no humans." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">다섯 번의 큰 대멸종을 구별해요. 대멸종은 생물 전체의 소멸을 뜻하지 않아요.</p><p class="comic-analogy"><strong>비유 연결</strong> 평소 몇 자리의 결석과 태풍 때 한꺼번에 비는 여러 교실 자리 → 평소 낮은 종 소멸률과 비교해 짧은 지질 시간에 훨씬 많은 종이 사라지는 규모·기간의 차이</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>페름기 말에는 무엇을 연결하죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>시베리아 대규모 화산 활동과 탄소 방출, 온난화·해양 환경 악화의 경로야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s2-extinction/02.png" alt="Actual Permian mechanism diagram with separate linked vignettes: broad fissure volcanic eruption, gas rising into atmosphere, stressed warm ocean habitat, dark low-oxygen water layer; no asteroid." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">해양 무산소·황화수소와 오존층 약화·자외선 증가도 보충 경로예요. 오존층 파괴를 곧 온난화의 원인으로 합치지 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>백악기 말 충돌은 어떻게 추론해요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>경계층 이리듐 농축과 칙술루브 충돌구가 관찰 단서야. 큰 충돌과 기후·먹이망 교란을 연결해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s2-extinction/03.png" alt="Actual evidence still life: impact crater circular cross section, boundary rock slab with thin highlighted layer and scattered tiny metallic specks; separate small inset of asteroid impact dust cloud." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">이리듐은 지표에 드물고 운석에는 상대적으로 많아요. 관찰한 흔적과 추론한 사건, 멸종 결과를 구별해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>원인도 다르고 이후 다양성도 다시 달라지네요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>맞아. 모든 멸종을 운석으로 설명하지 않아. 남은 계열의 적응방산과 함께 다양성이 오르내려.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s2-extinction/04.png" alt="Two separated scientific cause paths: volcanic fissure to warming ocean, asteroid crater to dust-shaded vegetation; beneath a branching diversity tree with some extinct branches and later diversified surviving branches." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">보충의 다섯 사건: 오르도비스기 말·데본기 후기·페름기 말·삼첩기 말·백악기 말. 수업은 페름기·백악기 중심이며 불확실한 영상 수치를 하나로 확정하지 않아요. 인간 활동과 제6 대멸종은 추가 문제 제기예요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 결석은 규모·시간 패턴만 비유한다. 멸종은 종 계열의 소멸이고 모든 생물이 사라졌다는 뜻도, 모든 사건이 같은 원인이라는 뜻도 아니다.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1103_Macroevolution_and_Taxonomy.html#s2-extinction" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="sum-lead">배경률을 넘는 규모·기간으로 대멸종을 구별하고 관찰 흔적→추론 사건→생물학적 결과를 연결한다.</p><p class="panel-label">용어</p><dl class="terms"><dt>관찰과 추론</dt><dd>이리듐 농축과 충돌구는 관찰한 흔적, 큰 충돌은 추론한 사건, 서식지·먹이망 교란과 멸종은 연결할 생물학적 결과예요.</dd><dt>인과 경로의 한계</dt><dd><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>온난화와 오존층 약화 경로를 하나로 합치지 않아요. 초대륙이 열을 막아 반드시 폭발했다는 비유가 화산 원인의 완전한 설명은 아니에요. 영상의 서로 다른 비율·온도·충돌 크기를 확정 수치 하나로 묶지 않아요.</dd></dl></div></article></section>
+<section id="comic-section-4"><h2>3. 발생과 생물 분류</h2><article class="topic" id="s3-evodevo"><h3>몸을 만드는 유전자를 지휘하는 유전자</h3><p class="comic-question">호미오 유전자가 팔다리의 재료가 되나요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>관리자가 벽돌 자체가 되는 건 아니죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>그렇듯 조절 유전자도 팔다리 재료 자체가 아니야. 다른 유전자들이 작동하는 관계를 조절해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s3-evodevo/01.png" alt="Analogy construction objects: planning board without writing, three separate work stations with bricks and beams, arrows from board to workstations; no people or faces." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">일꾼·관리자 비유는 실제 물질과 조절의 역할을 구별하기 위한 것이에요.</p><p class="comic-analogy"><strong>비유 연결</strong> 공사 현장의 작업 지시와 실제 건축 재료·일꾼을 구별하는 장면 → 몸 형성 표적 유전자의 작용을 조절하는 역할과 만들어지는 몸 구조·재료의 구별</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>발생을 조절한다는 건 무슨 뜻이에요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>수정란에서 몸이 만들어질 때 구조·부위의 정체성과 관련된 유전자 발현을 조절한다는 뜻이야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s3-evodevo/02.png" alt="Scientific scene: fertilized egg followed by early embryo, separate DNA region leading to a small regulatory protein shape; arrows do not turn DNA into limb." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">진화발달생물학은 배 발생 조절의 진화적 변화와 체형·체제 변화를 연구해요. 호미오 유전자는 여러 종류가 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>유전자가 다른 유전자에게 직접 명령해요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>그 유전자가 암호화한 조절 단백질, 전사인자가 표적 발현에 작용해. RNA 중합효소의 전사 시작과 연결돼.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s3-evodevo/03.png" alt="Scientific molecular schematic: DNA segment followed by RNA then regulatory protein; regulatory protein adjacent to another DNA promoter and RNA polymerase, three downstream target gene regions; no letters or labels." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">가상 A·B·C 유전자 예는 실제 특정 손가락 유전자 이름이 아니에요. 적절한 시간·위치에서 표적 유전자들이 작동해야 해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>조절 위치가 바뀌면 큰 모양 변화도 가능하군요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>맞아. 머리에 다리 같은 구조가 생길 수 있어. 조절 단계를 건너뛰어 유전자가 팔다리가 됐다고 말하진 않아.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s3-evodevo/04.png" alt="Separated normal insect head with antennae and abnormal insect head bearing leg-like appendages in place of antennae; anatomically simplified scientific models, no anthropomorphic face." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">호미오 유전자와 모든 전사인자를 동일시하지 않아요. 실제 발생에서의 발현 위치·시간과 구조의 관계를 봐요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 건설은 조절 단계만 비유한다. 유전자는 의도적인 관리자가 아니며 모든 전사인자가 호미오 유전자인 것도 아니다.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1103_Macroevolution_and_Taxonomy.html#s3-evodevo" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">호미오 유전자→조절 단백질→표적 유전자 발현→발생 구조의 단계를 구별한다.</p><p class="panel-label">용어</p><dl class="terms"><dt>조절 단계</dt><dd>호미오 유전자→조절 단백질(전사인자)→표적 유전자 발현→발생 구조를 구별해요. 유전자 자체가 팔다리 재료가 되지는 않아요.</dd><dt>발현 조건</dt><dd>표적 유전자들이 적절한 시간·위치에서 작동해야 해요. 전사는 RNA 중합효소가 프로모터에서 시작하는 과정과 연결돼요. A·B·C는 가상 예이고, 수업에서는 전사인자를 복사집 아르바이트생에도 비유했어요.</dd></dl></div></article><article class="topic" id="s3-phylogeny"><h3>계통수는 진화사의 가설을 그려요</h3><p class="comic-question">그림에서 옆자리에 있거나 아래에 있으면 더 가까운 친척인가요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>가까운 친척은 끝점끼리 거리가 짧은 쪽인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>길을 거슬러 공통 출발점을 찾아봐. 더 최근의 공통조상을 공유하는 쪽이 가까워.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s3-phylogeny/01.png" alt="Analogy route map: rooted branching footpaths with three terminal destinations represented by simple different shape markers; two paths join at a recent junction, third joins farther back; no people or map text." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">계통은 진화 역사, 계통수는 가지와 분기점으로 나타낸 진화사의 가설이에요.</p><p class="comic-analogy"><strong>비유 연결</strong> <span class="badge supp">보충 · 수업에서 다루지 않았어요</span>갈라진 길을 거슬러 두 길이 마지막으로 만나는 출발점을 찾는 지도 → 두 길의 최근 공통 분기점에 대응하는, 두 계열의 더 최근 공통조상과 가까운 진화 관계</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>뿌리는 누굴 뜻해요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>이 나무에 포함된 모든 생물의 공통조상이야. 아래쪽 현생 생물이 다른 현생 생물의 직접 조상인 건 아니야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s3-phylogeny/02.png" alt="Scientific rooted three-tip tree: two tips share a recent node and a third branches earlier; root visible below, tips level; paired tracing paths highlighted without labels or organism rankings." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">좌우 배치나 눈금 없는 선 길이로 연대를 정하지 않아요. 공유 파생특성은 조상에서 새로 나타나 후손에게 이어진 특징이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>분류는 그냥 닮은 것끼리 모으나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>동정·명명·배열을 하되 형태·행동·분자 자료를 함께 봐. 수렴도 있고 새 자료로 가설이 바뀔 수 있어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s3-phylogeny/03.png" alt="Biological evidence table objects: mushroom specimens separate from magnified morphology, frog sound wave symbol, and DNA sequence-color tiles; all linked toward one provisional branching diagram. No written sequence." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">동정은 무엇인지 확인하는 과정이에요. 독버섯 구별·보전·생태계 관계 파악에도 정확한 분류가 필요해요. 친척이라도 DNA가 전부 같지는 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>나무 모양과 지층 깊이를 바로 대응해도 돼요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>주어진 분기점과 지층의 실제 조건을 따로 확인해야 해. 눈금 없는 가로선 길이는 시간이 아니야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s3-phylogeny/04.png" alt="Two separated scientific models: simple rooted tree grouping animal and plant tips more recently than bacteria-like and archaea-like tips; undisturbed horizontal strata with shallow recent and deep old fossils. No temporal alignment between tree and strata." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">기출의 단순 나무는 주어진 선택쌍의 공통조상을 비교해요. 같은 지역의 정상 퇴적·비교 가능한 보존 조건에서는 더 최근 조상 화석을 얕은 층에서 기대할 수 있어요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 길 지도는 분기 관계만 비유한다. 가지의 좌우 위치·길이를 연대 눈금 없이 시간이나 진화의 우열로 읽지 않는다.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1103_Macroevolution_and_Taxonomy.html#s3-phylogeny" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="sum-lead">공통조상의 최근성으로 근연성을 읽는다. 계통수는 자료를 바탕으로 재건하고 수정할 수 있는 가설이다.</p><p class="panel-label">용어</p><dl class="terms"><dt>계통과 분류</dt><dd>계통은 진화 역사, 계통수는 그 가설이에요. 계통생물학은 진화사를 재건하고 종을 분류해요. 분류학은 동정·명명·분류 위치 배열, 동정은 무엇인지 확인하는 과정이에요.</dd><dt>관계 읽기</dt><dd><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>더 최근 공통조상을 공유할수록 가까워요. 뿌리는 포함된 모든 생물의 공통조상이에요. 공유 파생특성의 유래와 분기점을 읽고 현생 생물의 좌우·상하 배치나 눈금 없는 선 길이에 의미를 부여하지 않아요.</dd></dl></div></article><article class="topic" id="s3-naming"><h3>종 이름은 두 단어이고 분류는 여러 층이에요</h3><p class="comic-question">종소명 하나만 쓰면 완전한 학명인가요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>이름 뒷부분만 알면 충분해요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>아니. 속 이름과 종소명을 함께 써야 종의 학명이 돼.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s3-naming/01.png" alt="Analogy object-only: small specimen storage box with a single blank name tag visibly divided into two connected fields; beside nested boxes, no writing on tags." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">Homo sapiens는 Homo가 속, sapiens가 종소명이에요. 속 첫 글자만 대문자, 두 단어 모두 이탤릭체로 써요.</p><p class="comic-analogy"><strong>비유 연결</strong> 작은 상자를 큰 상자 안에 넣고 두 부분 이름표로 물건을 찾는 수납 → 두 부분을 함께 사용하는 학명과 작은 분류군이 더 큰 분류군 안에 포함되는 관계</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>큰 범위부터 물으면 외운 순서 그대로 쓰나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>작은 쪽은 종·속·과·목·강·문·계·역. 큰 쪽부터면 거꾸로 읽어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s3-naming/02.png" alt="Exactly eight nested open-outline containers of increasing size arranged as visibly inclusive groups, each distinguished by outline and pale fill, no labels or ranking symbols." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">같은 속의 종은 일반적으로 가까워요. 큰 분류군일수록 더 넓고 다양한 생물을 포함해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>균류와 남세균은 어디에 넣어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>균류는 진핵생물역, 남세균은 세균역이야. 고세균역은 세균역과 구별해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s3-naming/03.png" alt="Three separate domain containers: bacterial simple cells including cyanobacteria; archaeal simple cells; eukaryote container subdivided with animal, plant, mushroom, flagellated protist. No false equal evolutionary distances." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">수업용 3역 체계예요. 교재에서는 진핵생물역 안에 동물계·식물계·균계·원생생물계를 두어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>개구리가 닮아도 울음으로 구별할 수 있나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>구애 울음 차이가 행동적 격리의 근거가 될 수 있어. 맥락과 다른 증거도 함께 봐.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s3-naming/04.png" alt="Two visually similar frogs on separate lily pads with distinctly shaped abstract sound-wave arcs, alongside separate morphology and DNA comparison symbols; no letters." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">린네의 형태 중심 틀을 오늘날 형태·생리·행동·분자 자료로 발전시켜요. 모든 소리 차이를 곧바로 새 종으로 단정하지 않아요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 상자는 분류의 포함 관계만 설명한다. 겉모습만으로 모든 종을 결정하거나 분류 계급을 진화 사다리로 읽지 않는다.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1103_Macroevolution_and_Taxonomy.html#s3-naming" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">속+종소명의 두 단어 전체가 학명이며 분류 계급은 포함 관계다.</p><p class="panel-label">용어</p><dl class="terms"><dt>학명 표기</dt><dd>Homo sapiens의 두 단어 전체가 학명이에요. 속 첫 글자만 대문자, 종소명은 소문자, 두 단어 모두 이탤릭체로 써요.</dd><dt>계급의 포함 관계</dt><dd>종·속·과·목·강·문·계·역이 작은→큰 순서예요. 역은 영역이라고도 하며 큰→작은 순서는 반대예요.</dd><dt>분류 자료</dt><dd>형태·생리·행동·분자를 종합해요. 구애 울음이 맞지 않아 교미가 막히는 경우는 수정 전 행동적 격리의 근거가 될 수 있지만 모든 소리 차이가 새 종은 아니에요.</dd></dl></div></article><article class="topic" id="s3-rrna"><h3>rRNA 서열은 생물을 비교하는 공통 표지예요</h3><p class="comic-question">PCR이 늘리는 것은 rRNA인가요? PCR만으로 종 이름을 얻나요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>전체 DNA를 다 읽어야 비교가 가능해요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>같은 문단처럼 서로 대응하는 공통 표지를 고를 수 있어. 어떤 표지를 고르는지가 중요하지.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s3-rrna/01.png" alt="Analogy: three closed books with matching bookmarked regions, open pages show colored small geometric tiles instead of writing; corresponding bands singled out, no letters or humans." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">수업에서는 얼굴을 보고 알아보는 비유도 썼어요. 표지는 널리 존재하고 비교적 천천히 변하며 종간 이동이 상대적으로 적어야 깊은 비교에 유용해요.</p><p class="comic-analogy"><strong>비유 연결</strong> 전체 책 대신 여러 판본에 공통으로 있는 같은 문단을 골라 복사하고 대조하는 작업 → 전체 유전체 대신 여러 생물에서 서로 대응되는 공통 표지의 서열을 선택해 비교하는 관계</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>rRNA를 PCR로 복사하는 거예요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>rRNA는 리보솜 RNA, 보통 증폭하는 건 그 정보를 담은 유전자 DNA 구간이야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s3-rrna/02.png" alt="Scientific two-stage comparison: DNA double helix region copied into several DNA double helices; separately an RNA strand inside ribosome, visibly no direct RNA duplication. No letters or labelling." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">PCR은 비교할 재료를 늘려요. 모양이나 종 이름을 직접 측정하는 단계는 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그다음에 직접 얻는 자료는 뭐예요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>염기서열과 일치·차이야. 여기서 관계를 추정해. 우즈의 rRNA 비교는 3역 구분을 뒷받침했어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s3-rrna/03.png" alt="Scientific three aligned rows of colored nucleotide-shaped tiles with corresponding similarities and differences; separate three unlabelled cell groups representing bacteria, archaea, eukaryotes with no ladder." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">세균역·고세균역·진핵생물역을 구별해요. 서열과 형태·행동 자료를 함께 해석하며 한 표지가 모든 종을 확정하지는 않아요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 공통 문단은 대응되는 표지 선택의 비유다. 한 표지가 모든 종을 언제나 확정하지 않으며 PCR 자체가 종 이름이나 관계를 측정하지 않는다.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>겉보기에는 버섯이 식물 같은데요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>분자 자료로는 균류가 식물보다 동물과 가까워. 둘 다 진핵생물역 안에 있어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1103_Macroevolution_and_Taxonomy/versions/20261109T150040-6972dd20/images/s3-rrna/04.png" alt="Scientific simplified rooted eukaryote subtree: animal and mushroom share a more recent node than their junction with plant; all tips equal height, separate bacterial and archaeal icons outside eukaryote frame." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">현재 계통 비교를 위한 보충이에요. 9장의 균류 분류·생리 상세를 배운 것으로 세지 않아요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1103_Macroevolution_and_Taxonomy.html#s3-rrna" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="sum-lead">rRNA는 RNA, rRNA 유전자는 DNA다. DNA 증폭 뒤 서열 일치·차이를 측정하고 관계를 추정한다.</p><p class="panel-label">용어</p><dl class="terms"><dt>물질과 측정</dt><dd>rRNA는 리보솜 RNA, rRNA 유전자는 그것을 암호화하는 DNA예요. 해당 DNA를 증폭한 뒤 서열을 읽고 알려진 서열과 일치·차이를 비교해 동정·관계를 추정해요.</dd><dt>공통 표지 선택</dt><dd>rRNA는 모든 세포성 생물의 리보솜과 연결돼요. 널리 존재하고 비교적 천천히 진화하며 종간 이동이 상대적으로 적다는 점이 깊은 비교에 유용해요. 표지 하나가 모든 종을 항상 확정하지는 않아요.</dd></dl></div></article></section>
+<section id="comic-section-5"><h2>4. 요약 · 예고</h2><article class="topic" id="s4-cheatsheet"><h3>시험 직전 한눈에</h3><div class="layer warn"><span class="layer-title">이 페이지는 제작 보류 중이에요</span><p>전체 요약의 마지막 그림에서 분류계급을 나타내는 중첩 윤곽이 8개가 아닌 7개이고, RNA가 DNA와 혼동될 수 있는 사다리 모양으로 남았습니다. 한 차례 수정 후 독립 그림 검토를 통과하지 못해 이 페이지의 그림을 보류합니다. 나머지 학습 페이지와 원본 정리노트를 이용해 주세요.</p></div><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1103_Macroevolution_and_Taxonomy.html#s4-cheatsheet" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">이 페이지는 아직 제작을 마치지 못했어요.</p></div></article></section>
+  </main>
+  <footer>일부 페이지 제작 보류</footer>
+    </div>
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="panel-right-title">
+      <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-right-title">페이지 요약</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-empty" id="sum-empty">페이지를 넘기면 그 페이지의 핵심 식과 용어가 여기에 나옵니다.</p>
+        <div class="sums" id="sum-for"></div>
+      </div>
+    </aside>
+  </div>
+  <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
+  <nav class="pager" aria-label="화면 이동">
+    <div class="pager-inner">
+      <button class="btn btn-ghost" id="pager-prev" type="button">이전</button>
+      <span class="pager-count" id="pager-count"></span>
+      <button class="btn btn-primary" id="pager-next" type="button">시작하기</button>
+    </div>
+  </nav>
+  <p class="sr-only" id="pager-status" aria-live="polite"></p>
+
+  <script id="theme-ui">
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const sysDark = matchMedia('(prefers-color-scheme: dark)');
+      const KEY = 'od-theme';
+      const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+      function label() {
+        const next = isDark() ? '라이트 모드로 전환' : '다크 모드로 전환';
+        btn.setAttribute('aria-label', next);
+        btn.title = next;
+      }
+      btn.addEventListener('click', () => {
+        const t = isDark() ? 'light' : 'dark';
+        // 시스템 설정과 같아지면 저장을 지워 다시 시스템을 따른다
+        if ((t === 'dark') === sysDark.matches) { delete root.dataset.theme; try { localStorage.removeItem(KEY); } catch (e) {} }
+        else { root.dataset.theme = t; try { localStorage.setItem(KEY, t); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+        label();
+      });
+      sysDark.addEventListener('change', label);
+      window.addEventListener('storage', (e) => {
+        if (e.key !== KEY) return;
+        if (e.newValue === 'light' || e.newValue === 'dark') root.dataset.theme = e.newValue; else delete root.dataset.theme;
+        label();
+      });
+      label();
+    })();
+  </script>
+  <script id="panels-ui">
+    (function () {
+      const body = document.body;
+      const layout = document.querySelector('.layout');
+      const kind = body.dataset.panels;
+      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const scrim = document.getElementById('panel-scrim');
+      const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
+      const wideMq = matchMedia('(min-width: 1024px)');
+      const roomyMq = matchMedia('(min-width: 1280px)');
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      // 푼 기록은 탭(세션) 단위로만 유지: 뒤로가기·새로고침엔 남고, 창을 닫고 다시 열면 초기화
+      const tabStore = {
+        get(k, d) { try { const v = sessionStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      const PREF = 'od-panels:' + kind;
+      // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
+      const RANGE = body.dataset.range || '';
+      const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+      const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+      let overlay = null;
+
+      // ---------- 열고 닫기 ----------
+      function docked() {
+        const pref = store.get(PREF, {});
+        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+      }
+      function sync() {
+        const wide = wideMq.matches;
+        const d = docked();
+        ['left', 'right'].forEach((side) => {
+          const open = wide ? d[side] : overlay === side;
+          const p = panels[side];
+          layout.dataset[side] = open ? 'open' : 'closed';
+          p.classList.toggle('is-open', !wide && open);
+          p.inert = !open;
+          if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
+          toggles[side].setAttribute('aria-expanded', String(open));
+        });
+        const drawer = !wide && overlay !== null;
+        scrim.classList.toggle('is-on', drawer);
+        body.classList.toggle('drawer-open', drawer);
+        blockers.forEach((el) => { el.inert = drawer; });
+      }
+      function openDrawer(side) {
+        overlay = side;
+        sync();
+        requestAnimationFrame(() => panels[side].querySelector('[data-panel-close]').focus());
+      }
+      function closeDrawer(refocus) {
+        if (overlay === null) return;
+        const side = overlay;
+        overlay = null;
+        sync();
+        if (refocus) toggles[side].focus();
+      }
+      function toggle(side) {
+        if (wideMq.matches) {
+          const d = docked();
+          d[side] = !d[side];
+          store.set(PREF, d);
+          sync();
+          if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+        } else if (overlay === side) closeDrawer(true);
+        else openDrawer(side);
+      }
+
+      toggles.left.addEventListener('click', () => toggle('left'));
+      toggles.right.addEventListener('click', () => toggle('right'));
+      scrim.addEventListener('click', () => closeDrawer(true));
+      document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
+      panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
+
+      // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      function applyWidths() {
+        const w = store.get(PREF + ':w', {});
+        ['left', 'right'].forEach((side) => {
+          if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
+          else layout.style.removeProperty(WIDTH[side].prop);
+        });
+      }
+      function maxFor(side) {
+        const other = side === 'left' ? panels.right : panels.left;
+        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
+      }
+      function setWidth(side, px, save) {
+        const v = Math.round(Math.min(Math.max(px, WIDTH[side].min), maxFor(side)));
+        layout.style.setProperty(WIDTH[side].prop, v + 'px');
+        panels[side].querySelector('.panel-resize').setAttribute('aria-valuenow', String(v));
+        if (save) { const w = store.get(PREF + ':w', {}); w[side] = v; store.set(PREF + ':w', w); }
+      }
+      function resetWidth(side) {
+        const w = store.get(PREF + ':w', {});
+        delete w[side];
+        store.set(PREF + ':w', w);
+        layout.style.removeProperty(WIDTH[side].prop);
+      }
+      document.querySelectorAll('.panel-resize').forEach((handle) => {
+        const side = handle.dataset.side;
+        const dir = side === 'left' ? 1 : -1;
+        handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
+        handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
+        handle.addEventListener('pointerdown', (e) => {
+          if (!wideMq.matches || e.button !== 0) return;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startW = panels[side].getBoundingClientRect().width;
+          handle.setPointerCapture(e.pointerId);
+          body.classList.add('is-resizing');
+          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const up = () => {
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', up);
+            handle.removeEventListener('pointercancel', up);
+            body.classList.remove('is-resizing');
+            setWidth(side, panels[side].getBoundingClientRect().width, true);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', up);
+          handle.addEventListener('pointercancel', up);
+        });
+        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('keydown', (e) => {
+          const step = e.shiftKey ? 64 : 16;
+          const cur = panels[side].getBoundingClientRect().width;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+        });
+      });
+      applyWidths();
+      const onMq = () => { overlay = null; sync(); };
+      wideMq.addEventListener('change', onMq);
+      roomyMq.addEventListener('change', onMq);
+
+      // ---------- 목차의 진행 표시 ----------
+      const progressN = document.getElementById('progress-n');
+      const progressBar = document.getElementById('progress-bar');
+      const progressTotal = document.getElementById('progress-total');
+      function markToc(done, total, doneLabel) {
+        panels.left.querySelectorAll('.toc-list a').forEach((a) => {
+          const id = decodeURIComponent(a.getAttribute('href').slice(1));
+          let mark = a.querySelector('.toc-mark');
+          if (!mark) {
+            mark = document.createElement('span');
+            mark.className = 'toc-mark';
+            mark.setAttribute('aria-hidden', 'true');
+            const state = document.createElement('span');
+            state.className = 'sr-only toc-state';
+            a.append(mark, state);
+          }
+          const isDone = done.has(id);
+          mark.classList.toggle('is-done', isDone);
+          mark.innerHTML = isDone ? ICON_DONE : ICON_TODO;
+          a.querySelector('.toc-state').textContent = isDone ? ' (' + doneLabel + ')' : '';
+        });
+        progressN.textContent = String(done.size);
+        progressTotal.textContent = String(total);
+        progressBar.style.transform = 'scaleX(' + (total ? done.size / total : 0) + ')';
+      }
+      function revealCurrent() {
+        const link = panels.left.querySelector('.toc-list a[aria-current="true"]');
+        if (link && layout.dataset.left === 'open') link.scrollIntoView({ block: 'nearest' });
+      }
+
+      // ---------- 복습문제: 오른쪽 = 원문 · 힌트 · 풀이 ----------
+      function setupReview() {
+        const KEY = 'od-review-solved:' + RANGE;
+        const cards = Array.from(document.querySelectorAll('main article.card'));
+        const aids = panels.right.querySelector('.aids');
+        const empty = panels.right.querySelector('.panel-empty');
+        const btn = document.getElementById('solved-btn');
+        const groups = {};
+        const solved = new Set(tabStore.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        cards.forEach((card) => {
+          const g = document.createElement('div');
+          g.className = 'aid';
+          g.hidden = true;
+          card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
+          aids.appendChild(g);
+          groups[card.id] = g;
+        });
+        let curId = null;
+        function paintBtn() {
+          const on = solved.has(curId);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.innerHTML = (on ? ICON_DONE : ICON_TODO) + '<span>' + (on ? '푼 문제 · 표시 해제' : '푼 문제로 표시') + '</span>';
+        }
+        btn.addEventListener('click', () => {
+          if (!curId) return;
+          if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
+          tabStore.set(KEY, Array.from(solved));
+          paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          curId = s.matches('article.card') ? s.id : null;
+          Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
+          empty.hidden = Boolean(curId);
+          btn.hidden = !curId;
+          if (curId) paintBtn();
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(solved, cards.length, '푼 문제');
+          revealCurrent();
+        });
+      }
+
+      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
+      function setupNote() {
+        const KEY = 'od-comic-read:' + RANGE;
+        const topics = Array.from(document.querySelectorAll('main article.topic'));
+        const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
+        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
+        const box = panels.right.querySelector('.sums');
+        const sums = {};
+        topics.forEach((t) => {
+          const el = t.querySelector(':scope > .sum');
+          if (!el) return;
+          el.hidden = true;
+          box.appendChild(el);
+          sums[t.id] = el;
+        });
+        const empty = document.getElementById('sum-empty');
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          const key = s.matches('article.topic') ? s.id : 'intro';
+          Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
+          empty.hidden = Boolean(sums[key]);
+          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(read, topics.length, '읽음');
+          revealCurrent();
+        });
+      }
+
+      if (kind === 'review') setupReview();
+      if (kind === 'note') setupNote();
+      sync();
+    })();
+  </script>
+  <script id="pager-ui">
+    (function () {
+      const root = document.documentElement;
+      const main = document.querySelector('main');
+      const hero = main.querySelector('.hero');
+      const screens = [hero].concat(Array.from(main.querySelectorAll(document.body.dataset.screens)));
+      if (screens.length < 2) { root.classList.remove('js'); return; }
+      screens.forEach((s) => s.classList.add('screen'));
+
+      const last = screens.length - 1;
+      const prevBtn = document.getElementById('pager-prev');
+      const nextBtn = document.getElementById('pager-next');
+      const count = document.getElementById('pager-count');
+      const bar = document.getElementById('pager-bar');
+      const status = document.getElementById('pager-status');
+      const toc = document.querySelector('#panel-left .toc');
+      const scroller = document.querySelector('.content');
+      const titleOf = (s) => ((s.querySelector('h3') || s.querySelector('h1') || {}).textContent || '').trim();
+      let cur = -1;
+
+      // 목차: 섹션 링크 아래에 화면(토픽·카드) 목록을 붙인다
+      const tocLinks = [];
+      Array.from(toc.querySelectorAll(':scope > a')).forEach((a) => {
+        const sec = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+        const group = document.createElement('div');
+        group.className = 'toc-group';
+        a.replaceWith(group);
+        group.appendChild(a);
+        if (!sec) return;
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        screens.forEach((s, i) => {
+          if (!sec.contains(s)) return;
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#' + s.id;
+          link.innerHTML = '<span class="toc-title"></span>';
+          link.firstChild.textContent = titleOf(s);
+          li.appendChild(link);
+          list.appendChild(li);
+          tocLinks[i] = link;
+        });
+        group.appendChild(list);
+      });
+
+      function indexFor(hash) {
+        const id = decodeURIComponent((hash || '').replace(/^#/, ''));
+        const el = id && document.getElementById(id);
+        if (!el || !main.contains(el)) return { i: 0 };
+        const i = screens.findIndex((s) => s.contains(el) || el.contains(s));
+        return { i: Math.max(i, 0), target: i >= 0 && screens[i].contains(el) && screens[i] !== el ? el : null };
+      }
+
+      function render(i, target) {
+        const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
+        if (i !== cur) {
+          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
+          main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
+          const s = screens[i];
+          const sec = s.closest('section');
+          if (sec) sec.classList.add('is-on');
+          s.classList.add('is-current');
+          if (dir) { s.classList.remove('enter-next', 'enter-prev'); void s.offsetWidth; s.classList.add(dir); }
+          cur = i;
+          document.body.classList.toggle('at-end', i === last);
+          prevBtn.disabled = i === 0;
+          nextBtn.textContent = i === 0 ? '시작하기' : i === last ? '처음으로' : '다음';
+          count.textContent = i === 0 ? '' : i + ' / ' + last;
+          bar.style.transform = 'scaleX(' + (i / last) + ')';
+          status.textContent = i === 0 ? titleOf(s) : i + ' / ' + last + ', ' + titleOf(s);
+          tocLinks.forEach((link, k) => link && link.setAttribute('aria-current', String(k === i)));
+          document.dispatchEvent(new CustomEvent('od:screen', { detail: { index: i, screen: s } }));
+        }
+        if (target) target.scrollIntoView({ block: 'start' });
+        else scroller.scrollTo(0, 0);
+      }
+
+      function go(i) {
+        i = Math.min(Math.max(i, 0), last);
+        if (i === cur) return;
+        const url = i === 0 ? location.pathname + location.search : '#' + screens[i].id;
+        history.pushState(null, '', url);
+        render(i);
+      }
+
+      prevBtn.addEventListener('click', () => go(cur - 1));
+      nextBtn.addEventListener('click', () => go(cur === last ? 0 : cur + 1));
+      const fromUrl = () => { const r = indexFor(location.hash); render(r.i, r.target); };
+      window.addEventListener('hashchange', fromUrl);
+      window.addEventListener('popstate', fromUrl);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+
+      // 좌우로 밀어서 넘기기 (가로로 스크롤되는 영역은 제외)
+      let sx = 0, sy = 0, skip = true;
+      main.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (skip) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 64 && Math.abs(dx) > 2 * Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      fromUrl();
+    })();
+  </script>
+</body>
+</html>
