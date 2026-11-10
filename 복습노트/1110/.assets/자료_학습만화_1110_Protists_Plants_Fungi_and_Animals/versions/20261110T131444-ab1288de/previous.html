@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>생명과학 1110 학습만화</title>
+  <meta name="description" content="1110 수업 학습만화. 12/16페이지 완료 · 일부 보류">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('od-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']})"></script>
+  <style>
+    /* ---------- 토큰 ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #b54708; --prof: #6941c6; --supp: #067647; --danger: #d92d20;
+      --scroll: #c9d0db; --scroll-hover: #9aa3b2;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --fs-title: clamp(28px, 6vw, 36px); --fs-h3: clamp(26px, 5.4vw, 32px); --fs-layer: 19px; --fs-lead: 22px; --fs-body: 17px; --fs-sub: 15px; --fs-small: 14px; --fs-label: 13px; --fs-fig: 12px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+      --radius: 8px; --measure: 680px; --tap: 48px; --btn-min: 160px;
+      --dur: 220ms; --dur-exit: 150ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+      /* 예전 조각이 참조할 수 있는 이름 */
+      --surface-2: var(--surface); --accent-soft: var(--surface); --warn-soft: var(--surface);
+      --prof-soft: var(--surface); --supp-soft: var(--surface); --eli5: var(--accent-ink); --eli5-soft: var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+        --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+        --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+        --scroll: #3f414b; --scroll-hover: #5b5e6a;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+      --scroll: #3f414b; --scroll-hover: #5b5e6a;
+    }
+
+    /* ---------- 기본 ---------- */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent-ink); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+
+    /* ---------- 상단 바 ---------- */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s2) var(--s4); display: flex; align-items: center; gap: var(--s3); min-height: 56px; }
+    .brand { flex: 1 1 auto; min-width: 0; font-size: var(--fs-body); font-weight: 700; white-space: nowrap; }
+    .text-btn { flex: none; min-height: 44px; min-width: 44px; padding: 0 var(--s3); border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); font: 600 var(--fs-small)/1 var(--font); cursor: pointer; }
+    .bar { height: 2px; background: var(--line); overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+
+    /* ---------- 본문 ---------- */
+    main { flex: 1 0 auto; width: 100%; max-width: var(--measure); margin: 0 auto; padding: var(--s6) var(--s5) var(--s7); }
+    .hero h1 { font-size: var(--fs-title); line-height: 1.3; margin: 0 0 var(--s3); letter-spacing: -0.02em; }
+    .hero p { color: var(--ink-2); margin: 0; }
+    section { margin-top: var(--s7); }
+    section > h2 { font-size: 22px; line-height: 1.4; margin: 0 0 var(--s4); }
+    .topic { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .topic h3 { margin: 0 0 var(--s2); font-size: var(--fs-h3); font-weight: 800; line-height: 1.3; letter-spacing: -0.02em; }
+    .tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+    .tag { font-size: var(--fs-label); line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+
+    /* 레이어: 배경 없이 라벨과 구분선으로 나눈다 */
+    .layer { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .layer.eli5 { margin-top: 0; padding-top: 0; border-top: 0; }
+    .layer > :first-child { margin-top: 0; }
+    .layer > :last-child { margin-bottom: 0; }
+    .layer-title { display: block; font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; color: var(--ink); margin-bottom: var(--s3); }
+    .layer.eli5 .layer-title { color: var(--accent-ink); }
+    .layer.eli5 .lead { font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; letter-spacing: -0.01em; margin: 0 0 var(--s4); }
+    /* 정확히 말하면: 본문 크기 그대로, 굵은 첫머리만 진하게 */
+    .layer.formal b { font-weight: 700; color: var(--ink); }
+    /* 교수님 말씀 · 주의: 보조 정보는 한 단계 작게 */
+    .layer.prof, .layer.warn, .layer.listen { font-size: var(--fs-sub); line-height: 1.7; }
+    .layer.prof blockquote { font-size: var(--fs-sub); }
+    .layer.prof .layer-title { color: var(--prof); }
+    .layer.warn, .layer.listen { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn .layer-title { color: var(--warn); font-size: var(--fs-body); }
+    .layer.listen .layer-title { color: var(--accent-ink); font-size: var(--fs-body); }
+    .layer.supp .badge.supp { margin-bottom: var(--s2); }
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
+    .badge.supp { color: var(--supp); }
+    .badge.exam { color: var(--warn); margin-right: var(--s1); }
+    blockquote { margin: var(--s3) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
+    ol.steps { padding-left: 1.4em; }
+    ol.steps li { margin: var(--s2) 0; }
+
+    /* 그림 · 수식 · 표 */
+    .figure { margin: var(--s4) 0; text-align: center; }
+    .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
+    .figure img { max-width: 100%; height: auto; }
+    .figure figcaption { font-size: var(--fs-small); color: var(--ink-2); margin-top: var(--s1); }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: var(--s1) 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+    th, td { border-bottom: 1px solid var(--line); padding: var(--s2); text-align: left; vertical-align: top; }
+    th { color: var(--ink-2); font-weight: 600; }
+    td:first-child, th:first-child { min-width: 6em; }
+
+    /* 위젯 */
+    .widget { background: var(--surface); border-radius: var(--radius); padding: var(--s4); margin: var(--s5) 0; }
+    .widget h4 { margin: 0 0 var(--s1); font-size: var(--fs-layer); line-height: 1.4; }
+    .widget-help { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s3); }
+    .controls { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--s2); font-size: var(--fs-small); }
+    .controls label { display: flex; align-items: center; gap: var(--s2); min-height: 44px; }
+    .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .widget svg { width: 100%; height: auto; background: var(--bg); border-radius: var(--radius); }
+    .readout { font-size: var(--fs-small); margin-top: var(--s2); }
+    .legend { font-size: var(--fs-label); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .sw { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: var(--s1); border-radius: 2px; }
+    .sw.truth { background: var(--ink-2); } .sw.fit { background: var(--accent); } .sw.train { background: var(--accent); height: 10px; width: 10px; border-radius: 50%; }
+    .sw.test { background: var(--warn); height: 10px; width: 10px; border-radius: 50%; } .sw.like { background: var(--accent); } .sw.prior { background: var(--prof); } .sw.post { background: var(--supp); }
+    .axis { stroke: var(--line); stroke-width: 1.5; }
+    .tick { fill: var(--ink-2); font-size: 11px; }
+    .plot-truth { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .plot-fit { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+    .pt-train { fill: var(--accent); }
+    .pt-test { fill: var(--warn); }
+    .plot-like { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .plot-prior { fill: none; stroke: var(--prof); stroke-width: 2; stroke-dasharray: 6 4; }
+    .plot-post { fill: none; stroke: var(--supp); stroke-width: 3; }
+    .mark-ml { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .mark-map { stroke: var(--supp); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 2; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 2.5; }
+    .fig-danger { stroke: var(--danger); fill: none; stroke-width: 2.5; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: 13px; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-fig); font-family: inherit; }
+
+    footer { width: 100%; max-width: var(--measure); margin: 0 auto; padding: 0 var(--s5) var(--s6); color: var(--ink-2); font-size: var(--fs-small); }
+
+    /* ---------- 하단 이동 바 ---------- */
+    .pager { position: sticky; bottom: 0; z-index: 10; background: var(--bg); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .pager-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s3) var(--s4); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); }
+    .pager-count { font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; min-width: 4em; }
+    .btn { min-height: var(--tap); min-width: var(--btn-min); padding: 0 var(--s6); border-radius: var(--radius); border: 0; font: 700 var(--fs-body)/1 var(--font); cursor: pointer; white-space: nowrap;
+      transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+    .btn-ghost { justify-self: start; background: var(--surface); color: var(--ink); }
+    .btn-primary { justify-self: end; background: var(--btn-bg); color: var(--on-btn); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    @media (hover: hover) {
+      .text-btn:hover, .btn-ghost:not(:disabled):hover { background: var(--line); }
+      .btn-primary:not(:disabled):hover { box-shadow: inset 0 0 0 100px rgba(0, 0, 0, .14); }
+    }
+
+    /* ---------- 목차 시트 ---------- */
+    .sheet { width: min(100%, var(--measure)); max-width: 100%; max-height: 80dvh; margin: auto auto 0; padding: 0; border: 0;
+      border-radius: 16px 16px 0 0; background: var(--bg); color: var(--ink); }
+    .sheet::backdrop { background: rgba(0, 0, 0, .4); }
+    .sheet-inner { padding: var(--s4) var(--s5) calc(var(--s5) + env(safe-area-inset-bottom)); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s2); }
+    .sheet-head h2 { margin: 0; font-size: var(--fs-lead); }
+    .toc { display: flex; flex-direction: column; }
+    .toc > a, .toc-group > a { display: block; padding: var(--s3) 0 var(--s1); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); text-decoration: none; }
+    .toc-list { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+    .toc-list a { display: flex; align-items: center; gap: var(--s3); min-height: var(--tap); padding: var(--s2) var(--s3); margin: 0 calc(-1 * var(--s3));
+      border-radius: var(--radius); color: var(--ink); text-decoration: none; line-height: 1.4; }
+    .toc-list a[aria-current="true"] { background: var(--surface); font-weight: 700; color: var(--accent-ink); }
+    .toc-list .toc-title { flex: 1 1 0; min-width: 0; }
+    @media (hover: hover) { .toc-list a:hover { background: var(--surface); } }
+
+    /* ---------- 한 화면에 하나씩 (JS가 켤 때만) ---------- */
+    html:not(.js) .pager, html:not(.js) #toc-open { display: none; }
+    html:not(.js) .sheet { display: block; position: static; width: 100%; max-height: none; margin: 0 auto; border-radius: 0; border-bottom: 1px solid var(--line); }
+    html:not(.js) .sheet-close { display: none; }
+    .js main > .hero:not(.is-current), .js main > section:not(.is-on), .js .screen:not(.is-current) { display: none; }
+    .js main > section { margin-top: 0; }
+    .js main > section > h2 { font-size: var(--fs-small); font-weight: 600; color: var(--accent-ink); margin: 0 0 var(--s2); }
+    .js .topic { padding: 0; border-top: 0; }
+    .js .hero { padding-top: 12vh; }
+    .js footer { display: none; }
+    .js body.at-end footer { display: block; }
+    .screen.enter-next { animation: enter-next var(--dur) var(--ease-out); }
+    .screen.enter-prev { animation: enter-prev var(--dur) var(--ease-out); }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .screen.enter-next, .screen.enter-prev { animation: none; }
+      .bar > span, .btn { transition: none; }
+    }
+    @media (max-width: 480px) {
+      main { padding: var(--s5) var(--s4) var(--s6); }
+      footer { padding: 0 var(--s4) var(--s5); }
+      .btn { min-width: 120px; padding: 0 var(--s5); }
+    }
+    @media print {
+      .topbar, .pager, .sheet { display: none !important; }
+      .js main > .hero, .js main > section, .js .screen, .js footer { display: block !important; }
+    }
+
+    /* ---------- 좌우 패널 (drawer) ---------- */
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
+    .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
+    .panel-toggle svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-toggle .strip { fill: transparent; stroke: none; transition: fill 150ms ease-out; }
+    .panel-toggle[aria-expanded="true"] { color: var(--accent-ink); }
+    .panel-toggle[aria-expanded="true"] .strip { fill: currentColor; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .i-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .theme-toggle .i-sun { display: block; }
+      :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
+    }
+
+    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
+    .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
+    .content { grid-column: 2; }
+    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
+    .content::-webkit-scrollbar, .panel-inner::-webkit-scrollbar { width: 8px; }
+    .content::-webkit-scrollbar-track, .panel-inner::-webkit-scrollbar-track { background: transparent; }
+    .content::-webkit-scrollbar-thumb, .panel-inner::-webkit-scrollbar-thumb { background: var(--scroll); border-radius: 8px; border: 2px solid var(--bg); }
+    .content::-webkit-scrollbar-thumb:hover, .panel-inner::-webkit-scrollbar-thumb:hover { background: var(--scroll-hover); }
+    @supports (scrollbar-color: auto) { .content, .panel-inner { scrollbar-width: thin; scrollbar-color: var(--scroll) transparent; } }
+    .panel-resize { display: none; }
+    .panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 44px; margin-bottom: var(--s2); }
+    .panel-head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-lead); line-height: 1.4; }
+    .panel-sub { margin: 0 0 var(--s4); font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; }
+    .panel-empty { margin: 0; color: var(--ink-2); }
+    .panel-label { display: block; margin: var(--s5) 0 var(--s2); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+
+    /* 진행 상태 */
+    .panel-meta { margin: 0 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .panel-meta b { color: var(--ink); }
+    .progress { height: 4px; margin-bottom: var(--s3); border-radius: 2px; background: var(--line); overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+    .panel .toc-list a { margin: 0 calc(-1 * var(--s2)); padding: var(--s2); font-size: var(--fs-panel); }
+    .toc-mark { flex: none; display: block; width: 20px; height: 20px; color: var(--ink-2); }
+    .toc-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .toc-mark.is-done { color: var(--accent-ink); }
+
+    /* 복습문제: 원문 · 힌트 · 풀이 */
+    .aid details:last-of-type { border-bottom: 1px solid var(--line); }
+    .aid details.original > summary { font-size: var(--fs-panel); }
+    .solved-btn { display: flex; align-items: center; justify-content: center; gap: var(--s2); width: 100%; min-height: var(--tap); margin-top: var(--s5); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .solved-btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
+
+    /* 정리노트: 페이지 요약 */
+    .sum-supp { margin-top: var(--s4); }
+    .sum-lead { margin: 0; font-size: var(--fs-body); font-weight: 700; line-height: 1.6; }
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+    .eq-list li:first-child { padding-top: 0; }
+    .eq-name { display: block; font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+    .eq-list .katex-display { margin: var(--s1) 0 0; text-align: left; }
+    .eq-list .katex-display > .katex { text-align: left; }
+    .terms { margin: 0; }
+    .terms dt { font-size: var(--fs-panel); font-weight: 700; margin-top: var(--s4); }
+    .terms dt:first-child { margin-top: 0; }
+    .terms dd { margin: var(--s1) 0 0; font-size: var(--fs-sub); line-height: 1.6; color: var(--ink-2); }
+    .flow { margin: 0; padding-left: 1.4em; font-size: var(--fs-sub); }
+    .flow li { margin: var(--s2) 0; }
+
+    @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
+
+    /* 넓은 화면: 본문 옆에 붙는 패널 */
+    @media (min-width: 1024px) {
+      .layout { --l: var(--panel-l-user, var(--panel-l)); }
+      .layout[data-left="closed"] { --l: 0px; }
+      .panel-left { width: var(--l); }
+      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
+      .panel-left .panel-resize { right: 0; }
+      .panel-right .panel-resize { left: 0; }
+      .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
+      .panel-left .panel-resize::after { right: 0; }
+      .panel-right .panel-resize::after { left: 0; }
+      .panel-resize:focus-visible { outline: none; }
+      .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
+      @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
+      body.is-resizing { cursor: col-resize; user-select: none; }
+      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
+      .scrim, .panel-close { display: none; }
+    }
+    @keyframes panel-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 좁은 화면: 가장자리에서 밀려 나오는 drawer */
+    @media (max-width: 1023.98px) {
+      .panel { position: fixed; top: 0; bottom: 0; z-index: 40; visibility: hidden;
+        transition: transform var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .panel-left { left: 0; width: min(var(--drawer-l), 88vw); transform: translateX(-100%); }
+      .panel-right { right: 0; width: min(var(--drawer-r), 88vw); transform: translateX(100%); }
+      .panel.is-open { visibility: visible; transform: none; transition: transform var(--dur) var(--ease-out); }
+      .panel-inner { padding-top: calc(var(--s3) + env(safe-area-inset-top)); padding-bottom: calc(var(--s6) + env(safe-area-inset-bottom)); }
+      .scrim { position: fixed; inset: 0; z-index: 35; background: var(--scrim); opacity: 0; visibility: hidden;
+        transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
+      html:not(.js) .panel-left { display: none; }
+    }
+    @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
+      .panel.is-shown { animation: none; }
+      .panel-resize::after { transition: none; }
+    }
+    @media print {
+      body { display: block; height: auto; overflow: visible; }
+      .layout { display: block; }
+      .content { overflow: visible; }
+      .panel, .scrim { display: none !important; }
+    }
+  </style>
+<style id="comic-style">
+/* Extends the note shell; its tokens and behavior remain the visual authority. */
+.comic-question { margin: var(--s3) 0 var(--s5); font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; }
+.comic-strip { display: grid; gap: var(--s6); list-style: none; margin: 0; padding: 0; }
+.comic-panel { min-width: 0; }
+.comic-panel figure { margin: 0; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.comic-scene { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; position: relative; isolation: isolate; background: #faf8f2; color: #162438; }
+.comic-panel img { grid-column: 1; grid-row: 1 / 3; align-self: end; display: block; width: 100%; height: auto; background: #faf8f2; }
+.comic-art-space { grid-column: 1; grid-row: 2; width: 100%; pointer-events: none; }
+.comic-balloon-layer { grid-column: 1; grid-row: 1; z-index: 1; display: flex; flex-direction: column; gap: var(--s3); padding: var(--s4) var(--s5); min-width: 0; }
+.comic-panel figcaption { padding: var(--s4); background: var(--bg); }
+.comic-number { display: block; margin-bottom: var(--s2); font-size: var(--fs-label); font-weight: 700; color: var(--ink-2); }
+.comic-caption { margin: 0; line-height: 1.7; }
+.comic-dialogue { position: relative; width: fit-content; max-width: 88%; margin: 0; padding: var(--s3) var(--s4); border: 1.5px solid #566477; border-radius: 18px; background: #fffefb; color: #162438; font-size: var(--fs-body); line-height: 1.6; box-shadow: 0 2px 0 #1624380d; }
+.comic-voice-left { align-self: flex-start; border-bottom-left-radius: 4px; }
+.comic-voice-right { align-self: flex-end; border-bottom-right-radius: 4px; background: #f0f5fc; }
+.comic-dialogue::after { content: ''; position: absolute; top: 18px; width: 10px; height: 10px; background: inherit; border: solid #566477; transform: rotate(45deg); }
+.comic-voice-left::after { left: -6px; border-width: 0 0 1.5px 1.5px; }
+.comic-voice-right::after { right: -6px; border-width: 1.5px 1.5px 0 0; }
+.comic-speaker { display: block; margin-bottom: var(--s1); font-size: var(--fs-label); font-weight: 700; color: #1b64da; }
+@media (max-width: 480px) {
+  .comic-balloon-layer { padding: var(--s3) var(--s4); gap: var(--s2); }
+  .comic-dialogue { max-width: 94%; padding: var(--s2) var(--s3); }
+}
+.comic-source { margin: var(--s6) 0 0; }
+.comic-source a { display: inline-flex; align-items: center; min-height: var(--tap); }
+.comic-panel .badge { display: block; width: fit-content; max-width: 100%; white-space: normal; margin: 0 0 var(--s2); }
+.sum > .badge { white-space: normal; margin-bottom: var(--s2); }
+@media print {
+  .comic-panel { break-inside: avoid; }
+  .comic-source { display: none; }
+}
+.comic-analogy, .comic-limit { margin: var(--s4) 0 0; padding-top: var(--s3); border-top: 1px solid var(--line); font-size: var(--fs-small); line-height: 1.7; color: var(--ink-2); }
+.comic-analogy strong, .comic-limit strong { display: block; margin-bottom: var(--s1); color: var(--ink); }
+
+</style>
+</head>
+<body data-screens="article.topic" data-panels="note" data-range="1110">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <strong class="brand">학습만화</strong>
+      <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>요약</span></button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
+  </header>
+  <div class="layout" data-left="open" data-right="closed">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
+      <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-left-title">목차</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-meta">읽은 토픽 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <nav class="toc" aria-label="목차"><a href="#comic-section-1">1. 다양한 원생생물</a><a href="#comic-section-2">2. 식물의 육상 적응과 번식</a><a href="#comic-section-3">3. 균류의 구조와 먹이·공생</a><a href="#comic-section-4">4. 동물의 분류와 육상 생식</a><a href="#comic-section-5">5. 사람류의 특징과 증거 읽기</a><a href="#comic-section-6">6. 요약 · 예고</a></nav>
+      </div>
+    </aside>
+    <div class="content">
+  <main>
+    <div class="hero">
+      <h1>생명과학 1110 학습만화</h1>
+      <p>12/16페이지 완료 · 일부 보류. 그림과 대사를 따라 읽고 원본 정리노트에서 확인해요.</p>
+    </div>
+<section id="comic-section-1"><h2>1. 다양한 원생생물</h2><article class="topic" id="s0-recap"><h3>지난 수업과 이어 보기</h3><p class="comic-question">영역과 계를 같은 높이로 나란히 외우는 혼동을 어떻게 구별할까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>옛날 두 계와 다섯 계는 생물이 늘어난 순서야?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>분류 기준이 달라진 역사야. 생물이 그 순서로 태어났다는 그림은 아니야.</p></div><img src="../20261110T083140-9c36e474/images/s0-recap/01.png" alt="분류 서랍의 크기 — 옛 두 계에서 다섯 계로 분류가 세분됐어요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">옛 두 계에서 다섯 계로 분류가 세분됐어요.</p><p class="comic-analogy"><strong>비유 연결</strong> 큰 서랍 안 작은 칸 → 분류의 범위</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>영역과 계도 나란히 놓을까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>영역이 더 커. 세 영역 중 진핵생물 안에 수업의 네 계가 들어가.</p></div><img src="../20261110T083140-9c36e474/images/s0-recap/02.png" alt="분류 서랍의 크기 — 세균·고세균·진핵생물은 영역, 원생생물·식물·균류·동물은 이 수업의 전통적 진핵생물 네 계예요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">세균·고세균·진핵생물은 영역, 원생생물·식물·균류·동물은 이 수업의 전통적 진핵생물 네 계예요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>핵이 없으면 세균 한 무리겠네?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>진정세균과 고세균은 모두 원핵생물이지만 서로 다른 영역이야.</p></div><img src="../20261110T083140-9c36e474/images/s0-recap/03.png" alt="분류 서랍의 크기 — 원핵생물에는 핵막으로 둘러싸인 핵이 없어요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">원핵생물에는 핵막으로 둘러싸인 핵이 없어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>균류는 식물 옆에만 두면 될까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>이전 계통 비교 보충에서는 식물보다 동물에 가까워. 오늘 직접 설명과는 구별하자.</p></div><img src="../20261110T083140-9c36e474/images/s0-recap/04.png" alt="분류 서랍의 크기 — 보충 관계는 이전 rRNA 비교 노트에서 연결한 내용이에요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">보충 관계는 이전 rRNA 비교 노트에서 연결한 내용이에요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 서랍은 포함 관계만 설명하며 생물이 정해진 칸을 향해 진화한다는 뜻이 아니다</p></figcaption></figure></li></ol><p class="comic-source"><a href="../../../../%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1110_Protists_Plants_Fungi_and_Animals.html#s0-recap" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">영역 안에 계가 포함되며 분류 체계의 변화는 진화 단계가 아니다.</p><p class="panel-label">용어</p><dl class="terms"><dt>세 영역을 구별한 근거</dt><dd>세균·고세균·진핵생물의 구별에는 분자 서열 비교를 사용해요.</dd></dl></div></article><article class="topic" id="s0-diversity"><h3>한 가지 모습으로 묶을 수 없는 원생생물</h3><p class="comic-question">원생생물은 모두 단세포이며 수축포와 식포가 같은 구조라는 혼동을 어떻게 구별할까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>원생생물은 작은 한 세포뿐이지?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>큰 다세포 해조류도 있어. 핵이 있는 다양한 진핵생물의 전통적 묶음이야.</p></div><img src="../20261110T083140-9c36e474/images/s0-diversity/01.png" alt="서로 다른 일을 하는 도구 — 동물·육상식물·균류 이외의 넓은 묶음이며 단일한 자연 계통군이 아니에요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">동물·육상식물·균류 이외의 넓은 묶음이며 단일한 자연 계통군이 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>주머니면 모두 음식을 담는 걸까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>물을 퍼내는 바가지와 음식 그릇의 일부터 나눠 보자.</p></div><img src="../20261110T083140-9c36e474/images/s0-diversity/02.png" alt="서로 다른 일을 하는 도구 — 비유에서 물 배출과 음식 처리를 서로 다른 기능으로 비교해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">비유에서 물 배출과 음식 처리를 서로 다른 기능으로 비교해요.</p><p class="comic-analogy"><strong>비유 연결</strong> 물 퍼내는 바가지와 음식 담는 그릇 → 수축포와 식포의 서로 다른 기능</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>세포에서는 어떤 구조가 그 일을 해?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>먹이를 막으로 감싼 식포 안에서 소화해. 수축포는 물을 내보내고, 위족은 이동·포획이야.</p></div><img src="../20261110T083140-9c36e474/images/s0-diversity/03.png" alt="서로 다른 일을 하는 도구 — 담수의 짚신벌레는 삼투로 들어온 물을 수축포로 내보내요. 위족은 위장이 아니에요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">담수의 짚신벌레는 삼투로 들어온 물을 수축포로 내보내요. 위족은 위장이 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>먹는 법과 사는 곳도 하나로 외울까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>독립영양은 빛으로 유기물을 만들고 종속영양은 외부 먹이를 써. 혼합영양은 조건에 따라 둘 다 해.</p></div><img src="../20261110T083140-9c36e474/images/s0-diversity/04.png" alt="서로 다른 일을 하는 도구 — 유글레나는 조건에 따라 광합성과 외부 유기물 이용을 해요. 일부 기생종의 질병을 전체 성질로 일반화하지 않아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">유글레나는 조건에 따라 광합성과 외부 유기물 이용을 해요. 유성·무성생식하는 종류가 있고 물·습한 곳이나 숙주 안에서 살기도 해요. 말라리아·아프리카 수면병·감자역병을 일으키는 일부 사례를 전체 성질로 일반화하지 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>두 딸세포나 두 핵을 보면 그 종류만의 특징일까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>어떤 종류에서 가능하다는 말과 전체의 공통·고유 특징은 달라.</p></div><img src="../20261110T083140-9c36e474/images/s0-diversity/05.png" alt="서로 다른 일을 하는 도구 — 일부 원생생물은 이분법을 해요. 대핵·소핵 등 두 핵이 짚신벌레에만 유일하지 않아요. 펩티도글리칸은 진정세균의 특징이에요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">일부 원생생물은 이분법을 해요. 대핵·소핵 등 두 핵이 짚신벌레에만 유일하지 않아요. 펩티도글리칸은 진정세균의 특징이에요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 바가지와 그릇은 기능 비유이며 세포 속에 실제 생활 도구가 들어 있는 것은 아니다</p></figcaption></figure></li></ol><p class="comic-source"><a href="../../../../%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1110_Protists_Plants_Fungi_and_Animals.html#s0-diversity" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="sum-lead">원생생물의 다양성과 물 배출·소화·위족의 일을 각각 구별한다.</p><p class="panel-label">용어</p><dl class="terms"><dt>식포의 형성과 소화</dt><dd>먹이를 막으로 둘러싸 식포를 만들고, 그 안에서 먹이를 소화해요.</dd><dt>독립·종속·혼합영양</dt><dd>독립영양은 빛으로 유기물을 만들고, 종속영양은 외부 먹이를 이용해요. 유글레나는 조건에 따라 광합성과 외부 유기물 이용을 하는 혼합영양이에요.</dd></dl></div></article><article class="topic" id="s0-algae"><h3>물속 생산자와 가까운 친척</h3><p class="comic-question">홍조류·적조 또는 가까운 친척·직접 조상을 같은 뜻으로 읽는 혼동을 어떻게 구별할까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>해조류도 광합성하면 꽃과 씨를 만들까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>빛으로 CO₂에서 유기물을 만드는 건 공유해도 꽃·종자는 공통이 아니야. 물속 생산자의 역할이지.</p></div><img src="../20261110T083140-9c36e474/images/s0-algae/01.png" alt="이름표와 사건 알림 — 규조류는 규산질 껍질, 미역·다시마는 갈조류, 김은 홍조류예요. 녹조류는 육상식물에 가까워요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">규조류는 규산질 껍질, 미역·다시마는 갈조류, 김은 홍조류예요. 녹조류는 육상식물에 가까워요.</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>홍조류가 늘어나는 것이 적조야?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>홍조류는 무리 이름, 적조는 일부 와편모조류 등의 번성 현상이야. 종류와 사건을 나누자.</p></div><img src="../20261110T083140-9c36e474/images/s0-algae/02.png" alt="이름표와 사건 알림 — 식물성 플랑크톤은 광합성, 동물성 플랑크톤은 외부 먹이를 이용해요. 녹조류와 녹조도 무리와 현상의 구분이에요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">식물성 플랑크톤은 광합성, 동물성 플랑크톤은 외부 먹이를 이용해요. 녹조류와 녹조도 무리와 현상의 구분이에요.</p><p class="comic-analogy"><strong>비유 연결</strong> 도감의 미세조류 종류 이름과 수조의 미세조류 번성 → 홍조류 같은 분류군 이름과 적조라는 번성 현상</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>피해는 전부 독 때문일까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>일부 종의 독소도 있지만 호흡과 사체 분해가 산소를 줄일 수도 있어.</p></div><img src="../20261110T083140-9c36e474/images/s0-algae/03.png" alt="이름표와 사건 알림 — 모든 와편모조류가 독을 내거나 모든 적조가 같은 원인인 것은 아니에요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">일부 와편모조류는 적조를 일으켜요. 모든 와편모조류가 독을 내거나 모든 적조가 같은 원인인 것은 아니에요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 도감의 종류와 수조의 번성 상태는 분류군과 현상을 나누는 비유예요. 모든 적조가 같은 미세조류나 같은 독소로 발생한다는 뜻은 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>하얀 산호는 흰 조류고 이미 죽은 거야?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>산호는 동물이야. 공생 조류나 색소가 줄어 백화하며, 즉각 죽었다는 뜻은 아니야.</p></div><img src="../20261110T083140-9c36e474/images/s0-algae/04.png" alt="이름표와 사건 알림 — 높은 수온 등으로 공생이 깨질 수 있어요. 지속되면 생존과 서식처·광합성 산물 공급이 위협받아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">높은 수온 등으로 공생이 깨질 수 있어요. 지속되면 생존과 서식처·광합성 산물 공급이 위협받아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>닮은 현생 생물이 직접 조상이겠네?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>가까운 친척이라는 뜻이야. 깃편모충류와 동물도 형태·DNA로 관계를 추론해.</p></div><img src="../20261110T083140-9c36e474/images/s0-algae/05.png" alt="이름표와 사건 알림 — 녹조류와 육상식물, 깃편모충류와 동물의 가까움은 직접 조상 확정이 아니에요. 보충: 일부 해조류에도 세대교번이 있어요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">녹조류와 육상식물, 깃편모충류와 동물의 가까움은 직접 조상 확정이 아니에요. 보충: 일부 해조류에도 세대교번이 있어요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="../../../../%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1110_Protists_Plants_Fungi_and_Animals.html#s0-algae" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="sum-lead">생물군·현상, 공생자·숙주, 친척·직접 조상을 각각 분리한다.</p></div></article></section>
+<section id="comic-section-2"><h2>2. 식물의 육상 적응과 번식</h2><article class="topic" id="s1-land"><h3>물 밖에서 마르지 않고 서는 법</h3><p class="comic-question">큐티클과 기공 또는 관다발과 종자를 같은 적응으로 보는 혼동을 어떻게 구별할까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>물 밖이면 햇빛만 충분하면 될까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>마르지 않아야 하고 부력 없이 몸도 받쳐야 해.</p></div><img src="../20261110T083140-9c36e474/images/s1-land/01.png" alt="비옷·창문·배관·기둥 — 수업의 식물은 육상식물이에요. 선태류는 포함하지만 갈조류·녹조류는 구별해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">수업의 식물은 육상식물이에요. 선태류는 포함하고 갈조류·녹조류는 구별해요. 녹조류는 가까운 친척이지만, 광합성을 한다고 육상식물과 같은 군이 되지는 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>전부 덮으면 문제 해결 아닐까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>물은 지키지만 공기도 드나들어야 해. 덮개와 조절 구멍이 함께 필요해.</p></div><img src="../20261110T083140-9c36e474/images/s1-land/02.png" alt="비옷·창문·배관·기둥 — 큐티클은 왁스성 층으로 수분 손실을 줄이고, 기공은 열리고 닫히며 기체 교환과 물 손실을 조절해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">큐티클은 표면의 왁스성 층으로 수분 손실과 기체의 직접 출입을 줄여요. 기공은 열리고 닫히며 CO₂ 유입 등 기체 교환과 물 손실을 조절해요.</p><p class="comic-analogy"><strong>비유 연결</strong> 비옷의 덮개와 여닫는 통풍구 → 큐티클의 수분 손실 감소와 기공의 기체 교환 조절 · 건물의 배관과 지지 기둥 → 관다발의 수송과 리그닌의 조직 지지</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그럼 모든 식물에 기공이 있겠네?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>검정말은 기공 없이, 물과 접한 얇은 몸 표면에서 직접 기체를 교환하는 예외야.</p></div><img src="../20261110T083140-9c36e474/images/s1-land/03.png" alt="비옷·창문·배관·기둥 — 육상식물의 공통 경향을 예외 없는 규칙으로 바꾸지 않아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">육상식물의 공통 경향을 예외 없는 규칙으로 바꾸지 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>몸속 길과 단단한 벽은 같은 일이야?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>물관·체관은 수송, 리그닌은 조직을 단단하게 해 지지에 도움을 줘.</p></div><img src="../20261110T083140-9c36e474/images/s1-land/04.png" alt="비옷·창문·배관·기둥 — 물관은 물·무기양분, 체관은 광합성 산물을 운반해요. 리그닌과 셀룰로오스는 달라요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">물관은 물·무기양분, 체관은 광합성 산물을 운반해요. 리그닌과 셀룰로오스는 달라요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>관다발이 있으면 종자도 있지?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>양치류는 관다발이 있어도 종자는 없어. 두 기준을 따로 적용해야 해.</p></div><img src="../20261110T083140-9c36e474/images/s1-land/05.png" alt="비옷·창문·배관·기둥 — 선태류는 관다발 없음, 양치류는 있음. 둘 다 종자 없이 포자로 번식해요. 겉씨·속씨식물은 종자가 있어요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">선태류는 관다발이 없어 장거리 수송이 어렵고 대체로 작으며 습한 곳에서 자라요. 양치류는 관다발이 있지만 두 군 모두 종자 없이 포자로 번식해요. 겉씨·속씨식물에는 종자가 있어요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 식물 안에 실제 옷·건물 부품이 있는 것은 아니며 모든 식물이 동일한 구조를 갖는 것도 아니다</p></figcaption></figure></li></ol><p class="comic-source"><a href="../../../../%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1110_Protists_Plants_Fungi_and_Animals.html#s1-land" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">건조·기체 교환·수송·지지를 구별하고 관다발과 종자의 두 분류 기준을 적용한다.</p></div></article><article class="topic" id="s1-seed"><h3>꽃가루·밑씨·씨방은 서로 다른 단계</h3><p class="comic-question">수분·수정·산포를 혼동하거나 밑씨·씨방의 발달을 뒤집는 혼동을 어떻게 구별할까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>입구에 도착하면 안쪽 만남도 끝난 걸까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>도착과 만남은 별개야. 꽃가루 이동과 생식 세포 결합도 나누자.</p></div><img src="../20261110T083140-9c36e474/images/s1-seed/01.png" alt="택배의 도착과 안쪽 만남 — 수분·수정·종자 산포는 대상과 시점이 달라요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">수분·수정·종자 산포는 대상과 시점이 달라요.</p><p class="comic-analogy"><strong>비유 연결</strong> 건물에 도착한 운반물과 안쪽에서의 만남 → 수분의 도착과 수정의 결합은 다른 사건</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>겉씨식물에도 꽃가루가 있어?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>둘 다 꽃가루와 밑씨가 있어. 겉씨는 밑씨가 씨방에 싸이지 않고 속씨는 씨방 안에 있어.</p></div><img src="../20261110T083140-9c36e474/images/s1-seed/02.png" alt="택배의 도착과 안쪽 만남 — 겉씨식물에는 속씨식물의 꽃·씨방·열매가 없어요. 꽃가루 안에서 정자가, 밑씨 안에서 난세포가 발달해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">겉씨식물에는 속씨식물의 꽃·씨방·열매가 없어요. 꽃가루 안에서 정자가, 밑씨 안에서 난세포가 발달해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>꽃가루가 닿았어. 수정 끝이지?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>아직이야. 꽃가루관을 통해 정자가 이동해 난세포와 결합해야 수정이야.</p></div><img src="../20261110T083140-9c36e474/images/s1-seed/03.png" alt="택배의 도착과 안쪽 만남 — 꽃가루 이동에 자유로운 물이 꼭 필요하지 않아요. 바람·동물이 수분을 매개해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">꽃가루 이동에 자유로운 물이 꼭 필요하지 않아요. 바람·동물이 수분을 매개해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그럼 씨방이 씨가 되는 거야?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>밑씨는 종자, 씨방은 열매, 수정란은 배가 돼. 각각 출발 부위가 달라.</p></div><img src="../20261110T083140-9c36e474/images/s1-seed/04.png" alt="종자는 배·영양조직·종피를 포함해요. 종피가 배를 보호하며 종자는 휴면을 거칠 수 있고, 알맞은 수분 등 조건에서 발아해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">종자는 배·영양조직·종피를 포함해요. 종피가 배를 보호하며 종자는 휴면을 거칠 수 있고, 알맞은 수분 등 조건에서 발아해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>종자가 멀리 가는 것도 수분일까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>완성된 종자의 이동은 산포야. 부모와 빛·물을 두고 경쟁을 줄이는 이점이 있어.</p></div><img src="../20261110T083140-9c36e474/images/s1-seed/05.png" alt="택배의 도착과 안쪽 만남 — 바람·물·동물이 종자 산포를 도와요. 보충: 겉씨식물도 포자를 만들지만 내부 생식 구조에 머무는 단계와 외부 산포는 달라요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">바람·물·동물이 종자 산포를 도와요. 보충: 겉씨식물도 포자를 만들지만 내부 생식 구조에 머무는 단계와 외부 산포는 달라요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>속씨식물만 관다발이 있고 초기 화석도 충분해?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>특수 물관요소 설명과 관다발의 존재는 달라. 교재는 초기 화석 기록이 빈약하다고 해.</p></div><img src="../20261110T083140-9c36e474/images/s1-seed/06.png" alt="택배의 도착과 안쪽 만남 — 보충: 특수 물관요소는 물 수송 설명에 유용하지만 관다발을 속씨식물 고유로 만들지 않아요. 초기 진화 연결도 단정하지 않아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">보충: 특수 물관요소는 물 수송 설명에 유용하지만 관다발을 속씨식물 고유로 만들지 않아요. 초기 진화 연결도 단정하지 않아요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 택배는 단계 구분용이며 꽃가루 자체가 수정란이나 종자가 되는 것은 아니다</p></figcaption></figure></li></ol><p class="comic-source"><a href="../../../../%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1110_Protists_Plants_Fungi_and_Animals.html#s1-seed" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="sum-lead">꽃가루 이동 뒤 수정이 일어나며 밑씨·씨방·수정란의 발달 대상이 다르다.</p><p class="panel-label">용어</p><dl class="terms"><dt>꽃가루와 종자</dt><dd>꽃가루는 수분으로 이동하는 운반 단위예요. 수정란이나 완성된 종자를 뜻하지 않아요.</dd><dt>속씨식물의 특수 물관요소</dt><dd><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>교재는 특수한 물관요소가 뿌리에서 지상부로 물을 더 빠르게 운반하도록 돕는다고 설명해요. 관다발 자체가 속씨식물만의 구조라는 뜻은 아니에요.</dd></dl></div></article><article class="topic" id="s1-coevolution"><h3>꽃과 동물이 서로에게 미친 진화적 영향</h3><p class="comic-question">매력적인 신호·물리적 맞물림·공진화를 같은 뜻으로 읽는 혼동을 어떻게 구별할까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>서로 영향을 주면 바로 공진화야?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>경기 조건이 바뀌면 전략의 유불리가 달라지듯 상대의 변화가 선택 조건을 바꿔.</p></div><img src="../20261110T083140-9c36e474/images/s1-coevolution/01.png" alt="서로 바뀌는 경기 조건 — 생물에서는 상대 계통의 유전적 변화가 서로 선택압으로 작용할 수 있어요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">생물에서는 상대 계통의 유전적 변화가 서로 선택압으로 작용할 수 있어요.</p><p class="comic-analogy"><strong>비유 연결</strong> 경기 규칙 변화가 참가자의 전략 조건을 바꾸고 전략이 다시 운영 조건에 영향을 줌 → 한쪽 변화가 상대의 선택 조건을 바꾸는 상호작용</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>꽃 색과 향은 무엇을 바꾸지?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>방문자가 감지하는 신호야. 벌의 자외선 무늬 감지나 새의 시각과 연결돼.</p></div><img src="../20261110T083140-9c36e474/images/s1-coevolution/02.png" alt="동물이 옮긴 꽃가루는 꽃이 다음 씨를 만들 기회를 줘요. 종자 자체를 옮기는 산포와 달라요. 벌·붉은 꽃의 예를 모든 종에 적용하지 않으며, 눈길을 끄는 신호와 몸 구조의 적합성도 구별해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">동물이 옮긴 꽃가루는 꽃이 다음 씨를 만들 기회를 줘요. 종자 자체를 옮기는 산포와 달라요. 벌·붉은 꽃의 예를 모든 종에 적용하지 않으며, 눈길을 끄는 신호와 몸 구조의 적합성도 구별해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>동물이 옮기면 모두 충매화지?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>충매는 곤충이야. 새·박쥐도 동물 매개자고 바람매개 꽃도 있어.</p></div><img src="../20261110T083140-9c36e474/images/s1-coevolution/03.png" alt="서로 바뀌는 경기 조건 — 수분은 꽃가루 운반이며 종자 산포와 달라요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">수분은 꽃가루 운반이며 종자 산포와 달라요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>눈에 안 띄는 꽃이면 기계적 격리일까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>방문 선호와 물리적 전달 차단은 달라. 두 종 사이 유전자 흐름이 막히는지도 확인해야 해.</p></div><img src="../20261110T083140-9c36e474/images/s1-coevolution/04.png" alt="서로 바뀌는 경기 조건 — 기계적 격리는 구조·형태 대응으로 전달·수용이 물리적으로 막히는 수정 전 격리예요. 한 번의 불일치만으로 종간 격리를 입증하지 않아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">기계적 격리는 구조·형태 대응으로 전달·수용이 물리적으로 막히는 수정 전 격리예요. 한 번의 불일치만으로 종간 격리를 입증하지 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>꽃과 새가 필요해서 몸을 바꾸는 건 아니구나?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>맞아. 여러 세대의 상호 선택압이지 의도적 변신이나 즉각적인 추종이 아니야.</p></div><img src="../20261110T083140-9c36e474/images/s1-coevolution/05.png" alt="서로 바뀌는 경기 조건 — 공동진화와 공진화는 같은 말이에요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">공동진화와 공진화는 같은 말이에요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 사람의 의도적 전략과 달리 생물의 공진화는 유전적 변화가 여러 세대에 걸쳐 선택되는 과정이다</p></figcaption></figure></li></ol><p class="comic-source"><a href="../../../../%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1110_Protists_Plants_Fungi_and_Animals.html#s1-coevolution" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">방문·꽃가루 전달·세대에 걸친 상호 선택압을 분리한다.</p></div></article></section>
+<section id="comic-section-3"><h2>3. 균류의 구조와 먹이·공생</h2><article class="topic" id="s2-structure"><h3>눈에 보이는 버섯 아래의 실</h3><div class="layer warn"><span class="layer-title">이 페이지는 제작 보류 중이에요</span><p>2컷 균사체 확대도의 핵심 부분이 말풍선용 상단 40% 여백을 침범해 생성자 검사에서 실패했어요. 페이지의 한 번 수정 묶음 뒤 남은 문제이므로 전체 페이지를 보류해요.</p></div><p class="comic-source"><a href="../../../../%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1110_Protists_Plants_Fungi_and_Animals.html#s2-structure" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">이 페이지는 아직 제작을 마치지 못했어요.</p></div></article><article class="topic" id="s2-feeding"><h3>밖에서 잘게 자른 다음 흡수해요</h3><p class="comic-question">균류가 먹이를 통째로 삼킨 뒤 소화하며 모든 오염물질을 분해한다는 혼동을 어떻게 구별할까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>큰 먹이를 먼저 삼키면 안 될까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>문보다 큰 덩어리를 밖에서 작게 나누듯, 먼저 분해해야 흡수할 수 있어.</p></div><img src="../20261110T083140-9c36e474/images/s2-feeding/01.png" alt="문 밖에서 잘라 들여오기 — 균류는 광합성하지 않는 종속영양 생물이에요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">균류는 광합성하지 않는 종속영양 생물이에요.</p><p class="comic-analogy"><strong>비유 연결</strong> 문보다 큰 덩어리를 밖에서 잘라 작은 조각으로 들임 → 큰 유기물의 세포외 소화와 작은 분자 흡수</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>밖으로 내보내는 것과 안으로 받는 것은?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>효소는 밖으로 분비하고, 작아진 먹이 분자는 안으로 흡수해.</p></div><img src="../20261110T083140-9c36e474/images/s2-feeding/02.png" alt="문 밖에서 잘라 들여오기 — 동물은 보통 섭식 뒤 몸 안에서 소화, 균류는 세포외 소화 뒤 흡수해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">동물은 보통 섭식 뒤 몸 안에서 소화, 균류는 세포외 소화 뒤 흡수해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>살아 있는 숙주와 죽은 나무는 같을까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>살아 있는 숙주에서 얻으면 기생, 죽은 유기물에서 얻으면 부생이야.</p></div><img src="../20261110T083140-9c36e474/images/s2-feeding/03.png" alt="문 밖에서 잘라 들여오기 — 세균·균류 분해자는 유기물 탄소를 CO₂ 등으로 되돌려 순환에 기여해요. 포자와 유성·무성생식은 영양 방식과 별개의 기준이에요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">세균·균류 분해자는 유기물 탄소를 CO₂ 등으로 되돌려 순환에 기여해요. 포자와 유성·무성생식은 영양 방식과 별개의 기준이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그럼 모든 독성물질이 사라질까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>특정 유기오염물에 활용될 수 있지만 금속은 분해되지 않아. 조건도 따져야 해.</p></div><img src="../20261110T083140-9c36e474/images/s2-feeding/04.png" alt="문 밖에서 잘라 들여오기 — 보충: 오염물질 종류·산소·산도·수분·온도에 따라 효과가 달라요. 금속은 일부 경우 축적될 수 있어요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">보충: 오염물질 종류·산소·산도·수분·온도에 따라 효과가 달라요. 금속은 일부 경우 축적될 수 있어요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 세포막은 단순 문이 아니며 실제 절단은 세포 밖 효소 작용이다</p></figcaption></figure></li></ol><p class="comic-source"><a href="../../../../%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1110_Protists_Plants_Fungi_and_Animals.html#s2-feeding" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="sum-lead">몸 밖 효소 분해 뒤 작은 분자 흡수의 순서와 적용 한계를 구별한다.</p></div></article><article class="topic" id="s2-symbiosis"><h3>지의류와 균근의 교환 상대</h3><p class="comic-question">지의류·균근 상대를 뒤섞거나 균류가 당을 만든다고 방향을 뒤집는 혼동을 어떻게 구별할까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>서로 돕는다면 같은 것을 주고받나?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>만들거나 얻기 쉬운 자원이 달라. 빵과 물을 교환하는 관계처럼 나눠 보자.</p></div><img src="../20261110T083140-9c36e474/images/s2-symbiosis/01.png" alt="서로 다른 물건을 바꾸는 교환 — 비유의 빵은 광합성 유기물, 물·재료는 물과 무기양분에 대응해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">비유의 빵은 광합성 유기물, 물·재료는 물과 무기양분에 대응해요.</p><p class="comic-analogy"><strong>비유 연결</strong> 빵을 만드는 가게와 물·재료를 구하는 가게의 교환 → 각자의 자원 확보 능력이 다른 교환</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>지의류에서 유기물은 누가 만들어?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>남세균이나 녹조류 같은 광합성 상대야. 균류는 물과 무기양분 획득을 도와.</p></div><img src="../20261110T083140-9c36e474/images/s2-symbiosis/02.png" alt="서로 다른 물건을 바꾸는 교환 — 지의류는 척박한 바위에 살고 풍화·토양 형성에 기여할 수 있어요. 오염에 민감한 종류는 대기 지표로 쓰여요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">지의류는 척박한 바위에 살고 풍화·토양 형성에 기여할 수 있어요. 오염에 민감한 종류는 대기 지표로 쓰여요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>균근은 상대가 바뀌는 거구나?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>여기서는 식물 뿌리야. 균사가 작은 틈까지 뻗어 뿌리의 흡수 범위를 넓혀.</p></div><img src="../20261110T083140-9c36e474/images/s2-symbiosis/03.png" alt="서로 다른 물건을 바꾸는 교환 — 식물이 탄수화물 등 유기물을 균류에 주고, 균류는 물·인 같은 무기이온 획득을 도와요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">식물이 탄수화물 등 유기물을 균류에 주고, 균류는 물·인 같은 무기이온 획득을 도와요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>균류가 식물에 당을 만들어 주는 건 아니네?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>맞아. 당은 식물에서 균류로, 물·무기양분은 균류 도움으로 식물에 가.</p></div><img src="../20261110T083140-9c36e474/images/s2-symbiosis/04.png" alt="서로 다른 물건을 바꾸는 교환 — 지의류의 광합성 상대와 균근의 뿌리를 바꾸지 않아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">지의류의 광합성 상대와 균근의 뿌리를 바꾸지 않아요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 생물이 약속하고 거래하는 것은 아니며 실제 교환은 생리적 상호작용이다</p></figcaption></figure></li></ol><p class="comic-source"><a href="../../../../%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1110_Protists_Plants_Fungi_and_Animals.html#s2-symbiosis" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">광합성 상대가 유기물을 만들고 균류는 물·무기양분 획득을 돕는 방향을 보존한다.</p></div></article></section>
+<section id="comic-section-4"><h2>4. 동물의 분류와 육상 생식</h2><article class="topic" id="s3-animal"><h3>동물이라고 모두 대칭인 것은 아니에요</h3><p class="comic-question">다세포와 대칭성 모두 동물의 예외 없는 공통 형질이라는 혼동을 어떻게 구별할까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>동물은 모두 반으로 똑같이 나뉘지?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>접어 맞는 면을 찾아 보자. 하나, 여러 개, 없는 경우가 있어.</p></div><img src="../20261110T083140-9c36e474/images/s3-animal/01.png" alt="접어 겹치는 모양 — 좌우대칭·방사대칭·비대칭은 서로 다른 몸의 관계예요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">좌우대칭·방사대칭·비대칭은 서로 다른 몸의 관계예요.</p><p class="comic-analogy"><strong>비유 연결</strong> 접었을 때 맞는 종이 모양 → 한 평면·여러 평면·대칭면 없음</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>사람과 말미잘과 해면을 비교하면?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>사람은 좌우대칭, 말미잘은 방사대칭, 실제 해면은 일반적으로 비대칭이야.</p></div><img src="../20261110T083140-9c36e474/images/s3-animal/02.png" alt="접어 겹치는 모양 — 동물은 다세포 진핵·종속영양이며 세포벽이 없어요. 대부분 생활사의 어느 단계에서 움직여요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">동물은 다세포 진핵·종속영양이며 세포벽이 없어요. 대부분 생활사의 어느 단계에서 움직여요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>해면도 진정한 조직이 있을까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>해면에는 없어. 깃세포가 물을 흐르게 하고 먹이 입자를 걸러.</p></div><img src="../20261110T083140-9c36e474/images/s3-animal/03.png" alt="접어 겹치는 모양 — 깃세포는 깃편모충류와 모양이 닮았어요. 만화 캐릭터의 네모 모양을 실제 해면 특징으로 외우지 않아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">깃세포는 깃편모충류와 모양이 닮았어요. 만화 캐릭터의 네모 모양을 실제 해면 특징으로 외우지 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>무성생식이 되면 유성생식은 안 될까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>둘 다 가능한 경우가 있어. 유성생식만 한다는 말과 유성생식도 한다는 말은 달라.</p></div><img src="../20261110T083140-9c36e474/images/s3-animal/04.png" alt="접어 겹치는 모양 — 보충: 동물은 대개 유성생식하지만 해면은 몸 일부로 무성생식도 가능해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">보충: 동물은 대개 유성생식하지만 해면은 몸 일부로 무성생식도 가능해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 이상화한 모양의 비유이며 실제 동물의 세포·조직과 생식 방식을 종이에서 추론하지 않는다</p></figcaption></figure></li></ol><p class="comic-source"><a href="../../../../%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1110_Protists_Plants_Fungi_and_Animals.html#s3-animal" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="sum-lead">대칭면 수와 해면동물의 비대칭·조직 부재를 구별한다.</p></div></article><article class="topic" id="s3-chordate"><h3>척삭동물 안에 척추동물이 있어요</h3><p class="comic-question">척삭동물과 척추동물을 같게 보거나 어류를 모든 후손을 담는 계통군으로 읽는 혼동을 어떻게 구별할까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>척삭동물은 전부 척추동물이야?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>큰 상자 안 작은 상자야. 척추동물은 척삭동물의 일부지 역은 아니야.</p></div><img src="../20261110T083140-9c36e474/images/s3-chordate/01.png" alt="큰 상자 속 작은 상자 — 사지류도 척추동물 안에 있고 양서류와 양막류를 포함해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">사지류도 척추동물 안에 있고 양서류와 양막류를 포함해요.</p><p class="comic-analogy"><strong>비유 연결</strong> 큰 보관함 안 작은 보관함 → 척삭동물 안 척추동물 안 사지류의 포함</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>척삭은 등뼈의 다른 말일까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>척삭은 유연한 지지 기둥이고 척추는 등뼈야. 척삭은 생애 적어도 한 단계에 나타나.</p></div><img src="../20261110T083140-9c36e474/images/s3-chordate/02.png" alt="큰 상자 속 작은 상자 — 등쪽 속 빈 신경삭·인두열·근육성 꼬리도 척삭동물 형질이에요. 사람은 배아의 척삭 일부가 척추 사이 원반에 남아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">등쪽 속 빈 신경삭·인두열·근육성 꼬리도 척삭동물 형질이에요. 사람은 배아의 척삭 일부가 척추 사이 원반에 남아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>모든 척삭동물에 뼈가 있다는 말은?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>무척추 척삭동물까지 포함하니 틀려. 턱과 내부골격도 범위를 확인해야 해.</p></div><img src="../20261110T083140-9c36e474/images/s3-chordate/03.png" alt="큰 상자 속 작은 상자 — 보충: 먹장어·칠성장어는 턱 없는 계통. 뼈 또는 연골 내부골격은 지지·보호하고 턱은 먹이 포획·방어에 도움을 줘요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">보충: 먹장어·칠성장어는 턱 없는 계통. 뼈 또는 연골 내부골격은 지지·보호하고 턱은 먹이 포획·방어에 도움을 줘요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>물고기만 묶으면 왜 계통군이 빠질까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>그 조상의 후손인 사지류를 빼기 때문이야. 모든 후손을 담으면 단계통이 돼.</p></div><img src="../20261110T083140-9c36e474/images/s3-chordate/04.png" alt="큰 상자 속 작은 상자 — 일상의 어류는 유용하지만 사지류를 뺀 어류는 측계통이에요. 진화 사다리로 줄 세우지 않아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">일상의 어류는 유용하지만 사지류를 뺀 어류는 측계통이에요. 진화 사다리로 줄 세우지 않아요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 상자 위치는 포함만 설명하며 모든 척삭동물이 척추나 뼈를 갖는다는 뜻이 아니다</p></figcaption></figure></li></ol><p class="comic-source"><a href="../../../../%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1110_Protists_Plants_Fungi_and_Animals.html#s3-chordate" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="sum-lead">척추동물은 척삭동물의 일부이며 단계통과 측계통을 구별한다.</p></div></article><article class="topic" id="s3-amniote"><h3>몸과 배를 건조에서 보호해요</h3><p class="comic-question">네 다리·양막란·껍질 알·포유류 출산을 같은 기준으로 보는 혼동을 어떻게 구별할까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>몸만 마르지 않으면 육상 생식도 해결일까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>몸의 비옷과 배의 보호 공간은 달라. 발생 중인 배도 지켜야 해.</p></div><img src="../20261110T083140-9c36e474/images/s3-amniote/01.png" alt="몸의 비옷과 배의 보호 공간 — 육상에서 건조는 몸과 발생 환경 모두의 문제예요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">육상에서 건조는 몸과 발생 환경 모두의 문제예요.</p><p class="comic-analogy"><strong>비유 연결</strong> 몸을 덮는 비옷과 아기를 감싸는 보호 공간 → 몸의 수분 보호와 발생 중 배의 보호는 다름</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>배를 보호하는 막은 다 같은 역할이야?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>양막은 배를 감싸고, 난황낭은 영양, 요막은 배설물 저장·기체 교환, 장막은 바깥 기체 교환을 도와.</p></div><img src="../20261110T083140-9c36e474/images/s3-amniote/02.png" alt="몸의 비옷과 배의 보호 공간 — 네 막은 서로 다른 자리와 기능을 가져요. 겉껍데기를 네 막 중 하나로 세지 않아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">네 막은 서로 다른 자리와 기능을 가져요. 겉껍데기를 네 막 중 하나로 세지 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>양막류면 모두 밖에 알을 낳겠네?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>조류·파충류·포유류가 들어가지만 밖에 껍질 알을 낳는 방식만 있는 건 아니야.</p></div><img src="../20261110T083140-9c36e474/images/s3-amniote/03.png" alt="몸의 비옷과 배의 보호 공간 — 양서류의 수중 생식과 양막류를 구별해요. 조류는 진화 계통상 파충류 쪽 양막류이며 네 다리의 기원과 육상 생식 적응은 다른 질문이에요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">양서류의 수중 생식과 양막류를 구별해요. 조류는 진화 계통상 파충류 쪽 양막류이며 네 다리의 기원과 육상 생식 적응은 다른 질문이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>알을 낳는 오리너구리는 포유류가 아니야?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>단공류도 젖을 먹이니 포유류야. 유대류와 태반류도 젖으로 새끼를 키워.</p></div><img src="../20261110T083140-9c36e474/images/s3-amniote/04.png" alt="몸의 비옷과 배의 보호 공간 — 단공류는 알, 유대류는 짧은 초기 자궁 발생 뒤 육아낭, 태반류는 자궁·태반을 통한 긴 발생이에요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">단공류는 알, 유대류는 짧은 초기 자궁 발생 뒤 육아낭, 태반류는 자궁·태반을 통한 긴 발생이에요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 보호 공간은 배외막의 역할 비유이며 모든 양막류가 외부 껍질 알을 낳는 것은 아니다</p></figcaption></figure></li></ol><p class="comic-source"><a href="../../../../%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1110_Protists_Plants_Fungi_and_Animals.html#s3-amniote" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">피부와 배외막의 대상을 분리하고 양막류와 포유류의 다양한 생식을 구별한다.</p><p class="panel-label">용어</p><dl class="terms"><dt>피부와 배외막의 보호 대상</dt><dd>양막류의 물이 잘 통과하지 않는 피부는 몸의 수분 손실을 줄여요. 배외막은 발생 중인 배를 보호해요. 몸과 배는 서로 다른 보호 대상이에요.</dd><dt>육상 생식 적응의 기준</dt><dd>양막류는 척추동물 가운데 육상 생식에 처음으로 본격 적응한 무리로 구별해요. 처음 땅을 밟은 척추동물을 묻는 질문과 달라요.</dd></dl></div></article></section>
+<section id="comic-section-5"><h2>5. 사람류의 특징과 증거 읽기</h2><article class="topic" id="s4-primate"><h3>마주 보는 엄지와 두 발 걷기는 다른 기준</h3><div class="layer warn"><span class="layer-title">이 페이지는 제작 보류 중이에요</span><p>한 번의 수정 뒤에도 3컷의 상단 말풍선 여백 침범과 4컷 오스트랄로피테쿠스의 사람류 집합 밖 배치 오류가 남아 전체 페이지를 보류해요.</p></div><p class="comic-source"><a href="../../../../%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1110_Protists_Plants_Fungi_and_Animals.html#s4-primate" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">이 페이지는 아직 제작을 마치지 못했어요.</p></div></article><article class="topic" id="s4-fossil"><h3>뼈·발자국에서 행동을 추론해요</h3><div class="layer warn"><span class="layer-title">이 페이지는 제작 보류 중이에요</span><p>4컷 사람류 발자국의 발가락 자국이 다섯 개가 아니라 네 개로 남았고, 한 번의 독립 검토 수정으로도 해결되지 않아 전체 페이지를 보류해요.</p></div><p class="comic-source"><a href="../../../../%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1110_Protists_Plants_Fungi_and_Animals.html#s4-fossil" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">이 페이지는 아직 제작을 마치지 못했어요.</p></div></article><article class="topic" id="s4-origin"><h3>현대인의 기원을 뒷받침하는 서로 다른 자료</h3><p class="comic-question">유전적 다양성 하나로 기원·우열·연대를 확정하거나 교배에서 멸종 원인을 단정하는 혼동을 어떻게 구별할까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>자료 하나가 많으면 기원을 확정할까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>장소·시점의 흔적과 복사본 차이처럼 서로 다른 단서를 함께 대조해야 해.</p></div><img src="../20261110T083140-9c36e474/images/s4-origin/01.png" alt="서로 다른 장부의 일치 — 화석과 분자 자료는 같은 관찰이 아니에요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">화석과 분자 자료는 같은 관찰이 아니에요.</p><p class="comic-analogy"><strong>비유 연결</strong> 오래된 영수증의 장소·날짜와 여러 복사본의 차이를 대조함 → 화석의 연대·위치와 집단 DNA 차이를 함께 검토</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>아프리카 기원설의 근거는?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>아프리카의 오래된 화석과 집단의 큰 유전적 다양성을 함께 해석해 기원과 확산을 추론해.</p></div><img src="../20261110T083140-9c36e474/images/s4-origin/02.png" alt="서로 다른 장부의 일치 — 연대·발견 위치와 집단 DNA 차이가 직접 자료예요. 오래된 수업 숫자를 최신 확정 연대로 외우지 않아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">연대·발견 위치와 집단 DNA 차이가 직접 자료예요. 오래된 수업 숫자를 최신 확정 연대로 외우지 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>다지역설도 같은 설명일까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>여러 지역의 옛 집단이 교류하며 현대인으로 진화했다는 다른 설명으로 소개됐어.</p></div><img src="../20261110T083140-9c36e474/images/s4-origin/03.png" alt="서로 다른 장부의 일치 — 수업은 두 가설의 차이와 아프리카 기원설의 두 근거에 초점을 두었어요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">수업은 두 가설의 차이와 아프리카 기원설의 두 근거에 초점을 두었어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>네안데르탈인은 사피엔스 바로 앞 조상이지?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>한동안 공존했고 일부 계통 사이 유전자 유입을 DNA가 지지해. 일렬의 직계 목록은 아니야.</p></div><img src="../20261110T083140-9c36e474/images/s4-origin/04.png" alt="서로 다른 장부의 일치 — 호모 에렉투스·네안데르탈인·사피엔스의 언급 순서는 직계 조상 순서가 아니에요. 일부 DNA 공유는 전체 DNA의 닮은 비율이라는 뜻이 아니에요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">호모 에렉투스·네안데르탈인·사피엔스의 언급 순서는 직계 조상 순서가 아니에요. 일부 DNA 공유는 전체 DNA의 닮은 비율이라는 뜻이 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>교배 증거로 멸종 원인도 알까?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>다른 질문이야. 다양성도 개인의 우열이나 진화 단계가 아니고, 단독으로 기원·연대를 확정 못 해.</p></div><img src="../20261110T083140-9c36e474/images/s4-origin/05.png" alt="서로 다른 장부의 일치 — 네안데르탈인 멸종 원인은 수업에서도 확정하지 않았어요. 늦은 등장만으로 종간 다양성 순위를 정하지 않아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">네안데르탈인 멸종 원인은 수업에서도 확정하지 않았어요. 늦은 등장만으로 종간 다양성 순위를 정하지 않아요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 서류는 증거의 독립성 비유이며 유전적 다양성이 곧 개인의 우열이나 정확한 시계가 되지 않는다</p></figcaption></figure></li></ol><p class="comic-source"><a href="../../../../%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1110_Protists_Plants_Fungi_and_Animals.html#s4-origin" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">화석과 DNA를 별도 관찰로 비교하고 추론의 한계를 유지한다.</p></div></article></section>
+<section id="comic-section-6"><h2>6. 요약 · 예고</h2><article class="topic" id="s5-cheatsheet"><h3>시험 직전 한눈에</h3><div class="layer warn"><span class="layer-title">이 페이지는 제작 보류 중이에요</span><p>7컷 단공류 오리너구리에 젖꼭지처럼 보이는 돌출이 한 번의 수정 뒤에도 남아, 포유류 생식 비교를 잘못 학습할 수 있어 전체 요약 페이지를 보류해요.</p></div><p class="comic-source"><a href="../../../../%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1110_Protists_Plants_Fungi_and_Animals.html#s5-cheatsheet" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">이 페이지는 아직 제작을 마치지 못했어요.</p></div></article></section>
+  </main>
+  <footer>일부 페이지 제작 보류</footer>
+    </div>
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="panel-right-title">
+      <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-right-title">페이지 요약</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-empty" id="sum-empty">페이지를 넘기면 그 페이지의 핵심 식과 용어가 여기에 나옵니다.</p>
+        <div class="sums" id="sum-for"></div>
+      </div>
+    </aside>
+  </div>
+  <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
+  <nav class="pager" aria-label="화면 이동">
+    <div class="pager-inner">
+      <button class="btn btn-ghost" id="pager-prev" type="button">이전</button>
+      <span class="pager-count" id="pager-count"></span>
+      <button class="btn btn-primary" id="pager-next" type="button">시작하기</button>
+    </div>
+  </nav>
+  <p class="sr-only" id="pager-status" aria-live="polite"></p>
+
+  <script id="theme-ui">
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const sysDark = matchMedia('(prefers-color-scheme: dark)');
+      const KEY = 'od-theme';
+      const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+      function label() {
+        const next = isDark() ? '라이트 모드로 전환' : '다크 모드로 전환';
+        btn.setAttribute('aria-label', next);
+        btn.title = next;
+      }
+      btn.addEventListener('click', () => {
+        const t = isDark() ? 'light' : 'dark';
+        // 시스템 설정과 같아지면 저장을 지워 다시 시스템을 따른다
+        if ((t === 'dark') === sysDark.matches) { delete root.dataset.theme; try { localStorage.removeItem(KEY); } catch (e) {} }
+        else { root.dataset.theme = t; try { localStorage.setItem(KEY, t); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+        label();
+      });
+      sysDark.addEventListener('change', label);
+      window.addEventListener('storage', (e) => {
+        if (e.key !== KEY) return;
+        if (e.newValue === 'light' || e.newValue === 'dark') root.dataset.theme = e.newValue; else delete root.dataset.theme;
+        label();
+      });
+      label();
+    })();
+  </script>
+  <script id="panels-ui">
+    (function () {
+      const body = document.body;
+      const layout = document.querySelector('.layout');
+      const kind = body.dataset.panels;
+      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const scrim = document.getElementById('panel-scrim');
+      const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
+      const wideMq = matchMedia('(min-width: 1024px)');
+      const roomyMq = matchMedia('(min-width: 1280px)');
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      // 푼 기록은 탭(세션) 단위로만 유지: 뒤로가기·새로고침엔 남고, 창을 닫고 다시 열면 초기화
+      const tabStore = {
+        get(k, d) { try { const v = sessionStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      const PREF = 'od-panels:' + kind;
+      // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
+      const RANGE = body.dataset.range || '';
+      const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+      const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+      let overlay = null;
+
+      // ---------- 열고 닫기 ----------
+      function docked() {
+        const pref = store.get(PREF, {});
+        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+      }
+      function sync() {
+        const wide = wideMq.matches;
+        const d = docked();
+        ['left', 'right'].forEach((side) => {
+          const open = wide ? d[side] : overlay === side;
+          const p = panels[side];
+          layout.dataset[side] = open ? 'open' : 'closed';
+          p.classList.toggle('is-open', !wide && open);
+          p.inert = !open;
+          if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
+          toggles[side].setAttribute('aria-expanded', String(open));
+        });
+        const drawer = !wide && overlay !== null;
+        scrim.classList.toggle('is-on', drawer);
+        body.classList.toggle('drawer-open', drawer);
+        blockers.forEach((el) => { el.inert = drawer; });
+      }
+      function openDrawer(side) {
+        overlay = side;
+        sync();
+        requestAnimationFrame(() => panels[side].querySelector('[data-panel-close]').focus());
+      }
+      function closeDrawer(refocus) {
+        if (overlay === null) return;
+        const side = overlay;
+        overlay = null;
+        sync();
+        if (refocus) toggles[side].focus();
+      }
+      function toggle(side) {
+        if (wideMq.matches) {
+          const d = docked();
+          d[side] = !d[side];
+          store.set(PREF, d);
+          sync();
+          if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+        } else if (overlay === side) closeDrawer(true);
+        else openDrawer(side);
+      }
+
+      toggles.left.addEventListener('click', () => toggle('left'));
+      toggles.right.addEventListener('click', () => toggle('right'));
+      scrim.addEventListener('click', () => closeDrawer(true));
+      document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
+      panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
+
+      // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      function applyWidths() {
+        const w = store.get(PREF + ':w', {});
+        ['left', 'right'].forEach((side) => {
+          if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
+          else layout.style.removeProperty(WIDTH[side].prop);
+        });
+      }
+      function maxFor(side) {
+        const other = side === 'left' ? panels.right : panels.left;
+        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
+      }
+      function setWidth(side, px, save) {
+        const v = Math.round(Math.min(Math.max(px, WIDTH[side].min), maxFor(side)));
+        layout.style.setProperty(WIDTH[side].prop, v + 'px');
+        panels[side].querySelector('.panel-resize').setAttribute('aria-valuenow', String(v));
+        if (save) { const w = store.get(PREF + ':w', {}); w[side] = v; store.set(PREF + ':w', w); }
+      }
+      function resetWidth(side) {
+        const w = store.get(PREF + ':w', {});
+        delete w[side];
+        store.set(PREF + ':w', w);
+        layout.style.removeProperty(WIDTH[side].prop);
+      }
+      document.querySelectorAll('.panel-resize').forEach((handle) => {
+        const side = handle.dataset.side;
+        const dir = side === 'left' ? 1 : -1;
+        handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
+        handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
+        handle.addEventListener('pointerdown', (e) => {
+          if (!wideMq.matches || e.button !== 0) return;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startW = panels[side].getBoundingClientRect().width;
+          handle.setPointerCapture(e.pointerId);
+          body.classList.add('is-resizing');
+          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const up = () => {
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', up);
+            handle.removeEventListener('pointercancel', up);
+            body.classList.remove('is-resizing');
+            setWidth(side, panels[side].getBoundingClientRect().width, true);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', up);
+          handle.addEventListener('pointercancel', up);
+        });
+        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('keydown', (e) => {
+          const step = e.shiftKey ? 64 : 16;
+          const cur = panels[side].getBoundingClientRect().width;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+        });
+      });
+      applyWidths();
+      const onMq = () => { overlay = null; sync(); };
+      wideMq.addEventListener('change', onMq);
+      roomyMq.addEventListener('change', onMq);
+
+      // ---------- 목차의 진행 표시 ----------
+      const progressN = document.getElementById('progress-n');
+      const progressBar = document.getElementById('progress-bar');
+      const progressTotal = document.getElementById('progress-total');
+      function markToc(done, total, doneLabel) {
+        panels.left.querySelectorAll('.toc-list a').forEach((a) => {
+          const id = decodeURIComponent(a.getAttribute('href').slice(1));
+          let mark = a.querySelector('.toc-mark');
+          if (!mark) {
+            mark = document.createElement('span');
+            mark.className = 'toc-mark';
+            mark.setAttribute('aria-hidden', 'true');
+            const state = document.createElement('span');
+            state.className = 'sr-only toc-state';
+            a.append(mark, state);
+          }
+          const isDone = done.has(id);
+          mark.classList.toggle('is-done', isDone);
+          mark.innerHTML = isDone ? ICON_DONE : ICON_TODO;
+          a.querySelector('.toc-state').textContent = isDone ? ' (' + doneLabel + ')' : '';
+        });
+        progressN.textContent = String(done.size);
+        progressTotal.textContent = String(total);
+        progressBar.style.transform = 'scaleX(' + (total ? done.size / total : 0) + ')';
+      }
+      function revealCurrent() {
+        const link = panels.left.querySelector('.toc-list a[aria-current="true"]');
+        if (link && layout.dataset.left === 'open') link.scrollIntoView({ block: 'nearest' });
+      }
+
+      // ---------- 복습문제: 오른쪽 = 원문 · 힌트 · 풀이 ----------
+      function setupReview() {
+        const KEY = 'od-review-solved:' + RANGE;
+        const cards = Array.from(document.querySelectorAll('main article.card'));
+        const aids = panels.right.querySelector('.aids');
+        const empty = panels.right.querySelector('.panel-empty');
+        const btn = document.getElementById('solved-btn');
+        const groups = {};
+        const solved = new Set(tabStore.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        cards.forEach((card) => {
+          const g = document.createElement('div');
+          g.className = 'aid';
+          g.hidden = true;
+          card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
+          aids.appendChild(g);
+          groups[card.id] = g;
+        });
+        let curId = null;
+        function paintBtn() {
+          const on = solved.has(curId);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.innerHTML = (on ? ICON_DONE : ICON_TODO) + '<span>' + (on ? '푼 문제 · 표시 해제' : '푼 문제로 표시') + '</span>';
+        }
+        btn.addEventListener('click', () => {
+          if (!curId) return;
+          if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
+          tabStore.set(KEY, Array.from(solved));
+          paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          curId = s.matches('article.card') ? s.id : null;
+          Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
+          empty.hidden = Boolean(curId);
+          btn.hidden = !curId;
+          if (curId) paintBtn();
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(solved, cards.length, '푼 문제');
+          revealCurrent();
+        });
+      }
+
+      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
+      function setupNote() {
+        const KEY = 'od-comic-read:' + RANGE;
+        const topics = Array.from(document.querySelectorAll('main article.topic'));
+        const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
+        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
+        const box = panels.right.querySelector('.sums');
+        const sums = {};
+        topics.forEach((t) => {
+          const el = t.querySelector(':scope > .sum');
+          if (!el) return;
+          el.hidden = true;
+          box.appendChild(el);
+          sums[t.id] = el;
+        });
+        const empty = document.getElementById('sum-empty');
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          const key = s.matches('article.topic') ? s.id : 'intro';
+          Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
+          empty.hidden = Boolean(sums[key]);
+          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(read, topics.length, '읽음');
+          revealCurrent();
+        });
+      }
+
+      if (kind === 'review') setupReview();
+      if (kind === 'note') setupNote();
+      sync();
+    })();
+  </script>
+  <script id="pager-ui">
+    (function () {
+      const root = document.documentElement;
+      const main = document.querySelector('main');
+      const hero = main.querySelector('.hero');
+      const screens = [hero].concat(Array.from(main.querySelectorAll(document.body.dataset.screens)));
+      if (screens.length < 2) { root.classList.remove('js'); return; }
+      screens.forEach((s) => s.classList.add('screen'));
+
+      const last = screens.length - 1;
+      const prevBtn = document.getElementById('pager-prev');
+      const nextBtn = document.getElementById('pager-next');
+      const count = document.getElementById('pager-count');
+      const bar = document.getElementById('pager-bar');
+      const status = document.getElementById('pager-status');
+      const toc = document.querySelector('#panel-left .toc');
+      const scroller = document.querySelector('.content');
+      const titleOf = (s) => ((s.querySelector('h3') || s.querySelector('h1') || {}).textContent || '').trim();
+      let cur = -1;
+
+      // 목차: 섹션 링크 아래에 화면(토픽·카드) 목록을 붙인다
+      const tocLinks = [];
+      Array.from(toc.querySelectorAll(':scope > a')).forEach((a) => {
+        const sec = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+        const group = document.createElement('div');
+        group.className = 'toc-group';
+        a.replaceWith(group);
+        group.appendChild(a);
+        if (!sec) return;
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        screens.forEach((s, i) => {
+          if (!sec.contains(s)) return;
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#' + s.id;
+          link.innerHTML = '<span class="toc-title"></span>';
+          link.firstChild.textContent = titleOf(s);
+          li.appendChild(link);
+          list.appendChild(li);
+          tocLinks[i] = link;
+        });
+        group.appendChild(list);
+      });
+
+      function indexFor(hash) {
+        const id = decodeURIComponent((hash || '').replace(/^#/, ''));
+        const el = id && document.getElementById(id);
+        if (!el || !main.contains(el)) return { i: 0 };
+        const i = screens.findIndex((s) => s.contains(el) || el.contains(s));
+        return { i: Math.max(i, 0), target: i >= 0 && screens[i].contains(el) && screens[i] !== el ? el : null };
+      }
+
+      function render(i, target) {
+        const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
+        if (i !== cur) {
+          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
+          main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
+          const s = screens[i];
+          const sec = s.closest('section');
+          if (sec) sec.classList.add('is-on');
+          s.classList.add('is-current');
+          if (dir) { s.classList.remove('enter-next', 'enter-prev'); void s.offsetWidth; s.classList.add(dir); }
+          cur = i;
+          document.body.classList.toggle('at-end', i === last);
+          prevBtn.disabled = i === 0;
+          nextBtn.textContent = i === 0 ? '시작하기' : i === last ? '처음으로' : '다음';
+          count.textContent = i === 0 ? '' : i + ' / ' + last;
+          bar.style.transform = 'scaleX(' + (i / last) + ')';
+          status.textContent = i === 0 ? titleOf(s) : i + ' / ' + last + ', ' + titleOf(s);
+          tocLinks.forEach((link, k) => link && link.setAttribute('aria-current', String(k === i)));
+          document.dispatchEvent(new CustomEvent('od:screen', { detail: { index: i, screen: s } }));
+        }
+        if (target) target.scrollIntoView({ block: 'start' });
+        else scroller.scrollTo(0, 0);
+      }
+
+      function go(i) {
+        i = Math.min(Math.max(i, 0), last);
+        if (i === cur) return;
+        const url = i === 0 ? location.pathname + location.search : '#' + screens[i].id;
+        history.pushState(null, '', url);
+        render(i);
+      }
+
+      prevBtn.addEventListener('click', () => go(cur - 1));
+      nextBtn.addEventListener('click', () => go(cur === last ? 0 : cur + 1));
+      const fromUrl = () => { const r = indexFor(location.hash); render(r.i, r.target); };
+      window.addEventListener('hashchange', fromUrl);
+      window.addEventListener('popstate', fromUrl);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+
+      // 좌우로 밀어서 넘기기 (가로로 스크롤되는 영역은 제외)
+      let sx = 0, sy = 0, skip = true;
+      main.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (skip) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 64 && Math.abs(dx) > 2 * Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      fromUrl();
+    })();
+  </script>
+</body>
+</html>
