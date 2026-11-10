@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>생명과학 복습문제 8장 · 시험형</title>
+  <meta name="description" content="8장 웹과제 예상 v3">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('od-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']})"></script>
+  <style>
+    /* ---------- 토큰 ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #b54708; --prof: #6941c6; --supp: #067647; --danger: #d92d20;
+      --scroll: #c9d0db; --scroll-hover: #9aa3b2;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --fs-body: 17px; --fs-lead: 20px; --fs-small: 14px; --fs-label: 13px; --fs-fig: 12px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+      --radius: 8px; --measure: 680px; --tap: 48px; --btn-min: 160px;
+      --dur: 220ms; --dur-exit: 150ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+      /* 예전 조각이 참조할 수 있는 이름 */
+      --surface-2: var(--surface); --accent-soft: var(--surface); --warn-soft: var(--surface);
+      --prof-soft: var(--surface); --supp-soft: var(--surface); --eli5: var(--accent-ink); --eli5-soft: var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+        --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+        --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+        --scroll: #3f414b; --scroll-hover: #5b5e6a;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+      --scroll: #3f414b; --scroll-hover: #5b5e6a;
+    }
+
+    /* ---------- 기본 ---------- */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent-ink); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+
+    /* ---------- 상단 바 ---------- */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s2) var(--s4); display: flex; align-items: center; gap: var(--s3); min-height: 56px; }
+    .brand { flex: 1 1 auto; min-width: 0; font-size: var(--fs-body); font-weight: 700; white-space: nowrap; }
+    .text-btn { flex: none; min-height: 44px; min-width: 44px; padding: 0 var(--s3); border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); font: 600 var(--fs-small)/1 var(--font); cursor: pointer; }
+    .bar { height: 2px; background: var(--line); overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+
+    /* ---------- 본문 ---------- */
+    main { flex: 1 0 auto; width: 100%; max-width: var(--measure); margin: 0 auto; padding: var(--s6) var(--s5) var(--s7); }
+    .hero h1 { font-size: clamp(28px, 6vw, 36px); line-height: 1.3; margin: 0 0 var(--s3); letter-spacing: -0.02em; }
+    .hero p { color: var(--ink-2); margin: 0; }
+    section { margin-top: var(--s7); }
+    section > h2 { font-size: 22px; line-height: 1.4; margin: 0 0 var(--s4); }
+    .topic { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .topic h3 { margin: 0 0 var(--s2); font-size: clamp(24px, 5vw, 28px); line-height: 1.35; letter-spacing: -0.01em; }
+    .tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+    .tag { font-size: var(--fs-label); line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+
+    /* 레이어: 배경 없이 라벨과 구분선으로 나눈다 */
+    .layer { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .layer.eli5 { margin-top: 0; padding-top: 0; border-top: 0; }
+    .layer > :first-child { margin-top: 0; }
+    .layer > :last-child { margin-bottom: 0; }
+    .layer-title { display: block; font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); margin-bottom: var(--s2); }
+    .layer.eli5 .layer-title { color: var(--accent-ink); }
+    .layer.eli5 .lead { font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; margin: 0 0 var(--s3); }
+    .layer.prof .layer-title { color: var(--prof); }
+    .layer.warn { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn .layer-title { color: var(--warn); }
+    .layer.supp .badge.supp { margin-bottom: var(--s2); }
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
+    .badge.supp { color: var(--supp); }
+    blockquote { margin: var(--s2) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
+    ol.steps { padding-left: 1.4em; }
+    ol.steps li { margin: var(--s2) 0; }
+
+    /* 그림 · 수식 · 표 */
+    .figure { margin: var(--s4) 0; text-align: center; }
+    .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
+    .figure img { max-width: 100%; height: auto; }
+    .figure figcaption { font-size: var(--fs-small); color: var(--ink-2); margin-top: var(--s1); }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: var(--s1) 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+    th, td { border-bottom: 1px solid var(--line); padding: var(--s2); text-align: left; vertical-align: top; }
+    th { color: var(--ink-2); font-weight: 600; }
+    td:first-child, th:first-child { min-width: 6em; }
+
+    /* 위젯 */
+    .widget { background: var(--surface); border-radius: var(--radius); padding: var(--s4); margin: var(--s5) 0; }
+    .widget h4 { margin: 0 0 var(--s1); font-size: var(--fs-body); }
+    .widget-help { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s3); }
+    .controls { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--s2); font-size: var(--fs-small); }
+    .controls label { display: flex; align-items: center; gap: var(--s2); min-height: 44px; }
+    .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .widget svg { width: 100%; height: auto; background: var(--bg); border-radius: var(--radius); }
+    .readout { font-size: var(--fs-small); margin-top: var(--s2); }
+    .legend { font-size: var(--fs-label); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .sw { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: var(--s1); border-radius: 2px; }
+    .sw.truth { background: var(--ink-2); } .sw.fit { background: var(--accent); } .sw.train { background: var(--accent); height: 10px; width: 10px; border-radius: 50%; }
+    .sw.test { background: var(--warn); height: 10px; width: 10px; border-radius: 50%; } .sw.like { background: var(--accent); } .sw.prior { background: var(--prof); } .sw.post { background: var(--supp); }
+    .axis { stroke: var(--line); stroke-width: 1.5; }
+    .tick { fill: var(--ink-2); font-size: 11px; }
+    .plot-truth { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .plot-fit { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+    .pt-train { fill: var(--accent); }
+    .pt-test { fill: var(--warn); }
+    .plot-like { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .plot-prior { fill: none; stroke: var(--prof); stroke-width: 2; stroke-dasharray: 6 4; }
+    .plot-post { fill: none; stroke: var(--supp); stroke-width: 3; }
+    .mark-ml { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .mark-map { stroke: var(--supp); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 2; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 2.5; }
+    .fig-danger { stroke: var(--danger); fill: none; stroke-width: 2.5; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: 13px; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-fig); font-family: inherit; }
+
+    footer { width: 100%; max-width: var(--measure); margin: 0 auto; padding: 0 var(--s5) var(--s6); color: var(--ink-2); font-size: var(--fs-small); }
+
+    /* ---------- 문제 카드 ---------- */
+    .card { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .card h3 { margin: 0 0 var(--s4); font-size: clamp(22px, 5vw, 26px); line-height: 1.4; letter-spacing: -0.01em; }
+    .problem { margin: 0 0 var(--s5); }
+    .problem ol { padding-left: 1.4em; }
+    details { border-top: 1px solid var(--line); }
+    .card details:last-of-type { border-bottom: 1px solid var(--line); }
+    details[open] { padding-bottom: var(--s4); }
+    details > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: var(--s3);
+      min-height: var(--tap); cursor: pointer; font-weight: 600; }
+    details > summary::-webkit-details-marker { display: none; }
+    details > summary::after { content: ""; flex: none; width: 8px; height: 8px; margin-right: var(--s1);
+      border-right: 2px solid var(--ink-2); border-bottom: 2px solid var(--ink-2); transform: rotate(45deg); transition: transform 150ms ease-out; }
+    details[open] > summary::after { transform: rotate(-135deg); }
+    details.original { color: var(--ink-2); font-size: var(--fs-small); }
+    details.original > summary { color: var(--ink); font-size: var(--fs-body); }
+    .answer { font-weight: 700; background: var(--surface); border-radius: var(--radius); padding: var(--s3) var(--s4); }
+    .link-back { font-size: var(--fs-small); color: var(--ink-2); margin: var(--s5) 0 var(--s4); }
+    .top-link { flex: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--s2);
+      font-size: var(--fs-small); font-weight: 600; text-decoration: none; }
+    .js .card { padding: 0; border-top: 0; }
+    @media (prefers-reduced-motion: reduce) { details > summary::after { transition: none; } }
+
+    /* ---------- 하단 이동 바 ---------- */
+    .pager { position: sticky; bottom: 0; z-index: 10; background: var(--bg); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .pager-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s3) var(--s4); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); }
+    .pager-count { font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; min-width: 4em; }
+    .btn { min-height: var(--tap); min-width: var(--btn-min); padding: 0 var(--s6); border-radius: var(--radius); border: 0; font: 700 var(--fs-body)/1 var(--font); cursor: pointer; white-space: nowrap;
+      transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+    .btn-ghost { justify-self: start; background: var(--surface); color: var(--ink); }
+    .btn-primary { justify-self: end; background: var(--btn-bg); color: var(--on-btn); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    @media (hover: hover) {
+      .text-btn:hover, .btn-ghost:not(:disabled):hover { background: var(--line); }
+      .btn-primary:not(:disabled):hover { box-shadow: inset 0 0 0 100px rgba(0, 0, 0, .14); }
+    }
+
+    /* ---------- 목차 시트 ---------- */
+    .sheet { width: min(100%, var(--measure)); max-width: 100%; max-height: 80dvh; margin: auto auto 0; padding: 0; border: 0;
+      border-radius: 16px 16px 0 0; background: var(--bg); color: var(--ink); }
+    .sheet::backdrop { background: rgba(0, 0, 0, .4); }
+    .sheet-inner { padding: var(--s4) var(--s5) calc(var(--s5) + env(safe-area-inset-bottom)); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s2); }
+    .sheet-head h2 { margin: 0; font-size: var(--fs-lead); }
+    .toc { display: flex; flex-direction: column; }
+    .toc > a, .toc-group > a { display: block; padding: var(--s3) 0 var(--s1); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); text-decoration: none; }
+    .toc-list { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+    .toc-list a { display: flex; align-items: center; gap: var(--s3); min-height: var(--tap); padding: var(--s2) var(--s3); margin: 0 calc(-1 * var(--s3));
+      border-radius: var(--radius); color: var(--ink); text-decoration: none; line-height: 1.4; }
+    .toc-list a[aria-current="true"] { background: var(--surface); font-weight: 700; color: var(--accent-ink); }
+    .toc-list .toc-title { flex: 1 1 0; min-width: 0; }
+    @media (hover: hover) { .toc-list a:hover { background: var(--surface); } }
+
+    /* ---------- 한 화면에 하나씩 (JS가 켤 때만) ---------- */
+    html:not(.js) .pager, html:not(.js) #toc-open { display: none; }
+    html:not(.js) .sheet { display: block; position: static; width: 100%; max-height: none; margin: 0 auto; border-radius: 0; border-bottom: 1px solid var(--line); }
+    html:not(.js) .sheet-close { display: none; }
+    .js main > .hero:not(.is-current), .js main > section:not(.is-on), .js .screen:not(.is-current) { display: none; }
+    .js main > section { margin-top: 0; }
+    .js main > section > h2 { font-size: var(--fs-label); font-weight: 600; color: var(--accent-ink); margin: 0 0 var(--s2); }
+    .js .topic { padding: 0; border-top: 0; }
+    .js .hero { padding-top: 12vh; }
+    .js footer { display: none; }
+    .js body.at-end footer { display: block; }
+    .screen.enter-next { animation: enter-next var(--dur) var(--ease-out); }
+    .screen.enter-prev { animation: enter-prev var(--dur) var(--ease-out); }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .screen.enter-next, .screen.enter-prev { animation: none; }
+      .bar > span, .btn { transition: none; }
+    }
+    @media (max-width: 480px) {
+      main { padding: var(--s5) var(--s4) var(--s6); }
+      footer { padding: 0 var(--s4) var(--s5); }
+      .btn { min-width: 120px; padding: 0 var(--s5); }
+    }
+    @media print {
+      .topbar, .pager, .sheet { display: none !important; }
+      .js main > .hero, .js main > section, .js .screen, .js footer { display: block !important; }
+    }
+
+    /* ---------- 좌우 패널 (drawer) ---------- */
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
+    .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
+    .panel-toggle svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-toggle .strip { fill: transparent; stroke: none; transition: fill 150ms ease-out; }
+    .panel-toggle[aria-expanded="true"] { color: var(--accent-ink); }
+    .panel-toggle[aria-expanded="true"] .strip { fill: currentColor; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .i-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .theme-toggle .i-sun { display: block; }
+      :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
+    }
+
+    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
+    .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
+    .content { grid-column: 2; }
+    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
+    .content::-webkit-scrollbar, .panel-inner::-webkit-scrollbar { width: 8px; }
+    .content::-webkit-scrollbar-track, .panel-inner::-webkit-scrollbar-track { background: transparent; }
+    .content::-webkit-scrollbar-thumb, .panel-inner::-webkit-scrollbar-thumb { background: var(--scroll); border-radius: 8px; border: 2px solid var(--bg); }
+    .content::-webkit-scrollbar-thumb:hover, .panel-inner::-webkit-scrollbar-thumb:hover { background: var(--scroll-hover); }
+    @supports (scrollbar-color: auto) { .content, .panel-inner { scrollbar-width: thin; scrollbar-color: var(--scroll) transparent; } }
+    .panel-resize { display: none; }
+    .panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 44px; margin-bottom: var(--s2); }
+    .panel-head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-lead); line-height: 1.4; }
+    .panel-sub { margin: 0 0 var(--s4); font-weight: 700; line-height: 1.45; }
+    .panel-empty { margin: 0; color: var(--ink-2); }
+    .panel-label { display: block; margin: var(--s5) 0 var(--s2); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+
+    /* 진행 상태 */
+    .panel-meta { margin: 0 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .panel-meta b { color: var(--ink); }
+    .progress { height: 4px; margin-bottom: var(--s3); border-radius: 2px; background: var(--line); overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+    .panel .toc-list a { margin: 0 calc(-1 * var(--s2)); padding: var(--s2); font-size: var(--fs-panel); }
+    .toc-mark { flex: none; display: block; width: 20px; height: 20px; color: var(--ink-2); }
+    .toc-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .toc-mark.is-done { color: var(--accent-ink); }
+
+    /* 복습문제: 원문 · 힌트 · 풀이 */
+    .aid details:last-of-type { border-bottom: 1px solid var(--line); }
+    .aid details.original > summary { font-size: var(--fs-panel); }
+    .solved-btn { display: flex; align-items: center; justify-content: center; gap: var(--s2); width: 100%; min-height: var(--tap); margin-top: var(--s5); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .solved-btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
+
+    /* 정리노트: 섹션 요약 */
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+    .eq-list li:first-child { padding-top: 0; }
+    .eq-name { display: block; font-size: var(--fs-small); font-weight: 600; color: var(--ink-2); }
+    .eq-list .katex-display { margin: var(--s1) 0 0; text-align: left; }
+    .eq-list .katex-display > .katex { text-align: left; }
+    .terms { margin: 0; }
+    .terms dt { font-weight: 700; margin-top: var(--s3); }
+    .terms dt:first-child { margin-top: 0; }
+    .terms dd { margin: var(--s1) 0 0; }
+    .flow { margin: 0; padding-left: 1.4em; }
+    .flow li { margin: var(--s2) 0; }
+
+    @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
+
+    /* 넓은 화면: 본문 옆에 붙는 패널 */
+    @media (min-width: 1024px) {
+      .layout { --l: var(--panel-l-user, var(--panel-l)); }
+      .layout[data-left="closed"] { --l: 0px; }
+      .panel-left { width: var(--l); }
+      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
+      .panel-left .panel-resize { right: 0; }
+      .panel-right .panel-resize { left: 0; }
+      .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
+      .panel-left .panel-resize::after { right: 0; }
+      .panel-right .panel-resize::after { left: 0; }
+      .panel-resize:focus-visible { outline: none; }
+      .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
+      @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
+      body.is-resizing { cursor: col-resize; user-select: none; }
+      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
+      .scrim, .panel-close { display: none; }
+    }
+    @keyframes panel-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 좁은 화면: 가장자리에서 밀려 나오는 drawer */
+    @media (max-width: 1023.98px) {
+      .panel { position: fixed; top: 0; bottom: 0; z-index: 40; visibility: hidden;
+        transition: transform var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .panel-left { left: 0; width: min(var(--drawer-l), 88vw); transform: translateX(-100%); }
+      .panel-right { right: 0; width: min(var(--drawer-r), 88vw); transform: translateX(100%); }
+      .panel.is-open { visibility: visible; transform: none; transition: transform var(--dur) var(--ease-out); }
+      .panel-inner { padding-top: calc(var(--s3) + env(safe-area-inset-top)); padding-bottom: calc(var(--s6) + env(safe-area-inset-bottom)); }
+      .scrim { position: fixed; inset: 0; z-index: 35; background: var(--scrim); opacity: 0; visibility: hidden;
+        transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
+      html:not(.js) .panel-left { display: none; }
+    }
+    @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
+      .panel.is-shown { animation: none; }
+      .panel-resize::after { transition: none; }
+    }
+    @media print {
+      body { display: block; height: auto; overflow: visible; }
+      .layout { display: block; }
+      .content { overflow: visible; }
+      .panel, .scrim { display: none !important; }
+    }
+  </style>
+<!-- Exam extensions to the shared review-template.html shell. -->
+<style>
+.exam-input fieldset { border:0; padding:0; margin:var(--s5) 0; min-width:0; }
+.exam-input legend { font-size:var(--fs-small); color:var(--ink-2); margin-bottom:var(--s3); }
+.exam-input label:has(input[type=radio]) {
+  display:flex; align-items:baseline; gap:var(--s2); min-height:44px; margin-bottom:var(--s3);
+  padding:12px 16px; border:1px solid var(--line); border-radius:8px;
+  background:var(--surface); color:var(--ink); cursor:pointer;
+}
+.exam-input label:has(input:checked) { border-color:var(--accent); outline:2px solid var(--accent); outline-offset:-2px; }
+.exam-input label:hover { border-color:var(--accent); }
+.exam-input input[type=radio] { flex:none; accent-color:var(--accent); }
+.exam-input input[type=text] { width:100%; margin:var(--s2) 0; padding:12px 16px; font:inherit;
+  border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); color:var(--ink); caret-color:var(--accent); }
+.problem .choices { display:none; }
+img, svg { max-width:100%; height:auto; }
+.exam-actions { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:var(--s2); padding:var(--s2) var(--s4) 0; }
+.exam-actions .btn { min-width:0; min-height:44px; }
+#summary { flex-basis:100%; margin:0; text-align:center; font-size:var(--fs-small); color:var(--ink-2); }
+#summary:empty { display:none; }
+.result { font-weight:650; }
+.result:empty { display:none; }
+.provenance { font-size:var(--fs-small); overflow-wrap:anywhere; }
+.js article.card > .solution, .js article.card > .provenance { display:none !important; }
+.solution[hidden], .provenance[hidden] { display:none !important; }
+html:not(.js) body { height:auto; display:block; overflow:visible; }
+html:not(.js) .layout { display:block; }
+html:not(.js) .panel-left { display:none; }
+@media print { .exam-actions { display:none; } .solution[hidden], .provenance[hidden] { display:none !important; } }
+</style>
+<style>
+#exam-results[hidden], .exam-result-row[hidden], #results-empty[hidden] { display:none !important; }
+body.exam-results main > section, body.exam-results main > .hero, body.exam-results .pager { display:none !important; }
+#exam-results { padding:var(--s6) 0; }
+#results-title { font-size:clamp(28px, 6vw, 36px); line-height:1.3; margin:0 0 var(--s4); }
+#results-title:focus { outline:none; }
+#results-summary { font-weight:650; line-height:1.8; font-variant-numeric:tabular-nums; }
+.results-note, #prompt-status, #results-count { color:var(--ink-2); font-size:var(--fs-small); }
+.results-actions, .results-filter { display:flex; flex-wrap:wrap; align-items:center; gap:var(--s3); margin:var(--s4) 0; }
+.results-actions .btn { min-height:44px; min-width:0; }
+.results-filter select { font:inherit; color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:8px 12px; min-height:44px; max-width:100%; }
+#results-list { list-style:none; padding:0; margin:var(--s5) 0; }
+.exam-result-row { border-top:1px solid var(--line); padding:var(--s4) 0; overflow-wrap:anywhere; }
+.exam-result-row h3 { margin:0; font-size:var(--fs-body); }
+.exam-result-status { margin:var(--s2) 0; font-weight:650; }
+.exam-result-row dl { display:grid; grid-template-columns:4em minmax(0,1fr); gap:var(--s2) var(--s3); margin:var(--s3) 0; }
+.exam-result-row dt { color:var(--ink-2); }
+.exam-result-row dd { margin:0; white-space:pre-wrap; }
+.exam-result-row a { display:inline-block; padding:8px 0; min-height:44px; }
+#prompt-status:empty { display:none; }
+@media print { .results-actions, .results-filter, .exam-result-row a { display:none !important; } }
+</style>
+
+<style>
+#submit-exam[hidden], body.exam-last-unsubmitted #pager-next { display:none !important; }
+#exam-scorecard { width:100%; table-layout:fixed; border-collapse:collapse; font-variant-numeric:tabular-nums; }
+#exam-scorecard caption { text-align:left; font-weight:650; padding:var(--s3) 0; }
+#exam-scorecard td { padding:0; border:1px solid var(--line); text-align:center; }
+#exam-scorecard a { display:flex; align-items:center; justify-content:center; min-height:44px; color:var(--ink); font-size:var(--fs-small); text-decoration:none; }
+#exam-scorecard a:hover { background:var(--surface); text-decoration:underline; }
+#exam-scorecard a:focus-visible { outline:2px solid var(--accent); outline-offset:-3px; }
+#exam-scorecard a[data-result=incorrect] { font-weight:750; }
+.scorecard-legend { color:var(--ink-2); font-size:var(--fs-small); line-height:1.8; }
+</style>
+
+<style>
+.exam-actions:has(#submit-exam[hidden]):has(#summary:empty) { display:none; }
+@media (max-width:600px) {
+  .topbar-inner { gap:4px; }
+  .topbar-inner .text-btn:not(.theme-toggle) { padding:0 6px; }
+  .topbar-inner .brand { overflow:hidden; text-overflow:ellipsis; }
+  #reset-exam { white-space:nowrap; }
+}
+html:not(.js) #reset-exam { display:none; }
+</style>
+<script type="application/json" id="presentation-meta">{"mode": "exam", "documentId": "복습문제_8장_웹과제예상_시험형_v3.html", "questionSetHash": "23c893571abc6b558dc82b64cc97cbe68f4f3e213395404d79c3b2352f883070", "partner": "복습문제_8장_웹과제예상_v3.html", "explanation": "문제해설_8장_웹과제예상_v3.html"}</script>
+<style>.topbar .brand{overflow:hidden;text-overflow:ellipsis}.presentation-links{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 0;font-size:var(--fs-small);}.presentation-links button{min-height:44px;display:inline-flex;align-items:center;}.presentation-links[hidden],#open-explanation[hidden]{display:none!important}.check-answer{min-height:44px;margin:8px 0}</style></head>
+<body data-screens="article.card" data-panels="exam" data-range="8장-v3"><script>(()=>{try{sessionStorage.removeItem('od-review-solved:'+document.body.dataset.range);}catch{}if(location.hash==='#exam-results')history.replaceState(null,'',location.pathname+location.search+'#p1');})();</script>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <strong class="brand">복습문제</strong>
+      <a class="top-link" href="../../복습노트/1029/정리노트_1029_Microevolution_and_Speciation.html">정리노트</a>
+      <button class="text-btn" id="reset-exam" type="button">다시 풀기</button><button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>풀이</span></button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
+  </header>
+  <div class="layout" data-left="open" data-right="closed">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
+      <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-left-title">문제 목록</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-meta">푼 문제 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <nav class="toc" aria-label="목차"><a href="#partA">예상 개요</a><a href="#partB">기출 5</a><a href="#partC">새 문제 10</a></nav>
+      </div>
+    </aside>
+    <div class="content">
+  <main><nav class="presentation-links" aria-label="학습 도구" hidden><strong>시험형</strong> <button class="text-btn" type="button" id="open-explanation" hidden>상세 해설 열기</button></nav>
+    <div class="hero">
+      <h1>8장 웹과제 예상 v3 · 시험형</h1>
+      <p>8장 종분화와 대진화·분류를 새로운 기출 조합과 도식·표·비교 단위 문항으로 연습해요. 실제 8장 웹과제·공식 답은 미확인이에요. 참고 목표 기본 12·심화 3과 달리 독립 풀이 기준 실제는 기본 14(수준 1 6·수준 2 8)·심화 1(수준 3 1)이에요. 범위 밖 원리나 불필요한 조건을 덧붙여 난이도를 높이지 않았어요.</p>
+    </div>
+    <section id="partA"><h2>A. 예상 개요</h2>
+
+
+    </section>
+    <section id="partB"><h2>B. 기출 재출제 예상</h2>
+<article class="card" id="p1"><h3>P1. [기출 예상] 두 초파리가 같은 종인지 검증하기</h3><div class="problem"><p>만약 여러분이 암컷 초파리와 수컷 초파리를 가지고 있다면, 어떻게 그들이 같은 종이라는 가설을 가장 간단하게 검증할 수 있겠는가?</p>
+    <ul class="choices"><li>A. 초파리들이 짝짓기 하는지, 그들의 자손 또한 짝짓기 할 수 있는지 확인한다</li><li>B. 서로에게 구애행동을 하는지 확인한다</li><li>C. 초파리들이 같은 수의 염색체를 갖고 있는지 확인한다</li><li>D. 여러 먹이를 제공하고 같은 먹이를 선호하는지 확인한다</li><li>E. 각 초파리의 아미노산 서열을 확인한다</li></ul></div><div class="exam-input"><fieldset><legend>답 선택</legend><label><input type="radio" name="p1" value="A"> A. 초파리들이 짝짓기 하는지, 그들의 자손 또한 짝짓기 할 수 있는지 확인한다</label><label><input type="radio" name="p1" value="B"> B. 서로에게 구애행동을 하는지 확인한다</label><label><input type="radio" name="p1" value="C"> C. 초파리들이 같은 수의 염색체를 갖고 있는지 확인한다</label><label><input type="radio" name="p1" value="D"> D. 여러 먹이를 제공하고 같은 먹이를 선호하는지 확인한다</label><label><input type="radio" name="p1" value="E"> E. 각 초파리의 아미노산 서열을 확인한다</label></fieldset></div><p class="result" role="status"></p><div class="solution" hidden><ol class="steps">
+      <li>A. 맞아요. 생물학적 종 개념에 따르면 서로 교배해 생식력 있는 자손을 낳을 수 있어야 같은 종이므로, 짝짓기 여부와 그 자손의 번식 능력까지 확인하는 것이 가장 직접적인 검증이에요.</li>
+      <li>B. 틀려요. 구애 행동을 하더라도 실제 짝짓기가 이루어지지 않거나 불임 자손이 태어날 수 있어 같은 종임을 확정하지 못해요.</li>
+      <li>C. 틀려요. 서로 다른 종이라도 염색체 수가 우연히 같을 수 있고, 반대로 염색체 수가 같아도 생식적으로 격리되어 있으면 다른 종이에요.</li>
+      <li>D. 틀려요. 먹이 선호는 환경이나 생활 방식에 관한 정보일 뿐 생물학적 종을 판정하는 기준이 아니에요.</li>
+      <li>E. 틀려요. 분자 서열의 유사성은 참고 자료가 될 수 있지만 생물학적 종 개념의 직접 판정 기준은 생식적 격리 여부예요.</li>
+      <li>수업과의 연결: 생물학적 종 개념은 교배 가능 여부와 자손의 생식력을 기준으로 삼아요(<a href="../../복습노트/1029/정리노트_1029_Microevolution_and_Speciation.html#s2-species">정리노트 “종 개념과 아종”</a>).</li>
+    </ol><p class="answer">정답: A</p></div><div class="provenance" hidden>{&quot;refs&quot;: [{&quot;path&quot;: &quot;기출 8강 5 예상&quot;, &quot;locator&quot;: &quot;&quot;}]}</div></article>
+<article class="card" id="p2"><h3>P2. [기출 예상] 계통수 처음 갈라지는 줄기의 의미</h3><div class="problem"><p>계통수에서 가장 처음 갈라지는 줄기가 나타내는 것은 무엇인가?</p>
+    <ul class="choices"><li>A. 가장 복잡한 구조를 가진 구성원</li><li>B. 계통에서 멸종된 구성원</li><li>C. 주어진 계통수에서 모든 생물의 가장 초기의 공통조상</li><li>D. 가장 많은 화석에서 발견된 생물</li><li>E. 그 계통에서 가장 진화적인 구성원</li></ul></div><div class="exam-input"><fieldset><legend>답 선택</legend><label><input type="radio" name="p2" value="A"> A. 가장 복잡한 구조를 가진 구성원</label><label><input type="radio" name="p2" value="B"> B. 계통에서 멸종된 구성원</label><label><input type="radio" name="p2" value="C"> C. 주어진 계통수에서 모든 생물의 가장 초기의 공통조상</label><label><input type="radio" name="p2" value="D"> D. 가장 많은 화석에서 발견된 생물</label><label><input type="radio" name="p2" value="E"> E. 그 계통에서 가장 진화적인 구성원</label></fieldset></div><p class="result" role="status"></p><div class="solution" hidden><ol class="steps">
+      <li>A. 틀려요. 가지가 갈라지는 순서나 뿌리의 위치가 구조의 복잡성을 나타내는 것은 아니에요.</li>
+      <li>B. 틀려요. 처음 갈라진 줄기라고 해서 계통에서 멸종된 구성원을 뜻하지 않아요.</li>
+      <li>C. 맞아요. 계통수에서 가장 처음 갈라지는 줄기인 뿌리는 주어진 계통수의 모든 생물이 공유하는 가장 이른 공통조상을 나타내요.</li>
+      <li>D. 틀려요. 화석 발견 빈도는 보존 환경 등에 영향을 받으며 계통수 뿌리의 의미가 아니에요.</li>
+      <li>E. 틀려요. 계통수에서 특정 생물이 다른 생물보다 더 진화되었다는 우열이나 순위를 매기지 않아요.</li>
+      <li>수업과의 연결: 계통수의 뿌리는 포함된 모든 생물의 공통조상을 나타내요(<a href="../../복습노트/1103/정리노트_1103_Macroevolution_and_Taxonomy.html#s3-phylogeny">정리노트 “계통수는 진화사의 가설을 그려요”</a>).</li>
+    </ol><p class="answer">정답: C</p></div><div class="provenance" hidden>{&quot;refs&quot;: [{&quot;path&quot;: &quot;기출 8강 16 예상&quot;, &quot;locator&quot;: &quot;&quot;}]}</div></article>
+<article class="card" id="p3"><h3>P3. [기출 변형] 노새가 자손을 갖지 못하는 이유</h3><div class="problem"><p>노새가 자손을 갖지 못하는 이유는?</p>
+    <ul class="choices"><li>A. 말과 당나귀의 유전자가 섞이면서 생식 기관 자체가 형성되지 않기 때문</li><li>B. 두 부모 종의 염색체 수가 너무 많아 배 발생 도중에 치사하기 때문</li><li>C. 1대 잡종은 번식하지만 2대 잡종부터 점차 생존력이 떨어져 대가 끊기기 때문</li><li>D. 수정란이 만들어진 뒤 암컷 체내에서 착상하지 못하고 분만 전에 사망하기 때문</li><li>E. 말과 당나귀에서 온 63개 염색체가 감수분열에서 정상적으로 짝을 맞추지 못해 생식세포 형성이 막히기 때문</li></ul></div><div class="exam-input"><fieldset><legend>답 선택</legend><label><input type="radio" name="p3" value="A"> A. 말과 당나귀의 유전자가 섞이면서 생식 기관 자체가 형성되지 않기 때문</label><label><input type="radio" name="p3" value="B"> B. 두 부모 종의 염색체 수가 너무 많아 배 발생 도중에 치사하기 때문</label><label><input type="radio" name="p3" value="C"> C. 1대 잡종은 번식하지만 2대 잡종부터 점차 생존력이 떨어져 대가 끊기기 때문</label><label><input type="radio" name="p3" value="D"> D. 수정란이 만들어진 뒤 암컷 체내에서 착상하지 못하고 분만 전에 사망하기 때문</label><label><input type="radio" name="p3" value="E"> E. 말과 당나귀에서 온 63개 염색체가 감수분열에서 정상적으로 짝을 맞추지 못해 생식세포 형성이 막히기 때문</label></fieldset></div><p class="result" role="status"></p><div class="solution" hidden><ol class="steps">
+      <li>A. 틀려요. 노새는 정상적인 암수 생식 기관을 갖추고 태어나며, 기관 형성이 결손된 것이 아니에요.</li>
+      <li>B. 틀려요. 노새는 성체까지 건강하게 발생하여 자라므로 배 발생 중 치사하는 것이 아니며, 염색체 수가 많아서 문제가 되는 것도 아니에요.</li>
+      <li>C. 틀려요. 1대 잡종은 번식하고 다음 세대에서 생존력·생식력이 떨어지는 것은 잡종 붕괴의 설명이에요. 노새는 1대 잡종 자체가 자손을 낳지 못해요.</li>
+      <li>D. 틀려요. 수정란이 분만 전에 사망하는 것은 잡종 생존불능의 예이며, 노새는 건강하게 태어나 성체로 자라요.</li>
+      <li>E. 맞아요. 말(n=32)과 당나귀(n=31)의 염색체가 합쳐진 63개는 상동염색체 짝이 맞지 않아 감수분열 전기에 4분염색체 형성이 멈추고 정상적인 정자나 난자를 만들지 못해요.</li>
+      <li>원문 정답과 달라진 점: 원문은 '난자와 정자를 만들지 못한다'는 결과 진술이 정답이었고, 여기서는 부모 종의 서로 다른 염색체(63개)가 감수분열에서 정상적으로 짝을 맞추지 못해 생식세포가 형성되지 않는다는 세포학적 원인이 정답이에요.</li>
+      <li>수업과의 연결: 노새는 부모 염색체의 짝 불일치로 감수분열이 멈추는 잡종 불임의 대표적 예예요(<a href="../../복습노트/1029/정리노트_1029_Microevolution_and_Speciation.html#s2-postzygotic">정리노트 “접합 후 장벽: 잡종 생존불능·불임·붕괴”</a>).</li>
+    </ol><p class="answer">정답: E</p></div><div class="provenance" hidden>{&quot;refs&quot;: [{&quot;path&quot;: &quot;기출 8강 26 예상&quot;, &quot;locator&quot;: &quot;&quot;}]}</div></article>
+<article class="card" id="p4"><h3>P4. [기출 변형] 파나마 지협의 놀래기를 나눈 요인</h3><div class="problem"><p>파나마 지협의 놀래기는 두 가지 구별되는 종으로 나타난다. 어떤 요인이 이 두 종을 나누었는가?</p>
+    <ul class="choices"><li>A. 수심에 따른 빛의 세기 차이로 인해 시각적 구애 신호가 달라진 행동적 격리</li><li>B. 지협이 솟아올라 태평양과 대서양 집단 사이의 유전자 흐름이 차단된 지리적 격리</li><li>C. 같은 바다 안에서 산호초와 모래 바닥으로 선호 먹이가 나뉜 서식지 분화</li><li>D. 태평양과 대서양의 산란 수온 차이로 번식 계절이 어긋난 시간적 격리</li><li>E. 수컷의 체색 변이에 대해 암컷이 서로 다른 짝짓기 선호를 보인 성선택</li></ul></div><div class="exam-input"><fieldset><legend>답 선택</legend><label><input type="radio" name="p4" value="A"> A. 수심에 따른 빛의 세기 차이로 인해 시각적 구애 신호가 달라진 행동적 격리</label><label><input type="radio" name="p4" value="B"> B. 지협이 솟아올라 태평양과 대서양 집단 사이의 유전자 흐름이 차단된 지리적 격리</label><label><input type="radio" name="p4" value="C"> C. 같은 바다 안에서 산호초와 모래 바닥으로 선호 먹이가 나뉜 서식지 분화</label><label><input type="radio" name="p4" value="D"> D. 태평양과 대서양의 산란 수온 차이로 번식 계절이 어긋난 시간적 격리</label><label><input type="radio" name="p4" value="E"> E. 수컷의 체색 변이에 대해 암컷이 서로 다른 짝짓기 선호를 보인 성선택</label></fieldset></div><p class="result" role="status"></p><div class="solution" hidden><ol class="steps">
+      <li>A. 틀려요. 시각적 구애 신호의 차이는 행동적 격리에 해당하지만, 파나마 놀래기 두 종을 처음 나눈 근본 원인은 물리적 장벽에 의한 분리예요.</li>
+      <li>B. 맞아요. 과거 하나로 이어졌던 바다가 파나마 지협의 융기로 나뉘면서 태평양과 대서양 집단 사이의 유전자 흐름이 완전히 차단된 지리적 격리가 이소적 종분화의 출발점이에요.</li>
+      <li>C. 틀려요. 먹이 선호 차이에 따른 서식지 분화는 지리적 격리가 없는 동소적 종분화에서 주로 나타나는 요인이에요.</li>
+      <li>D. 틀려요. 번식 계절의 차이는 시간적 격리에 해당하지만, 이 사례의 본질적인 분리 원인은 육지 형성에 의한 지리적 장벽이에요.</li>
+      <li>E. 틀려요. 성선택에 의한 교배 선호 분화는 동소적 종분화 등을 촉진하는 요인이며, 파나마 놀래기 두 종을 물리적으로 격리한 원인이 아니에요.</li>
+      <li>원문 정답과 달라진 점: 원문은 '파나마 지협의 융기로 인한 서식지의 분리'라는 단순 현상이 정답이었고, 여기서는 지협이 솟아올라 양쪽 집단 사이의 유전자 흐름이 차단된 지리적 격리라는 진화적 메커니즘을 명시한 진술이 정답이에요.</li>
+      <li>수업과의 연결: 파나마 지협 형성에 따른 놀래기의 종분화는 물리적 장벽이 유전자 흐름을 막아 시작된 이소적 종분화의 대표적 사례예요(<a href="../../복습노트/1029/정리노트_1029_Microevolution_and_Speciation.html#s3-allopatric">정리노트 “이소적 종분화: 지리적 격리 뒤의 생식적 격리”</a>).</li>
+    </ol><p class="answer">정답: B</p></div><div class="provenance" hidden>{&quot;refs&quot;: [{&quot;path&quot;: &quot;기출 8강 29 예상&quot;, &quot;locator&quot;: &quot;&quot;}]}</div></article>
+<article class="card" id="p5"><h3>P5. [기출 변형] 분류 체계의 계급 순서</h3><div class="problem"><p>다음 중 분류 체계를 큰 범위부터 작은 범위로 올바르게 나열한 것은?</p>
+    <ul class="choices"><li>A. 종, 속, 과, 목</li><li>B. 계, 영역, 문, 강</li><li>C. 문, 강, 과, 목</li><li>D. 역, 문, 목, 속</li><li>E. 강, 문, 속, 종</li></ul></div><div class="exam-input"><fieldset><legend>답 선택</legend><label><input type="radio" name="p5" value="A"> A. 종, 속, 과, 목</label><label><input type="radio" name="p5" value="B"> B. 계, 영역, 문, 강</label><label><input type="radio" name="p5" value="C"> C. 문, 강, 과, 목</label><label><input type="radio" name="p5" value="D"> D. 역, 문, 목, 속</label><label><input type="radio" name="p5" value="E"> E. 강, 문, 속, 종</label></fieldset></div><p class="result" role="status"></p><div class="solution" hidden><ol class="steps">
+      <li>A. 틀려요. 종에서 목으로 갈수록 포함하는 범위가 넓어지므로, 큰 범위가 아닌 가장 작은 범위부터 나열한 역순이에요.</li>
+      <li>B. 틀려요. 영역(역)이 계보다 더 넓은 상위 계급이므로 계가 영역보다 앞에 올 수 없어요.</li>
+      <li>C. 틀려요. 목이 과보다 큰 상위 계급이므로 과가 목보다 앞에 올 수 없어요.</li>
+      <li>D. 맞아요. 역(영역) 안에 문, 문 안에 목, 목 안에 속이 차례로 포함되므로 큰 범위부터 작은 범위로 올바르게 나열되었어요.</li>
+      <li>E. 틀려요. 문이 강보다 큰 상위 계급이므로 강이 문보다 앞에 올 수 없어요.</li>
+      <li>원문 정답과 달라진 점: 원문은 '영역, 계, 문, 종' 조합이 정답이었고, 여기서는 '역, 문, 목, 속'으로 분류계급 단계를 건너뛰어 추출하면서도 큰 범위에서 작은 범위로 나열한 순서 관계를 유지한 조합이 정답이에요.</li>
+      <li>수업과의 연결: 분류계급은 큰 범위부터 역·계·문·강·목·과·속·종 순서로 배열돼요(<a href="../../복습노트/1103/정리노트_1103_Macroevolution_and_Taxonomy.html#s3-naming">정리노트 “종 이름은 두 단어이고 분류는 여러 층이에요”</a>).</li>
+    </ol><p class="answer">정답: D</p></div><div class="provenance" hidden>{&quot;refs&quot;: [{&quot;path&quot;: &quot;기출 8강 34 예상&quot;, &quot;locator&quot;: &quot;&quot;}]}</div></article>
+    </section>
+    <section id="partC"><h2>C. 새 문제 예상</h2>
+<article class="card" id="p6"><h3>P6. [예상] 식물 두 집단의 생식적 격리 단계</h3><div class="problem"><p>표는 서로 다른 두 식물 집단 사이에서 교배나 번식이 차단되는 세 사례 (가)~(다)를 나타낸 것이에요. 이에 대한 옳은 설명은 무엇인가요?</p>
+    <div class="table-wrap"><table><thead><tr><th>사례</th><th>관찰된 번식 차단 현상</th></tr></thead><tbody>
+      <tr><td>(가)</td><td>꽃 구조가 달라 한 종은 벌만, 다른 종은 벌새만 꽃가루를 옮겨 서로 다른 종으로 꽃가루가 전달되지 않는다.</td></tr>
+      <tr><td>(나)</td><td>바람이나 곤충으로 꽃가루가 다른 종의 암술머리에 닿았으나, 난자가 다른 종의 꽃가루·정자를 인식하지 못해 수정이 이루어지지 않는다.</td></tr>
+      <tr><td>(다)</td><td>수정이 일어나 1대 잡종 식물이 정상으로 자라 씨앗을 맺었으나, 2대 자손부터 생존력과 생식력이 급격히 떨어져 대가 끊긴다.</td></tr>
+    </tbody></table></div>
+    <ul class="choices">
+      <li>A. (가)는 꽃가루가 전달되지 않는 현상이므로 두 종의 개화 시기가 달라 교배가 차단되는 시간적 격리에 해당해요.</li>
+      <li>B. (가)는 꽃 구조 차이에 따른 기계적 격리이고, (다)는 2대 자손 대에서 대가 끊기는 잡종 붕괴로 접합 후 장벽이에요.</li>
+      <li>C. (나)는 다른 종의 꽃가루가 암술머리에 닿았으나 교배에 실패한 것이므로, 생식 기관 구조가 맞지 않는 기계적 격리에 해당해요.</li>
+      <li>D. (다)는 1대 잡종 식물이 정상으로 자랐으므로, 노새처럼 1대 잡종 자체가 정자나 난자를 만들지 못하는 잡종 불임에 해당해요.</li>
+      <li>E. (가)~(다)는 모두 꽃가루 수분이나 수정과 관련된 번식 차단이므로 수정란이 생기지 않는 접합 전 장벽에 속해요.</li>
+    </ul>
+  </div><div class="exam-input"><fieldset><legend>답 선택</legend><label><input type="radio" name="p6" value="A"> A. (가)는 꽃가루가 전달되지 않는 현상이므로 두 종의 개화 시기가 달라 교배가 차단되는 시간적 격리에 해당해요.</label><label><input type="radio" name="p6" value="B"> B. (가)는 꽃 구조 차이에 따른 기계적 격리이고, (다)는 2대 자손 대에서 대가 끊기는 잡종 붕괴로 접합 후 장벽이에요.</label><label><input type="radio" name="p6" value="C"> C. (나)는 다른 종의 꽃가루가 암술머리에 닿았으나 교배에 실패한 것이므로, 생식 기관 구조가 맞지 않는 기계적 격리에 해당해요.</label><label><input type="radio" name="p6" value="D"> D. (다)는 1대 잡종 식물이 정상으로 자랐으므로, 노새처럼 1대 잡종 자체가 정자나 난자를 만들지 못하는 잡종 불임에 해당해요.</label><label><input type="radio" name="p6" value="E"> E. (가)~(다)는 모두 꽃가루 수분이나 수정과 관련된 번식 차단이므로 수정란이 생기지 않는 접합 전 장벽에 속해요.</label></fieldset></div><p class="result" role="status"></p><div class="solution" hidden><ol class="steps">
+      <li>A. 틀려요. (가)는 개화 시기가 달라서가 아니라 꽃의 구조적 차이로 인해 매개 동물이 달라져 꽃가루가 옮겨가지 못하는 기계적 격리예요.</li>
+      <li>B. 맞아요. (가)는 꽃 구조 차이로 매개 동물이 다른 기계적 격리(접합 전)이고, (다)는 1대는 씨앗을 맺지만 2대 자손부터 생존력과 생식력이 떨어져 끊기는 잡종 붕괴(접합 후)예요.</li>
+      <li>C. 틀려요. (나)는 꽃가루가 이미 암술머리에 닿았으나 난자가 꽃가루·정자를 인식하지 못해 수정란이 생기지 않는 배우자 격리예요.</li>
+      <li>D. 틀려요. 1대 잡종이 정상으로 자라 씨앗을 맺고 2대 자손부터 쇠퇴하는 것은 잡종 붕괴이며, 1대 잡종 자체가 자손을 낳지 못하는 잡종 불임과 달라요.</li>
+      <li>E. 틀려요. (가)와 (나)는 수정란이 생기지 않는 접합 전 장벽이지만, (다)는 수정란이 생겨 1대 잡종이 자란 뒤 다음 세대에서 문제가 생기는 접합 후 장벽이에요.</li>
+      <li>수업과의 연결: 꽃가루가 관련되더라도 매개 동물 차이는 기계적 격리, 난자의 불인식은 배우자 격리, 2대 자손 쇠퇴는 잡종 붕괴로 구별해요(<a href="../../복습노트/1029/정리노트_1029_Microevolution_and_Speciation.html#s2-prezygotic">정리노트 "접합 전 장벽 다섯 가지"</a>).</li>
+    </ol><p class="answer">정답: B</p></div><div class="provenance" hidden>{&quot;refs&quot;: [{&quot;path&quot;: &quot;예상 8장 6&quot;, &quot;locator&quot;: &quot;&quot;}]}</div></article>
+<article class="card" id="p7"><h3>P7. [예상] 2n=12 식물에서 생긴 4n 배수체와 염색체 수</h3><div class="problem"><p>체세포 염색체 수가 2n = 12 (n = 6)인 어떤 식물 집단에서, 한 개체가 DNA 복제 후 세포분열을 하지 않아 4n 배수체 개체가 되었어요. 이 4n 식물과 염색체 수 변화에 대한 설명으로 옳지 <strong>않은</strong> 것은 무엇인가요?</p>
+    <ul class="choices">
+      <li>A. 이 4n 식물의 체세포 염색체 수는 24개이고, 감수분열로 만드는 배우자의 염색체 수는 2n = 12개예요.</li>
+      <li>B. 이 4n 식물과 원래 2n 식물이 교배해 생긴 3n 자손은 체세포 염색체 수가 18개이며, 감수분열에서 세 세트가 정상적으로 짝을 맞추지 못해 불임이 돼요.</li>
+      <li>C. 4n 개체끼리 교배하면 2n = 12 배우자끼리 만나 4n = 24 자손을 낳으므로, 지리적 격리 없이도 한 세대 만에 원래 집단과 구별되는 종이 될 수 있어요.</li>
+      <li>D. 4n 식물과 원래 2n 식물이 교배해 태어난 3n 자손은 체세포 염색체 수가 18개로 짝수이므로, 감수분열에서 모든 염색체가 9쌍의 4분염색체를 정상 형성해 생식력을 가져요.</li>
+      <li>E. 염색체 세트 전체가 늘어난 3n, 4n과 같은 배수체는 일부 염색체의 수만 달라진 2n+1(다운 증후군 등)과 같은 이수체와 구별돼요.</li>
+    </ul>
+  </div><div class="exam-input"><fieldset><legend>답 선택</legend><label><input type="radio" name="p7" value="A"> A. 이 4n 식물의 체세포 염색체 수는 24개이고, 감수분열로 만드는 배우자의 염색체 수는 2n = 12개예요.</label><label><input type="radio" name="p7" value="B"> B. 이 4n 식물과 원래 2n 식물이 교배해 생긴 3n 자손은 체세포 염색체 수가 18개이며, 감수분열에서 세 세트가 정상적으로 짝을 맞추지 못해 불임이 돼요.</label><label><input type="radio" name="p7" value="C"> C. 4n 개체끼리 교배하면 2n = 12 배우자끼리 만나 4n = 24 자손을 낳으므로, 지리적 격리 없이도 한 세대 만에 원래 집단과 구별되는 종이 될 수 있어요.</label><label><input type="radio" name="p7" value="D"> D. 4n 식물과 원래 2n 식물이 교배해 태어난 3n 자손은 체세포 염색체 수가 18개로 짝수이므로, 감수분열에서 모든 염색체가 9쌍의 4분염색체를 정상 형성해 생식력을 가져요.</label><label><input type="radio" name="p7" value="E"> E. 염색체 세트 전체가 늘어난 3n, 4n과 같은 배수체는 일부 염색체의 수만 달라진 2n+1(다운 증후군 등)과 같은 이수체와 구별돼요.</label></fieldset></div><p class="result" role="status"></p><div class="solution" hidden><ol class="steps">
+      <li>A. 맞아요. n = 6이므로 4n 식물의 체세포 염색체 수는 4 × 6 = 24개이고, 감수분열로 염색체 수가 절반이 되어 배우자(생식세포)는 2n = 12개를 가져요.</li>
+      <li>B. 맞아요. 4n의 배우자(12개)와 2n의 배우자(6개)가 만나 18개(3n)가 되며, 세 세트 중 한 세트가 짝이 없어 감수분열에서 4분염색체를 정상 형성하지 못해 불임이 돼요.</li>
+      <li>C. 맞아요. 4n끼리는 2n = 12 배우자끼리 수정해 4n = 24 자손을 낳아 번식할 수 있으므로, 지리적 격리가 없어도 단 한 세대 만에 동소적 종분화가 일어날 수 있어요.</li>
+      <li>D. 틀려요. 3n 자손의 체세포 염색체 수가 18개로 짝수여도 6종류의 염색체가 3개씩 존재하는 3n 상태이므로, 감수분열 전기에 상동염색체 세 세트가 고르게 짝을 맞추지 못해 불임이 돼요.</li>
+      <li>E. 맞아요. 염색체 세트 전체가 통째로 배가된 3n, 4n은 배수체이고, 21번 염색체처럼 특정 염색체 일부만 하나 더 있는 2n+1은 이수체예요.</li>
+      <li>수업과의 연결: 배수체는 한 세대 만에 종분화를 일으키며, 3n은 염색체 수가 짝수여도 세 세트가 짝을 맞추지 못해 불임이 돼요(<a href="../../복습노트/1029/정리노트_1029_Microevolution_and_Speciation.html#s3-polyploidy">정리노트 "배수성: 한 세대 만의 종분화"</a>, <a href="../../복습노트/1001/정리노트_1001_Chromosome_Changes_and_DNA_Replication.html#s1-polyploidy">정리노트 "한 개의 오류와 세트 전체의 증가"</a>).</li>
+    </ol><p class="answer">정답: D</p></div><div class="provenance" hidden>{&quot;refs&quot;: [{&quot;path&quot;: &quot;예상 8장 7&quot;, &quot;locator&quot;: &quot;&quot;}]}</div></article>
+<article class="card" id="p8"><h3>P8. [예상] 화석 시료에 남은 탄소 비율과 경과 시간</h3><div class="problem"><p>죽은 뒤 외부와 탄소 교환이 없었던 어떤 유기물 화석 시료에서 현재 남은 C-14의 비율이 생전 기준의 25%로 측정되었어요. C-14의 반감기가 5,730년일 때, 지금으로부터 5,730년이 더 지난 시점에 이 시료에 남아 있을 C-14의 비율과, 그 시점까지 생물이 죽은 뒤 총 경과한 시간을 바르게 짝지은 것은 무엇인가요?</p>
+    <ul class="choices">
+      <li>A. 남은 비율: 12.5% · 총 경과 시간: 17,190년</li>
+      <li>B. 남은 비율: 0% · 총 경과 시간: 17,190년</li>
+      <li>C. 남은 비율: 12.5% · 총 경과 시간: 11,460년</li>
+      <li>D. 남은 비율: 6.25% · 총 경과 시간: 17,190년</li>
+      <li>E. 남은 비율: 6.25% · 총 경과 시간: 22,920년</li>
+    </ul>
+  </div><div class="exam-input"><fieldset><legend>답 선택</legend><label><input type="radio" name="p8" value="A"> A. 남은 비율: 12.5% · 총 경과 시간: 17,190년</label><label><input type="radio" name="p8" value="B"> B. 남은 비율: 0% · 총 경과 시간: 17,190년</label><label><input type="radio" name="p8" value="C"> C. 남은 비율: 12.5% · 총 경과 시간: 11,460년</label><label><input type="radio" name="p8" value="D"> D. 남은 비율: 6.25% · 총 경과 시간: 17,190년</label><label><input type="radio" name="p8" value="E"> E. 남은 비율: 6.25% · 총 경과 시간: 22,920년</label></fieldset></div><p class="result" role="status"></p><div class="solution" hidden><ol class="steps">
+      <li>A. 맞아요. 현재 25%는 100% → 50% → 25%로 반감기 2번(11,460년)이 지난 상태이고, 5,730년(1반감기)이 더 지나면 남은 양의 절반인 12.5%가 되며 총 경과 시간은 3반감기인 17,190년이에요.</li>
+      <li>B. 틀려요. 반감기마다 처음 양을 기준으로 일정하게 25%를 뺀다고 착각해 25% − 25% = 0%로 오산한 것이며, 실제로는 현재 남은 양의 절반인 12.5%가 남아요.</li>
+      <li>C. 틀려요. 남은 비율 12.5%는 맞지만, 11,460년은 현재 시점(2반감기)까지 경과한 시간이고 5,730년이 더 지난 시점의 총 경과 시간은 17,190년이에요.</li>
+      <li>D. 틀려요. 총 경과 시간 17,190년(3반감기)은 맞지만, 25%에서 반감기가 두 번 더 지났다고 잘못 계산해 6.25%로 구한 값이에요.</li>
+      <li>E. 틀려요. 6.25%와 22,920년은 반감기가 총 4번 지난 시점(현재로부터 11,460년이 더 지난 시점)에 해당해요.</li>
+      <li>수업과의 연결: 반감기가 지날 때마다 처음 양의 절반을 빼는 것이 아니라 현재 남은 양의 절반이 남아요(<a href="../../복습노트/1103/정리노트_1103_Macroevolution_and_Taxonomy.html#s0-dating">정리노트 "화석의 나이는 무엇을 재서 알아낼까요?"</a>).</li>
+    </ol><p class="answer">정답: A</p></div><div class="provenance" hidden>{&quot;refs&quot;: [{&quot;path&quot;: &quot;예상 8장 8&quot;, &quot;locator&quot;: &quot;&quot;}]}</div></article>
+<article class="card" id="p9"><h3>P9. [예상] 지질시대 시간축 도식과 큰 사건</h3><div class="problem"><p>그림은 약 46억 년 전 지구 탄생부터 현재까지의 지질시대 구분을 나타낸 시간축 도식이에요. 도식의 구간 (가)~(라)에 대한 설명으로 옳은 것은 무엇인가요?</p>
+    <figure class="figure"><svg viewBox="0 0 340 160" role="img" aria-label="지구 탄생부터 현재까지의 지질시대 시간축 도식. 명왕이언 다음 순서대로 이언 (가)와 (나)가 이어지고, 현생이언은 (다), (라), 신생대의 세 시기로 구분되어 있다.">
+      <text class="fig-text" x="170" y="18" text-anchor="middle">지질시대 시간축</text>
+      <rect class="fig-ink" x="10" y="28" width="56" height="36" rx="4"/>
+      <text class="fig-muted" x="38" y="50" text-anchor="middle">명왕이언</text>
+      <rect class="fig-accent" x="72" y="28" width="70" height="36" rx="4"/>
+      <text class="fig-text" x="107" y="50" text-anchor="middle">(가) 이언</text>
+      <rect class="fig-accent" x="148" y="28" width="74" height="36" rx="4"/>
+      <text class="fig-text" x="185" y="50" text-anchor="middle">(나) 이언</text>
+      <rect class="fig-ink" x="228" y="28" width="102" height="36" rx="4"/>
+      <text class="fig-text" x="279" y="50" text-anchor="middle">현생이언</text>
+      <path class="fig-ink" d="M 279 64 L 279 78 M 148 78 L 293 78 M 148 78 L 148 90 M 220 78 L 220 90 M 293 78 L 293 90"/>
+      <rect class="fig-accent" x="118" y="90" width="60" height="30" rx="4"/>
+      <text class="fig-text" x="148" y="110" text-anchor="middle">(다) 대</text>
+      <rect class="fig-accent" x="190" y="90" width="60" height="30" rx="4"/>
+      <text class="fig-text" x="220" y="110" text-anchor="middle">(라) 대</text>
+      <rect class="fig-ink" x="263" y="90" width="60" height="30" rx="4"/>
+      <text class="fig-muted" x="293" y="110" text-anchor="middle">신생대</text>
+      <circle class="fig-dot" cx="279" cy="64" r="2.5"/>
+      <path class="fig-muted" d="M 10 134 L 330 134"/>
+      <text class="fig-muted" x="10" y="150">약 46억 년 전 (지구 탄생)</text>
+      <text class="fig-muted" x="330" y="150" text-anchor="end">현재</text>
+    </svg></figure>
+    <ul class="choices">
+      <li>A. (가) 이언에는 남세균의 광합성으로 대기 중에 산소가 급격히 축적되며 최초의 진핵생물이 출현했어요.</li>
+      <li>B. (나) 이언의 시작과 함께 캄브리아기 대폭발이 일어나 오늘날 존재하는 대다수 동물 문의 조상이 짧은 지질 시간에 다양해졌어요.</li>
+      <li>C. (다) 대의 말기에는 거대 운석 충돌로 인한 대멸종이 일어나 공룡을 비롯한 많은 생물이 멸종했어요.</li>
+      <li>D. 지구 역사상 최초의 원핵생물이 출현하여 생명의 역사가 시작된 시점은 (나) 이언이에요.</li>
+      <li>E. (다) 대는 캄브리아기 대폭발로 시작해 페름기 말 대멸종으로 끝나며, (라) 대는 백악기 말 대멸종으로 끝나요.</li>
+    </ul>
+  </div><div class="exam-input"><fieldset><legend>답 선택</legend><label><input type="radio" name="p9" value="A"> A. (가) 이언에는 남세균의 광합성으로 대기 중에 산소가 급격히 축적되며 최초의 진핵생물이 출현했어요.</label><label><input type="radio" name="p9" value="B"> B. (나) 이언의 시작과 함께 캄브리아기 대폭발이 일어나 오늘날 존재하는 대다수 동물 문의 조상이 짧은 지질 시간에 다양해졌어요.</label><label><input type="radio" name="p9" value="C"> C. (다) 대의 말기에는 거대 운석 충돌로 인한 대멸종이 일어나 공룡을 비롯한 많은 생물이 멸종했어요.</label><label><input type="radio" name="p9" value="D"> D. 지구 역사상 최초의 원핵생물이 출현하여 생명의 역사가 시작된 시점은 (나) 이언이에요.</label><label><input type="radio" name="p9" value="E"> E. (다) 대는 캄브리아기 대폭발로 시작해 페름기 말 대멸종으로 끝나며, (라) 대는 백악기 말 대멸종으로 끝나요.</label></fieldset></div><p class="result" role="status"></p><div class="solution" hidden><ol class="steps">
+      <li>A. 틀려요. (가)는 시생이언으로 최초의 원핵생물과 광합성 생물이 등장한 시기이고, 대기 중 산소 축적과 최초의 진핵생물 출현은 (나)인 원생이언의 사건이에요.</li>
+      <li>B. 틀려요. 캄브리아기 대폭발은 (나) 원생이언이 아니라 현생이언의 첫 시기인 (다) 고생대의 시작을 알리는 사건이에요.</li>
+      <li>C. 틀려요. 거대 운석 충돌로 공룡 등이 멸종한 사건은 (다) 고생대 말기가 아니라 (라) 중생대 말기의 백악기 말 대멸종이에요. (다) 고생대의 끝은 페름기 말 대멸종이에요.</li>
+      <li>D. 틀려요. 최초의 원핵생물이 출현한 시기는 (나) 원생이언이 아니라 명왕이언 직후인 (가) 시생이언이에요.</li>
+      <li>E. 맞아요. 도식에서 (다)는 고생대, (라)는 중생대예요. 고생대는 캄브리아기 대폭발로 시작해 페름기 말 대멸종으로 끝나고, 중생대는 백악기 말 대멸종으로 끝나요.</li>
+      <li>수업과의 연결: 교수님은 시생이언의 생명, 원생이언의 진핵생물, 캄브리아기 대폭발, 페름기·백악기 대멸종, 신생대 인류의 순서를 기억하라고 강조하셨어요(<a href="../../복습노트/1103/정리노트_1103_Macroevolution_and_Taxonomy.html#s0-geologic">정리노트 "지구 역사는 큰 사건의 순서로 기억해요"</a>).</li>
+    </ol><p class="answer">정답: E</p></div><div class="provenance" hidden>{&quot;refs&quot;: [{&quot;path&quot;: &quot;예상 8장 9&quot;, &quot;locator&quot;: &quot;&quot;}]}</div></article>
+<article class="card" id="p10"><h3>P10. [예상] 수렴진화와 상동성·상사성의 비교 단위</h3><div class="problem"><p>수렴진화, 상사성, 상동성 및 진화적 비교 단위에 대한 설명으로 옳지 <strong>않은</strong> 것은 무엇인가요?</p>
+    <ul class="choices">
+      <li>A. 상어(어류), 펭귄(조류), 돌고래(포유류)처럼 계통적으로 먼 생물이 비슷한 물 환경에서 모두 유선형 체형을 갖추게 된 것은 수렴진화의 예예요.</li>
+      <li>B. 수렴진화는 서로 먼 계열이 비슷한 환경에서 독립적으로 비슷한 적응을 이루는 '진화 과정'이고, 상사성은 그렇게 형성된 형질의 '유사성의 성격'을 뜻해요.</li>
+      <li>C. 독수리와 박쥐는 앞다리뼈의 상대적 배열이 공통조상에서 유래했으므로, 두 동물의 비행용 날개라는 기능적 적응까지도 각 계열의 독립적 진화가 아니라 공통조상에서 물려받은 상동 형질로만 설명해야 해요.</li>
+      <li>D. 두 생물의 특정 형질이 상동인지 판단할 때는 단순히 먼 공통조상을 공유하는지가 아니라, '비교하는 바로 그 형질'이 공통조상에서 유래했는지를 확인해야 해요.</li>
+      <li>E. 서로 먼 식물 계열인 선인장과 대극이 건조한 사막 환경에서 각각 독립적으로 다육질 줄기를 갖추게 된 것은 수렴진화로 형성된 상사성의 예예요.</li>
+    </ul>
+  </div><div class="exam-input"><fieldset><legend>답 선택</legend><label><input type="radio" name="p10" value="A"> A. 상어(어류), 펭귄(조류), 돌고래(포유류)처럼 계통적으로 먼 생물이 비슷한 물 환경에서 모두 유선형 체형을 갖추게 된 것은 수렴진화의 예예요.</label><label><input type="radio" name="p10" value="B"> B. 수렴진화는 서로 먼 계열이 비슷한 환경에서 독립적으로 비슷한 적응을 이루는 '진화 과정'이고, 상사성은 그렇게 형성된 형질의 '유사성의 성격'을 뜻해요.</label><label><input type="radio" name="p10" value="C"> C. 독수리와 박쥐는 앞다리뼈의 상대적 배열이 공통조상에서 유래했으므로, 두 동물의 비행용 날개라는 기능적 적응까지도 각 계열의 독립적 진화가 아니라 공통조상에서 물려받은 상동 형질로만 설명해야 해요.</label><label><input type="radio" name="p10" value="D"> D. 두 생물의 특정 형질이 상동인지 판단할 때는 단순히 먼 공통조상을 공유하는지가 아니라, '비교하는 바로 그 형질'이 공통조상에서 유래했는지를 확인해야 해요.</label><label><input type="radio" name="p10" value="E"> E. 서로 먼 식물 계열인 선인장과 대극이 건조한 사막 환경에서 각각 독립적으로 다육질 줄기를 갖추게 된 것은 수렴진화로 형성된 상사성의 예예요.</label></fieldset></div><p class="result" role="status"></p><div class="solution" hidden><ol class="steps">
+      <li>A. 맞아요. 상어(어류), 펭귄(조류), 돌고래(포유류)는 서로 먼 계열이지만 물속을 헤엄치는 비슷한 생활 환경에서 유선형 체형이라는 적응을 독립적으로 획득한 수렴진화의 대표적인 예예요.</li>
+      <li>B. 맞아요. 수렴진화는 서로 먼 계열에서 비슷한 적응이 독립적으로 생기는 진화 과정이고, 상사성은 그 결과 나타난 기능적 유사성의 성격을 뜻해요.</li>
+      <li>C. 틀려요. 독수리와 박쥐의 앞다리뼈 배치는 공통조상에서 유래한 상동 구조이지만, 날아서 이동하는 비행용 날개로서의 기능적 적응은 각 계열에서 독립적으로 진화한 상사적 측면이므로 비교 단위에 따라 상동과 상사를 구별해야 해요.</li>
+      <li>D. 맞아요. 모든 생물은 먼 공통조상을 공유할 수 있으므로, 상동성을 판단할 때는 단순히 공통조상의 존재 여부가 아니라 비교하는 바로 그 형질이 공통조상에서 유래했는지를 기준으로 삼아야 해요.</li>
+      <li>E. 맞아요. 선인장과 대극은 서로 먼 식물 계열이지만 건조한 환경에 적응하며 독립적으로 다육질 줄기를 갖추었으므로 수렴진화에 의한 상사성의 예예요.</li>
+      <li>수업과의 연결: 수렴진화(과정)와 상사성(성격)을 구별하고, 독수리와 박쥐의 앞다리처럼 비교하는 바로 그 형질 단위(뼈 구조 vs 비행 날개 기능)에 따라 상동과 상사를 정확히 나눠요(<a href="../../복습노트/1103/정리노트_1103_Macroevolution_and_Taxonomy.html#s1-convergence">정리노트 "같이 닮은 이유가 같지는 않아요"</a>).</li>
+    </ol><p class="answer">정답: C</p></div><div class="provenance" hidden>{&quot;refs&quot;: [{&quot;path&quot;: &quot;예상 8장 10&quot;, &quot;locator&quot;: &quot;&quot;}]}</div></article>
+<article class="card" id="p11"><h3>P11. [예상] 말 계통의 분지형 진화와 경향</h3><div class="problem"><p>그림은 화석 기록을 바탕으로 말(<i>Equus</i>) 계통의 진화 양상을 단순화하여 나타낸 모식도예요. 이 도식과 대진화의 경향에 대한 설명으로 옳은 것은 무엇인가요?</p>
+    <figure class="figure"><svg viewBox="0 0 340 190" role="img" aria-label="말 계통의 화석 진화 모식도. 아래 초기 조상에서 여러 갈래로 분지하며, 도중에 끝난 멸종 가지들과 현재까지 이어진 현생 말 가지가 표시되어 있다.">
+      <path class="fig-ink" d="M22 165 V35 M17 43 L22 35 L27 43"/>
+      <text class="fig-muted" x="22" y="178" text-anchor="middle">과거</text>
+      <text class="fig-muted" x="22" y="25" text-anchor="middle">현재</text>
+      <path class="fig-ink" d="M150 162 V130 M150 130 C115 120 75 105 70 78 M150 130 C155 120 165 115 165 105 M165 105 C140 95 115 85 110 68 M165 105 C210 100 250 95 260 90 M165 105 C175 95 185 85 185 75 M185 75 C215 70 240 62 250 55"/>
+      <path class="fig-accent" d="M185 75 V32"/>
+      <circle class="fig-dot" cx="150" cy="130" r="3.5"/>
+      <circle class="fig-dot" cx="165" cy="105" r="3.5"/>
+      <circle class="fig-dot" cx="185" cy="75" r="3.5"/>
+      <circle class="fig-dot" cx="185" cy="32" r="3.5"/>
+      <text class="fig-muted" x="70" y="70" text-anchor="middle">× 멸종 (3발가락·잎)</text>
+      <text class="fig-muted" x="110" y="60" text-anchor="middle">× 멸종 (소형화)</text>
+      <text class="fig-muted" x="260" y="84" text-anchor="middle">× 멸종 (3발가락)</text>
+      <text class="fig-muted" x="250" y="48" text-anchor="middle">× 멸종</text>
+      <text class="fig-text" x="185" y="24" text-anchor="middle">현생 말 (대형·1발가락·풀)</text>
+      <text class="fig-text" x="150" y="178" text-anchor="middle">초기 조상 (소형·다발가락·잎 섭식)</text>
+    </svg></figure>
+    <ul class="choices"><li>A. 화석 기록은 여러 갈래의 분지와 멸종을 보여 주므로, 현생 말 계열의 몸집 증가와 발가락 수 감소를 모든 계열에 작용한 필연적 일직선 방향으로 볼 수 없어요.</li><li>B. 진화에는 몸집을 키우고 복잡성을 높이도록 미리 정해진 내재적 추진력이 항상 작용해요.</li><li>C. 멸종한 가지들(×)은 환경에 적응하지 못해 도태된 예외일 뿐이므로 대진화 경향을 분석할 때 고려할 필요가 없어요.</li><li>D. 생물의 진화에서 형태적 복잡성과 몸집의 증가는 어떤 환경에서도 예외 없이 관찰되는 보편 법칙이에요.</li><li>E. 초기 조상 계열에서 현생 말에 이르는 동안 가지 갈림(종분화) 없이 단 하나의 계열만 일직선으로 이어져 왔어요.</li></ul>
+  </div><div class="exam-input"><fieldset><legend>답 선택</legend><label><input type="radio" name="p11" value="A"> A. 화석 기록은 여러 갈래의 분지와 멸종을 보여 주므로, 현생 말 계열의 몸집 증가와 발가락 수 감소를 모든 계열에 작용한 필연적 일직선 방향으로 볼 수 없어요.</label><label><input type="radio" name="p11" value="B"> B. 진화에는 몸집을 키우고 복잡성을 높이도록 미리 정해진 내재적 추진력이 항상 작용해요.</label><label><input type="radio" name="p11" value="C"> C. 멸종한 가지들(×)은 환경에 적응하지 못해 도태된 예외일 뿐이므로 대진화 경향을 분석할 때 고려할 필요가 없어요.</label><label><input type="radio" name="p11" value="D"> D. 생물의 진화에서 형태적 복잡성과 몸집의 증가는 어떤 환경에서도 예외 없이 관찰되는 보편 법칙이에요.</label><label><input type="radio" name="p11" value="E"> E. 초기 조상 계열에서 현생 말에 이르는 동안 가지 갈림(종분화) 없이 단 하나의 계열만 일직선으로 이어져 왔어요.</label></fieldset></div><p class="result" role="status"></p><div class="solution" hidden><ol class="steps"><li>A. 맞아요. 화석 기록은 크기·발가락 수·이빨 구조가 다양한 여러 갈래의 분지와 멸종을 보여 주므로, 현생 말 계열의 경향이 모든 말 계열의 정해진 목표나 일직선 진화는 아니에요.</li><li>B. 틀려요. 특정 표현형이나 복잡성을 향해 밀어붙이는 내재적 추진력은 없으며, 진화는 유전적 변이와 환경 사이의 상호작용 결과예요.</li><li>C. 틀려요. 대진화의 경향을 제대로 이해하려면 현재 살아남은 한 가지만 보는 것이 아니라 도중에 사라진 멸종 가지들도 함께 살펴봐야 해요.</li><li>D. 틀려요. 몸집 증가나 복잡성 증가는 일부 계열에서 관찰되는 경향일 수 있지만 모든 생물과 환경에 적용되는 보편 법칙은 아니며, 환경에 따라 몸집이 작아지거나 구조가 단순해지는 경우도 있어요.</li><li>E. 틀려요. 도식처럼 말의 역사는 초기 조상에서 여러 계열로 분지하고 다수가 멸종한 나무 모양(분지형)이지, 종분화 없는 단 한 줄의 사다리형 진화가 아니에요.</li>
+      <li>수업과의 연결: 현생 말로 이어지는 한 계열의 변화만 보고 말이 무조건 커진다고 단정하면 안 되며, 멸종한 계열에는 작아진 말도 있었다는 점을 확인해요(<a href="../../복습노트/1103/정리노트_1103_Macroevolution_and_Taxonomy.html#s2-trends">정리노트 "진화는 정해진 목표를 향해 가지 않아요"</a>).</li>
+    </ol><p class="answer">정답: A</p></div><div class="provenance" hidden>{&quot;refs&quot;: [{&quot;path&quot;: &quot;예상 8장 11&quot;, &quot;locator&quot;: &quot;&quot;}]}</div></article>
+<article class="card" id="p12"><h3>P12. [예상] 멸종의 규모와 변화의 시간 양상</h3><div class="problem"><p>생물의 멸종과 진화적 변화의 시간 양상에 대한 설명으로 옳지 <strong>않은</strong> 것은 무엇인가요?</p>
+    <ul class="choices"><li>A. 배경멸종은 평상시에도 낮은 비율로 종이 사라지는 것이고, 대멸종은 비교적 짧은 지질 시간에 배경멸종률을 크게 넘는 많은 종이 사라지는 사건이에요.</li><li>B. 페름기 말 대멸종은 시베리아의 대규모 화산 활동으로 방출된 온실가스와 이에 따른 온난화, 해양 환경 악화 경로와 연결돼요.</li><li>C. 백악기 말 경계 지층의 이리듐 농축과 멕시코 유카탄반도의 칙술루브 충돌구는 대규모 소행성 충돌 가설을 뒷받침하는 관찰 증거예요.</li><li>D. 점진주의는 작은 형태 변화가 긴 시간에 걸쳐 서서히 누적되는 양상이고, 단속평형은 긴 형태적 정체와 종분화에 연결된 지질학적으로 짧은 변화 구간이 번갈아 나타나는 양상이에요.</li><li>E. 단속평형에서 변화 구간이 급격하다는 것은 지질학적 시간이 아니라 한 세대 안에서 개체 하나가 하룻밤 사이에 다른 종으로 변신한다는 뜻이며, 형태가 안정적으로 보이는 정체기에는 유전적 변화가 완전히 멈춰요.</li></ul>
+  </div><div class="exam-input"><fieldset><legend>답 선택</legend><label><input type="radio" name="p12" value="A"> A. 배경멸종은 평상시에도 낮은 비율로 종이 사라지는 것이고, 대멸종은 비교적 짧은 지질 시간에 배경멸종률을 크게 넘는 많은 종이 사라지는 사건이에요.</label><label><input type="radio" name="p12" value="B"> B. 페름기 말 대멸종은 시베리아의 대규모 화산 활동으로 방출된 온실가스와 이에 따른 온난화, 해양 환경 악화 경로와 연결돼요.</label><label><input type="radio" name="p12" value="C"> C. 백악기 말 경계 지층의 이리듐 농축과 멕시코 유카탄반도의 칙술루브 충돌구는 대규모 소행성 충돌 가설을 뒷받침하는 관찰 증거예요.</label><label><input type="radio" name="p12" value="D"> D. 점진주의는 작은 형태 변화가 긴 시간에 걸쳐 서서히 누적되는 양상이고, 단속평형은 긴 형태적 정체와 종분화에 연결된 지질학적으로 짧은 변화 구간이 번갈아 나타나는 양상이에요.</label><label><input type="radio" name="p12" value="E"> E. 단속평형에서 변화 구간이 급격하다는 것은 지질학적 시간이 아니라 한 세대 안에서 개체 하나가 하룻밤 사이에 다른 종으로 변신한다는 뜻이며, 형태가 안정적으로 보이는 정체기에는 유전적 변화가 완전히 멈춰요.</label></fieldset></div><p class="result" role="status"></p><div class="solution" hidden><ol class="steps"><li>A. 맞아요. 배경멸종은 평소 일어나는 낮은 비율의 종 소멸이고, 대멸종은 비교적 짧은 지질 시간에 배경률을 크게 뛰어넘는 대규모 종 소멸이에요.</li><li>B. 맞아요. 페름기 말 대멸종은 시베리아의 거대한 화산 분출과 온실가스 증가, 온난화 및 해양 환경 악화가 복합적으로 작용한 사건이에요.</li><li>C. 맞아요. 경계 지층의 이리듐 농축과 칙술루브 충돌구는 백악기 말에 거대한 소행성 충돌이 있었다는 과학적 추론의 관찰 증거예요.</li><li>D. 맞아요. 점진주의는 작은 변화의 오랜 누적 양상이고, 단속평형은 긴 형태적 정체 사이에 지질학적으로 짧은 변화 구간이 끼어드는 양상이에요.</li><li>E. 틀려요. 단속평형의 급격함은 지질학적 시간에 비해 짧다는 뜻이지 개체 하나가 하룻밤에 다른 종으로 바뀌는 것이 아니며, 형태적 정체기에도 유전적 변화가 완전히 멈추는 것은 아니에요.</li>
+      <li>수업과의 연결: 페름기 말 화산 분출과 백악기 말 충돌 흔적을 구별하고, 단속평형의 시간 단위는 지질학적 시간이라는 점을 확인해요(<a href="../../복습노트/1103/정리노트_1103_Macroevolution_and_Taxonomy.html#s2-extinction">정리노트 "배경멸종과 대멸종은 규모와 속도가 달라요"</a>, <a href="../../복습노트/1103/정리노트_1103_Macroevolution_and_Taxonomy.html#s2-tempo">정리노트 "점진주의와 단속평형은 변화의 시간 양상이에요"</a>).</li>
+    </ol><p class="answer">정답: E</p></div><div class="provenance" hidden>{&quot;refs&quot;: [{&quot;path&quot;: &quot;예상 8장 12&quot;, &quot;locator&quot;: &quot;&quot;}]}</div></article>
+<article class="card" id="p13"><h3>P13. [예상] 배 발생 과정의 유전자 작용 단계</h3><div class="problem"><p>그림은 진화발달생물학(evo-devo)에서 다루는 유전자 (가)의 작용 경로와 발현 부위 변화에 따른 결과를 나타낸 모식도예요. 이 도식에 대한 설명으로 옳은 것은 무엇인가요?</p>
+    <figure class="figure"><svg viewBox="0 0 340 175" role="img" aria-label="배 발생에서 유전자 (가)가 산물 (나)를 거쳐 유전자 (다)의 프로모터에 작용하여 (라) 몸 부위 구조를 형성하는 경로와, (가)의 발현 부위가 가슴에서 머리로 바뀔 때 다리 구조 형성 위치가 달라지는 비교 모식도.">
+      <path class="fig-ink" d="M12 12 H160 V42 H12 Z"/>
+      <text class="fig-text" x="86" y="26" text-anchor="middle">유전자 (가)</text>
+      <text class="fig-muted" x="86" y="38" text-anchor="middle">DNA 구간</text>
+      <path class="fig-ink" d="M86 42 V58 M82 52 L86 58 L90 52"/>
+      <text class="fig-muted" x="96" y="53">전사·번역</text>
+      <path class="fig-ink" d="M12 58 H160 V84 H12 Z"/>
+      <text class="fig-text" x="86" y="74" text-anchor="middle">(나) 단백질 산물</text>
+      <path class="fig-ink" d="M86 84 V100 M82 94 L86 100 L90 94"/>
+      <text class="fig-muted" x="96" y="95">프로모터 작용</text>
+      <path class="fig-ink" d="M12 100 H160 V128 H12 Z"/>
+      <text class="fig-text" x="86" y="113" text-anchor="middle">(다) 유전자 A·B·C</text>
+      <text class="fig-muted" x="86" y="124" text-anchor="middle">RNA 중합효소 전사 개시</text>
+      <path class="fig-ink" d="M86 128 V144 M82 138 L86 144 L90 138"/>
+      <path class="fig-accent" d="M12 144 H160 V168 H12 Z"/>
+      <text class="fig-text" x="86" y="160" text-anchor="middle">(라) 몸 부위 구조 형성</text>
+      <path class="fig-ink" d="M172 12 V168"/>
+      <text class="fig-text" x="255" y="24" text-anchor="middle">[발현 부위 비교]</text>
+      <path class="fig-ink" d="M182 32 H328 V92 H182 Z"/>
+      <text class="fig-muted" x="190" y="46">정상 배아</text>
+      <text class="fig-text" x="190" y="62">(가) 발현 부위: 가슴</text>
+      <path class="fig-ink" d="M255 66 V76 M252 72 L255 76 L258 72"/>
+      <text class="fig-text" x="255" y="86" text-anchor="middle">가슴에 다리 형성</text>
+      <path class="fig-accent" d="M182 100 H328 V160 H182 Z"/>
+      <text class="fig-muted" x="190" y="114">변이 배아</text>
+      <text class="fig-text" x="190" y="130">(가) 발현 부위: 머리</text>
+      <path class="fig-accent" d="M255 134 V144 M252 140 L255 144 L258 140"/>
+      <text class="fig-text" x="255" y="154" text-anchor="middle">머리에 다리 형성</text>
+    </svg></figure>
+    <ul class="choices"><li>A. 호미오 유전자에 해당하는 (가) 자체가 팔다리나 손가락을 이루는 직접적인 몸 재료가 돼요.</li><li>B. (나)는 전사인자로 작동하여 (다) 표적 유전자들의 발현 시기와 위치를 지휘하며, (가)의 발현 위치가 바뀌면 구조가 만들어지는 자리도 달라질 수 있어요.</li><li>C. 세포 안에 있는 모든 종류의 전사인자는 예외 없이 호미오 유전자 (가)에서만 만들어져요.</li><li>D. (나)는 RNA 중합효소 없이 혼자서 프로모터에서 전사를 수행해 mRNA를 직접 합성해요.</li><li>E. 배 발생 과정에서 (가)의 발현 위치가 달라져도 만들어지는 몸의 체형과 구조에는 변화가 없어요.</li></ul>
+  </div><div class="exam-input"><fieldset><legend>답 선택</legend><label><input type="radio" name="p13" value="A"> A. 호미오 유전자에 해당하는 (가) 자체가 팔다리나 손가락을 이루는 직접적인 몸 재료가 돼요.</label><label><input type="radio" name="p13" value="B"> B. (나)는 전사인자로 작동하여 (다) 표적 유전자들의 발현 시기와 위치를 지휘하며, (가)의 발현 위치가 바뀌면 구조가 만들어지는 자리도 달라질 수 있어요.</label><label><input type="radio" name="p13" value="C"> C. 세포 안에 있는 모든 종류의 전사인자는 예외 없이 호미오 유전자 (가)에서만 만들어져요.</label><label><input type="radio" name="p13" value="D"> D. (나)는 RNA 중합효소 없이 혼자서 프로모터에서 전사를 수행해 mRNA를 직접 합성해요.</label><label><input type="radio" name="p13" value="E"> E. 배 발생 과정에서 (가)의 발현 위치가 달라져도 만들어지는 몸의 체형과 구조에는 변화가 없어요.</label></fieldset></div><p class="result" role="status"></p><div class="solution" hidden><ol class="steps"><li>A. 틀려요. (가) 호미오 유전자는 몸 부위의 정체성 결정에 관여하는 조절 유전자이며, 그 유전자 자체가 팔다리나 손가락 재료가 되는 것은 아니에요.</li><li>B. 맞아요. (나)는 호미오 유전자가 암호화한 조절 단백질(전사인자)로 표적 유전자 (다)의 발현을 지휘하며, (가)의 발현 위치가 바뀌면 머리에 다리 같은 구조가 생기는 큰 형태 변화도 가능해요.</li><li>C. 틀려요. 호미오 유전자는 전사인자를 암호화하지만, 모든 전사인자를 호미오 유전자라고 부르지는 않아요.</li><li>D. 틀려요. 전사 조절은 RNA 중합효소가 프로모터에서 전사를 시작하는 과정과 연결되며, 전사인자는 이를 조절하는 단백질이에요.</li><li>E. 틀려요. 발생 조절 유전자의 발현 위치와 시기가 바뀌면 만들어지는 몸의 체형과 체제가 크게 달라질 수 있어요.</li>
+      <li>수업과의 연결: 몸을 만드는 유전자를 일꾼, 호미오 유전자를 관리자에 빗댄 설명을 확인하고 조절 단백질과 표적 유전자의 단계를 구별해요(<a href="../../복습노트/1103/정리노트_1103_Macroevolution_and_Taxonomy.html#s3-evodevo">정리노트 "몸을 만드는 유전자를 지휘하는 유전자"</a>).</li>
+    </ol><p class="answer">정답: B</p></div><div class="provenance" hidden>{&quot;refs&quot;: [{&quot;path&quot;: &quot;예상 8장 13&quot;, &quot;locator&quot;: &quot;&quot;}]}</div></article>
+<article class="card" id="p14"><h3>P14. [예상] 네 생물 무리의 계통과 분류</h3><div class="problem"><p>표는 서로 다른 네 생물 무리 (가)~(라)의 구분과 주요 특징을 정리한 것이에요. 수업의 3역 체계와 분자 계통 자료에 근거할 때, 표에 대한 설명으로 옳은 것은 무엇인가요?</p>
+    <div class="table-wrap"><table><thead><tr><th>생물 무리</th><th>원핵·진핵 구분</th><th>수업에서 다룬 특징 및 분류</th></tr></thead><tbody><tr><td>(가)</td><td>원핵생물</td><td>물에서 전자를 얻는 산소 발생 광합성을 수행하는 남세균</td></tr><tr><td>(나)</td><td>원핵생물</td><td>우즈(Woese)의 rRNA 염기서열 비교를 통해 세균역 및 진핵생물역과 구별된 고세균</td></tr><tr><td>(다)</td><td>진핵생물</td><td>진핵생물역 안의 4계 체계에서 균계에 속하는 균류</td></tr><tr><td>(라)</td><td>진핵생물</td><td>진핵생물역 안의 4계 체계에서 동물계에 속하는 동물</td></tr></tbody></table></div>
+    <ul class="choices"><li>A. (가) 남세균과 (나) 고세균은 모두 원핵생물이므로 3역 체계에서 같은 세균역에 속해요.</li><li>B. (나) 고세균은 세균역의 다른 이름일 뿐이며 진핵생물역의 원생생물계 안에 포함돼요.</li><li>C. 분자 자료에 근거할 때 (다) 균류는 식물보다 (라) 동물과 더 가까운 관계이며, (가)와 (나)는 서로 다른 역(영역)에 속해요.</li><li>D. (다) 균류와 (라) 동물은 모두 세균역에 속하며, 분자 자료에 근거할 때 (다)는 (라)보다 남세균에 더 가까워요.</li><li>E. (가) 남세균은 진핵생물역의 식물계에 속하며 현생이언의 신생대에 처음 등장했어요.</li></ul>
+  </div><div class="exam-input"><fieldset><legend>답 선택</legend><label><input type="radio" name="p14" value="A"> A. (가) 남세균과 (나) 고세균은 모두 원핵생물이므로 3역 체계에서 같은 세균역에 속해요.</label><label><input type="radio" name="p14" value="B"> B. (나) 고세균은 세균역의 다른 이름일 뿐이며 진핵생물역의 원생생물계 안에 포함돼요.</label><label><input type="radio" name="p14" value="C"> C. 분자 자료에 근거할 때 (다) 균류는 식물보다 (라) 동물과 더 가까운 관계이며, (가)와 (나)는 서로 다른 역(영역)에 속해요.</label><label><input type="radio" name="p14" value="D"> D. (다) 균류와 (라) 동물은 모두 세균역에 속하며, 분자 자료에 근거할 때 (다)는 (라)보다 남세균에 더 가까워요.</label><label><input type="radio" name="p14" value="E"> E. (가) 남세균은 진핵생물역의 식물계에 속하며 현생이언의 신생대에 처음 등장했어요.</label></fieldset></div><p class="result" role="status"></p><div class="solution" hidden><ol class="steps"><li>A. 틀려요. (가) 남세균은 세균역이고 (나) 고세균은 고세균역으로, 둘 다 원핵생물이지만 우즈의 rRNA 비교에 따라 서로 다른 역으로 구분해요.</li><li>B. 틀려요. 고세균은 세균역의 다른 이름이 아니며, 진핵생물역과도 구별되는 별도의 고세균역을 이뤄요.</li><li>C. 맞아요. 분자 자료에 근거할 때 (다) 균류는 식물보다 (라) 동물과 더 가까운 관계이고, (가) 남세균(세균역)과 (나) 고세균(고세균역)은 서로 다른 역에 속해요.</li><li>D. 틀려요. (다) 균류와 (라) 동물은 모두 진핵생물역에 속하며 세균역의 남세균보다 서로 훨씬 가까운 관계예요.</li><li>E. 틀려요. (가) 남세균은 원핵생물로서 세균역에 속하며, 시생이언에 등장해 산소 발생 광합성을 수행했어요.</li>
+      <li>수업과의 연결: 세균역·고세균역·진핵생물역의 3역 체계와 남세균의 소속, 그리고 균류는 식물보다 동물과 더 가깝다는 분자 계통 보충을 확인해요(<a href="../../복습노트/1103/정리노트_1103_Macroevolution_and_Taxonomy.html#s3-naming">정리노트 "종 이름은 두 단어이고 분류는 여러 층이에요"</a>, <a href="../../복습노트/1103/정리노트_1103_Macroevolution_and_Taxonomy.html#s3-rrna">정리노트 "rRNA 서열은 생물을 비교하는 공통 표지예요"</a>).</li>
+    </ol><p class="answer">정답: C</p></div><div class="provenance" hidden>{&quot;refs&quot;: [{&quot;path&quot;: &quot;예상 8장 14&quot;, &quot;locator&quot;: &quot;&quot;}]}</div></article>
+<article class="card" id="p15"><h3>P15. [예상] 계통과 동정, 그리고 rRNA 유전자 비교</h3><div class="problem"><p>생물의 계통, 분류, 동정 및 rRNA 유전자를 활용한 분자 비교에 대한 설명으로 옳지 <strong>않은</strong> 것은 무엇인가요?</p>
+    <ul class="choices"><li>A. 계통(phylogeny)은 생물군의 진화 역사이고, 분류학(taxonomy)은 생물을 동정하고 이름 붙이며 분류상의 위치에 배열하는 분야예요.</li><li>B. 동정(identification)은 어떤 생물 표본이나 시료가 기존에 알려진 어느 생물에 해당하는지 확인하는 과정이에요.</li><li>C. rRNA는 리보솜을 구성하는 RNA이고, 실제 비교를 위해 PCR로 증폭하고 염기서열을 읽는 대상은 그 정보를 암호화한 rRNA 유전자 DNA 구간이에요.</li><li>D. PCR은 시료의 종 이름과 외부 형태를 기계가 직접 측정해 주는 단계이므로, rRNA 유전자를 증폭하기만 하면 염기서열의 일치·차이를 비교하지 않아도 어떤 종인지 항상 확정할 수 있어요.</li><li>E. 계통수는 진화 역사에 대한 가설이므로 형태·행동·분자 자료 등 새로운 진화 정보가 쌓이면 분류 체계도 수정될 수 있어요.</li></ul>
+  </div><div class="exam-input"><fieldset><legend>답 선택</legend><label><input type="radio" name="p15" value="A"> A. 계통(phylogeny)은 생물군의 진화 역사이고, 분류학(taxonomy)은 생물을 동정하고 이름 붙이며 분류상의 위치에 배열하는 분야예요.</label><label><input type="radio" name="p15" value="B"> B. 동정(identification)은 어떤 생물 표본이나 시료가 기존에 알려진 어느 생물에 해당하는지 확인하는 과정이에요.</label><label><input type="radio" name="p15" value="C"> C. rRNA는 리보솜을 구성하는 RNA이고, 실제 비교를 위해 PCR로 증폭하고 염기서열을 읽는 대상은 그 정보를 암호화한 rRNA 유전자 DNA 구간이에요.</label><label><input type="radio" name="p15" value="D"> D. PCR은 시료의 종 이름과 외부 형태를 기계가 직접 측정해 주는 단계이므로, rRNA 유전자를 증폭하기만 하면 염기서열의 일치·차이를 비교하지 않아도 어떤 종인지 항상 확정할 수 있어요.</label><label><input type="radio" name="p15" value="E"> E. 계통수는 진화 역사에 대한 가설이므로 형태·행동·분자 자료 등 새로운 진화 정보가 쌓이면 분류 체계도 수정될 수 있어요.</label></fieldset></div><p class="result" role="status"></p><div class="solution" hidden><ol class="steps"><li>A. 맞아요. 계통은 생물군의 진화 역사 자체를 뜻하고, 분류학은 생물을 동정·명명·배열하는 학문 분야예요.</li><li>B. 맞아요. 동정은 신분증(ID)을 확인하듯 해당 생물이 무엇인지 기존 분류군과 비교하여 확인하는 과정이에요.</li><li>C. 맞아요. rRNA는 리보솜을 이루는 RNA 물질이고, 실험실에서 PCR로 증폭하는 대상은 rRNA 정보를 담고 있는 DNA 구간(rRNA 유전자)이에요.</li><li>D. 틀려요. PCR은 비교할 DNA 재료의 양을 늘려 주는 증폭 단계일 뿐이며, 종 이름을 직접 알려 주지 않아요. 증폭된 산물의 염기서열을 읽고 알려진 생물의 서열과 일치·차이를 비교해야 종을 추정할 수 있어요.</li><li>E. 맞아요. 계통수는 진화사를 나타낸 과학적 가설이므로, 새로운 형태·분자 증거에 따라 계통 관계 해석과 분류 체계가 바뀔 수 있어요.</li>
+      <li>수업과의 연결: 계통과 분류·동정의 정의를 나누고, rRNA(RNA)와 rRNA 유전자(DNA)의 구별 및 PCR의 실제 역할을 명확히 확인해요(<a href="../../복습노트/1103/정리노트_1103_Macroevolution_and_Taxonomy.html#s3-phylogeny">정리노트 "계통수는 진화사의 가설을 그려요"</a>, <a href="../../복습노트/1103/정리노트_1103_Macroevolution_and_Taxonomy.html#s3-rrna">정리노트 "rRNA 서열은 생물을 비교하는 공통 표지예요"</a>).</li>
+    </ol><p class="answer">정답: D</p></div><div class="provenance" hidden>{&quot;refs&quot;: [{&quot;path&quot;: &quot;예상 8장 15&quot;, &quot;locator&quot;: &quot;&quot;}]}</div></article>
+    </section>
+  <div id="exam-results" role="region" aria-labelledby="results-title" hidden>
+  <h1 id="results-title" tabindex="-1">전체 풀이 결과</h1>
+  <p id="results-summary"></p>
+  <p class="results-note">단답형은 정답·허용답과 일치하는 경우만 자동으로 확인합니다. 자기채점 대기는 해설과 비교해 주세요. 새로고침하면 답안이 초기화되므로 복기하려면 먼저 복기 프롬프트를 복사하세요.</p>
+  <div class="results-actions">
+    <button class="btn btn-primary" id="copy-prompt" type="button">복기 프롬프트 복사</button>
+  </div>
+  <p id="prompt-status" role="status" aria-live="polite"></p>
+  <div class="results-filter">
+    <label for="results-filter">결과 보기</label>
+    <select id="results-filter">
+      <option value="all">전체</option><option value="incorrect">오답</option>
+      <option value="pending">자기채점 대기</option><option value="unanswered">미응답</option>
+      <option value="correct">정답</option><option value="matched">자동 일치</option>
+    </select>
+    <span id="results-count" role="status"></span>
+  </div>
+  <p id="results-empty" hidden>이 분류에 해당하는 문항이 없습니다.</p>
+  <ol id="results-list" aria-label="문항별 풀이 결과"></ol>
+</div>
+</main>
+  <footer>근거: 1029·1103 정리노트, 8장 강의노트·교과서, 8강 기출 합본. 예상 적중률을 뜻하지 않아요.</footer>
+    </div>
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="panel-right-title">
+      <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-right-title">풀이 도움</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-empty">문제로 넘어가면 그 문제의 교과서 원문, 힌트, 풀이가 여기에 나옵니다. 먼저 스스로 풀어 본 뒤 여세요.</p>
+        <div class="aids" id="exam-aid"></div>
+        <button class="solved-btn" id="solved-btn" type="button" aria-pressed="false" hidden><span>푼 문제로 표시</span></button>
+      </div>
+    </aside>
+  </div>
+  <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
+  <nav class="pager" aria-label="화면 이동">
+    <div class="exam-actions"><button class="btn btn-primary" id="submit-exam" type="button" hidden>전체 제출</button><p id="summary" role="status" aria-live="polite"></p></div><div class="pager-inner">
+      <button class="btn btn-ghost" id="pager-prev" type="button">이전</button>
+      <span class="pager-count" id="pager-count"></span>
+      <button class="btn btn-primary" id="pager-next" type="button">시작하기</button>
+    </div>
+  </nav>
+  <p class="sr-only" id="pager-status" aria-live="polite"></p>
+
+  <script type="application/json" id="exam-meta">{"documentId": "복습문제_8장_웹과제예상_시험형_v3.html", "range": "8장", "examVersion": 3}</script><script type="application/json" id="exam-model">{"p1": {"format": "mcq", "answer": {"kind": "choice", "option_id": "A"}}, "p2": {"format": "mcq", "answer": {"kind": "choice", "option_id": "C"}}, "p3": {"format": "mcq", "answer": {"kind": "choice", "option_id": "E"}}, "p4": {"format": "mcq", "answer": {"kind": "choice", "option_id": "B"}}, "p5": {"format": "mcq", "answer": {"kind": "choice", "option_id": "D"}}, "p6": {"format": "mcq", "answer": {"kind": "choice", "option_id": "B"}}, "p7": {"format": "mcq", "answer": {"kind": "choice", "option_id": "D"}}, "p8": {"format": "mcq", "answer": {"kind": "choice", "option_id": "A"}}, "p9": {"format": "mcq", "answer": {"kind": "choice", "option_id": "E"}}, "p10": {"format": "mcq", "answer": {"kind": "choice", "option_id": "C"}}, "p11": {"format": "mcq", "answer": {"kind": "choice", "option_id": "A"}}, "p12": {"format": "mcq", "answer": {"kind": "choice", "option_id": "E"}}, "p13": {"format": "mcq", "answer": {"kind": "choice", "option_id": "B"}}, "p14": {"format": "mcq", "answer": {"kind": "choice", "option_id": "C"}}, "p15": {"format": "mcq", "answer": {"kind": "choice", "option_id": "D"}}}</script><script type="application/json" id="exam-casefold">{"µ": "μ", "ß": "ss", "ŉ": "ʼn", "ſ": "s", "ǰ": "ǰ", "ͅ": "ι", "ΐ": "ΐ", "ΰ": "ΰ", "ς": "σ", "ϐ": "β", "ϑ": "θ", "ϕ": "φ", "ϖ": "π", "ϰ": "κ", "ϱ": "ρ", "ϵ": "ε", "և": "եւ", "Ꭰ": "Ꭰ", "Ꭱ": "Ꭱ", "Ꭲ": "Ꭲ", "Ꭳ": "Ꭳ", "Ꭴ": "Ꭴ", "Ꭵ": "Ꭵ", "Ꭶ": "Ꭶ", "Ꭷ": "Ꭷ", "Ꭸ": "Ꭸ", "Ꭹ": "Ꭹ", "Ꭺ": "Ꭺ", "Ꭻ": "Ꭻ", "Ꭼ": "Ꭼ", "Ꭽ": "Ꭽ", "Ꭾ": "Ꭾ", "Ꭿ": "Ꭿ", "Ꮀ": "Ꮀ", "Ꮁ": "Ꮁ", "Ꮂ": "Ꮂ", "Ꮃ": "Ꮃ", "Ꮄ": "Ꮄ", "Ꮅ": "Ꮅ", "Ꮆ": "Ꮆ", "Ꮇ": "Ꮇ", "Ꮈ": "Ꮈ", "Ꮉ": "Ꮉ", "Ꮊ": "Ꮊ", "Ꮋ": "Ꮋ", "Ꮌ": "Ꮌ", "Ꮍ": "Ꮍ", "Ꮎ": "Ꮎ", "Ꮏ": "Ꮏ", "Ꮐ": "Ꮐ", "Ꮑ": "Ꮑ", "Ꮒ": "Ꮒ", "Ꮓ": "Ꮓ", "Ꮔ": "Ꮔ", "Ꮕ": "Ꮕ", "Ꮖ": "Ꮖ", "Ꮗ": "Ꮗ", "Ꮘ": "Ꮘ", "Ꮙ": "Ꮙ", "Ꮚ": "Ꮚ", "Ꮛ": "Ꮛ", "Ꮜ": "Ꮜ", "Ꮝ": "Ꮝ", "Ꮞ": "Ꮞ", "Ꮟ": "Ꮟ", "Ꮠ": "Ꮠ", "Ꮡ": "Ꮡ", "Ꮢ": "Ꮢ", "Ꮣ": "Ꮣ", "Ꮤ": "Ꮤ", "Ꮥ": "Ꮥ", "Ꮦ": "Ꮦ", "Ꮧ": "Ꮧ", "Ꮨ": "Ꮨ", "Ꮩ": "Ꮩ", "Ꮪ": "Ꮪ", "Ꮫ": "Ꮫ", "Ꮬ": "Ꮬ", "Ꮭ": "Ꮭ", "Ꮮ": "Ꮮ", "Ꮯ": "Ꮯ", "Ꮰ": "Ꮰ", "Ꮱ": "Ꮱ", "Ꮲ": "Ꮲ", "Ꮳ": "Ꮳ", "Ꮴ": "Ꮴ", "Ꮵ": "Ꮵ", "Ꮶ": "Ꮶ", "Ꮷ": "Ꮷ", "Ꮸ": "Ꮸ", "Ꮹ": "Ꮹ", "Ꮺ": "Ꮺ", "Ꮻ": "Ꮻ", "Ꮼ": "Ꮼ", "Ꮽ": "Ꮽ", "Ꮾ": "Ꮾ", "Ꮿ": "Ꮿ", "Ᏸ": "Ᏸ", "Ᏹ": "Ᏹ", "Ᏺ": "Ᏺ", "Ᏻ": "Ᏻ", "Ᏼ": "Ᏼ", "Ᏽ": "Ᏽ", "ᏸ": "Ᏸ", "ᏹ": "Ᏹ", "ᏺ": "Ᏺ", "ᏻ": "Ᏻ", "ᏼ": "Ᏼ", "ᏽ": "Ᏽ", "ᲀ": "в", "ᲁ": "д", "ᲂ": "о", "ᲃ": "с", "ᲄ": "т", "ᲅ": "т", "ᲆ": "ъ", "ᲇ": "ѣ", "ᲈ": "ꙋ", "ẖ": "ẖ", "ẗ": "ẗ", "ẘ": "ẘ", "ẙ": "ẙ", "ẚ": "aʾ", "ẛ": "ṡ", "ẞ": "ss", "ὐ": "ὐ", "ὒ": "ὒ", "ὔ": "ὔ", "ὖ": "ὖ", "ᾀ": "ἀι", "ᾁ": "ἁι", "ᾂ": "ἂι", "ᾃ": "ἃι", "ᾄ": "ἄι", "ᾅ": "ἅι", "ᾆ": "ἆι", "ᾇ": "ἇι", "ᾈ": "ἀι", "ᾉ": "ἁι", "ᾊ": "ἂι", "ᾋ": "ἃι", "ᾌ": "ἄι", "ᾍ": "ἅι", "ᾎ": "ἆι", "ᾏ": "ἇι", "ᾐ": "ἠι", "ᾑ": "ἡι", "ᾒ": "ἢι", "ᾓ": "ἣι", "ᾔ": "ἤι", "ᾕ": "ἥι", "ᾖ": "ἦι", "ᾗ": "ἧι", "ᾘ": "ἠι", "ᾙ": "ἡι", "ᾚ": "ἢι", "ᾛ": "ἣι", "ᾜ": "ἤι", "ᾝ": "ἥι", "ᾞ": "ἦι", "ᾟ": "ἧι", "ᾠ": "ὠι", "ᾡ": "ὡι", "ᾢ": "ὢι", "ᾣ": "ὣι", "ᾤ": "ὤι", "ᾥ": "ὥι", "ᾦ": "ὦι", "ᾧ": "ὧι", "ᾨ": "ὠι", "ᾩ": "ὡι", "ᾪ": "ὢι", "ᾫ": "ὣι", "ᾬ": "ὤι", "ᾭ": "ὥι", "ᾮ": "ὦι", "ᾯ": "ὧι", "ᾲ": "ὰι", "ᾳ": "αι", "ᾴ": "άι", "ᾶ": "ᾶ", "ᾷ": "ᾶι", "ᾼ": "αι", "ι": "ι", "ῂ": "ὴι", "ῃ": "ηι", "ῄ": "ήι", "ῆ": "ῆ", "ῇ": "ῆι", "ῌ": "ηι", "ῒ": "ῒ", "ΐ": "ΐ", "ῖ": "ῖ", "ῗ": "ῗ", "ῢ": "ῢ", "ΰ": "ΰ", "ῤ": "ῤ", "ῦ": "ῦ", "ῧ": "ῧ", "ῲ": "ὼι", "ῳ": "ωι", "ῴ": "ώι", "ῶ": "ῶ", "ῷ": "ῶι", "ῼ": "ωι", "ꭰ": "Ꭰ", "ꭱ": "Ꭱ", "ꭲ": "Ꭲ", "ꭳ": "Ꭳ", "ꭴ": "Ꭴ", "ꭵ": "Ꭵ", "ꭶ": "Ꭶ", "ꭷ": "Ꭷ", "ꭸ": "Ꭸ", "ꭹ": "Ꭹ", "ꭺ": "Ꭺ", "ꭻ": "Ꭻ", "ꭼ": "Ꭼ", "ꭽ": "Ꭽ", "ꭾ": "Ꭾ", "ꭿ": "Ꭿ", "ꮀ": "Ꮀ", "ꮁ": "Ꮁ", "ꮂ": "Ꮂ", "ꮃ": "Ꮃ", "ꮄ": "Ꮄ", "ꮅ": "Ꮅ", "ꮆ": "Ꮆ", "ꮇ": "Ꮇ", "ꮈ": "Ꮈ", "ꮉ": "Ꮉ", "ꮊ": "Ꮊ", "ꮋ": "Ꮋ", "ꮌ": "Ꮌ", "ꮍ": "Ꮍ", "ꮎ": "Ꮎ", "ꮏ": "Ꮏ", "ꮐ": "Ꮐ", "ꮑ": "Ꮑ", "ꮒ": "Ꮒ", "ꮓ": "Ꮓ", "ꮔ": "Ꮔ", "ꮕ": "Ꮕ", "ꮖ": "Ꮖ", "ꮗ": "Ꮗ", "ꮘ": "Ꮘ", "ꮙ": "Ꮙ", "ꮚ": "Ꮚ", "ꮛ": "Ꮛ", "ꮜ": "Ꮜ", "ꮝ": "Ꮝ", "ꮞ": "Ꮞ", "ꮟ": "Ꮟ", "ꮠ": "Ꮠ", "ꮡ": "Ꮡ", "ꮢ": "Ꮢ", "ꮣ": "Ꮣ", "ꮤ": "Ꮤ", "ꮥ": "Ꮥ", "ꮦ": "Ꮦ", "ꮧ": "Ꮧ", "ꮨ": "Ꮨ", "ꮩ": "Ꮩ", "ꮪ": "Ꮪ", "ꮫ": "Ꮫ", "ꮬ": "Ꮬ", "ꮭ": "Ꮭ", "ꮮ": "Ꮮ", "ꮯ": "Ꮯ", "ꮰ": "Ꮰ", "ꮱ": "Ꮱ", "ꮲ": "Ꮲ", "ꮳ": "Ꮳ", "ꮴ": "Ꮴ", "ꮵ": "Ꮵ", "ꮶ": "Ꮶ", "ꮷ": "Ꮷ", "ꮸ": "Ꮸ", "ꮹ": "Ꮹ", "ꮺ": "Ꮺ", "ꮻ": "Ꮻ", "ꮼ": "Ꮼ", "ꮽ": "Ꮽ", "ꮾ": "Ꮾ", "ꮿ": "Ꮿ", "ﬀ": "ff", "ﬁ": "fi", "ﬂ": "fl", "ﬃ": "ffi", "ﬄ": "ffl", "ﬅ": "st", "ﬆ": "st", "ﬓ": "մն", "ﬔ": "մե", "ﬕ": "մի", "ﬖ": "վն", "ﬗ": "մխ"}</script><script>(function (scope) {
+  'use strict';
+  const GROUPS = [
+    ['incorrect', '오답'],
+    ['unsure', '애매함 표시(맞혔지만 확신 없음)'],
+    ['pending', '자기채점 대기'],
+    ['unanswered', '미응답'],
+    ['ambiguous', '출제 모호'],
+  ];
+  const KIND = {review:'복습문제', exam:'시험 예상문제'};
+  const GROUP_RULE = '2. 다시 볼 문항을 개념별로 묶고, 반복되거나 선행 개념인 묶음부터 다뤄.';
+  const DEEP_RULE = '2. 오답·애매함·미응답 문항이 없어. 아래 맞힌 문항이 다룬 개념을 조건을 바꾼 변형 질문으로 하나씩 확인해서, 실제로 이해했는지 찍었는지 가려 줘.';
+
+  function countBy(items) {
+    const counts = {correct:0, unsure:0, incorrect:0, unanswered:0, ambiguous:0, pending:0};
+    items.forEach(item => {counts[item.status] = (counts[item.status] || 0) + 1;});
+    return counts;
+  }
+  function summaryLine(items) {
+    const c = countBy(items);
+    let line = `- 문항 ${items.length}개 · 응답 ${items.length - c.unanswered} · 정답 ${c.correct + c.unsure}(그중 애매함 ${c.unsure})` +
+      ` · 오답 ${c.incorrect} · 미응답 ${c.unanswered}`;
+    if (c.pending) line += ` · 자기채점 대기 ${c.pending}`;
+    if (c.ambiguous) line += ` · 출제 모호 ${c.ambiguous}`;
+    return line;
+  }
+  function answerLine(item) {
+    if (item.format === 'short') {
+      const mine = item.selected == null ? '없음' : `"${item.selected}"`;
+      const accepted = item.accepted && item.accepted.length ? ` (허용: ${item.accepted.join(', ')})` : '';
+      return `내 답: ${mine} / 정답: ${item.answer}${accepted}`;
+    }
+    const mine = item.selected == null ? '없음' : `[${item.selected}]`;
+    return `내 답: ${mine} / 정답: [${item.answer}]`;
+  }
+  function itemBlock(item) {
+    const lines = [`#### ${item.id}. ${item.title}`, `문제: ${item.stem}`];
+    if (item.format !== 'short' && item.options && item.options.length) {
+      lines.push('보기:');
+      item.options.forEach(opt => lines.push(`- [${opt.id}] ${opt.text}`));
+    }
+    lines.push(answerLine(item));
+    if (item.explanations && item.explanations.length) {
+      lines.push('해설:');
+      item.explanations.forEach(e => lines.push(e.label ? `- ${e.label}: ${e.text}` : `- ${e.text}`));
+    }
+    return lines.join('\n');
+  }
+  function buildReviewPrompt(record) {
+    const items = record.items || [];
+    const range = record.range;
+    const review = items.filter(item => item.status !== 'correct');
+    const correct = items.filter(item => item.status === 'correct');
+    const out = [
+      '# 생명과학 복기 요청',
+      '',
+      `너는 내 생명과학 튜터야. 아래는 내가 방금 푼 ${KIND[record.kind] || KIND.review}(${range})의 풀이 기록이야. 이 기록을 출발점으로 내 약한 개념을 찾아 대화로 보완 학습을 진행해 줘.`,
+      '',
+      '## 진행 규칙',
+      '1. 먼저 기록에서 보이는 핵심 진단을 짧게 공유해. 확인된 사실(내 선택, 정답)과 네 가설을 구분하고, 정답률만으로 이해도를 단정하지 마.',
+      review.length ? GROUP_RULE : DEEP_RULE,
+      '3. 한 번에 한 개념만 겨냥한 질문을 하나씩 내. 보기는 숫자로 달고, "모르겠다"와 "답은 골랐지만 찍었거나 확신이 없다"를 별도 숫자 보기로 넣어. 나는 숫자만 답해도 돼.',
+      '4. 원래 문항을 그대로 다시 묻지 말고, 조건이나 비교 대상을 한 가지만 바꾼 새 질문으로 확인해.',
+      '5. 내가 틀리거나 확신이 없으면 맞는 부분과 잘못 연결한 부분을 짚고, 표현을 바꾼 재확인 질문을 한 번 더 내. 설명을 본 뒤 맞힌 것은 "코칭 후 이해"로 기록하고 원래 알던 것으로 치지 마.',
+      `6. "출제 모호" 문항은 내 오개념의 증거로 쓰지 마. 해설은 진단 근거로만 쓰고, 이 범위(${range}) 수업 밖 내용으로 넓히지 마.`,
+      '7. "자기채점 대기" 단답형은 먼저 내 답이 정답·허용답과 같은 뜻인지 판정해 줘.',
+      '8. 모든 묶음을 다루거나 내가 그만하자고 하면 다음 다섯 항목으로 정리해 줘: 내가 어려웠던 부분 / 코칭한 부분 / 학습한 부분 / 아직 어려운 부분 / 복습해야 할 부분.',
+      '',
+      '## 기록 요약',
+      `- 자료: ${record.documentId}`,
+      summaryLine(items),
+      '',
+    ];
+    if (review.length) {
+      out.push('## 다시 볼 문항', '');
+      GROUPS.forEach(([status, title]) => {
+        const group = review.filter(item => item.status === status);
+        if (!group.length) return;
+        out.push(`### ${title}`, '');
+        group.forEach(item => out.push(itemBlock(item), ''));
+      });
+    }
+    if (correct.length) {
+      out.push('## 확신 있게 맞힌 문항');
+      correct.forEach(item => out.push(`- ${item.id}. ${item.title}`));
+      out.push('');
+    }
+    out.push('준비됐으면 핵심 진단부터 공유하고 첫 질문을 내 줘.');
+    return out.join('\n') + '\n';
+  }
+
+  function problemText(problemEl) {
+    const clone = problemEl.cloneNode(true);
+    clone.querySelectorAll('.choices').forEach(node => node.remove());
+    // KaTeX may already have rendered; restore its TeX source instead of MathML + glyph text.
+    clone.querySelectorAll('.katex').forEach(node => {
+      const tex = node.querySelector('annotation[encoding="application/x-tex"]');
+      if (!tex) return;
+      const fence = node.closest('.katex-display') ? '$$' : '$';
+      node.replaceWith(clone.ownerDocument.createTextNode(fence + tex.textContent.trim() + fence));
+    });
+    clone.querySelectorAll('img').forEach(img => {
+      img.replaceWith(clone.ownerDocument.createTextNode(` [그림: ${img.getAttribute('alt') || ''}] `));
+    });
+    return clone.textContent.replace(/\s+/g, ' ').trim();
+  }
+
+  function execCopy(win, text) {
+    const doc = win.document;
+    const area = doc.createElement('textarea');
+    area.value = text;
+    area.setAttribute('readonly', '');
+    area.style.position = 'fixed';
+    area.style.top = '0';
+    area.style.left = '-9999px';
+    area.style.opacity = '0';
+    doc.body.append(area);
+    try {
+      area.select();
+      return doc.execCommand('copy') === true;
+    } catch (_) {
+      return false;
+    } finally {
+      area.remove();
+    }
+  }
+  async function copyText(win, text) {
+    const clipboard = win.navigator && win.navigator.clipboard;
+    if (clipboard && typeof clipboard.writeText === 'function') {
+      try {
+        await clipboard.writeText(text);
+        return true;
+      } catch (_) {}
+    }
+    return execCopy(win, text);
+  }
+
+  const DIALOG_CSS = `
+.review-prompt-dialog{width:min(44rem,calc(100vw - 2rem));max-height:calc(100vh - 2rem);padding:1rem 1.1rem;border:1px solid #c9ccd3;border-radius:10px;background:#fff;color:#1d2330;box-shadow:0 12px 36px rgba(0,0,0,.18)}
+.review-prompt-dialog::backdrop{background:rgba(15,20,30,.45)}
+.review-prompt-dialog h2{margin:0 0 .35rem;font-size:1.05rem}
+.review-prompt-dialog p{margin:0 0 .6rem;font-size:.9rem;color:#4a5263}
+.review-prompt-dialog textarea{display:block;box-sizing:border-box;width:100%;height:min(55vh,28rem);padding:.6rem;border:1px solid #c9ccd3;border-radius:6px;font:13px/1.5 ui-monospace,Consolas,monospace;resize:vertical}
+.review-prompt-dialog .review-prompt-actions{display:flex;justify-content:flex-end;margin-top:.7rem}
+.review-prompt-dialog button{padding:.4rem 1rem;border:1px solid #c9ccd3;border-radius:6px;background:#f4f5f7;color:inherit;font:inherit;cursor:pointer}
+@media (prefers-color-scheme:dark){.review-prompt-dialog{background:#1e222b;color:#e6e8ee;border-color:#3a404d}.review-prompt-dialog p{color:#aab1c0}.review-prompt-dialog textarea{background:#14171d;color:#e6e8ee;border-color:#3a404d}.review-prompt-dialog button{background:#2a2f3a;border-color:#3a404d}}
+`;
+  function openPromptDialog(doc, text) {
+    if (!doc.getElementById('review-prompt-style')) {
+      const style = doc.createElement('style');
+      style.id = 'review-prompt-style';
+      style.textContent = DIALOG_CSS;
+      doc.head.append(style);
+    }
+    let dialog = doc.querySelector('dialog.review-prompt-dialog');
+    if (!dialog) {
+      dialog = doc.createElement('dialog');
+      dialog.className = 'review-prompt-dialog';
+      dialog.setAttribute('aria-labelledby', 'review-prompt-title');
+      const title = doc.createElement('h2');
+      title.id = 'review-prompt-title';
+      title.textContent = '복기 프롬프트';
+      const note = doc.createElement('p');
+      note.textContent = 'Ctrl+C(⌘C)로 복사해 AI 채팅에 붙여 넣으세요.';
+      const area = doc.createElement('textarea');
+      area.readOnly = true;
+      area.setAttribute('aria-label', '복기 프롬프트');
+      const actions = doc.createElement('div');
+      actions.className = 'review-prompt-actions';
+      const close = doc.createElement('button');
+      close.type = 'button';
+      close.textContent = '닫기';
+      close.addEventListener('click', () => dialog.close());
+      actions.append(close);
+      dialog.append(title, note, area, actions);
+      doc.body.append(dialog);
+    }
+    const area = dialog.querySelector('textarea');
+    area.value = text;
+    if (!dialog.open) dialog.showModal();
+    area.focus();
+    area.select();
+    return dialog;
+  }
+
+  const api = {buildReviewPrompt, problemText, copyText, openPromptDialog};
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else scope.ReviewPrompt = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+</script><script>(() => {
+  'use strict';
+  // Original question numbers are presentation metadata; keep source/model bytes intact.
+  document.querySelectorAll('article.card > .problem').forEach(problem => {
+    const paragraph = problem.querySelector('p');
+    if (!paragraph) return;
+    const walker = document.createTreeWalker(paragraph, NodeFilter.SHOW_TEXT);
+    let text;
+    while ((text = walker.nextNode()) && !text.textContent.trim()) {}
+    if (text) text.textContent = text.textContent.replace(/^\s*(?:\d{1,3}[.)]|\(\d{1,3}\))\s+/, '');
+  });
+  // Capture prompt text before KaTeX rewrites the math.
+  const prompt = window.ReviewPrompt;
+  const texts = {};
+  document.querySelectorAll('main article.card').forEach(card => {
+    const problem = card.querySelector('.problem');
+    texts[card.id] = {
+      // The prompt already prints the card id, so drop the "p1." label from the heading.
+      title: (card.querySelector('h3')?.textContent || '').replace(/\s+/g, ' ').trim().replace(/^p\d+\.\s*/i, ''),
+      stem: problem ? (prompt ? prompt.problemText(problem) : problem.textContent.replace(/\s+/g, ' ').trim()) : '',
+      options: Array.from(card.querySelectorAll('.exam-input label')).filter(label => label.querySelector('input[type=radio]'))
+        .map(label => ({id: label.querySelector('input').value, text: label.textContent.replace(/\s+/g, ' ').trim().replace(/^[A-Z]\.\s*/, '')})),
+      explanations: Array.from(card.querySelectorAll('.solution ol.steps > li'))
+        .map(li => ({label: '풀이', text: li.textContent.replace(/\s+/g, ' ').trim()}))
+    };
+  });
+  const models = JSON.parse(document.getElementById('exam-model').textContent);
+  const fold = JSON.parse(document.getElementById('exam-casefold').textContent);
+  const summary = document.getElementById('summary');
+  const normalize = (s, sensitive) => { const n = s.normalize('NFC').trim(); return sensitive ? n : Array.from(n).map(c => fold[c] ?? c.toLowerCase()).join(''); };
+  let submitted = false, current = null, attempt = null;
+  const meta = JSON.parse(document.getElementById('exam-meta').textContent);
+  const presentation = document.getElementById('presentation-meta');
+  const mode = presentation ? JSON.parse(presentation.textContent) : {mode:'exam'};
+  const practice = mode.mode === 'practice';
+  document.querySelectorAll('.exam-input input').forEach(input => {
+    input.autocomplete = 'off'; input.disabled = false;
+    if (input.type === 'radio') input.checked = false;
+    else input.value = '';
+  });
+  if (presentation) Object.assign(meta, {documentId:mode.documentId, mode:mode.mode, questionSetHash:mode.questionSetHash});
+  const checked = new Set();
+  const results = document.getElementById('exam-results');
+  const filter = document.getElementById('results-filter');
+  const labels = {correct:'정답', incorrect:'오답', matched:'자동 일치', pending:'자기채점 대기', unanswered:'미응답'};
+  function resultRoute() {
+    const active = submitted && location.hash === '#exam-results';
+    document.body.classList.toggle('exam-results', active);
+    results.hidden = !active;
+    syncControls(); showAid();
+    if (active) {
+      const toggle = document.getElementById('toggle-right');
+      if (matchMedia('(min-width: 1024px)').matches && toggle.getAttribute('aria-expanded') !== 'true') toggle.click();
+      document.getElementById('results-title').focus({preventScroll:true});
+      document.querySelector('.content').scrollTop = 0;
+    }
+  }
+  function syncControls() {
+    const button = document.getElementById('submit-exam');
+    const ids = Object.keys(models);
+    button.hidden = practice || (!submitted && current !== ids[ids.length - 1]);
+    document.body.classList.toggle('exam-last-unsubmitted', !practice && !submitted && current === ids[ids.length - 1]);
+    const explanation = document.getElementById('open-explanation');
+    if (explanation) explanation.hidden = !practice && !submitted;
+    const tools = document.querySelector('.presentation-links');
+    if (tools) tools.hidden = !practice && !submitted;
+  }
+  function openResults() {
+    if (location.hash === '#exam-results') resultRoute();
+    else location.hash = 'exam-results';
+  }
+  window.addEventListener('hashchange', resultRoute);
+  window.addEventListener('popstate', resultRoute);
+  // The shared question pager must not consume arrow keys on the results screen.
+  document.addEventListener('keydown', e => {
+    if (document.body.classList.contains('exam-results') && ['ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
+  }, true);
+  // Keep result-screen swipes from reaching the shared question pager.
+  document.addEventListener('touchend', e => {
+    if (document.body.classList.contains('exam-results') && results.contains(e.target)) e.stopPropagation();
+  }, {capture:true, passive:true});
+  function filterResults() {
+    let shown = 0;
+    results.querySelectorAll('.exam-result-row').forEach(row => {
+      row.hidden = filter.value !== 'all' && row.dataset.result !== filter.value;
+      shown += Number(!row.hidden);
+    });
+    document.getElementById('results-count').textContent = `${shown} / ${attempt.cards.length}문항`;
+    document.getElementById('results-empty').hidden = shown !== 0;
+  }
+  filter.addEventListener('change', filterResults);
+  function renderResults() {
+    const {summary:s} = attempt;
+    const percent = s.mcq.total ? Math.round(s.mcq.correct / s.mcq.total * 100) : 0;
+    const text = `객관식 정답 ${s.mcq.correct}/${s.mcq.total} · 정답률 ${percent}% · 단답형 자동 일치 ${s.short.matched} · 자기채점 대기 ${s.short.pending} · 미응답 ${s.unanswered}`;
+    summary.textContent = text;
+    document.getElementById('results-summary').textContent = text;
+    const list = document.getElementById('results-list'); list.replaceChildren();
+    for (const card of attempt.cards) {
+      const row = document.createElement('li'); row.className = 'exam-result-row'; row.dataset.result = card.result;
+      const heading = document.createElement('h3'); heading.textContent = card.id + ' · ' + (card.format === 'mcq' ? '객관식' : '단답형');
+      const status = document.createElement('p'); status.className = 'exam-result-status'; status.textContent = labels[card.result];
+      const dl = document.createElement('dl');
+      const fields = [['내 답', card.selected === null ? '미응답' : card.selected],
+        ['정답', card.format === 'mcq' ? card.answer.option_id : card.answer.canonical]];
+      if (card.format === 'short') fields.push(['허용답', card.answer.accepted.join(', ') || '없음']);
+      for (const [name,value] of fields) {
+        const dt = document.createElement('dt'); dt.textContent = name;
+        const dd = document.createElement('dd'); dd.textContent = value; dl.append(dt, dd);
+      }
+      const link = document.createElement('a'); link.href = '#' + card.id; link.textContent = '문제·해설 보기';
+      link.setAttribute('aria-label', card.id + ' 문제·해설 보기');
+      link.addEventListener('click', () => {
+        const toggle = document.getElementById('toggle-right');
+        if (toggle.getAttribute('aria-expanded') !== 'true') toggle.click();
+      });
+      row.append(heading, status, dl, link); list.append(row);
+    }
+    filter.value = 'all'; filterResults();
+  }
+  const promptStatus = {matched: 'correct', correct: 'correct', incorrect: 'incorrect', pending: 'pending', unanswered: 'unanswered'};
+  const copyButton = document.getElementById('copy-prompt');
+  copyButton.addEventListener('click', async () => {
+    if (!attempt || !prompt || copyButton.disabled) return;
+    const status = document.getElementById('prompt-status');
+    copyButton.disabled = true;
+    try {
+      const items = attempt.cards.map(card => {
+        const t = texts[card.id] || {title: '', stem: '', options: [], explanations: []};
+        const mcq = card.format === 'mcq';
+        return {id: card.id, title: t.title, stem: t.stem, format: mcq ? 'mcq' : 'short',
+          options: mcq ? t.options : null, selected: card.selected,
+          answer: mcq ? card.answer.option_id : card.answer.canonical,
+          accepted: mcq ? null : card.answer.accepted.filter(x => x !== card.answer.canonical),
+          status: promptStatus[card.result], explanations: t.explanations};
+      });
+      const text = prompt.buildReviewPrompt({kind: 'exam', documentId: meta.documentId, range: meta.range, items});
+      if (await prompt.copyText(window, text)) status.textContent = '복기 프롬프트를 복사했어요. AI 채팅에 붙여 넣으세요.';
+      else {
+        prompt.openPromptDialog(document, text);
+        status.textContent = '자동 복사가 막혀 있어요. 열린 창에서 직접 복사해 주세요.';
+      }
+    } finally { copyButton.disabled = false; }
+  });
+  const aid = document.getElementById('exam-aid');
+  const empty = document.querySelector('#panel-right .panel-empty');
+  const valueOf = (card, model) => model.format === 'mcq' ? (card.querySelector('input:checked')?.value || '') : card.querySelector('input[type=text]').value;
+  function progress() {
+    let answered = 0;
+    for (const [id, model] of Object.entries(models)) {
+      const done = Boolean(valueOf(document.getElementById(id), model).trim());
+      answered += Number(done);
+      const link = document.querySelector('.toc-list a[href="#' + id + '"]');
+      if (link) {
+        let mark = link.querySelector('.toc-mark');
+        if (!mark) { mark = document.createElement('span'); mark.className = 'toc-mark'; mark.setAttribute('aria-hidden', 'true'); link.append(mark); }
+        mark.classList.toggle('is-done', done);
+        mark.innerHTML = done ? '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>' : '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+        link.setAttribute('aria-label', link.querySelector('.toc-title').textContent + (done ? ' · 응답함' : ' · 미응답'));
+      }
+    }
+    document.getElementById('progress-n').textContent = answered;
+    document.getElementById('progress-total').textContent = Object.keys(models).length;
+    document.getElementById('progress-bar').style.transform = 'scaleX(' + answered / Object.keys(models).length + ')';
+  }
+  function showAid() {
+    aid.replaceChildren();
+    const isResults = submitted && location.hash === '#exam-results';
+    document.getElementById('panel-right-title').textContent = isResults ? '채점표' : '풀이 도움';
+    document.querySelector('#toggle-right span').textContent = isResults ? '채점표' : '풀이';
+    if (isResults) {
+      empty.hidden = true;
+      const legend = document.createElement('p'); legend.className = 'scorecard-legend';
+      legend.textContent = '○ 정답·자동 일치 · × 오답 · ? 자기채점 대기 · — 미응답';
+      const table = document.createElement('table'); table.id = 'exam-scorecard';
+      const caption = document.createElement('caption'); caption.textContent = '전체 문항 채점표'; table.append(caption);
+      const tbody = document.createElement('tbody');
+      const symbols = {correct:'○', incorrect:'×', matched:'○', pending:'?', unanswered:'—'};
+      let row;
+      attempt.cards.forEach((card, i) => {
+        if (i % 5 === 0) { row = document.createElement('tr'); tbody.append(row); }
+        const cell = document.createElement('td');
+        const link = document.createElement('a'); link.href = '#' + card.id; link.dataset.result = card.result;
+        link.textContent = `${i + 1} ${symbols[card.result]}`;
+        link.setAttribute('aria-label', `${i + 1}번 · ${labels[card.result]} · 문제와 해설 보기`);
+        cell.append(link); row.append(cell);
+      });
+      table.append(tbody); aid.append(legend, table);
+      return;
+    }
+    const card = current && document.getElementById(current);
+    const show = Boolean(card) && (practice ? checked.has(card.id) : submitted);
+    empty.hidden = show;
+    empty.textContent = practice ? '답을 확인하면 현재 문제의 정답과 풀이가 나옵니다.' : submitted ? '문제를 선택하면 정답과 풀이가 여기에 나옵니다.' : '전체 제출 후 현재 문제의 정답과 풀이를 확인할 수 있습니다.';
+    if (!show) return;
+    const result = card.querySelector('.result').cloneNode(true);
+    const solution = card.querySelector('.solution').cloneNode(true);
+    solution.hidden = false;
+    aid.append(result, solution);
+    const data = JSON.parse(card.querySelector('.provenance').textContent);
+    const details = document.createElement('details');
+    details.className = 'provenance';
+    const heading = document.createElement('summary'); heading.textContent = '출처 보기'; details.append(heading);
+    const list = document.createElement('ul');
+    for (const ref of data.refs) { const item = document.createElement('li'); item.textContent = ref.path + ' · ' + ref.locator; list.append(item); }
+    details.append(list); aid.append(details);
+    document.querySelector('#panel-right .panel-inner').scrollTop = 0;
+  }
+  document.addEventListener('od:screen', ({detail}) => {
+    current = detail.screen.matches('article.card') ? detail.screen.id : null;
+    progress(); syncControls(); showAid();
+    document.querySelector('.toc-list a[aria-current="true"]')?.scrollIntoView({block:'nearest'});
+  });
+  function gradeValue(value, model) {
+    if (!value.trim()) return 'unanswered';
+    const answer = model.answer;
+    if (model.format === 'mcq') return value === answer.option_id ? 'correct' : 'incorrect';
+    return [answer.canonical, ...answer.accepted].some(x => normalize(x, answer.case_sensitive) === normalize(value, answer.case_sensitive)) ? 'matched' : 'pending';
+  }
+  function checkPractice(card) {
+    const value = valueOf(card, models[card.id]);
+    if (!value.trim()) return;
+    submitted = false; attempt = null; summary.textContent = '';
+    checked.add(card.id);
+    card.querySelector('.result').textContent = labels[gradeValue(value, models[card.id])];
+    card.querySelectorAll('.solution,.provenance').forEach(n => { n.hidden = false; });
+    showAid(); syncControls();
+    const toggle = document.getElementById('toggle-right');
+    if (toggle.getAttribute('aria-expanded') !== 'true') toggle.click();
+  }
+  if (practice) {
+    for (const [id, model] of Object.entries(models)) {
+      if (model.format !== 'short') continue;
+      const card = document.getElementById(id), button = document.createElement('button');
+      button.className = 'btn check-answer'; button.type = 'button'; button.textContent = '답 확인';
+      card.querySelector('.exam-input').append(button);
+      button.addEventListener('click', () => checkPractice(card));
+    }
+    const resultsButton = document.createElement('button');
+    resultsButton.className = 'text-btn'; resultsButton.type = 'button'; resultsButton.id = 'practice-results'; resultsButton.textContent = '학습 결과 보기';
+    document.querySelector('.presentation-links').append(resultsButton);
+    resultsButton.addEventListener('click', () => document.getElementById('submit-exam').click());
+  }
+  document.querySelector('main').addEventListener('input', e => {
+    if (practice && e.target.matches('.exam-input input')) {
+      submitted = false; attempt = null;
+      const card = e.target.closest('article.card'); checked.delete(card.id);
+      card.querySelector('.result').textContent = '';
+      card.querySelectorAll('.solution,.provenance').forEach(n => { n.hidden = true; });
+      summary.textContent = ''; showAid(); syncControls();
+    }
+    progress();
+  });
+  document.querySelector('main').addEventListener('change', e => {
+    if (submitted || !e.target.matches('.exam-input input[type=radio]:checked')) return;
+    const card = e.target.closest('article.card');
+    if (practice) { checkPractice(card); return; }
+    const ids = Object.keys(models);
+    if (card.id !== current || ids.indexOf(current) === ids.length - 1) return;
+    document.getElementById('pager-next').click();
+    const heading = document.getElementById(current)?.querySelector('h3');
+    if (heading) { heading.tabIndex = -1; heading.focus({preventScroll:true}); }
+  });
+  document.getElementById('submit-exam').addEventListener('click', () => {
+    if (submitted) { openResults(); return; }
+    if (!practice && current !== Object.keys(models).at(-1)) return;
+    const cards = Object.entries(models).map(([id, model]) => {
+      const card = document.getElementById(id), answer = model.answer;
+      const value = practice && !checked.has(id) ? '' : valueOf(card, model);
+      const result = gradeValue(value, model);
+      card.querySelector('.result').textContent = labels[result];
+      card.querySelectorAll('.solution,.provenance').forEach(n => { n.hidden = practice && !checked.has(id); });
+      return {id, format:model.format, selected:value.trim() ? value : null, answer, result};
+    });
+    const count = (format, result) => cards.filter(c => c.format === format && (!result || c.result === result)).length;
+    const unanswered = cards.filter(c => c.result === 'unanswered').length;
+    attempt = {schema:'bio-exam-attempt', schemaVersion:1, ...meta,
+      attemptId:window.crypto?.randomUUID ? window.crypto.randomUUID() : Date.now().toString(36) + '-' + Math.random().toString(36).slice(2),
+      submittedAt:new Date().toISOString(),
+      summary:{total:cards.length, answered:cards.length-unanswered, unanswered,
+        mcq:{total:count('mcq'), correct:count('mcq','correct'), incorrect:count('mcq','incorrect'), unanswered:count('mcq','unanswered')},
+        short:{total:count('short'), matched:count('short','matched'), pending:count('short','pending'), unanswered:count('short','unanswered')}}, cards};
+    submitted = true;
+    if (!practice) document.querySelectorAll('.exam-input input').forEach(n => { n.disabled = true; });
+    document.getElementById('submit-exam').textContent = '전체 결과';
+    renderResults(); showAid(); openResults();
+
+  });
+  function resetExam() {
+    if ((submitted || checked.size) && !window.confirm('답안과 결과를 초기화하고 다시 풀까요? 복기하려면 먼저 복기 프롬프트를 복사하세요.')) return;
+    submitted = false; attempt = null; checked.clear();
+    document.querySelectorAll('.exam-input input').forEach(n => { n.disabled = false; if (n.type === 'radio') n.checked = false; else n.value = ''; });
+    document.querySelectorAll('.solution,.provenance').forEach(n => { n.hidden = true; });
+    document.querySelectorAll('.result').forEach(n => { n.textContent = ''; });
+    summary.textContent = ''; document.getElementById('results-list').replaceChildren();
+    document.getElementById('results-summary').textContent = '';
+    document.getElementById('prompt-status').textContent = '';
+    document.getElementById('submit-exam').textContent = '전체 제출';
+    progress(); showAid(); resultRoute();
+    location.hash = 'p1';
+  }
+  document.getElementById('reset-exam').addEventListener('click', resetExam);
+  if (window.renderMathInElement) window.renderMathInElement(document.querySelector('main'), {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],ignoredTags:['script','noscript','style','textarea','pre','code','input'],throwOnError:false});
+})();
+</script><script id="theme-ui">
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const sysDark = matchMedia('(prefers-color-scheme: dark)');
+      const KEY = 'od-theme';
+      const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+      function label() {
+        const next = isDark() ? '라이트 모드로 전환' : '다크 모드로 전환';
+        btn.setAttribute('aria-label', next);
+        btn.title = next;
+      }
+      btn.addEventListener('click', () => {
+        const t = isDark() ? 'light' : 'dark';
+        // 시스템 설정과 같아지면 저장을 지워 다시 시스템을 따른다
+        if ((t === 'dark') === sysDark.matches) { delete root.dataset.theme; try { localStorage.removeItem(KEY); } catch (e) {} }
+        else { root.dataset.theme = t; try { localStorage.setItem(KEY, t); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+        label();
+      });
+      sysDark.addEventListener('change', label);
+      window.addEventListener('storage', (e) => {
+        if (e.key !== KEY) return;
+        if (e.newValue === 'light' || e.newValue === 'dark') root.dataset.theme = e.newValue; else delete root.dataset.theme;
+        label();
+      });
+      label();
+    })();
+  </script>
+  <script id="panels-ui">
+    (function () {
+      const body = document.body;
+      const layout = document.querySelector('.layout');
+      const kind = body.dataset.panels;
+      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const scrim = document.getElementById('panel-scrim');
+      const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
+      const wideMq = matchMedia('(min-width: 1024px)');
+      const roomyMq = matchMedia('(min-width: 1280px)');
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      // 푼 기록은 탭(세션) 단위로만 유지: 뒤로가기·새로고침엔 남고, 창을 닫고 다시 열면 초기화
+      const tabStore = {
+        get(k, d) { try { const v = sessionStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      const PREF = 'od-panels:' + kind;
+      // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
+      const RANGE = body.dataset.range || '';
+      const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+      const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+      let overlay = null;
+
+      // ---------- 열고 닫기 ----------
+      function docked() {
+        const pref = store.get(PREF, {});
+        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+      }
+      function sync() {
+        const wide = wideMq.matches;
+        const d = docked();
+        ['left', 'right'].forEach((side) => {
+          const open = wide ? d[side] : overlay === side;
+          const p = panels[side];
+          layout.dataset[side] = open ? 'open' : 'closed';
+          p.classList.toggle('is-open', !wide && open);
+          p.inert = !open;
+          if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
+          toggles[side].setAttribute('aria-expanded', String(open));
+        });
+        const drawer = !wide && overlay !== null;
+        scrim.classList.toggle('is-on', drawer);
+        body.classList.toggle('drawer-open', drawer);
+        blockers.forEach((el) => { el.inert = drawer; });
+      }
+      function openDrawer(side) {
+        overlay = side;
+        sync();
+        requestAnimationFrame(() => panels[side].querySelector('[data-panel-close]').focus());
+      }
+      function closeDrawer(refocus) {
+        if (overlay === null) return;
+        const side = overlay;
+        overlay = null;
+        sync();
+        if (refocus) toggles[side].focus();
+      }
+      function toggle(side) {
+        if (wideMq.matches) {
+          const d = docked();
+          d[side] = !d[side];
+          store.set(PREF, d);
+          sync();
+          if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+        } else if (overlay === side) closeDrawer(true);
+        else openDrawer(side);
+      }
+
+      toggles.left.addEventListener('click', () => toggle('left'));
+      toggles.right.addEventListener('click', () => toggle('right'));
+      scrim.addEventListener('click', () => closeDrawer(true));
+      document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
+      panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
+
+      // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      function applyWidths() {
+        const w = store.get(PREF + ':w', {});
+        ['left', 'right'].forEach((side) => {
+          if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
+          else layout.style.removeProperty(WIDTH[side].prop);
+        });
+      }
+      function maxFor(side) {
+        const other = side === 'left' ? panels.right : panels.left;
+        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
+      }
+      function setWidth(side, px, save) {
+        const v = Math.round(Math.min(Math.max(px, WIDTH[side].min), maxFor(side)));
+        layout.style.setProperty(WIDTH[side].prop, v + 'px');
+        panels[side].querySelector('.panel-resize').setAttribute('aria-valuenow', String(v));
+        if (save) { const w = store.get(PREF + ':w', {}); w[side] = v; store.set(PREF + ':w', w); }
+      }
+      function resetWidth(side) {
+        const w = store.get(PREF + ':w', {});
+        delete w[side];
+        store.set(PREF + ':w', w);
+        layout.style.removeProperty(WIDTH[side].prop);
+      }
+      document.querySelectorAll('.panel-resize').forEach((handle) => {
+        const side = handle.dataset.side;
+        const dir = side === 'left' ? 1 : -1;
+        handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
+        handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
+        handle.addEventListener('pointerdown', (e) => {
+          if (!wideMq.matches || e.button !== 0) return;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startW = panels[side].getBoundingClientRect().width;
+          handle.setPointerCapture(e.pointerId);
+          body.classList.add('is-resizing');
+          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const up = () => {
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', up);
+            handle.removeEventListener('pointercancel', up);
+            body.classList.remove('is-resizing');
+            setWidth(side, panels[side].getBoundingClientRect().width, true);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', up);
+          handle.addEventListener('pointercancel', up);
+        });
+        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('keydown', (e) => {
+          const step = e.shiftKey ? 64 : 16;
+          const cur = panels[side].getBoundingClientRect().width;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+        });
+      });
+      applyWidths();
+      const onMq = () => { overlay = null; sync(); };
+      wideMq.addEventListener('change', onMq);
+      roomyMq.addEventListener('change', onMq);
+
+      // ---------- 목차의 진행 표시 ----------
+      const progressN = document.getElementById('progress-n');
+      const progressBar = document.getElementById('progress-bar');
+      const progressTotal = document.getElementById('progress-total');
+      function markToc(done, total, doneLabel) {
+        panels.left.querySelectorAll('.toc-list a').forEach((a) => {
+          const id = decodeURIComponent(a.getAttribute('href').slice(1));
+          let mark = a.querySelector('.toc-mark');
+          if (!mark) {
+            mark = document.createElement('span');
+            mark.className = 'toc-mark';
+            mark.setAttribute('aria-hidden', 'true');
+            const state = document.createElement('span');
+            state.className = 'sr-only toc-state';
+            a.append(mark, state);
+          }
+          const isDone = done.has(id);
+          mark.classList.toggle('is-done', isDone);
+          mark.innerHTML = isDone ? ICON_DONE : ICON_TODO;
+          a.querySelector('.toc-state').textContent = isDone ? ' (' + doneLabel + ')' : '';
+        });
+        progressN.textContent = String(done.size);
+        progressTotal.textContent = String(total);
+        progressBar.style.transform = 'scaleX(' + (total ? done.size / total : 0) + ')';
+      }
+      function revealCurrent() {
+        const link = panels.left.querySelector('.toc-list a[aria-current="true"]');
+        if (link && layout.dataset.left === 'open') link.scrollIntoView({ block: 'nearest' });
+      }
+
+      // ---------- 복습문제: 오른쪽 = 원문 · 힌트 · 풀이 ----------
+      function setupReview() {
+        const KEY = 'od-review-solved:' + RANGE;
+        const cards = Array.from(document.querySelectorAll('main article.card'));
+        const aids = panels.right.querySelector('.aids');
+        const empty = panels.right.querySelector('.panel-empty');
+        const btn = document.getElementById('solved-btn');
+        const groups = {};
+        const solved = new Set(tabStore.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        cards.forEach((card) => {
+          const g = document.createElement('div');
+          g.className = 'aid';
+          g.dataset.cardId = card.id;
+          g.hidden = true;
+          card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
+          aids.appendChild(g);
+          groups[card.id] = g;
+        });
+        let curId = null;
+        function paintBtn() {
+          const on = solved.has(curId);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.innerHTML = (on ? ICON_DONE : ICON_TODO) + '<span>' + (on ? '푼 문제 · 표시 해제' : '푼 문제로 표시') + '</span>';
+        }
+        btn.addEventListener('click', () => {
+          if (!curId) return;
+          if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
+          tabStore.set(KEY, Array.from(solved));
+          paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:answer', ({detail}) => {
+          if (!cards.some(c => c.id === detail.id)) return;
+          if (detail.restored && detail.selected !== null) return;
+          if (detail.selected === null) solved.delete(detail.id);
+          else solved.add(detail.id);
+          tabStore.set(KEY, Array.from(solved));
+          if (curId) paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          curId = s.matches('article.card') ? s.id : null;
+          Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
+          empty.hidden = Boolean(curId);
+          btn.hidden = !curId;
+          if (curId) paintBtn();
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(solved, cards.length, '푼 문제');
+          revealCurrent();
+        });
+      }
+
+      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
+      function setupNote() {
+        const KEY = 'od-note-read:' + RANGE;
+        const topics = Array.from(document.querySelectorAll('main article.topic'));
+        const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
+        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
+        const box = panels.right.querySelector('.sums');
+        const sums = {};
+        topics.forEach((t) => {
+          const el = t.querySelector(':scope > .sum');
+          if (!el) return;
+          el.hidden = true;
+          box.appendChild(el);
+          sums[t.id] = el;
+        });
+        const empty = document.getElementById('sum-empty');
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          const key = s.matches('article.topic') ? s.id : 'intro';
+          Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
+          empty.hidden = Boolean(sums[key]);
+          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(read, topics.length, '읽음');
+          revealCurrent();
+        });
+      }
+
+      if (kind === 'review') setupReview();
+      if (kind === 'note') setupNote();
+      sync();
+    })();
+  </script>
+  <script id="pager-ui">
+    (function () {
+      const root = document.documentElement;
+      const main = document.querySelector('main');
+      const hero = main.querySelector('.hero');
+      const screens = [hero].concat(Array.from(main.querySelectorAll(document.body.dataset.screens)));
+      if (screens.length < 2) { root.classList.remove('js'); return; }
+      screens.forEach((s) => s.classList.add('screen'));
+
+      const last = screens.length - 1;
+      const prevBtn = document.getElementById('pager-prev');
+      const nextBtn = document.getElementById('pager-next');
+      const count = document.getElementById('pager-count');
+      const bar = document.getElementById('pager-bar');
+      const status = document.getElementById('pager-status');
+      const toc = document.querySelector('#panel-left .toc');
+      const scroller = document.querySelector('.content');
+      const titleOf = (s) => ((s.querySelector('h3') || s.querySelector('h1') || {}).textContent || '').trim();
+      let cur = -1;
+
+      // 목차: 섹션 링크 아래에 화면(토픽·카드) 목록을 붙인다
+      const tocLinks = [];
+      Array.from(toc.querySelectorAll(':scope > a')).forEach((a) => {
+        const sec = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+        const group = document.createElement('div');
+        group.className = 'toc-group';
+        a.replaceWith(group);
+        group.appendChild(a);
+        if (!sec) return;
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        screens.forEach((s, i) => {
+          if (!sec.contains(s)) return;
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#' + s.id;
+          link.innerHTML = '<span class="toc-title"></span>';
+          link.firstChild.textContent = titleOf(s);
+          li.appendChild(link);
+          list.appendChild(li);
+          tocLinks[i] = link;
+        });
+        group.appendChild(list);
+      });
+
+      function indexFor(hash) {
+        const id = decodeURIComponent((hash || '').replace(/^#/, ''));
+        const el = id && document.getElementById(id);
+        if (!el || !main.contains(el)) return { i: 0 };
+        const i = screens.findIndex((s) => s.contains(el) || el.contains(s));
+        return { i: Math.max(i, 0), target: i >= 0 && screens[i].contains(el) && screens[i] !== el ? el : null };
+      }
+
+      function render(i, target) {
+        const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
+        if (i !== cur) {
+          if (cur >= 0) document.dispatchEvent(new CustomEvent('od:leave', { detail: { index: cur, screen: screens[cur] } }));
+          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
+          main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
+          const s = screens[i];
+          const sec = s.closest('section');
+          if (sec) sec.classList.add('is-on');
+          s.classList.add('is-current');
+          if (dir) { s.classList.remove('enter-next', 'enter-prev'); void s.offsetWidth; s.classList.add(dir); }
+          cur = i;
+          document.body.classList.toggle('at-end', i === last);
+          prevBtn.disabled = i === 0;
+          nextBtn.textContent = i === 0 ? '시작하기' : i === last ? '처음으로' : '다음';
+          count.textContent = i === 0 ? '' : i + ' / ' + last;
+          bar.style.transform = 'scaleX(' + (i / last) + ')';
+          status.textContent = i === 0 ? titleOf(s) : i + ' / ' + last + ', ' + titleOf(s);
+          tocLinks.forEach((link, k) => link && link.setAttribute('aria-current', String(k === i)));
+          document.dispatchEvent(new CustomEvent('od:screen', { detail: { index: i, screen: s } }));
+        }
+        if (target) target.scrollIntoView({ block: 'start' });
+        else scroller.scrollTo(0, 0);
+      }
+
+      function go(i) {
+        i = Math.min(Math.max(i, 0), last);
+        if (i === cur) return;
+        const url = i === 0 ? location.pathname + location.search : '#' + screens[i].id;
+        history.pushState(null, '', url);
+        render(i);
+      }
+
+      prevBtn.addEventListener('click', () => go(cur - 1));
+      nextBtn.addEventListener('click', () => go(cur === last ? 0 : cur + 1));
+      const fromUrl = () => { const r = indexFor(location.hash); render(r.i, r.target); };
+      window.addEventListener('hashchange', fromUrl);
+      window.addEventListener('popstate', fromUrl);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+
+      // 좌우로 밀어서 넘기기 (가로로 스크롤되는 영역은 제외)
+      let sx = 0, sy = 0, skip = true;
+      main.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (skip) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 64 && Math.abs(dx) > 2 * Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      fromUrl();
+    })();
+  </script>
+<script>(()=>{const meta=JSON.parse(document.getElementById('presentation-meta').textContent);document.getElementById('open-explanation').addEventListener('click',()=>{location.href=meta.explanation;});})();</script></body>
+</html>
