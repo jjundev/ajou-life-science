@@ -1,0 +1,1921 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>생명과학 복습문제 7장 · 연습형</title>
+  <meta name="description" content="7장 웹과제 예상 v3">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('od-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']})"></script>
+  <style>
+    /* ---------- 토큰 ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #b54708; --prof: #6941c6; --supp: #067647; --danger: #d92d20;
+      --scroll: #c9d0db; --scroll-hover: #9aa3b2;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --fs-body: 17px; --fs-lead: 20px; --fs-small: 14px; --fs-label: 13px; --fs-fig: 12px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+      --radius: 8px; --measure: 680px; --tap: 48px; --btn-min: 160px;
+      --dur: 220ms; --dur-exit: 150ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+      /* 예전 조각이 참조할 수 있는 이름 */
+      --surface-2: var(--surface); --accent-soft: var(--surface); --warn-soft: var(--surface);
+      --prof-soft: var(--surface); --supp-soft: var(--surface); --eli5: var(--accent-ink); --eli5-soft: var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+        --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+        --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+        --scroll: #3f414b; --scroll-hover: #5b5e6a;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+      --scroll: #3f414b; --scroll-hover: #5b5e6a;
+    }
+
+    /* ---------- 기본 ---------- */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent-ink); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+
+    /* ---------- 상단 바 ---------- */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s2) var(--s4); display: flex; align-items: center; gap: var(--s3); min-height: 56px; }
+    .brand { flex: 1 1 auto; min-width: 0; font-size: var(--fs-body); font-weight: 700; white-space: nowrap; }
+    .text-btn { flex: none; min-height: 44px; min-width: 44px; padding: 0 var(--s3); border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); font: 600 var(--fs-small)/1 var(--font); cursor: pointer; }
+    .bar { height: 2px; background: var(--line); overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+
+    /* ---------- 본문 ---------- */
+    main { flex: 1 0 auto; width: 100%; max-width: var(--measure); margin: 0 auto; padding: var(--s6) var(--s5) var(--s7); }
+    .hero h1 { font-size: clamp(28px, 6vw, 36px); line-height: 1.3; margin: 0 0 var(--s3); letter-spacing: -0.02em; }
+    .hero p { color: var(--ink-2); margin: 0; }
+    section { margin-top: var(--s7); }
+    section > h2 { font-size: 22px; line-height: 1.4; margin: 0 0 var(--s4); }
+    .topic { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .topic h3 { margin: 0 0 var(--s2); font-size: clamp(24px, 5vw, 28px); line-height: 1.35; letter-spacing: -0.01em; }
+    .tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+    .tag { font-size: var(--fs-label); line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+
+    /* 레이어: 배경 없이 라벨과 구분선으로 나눈다 */
+    .layer { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .layer.eli5 { margin-top: 0; padding-top: 0; border-top: 0; }
+    .layer > :first-child { margin-top: 0; }
+    .layer > :last-child { margin-bottom: 0; }
+    .layer-title { display: block; font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); margin-bottom: var(--s2); }
+    .layer.eli5 .layer-title { color: var(--accent-ink); }
+    .layer.eli5 .lead { font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; margin: 0 0 var(--s3); }
+    .layer.prof .layer-title { color: var(--prof); }
+    .layer.warn { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn .layer-title { color: var(--warn); }
+    .layer.supp .badge.supp { margin-bottom: var(--s2); }
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
+    .badge.supp { color: var(--supp); }
+    blockquote { margin: var(--s2) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
+    ol.steps { padding-left: 1.4em; }
+    ol.steps li { margin: var(--s2) 0; }
+
+    /* 그림 · 수식 · 표 */
+    .figure { margin: var(--s4) 0; text-align: center; }
+    .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
+    .figure img { max-width: 100%; height: auto; }
+    .figure figcaption { font-size: var(--fs-small); color: var(--ink-2); margin-top: var(--s1); }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: var(--s1) 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+    th, td { border-bottom: 1px solid var(--line); padding: var(--s2); text-align: left; vertical-align: top; }
+    th { color: var(--ink-2); font-weight: 600; }
+    td:first-child, th:first-child { min-width: 6em; }
+
+    /* 위젯 */
+    .widget { background: var(--surface); border-radius: var(--radius); padding: var(--s4); margin: var(--s5) 0; }
+    .widget h4 { margin: 0 0 var(--s1); font-size: var(--fs-body); }
+    .widget-help { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s3); }
+    .controls { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--s2); font-size: var(--fs-small); }
+    .controls label { display: flex; align-items: center; gap: var(--s2); min-height: 44px; }
+    .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .widget svg { width: 100%; height: auto; background: var(--bg); border-radius: var(--radius); }
+    .readout { font-size: var(--fs-small); margin-top: var(--s2); }
+    .legend { font-size: var(--fs-label); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .sw { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: var(--s1); border-radius: 2px; }
+    .sw.truth { background: var(--ink-2); } .sw.fit { background: var(--accent); } .sw.train { background: var(--accent); height: 10px; width: 10px; border-radius: 50%; }
+    .sw.test { background: var(--warn); height: 10px; width: 10px; border-radius: 50%; } .sw.like { background: var(--accent); } .sw.prior { background: var(--prof); } .sw.post { background: var(--supp); }
+    .axis { stroke: var(--line); stroke-width: 1.5; }
+    .tick { fill: var(--ink-2); font-size: 11px; }
+    .plot-truth { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .plot-fit { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+    .pt-train { fill: var(--accent); }
+    .pt-test { fill: var(--warn); }
+    .plot-like { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .plot-prior { fill: none; stroke: var(--prof); stroke-width: 2; stroke-dasharray: 6 4; }
+    .plot-post { fill: none; stroke: var(--supp); stroke-width: 3; }
+    .mark-ml { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .mark-map { stroke: var(--supp); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 2; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 2.5; }
+    .fig-danger { stroke: var(--danger); fill: none; stroke-width: 2.5; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: 13px; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-fig); font-family: inherit; }
+
+    footer { width: 100%; max-width: var(--measure); margin: 0 auto; padding: 0 var(--s5) var(--s6); color: var(--ink-2); font-size: var(--fs-small); }
+
+    /* ---------- 문제 카드 ---------- */
+    .card { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .card h3 { margin: 0 0 var(--s4); font-size: clamp(22px, 5vw, 26px); line-height: 1.4; letter-spacing: -0.01em; }
+    .problem { margin: 0 0 var(--s5); }
+    .problem ol { padding-left: 1.4em; }
+    details { border-top: 1px solid var(--line); }
+    .card details:last-of-type { border-bottom: 1px solid var(--line); }
+    details[open] { padding-bottom: var(--s4); }
+    details > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: var(--s3);
+      min-height: var(--tap); cursor: pointer; font-weight: 600; }
+    details > summary::-webkit-details-marker { display: none; }
+    details > summary::after { content: ""; flex: none; width: 8px; height: 8px; margin-right: var(--s1);
+      border-right: 2px solid var(--ink-2); border-bottom: 2px solid var(--ink-2); transform: rotate(45deg); transition: transform 150ms ease-out; }
+    details[open] > summary::after { transform: rotate(-135deg); }
+    details.original { color: var(--ink-2); font-size: var(--fs-small); }
+    details.original > summary { color: var(--ink); font-size: var(--fs-body); }
+    .answer { font-weight: 700; background: var(--surface); border-radius: var(--radius); padding: var(--s3) var(--s4); }
+    .link-back { font-size: var(--fs-small); color: var(--ink-2); margin: var(--s5) 0 var(--s4); }
+    .top-link { flex: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--s2);
+      font-size: var(--fs-small); font-weight: 600; text-decoration: none; }
+    .js .card { padding: 0; border-top: 0; }
+    @media (prefers-reduced-motion: reduce) { details > summary::after { transition: none; } }
+
+    /* ---------- 하단 이동 바 ---------- */
+    .pager { position: sticky; bottom: 0; z-index: 10; background: var(--bg); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .pager-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s3) var(--s4); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); }
+    .pager-count { font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; min-width: 4em; }
+    .btn { min-height: var(--tap); min-width: var(--btn-min); padding: 0 var(--s6); border-radius: var(--radius); border: 0; font: 700 var(--fs-body)/1 var(--font); cursor: pointer; white-space: nowrap;
+      transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+    .btn-ghost { justify-self: start; background: var(--surface); color: var(--ink); }
+    .btn-primary { justify-self: end; background: var(--btn-bg); color: var(--on-btn); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    @media (hover: hover) {
+      .text-btn:hover, .btn-ghost:not(:disabled):hover { background: var(--line); }
+      .btn-primary:not(:disabled):hover { box-shadow: inset 0 0 0 100px rgba(0, 0, 0, .14); }
+    }
+
+    /* ---------- 목차 시트 ---------- */
+    .sheet { width: min(100%, var(--measure)); max-width: 100%; max-height: 80dvh; margin: auto auto 0; padding: 0; border: 0;
+      border-radius: 16px 16px 0 0; background: var(--bg); color: var(--ink); }
+    .sheet::backdrop { background: rgba(0, 0, 0, .4); }
+    .sheet-inner { padding: var(--s4) var(--s5) calc(var(--s5) + env(safe-area-inset-bottom)); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s2); }
+    .sheet-head h2 { margin: 0; font-size: var(--fs-lead); }
+    .toc { display: flex; flex-direction: column; }
+    .toc > a, .toc-group > a { display: block; padding: var(--s3) 0 var(--s1); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); text-decoration: none; }
+    .toc-list { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+    .toc-list a { display: flex; align-items: center; gap: var(--s3); min-height: var(--tap); padding: var(--s2) var(--s3); margin: 0 calc(-1 * var(--s3));
+      border-radius: var(--radius); color: var(--ink); text-decoration: none; line-height: 1.4; }
+    .toc-list a[aria-current="true"] { background: var(--surface); font-weight: 700; color: var(--accent-ink); }
+    .toc-list .toc-title { flex: 1 1 0; min-width: 0; }
+    @media (hover: hover) { .toc-list a:hover { background: var(--surface); } }
+
+    /* ---------- 한 화면에 하나씩 (JS가 켤 때만) ---------- */
+    html:not(.js) .pager, html:not(.js) #toc-open { display: none; }
+    html:not(.js) .sheet { display: block; position: static; width: 100%; max-height: none; margin: 0 auto; border-radius: 0; border-bottom: 1px solid var(--line); }
+    html:not(.js) .sheet-close { display: none; }
+    .js main > .hero:not(.is-current), .js main > section:not(.is-on), .js .screen:not(.is-current) { display: none; }
+    .js main > section { margin-top: 0; }
+    .js main > section > h2 { font-size: var(--fs-label); font-weight: 600; color: var(--accent-ink); margin: 0 0 var(--s2); }
+    .js .topic { padding: 0; border-top: 0; }
+    .js .hero { padding-top: 12vh; }
+    .js footer { display: none; }
+    .js body.at-end footer { display: block; }
+    .screen.enter-next { animation: enter-next var(--dur) var(--ease-out); }
+    .screen.enter-prev { animation: enter-prev var(--dur) var(--ease-out); }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .screen.enter-next, .screen.enter-prev { animation: none; }
+      .bar > span, .btn { transition: none; }
+    }
+    @media (max-width: 480px) {
+      main { padding: var(--s5) var(--s4) var(--s6); }
+      footer { padding: 0 var(--s4) var(--s5); }
+      .btn { min-width: 120px; padding: 0 var(--s5); }
+    }
+    @media print {
+      .topbar, .pager, .sheet { display: none !important; }
+      .js main > .hero, .js main > section, .js .screen, .js footer { display: block !important; }
+    }
+
+    /* ---------- 좌우 패널 (drawer) ---------- */
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
+    .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
+    .panel-toggle svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-toggle .strip { fill: transparent; stroke: none; transition: fill 150ms ease-out; }
+    .panel-toggle[aria-expanded="true"] { color: var(--accent-ink); }
+    .panel-toggle[aria-expanded="true"] .strip { fill: currentColor; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .i-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .theme-toggle .i-sun { display: block; }
+      :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
+    }
+
+    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
+    .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
+    .content { grid-column: 2; }
+    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
+    .content::-webkit-scrollbar, .panel-inner::-webkit-scrollbar { width: 8px; }
+    .content::-webkit-scrollbar-track, .panel-inner::-webkit-scrollbar-track { background: transparent; }
+    .content::-webkit-scrollbar-thumb, .panel-inner::-webkit-scrollbar-thumb { background: var(--scroll); border-radius: 8px; border: 2px solid var(--bg); }
+    .content::-webkit-scrollbar-thumb:hover, .panel-inner::-webkit-scrollbar-thumb:hover { background: var(--scroll-hover); }
+    @supports (scrollbar-color: auto) { .content, .panel-inner { scrollbar-width: thin; scrollbar-color: var(--scroll) transparent; } }
+    .panel-resize { display: none; }
+    .panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 44px; margin-bottom: var(--s2); }
+    .panel-head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-lead); line-height: 1.4; }
+    .panel-sub { margin: 0 0 var(--s4); font-weight: 700; line-height: 1.45; }
+    .panel-empty { margin: 0; color: var(--ink-2); }
+    .panel-label { display: block; margin: var(--s5) 0 var(--s2); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+
+    /* 진행 상태 */
+    .panel-meta { margin: 0 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .panel-meta b { color: var(--ink); }
+    .progress { height: 4px; margin-bottom: var(--s3); border-radius: 2px; background: var(--line); overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+    .panel .toc-list a { margin: 0 calc(-1 * var(--s2)); padding: var(--s2); font-size: var(--fs-panel); }
+    .toc-mark { flex: none; display: block; width: 20px; height: 20px; color: var(--ink-2); }
+    .toc-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .toc-mark.is-done { color: var(--accent-ink); }
+
+    /* 복습문제: 원문 · 힌트 · 풀이 */
+    .aid details:last-of-type { border-bottom: 1px solid var(--line); }
+    .aid details.original > summary { font-size: var(--fs-panel); }
+    .solved-btn { display: flex; align-items: center; justify-content: center; gap: var(--s2); width: 100%; min-height: var(--tap); margin-top: var(--s5); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .solved-btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
+
+    /* 정리노트: 섹션 요약 */
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+    .eq-list li:first-child { padding-top: 0; }
+    .eq-name { display: block; font-size: var(--fs-small); font-weight: 600; color: var(--ink-2); }
+    .eq-list .katex-display { margin: var(--s1) 0 0; text-align: left; }
+    .eq-list .katex-display > .katex { text-align: left; }
+    .terms { margin: 0; }
+    .terms dt { font-weight: 700; margin-top: var(--s3); }
+    .terms dt:first-child { margin-top: 0; }
+    .terms dd { margin: var(--s1) 0 0; }
+    .flow { margin: 0; padding-left: 1.4em; }
+    .flow li { margin: var(--s2) 0; }
+
+    @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
+
+    /* 넓은 화면: 본문 옆에 붙는 패널 */
+    @media (min-width: 1024px) {
+      .layout { --l: var(--panel-l-user, var(--panel-l)); }
+      .layout[data-left="closed"] { --l: 0px; }
+      .panel-left { width: var(--l); }
+      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
+      .panel-left .panel-resize { right: 0; }
+      .panel-right .panel-resize { left: 0; }
+      .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
+      .panel-left .panel-resize::after { right: 0; }
+      .panel-right .panel-resize::after { left: 0; }
+      .panel-resize:focus-visible { outline: none; }
+      .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
+      @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
+      body.is-resizing { cursor: col-resize; user-select: none; }
+      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
+      .scrim, .panel-close { display: none; }
+    }
+    @keyframes panel-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 좁은 화면: 가장자리에서 밀려 나오는 drawer */
+    @media (max-width: 1023.98px) {
+      .panel { position: fixed; top: 0; bottom: 0; z-index: 40; visibility: hidden;
+        transition: transform var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .panel-left { left: 0; width: min(var(--drawer-l), 88vw); transform: translateX(-100%); }
+      .panel-right { right: 0; width: min(var(--drawer-r), 88vw); transform: translateX(100%); }
+      .panel.is-open { visibility: visible; transform: none; transition: transform var(--dur) var(--ease-out); }
+      .panel-inner { padding-top: calc(var(--s3) + env(safe-area-inset-top)); padding-bottom: calc(var(--s6) + env(safe-area-inset-bottom)); }
+      .scrim { position: fixed; inset: 0; z-index: 35; background: var(--scrim); opacity: 0; visibility: hidden;
+        transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
+      html:not(.js) .panel-left { display: none; }
+    }
+    @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
+      .panel.is-shown { animation: none; }
+      .panel-resize::after { transition: none; }
+    }
+    @media print {
+      body { display: block; height: auto; overflow: visible; }
+      .layout { display: block; }
+      .content { overflow: visible; }
+      .panel, .scrim { display: none !important; }
+    }
+  </style>
+<script type="application/json" id="presentation-meta">{"mode": "practice", "documentId": "복습문제_7장_웹과제예상_v3.html", "questionSetHash": "5c1d2196b9691e2c00bad9591471276431cb9e9cd9228444413ce17e998e3a9f", "partner": "복습문제_7장_웹과제예상_시험형_v3.html", "explanation": "문제해설_7장_웹과제예상_v3.html"}</script>
+<style>.topbar .brand{overflow:hidden;text-overflow:ellipsis}.presentation-links{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 0;font-size:var(--fs-small);}.presentation-links button{min-height:44px;display:inline-flex;align-items:center;}.presentation-links[hidden],#open-explanation[hidden]{display:none!important}.check-answer{min-height:44px;margin:8px 0}</style></head>
+<body data-screens="article.card" data-panels="review" data-range="7장-v3"><script>(()=>{try{sessionStorage.removeItem('od-review-solved:'+document.body.dataset.range);}catch{}if(location.hash==='#exam-results')history.replaceState(null,'',location.pathname+location.search+'#p1');})();</script>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <strong class="brand">복습문제</strong>
+      <a class="top-link" href="../../복습노트/1027/정리노트_1027_Evolutionary_Thought_and_Microevolution.html">정리노트</a>
+      <button class="text-btn" type="button" id="open-explanation">상세 해설</button><button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>풀이</span></button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
+  </header>
+  <div class="layout" data-left="open" data-right="closed">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
+      <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-left-title">문제 목록</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-meta">푼 문제 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <nav class="toc" aria-label="목차"><a href="#partA">예상 개요</a><a href="#partB">기출 5</a><a href="#partC">새 문제 10</a></nav>
+      </div>
+    </aside>
+    <div class="content">
+  <main>
+    <div class="hero">
+      <h1>7장 웹과제 예상 v3 · 연습형</h1>
+      <p>7장 진화 사상과 소진화의 세 번째 대비 세트예요. 실제 7장 웹과제 문제은행·원본 캡처·공식 답은 미확인 상태이고 note-feedback도 미작성 상태예요. 1~3장 유형 집계와 수업에서 강조한 하디-바인베르크 계산을 참고했어요. 기본 12·심화 3을 목표로 설계했고 독립 풀이에서도 기본 12·심화 3으로 일치했어요.</p>
+    </div>
+    <section id="partA"><h2>A. 예상 개요</h2>
+<article class="card" id="o1" data-source="예상 7장 개요">
+  <h3>형식과 주제 예상</h3>
+  <div class="problem">
+    <p>실제 7장 웹과제 원본과 공식 답을 확인하기 전에 만든 세 번째 대비 세트예요. 응시 완료 여부와 정본 문제은행은 미확인 상태예요.</p>
+    <ul>
+      <li>확정 참고 통계: 1~3장 정본 문제은행 46문항 중 부정형 18문항(39%), 그림 포함 8문항(17%), 기출 재사용 14문항(약 30%)이에요. 이 수치는 1~3장 집계이며 7장의 확정 통계로 쓰지 않아요.</li>
+      <li>7장 별도 원본 관찰 자료(raw/intake)는 없고, 문항별 피드백(note-feedback.md)도 미작성 상태예요.</li>
+      <li>생성 목표: 개요 2장·기출 5문항·새 문제 10문항이며, 정답은 A~E 각 3개예요. 유형 최소 목표는 부정형 4·계산 5·그림 2·표 2이고 ㄱㄴㄷ·장섞기는 0이에요. 그림이나 표가 있다고 해서 난이도가 자동으로 높아지지는 않아요.</li>
+      <li>난이도 설계: 장별 웹과제 근거가 없어 참고 생성 정책으로 기본(수준 1~2) 12문항·심화(수준 3) 3문항을 목표로 잡았고, 독립 풀이 판정 결과도 기본 12문항·심화 3문항으로 목표와 일치해요(차이 0).</li>
+      <li>차별화: v1·v2에서 사용한 기출 10문항과 이전 세트의 모든 발문을 피했어요. 계산 조건이 있는 기출 68번은 v1에서 사용했으므로 이번 세트의 기출 5문항은 그대로 2·쌍둥이 3으로 구성했어요.</li>
+      <li>별점 기준: 기출에 2회 이상 나오고 정리노트 요약에 있으면 ★★★, 둘 중 하나면 ★★☆, 교과서·노트 보충 중심이면 ★☆☆예요.</li>
+    </ul>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>가능성</th><th>주제</th><th>예상 질문</th><th>함정</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>★★★</td><td>자연선택의 논리</td><td>관찰과 추론의 짝, 선택받는 변이 조건은 무엇인가요?</td><td>살면서 얻은 변이는 유전되지 않아 선택 대상이 아니에요.</td></tr>
+          <tr><td>★★★</td><td>소진화와 대진화</td><td>같은 종 안의 빈도 변화와 종 수준 이상의 변화를 어떻게 가르나요?</td><td>변화의 크기나 걸린 시간이 아니라 종 수준이 기준이에요.</td></tr>
+          <tr><td>★★★</td><td>상동과 흔적기관</td><td>공통조상에서 물려받은 구조와 환경 적응으로 닮은 구조를 어떻게 구분하나요?</td><td>쓰임이 줄어든 흔적기관은 상사가 아니라 상동의 증거예요.</td></tr>
+          <tr><td>★★☆</td><td>비교발생과 비교분자</td><td>배아의 척삭과 DNA·단백질 서열 차이는 무엇을 보여 주나요?</td><td>서열 차이가 작을수록 더 최근에 공통조상에서 갈라졌어요.</td></tr>
+          <tr><td>★★★</td><td>하디-바인베르크 평형</td><td>1세대 유전자형 빈도에서 2세대·3세대 빈도를 어떻게 구하나요?</td><td>1세대 비평형 값을 그대로 다음 세대 답으로 쓰지 않아요.</td></tr>
+          <tr><td>★★★</td><td>열성 형질과 보인자 역산</td><td>열성 동형접합자 비율(q²)에서 이형접합자 비율(2pq)을 어떻게 구하나요?</td><td>환자 비율 q²와 대립유전자 빈도 q를 혼동하지 않아요.</td></tr>
+          <tr><td>★★★</td><td>소진화 요인과 유전자 확산</td><td>이주 개체가 합쳐졌을 때 대립유전자 빈도와 자손 비율은 어떻게 바뀌나요?</td><td>전체 대립유전자 분모는 개체 수 합계의 2배(2N)예요.</td></tr>
+          <tr><td>★★★</td><td>유전적 부동</td><td>병목 현상과 창시자 효과, 자연선택을 어떻게 구분하나요?</td><td>생존이 형질과 무관한 우연이면 유전적 부동이에요.</td></tr>
+          <tr><td>★★★</td><td>자연선택의 세 양상</td><td>방향성·안정화·분단성 선택에서 분포 평균과 폭은 어떻게 변하나요?</td><td>가뭄 뒤 생존자 곡선이 낮아지면 전체 개체 수는 줄어든 거예요.</td></tr>
+          <tr><td>★★☆</td><td>계통수 읽기</td><td>도중에 끊긴 가지와 갈림점은 각각 무엇을 나타내나요?</td><td>현재 선에 닿지 못한 가지는 멸종한 계통이에요.</td></tr>
+          <tr><td>★★☆</td><td>성선택과 근친교배</td><td>이성·동성 선택과 근친교배는 빈도에 어떤 영향을 주나요?</td><td>근친교배는 동형접합자를 늘리고 이형접합자를 줄여요.</td></tr>
+          <tr><td>★★☆</td><td>이배체성과 이형접합자 이점</td><td>불리한 대립유전자가 집단에서 사라지지 않는 이유는 무엇인가요?</td><td>말라리아가 없는 환경에서는 AS의 이점이 유지되지 않아요.</td></tr>
+          <tr><td>★★☆</td><td>다윈 이전과 지질학 사상</td><td>격변설·점진주의·동일과정설과 라마르크를 어떻게 구분하나요?</td><td>점진주의는 휴튼, 동일과정설은 라이엘이 주장했어요.</td></tr>
+          <tr><td>★☆☆</td><td>변이의 원천과 교차</td><td>새 대립유전자 생성과 기존 대립유전자 조합 변경을 어떻게 가르나요?</td><td>교차와 독립 분배는 새 대립유전자를 만들지 않아요.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article>
+<article class="card" id="o2" data-source="예상 7장 개요">
+  <h3>막판 체크</h3>
+  <div class="problem">
+    <ol>
+      <li>대립유전자 직접 계수는 <code>p = (2×AA + Aa) / (2N)</code>이고, 무작위 교배 자손의 기대 유전자형 빈도는 <code>p², 2pq, q²</code>예요.</li>
+      <li>평형 집단의 열성 동형접합자 비율이 <code>q²</code>일 때, 전체 열성 대립유전자 중 이형접합자(Aa) 안에 숨어 있는 비율은 <code>(2pq×1) / (2pq×1 + q²×2) = p</code>예요.</li>
+      <li>계통수에서 현재 선에 닿지 못한 가지는 멸종한 계통이고, 가뭄 전후 분포 그래프에서 평균선 이동은 방향성 선택을, 곡선 면적 감소는 개체 수 감소를 뜻해요.</li>
+      <li>흔적기관(상동) ↔ 유선형 몸(상사), 성선택(암수 차이 증가) ↔ 근친교배(동형접합 증가·이형접합 감소), 말라리아 유행 지역(AS 유리) ↔ 비유행 지역(AS 이점 소실)을 구분해요.</li>
+    </ol>
+    <p><b>재출제 유력 기출 10</b></p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>기출 번호</th><th>핵심 한 줄</th><th>정답 보기 문장</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>기출 7강 28</td><td>1980년대, 모든 Staphylococcus aureus 의 1 % ~ 5 % 만이 항생제에 강한 내성을 보였다. 현재는 60 % ~ 70 % 가 내성을 보인다. 이것은 무엇에 대한 예시인가?</td><td>세균의 방향성 선택</td></tr>
+          <tr><td>기출 7강 13</td><td>개와 고양이의 DNA는 고양이와 햄스터의 DNA 보다 더 유사하다. 이유는?</td><td>고양이와 개의 공통 조상은 고양이와 햄스터의 공통 조상보다 더 최근에 생겼다</td></tr>
+          <tr><td>기출 7강 12</td><td>소진화의 예가 될 수 있는 것은?</td><td>개체군 안에서의 작은 유전적 변화로 인한 새 개체군 색깔의 작은 변화</td></tr>
+          <tr><td>기출 7강 32</td><td>다음의 변이 중 자연선택을 받는 것은?</td><td>점박이 털을 가지고 태어나 다른 새끼들보다 더 잘 숨을 수 있는 하이에나</td></tr>
+          <tr><td>기출 7강 46</td><td>다음 보기 중, 자연선택과 진화에 대한 다윈의 관찰과 추론이 올바르게 연결된 것은?</td><td>대부분의 생물들은 한 마리 또는 두 마리 이상의 자손을 낳는다 → 개체군 안의 개체들은 제한된 자원을 위해 경쟁한다.</td></tr>
+          <tr><td>기출 7강 16</td><td>성선택이 일어나기 위한 특징은?</td><td>이성 중의 한 쪽이 결정한 선택으로 짝짓기에 영향을 미쳐야 한다</td></tr>
+          <tr><td>기출 7강 18</td><td>하디-바인베르그 법칙은 집단유전학의 일부로 이용된다. 다음 중 집단 유전학에 대한 질문으로 적합한 것은?</td><td>미래 세대에서 특정 유전형의 빈도는 어떻게 될 것인가?</td></tr>
+          <tr><td>기출 7강 37</td><td>한 도시에서 독성파리를 잡기 위해 DDT를 집중적으로 살포했다. 파리의 수는 즉시 빠르게 감소했다. 매년마다 그 도시는 반복적으로 살포했지만, 10년이 지난 뒤에 파리의 개체수는 점진적으로 증가했다. 다음 중 이에 대한 설명으로 가장 올바른 설명은?</td><td>DDT가 대부분의 파리들을 죽이나, 자연적으로 저항성이 있는 몇몇 개체는 살아남아서, 그들의 자손에게 이러한 저항성을 물려주었다.</td></tr>
+          <tr><td>기출 7강 44</td><td>우연한 일들이 대립유전자의 빈도에 예상치 못한 변화를 초래하는 현상을 무엇이라고 부르는가?</td><td>유전적 부동</td></tr>
+          <tr><td>기출 7강 67</td><td>새들의 날개, 돼지의 다리, 고래의 지느러미는 어떤 예들인가?</td><td>상동기관</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>이번 세트의 p3~p5는 발문만 유지하고 정답 보기를 새로 쓴 기출 변형이므로 위 표의 원문 정답을 그대로 고르지 않아요.</p>
+  </div>
+</article>
+    </section>
+    <section id="partB"><h2>B. 기출 재출제 예상</h2>
+<article class="card" id="p1" data-source="기출 7강 28 예상" data-types="직접판별">
+  <h3>P1. [기출 예상] 시간에 따른 내성 비율 변화</h3>
+  <div class="problem"><p>1980년대, 모든 Staphylococcus aureus 의 1 % ~ 5 % 만이 항생제에 강한 내성을 보였다. 현재는 60 % ~ 70 % 가 내성을 보인다. 이것은 무엇에 대한 예시인가?</p>
+    <ul class="choices"><li>A. 세균의 방향성 선택</li><li>B. 인간의 안정화 선택</li><li>C. 인간의 방향성 선택</li><li>D. 세균의 분단성 선택</li><li>E. 세균의 안정화 선택</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 7강 합본 28번을 보기 순서만 바꿔 실은 예상 문제예요.</details>
+  <details class="hint"><summary>힌트 보기</summary>항생제 환경에서 대립유전자 빈도가 변한 집단이 누구인지 먼저 찾고, 분포의 평균이 어느 쪽으로 이동했는지 살펴보아요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 맞아요. 항생제 환경에서 내성을 가진 세균이 더 많이 살아남아 번식하면서 세균 집단의 평균이 내성이라는 한쪽 방향으로 이동한 방향성 선택이에요.</li>
+      <li>B. 틀려요. 내성 비율이 변한 집단은 인간이 아니라 세균이며, 양 극단이 줄어드는 안정화 선택도 아니에요.</li>
+      <li>C. 틀려요. 사람은 항생제라는 환경 요인을 제공했을 뿐이고 실제로 선택을 받아 빈도가 변한 집단은 세균이에요.</li>
+      <li>D. 틀려요. 분단성 선택은 중간 표현형이 불리해 양 극단 두 무리가 함께 늘어나는 경우인데, 여기서는 내성이 있는 한쪽 끝으로만 비율이 이동했어요.</li>
+      <li>E. 틀려요. 안정화 선택은 평균이 유지되면서 양 극단이 줄어드는 양상이므로 내성 세균 비율이 크게 늘어난 변화와 맞지 않아요.</li>
+      <li>수업과의 연결: 항생제 내성 세균의 증가가 분단성 선택이 아니라 한쪽 방향으로 이동하는 방향성 선택이라는 수업 퀴즈 설명과 이어져요(<a href="../../복습노트/1029/정리노트_1029_Microevolution_and_Speciation.html#s1-fitness">정리노트 "상대적 적응도와 자연선택의 세 양상"</a>).</li>
+    </ol>
+    <p class="answer">정답: A</p>
+  </details>
+</article>
+<article class="card" id="p2" data-source="기출 7강 13 예상" data-types="직접판별">
+  <h3>P2. [기출 예상] 세 종의 DNA 유사성 비교</h3>
+  <div class="problem"><p>개와 고양이의 DNA는 고양이와 햄스터의 DNA 보다 더 유사하다. 이유는?</p>
+    <ul class="choices"><li>A. 고양이와 개는 햄스터보다 자식의 수가 적어서 DNA가 천천히 변한다</li><li>B. 고양이와 개는 육식동물로 유사한 영양을 섭취한다</li><li>C. 고양이의 후손과 개의 후손은 유사한 환경에서 진화하였다</li><li>D. 고양이와 개의 공통 조상은 고양이와 햄스터의 공통 조상보다 더 최근에 생겼다</li><li>E. 고양이와 개는 사람과 오랫동안 같이 살아와서 서로 유사하다</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 7강 합본 13번을 보기 순서만 바꿔 실은 예상 문제예요.</details>
+  <details class="hint"><summary>힌트 보기</summary>종이 갈라진 뒤 각 계통에 돌연변이가 따로 쌓인다는 비교분자생물학의 원리를 떠올려 보아요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. 두 종 사이의 DNA 서열 유사성은 한 번에 낳는 자식 수가 아니라 공통조상에서 갈라진 뒤 흐른 시간과 축적된 돌연변이 수를 반영해요.</li>
+      <li>B. 틀려요. 먹이나 영양 섭취 방식이 비슷하다고 해서 DNA 염기서열이 전반적으로 유사해지는 것은 아니에요.</li>
+      <li>C. 틀려요. 비슷한 환경에 적응하면 겉모습인 상사형질이 닮을 수 있지만, DNA 서열 유사성은 환경보다 분기 시점이 얼마나 최근인지를 보여 주어요.</li>
+      <li>D. 맞아요. 조상에서 갈라진 시점이 최근일수록 각 계통에 따로 쌓인 돌연변이가 적어 DNA 서열이 더 유사해요.</li>
+      <li>E. 틀려요. 사람과 함께 살았다는 생활 환경은 개와 고양이의 DNA 염기서열 유사성을 결정하는 근거가 아니에요.</li>
+      <li>수업과의 연결: 종이 분기한 뒤 각자 돌연변이가 쌓이므로 서열 차이가 적을수록 더 최근의 공통조상을 공유한다는 설명과 이어져요(<a href="../../복습노트/1027/정리노트_1027_Evolutionary_Thought_and_Microevolution.html#s2-molecular">정리노트 "비교발생학과 비교분자생물학"</a>).</li>
+    </ol>
+    <p class="answer">정답: D</p>
+  </details>
+</article>
+<article class="card" id="p3" data-source="기출 7강 12 예상" data-types="직접판별">
+  <h3>P3. [기출 변형] 소진화의 사례 판별</h3>
+  <div class="problem"><p>소진화의 예가 될 수 있는 것은?</p>
+    <ul class="choices"><li>A. 영양 상태가 좋아져 한 도시에서 키 큰 사람의 비율이 늘어난 현상</li><li>B. 같은 종의 세균 개체군에서 세대를 거치며 항생제 내성 대립유전자의 빈도가 높아진 현상</li><li>C. 중생대 말기에 공룡 계통 전체가 지구상에서 멸종한 사건</li><li>D. 한 조상 물고기 무리에서 서로 교배하지 않는 새로운 두 종이 출현한 사건</li><li>E. 산불이 발생해 숲에 살던 다람쥐 개체군 구성원 전체가 한꺼번에 사라진 사건</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 7강 합본 12번의 발문을 사용하고 보기를 새로 쓴 예상 변형이에요.</details>
+  <details class="hint"><summary>힌트 보기</summary>소진화는 새로운 종이 생기거나 사라지는 수준이 아니라, 같은 종 개체군 안에서 세대에 걸쳐 유전적 구성이 바뀌는 현상이에요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. 영양 상태 개선으로 키가 커진 것은 환경에 의한 비유전적 변화여서 개체군의 대립유전자 빈도가 바뀐 진화적 변화가 아니에요.</li>
+      <li>B. 맞아요. 종이 새로 생기지 않고 같은 종 개체군 안에서 세대를 거치며 대립유전자 빈도가 변했으므로 소진화의 예예요.</li>
+      <li>C. 틀려요. 공룡의 멸종처럼 종 수준 이상에서 일어나는 대규모 소멸은 소진화가 아니라 대진화에 해당해요.</li>
+      <li>D. 틀려요. 새로운 종이 탄생하는 변화는 종 수준 이상의 변화이므로 대진화로 구분해요.</li>
+      <li>E. 틀려요. 개체군 전체가 사라진 사건일 뿐 살아남은 집단에서 세대를 거쳐 대립유전자 빈도가 변한 사례가 아니에요.</li>
+      <li>원문 정답과 달라진 점: 원문은 새 개체군 안에서 작은 유전적 변화로 색깔이 변한 사례가 정답이었지만, 여기서는 같은 종의 세균 개체군에서 항생제 내성 대립유전자 빈도가 높아진 사례가 정답이에요.</li>
+      <li>수업과의 연결: 소진화와 대진화를 종 수준 기준으로 나누고 세균의 항생제 내성 획득을 소진화의 대표 예로 든 수업 설명과 이어져요(<a href="../../복습노트/1027/정리노트_1027_Evolutionary_Thought_and_Microevolution.html#s2-synthesis">정리노트 "현대적 종합론, 소진화와 대진화"</a>).</li>
+    </ol>
+    <p class="answer">정답: B</p>
+  </details>
+</article>
+<article class="card" id="p4" data-source="기출 7강 32 예상" data-types="직접판별">
+  <h3>P4. [기출 변형] 여러 가지 변이의 비교</h3>
+  <div class="problem"><p>다음의 변이 중 자연선택을 받는 것은?</p>
+    <ul class="choices"><li>A. 사람이 겨울 동안 우리 안을 따뜻하게 데워 주어 추위를 견뎌 낸 토끼</li><li>B. 먹이가 부족한 해에 자라면서 몸집이 작아져 좁은 바위 틈에 잘 숨는 도마뱀</li><li>C. 주인이 잎에 살충제를 뿌려 주어 해충 피해를 입지 않은 정원의 장미</li><li>D. 바위에 부딪혀 한쪽 집게발이 부러진 뒤 포식자의 눈에 덜 띄게 된 게</li><li>E. 딱딱한 씨앗이 많은 섬에서 유전적으로 두꺼운 부리를 타고나 먹이를 더 잘 깨 먹는 핀치</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 7강 합본 32번의 발문을 사용하고 보기를 새로 쓴 예상 변형이에요.</details>
+  <details class="hint"><summary>힌트 보기</summary>살면서 얻은 비유전적 차이는 다음 세대로 전해지지 않으므로, 자손에게 유전되면서 생존과 번식의 차이를 만드는 변이를 찾아요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. 외부에서 우리를 따뜻하게 해 준 환경 조건은 자손에게 유전되는 형질이 아니어서 자연선택의 재료가 되지 않아요.</li>
+      <li>B. 틀려요. 성장 과정의 영양 부족으로 몸집이 작아진 것은 유전되지 않는 후천적 변화이므로 다음 세대의 비율을 바꾸지 못해요.</li>
+      <li>C. 틀려요. 사람이 살충제를 뿌려 보호해 준 결과는 식물의 유전적 변이가 아니므로 자연선택을 받지 않아요.</li>
+      <li>D. 틀려요. 살아가는 동안 다쳐서 생긴 신체 변화는 획득형질이라 자손에게 유전되지 않아요.</li>
+      <li>E. 맞아요. 타고난 부리 두께 차이가 유전되며 딱딱한 씨앗이 많은 환경에서 생존과 번식에 유리하게 작용하므로 자연선택을 받아요.</li>
+      <li>원문 정답과 달라진 점: 원문은 점박이 털을 가지고 태어나 더 잘 숨는 하이에나가 정답이었지만, 여기서는 유전적으로 두꺼운 부리를 타고나 딱딱한 씨앗을 잘 깨 먹는 핀치가 정답이에요.</li>
+      <li>수업과의 연결: 살면서 생긴 차이는 유전되지 않아 재료가 되지 않고 타고난 유전 변이만 자연선택을 받는다는 조건과 이어져요(<a href="../../복습노트/1027/정리노트_1027_Evolutionary_Thought_and_Microevolution.html#s1-natural-selection">정리노트 "자연선택의 논리"</a>).</li>
+    </ol>
+    <p class="answer">정답: E</p>
+  </details>
+</article>
+<article class="card" id="p5" data-source="기출 7강 46 예상" data-types="직접판별">
+  <h3>P5. [기출 변형] 다윈의 관찰과 추론 연결</h3>
+  <div class="problem"><p>다음 보기 중, 자연선택과 진화에 대한 다윈의 관찰과 추론이 올바르게 연결된 것은?</p>
+    <ul class="choices"><li>A. 먹이와 서식 공간 같은 자원은 제한되어 있다 → 개체군 안의 모든 변이는 다음 세대로 유전된다.</li><li>B. 개체군 안의 개체들은 여러 형질에서 변이를 보인다 → 개체군의 크기는 세대마다 한없이 늘어난다.</li><li>C. 개체군 안의 개체들은 서로 다른 변이를 가지며 많은 변이가 자손에게 유전된다 → 유전되는 유리한 형질을 가진 개체가 더 잘 살아남고 더 많이 번식한다.</li><li>D. 자연 상태의 개체군 크기는 무한히 커지지 않는다 → 필요한 형질이 개체의 생애 동안 새로 만들어져 유전된다.</li><li>E. 많은 변이는 다음 세대에 전달되는 유전적 기반을 가진다 → 자원이 풍부해도 개체들은 항상 같은 수의 자손을 남긴다.</li></ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 7강 합본 46번의 발문을 사용하고 보기를 새로 쓴 예상 변형이에요.</details>
+  <details class="hint"><summary>힌트 보기</summary>자손 과잉과 자원 제한에서는 경쟁을 추론하고, 유전되는 변이의 존재에서는 개체 간 생존과 번식의 차이를 추론해요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. 자원이 제한되어 있다는 관찰에서는 개체들 사이의 경쟁을 추론하며, 모든 변이가 유전된다는 진술도 사실과 달라요.</li>
+      <li>B. 틀려요. 개체군 안에 변이가 있다는 관찰은 생존과 번식의 차이로 이어지며, 실제 개체군 크기는 자원 제한 때문에 한없이 늘어나지 않아요.</li>
+      <li>C. 맞아요. 개체들 사이에 유전되는 변이가 존재한다는 다윈의 관찰과, 그 결과 환경에 유리한 유전 형질을 가진 개체가 더 오래 생존하고 더 많이 번식한다는 추론을 바르게 이었어요.</li>
+      <li>D. 틀려요. 개체군 크기가 제한된다는 관찰은 자원 경쟁의 근거이며, 생애 동안 새로 얻은 형질이 유전된다는 설명은 라마르크의 주장이에요.</li>
+      <li>E. 틀려요. 유전되는 변이가 존재하면 환경에 따라 개체마다 생존과 번식에 차이가 생기므로 항상 같은 수의 자손을 남긴다는 추론은 틀려요.</li>
+      <li>원문 정답과 달라진 점: 원문은 많은 자손을 낳는다는 관찰에서 제한된 자원을 위한 경쟁을 추론한 연결이 정답이었지만, 여기서는 유전되는 변이가 있다는 관찰에서 유리한 형질 개체의 생존과 번식 우위를 추론한 연결이 정답이에요.</li>
+      <li>수업과의 연결: 교재 표 7.1의 관찰과 추론 두 갈래를 짝지어 유전되는 변이에서 생존·번식 차이를 이끄는 설명과 이어져요(<a href="../../복습노트/1027/정리노트_1027_Evolutionary_Thought_and_Microevolution.html#s1-natural-selection">정리노트 "자연선택의 논리"</a>).</li>
+    </ol>
+    <p class="answer">정답: C</p>
+  </details>
+</article>
+    </section>
+    <section id="partC"><h2>C. 새 문제 예상</h2>
+<article class="card" id="p6" data-source="예상 7장 6" data-types="부정형">
+  <h3>P6. [예상] 비교해부학과 비교발생학의 증거</h3>
+  <div class="problem"><p>비교해부학과 비교발생학은 생물의 구조를 비교해 진화의 증거를 찾아요. 다음 설명 중 <strong>옳지 않은 것</strong>은 무엇인가요?</p>
+    <ul class="choices"><li>A. 조상에게서 물려받았으나 지금은 구조의 틀만 남고 본래 기능이 사라진 흔적기관은 조상이 다른 생물이 비슷한 환경에 적응해 닮은 상사기관에 해당해요.</li><li>B. 지금은 기능이 거의 없거나 크게 줄어든 흔적기관은 과거 조상 시대에는 기능을 했던 구조가 물려 내려온 것이므로 공통조상의 증거가 돼요.</li><li>C. 어류와 포유류를 비롯한 척삭동물은 어린 배아 단계에서 유연한 기둥 구조인 척삭을 가져요.</li><li>D. 사람도 배아 단계에서는 척삭을 가지며, 자라면서 이 구조가 척추 디스크(원반)로 줄어들어 남아요.</li><li>E. 어류·양서류·파충류·조류·포유류의 초기 배아가 서로 비슷한 구조를 공유한다는 점은 비교발생학적 진화 증거예요.</li></ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 새 예상 문제예요. 비교해부학의 흔적기관(상동 증거)과 비교발생학의 척삭을 대조해요.</details>
+  <details class="hint"><summary>힌트 보기</summary>본래 기능을 잃고 흔적만 남은 기관이 조상에게서 물려받은 상동의 증거인지, 조상이 다른 생물이 환경 때문에 닮은 상사인지 구별해요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. 구조의 틀만 남고 본래 기능이 사라진 흔적기관은 조상에게서 물려받은 구조의 흔적이므로 상사기관이 아니라 상동의 한 예예요.</li>
+      <li>B. 맞아요. 흔적기관은 과거 조상에게서 쓰이던 구조가 물려 내려오면서 쓰임이 줄어든 흔적이므로 공통조상을 뒷받침해요.</li>
+      <li>C. 맞아요. 척추동물이 속하는 척삭동물은 어린 배아 단계에서 반드시 유연한 기둥인 척삭을 가져요.</li>
+      <li>D. 맞아요. 사람의 배아에 나타나는 척삭은 자라면서 척추 디스크(원반)로 줄어들어요.</li>
+      <li>E. 맞아요. 여러 척삭동물의 배아 단계 구조가 큰 차이 없이 비슷하다는 점은 공통조상을 보여 주는 비교발생학적 증거예요.</li>
+      <li>수업과의 연결: 흔적기관은 조상에게서 물려받은 상동의 증거이고, 척삭동물 배아의 척삭은 비교발생학적 증거예요(<a href="../../복습노트/1027/정리노트_1027_Evolutionary_Thought_and_Microevolution.html#s2-homology">정리노트 "상동과 상사"</a>).</li>
+    </ol>
+    <p class="answer">정답: A</p>
+  </details>
+</article>
+<article class="card" id="p7" data-source="예상 7장 7" data-types="계산">
+  <h3>P7. [예상] 열성 표현형 수로 이형접합자 수 구하기</h3>
+  <div class="problem"><p>하디-바인베르크 평형을 이루는 이배체 나비 개체군 10,000마리가 있어요. 날개 무늬를 결정하는 상염색체의 한 유전자좌에는 검은 무늬 대립유전자 A와 흰 무늬 대립유전자 a만 있고, A는 a에 대해 완전우성이에요. 이 개체군에서 흰 무늬 나비(aa)가 100마리일 때, 이형접합자(Aa)로 기대되는 개체 수는 몇 마리인가요?</p>
+    <ul class="choices"><li>A. 900마리</li><li>B. 1,800마리</li><li>C. 198마리</li><li>D. 8,100마리</li><li>E. 1,000마리</li></ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 새 예상 문제예요. 열성 동형접합자 비율(q²)에서 대립유전자 빈도를 역산해 이형접합자 개체 수를 구해요.</details>
+  <details class="hint"><summary>힌트 보기</summary>열성 표현형 나비의 비율은 q가 아니라 q²예요. 제곱근으로 q를 먼저 구한 뒤 이형접합자 빈도 2pq에 전체 개체 수를 곱해요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. 900마리는 pq = 0.9 × 0.1 = 0.09에 10,000을 곱한 값으로, 이형접합자 빈도 2pq에서 2를 빠뜨렸어요.</li>
+      <li>B. 맞아요. 흰 무늬 나비(aa)의 비율이 q² = 100/10,000 = 0.01이므로 q = 0.1, p = 0.9이고, 기대되는 Aa 개체 수는 2pq × 10,000 = 2 × 0.9 × 0.1 × 10,000 = 1,800마리예요.</li>
+      <li>C. 틀려요. 198마리는 열성 동형접합자 비율(q² = 0.01)을 대립유전자 빈도 q로 잘못 놓아 2 × 0.99 × 0.01 × 10,000을 계산한 값이에요.</li>
+      <li>D. 틀려요. 8,100마리는 p² × 10,000 = 0.81 × 10,000으로 우성 동형접합자(AA)의 기대 개체 수예요.</li>
+      <li>E. 틀려요. 1,000마리는 a 대립유전자 빈도 q = 0.1에 개체 수 10,000을 곱한 값이며 이형접합자 개체 수가 아니에요.</li>
+      <li>수업과의 연결: 평형 집단에서 열성 동형접합자 비율은 q²이므로 제곱근을 씌워 q를 구하고, 보인자(이형접합자) 빈도는 2pq로 계산해요(<a href="../../복습노트/1029/정리노트_1029_Microevolution_and_Speciation.html#s0-hw-practice">정리노트 "평형 계산의 함정과 열성 질환 역산"</a>).</li>
+    </ol>
+    <p class="answer">정답: B</p>
+  </details>
+</article>
+<article class="card" id="p8" data-source="예상 7장 8" data-types="표 계산">
+  <h3>P8. [예상] 유전자 확산 후 빈도 변화와 다음 세대</h3>
+  <div class="problem"><p>불완전우성 꽃 색 유전자좌에 대립유전자 C<sup>R</sup>과 C<sup>W</sup>만 있어 C<sup>R</sup>C<sup>R</sup>은 붉은색, C<sup>R</sup>C<sup>W</sup>는 분홍색, C<sup>W</sup>C<sup>W</sup>는 흰색 꽃이 피는 이배체 식물이 있어요. 표와 같이 기존 섬 집단 100개체에 다른 집단에서 이주해 온 100개체가 합쳐져 총 200개체가 되었어요. 이후 합쳐진 집단에 하디-바인베르크 다섯 조건이 적용되어 무작위 교배가 일어날 때, (1) 유입 전 기존 집단과 비교한 합쳐진 집단의 C<sup>R</sup> 대립유전자 빈도 변화와 (2) 무작위 교배로 태어나는 다음 세대에서 분홍색 꽃(C<sup>R</sup>C<sup>W</sup>)의 기대 빈도를 바르게 짝지은 것은 무엇인가요?</p>
+    <div class="table-wrap"><table><thead><tr><th>집단 구분</th><th>C<sup>R</sup>C<sup>R</sup> (붉은색)</th><th>C<sup>R</sup>C<sup>W</sup> (분홍색)</th><th>C<sup>W</sup>C<sup>W</sup> (흰색)</th><th>개체 수 합계</th></tr></thead><tbody><tr><th>유입 전 기존 집단</th><td>70</td><td>20</td><td>10</td><td>100</td></tr><tr><th>이주해 온 집단</th><td>10</td><td>60</td><td>30</td><td>100</td></tr></tbody></table></div>
+    <ul class="choices"><li>A. (1) 0.20 감소, (2) 0.40</li><li>B. (1) 0.20 감소, (2) 0.24</li><li>C. (1) 0.40 증가, (2) 0.48</li><li>D. (1) 0.30 감소, (2) 0.50</li><li>E. (1) 0.20 감소, (2) 0.48</li></ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 새 예상 문제예요. 이주 전후의 대립유전자 빈도 변화를 전체 대립유전자 수(2N) 기준으로 세고, 무작위 교배 다음 세대의 유전자형 빈도를 구해요.</details>
+  <details class="hint"><summary>힌트 보기</summary>유입 전(100개체, 대립유전자 200개)과 합산 직후(200개체, 대립유전자 400개)에서 각각 C<sup>R</sup>의 빈도를 구한 뒤, 다음 세대의 분홍색 꽃 빈도는 합산 직후의 유전자형 비율이 아니라 2pq로 계산해요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. 0.40은 이주 직후 합쳐진 집단에서 C<sup>R</sup>C<sup>W</sup> 개체가 차지하는 비율(80/200)이고, 무작위 교배로 태어나는 다음 세대의 기대 빈도는 2pq = 0.48이에요.</li>
+      <li>B. 틀려요. 0.24는 pq = 0.60 × 0.40으로, 이형접합자 기대 빈도 2pq에서 2를 빠뜨린 값이에요.</li>
+      <li>C. 틀려요. 합쳐진 집단의 C<sup>R</sup> 개수 240개를 전체 대립유전자 수 400개가 아니라 개체 수 200으로 나누면 안 돼요. 실제 빈도는 0.80에서 0.60으로 0.20 감소했어요.</li>
+      <li>D. 틀려요. 0.30 감소는 C<sup>R</sup>C<sup>R</sup> 개체 비율(0.70 → 0.40)만 비교한 값이며, 분홍색 개체가 가진 C<sup>R</sup>까지 포함해 대립유전자 빈도를 구해야 해요.</li>
+      <li>E. 맞아요. 유입 전 C<sup>R</sup> 빈도는 (2×70+20)/200 = 0.80이고, 합쳐진 200개체에서는 C<sup>R</sup>이 2×80+80 = 240개이므로 p = 240/400 = 0.60(0.20 감소), q = 0.40이에요. 따라서 다음 세대 분홍색 꽃(C<sup>R</sup>C<sup>W</sup>)의 기대 빈도는 2pq = 2 × 0.60 × 0.40 = 0.48이에요.</li>
+      <li>수업과의 연결: 유전자 확산 직후에는 들어온 개체까지 합쳐 전체 대립유전자 수(개체 수 × 2)로 빈도를 다시 세고, 무작위 교배 다음 세대는 p², 2pq, q²로 구해요(<a href="../../복습노트/1029/정리노트_1029_Microevolution_and_Speciation.html#s0-factors">정리노트 "조건이 깨지면 소진화: 돌연변이와 유전자 확산"</a>).</li>
+    </ol>
+    <p class="answer">정답: E</p>
+  </details>
+</article>
+<article class="card" id="p9" data-source="예상 7장 9" data-types="계산">
+  <h3>P9. [예상] 이형접합자 안에 숨은 열성 대립유전자 비율</h3>
+  <div class="problem"><p>하디-바인베르크 평형을 이루는 이배체 집단 1,000개체에서 상염색체의 한 유전자좌에 우성 대립유전자 A와 열성 대립유전자 a만 있어요. A는 a에 대해 완전우성이어서 AA와 Aa는 정상 표현형을 나타내고, 열성 동형접합자(aa)는 10개체예요. 이 집단 전체에 존재하는 열성 대립유전자 a의 총개수 중에서, 정상 표현형을 나타내는 이형접합자(Aa) 안에 들어 있는 a 대립유전자가 차지하는 비율은 얼마인가요?</p>
+    <ul class="choices"><li>A. 10%</li><li>B. 18%</li><li>C. 90%</li><li>D. 95%</li><li>E. 99%</li></ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 새 예상 문제예요. 이배체 집단에서 열성 대립유전자가 왜 선택을 피해 남는지 대립유전자 개수 단위로 계산해요.</details>
+  <details class="hint"><summary>힌트 보기</summary>먼저 q² = 10/1,000에서 q와 p를 구해 Aa 개체 수와 aa 개체 수를 각각 찾아요. Aa는 a를 1개씩, aa는 a를 2개씩 가진다는 점에 주의해 a의 개수를 비교해요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. 10%는 전체 대립유전자 중 a의 빈도(q = 0.10)이거나, 전체 a 대립유전자 200개 중 열성 동형접합자(aa) 안에 들어 있는 20개의 비율(20/200)이에요.</li>
+      <li>B. 틀려요. 18%는 전체 1,000개체 중 이형접합자(Aa) 개체가 차지하는 비율(2pq = 0.18)이며, 전체 a 대립유전자 중에서 차지하는 비율이 아니에요.</li>
+      <li>C. 맞아요. q² = 10/1,000 = 0.01에서 q = 0.10, p = 0.90이므로 Aa는 2pq × 1,000 = 180개체(a 180개)이고 aa는 10개체(a 20개)예요. 따라서 전체 a 대립유전자 200개 중 Aa 안에 들어 있는 비율은 180/200 = 90%예요.</li>
+      <li>D. 틀려요. 95%는 aa 10개체가 a를 2개씩 가진다는 점을 놓쳐 분모를 180 + 10 = 190으로 잘못 계산한 값에 가까워요.</li>
+      <li>E. 틀려요. 99%는 이 집단에서 정상 표현형 개체의 비율(1 − 0.01 = 0.99)이거나 q = 0.01일 때의 값이며, q = 0.10인 이 집단의 값과 달라요.</li>
+      <li>수업과의 연결: 자연선택은 표현형에 작용하므로 열성 대립유전자의 대부분은 표현형이 정상인 이형접합자 안에 숨어 선택을 피해 남아요(<a href="../../복습노트/1029/정리노트_1029_Microevolution_and_Speciation.html#s1-balanced">정리노트 "불리한 대립유전자가 남는 이유: 이형접합자 이점"</a>).</li>
+    </ol>
+    <p class="answer">정답: C</p>
+  </details>
+</article>
+<article class="card" id="p10" data-source="예상 7장 10" data-types="그림 부정형">
+  <h3>P10. [예상] 가뭄 전후 부리 깊이 분포와 선택 해석</h3>
+  <div class="problem"><p>어떤 섬에 사는 새 집단에서 부리 깊이는 유전되는 정량적 형질이에요. 극심한 가뭄 동안 작고 부드러운 씨앗이 사라지고 크고 딱딱한 씨앗만 남았어요. 그림은 가뭄 전 전체 집단과 가뭄 후 생존자 집단의 부리 깊이(mm)에 따른 개체 수 분포를 나타낸 것이에요. 이에 대한 해석으로 <strong>옳지 않은 것</strong>은 무엇인가요?</p>
+    <figure class="figure"><svg viewBox="0 0 340 190" role="img" aria-label="가로축은 부리 깊이(mm)이고 세로축은 개체 수예요. 가뭄 전 집단 실선 곡선은 높고 넓으며 평균 점선이 왼쪽에 있고, 가뭄 후 생존자 강조선 곡선은 낮으며 평균 점선이 오른쪽 깊은 부리 쪽에 있어요.">
+      <path class="fig-ink" d="M44 20 V146 H316"/>
+      <text class="fig-text" x="6" y="18">개체 수</text>
+      <text class="fig-text" x="52" y="164">얕음</text><text class="fig-text" x="142" y="164">부리 깊이 (mm)</text><text class="fig-text" x="284" y="164">깊음</text>
+      <path class="fig-ink" d="M55 145 C85 143 105 110 125 72 C138 48 147 38 155 38 C163 38 172 48 185 72 C205 110 225 143 255 145"/>
+      <path class="fig-ink" d="M155 30 V146" stroke-dasharray="4 3"/>
+      <text class="fig-text" x="88" y="26">가뭄 전 평균</text>
+      <path class="fig-accent" d="M125 145 C150 144 168 130 185 112 C196 101 203 96 210 96 C217 96 224 101 235 112 C252 130 270 144 295 145"/>
+      <path class="fig-accent" d="M210 84 V146" stroke-dasharray="4 3"/>
+      <text class="fig-text" x="215" y="88">생존자 평균</text>
+      <path class="fig-ink" d="M52 180 H72"/><text class="fig-text" x="77" y="184">가뭄 전 집단</text>
+      <path class="fig-accent" d="M180 180 H200"/><text class="fig-text" x="205" y="184">가뭄 후 생존자</text>
+    </svg></figure>
+    <ul class="choices"><li>A. 가뭄 후 생존자 집단의 평균 부리 깊이는 가뭄 전 집단의 평균보다 깊은 쪽으로 이동했어요.</li><li>B. 가뭄 후 생존자 곡선의 높이와 면적이 줄어든 것으로 보아 가뭄을 거치며 전체 개체 수는 감소했어요.</li><li>C. 크고 딱딱한 씨앗만 남은 환경에서 부리가 깊은 한쪽 극단의 표현형이 유리하게 작용한 방향성 선택의 사례예요.</li><li>D. 가뭄이 닥치자 개별 새들이 딱딱한 씨앗을 깨기 위해 부리를 계속 사용한 결과 한 개체의 부리가 깊어져 그 획득형질이 자손에게 유전되었어요.</li><li>E. 가뭄이 일어나기 전부터 이 새 집단 안에는 부리 깊이에 대한 유전적 변이가 존재했어요.</li></ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 새 예상 문제예요. 두 시점 분포 그래프에서 평균선 이동(방향성 선택)과 곡선 크기(개체 수 감소)를 판독하고 획득형질 서술을 가려내요.</details>
+  <details class="hint"><summary>힌트 보기</summary>두 곡선의 평균 점선 위치와 곡선 높이를 비교하고, 자연선택이 개체가 살면서 얻은 형질을 물려주는 과정인지 원래 있던 변이를 고르는 과정인지 떠올려요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 맞아요. 생존자 평균 점선이 가뭄 전 평균 점선보다 오른쪽(부리가 깊은 쪽)에 있으므로 평균 부리 깊이가 깊은 쪽으로 이동했어요.</li>
+      <li>B. 맞아요. 세로축이 개체 수인데 생존자 곡선이 가뭄 전 곡선보다 훨씬 낮고 작으므로 가뭄 동안 많은 개체가 죽어 전체 개체 수가 줄었어요.</li>
+      <li>C. 맞아요. 한쪽 극단(깊은 부리)의 개체들이 더 많이 살아남아 평균이 그쪽으로 이동했으므로 방향성 선택이에요.</li>
+      <li>D. 틀려요. 부리를 계속 써서 한 개체의 부리가 깊어지고 그 획득형질이 유전되었다는 것은 라마르크식 설명이며, 실제로는 원래 부리가 깊었던 개체가 더 많이 살아남은 자연선택이에요.</li>
+      <li>E. 맞아요. 가뭄 전 곡선이 여러 부리 깊이 값에 걸쳐 넓게 분포하므로 가뭄 전부터 유전되는 부리 깊이 변이가 이미 존재했어요.</li>
+      <li>수업과의 연결: 분포 그래프에서 평균선의 이동으로 방향성 선택을, 곡선 크기로 개체 수 감소를 읽으며, 살면서 변한 형질이 유전된다는 획득형질 설명은 자연선택이 아니에요(<a href="../../복습노트/1029/정리노트_1029_Microevolution_and_Speciation.html#s1-fitness">정리노트 "상대적 적응도와 자연선택의 세 양상"</a>).</li>
+    </ol>
+    <p class="answer">정답: D</p>
+  </details>
+</article>
+<article class="card" id="p11" data-source="예상 7장 11" data-types="그림">
+  <h3>P11. [예상] 계통수의 가지와 갈림점 읽기</h3>
+  <div class="problem"><p>그림은 한 뿌리에서 갈라져 나온 여러 계통의 진화 관계를 나타낸 계통수예요. 세로 방향은 아래(과거)에서 위(현재 점선)로 흐르는 시간을 뜻하고, 가지 P, Q, R은 맨 위 현재 점선에 닿아 있으며 가지 X, Y는 현재 점선에 닿지 못하고 중간에서 끝나요. 이 계통수에 대한 설명으로 <strong>옳은</strong> 것은 무엇인가요?</p>
+    <figure class="figure"><svg viewBox="0 0 340 190" role="img" aria-label="아래 과거에서 위 현재 점선으로 이어지는 계통수예요. 첫 갈림점 (가)에서 왼쪽 가지는 P와 중간에 멈춘 X로 나뉘고, 오른쪽 가지는 갈림점 (나)를 거쳐 중간에 멈춘 Y와 현재 점선에 닿는 Q, R로 나뉘어요.">
+      <path class="fig-muted" d="M48 35 H320" stroke-dasharray="4 4"/>
+      <path class="fig-ink" d="M22 168 V38 M17 46 L22 38 L27 46"/>
+      <path class="fig-ink" d="M175 175 V140 M175 140 L95 98 M95 98 L68 35 M175 140 L235 108 M235 108 L272 78 M272 78 L246 35 M272 78 L298 35"/>
+      <path class="fig-accent" d="M95 98 L126 68 M120 68 H132 M235 108 L192 72 M186 72 H198"/>
+      <circle class="fig-dot" cx="175" cy="140" r="3.5"/>
+      <circle class="fig-dot" cx="95" cy="98" r="3"/>
+      <circle class="fig-dot" cx="235" cy="108" r="3.5"/>
+      <circle class="fig-dot" cx="272" cy="78" r="3"/>
+      <text class="fig-text" x="8" y="182">과거</text>
+      <text class="fig-text" x="8" y="28">현재</text>
+      <text class="fig-text" x="63" y="24">P</text>
+      <text class="fig-text" x="121" y="59">X</text>
+      <text class="fig-text" x="187" y="63">Y</text>
+      <text class="fig-text" x="241" y="24">Q</text>
+      <text class="fig-text" x="293" y="24">R</text>
+      <text class="fig-text" x="183" y="146">(가)</text>
+      <text class="fig-text" x="244" y="114">(나)</text>
+    </svg></figure>
+    <ul class="choices"><li>A. 현재 점선에 닿아 있는 가지 P, Q, R은 이미 과거에 사라진 계통이고, 도중에 멈춘 X와 Y만 현재 살아 있는 종이에요.</li><li>B. 현재 점선에 닿지 못하고 도중에 끊긴 가지 X와 Y는 과거에 멸종한 계통을 나타내고, 갈림점 (가)와 (나)는 그 위로 갈라진 계통들의 공통조상을 나타내요.</li><li>C. 갈림점 (가)는 갈림점 (나)보다 현재에 더 가까운 시점에 일어난 분기를 나타내요.</li><li>D. 계통수의 각 가지는 한 개체가 태어나 자라면서 평생 동안 몸의 형태가 변해 가는 과정을 나타내요.</li><li>E. 맨 아래 뿌리에서 갈라져 나온 계통들은 서로 아무런 조상도 공유하지 않고 각자 별개로 생겨났어요.</li></ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 새 예상 문제예요. 다루는 혼동: 도중에 끝난 가지(멸종 계통)와 현재 선에 닿은 가지(현존 종)·갈림점(공통조상) 혼동. 근거 토픽: 1027 정리노트 "변형 혈통과 계통수".</details>
+  <details class="hint"><summary>힌트 보기</summary>세로축의 시간 방향을 따라가며 꼭대기 현재 선까지 이어진 가지, 중간에서 멈춘 가지, 가지가 나뉘는 지점이 각각 무엇을 뜻하는지 대조해 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. 꼭대기 현재 선까지 닿은 가지 끝(P, Q, R)이 지금 살아 있는 현존 종이고, 중간에 멈춘 가지(X, Y)가 사라진 계통이에요.</li>
+      <li>B. 맞아요. 현재 선에 닿지 못하고 도중에 끊긴 가지 X와 Y는 과거에 멸종한 종이나 집단을 뜻하고, 갈림점 (가)와 (나)는 한 계통이 나뉘어 새로운 계통이 나타난 곳으로 그 위 가지들의 공통조상을 나타내요.</li>
+      <li>C. 틀려요. 세로축은 아래가 과거이고 위가 현재이므로 아래쪽에 있는 (가)가 위쪽에 있는 (나)보다 더 오래전 과거의 분기예요.</li>
+      <li>D. 틀려요. 진화적 변화와 계통수의 분기는 한 개체의 일생 변화가 아니라 세대를 거치는 집단(개체군) 수준에서 일어나요.</li>
+      <li>E. 틀려요. 한 뿌리에서 갈라진 계통수는 여러 계통이 하나의 공통조상에서 변형 혈통으로 이어져 나왔음을 보여 줘요.</li>
+      <li>수업과의 연결: 계통수에서 도중에 끊긴 가지는 멸종한 종이고, 갈림점은 공통조상이며, 꼭대기 현재 선에 닿은 가지 끝은 현존 종이에요(<a href="../../복습노트/1027/정리노트_1027_Evolutionary_Thought_and_Microevolution.html#s1-tree">정리노트 "변형 혈통과 계통수"</a>).</li>
+    </ol>
+    <p class="answer">정답: B</p>
+  </details>
+</article>
+<article class="card" id="p12" data-source="예상 7장 12" data-types="부정형">
+  <h3>P12. [예상] 헤모글로빈 유전자형과 말라리아</h3>
+  <div class="problem"><p>사람의 헤모글로빈 유전자 자리에는 정상 대립유전자 A와 낫모양 적혈구 대립유전자 S가 있어요. 말라리아가 유행하는 지역에서 세 유전자형 AA, AS, SS와 평형 다형성(이형접합자 이점)에 대한 설명 중 <strong>옳지 않은</strong> 것은 무엇인가요?</p>
+    <ul class="choices"><li>A. 이형접합자 AS가 가장 높은 상대적 적응도를 가지는 이점은 말라리아 유행 여부와 관계없이 모든 환경에서 똑같이 유지돼요.</li><li>B. 동형접합자 SS인 사람은 말라리아에는 저항성이 있지만 심한 빈혈 때문에 일찍 죽을 수 있어 상대적 적응도가 낮아요.</li><li>C. 동형접합자 AA인 사람은 빈혈은 없지만 말라리아에 대한 저항성이 없어 말라리아가 흔한 지역에서는 말라리아로 일찍 죽을 수 있어요.</li><li>D. 말라리아가 유행하는 지역에서는 이형접합자 AS가 약한 빈혈만 겪으면서 말라리아 저항성을 가져 생존과 번식에 가장 유리해요.</li><li>E. 빈혈을 일으키는 S 대립유전자가 집단에서 완전히 사라지지 않고 유지되는 것은 가장 유리한 이형접합자 AS 안에 실려 다음 세대로 전해지기 때문이에요.</li></ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 새 예상 문제예요. 다루는 혼동: 말라리아 유행 지역에서의 AS 이점이 말라리아 없는 환경에서도 무조건 유지된다는 착각. 근거 토픽: 1029 정리노트 "불리한 대립유전자가 남는 이유: 이형접합자 이점".</details>
+  <details class="hint"><summary>힌트 보기</summary>이형접합자 AS가 정상 동형접합자 AA보다 유리해지는 이유가 무엇인지 떠올리고, 모기가 옮기는 말라리아가 없는 지역에서도 그 이유가 성립하는지 생각해 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. AS가 AA보다 유리한 이유는 말라리아 저항성 때문이므로, 말라리아가 없는 지역에서는 그 이점이 사라져 S 대립유전자 빈도가 낮아져요.</li>
+      <li>B. 맞아요. SS 유전자형은 말라리아 저항성이 있더라도 심한 낫모양 적혈구 빈혈증 때문에 일찍 사망할 수 있어요.</li>
+      <li>C. 맞아요. AA 유전자형은 정상 적혈구를 가져 빈혈이 없지만, 말라리아 열원충에 대한 저항성이 없어 유행 지역에서는 걸릴 위험이 높아요.</li>
+      <li>D. 맞아요. AS는 빈혈 증상이 약하면서 S 대립유전자 하나로도 말라리아 저항성이 나타나므로 말라리아 유행 지역에서 상대적 적응도가 가장 높아요.</li>
+      <li>E. 맞아요. 이형접합자 AS의 상대적 적응도가 두 동형접합자보다 높은 이형접합자 이점 덕분에 S 대립유전자가 집단 내에 평형 다형성으로 남아요.</li>
+      <li>수업과의 연결: AS의 이형접합자 이점은 말라리아가 유행하는 환경에서만 성립하기 때문에 같은 인종이라도 아프리카와 미국의 S 빈도가 달라져요(<a href="../../복습노트/1029/정리노트_1029_Microevolution_and_Speciation.html#s1-balanced">정리노트 "불리한 대립유전자가 남는 이유: 이형접합자 이점"</a>).</li>
+    </ol>
+    <p class="answer">정답: A</p>
+  </details>
+</article>
+<article class="card" id="p13" data-source="예상 7장 13" data-types="표 계산">
+  <h3>P13. [예상] 두 개체군의 유전자형과 다음 세대</h3>
+  <div class="problem"><p>같은 종의 이배체 곤충으로 이루어진 두 개체군 (가)와 (나)(각각 총 100마리)에서 한 유전자좌의 유전자형별 개체 수를 조사한 결과가 아래 표와 같아요. 두 집단 모두 지금부터 하디-바인베르크 원리의 다섯 조건이 모두 적용되어 무작위 교배로 다음 세대를 이어 간다고 할 때, 이에 대한 설명으로 <strong>옳은</strong> 것은 무엇인가요?</p>
+    <div class="table-wrap"><table><thead><tr><th>집단</th><th>AA 개체 수</th><th>Aa 개체 수</th><th>aa 개체 수</th><th>총 개체 수</th></tr></thead><tbody><tr><td>(가)</td><td>36</td><td>48</td><td>16</td><td>100</td></tr><tr><td>(나)</td><td>50</td><td>20</td><td>30</td><td>100</td></tr></tbody></table></div>
+    <ul class="choices"><li>A. 현재 AA 개체 수가 더 많은 집단 (나)의 A 대립유전자 빈도는 0.70으로, 집단 (가)의 0.60보다 높아요.</li><li>B. 한 세대 무작위 교배 뒤에도 집단 (나)의 유전자형 빈도는 현재와 똑같이 AA 0.50, Aa 0.20, aa 0.30으로 유지돼요.</li><li>C. 집단 (가)는 한 세대 무작위 교배 뒤에 A 대립유전자 빈도가 0.36으로 줄어들어요.</li><li>D. 현재 유전자형 빈도는 서로 다르지만 두 집단의 A 대립유전자 빈도는 0.60으로 같고, 한 세대 무작위 교배 뒤에는 두 집단 모두 Aa의 기대 빈도가 0.48이 돼요.</li><li>E. 현재 시점에서 집단 (나)는 하디-바인베르크 평형 상태이지만 집단 (가)는 평형이 깨진 상태예요.</li></ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 새 예상 문제예요. 다루는 혼동: 현재 유전자형 빈도가 다른 두 집단의 대립유전자 빈도 비교와 무작위 교배 후 평형 도달. 근거 토픽: 1029 정리노트 "평형 계산의 함정과 열성 질환 역산".</details>
+  <details class="hint"><summary>힌트 보기</summary>각 집단의 전체 대립유전자 200개 중 A의 개수를 세어 p를 구한 뒤, p²·2pq·q²로 다음 세대 기대 유전자형 빈도를 비교해 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. 집단 (나)의 A 개수는 2×50+20=120개이므로 전체 대립유전자 200개 중 A 빈도는 120/200=0.60이어서 집단 (가)와 같아요.</li>
+      <li>B. 틀려요. 집단 (나)의 현재 유전자형 빈도(0.50, 0.20, 0.30)는 평형 분포가 아니므로, 한 세대 무작위 교배 뒤에는 p=0.60, q=0.40에 따라 0.36, 0.48, 0.16으로 바뀌어요.</li>
+      <li>C. 틀려요. 0.36은 AA 유전자형 빈도(p²)이고, 하디-바인베르크 조건이 적용되면 A 대립유전자 빈도 p는 0.60으로 그대로 유지돼요.</li>
+      <li>D. 맞아요. 집단 (가)는 (2×36+48)/200=0.60, 집단 (나)는 (2×50+20)/200=0.60으로 두 집단 모두 p=0.60, q=0.40이며, 한 세대 무작위 교배 뒤에는 둘 다 2pq=2×0.60×0.40=0.48의 Aa 기대 빈도를 가져요.</li>
+      <li>E. 틀려요. p=0.60, q=0.40일 때 평형 유전자형 빈도는 0.36, 0.48, 0.16이므로 현재 평형 상태인 쪽은 집단 (가)이고 평형이 깨져 있는 쪽은 집단 (나)예요.</li>
+      <li>수업과의 연결: 다음 세대로 전해지는 것은 현재의 유전자형 빈도가 아니라 대립유전자 빈도(p, q)이므로 p와 q가 같으면 무작위 교배 한 세대 뒤 같은 평형 분포에 도달해요(<a href="../../복습노트/1029/정리노트_1029_Microevolution_and_Speciation.html#s0-hw-practice">정리노트 "평형 계산의 함정과 열성 질환 역산"</a>).</li>
+    </ol>
+    <p class="answer">정답: D</p>
+  </details>
+</article>
+<article class="card" id="p14" data-source="예상 7장 14" data-types="부정형">
+  <h3>P14. [예상] 성선택의 두 유형과 선택적 교배</h3>
+  <div class="problem"><p>소진화와 관련된 성선택(이성 사이의 선택과 같은 성 사이의 선택), 성적이형성, 그리고 선택적 교배의 한 형태인 근친교배에 대한 설명으로 <strong>옳지 않은</strong> 것은 무엇인가요?</p>
+    <ul class="choices"><li>A. 공작 수컷의 화려한 꼬리 깃처럼 이성 중 한쪽이 특정 형질을 가진 짝을 선호해 교배하는 것은 암컷과 수컷 사이의 성선택에 해당해요.</li><li>B. 사슴의 뿔처럼 같은 성 개체들 사이에서 일어나는 선택도 성선택의 한 유형으로 분류돼요.</li><li>C. 수컷 공작의 큰 꼬리 깃처럼 포식자 눈에 잘 띄어 생존에 불리한 형질이라도 짝짓기 성공을 높여 자손을 더 많이 남기면 집단에 유지될 수 있어요.</li><li>D. 유전적으로 비슷한 친척끼리 교배하는 근친교배가 일어나면 집단 내 동형접합자의 빈도가 증가하고 이형접합자의 빈도가 감소해 유전자 평형에서 벗어나요.</li><li>E. 성선택으로 한쪽 성의 특정 형질이 세대를 거듭해 선택되면 암수의 외형 차이가 점점 줄어들어 암수 형태가 같아져요.</li></ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 새 예상 문제예요. 다루는 혼동: 이성·동성 성선택의 결과(성적이형성)와 근친교배의 유전자형 빈도 변화(동형접합 증가) 혼동. 근거 토픽: 1029 정리노트 "성선택과 성적이형성", "조건이 깨지면 소진화: 돌연변이와 유전자 확산".</details>
+  <details class="hint"><summary>힌트 보기</summary>암컷이 갈기 있는 수사자나 꼬리 깃이 화려한 수공작만 계속 고를 때 수컷과 암컷의 겉모습 차이가 어떻게 달라지는지 떠올려 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 맞아요. 암컷이 화려한 꼬리 깃을 가진 수컷을 짝으로 고르는 공작의 사례는 수컷과 암컷 사이의 성선택이에요.</li>
+      <li>B. 맞아요. 강의노트는 성선택을 수컷과 암컷 사이의 선택(공작의 꼬리)과 같은 성 사이의 선택(사슴의 뿔) 두 가지로 나눠요.</li>
+      <li>C. 맞아요. 상대적 적응도는 최종 자식 수로 결정되므로 생존에 불리한 형질도 짝짓기 성공으로 자식 수를 늘리면 대립유전자가 퍼져요.</li>
+      <li>D. 맞아요. 친척끼리 교배하는 근친교배는 같은 대립유전자끼리 만날 확률을 높여 동형접합자 빈도를 늘리고 이형접합자 빈도를 줄임으로써 유전자형 빈도를 평형에서 벗어나게 해요.</li>
+      <li>E. 틀려요. 한쪽 성의 특정 형질만 계속 선택되면 그 형질이 한쪽 성에만 쌓여 암수 모양 차이가 점점 커지는 성적이형성이 나타나요.</li>
+      <li>수업과의 연결: 성선택은 암수의 외형 차이가 커지는 성적이형성의 원인이며, 근친교배는 동형접합자 빈도를 높여 유전자 평형을 깨뜨려요(<a href="../../복습노트/1029/정리노트_1029_Microevolution_and_Speciation.html#s1-sexual">정리노트 "성선택과 성적이형성"</a>, <a href="../../복습노트/1029/정리노트_1029_Microevolution_and_Speciation.html#s0-factors">정리노트 "조건이 깨지면 소진화: 돌연변이와 유전자 확산"</a>).</li>
+    </ol>
+    <p class="answer">정답: E</p>
+  </details>
+</article>
+<article class="card" id="p15" data-source="예상 7장 15" data-types="계산">
+  <h3>P15. [예상] 다음 세대의 유전자형 빈도</h3>
+  <div class="problem"><p>어떤 이배체 식물 개체군의 1세대 유전자형 빈도를 조사했더니 AA가 0.70, Aa가 0.20, aa가 0.10이었어요. 이 개체군에 하디-바인베르크 원리의 다섯 조건이 모두 적용되어 한 세대 동안 무작위 교배가 일어났을 때, 2세대에서 기대되는 유전자형 빈도는 어떻게 되나요?</p>
+    <ul class="choices"><li>A. AA 0.70, Aa 0.20, aa 0.10</li><li>B. AA 0.49, Aa 0.42, aa 0.09</li><li>C. AA 0.64, Aa 0.32, aa 0.04</li><li>D. AA 0.64, Aa 0.16, aa 0.04</li><li>E. AA 0.80, Aa 0.00, aa 0.20</li></ul>
+  </div>
+  <details class="original"><summary>원문 정보 보기</summary>원문 기출이 아닌 새 예상 문제예요. 다루는 혼동: 1세대 비평형 유전자형 빈도를 2세대에 그대로 쓰는 함정과 2pq에서 2 누락. 근거 토픽: 1029 정리노트 "평형 계산의 함정과 열성 질환 역산".</details>
+  <details class="hint"><summary>힌트 보기</summary>1세대는 평형이 깨진 상태일 수 있으니 1세대 유전자형 빈도에서 대립유전자 빈도 p와 q를 먼저 구한 뒤, p²·2pq·q²로 2세대를 계산해요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>A. 틀려요. 1세대 유전자형 빈도(0.70, 0.20, 0.10)는 평형 모양이 아니므로 2세대에 그대로 유지되지 않고 무작위 교배를 거쳐 새로 정해져요.</li>
+      <li>B. 틀려요. 1세대 AA 빈도인 0.70을 바로 p로 착각해 제곱한 값이며, 이형접합자 Aa가 가진 A 대립유전자(0.20의 절반)도 더해야 해요.</li>
+      <li>C. 맞아요. 1세대에서 p = 0.70 + 0.20/2 = 0.80, q = 0.10 + 0.20/2 = 0.20이므로 2세대 유전자형 빈도는 AA(p²) = 0.64, Aa(2pq) = 0.32, aa(q²) = 0.04예요.</li>
+      <li>D. 틀려요. 이형접합자 Aa의 기대 빈도는 pq(0.16)가 아니라 두 가지 결합 방향을 합친 2pq(0.32)예요.</li>
+      <li>E. 틀려요. 대립유전자 빈도 p = 0.80과 q = 0.20을 유전자형 AA와 aa의 빈도 자리에 그대로 적은 값이에요.</li>
+      <li>수업과의 연결: 교수님이 강조한 것처럼 1세대는 평형이 깨진 상태로 주어지므로 반드시 p와 q를 먼저 구해 2세대의 p², 2pq, q²를 계산해야 해요(<a href="../../복습노트/1029/정리노트_1029_Microevolution_and_Speciation.html#s0-hw-practice">정리노트 "평형 계산의 함정과 열성 질환 역산"</a>).</li>
+    </ol>
+    <p class="answer">정답: C</p>
+  </details>
+</article>
+    </section>
+  </main>
+  <footer>근거: 1027·1029 정리노트, 7장 강의노트·교과서, 7강 기출 합본. 예상 적중률을 뜻하지 않아요.</footer>
+    </div>
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="panel-right-title">
+      <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-right-title">풀이 도움</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-empty">문제로 넘어가면 그 문제의 교과서 원문, 힌트, 풀이가 여기에 나옵니다. 먼저 스스로 풀어 본 뒤 여세요.</p>
+        <div class="aids"></div>
+        <button class="solved-btn" id="solved-btn" type="button" aria-pressed="false" hidden><span>푼 문제로 표시</span></button>
+      </div>
+    </aside>
+  </div>
+  <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
+  <nav class="pager" aria-label="화면 이동">
+    <div class="pager-inner">
+      <button class="btn btn-ghost" id="pager-prev" type="button">이전</button>
+      <span class="pager-count" id="pager-count"></span>
+      <button class="btn btn-primary" id="pager-next" type="button">시작하기</button>
+    </div>
+  </nav>
+  <p class="sr-only" id="pager-status" aria-live="polite"></p>
+
+  <script id="theme-ui">
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const sysDark = matchMedia('(prefers-color-scheme: dark)');
+      const KEY = 'od-theme';
+      const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+      function label() {
+        const next = isDark() ? '라이트 모드로 전환' : '다크 모드로 전환';
+        btn.setAttribute('aria-label', next);
+        btn.title = next;
+      }
+      btn.addEventListener('click', () => {
+        const t = isDark() ? 'light' : 'dark';
+        // 시스템 설정과 같아지면 저장을 지워 다시 시스템을 따른다
+        if ((t === 'dark') === sysDark.matches) { delete root.dataset.theme; try { localStorage.removeItem(KEY); } catch (e) {} }
+        else { root.dataset.theme = t; try { localStorage.setItem(KEY, t); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+        label();
+      });
+      sysDark.addEventListener('change', label);
+      window.addEventListener('storage', (e) => {
+        if (e.key !== KEY) return;
+        if (e.newValue === 'light' || e.newValue === 'dark') root.dataset.theme = e.newValue; else delete root.dataset.theme;
+        label();
+      });
+      label();
+    })();
+  </script>
+  <script id="panels-ui">
+    (function () {
+      const body = document.body;
+      const layout = document.querySelector('.layout');
+      const kind = body.dataset.panels;
+      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const scrim = document.getElementById('panel-scrim');
+      const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
+      const wideMq = matchMedia('(min-width: 1024px)');
+      const roomyMq = matchMedia('(min-width: 1280px)');
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      // 푼 기록은 탭(세션) 단위로만 유지: 뒤로가기·새로고침엔 남고, 창을 닫고 다시 열면 초기화
+      const tabStore = {
+        get(k, d) { try { const v = sessionStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      const PREF = 'od-panels:' + kind;
+      // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
+      const RANGE = body.dataset.range || '';
+      const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+      const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+      let overlay = null;
+
+      // ---------- 열고 닫기 ----------
+      function docked() {
+        const pref = store.get(PREF, {});
+        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+      }
+      function sync() {
+        const wide = wideMq.matches;
+        const d = docked();
+        ['left', 'right'].forEach((side) => {
+          const open = wide ? d[side] : overlay === side;
+          const p = panels[side];
+          layout.dataset[side] = open ? 'open' : 'closed';
+          p.classList.toggle('is-open', !wide && open);
+          p.inert = !open;
+          if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
+          toggles[side].setAttribute('aria-expanded', String(open));
+        });
+        const drawer = !wide && overlay !== null;
+        scrim.classList.toggle('is-on', drawer);
+        body.classList.toggle('drawer-open', drawer);
+        blockers.forEach((el) => { el.inert = drawer; });
+      }
+      function openDrawer(side) {
+        overlay = side;
+        sync();
+        requestAnimationFrame(() => panels[side].querySelector('[data-panel-close]').focus());
+      }
+      function closeDrawer(refocus) {
+        if (overlay === null) return;
+        const side = overlay;
+        overlay = null;
+        sync();
+        if (refocus) toggles[side].focus();
+      }
+      function toggle(side) {
+        if (wideMq.matches) {
+          const d = docked();
+          d[side] = !d[side];
+          store.set(PREF, d);
+          sync();
+          if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+        } else if (overlay === side) closeDrawer(true);
+        else openDrawer(side);
+      }
+
+      toggles.left.addEventListener('click', () => toggle('left'));
+      toggles.right.addEventListener('click', () => toggle('right'));
+      scrim.addEventListener('click', () => closeDrawer(true));
+      document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
+      panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
+
+      // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      function applyWidths() {
+        const w = store.get(PREF + ':w', {});
+        ['left', 'right'].forEach((side) => {
+          if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
+          else layout.style.removeProperty(WIDTH[side].prop);
+        });
+      }
+      function maxFor(side) {
+        const other = side === 'left' ? panels.right : panels.left;
+        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
+      }
+      function setWidth(side, px, save) {
+        const v = Math.round(Math.min(Math.max(px, WIDTH[side].min), maxFor(side)));
+        layout.style.setProperty(WIDTH[side].prop, v + 'px');
+        panels[side].querySelector('.panel-resize').setAttribute('aria-valuenow', String(v));
+        if (save) { const w = store.get(PREF + ':w', {}); w[side] = v; store.set(PREF + ':w', w); }
+      }
+      function resetWidth(side) {
+        const w = store.get(PREF + ':w', {});
+        delete w[side];
+        store.set(PREF + ':w', w);
+        layout.style.removeProperty(WIDTH[side].prop);
+      }
+      document.querySelectorAll('.panel-resize').forEach((handle) => {
+        const side = handle.dataset.side;
+        const dir = side === 'left' ? 1 : -1;
+        handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
+        handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
+        handle.addEventListener('pointerdown', (e) => {
+          if (!wideMq.matches || e.button !== 0) return;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startW = panels[side].getBoundingClientRect().width;
+          handle.setPointerCapture(e.pointerId);
+          body.classList.add('is-resizing');
+          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const up = () => {
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', up);
+            handle.removeEventListener('pointercancel', up);
+            body.classList.remove('is-resizing');
+            setWidth(side, panels[side].getBoundingClientRect().width, true);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', up);
+          handle.addEventListener('pointercancel', up);
+        });
+        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('keydown', (e) => {
+          const step = e.shiftKey ? 64 : 16;
+          const cur = panels[side].getBoundingClientRect().width;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+        });
+      });
+      applyWidths();
+      const onMq = () => { overlay = null; sync(); };
+      wideMq.addEventListener('change', onMq);
+      roomyMq.addEventListener('change', onMq);
+
+      // ---------- 목차의 진행 표시 ----------
+      const progressN = document.getElementById('progress-n');
+      const progressBar = document.getElementById('progress-bar');
+      const progressTotal = document.getElementById('progress-total');
+      function markToc(done, total, doneLabel) {
+        panels.left.querySelectorAll('.toc-list a').forEach((a) => {
+          const id = decodeURIComponent(a.getAttribute('href').slice(1));
+          let mark = a.querySelector('.toc-mark');
+          if (!mark) {
+            mark = document.createElement('span');
+            mark.className = 'toc-mark';
+            mark.setAttribute('aria-hidden', 'true');
+            const state = document.createElement('span');
+            state.className = 'sr-only toc-state';
+            a.append(mark, state);
+          }
+          const isDone = done.has(id);
+          mark.classList.toggle('is-done', isDone);
+          mark.innerHTML = isDone ? ICON_DONE : ICON_TODO;
+          a.querySelector('.toc-state').textContent = isDone ? ' (' + doneLabel + ')' : '';
+        });
+        progressN.textContent = String(done.size);
+        progressTotal.textContent = String(total);
+        progressBar.style.transform = 'scaleX(' + (total ? done.size / total : 0) + ')';
+      }
+      function revealCurrent() {
+        const link = panels.left.querySelector('.toc-list a[aria-current="true"]');
+        if (link && layout.dataset.left === 'open') link.scrollIntoView({ block: 'nearest' });
+      }
+
+      // ---------- 복습문제: 오른쪽 = 원문 · 힌트 · 풀이 ----------
+      function setupReview() {
+        const KEY = 'od-review-solved:' + RANGE;
+        const cards = Array.from(document.querySelectorAll('main article.card'));
+        const aids = panels.right.querySelector('.aids');
+        const empty = panels.right.querySelector('.panel-empty');
+        const btn = document.getElementById('solved-btn');
+        const groups = {};
+        const solved = new Set(tabStore.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        cards.forEach((card) => {
+          const g = document.createElement('div');
+          g.className = 'aid';
+          g.dataset.cardId = card.id;
+          g.hidden = true;
+          card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
+          aids.appendChild(g);
+          groups[card.id] = g;
+        });
+        let curId = null;
+        function paintBtn() {
+          const on = solved.has(curId);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.innerHTML = (on ? ICON_DONE : ICON_TODO) + '<span>' + (on ? '푼 문제 · 표시 해제' : '푼 문제로 표시') + '</span>';
+        }
+        btn.addEventListener('click', () => {
+          if (!curId) return;
+          if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
+          tabStore.set(KEY, Array.from(solved));
+          paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:answer', ({detail}) => {
+          if (!cards.some(c => c.id === detail.id)) return;
+          if (detail.restored && detail.selected !== null) return;
+          if (detail.selected === null) solved.delete(detail.id);
+          else solved.add(detail.id);
+          tabStore.set(KEY, Array.from(solved));
+          if (curId) paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          curId = s.matches('article.card') ? s.id : null;
+          Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
+          empty.hidden = Boolean(curId);
+          btn.hidden = !curId;
+          if (curId) paintBtn();
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(solved, cards.length, '푼 문제');
+          revealCurrent();
+        });
+      }
+
+      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
+      function setupNote() {
+        const KEY = 'od-note-read:' + RANGE;
+        const topics = Array.from(document.querySelectorAll('main article.topic'));
+        const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
+        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
+        const box = panels.right.querySelector('.sums');
+        const sums = {};
+        topics.forEach((t) => {
+          const el = t.querySelector(':scope > .sum');
+          if (!el) return;
+          el.hidden = true;
+          box.appendChild(el);
+          sums[t.id] = el;
+        });
+        const empty = document.getElementById('sum-empty');
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          const key = s.matches('article.topic') ? s.id : 'intro';
+          Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
+          empty.hidden = Boolean(sums[key]);
+          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(read, topics.length, '읽음');
+          revealCurrent();
+        });
+      }
+
+      if (kind === 'review') setupReview();
+      if (kind === 'note') setupNote();
+      sync();
+    })();
+  </script>
+  <script id="pager-ui">
+    (function () {
+      const root = document.documentElement;
+      const main = document.querySelector('main');
+      const hero = main.querySelector('.hero');
+      const screens = [hero].concat(Array.from(main.querySelectorAll(document.body.dataset.screens)));
+      if (screens.length < 2) { root.classList.remove('js'); return; }
+      screens.forEach((s) => s.classList.add('screen'));
+
+      const last = screens.length - 1;
+      const prevBtn = document.getElementById('pager-prev');
+      const nextBtn = document.getElementById('pager-next');
+      const count = document.getElementById('pager-count');
+      const bar = document.getElementById('pager-bar');
+      const status = document.getElementById('pager-status');
+      const toc = document.querySelector('#panel-left .toc');
+      const scroller = document.querySelector('.content');
+      const titleOf = (s) => ((s.querySelector('h3') || s.querySelector('h1') || {}).textContent || '').trim();
+      let cur = -1;
+
+      // 목차: 섹션 링크 아래에 화면(토픽·카드) 목록을 붙인다
+      const tocLinks = [];
+      Array.from(toc.querySelectorAll(':scope > a')).forEach((a) => {
+        const sec = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+        const group = document.createElement('div');
+        group.className = 'toc-group';
+        a.replaceWith(group);
+        group.appendChild(a);
+        if (!sec) return;
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        screens.forEach((s, i) => {
+          if (!sec.contains(s)) return;
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#' + s.id;
+          link.innerHTML = '<span class="toc-title"></span>';
+          link.firstChild.textContent = titleOf(s);
+          li.appendChild(link);
+          list.appendChild(li);
+          tocLinks[i] = link;
+        });
+        group.appendChild(list);
+      });
+
+      function indexFor(hash) {
+        const id = decodeURIComponent((hash || '').replace(/^#/, ''));
+        const el = id && document.getElementById(id);
+        if (!el || !main.contains(el)) return { i: 0 };
+        const i = screens.findIndex((s) => s.contains(el) || el.contains(s));
+        return { i: Math.max(i, 0), target: i >= 0 && screens[i].contains(el) && screens[i] !== el ? el : null };
+      }
+
+      function render(i, target) {
+        const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
+        if (i !== cur) {
+          if (cur >= 0) document.dispatchEvent(new CustomEvent('od:leave', { detail: { index: cur, screen: screens[cur] } }));
+          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
+          main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
+          const s = screens[i];
+          const sec = s.closest('section');
+          if (sec) sec.classList.add('is-on');
+          s.classList.add('is-current');
+          if (dir) { s.classList.remove('enter-next', 'enter-prev'); void s.offsetWidth; s.classList.add(dir); }
+          cur = i;
+          document.body.classList.toggle('at-end', i === last);
+          prevBtn.disabled = i === 0;
+          nextBtn.textContent = i === 0 ? '시작하기' : i === last ? '처음으로' : '다음';
+          count.textContent = i === 0 ? '' : i + ' / ' + last;
+          bar.style.transform = 'scaleX(' + (i / last) + ')';
+          status.textContent = i === 0 ? titleOf(s) : i + ' / ' + last + ', ' + titleOf(s);
+          tocLinks.forEach((link, k) => link && link.setAttribute('aria-current', String(k === i)));
+          document.dispatchEvent(new CustomEvent('od:screen', { detail: { index: i, screen: s } }));
+        }
+        if (target) target.scrollIntoView({ block: 'start' });
+        else scroller.scrollTo(0, 0);
+      }
+
+      function go(i) {
+        i = Math.min(Math.max(i, 0), last);
+        if (i === cur) return;
+        const url = i === 0 ? location.pathname + location.search : '#' + screens[i].id;
+        history.pushState(null, '', url);
+        render(i);
+      }
+
+      prevBtn.addEventListener('click', () => go(cur - 1));
+      nextBtn.addEventListener('click', () => go(cur === last ? 0 : cur + 1));
+      const fromUrl = () => { const r = indexFor(location.hash); render(r.i, r.target); };
+      window.addEventListener('hashchange', fromUrl);
+      window.addEventListener('popstate', fromUrl);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+
+      // 좌우로 밀어서 넘기기 (가로로 스크롤되는 영역은 제외)
+      let sx = 0, sy = 0, skip = true;
+      main.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (skip) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 64 && Math.abs(dx) > 2 * Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      fromUrl();
+    })();
+  </script>
+<!-- review-interaction:start -->
+<style>
+/* Progressive enhancement: original source remains readable without scripts. */
+.review-ready .choices { list-style:none; padding:0; }
+.review-ready .choices > li { margin:0 0 var(--s3); }
+.review-choice {
+  display:block; width:100%; min-height:44px; text-align:left; font:inherit;
+  color:var(--ink); background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:12px 16px; cursor:pointer; overflow-wrap:anywhere;
+}
+.review-choice:hover { border-color:var(--accent); }
+.review-choice:focus-visible, .review-reset:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+.review-choice[aria-expanded] { position:relative; padding-right:44px; }
+.review-choice[aria-expanded]::after { content:""; position:absolute; right:18px; top:20px; width:8px; height:8px; border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor; transform:rotate(45deg); }
+.review-choice[aria-expanded="true"]::after { transform:rotate(225deg); top:24px; }
+.review-choice[data-result="correct"], .review-choice[data-result="intended"] { border:3px solid var(--accent); }
+.review-choice[data-result="selected"] { border:3px solid var(--danger); }
+.review-choice[data-result="uncertain"] { border:3px solid var(--ink-2); }
+.review-choice-label { display:block; margin-top:6px; font-size:var(--fs-small); font-weight:700; color:var(--ink); }
+.review-choice-label[hidden], .review-diagnostic[hidden], .review-extra[hidden],
+.review-reset[hidden], .review-diagnostics[hidden] { display:none; }
+.review-diagnostics { list-style:none; padding:0; margin:0; }
+.review-diagnostic { padding:12px 16px 8px; color:var(--ink-2); overflow-wrap:anywhere; }
+.review-status { margin:var(--s3) 0; font-weight:650; }
+.review-status:empty { display:none; }
+.review-reset { min-height:44px; margin:var(--s2) 0 var(--s4); }
+.review-choice-content { padding:var(--s2) 0; }
+/* Look comes from the template's .solved-btn; only visibility and focus live here. */
+.review-unsure[hidden] { display:none; }
+.review-unsure.solved-btn[aria-pressed="true"] { border-color:#ffa030; color:#ffa030; }
+.review-unsure:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+.review-feedback {
+  position:fixed; top:calc(env(safe-area-inset-top) + 72px); left:50%; z-index:100;
+  transform:translateX(-50%); width:max-content; max-width:calc(100vw - 32px);
+  display:flex; align-items:center; gap:12px; padding:10px 16px;
+  border:2px solid var(--line); border-radius:12px; background:var(--bg);
+  color:var(--ink); font-weight:700; pointer-events:none;
+  animation:review-feedback-in 180ms ease-out both;
+}
+.review-feedback[data-result="correct"] { border-color:var(--accent); }
+.review-feedback[data-result="incorrect"] { border-color:var(--danger); }
+.review-feedback[data-result="copied"], .review-feedback[data-result="manual"] { border-color:var(--accent); }
+.review-feedback[data-result="copied"] .review-feedback-icon { border-radius:50%; background:var(--accent); }
+.review-feedback[data-result="copied"] .review-feedback-icon::after {
+  content:""; position:absolute; left:7px; top:3px; width:5px; height:10px;
+  border:solid var(--on-btn); border-width:0 2px 2px 0; rotate:45deg;
+}
+.review-feedback[data-result="unsure"] .review-feedback-icon { display:none; }
+.review-feedback[data-result="manual"] .review-feedback-icon { display:none; }
+.review-feedback-icon { position:relative; flex:none; width:20px; height:20px; }
+.review-feedback[data-result="correct"] .review-feedback-icon {
+  border-radius:50%; background:var(--accent); transform:scale(.45);
+  animation:review-pop 350ms ease-out both;
+}
+.review-feedback[data-result="correct"] .review-feedback-icon::before,
+.review-feedback[data-result="correct"] .review-feedback-icon::after {
+  content:""; position:absolute; left:8px; top:8px; width:4px; height:4px;
+  border-radius:50%; background:var(--accent);
+  box-shadow:0 -16px var(--accent), 16px 0 var(--accent), 0 16px var(--accent), -16px 0 var(--accent);
+  animation:review-burst 650ms ease-out both;
+}
+.review-feedback[data-result="correct"] .review-feedback-icon::after {
+  rotate:45deg; animation-delay:80ms;
+}
+.review-feedback[data-result="incorrect"] .review-feedback-icon {
+  animation:review-shake 320ms ease-in-out;
+}
+.review-feedback[data-result="incorrect"] .review-feedback-icon::before,
+.review-feedback[data-result="incorrect"] .review-feedback-icon::after {
+  content:""; position:absolute; left:9px; top:0; width:3px; height:20px;
+  border-radius:2px; background:var(--danger); rotate:45deg;
+}
+.review-feedback[data-result="incorrect"] .review-feedback-icon::after { rotate:-45deg; }
+@keyframes review-feedback-in {
+  from { opacity:0; translate:0 -8px; } to { opacity:1; translate:0 0; }
+}
+@keyframes review-pop {
+  from { transform:scale(.35); opacity:.5; } to { transform:scale(.65); opacity:1; }
+}
+@keyframes review-shake {
+  0%,100% { translate:0; } 25%,75% { translate:-5px; } 50% { translate:5px; }
+}
+@keyframes review-burst {
+  from { opacity:1; scale:.45; } to { opacity:0; scale:1.5; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .review-feedback, .review-feedback-icon, .review-feedback-icon::before,
+  .review-feedback-icon::after { animation:none !important; }
+  .review-feedback[data-result="correct"] .review-feedback-icon::before,
+  .review-feedback[data-result="correct"] .review-feedback-icon::after { display:none; }
+}
+.review-export-bar {
+  display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:12px;
+  max-width:var(--measure); margin:0 auto; padding:12px 16px 0;
+}
+body:not(.at-end) .review-export-bar { display:none; }
+.review-export-note { margin:0; font-size:var(--fs-small); color:var(--ink-2); }
+.review-export-note:empty { display:none; }
+@media print {
+  .review-export-bar { display:none !important; }
+  .review-feedback { display:none !important; }
+  .review-reset, .review-status, .review-choice-label, .review-unsure { display:none !important; }
+  .review-diagnostic[hidden] { display:list-item !important; }
+  .review-diagnostics[hidden] { display:block !important; }
+  .review-choice::after { display:none; }
+  .review-extra[hidden] { display:block !important; }
+  .review-choice { border:0 !important; box-shadow:none !important; padding:0; }
+}
+
+</style>
+<script id="review-interaction-model" type="application/json">{"cards": {"p1": {"answer": "A", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "1feaac870b9d3f76ccf1f3409ff365715c9cd2a56a487cc84f824f29031939cf"}, "p10": {"answer": "D", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "79fa60615e7e4f4560850994d917c50b12f2d3b8605b0047d9f03c3d965daf80"}, "p11": {"answer": "B", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "91bc8b34e0ad072005dab737f1af041b9746e8349250cdd9f5e9e8186a3028e3"}, "p12": {"answer": "A", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "0b5306f3596924129ddd54742c8d8b9459684ae45e4d9f4eb044f082ad7106a2"}, "p13": {"answer": "D", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "760ab223ea74ba06e4e630f9296b9e9132c50a0cfbb626c68f242bae1f8cd3fc"}, "p14": {"answer": "E", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "bef220626a2592ac9f08cc141914a5730412110278bc4f245b363a031cd4b1b6"}, "p15": {"answer": "C", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "ec2ac80684776721f141b652e40827c3c3bfe216b0cb22764d0cfc948dde763c"}, "p2": {"answer": "D", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "692df06c1af24aba24f8c7037a7d47e9f047a7f2a4b8407567f3168c507218e1"}, "p3": {"answer": "B", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "aa3f5ff190dd297b46a9889bf6b6060b97a8908685b77e42c314105db4d66638"}, "p4": {"answer": "E", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "49db49f290a4d4e2ecf84bc485e830def2f8166170efe385395ee2d4516ee62d"}, "p5": {"answer": "C", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "9653bb504edf7610329739f29d950cb9e53e5544c9e6be11226a32c6fb848232"}, "p6": {"answer": "A", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "da1e383c8c10399a68c5a1a9e3e0e57b149530bbfef751386eb5c6a886521372"}, "p7": {"answer": "B", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "fce67d7622c04e86c3fb37a9ccdab56b6eb2b295480ec6b718cf6034ae4ed350"}, "p8": {"answer": "E", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "e8e4ce06ebf8ba0412f890f0c5dd2dccc97c4d5fab01c19378e19d84fc01f99e"}, "p9": {"answer": "C", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "A", "index": 0}, {"diagnostic": 1, "id": "B", "index": 1}, {"diagnostic": 2, "id": "C", "index": 2}, {"diagnostic": 3, "id": "D", "index": 3}, {"diagnostic": 4, "id": "E", "index": 4}], "version": "f309679b7a542995aabd9600c62a94b1f8bbcdee268a1b0f17979a6e607e423e"}}, "documentId": "복습문제_7장_웹과제예상_v3.html", "errors": [], "schema": 1, "skipped": ["o1", "o2"]}</script>
+<script>
+(function (scope) {
+  'use strict';
+  const GROUPS = [
+    ['incorrect', '오답'],
+    ['unsure', '애매함 표시(맞혔지만 확신 없음)'],
+    ['pending', '자기채점 대기'],
+    ['unanswered', '미응답'],
+    ['ambiguous', '출제 모호'],
+  ];
+  const KIND = {review:'복습문제', exam:'시험 예상문제'};
+  const GROUP_RULE = '2. 다시 볼 문항을 개념별로 묶고, 반복되거나 선행 개념인 묶음부터 다뤄.';
+  const DEEP_RULE = '2. 오답·애매함·미응답 문항이 없어. 아래 맞힌 문항이 다룬 개념을 조건을 바꾼 변형 질문으로 하나씩 확인해서, 실제로 이해했는지 찍었는지 가려 줘.';
+
+  function countBy(items) {
+    const counts = {correct:0, unsure:0, incorrect:0, unanswered:0, ambiguous:0, pending:0};
+    items.forEach(item => {counts[item.status] = (counts[item.status] || 0) + 1;});
+    return counts;
+  }
+  function summaryLine(items) {
+    const c = countBy(items);
+    let line = `- 문항 ${items.length}개 · 응답 ${items.length - c.unanswered} · 정답 ${c.correct + c.unsure}(그중 애매함 ${c.unsure})` +
+      ` · 오답 ${c.incorrect} · 미응답 ${c.unanswered}`;
+    if (c.pending) line += ` · 자기채점 대기 ${c.pending}`;
+    if (c.ambiguous) line += ` · 출제 모호 ${c.ambiguous}`;
+    return line;
+  }
+  function answerLine(item) {
+    if (item.format === 'short') {
+      const mine = item.selected == null ? '없음' : `"${item.selected}"`;
+      const accepted = item.accepted && item.accepted.length ? ` (허용: ${item.accepted.join(', ')})` : '';
+      return `내 답: ${mine} / 정답: ${item.answer}${accepted}`;
+    }
+    const mine = item.selected == null ? '없음' : `[${item.selected}]`;
+    return `내 답: ${mine} / 정답: [${item.answer}]`;
+  }
+  function itemBlock(item) {
+    const lines = [`#### ${item.id}. ${item.title}`, `문제: ${item.stem}`];
+    if (item.format !== 'short' && item.options && item.options.length) {
+      lines.push('보기:');
+      item.options.forEach(opt => lines.push(`- [${opt.id}] ${opt.text}`));
+    }
+    lines.push(answerLine(item));
+    if (item.explanations && item.explanations.length) {
+      lines.push('해설:');
+      item.explanations.forEach(e => lines.push(e.label ? `- ${e.label}: ${e.text}` : `- ${e.text}`));
+    }
+    return lines.join('\n');
+  }
+  function buildReviewPrompt(record) {
+    const items = record.items || [];
+    const range = record.range;
+    const review = items.filter(item => item.status !== 'correct');
+    const correct = items.filter(item => item.status === 'correct');
+    const out = [
+      '# 생명과학 복기 요청',
+      '',
+      `너는 내 생명과학 튜터야. 아래는 내가 방금 푼 ${KIND[record.kind] || KIND.review}(${range})의 풀이 기록이야. 이 기록을 출발점으로 내 약한 개념을 찾아 대화로 보완 학습을 진행해 줘.`,
+      '',
+      '## 진행 규칙',
+      '1. 먼저 기록에서 보이는 핵심 진단을 짧게 공유해. 확인된 사실(내 선택, 정답)과 네 가설을 구분하고, 정답률만으로 이해도를 단정하지 마.',
+      review.length ? GROUP_RULE : DEEP_RULE,
+      '3. 한 번에 한 개념만 겨냥한 질문을 하나씩 내. 보기는 숫자로 달고, "모르겠다"와 "답은 골랐지만 찍었거나 확신이 없다"를 별도 숫자 보기로 넣어. 나는 숫자만 답해도 돼.',
+      '4. 원래 문항을 그대로 다시 묻지 말고, 조건이나 비교 대상을 한 가지만 바꾼 새 질문으로 확인해.',
+      '5. 내가 틀리거나 확신이 없으면 맞는 부분과 잘못 연결한 부분을 짚고, 표현을 바꾼 재확인 질문을 한 번 더 내. 설명을 본 뒤 맞힌 것은 "코칭 후 이해"로 기록하고 원래 알던 것으로 치지 마.',
+      `6. "출제 모호" 문항은 내 오개념의 증거로 쓰지 마. 해설은 진단 근거로만 쓰고, 이 범위(${range}) 수업 밖 내용으로 넓히지 마.`,
+      '7. "자기채점 대기" 단답형은 먼저 내 답이 정답·허용답과 같은 뜻인지 판정해 줘.',
+      '8. 모든 묶음을 다루거나 내가 그만하자고 하면 다음 다섯 항목으로 정리해 줘: 내가 어려웠던 부분 / 코칭한 부분 / 학습한 부분 / 아직 어려운 부분 / 복습해야 할 부분.',
+      '',
+      '## 기록 요약',
+      `- 자료: ${record.documentId}`,
+      summaryLine(items),
+      '',
+    ];
+    if (review.length) {
+      out.push('## 다시 볼 문항', '');
+      GROUPS.forEach(([status, title]) => {
+        const group = review.filter(item => item.status === status);
+        if (!group.length) return;
+        out.push(`### ${title}`, '');
+        group.forEach(item => out.push(itemBlock(item), ''));
+      });
+    }
+    if (correct.length) {
+      out.push('## 확신 있게 맞힌 문항');
+      correct.forEach(item => out.push(`- ${item.id}. ${item.title}`));
+      out.push('');
+    }
+    out.push('준비됐으면 핵심 진단부터 공유하고 첫 질문을 내 줘.');
+    return out.join('\n') + '\n';
+  }
+
+  function problemText(problemEl) {
+    const clone = problemEl.cloneNode(true);
+    clone.querySelectorAll('.choices').forEach(node => node.remove());
+    // KaTeX may already have rendered; restore its TeX source instead of MathML + glyph text.
+    clone.querySelectorAll('.katex').forEach(node => {
+      const tex = node.querySelector('annotation[encoding="application/x-tex"]');
+      if (!tex) return;
+      const fence = node.closest('.katex-display') ? '$$' : '$';
+      node.replaceWith(clone.ownerDocument.createTextNode(fence + tex.textContent.trim() + fence));
+    });
+    clone.querySelectorAll('img').forEach(img => {
+      img.replaceWith(clone.ownerDocument.createTextNode(` [그림: ${img.getAttribute('alt') || ''}] `));
+    });
+    return clone.textContent.replace(/\s+/g, ' ').trim();
+  }
+
+  function execCopy(win, text) {
+    const doc = win.document;
+    const area = doc.createElement('textarea');
+    area.value = text;
+    area.setAttribute('readonly', '');
+    area.style.position = 'fixed';
+    area.style.top = '0';
+    area.style.left = '-9999px';
+    area.style.opacity = '0';
+    doc.body.append(area);
+    try {
+      area.select();
+      return doc.execCommand('copy') === true;
+    } catch (_) {
+      return false;
+    } finally {
+      area.remove();
+    }
+  }
+  async function copyText(win, text) {
+    const clipboard = win.navigator && win.navigator.clipboard;
+    if (clipboard && typeof clipboard.writeText === 'function') {
+      try {
+        await clipboard.writeText(text);
+        return true;
+      } catch (_) {}
+    }
+    return execCopy(win, text);
+  }
+
+  const DIALOG_CSS = `
+.review-prompt-dialog{width:min(44rem,calc(100vw - 2rem));max-height:calc(100vh - 2rem);padding:1rem 1.1rem;border:1px solid #c9ccd3;border-radius:10px;background:#fff;color:#1d2330;box-shadow:0 12px 36px rgba(0,0,0,.18)}
+.review-prompt-dialog::backdrop{background:rgba(15,20,30,.45)}
+.review-prompt-dialog h2{margin:0 0 .35rem;font-size:1.05rem}
+.review-prompt-dialog p{margin:0 0 .6rem;font-size:.9rem;color:#4a5263}
+.review-prompt-dialog textarea{display:block;box-sizing:border-box;width:100%;height:min(55vh,28rem);padding:.6rem;border:1px solid #c9ccd3;border-radius:6px;font:13px/1.5 ui-monospace,Consolas,monospace;resize:vertical}
+.review-prompt-dialog .review-prompt-actions{display:flex;justify-content:flex-end;margin-top:.7rem}
+.review-prompt-dialog button{padding:.4rem 1rem;border:1px solid #c9ccd3;border-radius:6px;background:#f4f5f7;color:inherit;font:inherit;cursor:pointer}
+@media (prefers-color-scheme:dark){.review-prompt-dialog{background:#1e222b;color:#e6e8ee;border-color:#3a404d}.review-prompt-dialog p{color:#aab1c0}.review-prompt-dialog textarea{background:#14171d;color:#e6e8ee;border-color:#3a404d}.review-prompt-dialog button{background:#2a2f3a;border-color:#3a404d}}
+`;
+  function openPromptDialog(doc, text) {
+    if (!doc.getElementById('review-prompt-style')) {
+      const style = doc.createElement('style');
+      style.id = 'review-prompt-style';
+      style.textContent = DIALOG_CSS;
+      doc.head.append(style);
+    }
+    let dialog = doc.querySelector('dialog.review-prompt-dialog');
+    if (!dialog) {
+      dialog = doc.createElement('dialog');
+      dialog.className = 'review-prompt-dialog';
+      dialog.setAttribute('aria-labelledby', 'review-prompt-title');
+      const title = doc.createElement('h2');
+      title.id = 'review-prompt-title';
+      title.textContent = '복기 프롬프트';
+      const note = doc.createElement('p');
+      note.textContent = 'Ctrl+C(⌘C)로 복사해 AI 채팅에 붙여 넣으세요.';
+      const area = doc.createElement('textarea');
+      area.readOnly = true;
+      area.setAttribute('aria-label', '복기 프롬프트');
+      const actions = doc.createElement('div');
+      actions.className = 'review-prompt-actions';
+      const close = doc.createElement('button');
+      close.type = 'button';
+      close.textContent = '닫기';
+      close.addEventListener('click', () => dialog.close());
+      actions.append(close);
+      dialog.append(title, note, area, actions);
+      doc.body.append(dialog);
+    }
+    const area = dialog.querySelector('textarea');
+    area.value = text;
+    if (!dialog.open) dialog.showModal();
+    area.focus();
+    area.select();
+    return dialog;
+  }
+
+  const api = {buildReviewPrompt, problemText, copyText, openPromptDialog};
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else scope.ReviewPrompt = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
+(function (scope) {
+  'use strict';
+  function stripDiagnosticPrefix(text, id) {
+    const match = text.match(/^\s*(?:\((\d+)\)|([A-Z])[.)])\s*/);
+    return match && (match[1] || match[2]) === id ? text.slice(match[0].length) : text;
+  }
+  function scrollAnswerIntoView(scroller, selectedLi, answerLi, selectedButton, answerButton) {
+    if (!scroller || !selectedLi.getClientRects().length) return;
+    const viewport = scroller.getBoundingClientRect();
+    const height = scroller.clientHeight;
+    const margin = 16;
+    const span = (a, b) => {
+      const x = a.getBoundingClientRect(), y = b.getBoundingClientRect();
+      return {top:Math.min(x.top, y.top), bottom:Math.max(x.bottom, y.bottom)};
+    };
+    let target = span(selectedLi, answerLi);
+    if (target.bottom - target.top > height - 2 * margin)
+      target = span(selectedButton, answerButton);
+    if (target.bottom - target.top > height - 2 * margin)
+      target = span(selectedButton, selectedButton);
+    scroller.scrollTop += (target.top + target.bottom - viewport.top - viewport.bottom) / 2;
+  }
+  function grade(card, selected) {
+    if (!card.options.some(o => o.id === selected)) return null;
+    if (card.mode === 'ambiguous') return 'ambiguous';
+    return selected === card.answer ? 'correct' : 'incorrect';
+  }
+  function storageKey(documentId, cardId) {
+    return 'od-review-attempt:v1:' + encodeURIComponent(documentId) + ':' + encodeURIComponent(cardId);
+  }
+  function readAttempt(storage, key, card) {
+    try {
+      const value = JSON.parse(storage.getItem(key));
+      return value && value.version === card.version && grade(card, value.selected) !== null ? value.selected : null;
+    } catch { return null; }
+  }
+  function readUnsure(storage, key, card) {
+    try {
+      const value = JSON.parse(storage.getItem(key));
+      return !!value && value.version === card.version && grade(card, value.selected) === 'correct' && value.unsure === true;
+    } catch { return false; }
+  }
+  function writeAttempt(storage, key, card, selected, unsure) {
+    try {
+      if (selected === null) storage.removeItem(key);
+      else storage.setItem(key, JSON.stringify({version:card.version, selected, unsure:unsure === true}));
+    } catch {}
+  }
+  function promptApi(scope) {
+    if (scope && scope.ReviewPrompt) return scope.ReviewPrompt;
+    if (typeof require === 'function') {
+      try { return require('./review-prompt.js'); } catch {}
+    }
+    return null;
+  }
+  // Capture plain text before enhancement moves nodes or adds badges.
+  function captureCardText(card, choices, diagnostics, options, solution) {
+    const prompt = promptApi(card.ownerDocument && card.ownerDocument.defaultView);
+    const read = el => !el ? '' : prompt ? prompt.problemText(el) : el.textContent.replace(/\s+/g, ' ').trim();
+    const heading = card.querySelector('h3');
+    const problem = card.querySelector('.problem');
+    const list = Array.isArray(options) ? options : [];
+    const used = new Set(list.map(o => o.diagnostic));
+    const texts = {
+      // The prompt already prints the card id, so drop the "P1." label from the heading.
+      title: heading ? heading.textContent.replace(/\s+/g, ' ').trim().replace(/^P\d+\.\s*/i, '') : '',
+      stem: read(problem),
+      options: list.map(o => ({id:o.id, text:stripDiagnosticPrefix(read(choices[o.index]).trim(), o.id)})),
+      diagnostics: {},
+      extras: diagnostics.filter((_, i) => !used.has(i)).map(read).filter(Boolean)
+    };
+    list.forEach(o => { texts.diagnostics[o.id] = stripDiagnosticPrefix(read(diagnostics[o.diagnostic]).trim(), o.id); });
+    return texts;
+  }
+  function buildPromptRecord(model, texts, ids, selectedById, unsureById, range) {
+    const items = ids.map(id => {
+      const data = model.cards[id];
+      const t = texts[id] || {title:'', stem:'', options:[], diagnostics:{}, extras:[]};
+      const raw = selectedById[id];
+      const result = grade(data, raw);
+      const selected = result === null ? null : raw;
+      const status = result === null ? 'unanswered'
+        : result === 'correct' && unsureById && unsureById[id] === true ? 'unsure' : result;
+      const diagnostic = optionId => (t.diagnostics || {})[optionId] || '';
+      const explanations = [];
+      if (selected !== null && selected !== data.answer)
+        explanations.push({label:'내 선택 [' + selected + ']', text:diagnostic(selected)});
+      explanations.push({label:(data.mode === 'ambiguous' ? '출제 의도상 답 [' : '정답 [') + data.answer + ']',
+        text:diagnostic(data.answer)});
+      (t.extras || []).forEach(text => explanations.push({label:'', text}));
+      if (data.notice) explanations.push({label:'출제 주의', text:data.notice});
+      return {id, title:t.title, stem:t.stem, format:'mcq', options:t.options, selected,
+        answer:data.answer, accepted:null, status, explanations};
+    });
+    return {kind:'review', documentId:model.documentId, range:range || '', items};
+  }
+  function mount(root, model, storage) {
+    if (!model || model.schema !== 1 || !model.cards) return;
+    const win = root.defaultView;
+    const emit = (id, selected, result, restored = false) => root.dispatchEvent(
+      new win.CustomEvent('od:answer', {detail:{id, selected, result, restored}}));
+    const element = (tag, cls, text) => {
+      const el = root.createElement(tag);
+      el.className = cls;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    };
+    const selectedById = {};
+    const unsureById = {};
+    const texts = {};
+    let feedback = null;
+    let feedbackTimer = null;
+    let feedbackOwner = null;
+    function clearFeedback(owner = null) {
+      if (owner !== null && owner !== feedbackOwner) return;
+      if (feedbackTimer !== null) win.clearTimeout(feedbackTimer);
+      feedbackTimer = null;
+      if (feedback) feedback.remove();
+      feedback = null;
+      feedbackOwner = null;
+    }
+    function showFeedback(result, id, message, duration) {
+      clearFeedback();
+      if (!message && result !== 'correct' && result !== 'incorrect') return;
+      feedback = element('div', 'review-feedback');
+      feedback.dataset.reviewFeedback = '';
+      feedback.dataset.result = result;
+      feedback.setAttribute('aria-hidden', 'true');
+      feedback.append(
+        element('span', 'review-feedback-icon'),
+        element('span', 'review-feedback-text', message || (result === 'correct' ? '정답이에요' : '다시 확인해요'))
+      );
+      root.body.append(feedback);
+      feedbackOwner = id;
+      feedbackTimer = win.setTimeout(clearFeedback, duration || 1100);
+    }
+    const UNSURE_ICON_OFF = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+    const UNSURE_ICON_ON = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+    for (const [id, data] of Object.entries(model.cards)) {
+      const card = root.getElementById(id);
+      if (!card || card.classList.contains('review-ready')) continue;
+      const aid = Array.from(root.querySelectorAll('.aid')).find(n => n.dataset.cardId === id);
+      const solution = (aid || card).querySelector('details.solution');
+      const choices = Array.from(card.querySelectorAll('.choices > li'));
+      const diagnostics = solution ? Array.from(solution.querySelectorAll('ol.steps > li')) : [];
+      const options = data.options;
+      try { texts[id] = captureCardText(card, choices, diagnostics, options, solution); } catch {}
+      // Validate every reference before moving a single original node.
+      if (!solution || !Array.isArray(options) || choices.length !== options.length ||
+          !options.length || !options.some(o => o.id === data.answer) ||
+          new Set(options.map(o => o.index)).size !== options.length ||
+          new Set(options.map(o => o.diagnostic)).size !== options.length ||
+          options.some(o => !choices[o.index] || !diagnostics[o.diagnostic])) continue;
+      const positions = diagnostics.map(n => ({node:n, parent:n.parentNode, next:n.nextSibling}));
+      const diagnosticTexts = [];
+      const choiceNodes = choices.map(n => Array.from(n.childNodes));
+      const summary = solution.querySelector('summary');
+      const summaryText = summary ? summary.textContent : '';
+      const originalOpen = solution.open;
+      const originalHidden = solution.hidden;
+      let status, reset, notice, unsureBtn;
+      try {
+        // Some future cards supply the caution only as metadata. Keep its full
+        // explanation in the solution panel, without duplicating existing prose.
+        const compact = text => text.replace(/\s+/g, '');
+        if (data.mode === 'ambiguous' && data.notice &&
+            !compact(solution.textContent).includes(compact(data.notice))) {
+          notice = element('p', 'review-notice', data.notice);
+          solution.append(notice);
+        }
+        const controls = options.map(o => {
+          const li = choices[o.index];
+          const button = element('button', 'review-choice');
+          button.type = 'button';
+          const complex = li.querySelector('a,button,input,select,textarea,table,div,p,figure,ul,ol');
+          if (complex) {
+            button.textContent = o.id + '번 선택';
+            const content = element('div', 'review-choice-content');
+            content.id = id + '-choice-content-' + o.index;
+            content.append(...Array.from(li.childNodes));
+            button.setAttribute('aria-describedby', content.id);
+            li.append(button, content);
+          } else {
+            button.append(...Array.from(li.childNodes));
+            li.append(button);
+          }
+          const badge = element('span', 'review-choice-label');
+          badge.hidden = true;
+          button.append(badge);
+          button.setAttribute('aria-pressed', 'false');
+          const list = element('ol', 'review-diagnostics');
+          list.id = id + '-review-diagnostics-' + o.index;
+          const diagnostic = diagnostics[o.diagnostic];
+          const first = diagnostic.firstChild;
+          if (first && first.nodeType === 3) {
+            diagnosticTexts.push({node:first, text:first.textContent});
+            first.textContent = stripDiagnosticPrefix(first.textContent, o.id);
+          }
+          diagnostic.classList.add('review-diagnostic');
+          diagnostic.hidden = true;
+          list.append(diagnostic);
+          li.append(list);
+          return {id:o.id, button, badge, diagnostic, list};
+        });
+        status = element('p', 'review-status');
+        status.setAttribute('role', 'status');
+        status.setAttribute('aria-live', 'polite');
+        reset = element('button', 'review-reset text-btn', '다시 풀기');
+        reset.type = 'button';
+        card.querySelector('.choices').before(status);
+        card.querySelector('.choices').after(reset);
+        const key = storageKey(model.documentId, id);
+        let selected = readAttempt(storage, key, data);
+        let unsure = selected !== null && readUnsure(storage, key, data);
+        selectedById[id] = selected;
+        unsureById[id] = unsure;
+        unsureBtn = element('button', 'review-unsure solved-btn');
+        unsureBtn.type = 'button';
+        // Same look and place as the 푼 문제 button: bottom of the aid panel.
+        (aid || solution).append(unsureBtn);
+        const expanded = new Set(selected === null ? [] : [selected, data.answer]);
+        function paintDisclosure(c) {
+          const answered = selected !== null;
+          const open = answered && expanded.has(c.id);
+          c.diagnostic.hidden = !open;
+          c.list.hidden = !open;
+          if (answered) {
+            c.button.setAttribute('aria-expanded', String(open));
+            c.button.setAttribute('aria-controls', c.list.id);
+          } else {
+            c.button.removeAttribute('aria-expanded');
+            c.button.removeAttribute('aria-controls');
+          }
+        }
+        function paint() {
+          const answered = selected !== null;
+          const result = grade(data, selected);
+          reset.hidden = !answered;
+          unsureBtn.hidden = result !== 'correct';
+          unsureBtn.innerHTML = (unsure ? UNSURE_ICON_ON : UNSURE_ICON_OFF) +
+            '<span>' + (unsure ? '애매함 표시 취소' : '애매함으로 표시') + '</span>';
+          unsureBtn.setAttribute('aria-pressed', String(unsure));
+          unsureBtn.dataset.unsure = String(unsure);
+          status.textContent = !answered ? '' : result === 'ambiguous'
+            ? '단일 정답 판정 주의'
+            : result === 'correct' ? '정답이에요.' : '정답이 아니에요. 보기별 이유를 확인해 보세요.';
+          status.dataset.result = result || '';
+          controls.forEach(c => {
+            c.button.dataset.selected = String(c.id === selected);
+            if (answered) c.button.removeAttribute('aria-pressed');
+            else c.button.setAttribute('aria-pressed', 'false');
+            c.button.dataset.result = !answered ? '' : c.id === data.answer
+              ? (data.mode === 'ambiguous' ? 'intended' : 'correct')
+              : c.id === selected ? (data.mode === 'ambiguous' ? 'uncertain' : 'selected') : '';
+            c.badge.hidden = !answered;
+            c.badge.textContent = !answered ? '' : [
+              c.id === selected ? '내 선택' : '',
+              c.id === data.answer ? (data.mode === 'ambiguous' ? '출제 의도상 답' : '정답')
+                : data.mode === 'single' ? '정답 아님' : ''
+            ].filter(Boolean).join(' · ');
+            paintDisclosure(c);
+          });
+          solution.hidden = !answered;
+          solution.open = answered;
+          if (summary) summary.textContent = '추가 해설 · 수업과의 연결';
+        }
+        controls.forEach(c => c.button.addEventListener('click', () => {
+          if (selected !== null) {
+            if (expanded.has(c.id)) expanded.delete(c.id);
+            else expanded.add(c.id);
+            paintDisclosure(c);
+            return;
+          }
+          selected = c.id;
+          selectedById[id] = selected;
+          unsure = false;
+          unsureById[id] = false;
+          expanded.add(selected);
+          expanded.add(data.answer);
+          writeAttempt(storage, key, data, selected);
+          paint();
+          emit(id, selected, grade(data, selected));
+          showFeedback(grade(data, selected), id);
+          const selectedOption = options.find(o => o.id === selected);
+          const answerOption = options.find(o => o.id === data.answer);
+          const selectedControl = controls.find(control => control.id === selected);
+          const answerControl = controls.find(control => control.id === data.answer);
+          win.requestAnimationFrame(() => {
+            if (!card.isConnected || !card.getClientRects().length) return;
+            scrollAnswerIntoView(root.querySelector('.content'),
+              choices[selectedOption.index], choices[answerOption.index],
+              selectedControl.button, answerControl.button);
+          });
+        }));
+        reset.addEventListener('click', () => {
+          clearFeedback(id);
+          selected = null;
+          selectedById[id] = null;
+          unsure = false;
+          unsureById[id] = false;
+          expanded.clear();
+          writeAttempt(storage, key, data, null);
+          paint();
+          emit(id, null, null);
+          controls[0].button.focus();
+        });
+        unsureBtn.addEventListener('click', () => {
+          if (selected === null) return;
+          unsure = !unsure;
+          unsureById[id] = unsure;
+          writeAttempt(storage, key, data, selected, unsure);
+          paint();
+          showFeedback('unsure', id, unsure ? '애매함으로 표시했어요' : '애매함 표시를 취소했어요');
+        });
+        card.classList.add('review-ready');
+        solution.classList.add('review-extra');
+        paint();
+        if (selected !== null) emit(id, selected, grade(data, selected), true);
+        else {
+          try {
+            if (storage.getItem(key) !== null) {
+              writeAttempt(storage, key, data, null);
+              emit(id, null, null, true);
+            }
+          } catch {}
+        }
+      } catch (error) {
+        // Keep a readable static question if enhancement cannot be completed.
+        diagnosticTexts.forEach(p => { p.node.textContent = p.text; });
+        choices.forEach((li, i) => li.replaceChildren(...choiceNodes[i]));
+        positions.slice().reverse().forEach(p => {
+          p.node.hidden = false;
+          p.node.classList.remove('review-diagnostic');
+          p.parent.insertBefore(p.node, p.next);
+        });
+        for (const el of [status, reset, notice, unsureBtn]) if (el) el.remove();
+        solution.hidden = originalHidden;
+        solution.open = originalOpen;
+        if (summary) summary.textContent = summaryText;
+        solution.classList.remove('review-extra');
+        card.classList.remove('review-ready');
+        win.console.warn('문항 상호작용을 적용하지 못했습니다:', id, error);
+      }
+    }
+    const exportCards = Array.from(root.querySelectorAll('main article.card')).filter(el => model.cards[el.id]);
+    const pager = root.querySelector('.pager');
+    const prompt = promptApi(win);
+    if (prompt && exportCards.length && pager && !pager.querySelector('.review-export-bar')) {
+      const ids = exportCards.map(el => el.id);
+      const bar = element('div', 'review-export-bar');
+      const button = element('button', 'btn btn-primary review-export', '복기 프롬프트 복사');
+      button.type = 'button';
+      const note = element('p', 'review-export-note sr-only');
+      note.setAttribute('role', 'status');
+      note.setAttribute('aria-live', 'polite');
+      bar.append(button, note);
+      pager.prepend(bar);
+      root.addEventListener('od:screen', () => { note.textContent = ''; });
+      button.addEventListener('click', async () => {
+        if (button.disabled) return;
+        button.disabled = true;
+        let outcome;
+        try {
+          const record = buildPromptRecord(model, texts, ids, selectedById, unsureById, root.body.dataset.range || '');
+          const text = prompt.buildReviewPrompt(record);
+          outcome = await prompt.copyText(win, text) ? 'copied' : 'manual';
+          if (outcome === 'manual') prompt.openPromptDialog(root, text);
+        }
+        finally { button.disabled = false; }
+        const message = outcome === 'copied' ? '복기 프롬프트를 복사했어요. AI 채팅에 붙여 넣으세요'
+          : '자동 복사가 막혀 있어요. 열린 창에서 직접 복사해 주세요';
+        note.textContent = message + '.';
+        showFeedback(outcome, 'export', message, 2200);
+      });
+    }
+    // Existing page CSS hides side panels when printing. Move original details,
+    // including static questions, into their cards for print, then restore them.
+    if (!root.documentElement.dataset.reviewPrint) {
+      root.documentElement.dataset.reviewPrint = 'ready';
+      let printPositions = [];
+      win.addEventListener('beforeprint', () => {
+        if (printPositions.length) return;
+        root.querySelectorAll('.aid[data-card-id]').forEach(aid => {
+          const card = root.getElementById(aid.dataset.cardId);
+          if (!card) return;
+          Array.from(aid.children).forEach(node => {
+            printPositions.push({node, parent:aid, open:node.open});
+            if (node.tagName === 'DETAILS') node.open = true;
+            card.append(node);
+          });
+        });
+      });
+      win.addEventListener('afterprint', () => {
+        printPositions.forEach(p => {p.parent.append(p.node); p.node.open = p.open;});
+        printPositions = [];
+      });
+    }
+  }
+  const api = {stripDiagnosticPrefix, grade, storageKey, readAttempt, readUnsure, writeAttempt, mount,
+    captureCardText, buildPromptRecord};
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else scope.ReviewInteraction = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
+</script>
+<script>(function () {
+      function start() {
+        try {
+          let storage = null;
+          /* Forecast answers reset on every load. */
+          ReviewInteraction.mount(document, JSON.parse(document.getElementById('review-interaction-model').textContent), storage);
+        } catch (error) { console.warn('복습문제 상호작용 초기화 실패:', error); }
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
+      else start();
+    })();</script>
+<!-- review-interaction:end -->
+<script>(()=>{const meta=JSON.parse(document.getElementById('presentation-meta').textContent);document.getElementById('open-explanation').addEventListener('click',()=>{location.href=meta.explanation;});})();</script></body>
+</html>
