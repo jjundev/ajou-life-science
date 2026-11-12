@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>생명과학 1112 학습만화</title>
+  <meta name="description" content="1112 수업 학습만화. 13페이지 · 페이지마다 4~8컷">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('od-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']})"></script>
+  <style>
+    /* ---------- 토큰 ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #b54708; --prof: #6941c6; --supp: #067647; --danger: #d92d20;
+      --scroll: #c9d0db; --scroll-hover: #9aa3b2;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --fs-title: clamp(28px, 6vw, 36px); --fs-h3: clamp(26px, 5.4vw, 32px); --fs-layer: 19px; --fs-lead: 22px; --fs-body: 17px; --fs-sub: 15px; --fs-small: 14px; --fs-label: 13px; --fs-fig: 12px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+      --radius: 8px; --measure: 680px; --tap: 48px; --btn-min: 160px;
+      --dur: 220ms; --dur-exit: 150ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+      /* 예전 조각이 참조할 수 있는 이름 */
+      --surface-2: var(--surface); --accent-soft: var(--surface); --warn-soft: var(--surface);
+      --prof-soft: var(--surface); --supp-soft: var(--surface); --eli5: var(--accent-ink); --eli5-soft: var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+        --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+        --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+        --scroll: #3f414b; --scroll-hover: #5b5e6a;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+      --scroll: #3f414b; --scroll-hover: #5b5e6a;
+    }
+
+    /* ---------- 기본 ---------- */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent-ink); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+
+    /* ---------- 상단 바 ---------- */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s2) var(--s4); display: flex; align-items: center; gap: var(--s3); min-height: 56px; }
+    .brand { flex: 1 1 auto; min-width: 0; font-size: var(--fs-body); font-weight: 700; white-space: nowrap; }
+    .text-btn { flex: none; min-height: 44px; min-width: 44px; padding: 0 var(--s3); border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); font: 600 var(--fs-small)/1 var(--font); cursor: pointer; }
+    .bar { height: 2px; background: var(--line); overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+
+    /* ---------- 본문 ---------- */
+    main { flex: 1 0 auto; width: 100%; max-width: var(--measure); margin: 0 auto; padding: var(--s6) var(--s5) var(--s7); }
+    .hero h1 { font-size: var(--fs-title); line-height: 1.3; margin: 0 0 var(--s3); letter-spacing: -0.02em; }
+    .hero p { color: var(--ink-2); margin: 0; }
+    section { margin-top: var(--s7); }
+    section > h2 { font-size: 22px; line-height: 1.4; margin: 0 0 var(--s4); }
+    .topic { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .topic h3 { margin: 0 0 var(--s2); font-size: var(--fs-h3); font-weight: 800; line-height: 1.3; letter-spacing: -0.02em; }
+    .tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+    .tag { font-size: var(--fs-label); line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+
+    /* 레이어: 배경 없이 라벨과 구분선으로 나눈다 */
+    .layer { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .layer.eli5 { margin-top: 0; padding-top: 0; border-top: 0; }
+    .layer > :first-child { margin-top: 0; }
+    .layer > :last-child { margin-bottom: 0; }
+    .layer-title { display: block; font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; color: var(--ink); margin-bottom: var(--s3); }
+    .layer.eli5 .layer-title { color: var(--accent-ink); }
+    .layer.eli5 .lead { font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; letter-spacing: -0.01em; margin: 0 0 var(--s4); }
+    /* 정확히 말하면: 본문 크기 그대로, 굵은 첫머리만 진하게 */
+    .layer.formal b { font-weight: 700; color: var(--ink); }
+    /* 교수님 말씀 · 주의: 보조 정보는 한 단계 작게 */
+    .layer.prof, .layer.warn, .layer.listen { font-size: var(--fs-sub); line-height: 1.7; }
+    .layer.prof blockquote { font-size: var(--fs-sub); }
+    .layer.prof .layer-title { color: var(--prof); }
+    .layer.warn, .layer.listen { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn .layer-title { color: var(--warn); font-size: var(--fs-body); }
+    .layer.listen .layer-title { color: var(--accent-ink); font-size: var(--fs-body); }
+    .layer.supp .badge.supp { margin-bottom: var(--s2); }
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
+    .badge.supp { color: var(--supp); }
+    .badge.exam { color: var(--warn); margin-right: var(--s1); }
+    blockquote { margin: var(--s3) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
+    ol.steps { padding-left: 1.4em; }
+    ol.steps li { margin: var(--s2) 0; }
+
+    /* 그림 · 수식 · 표 */
+    .figure { margin: var(--s4) 0; text-align: center; }
+    .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
+    .figure img { max-width: 100%; height: auto; }
+    .figure figcaption { font-size: var(--fs-small); color: var(--ink-2); margin-top: var(--s1); }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: var(--s1) 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+    th, td { border-bottom: 1px solid var(--line); padding: var(--s2); text-align: left; vertical-align: top; }
+    th { color: var(--ink-2); font-weight: 600; }
+    td:first-child, th:first-child { min-width: 6em; }
+
+    /* 위젯 */
+    .widget { background: var(--surface); border-radius: var(--radius); padding: var(--s4); margin: var(--s5) 0; }
+    .widget h4 { margin: 0 0 var(--s1); font-size: var(--fs-layer); line-height: 1.4; }
+    .widget-help { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s3); }
+    .controls { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--s2); font-size: var(--fs-small); }
+    .controls label { display: flex; align-items: center; gap: var(--s2); min-height: 44px; }
+    .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .widget svg { width: 100%; height: auto; background: var(--bg); border-radius: var(--radius); }
+    .readout { font-size: var(--fs-small); margin-top: var(--s2); }
+    .legend { font-size: var(--fs-label); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .sw { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: var(--s1); border-radius: 2px; }
+    .sw.truth { background: var(--ink-2); } .sw.fit { background: var(--accent); } .sw.train { background: var(--accent); height: 10px; width: 10px; border-radius: 50%; }
+    .sw.test { background: var(--warn); height: 10px; width: 10px; border-radius: 50%; } .sw.like { background: var(--accent); } .sw.prior { background: var(--prof); } .sw.post { background: var(--supp); }
+    .axis { stroke: var(--line); stroke-width: 1.5; }
+    .tick { fill: var(--ink-2); font-size: 11px; }
+    .plot-truth { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .plot-fit { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+    .pt-train { fill: var(--accent); }
+    .pt-test { fill: var(--warn); }
+    .plot-like { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .plot-prior { fill: none; stroke: var(--prof); stroke-width: 2; stroke-dasharray: 6 4; }
+    .plot-post { fill: none; stroke: var(--supp); stroke-width: 3; }
+    .mark-ml { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .mark-map { stroke: var(--supp); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 2; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 2.5; }
+    .fig-danger { stroke: var(--danger); fill: none; stroke-width: 2.5; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: 13px; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-fig); font-family: inherit; }
+
+    footer { width: 100%; max-width: var(--measure); margin: 0 auto; padding: 0 var(--s5) var(--s6); color: var(--ink-2); font-size: var(--fs-small); }
+
+    /* ---------- 하단 이동 바 ---------- */
+    .pager { position: sticky; bottom: 0; z-index: 10; background: var(--bg); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .pager-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s3) var(--s4); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); }
+    .pager-count { font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; min-width: 4em; }
+    .btn { min-height: var(--tap); min-width: var(--btn-min); padding: 0 var(--s6); border-radius: var(--radius); border: 0; font: 700 var(--fs-body)/1 var(--font); cursor: pointer; white-space: nowrap;
+      transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+    .btn-ghost { justify-self: start; background: var(--surface); color: var(--ink); }
+    .btn-primary { justify-self: end; background: var(--btn-bg); color: var(--on-btn); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    @media (hover: hover) {
+      .text-btn:hover, .btn-ghost:not(:disabled):hover { background: var(--line); }
+      .btn-primary:not(:disabled):hover { box-shadow: inset 0 0 0 100px rgba(0, 0, 0, .14); }
+    }
+
+    /* ---------- 목차 시트 ---------- */
+    .sheet { width: min(100%, var(--measure)); max-width: 100%; max-height: 80dvh; margin: auto auto 0; padding: 0; border: 0;
+      border-radius: 16px 16px 0 0; background: var(--bg); color: var(--ink); }
+    .sheet::backdrop { background: rgba(0, 0, 0, .4); }
+    .sheet-inner { padding: var(--s4) var(--s5) calc(var(--s5) + env(safe-area-inset-bottom)); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s2); }
+    .sheet-head h2 { margin: 0; font-size: var(--fs-lead); }
+    .toc { display: flex; flex-direction: column; }
+    .toc > a, .toc-group > a { display: block; padding: var(--s3) 0 var(--s1); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); text-decoration: none; }
+    .toc-list { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+    .toc-list a { display: flex; align-items: center; gap: var(--s3); min-height: var(--tap); padding: var(--s2) var(--s3); margin: 0 calc(-1 * var(--s3));
+      border-radius: var(--radius); color: var(--ink); text-decoration: none; line-height: 1.4; }
+    .toc-list a[aria-current="true"] { background: var(--surface); font-weight: 700; color: var(--accent-ink); }
+    .toc-list .toc-title { flex: 1 1 0; min-width: 0; }
+    @media (hover: hover) { .toc-list a:hover { background: var(--surface); } }
+
+    /* ---------- 한 화면에 하나씩 (JS가 켤 때만) ---------- */
+    html:not(.js) .pager, html:not(.js) #toc-open { display: none; }
+    html:not(.js) .sheet { display: block; position: static; width: 100%; max-height: none; margin: 0 auto; border-radius: 0; border-bottom: 1px solid var(--line); }
+    html:not(.js) .sheet-close { display: none; }
+    .js main > .hero:not(.is-current), .js main > section:not(.is-on), .js .screen:not(.is-current) { display: none; }
+    .js main > section { margin-top: 0; }
+    .js main > section > h2 { font-size: var(--fs-small); font-weight: 600; color: var(--accent-ink); margin: 0 0 var(--s2); }
+    .js .topic { padding: 0; border-top: 0; }
+    .js .hero { padding-top: 12vh; }
+    .js footer { display: none; }
+    .js body.at-end footer { display: block; }
+    .screen.enter-next { animation: enter-next var(--dur) var(--ease-out); }
+    .screen.enter-prev { animation: enter-prev var(--dur) var(--ease-out); }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .screen.enter-next, .screen.enter-prev { animation: none; }
+      .bar > span, .btn { transition: none; }
+    }
+    @media (max-width: 480px) {
+      main { padding: var(--s5) var(--s4) var(--s6); }
+      footer { padding: 0 var(--s4) var(--s5); }
+      .btn { min-width: 120px; padding: 0 var(--s5); }
+    }
+    @media print {
+      .topbar, .pager, .sheet { display: none !important; }
+      .js main > .hero, .js main > section, .js .screen, .js footer { display: block !important; }
+    }
+
+    /* ---------- 좌우 패널 (drawer) ---------- */
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
+    .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
+    .panel-toggle svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-toggle .strip { fill: transparent; stroke: none; transition: fill 150ms ease-out; }
+    .panel-toggle[aria-expanded="true"] { color: var(--accent-ink); }
+    .panel-toggle[aria-expanded="true"] .strip { fill: currentColor; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .i-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .theme-toggle .i-sun { display: block; }
+      :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
+    }
+
+    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
+    .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
+    .content { grid-column: 2; }
+    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
+    .content::-webkit-scrollbar, .panel-inner::-webkit-scrollbar { width: 8px; }
+    .content::-webkit-scrollbar-track, .panel-inner::-webkit-scrollbar-track { background: transparent; }
+    .content::-webkit-scrollbar-thumb, .panel-inner::-webkit-scrollbar-thumb { background: var(--scroll); border-radius: 8px; border: 2px solid var(--bg); }
+    .content::-webkit-scrollbar-thumb:hover, .panel-inner::-webkit-scrollbar-thumb:hover { background: var(--scroll-hover); }
+    @supports (scrollbar-color: auto) { .content, .panel-inner { scrollbar-width: thin; scrollbar-color: var(--scroll) transparent; } }
+    .panel-resize { display: none; }
+    .panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 44px; margin-bottom: var(--s2); }
+    .panel-head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-lead); line-height: 1.4; }
+    .panel-sub { margin: 0 0 var(--s4); font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; }
+    .panel-empty { margin: 0; color: var(--ink-2); }
+    .panel-label { display: block; margin: var(--s5) 0 var(--s2); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+
+    /* 진행 상태 */
+    .panel-meta { margin: 0 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .panel-meta b { color: var(--ink); }
+    .progress { height: 4px; margin-bottom: var(--s3); border-radius: 2px; background: var(--line); overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+    .panel .toc-list a { margin: 0 calc(-1 * var(--s2)); padding: var(--s2); font-size: var(--fs-panel); }
+    .toc-mark { flex: none; display: block; width: 20px; height: 20px; color: var(--ink-2); }
+    .toc-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .toc-mark.is-done { color: var(--accent-ink); }
+
+    /* 복습문제: 원문 · 힌트 · 풀이 */
+    .aid details:last-of-type { border-bottom: 1px solid var(--line); }
+    .aid details.original > summary { font-size: var(--fs-panel); }
+    .solved-btn { display: flex; align-items: center; justify-content: center; gap: var(--s2); width: 100%; min-height: var(--tap); margin-top: var(--s5); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .solved-btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
+
+    /* 정리노트: 페이지 요약 */
+    .sum-supp { margin-top: var(--s4); }
+    .sum-lead { margin: 0; font-size: var(--fs-body); font-weight: 700; line-height: 1.6; }
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+    .eq-list li:first-child { padding-top: 0; }
+    .eq-name { display: block; font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+    .eq-list .katex-display { margin: var(--s1) 0 0; text-align: left; }
+    .eq-list .katex-display > .katex { text-align: left; }
+    .terms { margin: 0; }
+    .terms dt { font-size: var(--fs-panel); font-weight: 700; margin-top: var(--s4); }
+    .terms dt:first-child { margin-top: 0; }
+    .terms dd { margin: var(--s1) 0 0; font-size: var(--fs-sub); line-height: 1.6; color: var(--ink-2); }
+    .flow { margin: 0; padding-left: 1.4em; font-size: var(--fs-sub); }
+    .flow li { margin: var(--s2) 0; }
+
+    @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
+
+    /* 넓은 화면: 본문 옆에 붙는 패널 */
+    @media (min-width: 1024px) {
+      .layout { --l: var(--panel-l-user, var(--panel-l)); }
+      .layout[data-left="closed"] { --l: 0px; }
+      .panel-left { width: var(--l); }
+      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
+      .panel-left .panel-resize { right: 0; }
+      .panel-right .panel-resize { left: 0; }
+      .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
+      .panel-left .panel-resize::after { right: 0; }
+      .panel-right .panel-resize::after { left: 0; }
+      .panel-resize:focus-visible { outline: none; }
+      .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
+      @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
+      body.is-resizing { cursor: col-resize; user-select: none; }
+      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
+      .scrim, .panel-close { display: none; }
+    }
+    @keyframes panel-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 좁은 화면: 가장자리에서 밀려 나오는 drawer */
+    @media (max-width: 1023.98px) {
+      .panel { position: fixed; top: 0; bottom: 0; z-index: 40; visibility: hidden;
+        transition: transform var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .panel-left { left: 0; width: min(var(--drawer-l), 88vw); transform: translateX(-100%); }
+      .panel-right { right: 0; width: min(var(--drawer-r), 88vw); transform: translateX(100%); }
+      .panel.is-open { visibility: visible; transform: none; transition: transform var(--dur) var(--ease-out); }
+      .panel-inner { padding-top: calc(var(--s3) + env(safe-area-inset-top)); padding-bottom: calc(var(--s6) + env(safe-area-inset-bottom)); }
+      .scrim { position: fixed; inset: 0; z-index: 35; background: var(--scrim); opacity: 0; visibility: hidden;
+        transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
+      html:not(.js) .panel-left { display: none; }
+    }
+    @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
+      .panel.is-shown { animation: none; }
+      .panel-resize::after { transition: none; }
+    }
+    @media print {
+      body { display: block; height: auto; overflow: visible; }
+      .layout { display: block; }
+      .content { overflow: visible; }
+      .panel, .scrim { display: none !important; }
+    }
+  </style>
+<style id="comic-style">
+/* Extends the note shell; its tokens and behavior remain the visual authority. */
+.comic-question { margin: var(--s3) 0 var(--s5); font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; }
+.comic-strip { display: grid; gap: var(--s6); list-style: none; margin: 0; padding: 0; }
+.comic-panel { min-width: 0; }
+.comic-panel figure { margin: 0; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.comic-scene { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; position: relative; isolation: isolate; background: #faf8f2; color: #162438; }
+.comic-panel img { grid-column: 1; grid-row: 1 / 3; align-self: end; display: block; width: 100%; height: auto; background: #faf8f2; }
+.comic-art-space { grid-column: 1; grid-row: 2; width: 100%; pointer-events: none; }
+.comic-balloon-layer { grid-column: 1; grid-row: 1; z-index: 1; display: flex; flex-direction: column; gap: var(--s3); padding: var(--s4) var(--s5); min-width: 0; }
+.comic-panel figcaption { padding: var(--s4); background: var(--bg); }
+.comic-number { display: block; margin-bottom: var(--s2); font-size: var(--fs-label); font-weight: 700; color: var(--ink-2); }
+.comic-caption { margin: 0; line-height: 1.7; }
+.comic-dialogue { position: relative; width: fit-content; max-width: 88%; margin: 0; padding: var(--s3) var(--s4); border: 1.5px solid #566477; border-radius: 18px; background: #fffefb; color: #162438; font-size: var(--fs-body); line-height: 1.6; box-shadow: 0 2px 0 #1624380d; }
+.comic-voice-left { align-self: flex-start; border-bottom-left-radius: 4px; }
+.comic-voice-right { align-self: flex-end; border-bottom-right-radius: 4px; background: #f0f5fc; }
+.comic-dialogue::after { content: ''; position: absolute; top: 18px; width: 10px; height: 10px; background: inherit; border: solid #566477; transform: rotate(45deg); }
+.comic-voice-left::after { left: -6px; border-width: 0 0 1.5px 1.5px; }
+.comic-voice-right::after { right: -6px; border-width: 1.5px 1.5px 0 0; }
+.comic-speaker { display: block; margin-bottom: var(--s1); font-size: var(--fs-label); font-weight: 700; color: #1b64da; }
+@media (max-width: 480px) {
+  .comic-balloon-layer { padding: var(--s3) var(--s4); gap: var(--s2); }
+  .comic-dialogue { max-width: 94%; padding: var(--s2) var(--s3); }
+}
+.comic-source { margin: var(--s6) 0 0; }
+.comic-source a { display: inline-flex; align-items: center; min-height: var(--tap); }
+.comic-panel .badge { display: block; width: fit-content; max-width: 100%; white-space: normal; margin: 0 0 var(--s2); }
+.sum > .badge { white-space: normal; margin-bottom: var(--s2); }
+@media print {
+  .comic-panel { break-inside: avoid; }
+  .comic-source { display: none; }
+}
+.comic-analogy, .comic-limit { margin: var(--s4) 0 0; padding-top: var(--s3); border-top: 1px solid var(--line); font-size: var(--fs-small); line-height: 1.7; color: var(--ink-2); }
+.comic-analogy strong, .comic-limit strong { display: block; margin-bottom: var(--s1); color: var(--ink); }
+
+</style>
+</head>
+<body data-screens="article.topic" data-panels="note" data-range="1112">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <strong class="brand">학습만화</strong>
+      <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>요약</span></button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
+  </header>
+  <div class="layout" data-left="open" data-right="closed">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
+      <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-left-title">목차</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-meta">읽은 토픽 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <nav class="toc" aria-label="목차"><a href="#comic-section-1">1. 뉴런과 신경아교세포</a><a href="#comic-section-2">2. 휴지전위</a><a href="#comic-section-3">3. 활동전위와 전도</a><a href="#comic-section-4">4. 시냅스 전달</a><a href="#comic-section-5">5. 신경전달물질과 약물</a><a href="#comic-section-6">6. 요약 · 예고</a></nav>
+      </div>
+    </aside>
+    <div class="content">
+  <main>
+    <div class="hero">
+      <h1>생명과학 1112 학습만화</h1>
+      <p>13페이지 · 페이지마다 4~8컷. 그림과 대사를 따라 읽고 원본 정리노트에서 확인해요.</p>
+    </div>
+<section id="comic-section-1"><h2>1. 뉴런과 신경아교세포</h2><article class="topic" id="s0-neuron"><h3>뉴런의 세 부분과 신호의 방향</h3><p class="comic-question">받는 자리, 활동전위가 시작되는 자리, 넘겨주는 자리는 각각 어디일까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>뉴런에서 소식을 받는 곳과 넘기는 곳은 어떻게 찾죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>안테나와 케이블 끝을 먼저 비교해 봐요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s0-neuron/01.png" alt="왼쪽의 가지형 안테나가 수신기에 연결되고 케이블은 오른쪽으로 나간다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">받는 안테나 → 수신기 본체 → 내보내는 케이블 끝. 세 부분이 연결된 방향을 먼저 살펴봐요.</p><p class="comic-analogy"><strong>비유 연결</strong> 수신기의 가지형 안테나 → 입력을 받는 수상돌기(가지돌기) · 수신기 본체와 길게 뻗은 출력선 → 세포체와 축삭, 그리고 다음 세포로 신호를 넘기는 축삭말단</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>가지돌기가 입력을 받고, 세포체를 거쳐 축삭 시작부에 전달해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s0-neuron/02.png" alt="왼쪽 수상돌기, 가운데 핵을 품은 세포체, 오른쪽 축삭과 말단이 한 뉴런을 이룬다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">수상돌기는 입력을 받아요. 흥분성 입력의 예에서는 막의 채널을 통해 Na⁺가 들어와요. 핵과 미토콘드리아는 세포체 안에 있어요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 수신기는 세 부분의 연결과 방향을 보여 줍니다. 뉴런은 막의 이온 이동으로 전기적 신호를 만들어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>받는 곳은 가지, 활동전위가 출발하는 곳은 축삭 시작부군요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s0-neuron/03.png" alt="축삭둔덕을 지난 초기분절에 신호 변화가 표시되고 화살표가 축삭말단 쪽을 가리킨다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">여러 입력이 합쳐져 축삭 초기분절이 역치에 닿으면 활동전위가 생겨요. 신호는 축삭을 따라 말단까지 전해져요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>구심성과 원심성의 기준은 어디예요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>중추로 들어오면 구심성, 중추에서 근육으로 나가면 원심성이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s0-neuron/04.png" alt="감각에서 중추 속 연합뉴런으로 들어간 신호가 운동뉴런을 거쳐 근육으로 나간다." width="1774" height="887" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1774 / 567.68" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">감각 → 구심성(afferent) 뉴런 → 연합뉴런 → 원심성(efferent) 뉴런 → 근육. 구심·원심의 중심은 중추신경계예요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1112_Nervous_and_Sensory_Systems.html#s0-neuron" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">수상돌기에서 입력을 받아 세포체를 거쳐 축삭 초기분절에 영향을 줘요. 역치에 닿아 활동전위가 생기면 축삭을 따라 말단으로 전해져요. 감각에서 중추로 들어오는 쪽이 구심성, 중추에서 근육으로 나가는 쪽이 원심성이에요.</p><p class="panel-label">용어</p><dl class="terms"><dt>수상돌기(dendrite)</dt><dd>가지돌기. 입력을 받는 부분으로, 흥분성 입력의 예에서는 채널이 열려 Na⁺가 들어와요.</dd><dt>축삭둔덕·축삭 초기분절·축삭말단</dt><dd>축삭둔덕은 세포체가 축삭으로 좁아지는 연결 부위예요. 바로 다음의 축삭 초기분절이 대표적인 활동전위 시작점이고 축삭말단은 다음 세포에 신호를 넘기는 끝이에요.</dd><dt>감각·연합·운동뉴런</dt><dd>구심성 뉴런은 감각뉴런, 원심성 뉴런은 운동뉴런이에요. 둘 사이의 연합뉴런은 받은 정보를 통합해요.</dd></dl></div></article><article class="topic" id="s0-glia"><h3>신경아교세포와 미엘린 수초</h3><p class="comic-question">축삭을 둘러싼 수초는 어디에서 만들어지고 어느 자리를 남길까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>수초가 있으면 축삭 전체가 덮인 건가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>구간마다 덮개를 씌운 전선을 떠올려 봐요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s0-glia/01.png" alt="하나의 전선에 절연 덮개가 띄엄띄엄 씌워져 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">절연 덮개는 전선의 일부 구간을 둘러싸요. 그 사이에서는 같은 전선이 드러나요.</p><p class="comic-analogy"><strong>비유 연결</strong> 전선과 구간별 절연 덮개 → 축삭과 전류 누출을 줄이는 미엘린 수초 · 덮개 사이 드러난 구간 → 랑비에 결절</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>뉴런 곁의 별 모양 세포도 수초를 만들어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>성상세포는 주로 지지와 주변 환경 조절을 맡아요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s0-glia/02.png" alt="별 모양 성상세포가 뉴런과 작은 혈관 옆에 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">아교세포는 뉴런이 신호를 전달할 수 있게 주변 환경을 돌보고, 영양을 공급하거나 지지해요. 성상세포는 별 모양의 지지 세포예요. 아교세포와 뉴런의 수 비율은 종과 뇌 부위에 따라 달라요. 성인 남성 뇌 전체를 센 연구에서는 뉴런과 비뉴런 세포가 비슷했고, 비뉴런에는 혈관 세포도 포함돼요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>수초는 아교세포가 축삭을 여러 겹 감아 만들어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s0-glia/03.png" alt="희소돌기아교세포의 돌기가 수초에 닿고, 슈반세포 막이 한 축삭 구간을 여러 겹 감싼다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">중추신경계의 희소돌기아교세포와 말초신경계의 슈반세포는 자기 막으로 축삭을 여러 겹 감아 수초를 만들어요. 교재에는 슈반세포 막이 300번 이상 감긴 예가 나와요. 여러 겹의 막에는 지질이 많아 전류 누출을 줄이는 절연층이 돼요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 전선은 모양과 절연의 비유예요. 실제 수초는 살아 있는 아교세포의 막이 여러 겹 둘러싸 형성돼요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>수초 사이의 빈칸이 아니라, 축삭이 밖으로 보이는 자리군요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>그 드러난 축삭 막을 랑비에 결절이라고 해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s0-glia/04.png" alt="위쪽 유수축삭의 덮개 사이에 결절이 있고 아래쪽 무수축삭에는 수초가 없다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">수초가 있는 축삭은 유수, 없는 축삭은 무수라고 해요. 유수축삭에서 절연층이 끊겨 축삭 막이 노출된 짧은 틈이 랑비에 결절이에요. 지름이 비슷하면 보통 유수축삭에서 전도가 더 빨라요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1112_Nervous_and_Sensory_Systems.html#s0-glia" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">신경아교세포는 뉴런에 영양을 공급하고 지지하며, 일부는 축삭에 미엘린 수초를 형성해요. 수초 사이에서 축삭이 드러난 곳은 랑비에 결절이에요. 수초가 있으면 대체로 전도가 빨라져요.</p><p class="panel-label">용어</p><dl class="terms"><dt>성상세포</dt><dd>별 모양의 신경아교세포. 뉴런을 물리적으로 지지하고 주변 환경을 조절해요.</dd><dt>수초 형성 세포</dt><dd><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>중추신경계에서는 희소돌기아교세포, 말초신경계에서는 슈반세포가 수초를 형성해요.</dd></dl></div></article></section>
+<section id="comic-section-2"><h2>2. 휴지전위</h2><article class="topic" id="s1-channel-pump"><h3>채널과 Na⁺/K⁺ 펌프</h3><p class="comic-question">채널과 펌프는 이온을 어느 방향으로 어떻게 옮길까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>막을 지나는 이온은 전부 ATP를 써야 해요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>경사로와 리프트를 나란히 놓아 봐요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s1-channel-pump/01.png" alt="한 장면은 물건이 경사로를 내려가고 다른 장면은 리프트가 물건을 위로 올린다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">경사로에서는 저절로 내려가고, 리프트는 동력을 받아 물건을 위로 옮겨요.</p><p class="comic-analogy"><strong>비유 연결</strong> 스스로 굴러가는 경사로 → 열린 채널에서 전기화학 기울기를 따르는 수동 이동 · 동력을 쓰는 리프트 → ATP를 이용해 이온을 능동수송하는 펌프</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>채널은 길을 열어요. 이온은 그때의 전기화학 기울기를 따라 움직여요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s1-channel-pump/02.png" alt="막의 열린 채널을 통해 한 종류의 이온이 아래쪽 세포 안으로 이동한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">채널을 지나는 이온의 방향은 농도 차와 막전위가 함께 정해요. 이 그림은 Na⁺가 세포 안으로 들어가는 조건의 예예요. 채널마다 통과시키는 이온의 범위가 달라요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 경사는 이동에 유리한 방향을 뜻해요. 이온의 실제 이동에는 농도 차와 전기적 힘이 함께 작용해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>노란 Na⁺는 세 개가 밖으로, 청록색 K⁺는 두 개가 안으로 가네요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>ATP 덕분에 이미 농도가 높은 쪽으로 계속 보낼 수 있어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s1-channel-pump/03.png" alt="노란 동그라미 셋은 막 바깥쪽으로, 청록 사각형 둘은 막 안쪽으로 이동한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">Na⁺/K⁺ 펌프는 ATP를 써서 한 주기마다 Na⁺ 3개를 밖으로 내보내고 K⁺ 2개를 안으로 들여보내요. 그림에서 위는 세포 밖, 아래는 세포 안이에요. 들어오는 이온은 칼륨(K⁺)이에요. 같은 펌프의 한 주기에서 두 이온이 옮겨지는 모습을 나눠 그렸어요. 펌프는 ATP를 써서 두 이온을 각자의 전기화학 기울기에 거슬러 옮겨요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>펌프는 농도 차를 유지하고, 채널이 열리면 막전위가 빠르게 바뀔 수 있어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s1-channel-pump/04.png" alt="막 위쪽에는 노란 Na⁺가, 아래쪽에는 청록 K⁺가 더 많이 분포한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">펌프가 계속 작동하면 Na⁺는 바깥, K⁺는 안쪽에 높은 농도로 유지돼요. 이 차이는 휴지전위와 채널이 열릴 때 빠르게 생기는 전위 변화의 바탕이에요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1112_Nervous_and_Sensory_Systems.html#s1-channel-pump" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">이온 채널은 ATP를 직접 쓰지 않고 전기화학 기울기에 따라 이온이 이동하게 해요. Na⁺/K⁺ 펌프는 ATP를 써 Na⁺ 3개를 밖으로, K⁺ 2개를 안으로 옮겨 Na⁺는 바깥, K⁺는 안쪽에 많은 상태를 유지해요.</p><p class="panel-label">용어</p><dl class="terms"><dt>전기화학 기울기</dt><dd>이온에 작용하는 농도 차와 막전위의 효과를 합친 이동 구동력.</dd><dt>Na⁺/K⁺ 펌프</dt><dd>ATP를 쓰는 능동수송 단백질. 빠른 막전위 변화는 주로 채널의 개폐가 만들어요.</dd></dl></div></article><article class="topic" id="s1-resting"><h3>휴지전위가 생기는 이유</h3><p class="comic-question">자극이 없는 뉴런에서 세포 안쪽의 전압은 왜 더 낮을까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>세포 안팎의 상태는 펌프만 보면 알 수 있나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>열린 통로도 함께 봐야 해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s1-resting/01.png" alt="두 칸 사이에 열린 통로와 작동하는 보충 장치가 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">열려 있는 통로를 지나는 물건과 장치가 되돌려 보내는 물건을 구별해요.</p><p class="comic-analogy"><strong>비유 연결</strong> 칸막이와 열린 통로 → 세포막과 이온 선택성이 있는 누설 채널 · 두 칸 사이 물건을 되돌리는 장치 → Na⁺와 K⁺ 농도 차를 유지하는 펌프</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>농도 차는 펌프가 유지해요. 안쪽에는 음전하를 띤 큰 분자도 있어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s1-resting/02.png" alt="막 안팎의 Na⁺와 K⁺ 농도 분포가 다르고 큰 음전하 분자는 안쪽에 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">Na⁺/K⁺ 펌프는 ATP로 Na⁺ 3개를 밖으로, K⁺ 2개를 안으로 옮겨 농도 차를 유지해요. 안쪽에는 인산을 가진 핵산과 음전하를 띤 단백질 같은 큰 분자도 있어요. 이 펌프는 한 주기마다 순양전하 1개를 밖으로 보내요. 세포 호흡은 펌프가 쓰는 ATP를 공급해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>K⁺에 더 잘 통한다는 말은 얼마나 많이 나간다는 뜻인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>이동량을 알려면 각 이온에 작용하는 전기화학적 힘도 필요해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s1-resting/03.png" alt="두 누설 채널의 이온 이동 방향을 각각 한 화살표로 표시한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">대표적인 휴지 조건에서 K⁺는 밖으로, Na⁺는 안으로 이동할 수 있어요. 휴지 막은 보통 K⁺에 더 잘 통하지만, 그림의 화살표는 이온의 순이동량을 비교하는 표시가 아니에요. K⁺ 투과성이 높아서 휴지전위는 K⁺ 평형전위에 가까워요. K⁺가 밖으로 나가 양전하가 줄면 안쪽 전위가 낮아져요. 그러면 안쪽의 음의 전위가 K⁺를 안으로 끌어당겨 유출을 줄여요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 보관함은 농도 차 유지의 비유예요. 실제 이온의 순이동에는 막전위가 작용하며 열린 통로 수만으로 순이동량을 정할 수 없어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>쉬는 동안에도 이온은 움직여요. 전류가 균형을 이뤄 전압이 안정적으로 유지돼요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s1-resting/04.png" alt="전압계의 한 탐침은 세포 안에, 기준 탐침은 밖에 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">막전위는 바깥을 기준으로 잰 내부 전압이에요. 휴지 상태의 전압이 안정적이라는 것은 막을 지나는 전체 전류가 균형을 이룬다는 뜻이에요. 수치 문제는 강의노트의 −50~−60 mV를 기준으로 봐요. −70 mV는 활동전위 그래프와 위젯의 예시예요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1112_Nervous_and_Sensory_Systems.html#s1-resting" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">휴지전위는 자극받지 않은 뉴런의 내부 전위가 외부에 비해 낮은 상태예요. 펌프가 이온 농도 차를 유지하고, 상대적으로 높은 K⁺ 투과성과 다른 이온의 이동을 포함한 전류 균형이 휴지전위를 정해요. 강의노트 예시는 −50~−60 mV예요.</p><p class="panel-label">용어</p><dl class="terms"><dt>막전위</dt><dd>세포막을 사이에 둔 내부와 외부의 전압 차. 바깥을 기준으로 내부의 전압을 표시해요.</dd><dt>누설 채널</dt><dd>휴지 상태에서도 이온이 지나갈 수 있는 통로. 휴지 막은 보통 Na⁺보다 K⁺에 더 잘 통해요.</dd></dl></div></article></section>
+<section id="comic-section-3"><h2>3. 활동전위와 전도</h2><article class="topic" id="s2-action"><h3>활동전위: 탈분극·재분극·과분극</h3><p class="comic-question">활동전위에서 올라가는 구간과 내려가는 구간은 어떤 채널 때문에 생길까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>Na⁺ 문이 다 닫혀야 K⁺ 문이 열려요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>문마다 반응 속도가 다르다는 것부터 봐요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s2-action/01.png" alt="노란 문은 이미 열려 있고 청록색 문은 막 열리기 시작했다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">같은 신호에 반응하는 문도 열리고 닫히는 속도가 다를 수 있어요.</p><p class="comic-analogy"><strong>비유 연결</strong> 빨리 열리는 첫 문 → 역치 부근에서 빠르게 활성화하는 Na⁺ 채널 · 느리게 반응하는 둘째 문 → 지연되어 활성화하고 늦게 닫히는 K⁺ 채널</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>수상돌기에서 입력을 받아도 활동전위의 출발점은 축삭 시작부예요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s2-action/02.png" alt="작은 입력 표시가 왼쪽 수상돌기에, 활동전위 표시가 오른쪽 축삭 시작부에 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">수상돌기의 국소 막전위 변화는 수동으로 퍼져요. 입력이 합쳐져 역치에 이르면 많은 뉴런에서 둔덕 바로 뒤 축삭 초기분절에서 활동전위가 생겨요. 축삭을 따라 전해지는 것은 막전위 변화예요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>막전위가 갑자기 올라가는 쪽은 Na⁺ 유입 때문이군요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s2-action/03.png" alt="열린 Na⁺ 채널을 통해 세포 안쪽으로 이온이 이동한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">휴지 상태의 전압 개폐성 Na⁺ 채널은 닫혀 있고 누설 채널은 열려 있어요. 역치에 이르면 전압 개폐성 Na⁺ 채널이 빠르게 열려 Na⁺가 들어와요. Na⁺ 유입은 막전위를 더 올려 채널을 더 열고, 이 파형 예에서는 0 mV를 넘어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>Na⁺ 채널이 불활성화되는 동안 K⁺ 채널은 이미 열리기 시작했어요. 두 과정이 겹쳐요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s2-action/04.png" alt="Na⁺ 채널은 불활성화되고, K⁺ 채널은 열린 상태로 세포 밖으로 이온을 보낸다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">K⁺ 채널의 지연된 활성화는 Na⁺ 채널 불활성화가 끝나기 전에 시작될 수 있어요. 정점 부근에서 Na⁺ 유입이 줄고 K⁺가 밖으로 나가 막전위가 휴지전위 쪽으로 돌아와요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 자동문은 반응 속도의 비유예요. 실제 채널은 막전위에 반응하고 Na⁺ 채널은 불활성화 상태를 거쳐요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>아래로 더 내려가는 구간은 K⁺ 통로가 늦게 닫혀서군요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s2-action/05.png" alt="휴지전위 부근에서도 조금 열린 K⁺ 채널을 통해 이온이 바깥으로 나간다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">전압이 휴지전위에 가까워진 뒤에도 K⁺ 채널 일부가 잠시 열려 있어요. K⁺가 계속 나가면 휴지전위보다 전압이 더 낮아져 과분극이 돼요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>활동전위는 이 변화 전체를 말해요. 아래로 살짝 처진 곳만 과분극이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s2-action/06.png" alt="하나의 전압 곡선이 올라갔다가 출발선 아래로 잠시 내려온 뒤 같은 높이로 돌아온다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><p class="comic-caption">오르는 구간이 탈분극, 휴지전위 쪽으로 내려오는 구간이 재분극이에요. K⁺ 채널이 닫히면 과분극이 끝나고 휴지전위로 돌아와요. −70 mV는 교재 그림의 휴지전위 예시값이에요. 재분극과 함께 불활성화됐던 Na⁺ 채널도 다시 열릴 수 있는 상태로 회복해요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1112_Nervous_and_Sensory_Systems.html#s2-action" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">역치에 이르면 축삭 초기분절에서 활동전위가 생겨요. Na⁺ 유입으로 탈분극하고, Na⁺ 채널 불활성화와 K⁺ 유출로 재분극해요. K⁺ 채널이 늦게 닫혀 과분극했다가 휴지전위로 돌아와요.</p><p class="panel-label">용어</p><dl class="terms"><dt>역치와 탈분극</dt><dd>역치는 활동전위를 일으킬 수 있는 기준 전위, 탈분극은 막전위가 덜 음성이 되는 변화예요.</dd><dt>재분극과 과분극</dt><dd>재분극은 원래 전압 쪽으로 돌아오는 변화, 과분극은 휴지전위보다 더 낮아진 상태예요.</dd></dl></div></article><article class="topic" id="s2-all-or-none"><h3>실무율과 자극의 세기</h3><p class="comic-question">자극이 세져도 활동전위 한 번의 크기가 비슷하다면 세기는 어떻게 전할까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>역치에 조금 못 미치면 작은 활동전위가 나와요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>기준을 넘었을 때만 표가 나오는 장치를 생각해 봐요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s2-all-or-none/01.png" alt="두 표 발급기 중 오른쪽에서만 규격이 정해진 표가 나온다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">기준을 넘으면 같은 규격의 표가 한 장 나와요. 기준보다 낮으면 표가 나오지 않아요.</p><p class="comic-analogy"><strong>비유 연결</strong> 발급 기준선 → 활동전위가 시작되는 역치 · 같은 크기의 표와 시간당 장수 → 한 활동전위의 비슷한 크기와 발화 빈도</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>입력은 조금 커질 수 있어도 역치 아래에서는 활동전위가 생기지 않아요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s2-all-or-none/02.png" alt="부드러운 작은 전압 변화가 점선 역치 아래에 머문다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">수상돌기와 세포체 쪽에서는 입력 크기에 따라 국소 막전위 변화가 달라져요. 축삭 초기분절에서 역치에 못 미치면 활동전위는 0회예요. 역치에 닿으면 Na⁺ 유입이 막전위를 올려 더 많은 Na⁺ 채널을 열고 활동전위가 생겨요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>더 세게 주니까 봉우리 높이가 아니라 개수가 늘었어요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>같은 뉴런과 비슷한 조건에서 비교한 결과예요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s2-all-or-none/03.png" alt="같은 시간 폭의 위 그래프에는 한 봉우리, 아래 그래프에는 같은 높이의 봉우리 다섯 개가 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">위젯 예시에서 같은 60 ms 동안 역치를 약간 넘으면 1회, 강한 설정에서는 5회예요. 이 모델의 각 최고점은 +30 mV이고, 역치 예시는 −55 mV예요. 실제 수치는 뉴런과 조건에 따라 달라요. 위젯의 시작 설정에서는 3회이고, 이 모형의 휴지전위는 −70 mV예요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>자극이 아무리 세도 봉우리를 계속 붙여 그릴 수는 없겠네요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s2-all-or-none/04.png" alt="같은 높이의 두 봉우리 사이에 간격이 있고, 작은 확대 그림에 일시적으로 통과할 수 없는 채널이 보인다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">활동전위 직후에는 불응기가 있어 연속 발화의 간격에 한계가 생겨요. 불활성화된 Na⁺ 채널이 회복하고 다음 자극이 발화 조건을 충족해야 다음 활동전위가 생겨요. 절대 불응기에는 새 발화가 불가능해요. 뒤이은 상대 불응기에는 평소보다 강한 자극이 필요해요. 상대 불응기에는 일부 Na⁺ 채널이 회복 중이고 K⁺ 채널도 일부 열려 있어요. 강한 입력이 지속되면 회복 뒤 역치에 더 빨리 이르므로 일정 시간에 더 자주 발화할 수 있어요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 표는 유무와 횟수의 비유예요. 뉴런에는 채널이 회복해야 다시 발화할 수 있는 불응기가 있어요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1112_Nervous_and_Sensory_Systems.html#s2-all-or-none" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">수상돌기·세포체의 국소 전위는 입력 세기에 따라 달라져요. 축삭 시작부가 역치에 이르면 활동전위가 생기고, 같은 뉴런의 비슷한 조건에서는 봉우리 높이가 대체로 일정해요. 강한 입력은 불응기가 허용하는 범위에서 발화 빈도를 높일 수 있어요.</p><p class="panel-label">용어</p><dl class="terms"><dt>실무율</dt><dd>역치에 미치지 않으면 활동전위가 생기지 않고, 역치에 도달하면 재생성 활동전위가 생기는 성질.</dd><dt>불응기</dt><dd>Na⁺ 채널이 불활성화에서 회복하는 동안 발화할 수 없거나 평소보다 더 큰 자극이 필요한 때.</dd></dl></div></article><article class="topic" id="s2-conduction"><h3>전도 속도: 축삭의 지름과 도약전도</h3><p class="comic-question">수초 사이에서는 무엇이 전달되고, 활동전위는 어디에서 다시 생길까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>활동전위 하나가 축삭을 따라 그대로 움직이나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>신호등이 옆 자리에서 차례로 켜지는 모습을 떠올려 봐요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s2-conduction/01.png" alt="절연 전선으로 이어진 신호등들이 줄지어 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">연결된 장치에서는 옆 장치가 이어서 켜질 수 있어요. 불빛은 어느 위치에서 신호가 다시 생기는지에 대응해요.</p><p class="comic-analogy"><strong>비유 연결</strong> 차례로 켜지는 신호등 → 축삭 여러 지점에서 활동전위가 다시 생기는 과정 · 절연된 연결선 → 수초 아래에서 누출이 줄어든 국소 전류가 다음 결절에 도달하는 구간</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>이온은 막을 가로질러 들어오고, 그 효과는 국소 전류로 옆 막에 퍼져요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s2-conduction/02.png" alt="Na⁺ 유입 화살표는 막에 수직이고 국소 전류 화살표는 축삭 내부에서 오른쪽을 가리킨다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">첫 자리에서 Na⁺가 들어오면 국소 전류가 옆의 막전위를 올려요. 역치에 닿은 옆자리의 채널이 열리고 그곳에서 활동전위가 다시 생겨요. 먼저 발화한 자리는 재분극해 돌아와요. 무수축삭에서는 가까운 막을 따라 연속해서 재생돼요. 신호가 축삭말단에 닿으면 화학 시냅스의 경우 Ca²⁺ 유입을 거쳐 전달물질이 방출될 수 있어요. 다음 자리마다 활동전위가 새로 생기므로 신호의 크기가 유지돼요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>수초 아래에서도 전류가 퍼지지만 큰 신호는 결절에서 다시 생기는군요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s2-conduction/03.png" alt="수초 아래의 축삭 안에서 오른쪽으로 전류가 퍼지고 두 노출된 결절에만 재생 표시가 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">수초 아래로 국소 전류가 수동적으로 퍼지는 동안 전류 누출이 줄어요. 국소 전류가 다음 결절을 탈분극시키고, 역치에 닿으면 거기에 밀집한 전압 개폐성 Na⁺ 채널이 열려 활동전위가 재생돼요. 수초 아래 막에도 이온 채널은 존재해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 불빛은 활동전위의 재생 위치를 보여 줘요. 축삭에서는 막을 드나드는 이온과 국소 전류가 다음 구간의 전압을 바꿔요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>축삭을 굵게 하는 방법과 수초로 누출을 줄이는 방법이 있네요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s2-conduction/04.png" alt="굵은 무수축삭과 가는 무수축삭, 가는 유수축삭을 나란히 비교한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">다른 조건이 비슷할 때 축삭 지름이 크면 내부 저항이 작아져 전도가 빨라져요. 지름이 작은 축삭도 수초로 전류 누출을 줄이면 전도가 빨라질 수 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>다음 결절을 충분히 탈분극시키지 못하면 전달이 끊길 수 있어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s2-conduction/05.png" alt="하나로 이어진 축삭의 중간에서 청록색 수초가 벗겨져 있고 국소 전류가 퍼져 나간다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">다발성 경화증에서 수초가 손상되면 국소 전류가 새어 다음 결절이 역치에 늦게 닿거나 도달하지 못할 수 있어요. 전도가 느려지거나 끊기고, 상황에 따라 근력 저하와 축삭 손상도 생길 수 있어요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1112_Nervous_and_Sensory_Systems.html#s2-conduction" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">활동전위는 국소 전류가 다음 구간을 탈분극시키고 그곳의 채널이 열려 다시 생기며 전해져요. 지름이 크면 축삭 내부 저항이 낮아지고, 수초는 전류 누출을 줄여 랑비에 결절 사이의 도약전도를 도와요. 탈수초가 심하면 전도가 느려지거나 막힐 수 있어요.</p><p class="panel-label">용어</p><dl class="terms"><dt>도약전도</dt><dd>수초 밑으로 국소 전류가 퍼지고 Na⁺ 채널이 밀집한 결절에서 활동전위가 재생되는 전도.</dd><dt>다발성 경화증</dt><dd>중추신경계에서 면역계가 미엘린을 손상시키는 질환. 신호가 느려지거나 차단되고 축삭도 손상될 수 있어요.</dd></dl></div></article></section>
+<section id="comic-section-4"><h2>4. 시냅스 전달</h2><article class="topic" id="s3-synapse-types"><h3>시냅스: 화학적 시냅스와 전기적 시냅스</h3><p class="comic-question">두 세포 경계에서 실제로 건너가는 것은 무엇일까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>두 세포가 붙어 있으면 신호도 늘 같은 방식으로 건너가나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>무엇이 어디로 건너가는지 두 장면을 비교해 봐요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s3-synapse-types/01.png" alt="한 쌍의 건물은 틈에 소포가 있고 다른 쌍은 연결 통로에 작은 구슬이 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">틈으로 물건을 건네는 방법과 두 곳을 잇는 통로로 지나가는 방법을 비교해요.</p><p class="comic-analogy"><strong>비유 연결</strong> 틈으로 건네는 소포 → 화학적 시냅스에서 방출되어 틈을 건너는 신경전달물질 · 양쪽을 직접 잇는 터널 → 전기적 시냅스에서 이온이 흐르는 간극연접 통로</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>왼쪽 세포가 내보낸 물질이 틈을 건너네요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s3-synapse-types/02.png" alt="왼쪽의 방출 자리와 오른쪽의 받는 막 사이에 신경전달물질이 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">왼쪽 축삭말단의 큰 오목한 부분은 전달물질이 방출된 자리예요. 신경전달물질이 틈을 건너 시냅스 후 세포에 닿아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>여기서는 통로로 이온이 곧장 흐르죠. 두 막의 단백질 통로가 이어져 있어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s3-synapse-types/03.png" alt="서로 가까운 두 세포막에 걸친 단백질 통로 안으로 이온이 이동한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">전기적 시냅스에서는 이온이 두 막을 잇는 간극연접 통로를 직접 지나가요. Na⁺는 수업에서 든 예예요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 건물의 통로는 연결 방식을 보여 줍니다. 실제 간극연접은 두 세포막의 단백질 통로가 맞물린 구조이고, 그 안으로 이온이 흐릅니다.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>그럼 그림에서 틈인지 통로인지 확인하고, 건너가는 것이 뭔지 보면 되겠네요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s3-synapse-types/04.png" alt="화학적 시냅스의 열린 틈과 전기적 시냅스의 이어진 통로를 나란히 비교한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">왼쪽에서는 전달물질이 오목한 방출 자리에서 나와 틈을 건너요. 오른쪽에서는 이온이 두 세포를 잇는 통로로 흘러요. 수업의 다음 단계는 왼쪽의 화학적 시냅스예요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1112_Nervous_and_Sensory_Systems.html#s3-synapse-types" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">신경전달물질이 틈을 건너면 화학적 시냅스, 간극연접 통로로 이온 전류가 흐르면 전기적 시냅스예요. 신호를 주는 쪽과 받는 쪽을 각각 시냅스 전·후라고 해요.</p><p class="panel-label">용어</p><dl class="terms"><dt>시냅스 전·후</dt><dd>화학적 시냅스에서 전달물질을 내보내는 축삭말단 쪽이 시냅스 전, 받는 쪽이 시냅스 후예요.</dd><dt>간극연접</dt><dd>두 세포를 연결해 이온이 직접 이동할 수 있게 하는 통로예요.</dd></dl></div></article><article class="topic" id="s3-release"><h3>화학 시냅스의 전달 순서</h3><p class="comic-question">축삭말단에 도착한 전기 신호는 어떻게 다음 세포의 신호가 될까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>시냅스 양쪽에 있는 채널은 같은 신호로 열려요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>전압 센서와 카드키가 여는 문을 비교해 봐요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s3-release/01.png" alt="센서가 달린 문 옆에 카드키와 판독기가 있는 문이 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">전압을 감지하는 문과 카드키를 대야 열리는 문은 작동 조건이 달라요.</p><p class="comic-analogy"><strong>비유 연결</strong> 센서가 있는 문 → 축삭말단의 전압 개폐성 Ca²⁺ 채널 · 카드키 문 → 전달물질의 결합으로 열리는 리간드 개폐성 채널</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>말단에 대기하는 소포는 다 세포체에서 온 건가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>전달물질 종류에 따라 소포를 채우는 위치가 달라요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s3-release/02.png" alt="왼쪽에서는 세포체 쪽 소포가 수송되고 오른쪽에서는 말단의 소분자가 현지 소포에 담긴다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">소분자 전달물질은 주로 말단에서 합성되어 현지 소포에 담겨요. 신경펩타이드는 세포체에서 합성·포장되고, 소포는 운동단백질을 타고 미세소관을 따라 말단으로 가요. 두 경우 모두 말단에 소포가 준비돼요. NO처럼 소포에 저장하지 않고 작용하는 전달물질도 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>먼저 전압에 반응하는 채널이 열려 Ca²⁺가 말단 안으로 들어와요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s3-release/03.png" alt="Ca²⁺가 위쪽 말단의 막에 있는 열린 채널을 통과해 그 안으로 들어간다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">활동전위가 시냅스 전 축삭말단에 닿으면 막전위 변화로 Ca²⁺ 채널이 열려요. Ca²⁺는 시냅스 전 축삭말단 안으로 들어와요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>소포는 위쪽 막에 붙고 작은 전달물질만 밖으로 나오네요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s3-release/04.png" alt="위쪽 말단의 막에 붙어 열린 소포에서 노란 전달물질이 틈으로 나온다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">Ca²⁺가 들어오면 소포막이 시냅스 전 막과 융합해 전달물질을 내보내요. 막과 융합하는 것은 시냅스 소포예요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>틈을 실제로 건너는 것은 전달물질이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s3-release/05.png" alt="작은 전달물질이 두 막 사이를 건너 아래쪽 수용체에 다가간다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">방출된 전달물질은 시냅스 틈을 확산해 건너고 시냅스 후 막의 수용체에 결합해요. 소포 자체는 틈을 건너지 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>전달물질은 카드키처럼 붙고, 열린 통로에는 이온이 지나가네요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s3-release/06.png" alt="노란 전달물질이 채널 옆 결합부에 붙고 청록색 이온은 채널을 통해 세포 안으로 들어간다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><p class="comic-caption">리간드 개폐성 채널에서는 전달물질이 결합할 때 통로가 열려 이온이 움직여요. 이온 이동은 막전위를 바꿔 다음 활동전위의 가능성에 영향을 줘요. 세포 안의 신호 전달을 거쳐 채널을 조절하는 수용체도 있어요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 카드키 문은 여는 조건만 보여 줘요. 실제로는 특정 전달물질이 수용체에 결합하며, 모든 수용체가 이온 채널인 것은 아니에요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1112_Nervous_and_Sensory_Systems.html#s3-release" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">화학적 시냅스에서 활동전위가 말단에 닿으면 Ca²⁺가 들어오고, 소포가 시냅스 전 막과 융합해 전달물질을 방출해요. 전달물질은 틈을 확산해 시냅스 후 수용체에 결합해요. 소분자 전달물질과 펩타이드는 합성과 포장 위치가 달라요.</p><p class="panel-label">용어</p><dl class="terms"><dt>소포 준비</dt><dd>소분자 전달물질은 대개 말단에서 합성·포장하고, 신경펩타이드는 주로 세포체에서 합성·포장해 운동단백질이 미세소관을 따라 옮겨요.</dd><dt>문을 여는 조건</dt><dd>축삭 시작부 Na⁺ 채널과 말단 Ca²⁺ 채널은 전압으로, 시냅스 후 리간드 개폐성 채널은 전달물질 결합으로 열려요.</dd><dt>축삭 전도와 시냅스 방출</dt><dd>활동전위는 보통 축삭 초기분절에서 시작해 축삭을 따라 말단까지 전해져요. 소포가 막과 융합해 전달물질을 방출하는 곳은 시냅스 전 축삭말단이에요.</dd><dt>다음 뉴런의 역치</dt><dd>시냅스 후 채널로 Na⁺가 들어오는 경우 막이 탈분극할 수 있어요. 다음 뉴런의 축삭 초기분절이 역치에 닿으면 활동전위가 생기며, 다른 채널이나 막전위에서는 효과가 달라질 수 있어요.</dd></dl></div></article><article class="topic" id="s3-excite-inhibit"><h3>흥분성 신호와 억제성 신호</h3><p class="comic-question">전달물질이 결합했는데도 왜 발화가 어려워질까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>전달물질이 붙으면 항상 다음 뉴런이 흥분하나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>결합 뒤 막전위가 어떻게 변하는지 봐야 해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s3-excite-inhibit/01.png" alt="왼쪽 추는 목표선에 가깝고 오른쪽 추는 완충 장치에 연결되어 목표선에서 멀다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">같은 밀기에도 반응의 크기가 다를 수 있어요. 아래위로 움직이는 추는 막전위 변화를 떠올리기 위한 소품이에요.</p><p class="comic-analogy"><strong>비유 연결</strong> 목표선에 가까워지는 추 → 막전위를 역치 쪽으로 움직이는 흥분성 입력 · 움직임을 줄이는 완충 장치 → 같은 흥분성 입력의 전압 변화를 줄일 수 있는 억제성 입력</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>Na⁺ 유입으로 막전위가 오르면 발화가 쉬워져요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s3-excite-inhibit/02.png" alt="양이온이 열린 통로를 따라 세포 안으로 들어간다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">Na⁺가 세포 안으로 들어오면 막전위가 역치 쪽으로 올라갈 수 있어요. 역치에 도달할 때 활동전위가 생겨요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>양이온이 나가면 역치에서 더 멀어질 수 있군요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s3-excite-inhibit/03.png" alt="K⁺가 열린 통로를 통해 세포 안에서 밖으로 나간다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">K⁺가 밖으로 나가면 안쪽 전압이 더 낮아질 수 있어요. 막전위가 휴지전위보다 낮아지는 과분극은 발화를 어렵게 하는 한 방식이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>Cl⁻가 들어오는 경우도 있고, 순이동이 거의 없는 조건도 있어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s3-excite-inhibit/04.png" alt="선택한 예에서 염화 이온이 열린 채널을 따라 세포 안으로 들어간다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">GABA가 GABA_A 수용체를 열면 대표적인 성숙 뉴런 조건에서는 Cl⁻가 안으로 들어갈 수 있어요. 이동 방향과 과분극 여부는 막전위와 Cl⁻의 평형전위 관계에 달려 있어요. 막전위가 평형전위보다 높으면 Cl⁻ 유입, 낮으면 유출, 같으면 순이동이 없어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>과분극이 안 보여도 다른 입력이 역치까지 못 오르게 할 수 있네요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s3-excite-inhibit/05.png" alt="같은 기준선에서 시작한 두 곡선 중 청록색 전압 상승이 더 작다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">Cl⁻ 통로가 열려 막전위가 거의 바뀌지 않아도, 같은 흥분성 입력이 만드는 전압 상승이 작아질 수 있어요. 그래서 채널과 조건을 함께 봐야 해요. Cl⁻ 평형전위가 역치보다 낮고 휴지전위와 비슷한 경우가 한 예예요. 흥분성 입력으로 막전위가 Cl⁻ 평형전위보다 높아지면, 열린 통로로 Cl⁻가 들어와 전압 상승을 줄여요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 완충 장치는 반응의 크기를 줄이는 비유예요. 실제 시냅스에서는 열린 채널, 막전위와 이온의 평형전위가 작용해요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1112_Nervous_and_Sensory_Systems.html#s3-excite-inhibit" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">흥분성 입력은 활동전위 가능성을 높이고 억제성 입력은 낮춰요. Na⁺ 유입은 막전위를 올릴 수 있고 K⁺ 유출은 낮출 수 있어요. Cl⁻의 이동과 과분극 여부는 그때의 막전위와 Cl⁻ 평형전위에 따라 달라져요.</p><p class="panel-label">용어</p><dl class="terms"><dt>Cl⁻ 평형전위</dt><dd>Cl⁻에 대한 농도 차와 전기적 힘이 균형을 이루는 막전위. 열린 채널은 막전위를 이 값 쪽으로 움직이게 해요.</dd><dt>과분극 없는 억제</dt><dd>막전위가 거의 변하지 않아도, 열린 채널 때문에 같은 흥분성 입력이 만드는 전압 상승이 작아질 수 있어요.</dd></dl></div></article></section>
+<section id="comic-section-5"><h2>5. 신경전달물질과 약물</h2><article class="topic" id="s4-transmitters"><h3>여러 가지 신경전달물질</h3><p class="comic-question">쿠라레와 파상풍 독은 근육 수축에 왜 반대 효과를 낼까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>둘 다 신호를 막는 독이면 근육에는 같은 일이 생기나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>막히는 신호가 가속 쪽인지 제동 쪽인지 먼저 구별해 봐요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s4-transmitters/01.png" alt="한쪽은 바퀴로 힘을 보내는 모터 연결부가 끊기고, 다른 쪽은 제동 연결부가 끊겨 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">가속 장치를 끊는 것과 브레이크 장치를 끊는 것은 반대 효과를 낼 수 있어요.</p><p class="comic-analogy"><strong>비유 연결</strong> 가속 장치 쪽 차단 → 근육의 아세틸콜린 수용체를 막는 쿠라레 · 브레이크 신호 쪽 차단 → 운동뉴런을 억제하는 전달물질 방출을 막는 파상풍 독</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>아세틸콜린이 붙으면 열린 양이온 채널을 통한 순전류가 근육을 탈분극시켜요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s4-transmitters/02.png" alt="아세틸콜린이 근육 수용체에 붙고, Na⁺는 안쪽으로 K⁺는 바깥쪽으로 움직이는 예를 보인다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">근육의 니코틴성 아세틸콜린 수용체는 Na⁺와 K⁺가 모두 지나는 양이온 채널이에요. 근육의 휴지전위 부근에서는 Na⁺가 들어오고 K⁺가 나가며 양전하가 순유입돼 탈분극해요. 역치에 닿으면 전압 개폐성 Na⁺ 채널이 열려 근육 활동전위와 수축으로 이어져요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>쿠라레가 분비를 막는 줄 알았는데, 받는 자리를 막는군요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s4-transmitters/03.png" alt="틈에 아세틸콜린이 남아 있고 근육의 닫힌 수용체에 쿠라레가 결합해 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">쿠라레는 근육의 아세틸콜린 수용체 결합 자리를 차지해요. 전달물질이 방출되어도 수용체를 열기 어려워져 근육이 수축하지 못하고 이완성 마비가 올 수 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>브레이크에 해당하는 신호는 운동뉴런의 발화를 조절해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s4-transmitters/04.png" alt="왼쪽 억제성 뉴런이 가운데 운동뉴런에 연결되고 운동뉴런의 축삭은 오른쪽 근육에 닿는다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">평소 척수의 억제성 뉴런에서 나온 GABA나 글리신은 운동뉴런의 발화를 줄여요. 이 회로에서 억제성 입력이 먼저 닿는 곳은 운동뉴런이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>억제 신호를 막으면 운동뉴런이 더 많이 발화할 수 있겠네요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s4-transmitters/05.png" alt="운동뉴런 쪽으로 가는 억제성 방출 자리가 막혀 있고 근육은 강하게 수축해 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">파상풍 독은 억제성 뉴런의 소포가 세포막과 융합하는 것을 막아 GABA와 글리신 방출을 줄여요. 운동뉴런의 억제가 풀리면 근육이 지나치게 수축하고 경련이 생겨요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 가속과 제동은 결과 방향을 보여 줘요. 쿠라레의 표적은 근육의 수용체이고 파상풍 독의 표적은 억제성 뉴런의 방출 과정이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>작용은 물질의 이름과 함께 어느 세포의 어떤 수용체에 결합하느냐로 판단해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s4-transmitters/06.png" alt="서로 다른 전달물질을 나타내는 모양들이 다양한 수용체와 짝을 이룬다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><p class="comic-caption">글루탐산·아스파르트산은 기억·학습과 관련돼요. 노르에피네프린·에피네프린은 위급한 상황의 반응, 도파민은 움직임·기분, 세로토닌은 식욕·수면·불안 등에 관여해요. 뇌에서 쓰이는 아세틸콜린은 알츠하이머병과도 관련돼요. 세로토닌의 단순한 부족만으로 우울증을 설명할 수 없어요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1112_Nervous_and_Sensory_Systems.html#s4-transmitters" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">운동뉴런의 아세틸콜린은 근육의 니코틴성 양이온 채널을 열어 수축을 유도해요. 쿠라레가 그 수용체를 막으면 근육이 이완성 마비를 보일 수 있어요. 파상풍 독은 GABA와 글리신 방출을 막아 운동뉴런의 억제를 풀고 과수축을 일으켜요.</p><p class="panel-label">용어</p><dl class="terms"><dt>아세틸콜린과 GABA</dt><dd>아세틸콜린은 근육과 뇌에서 쓰여요. GABA_A는 주로 Cl⁻를 통과시키는 채널이고, GABA_B는 세포 안 신호를 통해 K⁺ 채널을 간접적으로 열 수 있어요.</dd><dt>다른 전달물질</dt><dd>글루탐산·아스파르트산, 노르에피네프린·에피네프린, 도파민·세로토닌도 각각 여러 회로와 기능에 관여해요.</dd></dl></div></article><article class="topic" id="s4-removal"><h3>신경전달물질의 제거와 약물</h3><p class="comic-question">같은 양을 분비해도 회수를 막으면 왜 신호가 오래 갈까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>시냅스 틈에 물질이 더 오래 남으면 분비량부터 늘었다고 봐야 해요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>들어오는 양을 같게 두고, 나가는 길을 바꿔 볼까요?</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s4-removal/01.png" alt="같은 공급 통로를 갖춘 두 상자 중 한 상자의 회수 통로가 막혀 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">같은 양을 공급하는 두 상자에서 한쪽 회수 통로만 막아 봐요. 더 오래 물건이 남을 쪽을 예상해 봐요.</p><p class="comic-analogy"><strong>비유 연결</strong> 같은 양으로 공급되는 상자 → 신경전달물질의 분비량을 같게 두고 비교하는 시냅스 틈 · 물건이 돌아나가는 길을 막은 상자 → 운반단백질의 재흡수가 억제되어 전달물질이 틈에 더 오래 남는 상태</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>틈에 계속 남아 있으면 수용체에 다시 붙을 수 있어요. 첫 제거 경로는 확산이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s4-removal/02.png" alt="세포 사이 틈 바깥으로 전달물질이 퍼진다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">확산으로 전달물질이 틈 밖으로 퍼지면 수용체와 만날 가능성이 줄어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>효소가 있으면 같은 분자가 틈에 그대로 남을 수 없겠네요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s4-removal/03.png" alt="시냅스 틈의 효소가 전달물질과 만나 분해 산물이 생긴다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">효소는 분자를 분해해요. 아세틸콜린 분해 효소가 아세틸콜린을 분해하는 경우가 그 예예요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>셋째 길은 재흡수예요. 틈의 물질을 보낸 쪽 막이 회수해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s4-removal/04.png" alt="전달물질이 운반단백질을 거쳐 시냅스 전 뉴런 안으로 돌아간다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">재흡수에서는 막 운반단백질이 전달물질을 시냅스 전 뉴런으로 되돌려 보내요. 회수된 도파민과 세로토닌은 다시 분비에 쓰일 수 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>분비량을 그대로 두어도 회수가 늦으면 틈의 전달물질이 더 오래 남네요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s4-removal/05.png" alt="정상 회수와 운반단백질이 막혀 틈에 물질이 남은 경우를 비교한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">같은 양을 분비해도 재흡수를 막으면 틈에 더 오래 남아 수용체와 결합할 기회가 늘어요. 세로토닌 재흡수 억제제와 코카인은 시냅스의 운반단백질에 작용해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 상자 비유는 공급과 제거의 균형을 보여 줍니다. 시냅스에서는 분자의 확산, 효소 작용, 막 운반단백질의 작동이 제거를 맡아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>모르핀도 회수를 늦추나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>오피오이드 수용체에 직접 결합해 작용해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s4-removal/06.png" alt="모르핀을 나타내는 분자가 시냅스 후 막의 수용체에 직접 결합해 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><p class="comic-caption">엔도르핀은 통증을 줄이는 신경전달물질이에요. 그림 속 모르핀도 같은 계열의 오피오이드 수용체에 직접 결합해 진통 작용을 해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="7">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>실데나필은 NO가 만든 하위 신호인 cGMP의 분해를 늦춰요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s4-removal/07.png" alt="넓어진 혈관 단면 옆에서 PDE5가 억제돼 하위 신호 분자가 남아 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">7컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">NO와 일산화탄소는 기체 전달물질이에요. NO는 혈관 민무늬근을 이완시켜 혈관을 넓혀요. 수업에서 말한 NO 제거는 단순화한 표현이에요. 실제 실데나필은 그림 속 마름모인 cGMP를 분해하는 효소 PDE5를 억제해요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1112_Nervous_and_Sensory_Systems.html#s4-removal" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="sum-lead">확산·효소 분해·재흡수는 틈에 남은 전달물질을 줄여요. 재흡수를 막으면 이미 분비된 전달물질이 오래 남아 시냅스 후 수용체에 결합할 기회가 늘어요. 모르핀은 오피오이드 수용체에 결합하고, 실데나필은 NO가 만든 하위 신호 cGMP의 분해를 늦춰요.</p><p class="panel-label">용어</p><dl class="terms"><dt>재흡수 억제</dt><dd><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>세로토닌 재흡수 억제제는 세로토닌 운반을, 코카인은 수업 예에서 도파민 운반을 막아요. 교재에서는 노르에피네프린·세로토닌 재흡수도 함께 설명해요.</dd><dt>PDE5</dt><dd><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>NO가 유도한 cGMP를 분해하는 효소예요. 실데나필이 PDE5를 억제하면 민무늬근 이완이 오래가요.</dd><dt>신호 효과가 커지는 조건</dt><dd>재흡수나 분해를 늦추면 시냅스 틈의 전달물질이 오래 남아요. 같은 원리로 전달물질 합성·분비가 늘거나 시냅스 후 수용체가 늘어도 조건에 따라 효과가 커질 수 있어요. 재흡수 억제 약물의 직접 작용 부위는 시냅스예요.</dd></dl></div></article></section>
+<section id="comic-section-6"><h2>6. 요약 · 예고</h2><article class="topic" id="s5-cheatsheet"><h3>시험 직전 한눈에</h3><p class="comic-question">받기부터 신호 끄기까지, 어느 자리에서 무엇이 일어날까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>단어가 많아서 서로 다른 과정을 한꺼번에 떠올리게 돼요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>먼저 어디서 받는지, 어디를 지나 어디에 건네는지 따라가 봐요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s5-cheatsheet/01.png" alt="받는 안테나와 연결선, 다음 기기의 단자가 왼쪽에서 오른쪽으로 놓인다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">입력을 받는 곳, 신호가 지나가는 길, 다음 장치에 건네는 자리를 먼저 나눠요.</p><p class="comic-analogy"><strong>비유 연결</strong> 입력 단자와 연결선 → 수상돌기가 입력을 받고 축삭이 활동전위를 전도하는 구간 · 다음 단자로 건네는 자리 → 시냅스에서 다음 세포에 신호를 넘기는 구간</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>한 뉴런의 수상돌기와 축삭을 먼저 구별해요. 아교세포는 지지하거나 수초를 만들어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s5-cheatsheet/02.png" alt="한 뉴런에 수상돌기, 세포체, 수초와 결절이 있는 축삭, 말단이 보인다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">수상돌기가 입력을 받고, 세포체에는 핵과 미토콘드리아 등이 있어요. 수상돌기와 세포체 입력이 합쳐져 역치에 닿으면, 많은 뉴런에서 축삭둔덕 다음의 축삭 초기분절에서 활동전위가 시작돼요. 감각뉴런은 중추로 들어오고 운동뉴런은 근육 쪽으로 나가며, 연합뉴런이 그 사이에서 정보를 통합해요. 일부 아교세포가 만든 수초 사이에서 축삭 막이 드러난 곳이 랑비에 결절이에요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 단자 비유는 위치와 순서만 보여 줘요. 실제 뉴런의 전도는 이온 이동과 전압 변화이고, 화학 시냅스에서는 전달물질이 틈을 건너요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>휴지 상태에서는 농도 차를 유지하는 펌프와 열린 채널을 함께 봐야 하죠.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s5-cheatsheet/03.png" alt="막 양쪽에 Na⁺와 K⁺가 모두 있으며 Na⁺는 바깥에, K⁺는 안에 더 많다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">펌프는 ATP로 Na⁺ 3개를 밖으로, K⁺ 2개를 안으로 옮겨요. 채널 이동은 전기화학 기울기를 따라요. 휴지 막의 높은 K⁺ 투과성과 전류 균형으로 안쪽 전위가 낮게 유지돼요. 강의노트의 휴지전위 예는 −50~−60 mV예요. Na⁺는 바깥에 많지만 안에도 있고, K⁺는 안에 많지만 바깥에도 있어요. K⁺ 투과성이 크므로 휴지전위는 K⁺ 평형전위에 가까워요. 기울기에는 농도 차와 막전위가 모두 관여해요. 펌프는 ATP로 기울기를 거스르고, 안정된 휴지 상태에서 모든 막전류를 더한 값은 0이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>역치, 봉우리의 높이, 같은 시간에 일어난 횟수는 각각 다른 정보예요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s5-cheatsheet/04.png" alt="한 번의 활동전위가 기준선 위로 올랐다가 기준선 아래로 잠시 처지고 다시 돌아온다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">역치에 닿으면 Na⁺ 유입으로 탈분극해요. Na⁺ 불활성화와 K⁺ 유출로 재분극하고, K⁺ 채널이 늦게 닫혀 과분극할 수 있어요. 비슷한 조건에서는 강한 자극이 계속될 때 한 번의 높이보다 발화 빈도가 달라져요. 절대 불응기에는 다시 발화할 수 없고 상대 불응기에는 평소보다 강한 자극이 필요해요. Na⁺ 채널 불활성화와 K⁺ 채널 활성은 정점 부근에서 겹쳐요. 수상돌기와 세포체의 국소 전위는 입력 세기에 따라 달라져요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>유수축삭에서 큰 신호가 다시 생기는 곳은 랑비에 결절이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s5-cheatsheet/05.png" alt="전류가 수초 아래의 연속된 축삭을 지나고 활동전위 표시는 노출된 결절에 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">다른 조건이 비슷할 때 굵은 축삭은 내부 저항이 작아요. 가는 축삭도 수초 아래에서 국소 전류가 덜 새고 다음 결절이 역치에 닿아 밀집한 Na⁺ 채널이 활동전위를 재생하면 빨라져요. 탈수초는 전도를 늦추거나 차단할 수 있어요. 무수축삭에서는 가까운 막을 따라 활동전위가 연속해서 재생돼요. 다발성 경화증에서는 중추신경계의 면역 반응으로 수초가 손상되고, 축삭도 손상될 수 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>말단의 Ca²⁺ 채널은 전압으로, 화학 시냅스의 리간드 개폐성 채널은 전달물질 결합으로 열려요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s5-cheatsheet/06.png" alt="전기 시냅스에서 두 세포막을 관통해 양쪽 세포 안으로 열린 통로로 이온이 이동한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><p class="comic-caption">화학 시냅스는 말단의 Ca²⁺ 유입, 시냅스 전 막과 소포의 융합, 전달물질 확산, 시냅스 후 수용체 결합 순서예요. 전기적 시냅스에서는 이온 전류가 두 세포를 잇는 통로로 흘러요. 소분자 전달물질은 주로 말단에서, 신경펩타이드는 세포체에서 합성·포장돼요. 축삭 시작부 Na⁺ 채널과 말단 Ca²⁺ 채널은 전압에, 리간드 개폐성 수용체 채널은 전달물질 결합에 반응해요. 세포 내 신호를 일으키는 수용체도 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="7">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">민서</span>독이 막는 위치를 찾으면 수축 감소인지 과수축인지 구분할 수 있네요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s5-cheatsheet/07.png" alt="왼쪽은 쿠라레가 수용체에 결합한 자리, 오른쪽은 파상풍 독이 소포 방출을 막은 자리다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">7컷</span><p class="comic-caption">열린 채널과 전위 조건이 흥분·억제를 가려요. 쿠라레는 근육의 ACh 양이온 수용체를 막아 수축을 억제해요. 파상풍 독은 GABA·글리신 방출을 막아 운동뉴런 억제를 풀어요. Cl⁻ 채널은 평형전위에 따라 과분극 없이도 발화를 줄일 수 있어요. Cl⁻는 막전위가 Cl⁻ 평형전위보다 높으면 들어오고 낮으면 나가요. 평형전위가 역치보다 낮을 때는 흥분성 입력에 의한 전압 상승을 줄일 수 있어요. Na⁺ 유입은 흥분을, K⁺ 유출은 억제를 일으킬 수 있어요. GABA_A는 Cl⁻가 주로 통과하는 채널이에요. 근육의 니코틴성 수용체가 열리면 Na⁺가 들어오고 K⁺가 나가며, 휴지 상태 부근에서는 양전하가 순유입돼요. 운동뉴런의 억제가 풀려 근육 경직과 경련이 생길 수 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="8">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>회수 차단인지, 수용체에 결합하는지, 하위 신호 분해를 늦추는지 나눠 봐요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems/versions/20261112T142725-f673d773/images/s5-cheatsheet/08.png" alt="전달물질이 틈 바깥으로 퍼지고, 효소에서 분해되고, 보내는 쪽으로 돌아가는 세 경로가 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">8컷</span><p class="comic-caption">확산, 효소 분해, 재흡수가 전달물질을 제거해요. 재흡수 억제제는 틈에 남는 시간을 늘리고, 모르핀은 수용체에 작용해요. NO가 유도한 cGMP의 분해는 PDE5 억제제로 늦출 수 있어요. 회수는 이미 분비된 물질이 시냅스 전 뉴런으로 돌아가 다시 쓰일 수 있는 경로예요. 코카인은 도파민 등의 재흡수를 막고, 세로토닌 재흡수 억제제는 세로토닌 운반을 막아요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1112_Nervous_and_Sensory_Systems.html#s5-cheatsheet" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">수상돌기에서 입력을 받고 축삭 시작부에서 활동전위가 생겨 말단까지 전해져요. 시냅스에서는 전달물질이나 직접 이온 전류가 다음 세포에 신호를 넘겨요. 수용체 종류와 조건에 따라 흥분 또는 억제가 생기고, 전달물질 제거는 신호를 끝내요.</p><p class="panel-label">용어</p><dl class="terms"><dt>막 안팎의 분포</dt><dd>펌프는 Na⁺ 3개를 밖으로, K⁺ 2개를 안으로 옮겨 농도 차를 유지해요. 휴지 막의 높은 K⁺ 투과성과 전류 균형이 휴지전위를 정해요.</dd><dt>전도와 전달</dt><dd>전도는 축삭에서 전압 변화가 재생되는 과정이고, 시냅스 전달은 다음 세포에 신호를 건네는 과정이에요.</dd><dt>회수·수용체·하위 신호</dt><dd>재흡수 억제제는 전달물질 회수, 모르핀은 오피오이드 수용체, 실데나필은 cGMP를 분해하는 PDE5에 작용해요. 모르핀은 오피오이드 수용체에 결합해 통증을 줄여요. NO가 cGMP를 늘리면 혈관 민무늬근이 이완돼요.</dd><dt>신경아교세포</dt><dd>성상세포는 뉴런을 지지해요. 중추의 희소돌기아교세포, 말초의 슈반세포가 수초를 만들어요. 아교세포와 뉴런의 비율은 부위와 종에 따라 달라요.</dd><dt>전달물질 예</dt><dd>글루탐산·아스파르트산은 기억·학습에 관련되고, 도파민은 움직임·기분, 세로토닌은 수면·식욕·불안 등에 관여해요. 노르에피네프린·에피네프린은 위급할 때의 반응에 관여해요. 아세틸콜린을 사용하는 일부 뇌 뉴런의 변화는 알츠하이머병과 관련돼요.</dd></dl></div></article></section>
+  </main>
+  <footer>정리노트의 수업 내용을 바탕으로 만든 학습만화</footer>
+    </div>
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="panel-right-title">
+      <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-right-title">페이지 요약</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-empty" id="sum-empty">페이지를 넘기면 그 페이지의 핵심 식과 용어가 여기에 나옵니다.</p>
+        <div class="sums" id="sum-for"></div>
+      </div>
+    </aside>
+  </div>
+  <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
+  <nav class="pager" aria-label="화면 이동">
+    <div class="pager-inner">
+      <button class="btn btn-ghost" id="pager-prev" type="button">이전</button>
+      <span class="pager-count" id="pager-count"></span>
+      <button class="btn btn-primary" id="pager-next" type="button">시작하기</button>
+    </div>
+  </nav>
+  <p class="sr-only" id="pager-status" aria-live="polite"></p>
+
+  <script id="theme-ui">
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const sysDark = matchMedia('(prefers-color-scheme: dark)');
+      const KEY = 'od-theme';
+      const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+      function label() {
+        const next = isDark() ? '라이트 모드로 전환' : '다크 모드로 전환';
+        btn.setAttribute('aria-label', next);
+        btn.title = next;
+      }
+      btn.addEventListener('click', () => {
+        const t = isDark() ? 'light' : 'dark';
+        // 시스템 설정과 같아지면 저장을 지워 다시 시스템을 따른다
+        if ((t === 'dark') === sysDark.matches) { delete root.dataset.theme; try { localStorage.removeItem(KEY); } catch (e) {} }
+        else { root.dataset.theme = t; try { localStorage.setItem(KEY, t); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+        label();
+      });
+      sysDark.addEventListener('change', label);
+      window.addEventListener('storage', (e) => {
+        if (e.key !== KEY) return;
+        if (e.newValue === 'light' || e.newValue === 'dark') root.dataset.theme = e.newValue; else delete root.dataset.theme;
+        label();
+      });
+      label();
+    })();
+  </script>
+  <script id="panels-ui">
+    (function () {
+      const body = document.body;
+      const layout = document.querySelector('.layout');
+      const kind = body.dataset.panels;
+      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const scrim = document.getElementById('panel-scrim');
+      const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
+      const wideMq = matchMedia('(min-width: 1024px)');
+      const roomyMq = matchMedia('(min-width: 1280px)');
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      // 푼 기록은 탭(세션) 단위로만 유지: 뒤로가기·새로고침엔 남고, 창을 닫고 다시 열면 초기화
+      const tabStore = {
+        get(k, d) { try { const v = sessionStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      const PREF = 'od-panels:' + kind;
+      // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
+      const RANGE = body.dataset.range || '';
+      const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+      const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+      let overlay = null;
+
+      // ---------- 열고 닫기 ----------
+      function docked() {
+        const pref = store.get(PREF, {});
+        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+      }
+      function sync() {
+        const wide = wideMq.matches;
+        const d = docked();
+        ['left', 'right'].forEach((side) => {
+          const open = wide ? d[side] : overlay === side;
+          const p = panels[side];
+          layout.dataset[side] = open ? 'open' : 'closed';
+          p.classList.toggle('is-open', !wide && open);
+          p.inert = !open;
+          if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
+          toggles[side].setAttribute('aria-expanded', String(open));
+        });
+        const drawer = !wide && overlay !== null;
+        scrim.classList.toggle('is-on', drawer);
+        body.classList.toggle('drawer-open', drawer);
+        blockers.forEach((el) => { el.inert = drawer; });
+      }
+      function openDrawer(side) {
+        overlay = side;
+        sync();
+        requestAnimationFrame(() => panels[side].querySelector('[data-panel-close]').focus());
+      }
+      function closeDrawer(refocus) {
+        if (overlay === null) return;
+        const side = overlay;
+        overlay = null;
+        sync();
+        if (refocus) toggles[side].focus();
+      }
+      function toggle(side) {
+        if (wideMq.matches) {
+          const d = docked();
+          d[side] = !d[side];
+          store.set(PREF, d);
+          sync();
+          if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+        } else if (overlay === side) closeDrawer(true);
+        else openDrawer(side);
+      }
+
+      toggles.left.addEventListener('click', () => toggle('left'));
+      toggles.right.addEventListener('click', () => toggle('right'));
+      scrim.addEventListener('click', () => closeDrawer(true));
+      document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
+      panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
+
+      // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      function applyWidths() {
+        const w = store.get(PREF + ':w', {});
+        ['left', 'right'].forEach((side) => {
+          if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
+          else layout.style.removeProperty(WIDTH[side].prop);
+        });
+      }
+      function maxFor(side) {
+        const other = side === 'left' ? panels.right : panels.left;
+        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
+      }
+      function setWidth(side, px, save) {
+        const v = Math.round(Math.min(Math.max(px, WIDTH[side].min), maxFor(side)));
+        layout.style.setProperty(WIDTH[side].prop, v + 'px');
+        panels[side].querySelector('.panel-resize').setAttribute('aria-valuenow', String(v));
+        if (save) { const w = store.get(PREF + ':w', {}); w[side] = v; store.set(PREF + ':w', w); }
+      }
+      function resetWidth(side) {
+        const w = store.get(PREF + ':w', {});
+        delete w[side];
+        store.set(PREF + ':w', w);
+        layout.style.removeProperty(WIDTH[side].prop);
+      }
+      document.querySelectorAll('.panel-resize').forEach((handle) => {
+        const side = handle.dataset.side;
+        const dir = side === 'left' ? 1 : -1;
+        handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
+        handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
+        handle.addEventListener('pointerdown', (e) => {
+          if (!wideMq.matches || e.button !== 0) return;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startW = panels[side].getBoundingClientRect().width;
+          handle.setPointerCapture(e.pointerId);
+          body.classList.add('is-resizing');
+          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const up = () => {
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', up);
+            handle.removeEventListener('pointercancel', up);
+            body.classList.remove('is-resizing');
+            setWidth(side, panels[side].getBoundingClientRect().width, true);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', up);
+          handle.addEventListener('pointercancel', up);
+        });
+        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('keydown', (e) => {
+          const step = e.shiftKey ? 64 : 16;
+          const cur = panels[side].getBoundingClientRect().width;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+        });
+      });
+      applyWidths();
+      const onMq = () => { overlay = null; sync(); };
+      wideMq.addEventListener('change', onMq);
+      roomyMq.addEventListener('change', onMq);
+
+      // ---------- 목차의 진행 표시 ----------
+      const progressN = document.getElementById('progress-n');
+      const progressBar = document.getElementById('progress-bar');
+      const progressTotal = document.getElementById('progress-total');
+      function markToc(done, total, doneLabel) {
+        panels.left.querySelectorAll('.toc-list a').forEach((a) => {
+          const id = decodeURIComponent(a.getAttribute('href').slice(1));
+          let mark = a.querySelector('.toc-mark');
+          if (!mark) {
+            mark = document.createElement('span');
+            mark.className = 'toc-mark';
+            mark.setAttribute('aria-hidden', 'true');
+            const state = document.createElement('span');
+            state.className = 'sr-only toc-state';
+            a.append(mark, state);
+          }
+          const isDone = done.has(id);
+          mark.classList.toggle('is-done', isDone);
+          mark.innerHTML = isDone ? ICON_DONE : ICON_TODO;
+          a.querySelector('.toc-state').textContent = isDone ? ' (' + doneLabel + ')' : '';
+        });
+        progressN.textContent = String(done.size);
+        progressTotal.textContent = String(total);
+        progressBar.style.transform = 'scaleX(' + (total ? done.size / total : 0) + ')';
+      }
+      function revealCurrent() {
+        const link = panels.left.querySelector('.toc-list a[aria-current="true"]');
+        if (link && layout.dataset.left === 'open') link.scrollIntoView({ block: 'nearest' });
+      }
+
+      // ---------- 복습문제: 오른쪽 = 원문 · 힌트 · 풀이 ----------
+      function setupReview() {
+        const KEY = 'od-review-solved:' + RANGE;
+        const cards = Array.from(document.querySelectorAll('main article.card'));
+        const aids = panels.right.querySelector('.aids');
+        const empty = panels.right.querySelector('.panel-empty');
+        const btn = document.getElementById('solved-btn');
+        const groups = {};
+        const solved = new Set(tabStore.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        cards.forEach((card) => {
+          const g = document.createElement('div');
+          g.className = 'aid';
+          g.hidden = true;
+          card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
+          aids.appendChild(g);
+          groups[card.id] = g;
+        });
+        let curId = null;
+        function paintBtn() {
+          const on = solved.has(curId);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.innerHTML = (on ? ICON_DONE : ICON_TODO) + '<span>' + (on ? '푼 문제 · 표시 해제' : '푼 문제로 표시') + '</span>';
+        }
+        btn.addEventListener('click', () => {
+          if (!curId) return;
+          if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
+          tabStore.set(KEY, Array.from(solved));
+          paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          curId = s.matches('article.card') ? s.id : null;
+          Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
+          empty.hidden = Boolean(curId);
+          btn.hidden = !curId;
+          if (curId) paintBtn();
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(solved, cards.length, '푼 문제');
+          revealCurrent();
+        });
+      }
+
+      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
+      function setupNote() {
+        const KEY = 'od-comic-read:' + RANGE;
+        const topics = Array.from(document.querySelectorAll('main article.topic'));
+        const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
+        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
+        const box = panels.right.querySelector('.sums');
+        const sums = {};
+        topics.forEach((t) => {
+          const el = t.querySelector(':scope > .sum');
+          if (!el) return;
+          el.hidden = true;
+          box.appendChild(el);
+          sums[t.id] = el;
+        });
+        const empty = document.getElementById('sum-empty');
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          const key = s.matches('article.topic') ? s.id : 'intro';
+          Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
+          empty.hidden = Boolean(sums[key]);
+          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(read, topics.length, '읽음');
+          revealCurrent();
+        });
+      }
+
+      if (kind === 'review') setupReview();
+      if (kind === 'note') setupNote();
+      sync();
+    })();
+  </script>
+  <script id="pager-ui">
+    (function () {
+      const root = document.documentElement;
+      const main = document.querySelector('main');
+      const hero = main.querySelector('.hero');
+      const screens = [hero].concat(Array.from(main.querySelectorAll(document.body.dataset.screens)));
+      if (screens.length < 2) { root.classList.remove('js'); return; }
+      screens.forEach((s) => s.classList.add('screen'));
+
+      const last = screens.length - 1;
+      const prevBtn = document.getElementById('pager-prev');
+      const nextBtn = document.getElementById('pager-next');
+      const count = document.getElementById('pager-count');
+      const bar = document.getElementById('pager-bar');
+      const status = document.getElementById('pager-status');
+      const toc = document.querySelector('#panel-left .toc');
+      const scroller = document.querySelector('.content');
+      const titleOf = (s) => ((s.querySelector('h3') || s.querySelector('h1') || {}).textContent || '').trim();
+      let cur = -1;
+
+      // 목차: 섹션 링크 아래에 화면(토픽·카드) 목록을 붙인다
+      const tocLinks = [];
+      Array.from(toc.querySelectorAll(':scope > a')).forEach((a) => {
+        const sec = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+        const group = document.createElement('div');
+        group.className = 'toc-group';
+        a.replaceWith(group);
+        group.appendChild(a);
+        if (!sec) return;
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        screens.forEach((s, i) => {
+          if (!sec.contains(s)) return;
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#' + s.id;
+          link.innerHTML = '<span class="toc-title"></span>';
+          link.firstChild.textContent = titleOf(s);
+          li.appendChild(link);
+          list.appendChild(li);
+          tocLinks[i] = link;
+        });
+        group.appendChild(list);
+      });
+
+      function indexFor(hash) {
+        const id = decodeURIComponent((hash || '').replace(/^#/, ''));
+        const el = id && document.getElementById(id);
+        if (!el || !main.contains(el)) return { i: 0 };
+        const i = screens.findIndex((s) => s.contains(el) || el.contains(s));
+        return { i: Math.max(i, 0), target: i >= 0 && screens[i].contains(el) && screens[i] !== el ? el : null };
+      }
+
+      function render(i, target) {
+        const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
+        if (i !== cur) {
+          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
+          main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
+          const s = screens[i];
+          const sec = s.closest('section');
+          if (sec) sec.classList.add('is-on');
+          s.classList.add('is-current');
+          if (dir) { s.classList.remove('enter-next', 'enter-prev'); void s.offsetWidth; s.classList.add(dir); }
+          cur = i;
+          document.body.classList.toggle('at-end', i === last);
+          prevBtn.disabled = i === 0;
+          nextBtn.textContent = i === 0 ? '시작하기' : i === last ? '처음으로' : '다음';
+          count.textContent = i === 0 ? '' : i + ' / ' + last;
+          bar.style.transform = 'scaleX(' + (i / last) + ')';
+          status.textContent = i === 0 ? titleOf(s) : i + ' / ' + last + ', ' + titleOf(s);
+          tocLinks.forEach((link, k) => link && link.setAttribute('aria-current', String(k === i)));
+          document.dispatchEvent(new CustomEvent('od:screen', { detail: { index: i, screen: s } }));
+        }
+        if (target) target.scrollIntoView({ block: 'start' });
+        else scroller.scrollTo(0, 0);
+      }
+
+      function go(i) {
+        i = Math.min(Math.max(i, 0), last);
+        if (i === cur) return;
+        const url = i === 0 ? location.pathname + location.search : '#' + screens[i].id;
+        history.pushState(null, '', url);
+        render(i);
+      }
+
+      prevBtn.addEventListener('click', () => go(cur - 1));
+      nextBtn.addEventListener('click', () => go(cur === last ? 0 : cur + 1));
+      const fromUrl = () => { const r = indexFor(location.hash); render(r.i, r.target); };
+      window.addEventListener('hashchange', fromUrl);
+      window.addEventListener('popstate', fromUrl);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+
+      // 좌우로 밀어서 넘기기 (가로로 스크롤되는 영역은 제외)
+      let sx = 0, sy = 0, skip = true;
+      main.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (skip) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 64 && Math.abs(dx) > 2 * Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      fromUrl();
+    })();
+  </script>
+</body>
+</html>
