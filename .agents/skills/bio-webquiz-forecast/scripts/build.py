@@ -47,15 +47,19 @@ def _once(html: str, old: str, new: str) -> str:
     return html.replace(old, new)
 
 
-def render(src: Path | str, *, dual: bool | None = None) -> tuple[str, str]:
-    src = Path(src)
-    m = load_pack(src)
+def _render_review(src: Path, m: dict) -> str:
     try:
         html = assemble.build_review(m, src)
     except (assemble.AssembleError, ValueError) as e:
         raise BuildError(str(e)) from e
     html = _once(html, f'href="{manifest_mod.note_name(m)}"', f'href="{m["note_href"]}"')
-    html = _once(html, f'data-range="{m["range"]}"', f'data-range="{m["range"]}-v{m["version"]}"')
+    return _once(html, f'data-range="{m["range"]}"', f'data-range="{m["range"]}-v{m["version"]}"')
+
+
+def render(src: Path | str, *, dual: bool | None = None) -> tuple[str, str]:
+    src = Path(src)
+    m = load_pack(src)
+    html = _render_review(src, m)
     if dual is None:
         dual = (src / 'presentations.json').is_file()
     if dual:
@@ -63,17 +67,23 @@ def render(src: Path | str, *, dual: bool | None = None) -> tuple[str, str]:
     return manifest_mod.review_name(m), html
 
 
+def render_exam(src: Path, *, legacy_sections: bool = False) -> str:
+    m = load_pack(src)
+    if not legacy_sections:
+        graded = [problem for problem in m["problems"] if problem["id"] in m["answer_key"]]
+        graded_parts = {problem["part"] for problem in graded}
+        m["problems"] = graded
+        m["parts"] = [part for part in m["parts"] if part["id"] in graded_parts]
+    exam = exam_presentations.web_exam(_render_review(src, m), m)
+    return exam_presentations.decorate(exam, m, 'exam', exam_presentations.set_hash(src))
+
+
 def build(src: Path | str) -> Path:
     src = Path(src).resolve()
-    name, raw = render(src, dual=False)
-    out = src.parents[1] / name
-    m = load_pack(src)
-    question_hash = exam_presentations.set_hash(src)
-    exam = exam_presentations.web_exam(raw, m)
-    texts = dict(practice=exam_presentations.decorate(raw, m, 'practice', question_hash),
-                 exam=exam_presentations.decorate(exam, m, 'exam', question_hash))
+    name, practice = render(src, dual=True)
+    texts = dict(practice=practice, exam=render_exam(src))
     exam_presentations.write_pair(src, texts)
-    return out
+    return src.parents[1] / name
 
 
 def next_version(chapter_dir: Path | str) -> int:

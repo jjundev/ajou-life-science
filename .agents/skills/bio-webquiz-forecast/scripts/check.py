@@ -119,10 +119,10 @@ def check(html_path: Path | str) -> list[str]:
     probs = [f"[checker] {p}" for p in check_html.check_file(html_path)]
     probs.extend(build.exam_presentations.check_pair(src))
     if (src / 'presentations.json').exists():
-        _, raw = build.render(src, dual=False)
-        expected = build.exam_presentations.decorate(build.exam_presentations.web_exam(raw, pack), pack, 'exam', build.exam_presentations.set_hash(src))
         exam = src.parent.parent / build.exam_presentations.names(pack)['exam']
-        if not exam.is_file() or exam.read_text(encoding='utf-8') != expected:
+        actual = exam.read_text(encoding='utf-8') if exam.is_file() else None
+        # Published versions may still contain empty section headings from the original renderer.
+        if actual != build.render_exam(src) and actual != build.render_exam(src, legacy_sections=True):
             probs.append('[stale] 시험형: 원본으로 다시 빌드한 결과와 다름')
 
     name, fresh = build.render(src)
