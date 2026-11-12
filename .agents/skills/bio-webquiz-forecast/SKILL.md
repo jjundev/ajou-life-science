@@ -44,11 +44,11 @@ description: 생명과학 장별 웹과제 예상문제를 연습형·시험형�
 ### 6. 빌드와 검사
 ```bash
 python "$SKILL/scripts/build.py" "$REPO/웹과제예상/<N>장/.pack/v<K>"
-python "$SKILL/scripts/check.py" "$REPO/웹과제예상/<N>장/복습문제_<N>장_웹과제예상_v<K>.html"
+python "$SKILL/scripts/check.py" --strict "$REPO/웹과제예상/<N>장/복습문제_<N>장_웹과제예상_v<K>.html"
 ```
 `OK`가 나와야 한다. `[title-leak]`은 정답 보기에만 있는 낱말이 제목에 드러난 것이다. 제목을 발문이 묻는 대상으로 바꾼다(블라인드 풀이 전에 잡아 재풀이를 줄인다). 문제 줄의 카드 id로 담당 작성자를 찾아 한 번에 모아 되돌린다(최대 2회). 남으면 "미해결"로 보고한다.
 
-build는 같은 버전의 연습형과 `_시험형_v<K>.html`을 함께 만들고 `.pack/v<K>/presentations.json`에 두 산출물 해시를 기록한다. check는 어느 문제판을 입력해도 두 판과 원본의 일치를 검사한다. 문항 저작·정답·보기 순서는 공유한다.
+build는 같은 버전의 연습형과 `_시험형_v<K>.html`을 함께 만들고 `.pack/v<K>/presentations.json`에 두 산출물 해시를 기록한다. check는 어느 문제판을 입력해도 두 판과 원본의 일치를 검사하고, 시험형의 목차 링크·본문 섹션·섹션별 문항 순서를 `pack.json`의 채점 문항과 대조한다. `[exam-layout]`은 표시된 섹션·문항을 출제 명세와 대조해 수정한 뒤 재빌드한다. 일반 검사에서 `OK (구버전 호환)`으로 표시되는 시험형은 현재 생성기로 재빌드해야 발행 검사(`--strict`)를 통과한다. 문항 저작·정답·보기 순서는 공유한다.
 
 ### 7. 블라인드 풀이
 `python "$SKILL/scripts/blind.py" <html> "$RUN/blind-r1.md"`로 사본을 만들고 `references/blind-brief.md`로 `opus or sol` 리뷰어 1명을 띄운다. 리뷰어가 `$RUN/blind-answers-r1.md`를 쓰면 결과를 카드 해시와 함께 기록하고 판정한다.
@@ -67,6 +67,8 @@ python "$SKILL/scripts/blind_ledger.py" status "$SRC" "$RUN/blind-ledger.json"
 ```bash
 python "$SKILL/scripts/browser_check.py" "$REPO/웹과제예상/<N>장/복습문제_<N>장_웹과제예상_v<K>.html" --out "$RUN/browser.json" --shots "$RUN/browser-shots"
 ```
+시험형은 브라우저가 만든 목차의 섹션별 문항 링크와 순서를 `pack.json`의 채점 문항과 대조한다.
+
 연습형만 넘기면 시험형을 찾아 **두 문제 HTML**을 1280×900·375×812 × light/dark로 모두 조작한다. 실패하면 문항·화면·이유가 `browser.json`의 `failures`에 남고 exit 1이다. PASS는 기계 확인이므로 `browser-shots/`의 스크린샷을 직접 열어 겹침·잘림·그림을 확인한다. 스크립트가 다루는 공통 계약의 데스크톱/375px·light/dark 검사는 다음과 같다. 연습형은 기존 복습문제의 선택 즉시 채점·현재 문항 유지·보기별 설명·다시 풀기·애매함 표시·복기 프롬프트·새로고침 초기화를 확인하고, 시험형은 p1~p15만 진행·선택 후 이동·제출 전 답 숨김·마지막 전체 제출·5열 채점표를 확인한다. 개요 o1·o2는 연습형에서만 제공한다. 시험형에는 문제 아래를 포함한 어느 위치에도 `출제 개요 보기` 버튼이나 개요 팝업을 만들지 않고, 시험형의 문항·진행·목차·채점에서 개요를 제외한다. 사용자가 기존 시험형의 표시 수정을 요청하면 문항·정답을 보존한 채 대상 장의 기존 시험형 버전 전체에도 적용하고, 해당 UI가 남아 있지 않은지 확인한다. 두 판의 경로·해시·실제 조작 증거(`browser.json`·스크린샷)를 RUN에 구별해 남긴다. 스크립트가 다루지 않는 표시 문제를 찾으면 그 화면만 추가로 확인한다.
 
 ### 9. 예상문제해설 생성

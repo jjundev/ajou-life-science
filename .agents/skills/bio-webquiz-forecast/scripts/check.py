@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""웹과제 예상 세트 검사기. CLI: check.py <웹과제예상/<N>장/복습문제_…_v<K>.html>"""
+"""웹과제 예상 세트 검사기. CLI: check.py [--strict] <문제 HTML>"""
 from __future__ import annotations
 
+import argparse
 from collections import Counter
 import json
 from pathlib import Path
@@ -13,6 +14,7 @@ sys.path.insert(0, str(HERE))
 import build  # noqa: E402  (bio-review-pack 경로도 여기서 추가된다)
 import cards  # noqa: E402
 import check_html  # noqa: E402
+from exam_layout import check_layout, expected_sections  # noqa: E402
 import exam_pool  # noqa: E402
 
 DEFAULT_EXAM_COUNTS = {"기출그대로": 2, "기출쌍둥이": 2, "기출숫자": 1}
@@ -101,29 +103,43 @@ def _earlier(src: Path, version: int) -> tuple[set[str], set[str]]:
 
 
 def check(html_path: Path | str) -> list[str]:
+    return _check(html_path, strict=False)[0]
+
+
+def _check(html_path: Path | str, *, strict: bool) -> tuple[list[str], bool]:
     html_path = Path(html_path).resolve()
-    m = re.search(r"_v(\d+)\.html$", html_path.name)
+    m = build.HTML_VERSION_RE.search(html_path.name)
     if not m:
-        return [f"[checker] {html_path.name}: 파일명에 _v<K>가 없음"]
+        return [f"[checker] {html_path.name}: 파일명에 _v<K>가 없음"], False
     src = html_path.parent / build.PACK / f"v{m.group(1)}"
     repo = html_path.parents[2]
     pack = build.load_pack(src)
+    names = build.exam_presentations.names(pack)
+    has_pair = (src / 'presentations.json').is_file()
     if '_시험형_v' in html_path.name:
-        from exam_presentations import check_pair, names
-        if html_path.name != names(pack)['exam'] or not (src / 'presentations.json').is_file():
-            return ['[checker] 시험형 파일명/두 풀이형 기록 불일치']
-        errors = check_pair(src)
-        primary = src.parent.parent / names(pack)['practice']
-        return errors + check(primary)
+        if html_path.name != names['exam'] or not has_pair:
+            return ['[checker] 시험형 파일명/두 풀이형 기록 불일치'], False
+        html_path = html_path.with_name(names['practice'])
     source = html_path.read_text(encoding="utf-8")
     probs = [f"[checker] {p}" for p in check_html.check_file(html_path)]
     probs.extend(build.exam_presentations.check_pair(src))
-    if (src / 'presentations.json').exists():
-        exam = src.parent.parent / build.exam_presentations.names(pack)['exam']
-        actual = exam.read_text(encoding='utf-8') if exam.is_file() else None
-        # Published versions may still contain empty section headings from the original renderer.
-        if actual != build.render_exam(src) and actual != build.render_exam(src, legacy_sections=True):
+    legacy_layout = False
+    if has_pair:
+        exam = html_path.with_name(names['exam'])
+        if exam.is_file():
+            actual = exam.read_text(encoding='utf-8')
+            current = build.render_exam(src)
+            legacy_layout = actual != current and actual == build.render_exam(src, legacy_sections=True)
+            if actual != current and not legacy_layout:
+                probs.append('[stale] 시험형: 원본으로 다시 빌드한 결과와 다름')
+            # The legacy exception covers empty authored sections. Cards and links still have to match.
+            probs.extend(check_layout(actual, expected_sections(pack, include_empty=legacy_layout)))
+            if strict and legacy_layout:
+                probs.append('[exam-layout] 시험형 구버전 목차: 발행하려면 현재 생성기로 재빌드 필요')
+        else:
             probs.append('[stale] 시험형: 원본으로 다시 빌드한 결과와 다름')
+    elif strict:
+        probs.append('[checker] 발행하려면 연습형·시험형을 함께 빌드해야 함')
 
     name, fresh = build.render(src)
     if name != html_path.name or fresh != source:
@@ -239,21 +255,24 @@ def check(html_path: Path | str) -> list[str]:
             probs.append(f"[stem-dup] {cid}: 이전 버전과 같은 발문")
         if s in quiz:
             probs.append(f"[webquiz-copy] {cid}: 실제 웹과제 발문과 같음")
-    return probs
+    return probs, legacy_layout
 
 
 def main(argv: list[str] | None = None) -> int:
-    args = sys.argv[1:] if argv is None else argv
     sys.stdout.reconfigure(encoding="utf-8")
-    if len(args) != 1:
-        print("사용법: check.py <html>", file=sys.stderr)
-        return 2
+    parser = argparse.ArgumentParser(description='웹과제 예상 문제판 검사')
+    parser.add_argument('html', type=Path, help='연습형 또는 시험형 HTML')
+    parser.add_argument('--strict', action='store_true', help='현재 목차 규칙을 적용한 두 문제판으로 발행 검사')
+    args = parser.parse_args(argv)
     try:
-        probs = check(args[0])
+        probs, legacy_layout = _check(args.html, strict=args.strict)
     except (build.BuildError, KeyError, FileNotFoundError) as e:
         print(f"[checker] 검사 실패: {e}")
         return 1
-    print("\n".join(probs) if probs else "OK")
+    if probs:
+        print('\n'.join(probs))
+    else:
+        print('OK (구버전 호환)' if legacy_layout else 'OK')
     return 1 if probs else 0
 
 

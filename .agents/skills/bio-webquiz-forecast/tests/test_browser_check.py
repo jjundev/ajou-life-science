@@ -26,6 +26,17 @@ class TestBrowserCheck(unittest.TestCase):
     def test_cli_rejects_exam_input(self):
         self.assertEqual(browser_check.main(['/x/복습문제_9장_웹과제예상_시험형_v1.html', '--out', '/tmp/x.json']), 2)
 
+    def test_runtime_missing_exam_toc_link_fails(self):
+        with tempfile.TemporaryDirectory() as temp:
+            practice = build.build(full_set(make_repo(Path(temp))))
+            exam = practice.with_name(practice.name.replace('_v', '_시험형_v'))
+            source = exam.read_text(encoding='utf-8')
+            script = """<script>document.querySelector('.toc-list a[href="#p2"]').parentElement.remove();</script>"""
+            exam.write_text(source.replace('</body>', script + '</body>', 1), encoding='utf-8')
+            report = browser_check.check(practice, viewports=[(375, 812)], themes=['dark'])
+            self.assertEqual(report['status'], 'fail', report['failures'])
+            self.assertTrue(any('목차' in error and 'p2' in error for error in report['failures']), report['failures'])
+
 
 if __name__ == '__main__':
     unittest.main()

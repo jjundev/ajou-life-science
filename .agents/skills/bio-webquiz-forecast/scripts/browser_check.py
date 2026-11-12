@@ -22,10 +22,12 @@ import hashlib
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import json
 from pathlib import Path
-import re
 import sys
 import threading
 from urllib.parse import quote
+
+import build
+from exam_layout import expected_sections
 
 VIEWPORTS = [(1280, 900), (375, 812)]
 THEMES = ["light", "dark"]
@@ -145,7 +147,7 @@ def check_practice(run: Run, url: str, ids: list[str]) -> dict:
     return {"cards_checked": checked}
 
 
-def check_exam(run: Run, url: str, ids: list[str], answers: dict[str, str]) -> dict:
+def check_exam(run: Run, url: str, sections: dict[str, list[str]], answers: dict[str, str]) -> dict:
     page = run.page
     page.on("dialog", lambda d: d.accept())
     page.goto(url, wait_until="domcontentloaded")
@@ -153,6 +155,13 @@ def check_exam(run: Run, url: str, ids: list[str], answers: dict[str, str]) -> d
     run.expect(page.locator("article.card#o1, article.card#o2").count() == 0, "시험형: 개요 카드가 있음")
     run.expect(page.locator(".presentation-links a").count() == 0, "시험형: 제출 전 다른 판 링크 노출")
     run.expect("출제 개요" not in (page.locator("body").inner_text() or ""), "시험형: '출제 개요' 문구가 보임")
+    toc = page.locator('#panel-left .toc > *').evaluate_all('''groups => groups.map(group => [
+        group.querySelector(':scope > a')?.getAttribute('href') ?? null,
+        Array.from(group.querySelectorAll('.toc-list a'), link => link.getAttribute('href'))
+    ])''')
+    expected_toc = [[f'#{part}', [f'#{cid}' for cid in cards]] for part, cards in sections.items()]
+    run.expect(toc == expected_toc, f'시험형 목차 문항: {toc} ≠ {expected_toc}')
+    ids = [cid for cards in sections.values() for cid in cards]
     run.expect((page.locator("#progress-total").text_content() or "").strip() == str(len(ids)), "시험형: 진행 총수 ≠ 문항 수")
     for n, cid in enumerate(ids):
         def one(cid=cid, n=n):
@@ -185,15 +194,27 @@ def check(practice: Path, shots: Path | None = None, viewports=VIEWPORTS, themes
     practice = practice.resolve()
     exam = practice.with_name(practice.name.replace("_v", "_시험형_v"))
     repo = practice.parents[2]
-    ids = sorted({m for m in re.findall(r'<article class="card[^"]*" id="(p\d+)"', practice.read_text(encoding="utf-8"))},
-                 key=lambda c: int(c[1:]))
+    report = {"practice": {"path": str(practice), "sha256": sha256(practice)},
+              "exam": {"path": str(exam), "sha256": sha256(exam) if exam.is_file() else None},
+              "viewports": [f"{w}x{h}" for w, h in viewports], "themes": list(themes), "runs": [], "failures": []}
+    try:
+        version = build.HTML_VERSION_RE.search(practice.name)
+        if not version:
+            raise ValueError('파일명에 _v<K>가 없음')
+        pack = build.load_pack(practice.parent / build.PACK / f'v{version[1]}')
+        sections = expected_sections(pack)
+        ids = [cid for cards in sections.values() for cid in cards]
+        if not ids:
+            raise ValueError('채점 문항이 없음')
+    except (OSError, ValueError, KeyError, build.BuildError) as exc:
+        report['failures'].append(f'출제 명세를 읽을 수 없음: {exc}')
+        report['status'] = 'fail'
+        return report
+
     server = ThreadingHTTPServer(("127.0.0.1", 0), partial(Quiet, directory=str(repo)))
     threading.Thread(target=server.serve_forever, daemon=True).start()
     origin = f"http://127.0.0.1:{server.server_port}/"
     url = lambda p: origin + quote(p.relative_to(repo).as_posix())
-    report = {"practice": {"path": str(practice), "sha256": sha256(practice)},
-              "exam": {"path": str(exam), "sha256": sha256(exam) if exam.is_file() else None},
-              "viewports": [f"{w}x{h}" for w, h in viewports], "themes": list(themes), "runs": [], "failures": []}
     if not exam.is_file():
         report["failures"].append(f"시험형 파일 없음: {exam.name}")
     try:
@@ -211,9 +232,8 @@ def check(practice: Path, shots: Path | None = None, viewports=VIEWPORTS, themes
                         run = Run(page, f"{kind} {width}x{height} {theme}", origin)
                         if kind == "practice":
                             detail = run.step("연습형 검사", lambda: check_practice(run, url(path), ids)) or {}
-                            answers = run.step("답 모델", lambda: model(page)) or {}
                         else:
-                            detail = run.step("시험형 검사", lambda: check_exam(run, url(path), ids, answers)) or {}
+                            detail = run.step("시험형 검사", lambda: check_exam(run, url(path), sections, pack['answer_key'])) or {}
                         if shots is not None:
                             shots.mkdir(parents=True, exist_ok=True)
                             figure = next((c for c in ids if page.locator(f"#{c} svg").count()), ids[-1])

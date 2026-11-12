@@ -1,8 +1,11 @@
-import json
-import unittest
+import re
+import subprocess
+import sys
 import tempfile
+import unittest
 from pathlib import Path
-from _util import card_html, overview_html, make_repo, make_set
+from unittest.mock import patch
+from _util import SCRIPTS, card_html, overview_html, make_repo, make_set
 import build
 import check
 
@@ -30,6 +33,46 @@ class TestDualHtml(unittest.TestCase):
             self.assertTrue(check.check(unrelated), '버전만 같은 임의 파일을 승인하면 안 됨')
             exam.write_text(exam.read_text().replace('문제 1번 발문이다?', '잘못 바뀐 문제?', 1))
             self.assertTrue(check.check(practice), '반대 형태의 변경도 감지해야 함')
+
+    def test_exam_layout_rejects_reproducible_renderer_errors(self):
+        with tempfile.TemporaryDirectory() as temp:
+            src = full_set(make_repo(Path(temp)))
+            practice = build.build(src)
+            current = build.render_exam(src)
+            card1, card2 = (re.search(rf'<article class="card" id="p{i}">.*?</article>', current, re.S)[0]
+                            for i in (1, 2))
+            reversed_cards = current.replace(card1, 'CARD_PLACEHOLDER', 1).replace(card2, card1, 1)
+            cases = {
+                'partExtra': current.replace('<a href="#partC">', '<a href="#partExtra">분류표</a><a href="#partC">', 1)
+                                    .replace('<section id="partC">', '<section id="partExtra"><h2>분류표</h2></section><section id="partC">', 1),
+                'partC': re.sub(r'<a href="#partC">.*?</a>', '', current, count=1),
+                'p1': reversed_cards.replace('CARD_PLACEHOLDER', card2, 1),
+            }
+            for target, broken in cases.items():
+                with self.subTest(target=target):
+                    self.assertNotEqual(broken, current)
+                    build.exam_presentations.write_pair(src, {'practice': practice.read_text(), 'exam': broken})
+                    # The same defect can exist in the published file and the renderer that produced it.
+                    with patch.object(build, 'render_exam', return_value=broken):
+                        errors = check.check(practice)
+                    self.assertTrue(any('[exam-layout]' in error and target in error for error in errors), errors)
+
+    def test_cli_distinguishes_legacy_exam_from_publishable_exam(self):
+        with tempfile.TemporaryDirectory() as temp:
+            src = full_set(make_repo(Path(temp)))
+            practice = build.build(src)
+            exam = practice.with_name(build.exam_presentations.names(build.load_pack(src))['exam'])
+            legacy = build.render_exam(src, legacy_sections=True)
+            build.exam_presentations.write_pair(src, {'practice': practice.read_text(), 'exam': legacy})
+            for path in (practice, exam):
+                with self.subTest(path=path.name):
+                    cmd = [sys.executable, str(SCRIPTS / 'check.py')]
+                    normal = subprocess.run([*cmd, str(path)], capture_output=True, text=True)
+                    self.assertEqual(normal.returncode, 0, normal.stdout + normal.stderr)
+                    self.assertIn('구버전 호환', normal.stdout)
+                    strict = subprocess.run([*cmd, '--strict', str(path)], capture_output=True, text=True)
+                    self.assertEqual(strict.returncode, 1, strict.stdout + strict.stderr)
+                    self.assertIn('재빌드', strict.stdout)
 
     def test_exam_navigation_excludes_overview_and_waits_for_submit(self):
         from playwright.sync_api import sync_playwright
