@@ -45,6 +45,6 @@
 
 ## 독립 검토자에게 전달할 작업
 
-> bio-review-comic 독립 검토. SKILL=<스킬 절대 경로>, RUN=<실행 절대 경로>, PAGE=<토픽 ID>. SKILL/references/review.md와 agents.md의 검토 계약을 읽어라. RUN/source.html/source.json의 해당 원본 본문·그림, storyboard.json의 해당 페이지·공통 정의, images.json의 해당 페이지 모든 실제 이미지를 직접 대조하라. 생성자의 평가를 정답으로 읽지 말라. 원본 핵심·조건·비유 한계·대사와 모든 실제 그림의 구조·방향·개수·연속성을 확인하라. comic.py fingerprints --run RUN으로 검토 대상의 실제 content/visual 지문을 얻어라. RUN/workers/PAGE/review.json에 페이지 ID, checked_panels, content와 visual의 status/fingerprint/notes, issues를 기록하라. status는 passed 또는 failed, issues는 컷 번호(페이지 전체면 null)·문제·근거·수정 제안의 목록이다. 실제 검토하지 않은 항목은 failed로 남겨라. 공유 review.json은 수정하지 말라. 부모에게 페이지·판정·보고서 경로·수정할 컷과 이유만 5줄 이내로 반환하라.
+> bio-review-comic 독립 검토. SKILL=<스킬 절대 경로>, RUN=<실행 절대 경로>, PAGE=<토픽 ID>. SKILL/references/review.md와 agents.md의 검토 계약을 읽어라. RUN/source.html/source.json의 해당 원본 본문·그림, storyboard.json의 해당 페이지·공통 정의, images.json의 해당 페이지 모든 실제 이미지를 직접 대조하라. 생성자의 평가를 정답으로 읽지 말라. 요약·대사·캡션·그림에서 가져온 다른 토픽과 별도 도해·위젯을 source_dependencies와 대조하라. 원본 핵심·조건·비유 한계·대사와 모든 실제 그림의 구조·방향·개수·연속성을 확인하라. comic.py fingerprints --run RUN --page PAGE로 검토 대상의 content/visual 지문을 얻어라. RUN/workers/PAGE/review.json에 page, checked_panels, content와 visual의 status/fingerprint/notes, issues를 기록하라. status는 passed 또는 failed, issues는 컷 번호(페이지 전체면 null)·문제·근거·수정 제안의 목록이며 남은 문제가 없으면 빈 배열이다. 실제 검토하지 않은 항목은 failed로 남겨라. 공유 review.json은 수정하지 말라. 부모에게 페이지·판정·보고서 경로·수정할 컷과 이유만 5줄 이내로 반환하라.
 
 위임이나 검토 도구가 없으면 메인에 원인을 반환하며 통과 보고서를 만들지 않는다. 메인은 실패를 페이지 보류로 반영한다. 수정 결과를 검토할 때는 현재 등록 이미지와 현재 지문을 다시 읽는다.

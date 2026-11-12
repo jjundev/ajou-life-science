@@ -3,11 +3,11 @@
 ## 파일과 원본 지문
 
 - `source.html`: 추출 당시 원본 바이트 스냅샷. 편집 금지.
-- `source.json`: 원본 경로, `sha256`(스냅샷 실제 바이트), `content_sha256`(검증된 만화 참조 블록만 제외한 원본), 토픽·근거·포함/제외 목록. 편집 금지.
+- `source.json`: 원본 경로, `sha256`(스냅샷 실제 바이트), `content_sha256`(검증된 만화 참조 블록만 제외한 원본), 토픽·근거·포함/제외 목록. 새 추출에는 `review_version: 1`이 기록된다. 편집 금지.
 - `selection`: 기본 `[]`(전체 포함 페이지). 명시적 `extract --page ID` 샘플만 `[ID]`. 범위 밖은 보류가 아니라 제작 범위 제외다.
 - `storyboard.json`: 작성할 콘티. 원본과 동일한 `source_sha256`, `schema_version: 2`.
 - `prompts.json`, `images.json`: 프롬프트와 실제 등록 이미지 지문. `reusable`은 실제 검토를 대신하지 않는다.
-- `review.json`, `checks/`: 실제 내용·그림·브라우저 검토와 화면 증거.
+- `review.json`, `review-evidence/`, `checks/`: 내용·그림·브라우저 판정, 최초 독립 검토 보고서, 화면 증거. 새 계약의 페이지 기록은 `inputs`와 `origin`(`kind`, `report`, `sha256`)을 포함한다. 이전 계약의 발행 버전은 기존 기록 형식으로 확인할 수 있다.
 - `preview.html`, `publication.json`: 미리보기와 발행 결과.
 - `note-links-result.json`: 원본 연결 결과. 실패해도 발행한 만화를 삭제하지 않는다.
 
@@ -41,6 +41,7 @@ v1 실행은 직접 수정·발행하지 않고 새 RUN에서 `extract --reuse �
   - `limit_panel`: 한계를 독자에게 보여 주는 컷 번호. 조립기는 해당 컷에 한계를 표시한다.
 - `narrative`: `{mode: "explanation"|"dialogue", cast: [캐릭터ID]}`. 설명형은 한 명, 대화형은 두 명 이상. 전원이 페이지에서 발언해야 한다. cast는 화자 목록이며 그림 출연 의무가 아니다.
 - `summary`: `{text,evidence}`. 핵심 관계·조건을 독립적으로 이해할 수 있게 작성.
+- `source_dependencies`: `{topics: [다른 원본 토픽 ID] 또는 "all", files: [저장소 루트 기준 상대 경로]}`. 요약·용어·대사·그림의 실제 근거를 적는다. 다른 토픽을 쓰지 않으면 `topics: []`, 별도 파일이 없으면 `files: []`를 명시한다. 필드 자체가 없으면 관련 토픽 범위를 확인할 수 없어 원본 전체를 비교한다. 파일은 읽은 바이트로 확인한다.
 - `terms`: `[{term,text,evidence}]`, 필요 없으면 `[]`.
 - `panels`: 4~8개. 각 컷에 `scene`, `caption`, `alt`, `evidence`, `characters`, `dialogue`.
   - `characters`: 그림에 실제 보이는 캐릭터 ID 목록. 사물 중심·확대·관찰 컷은 `[]`로 쓴다. 페이지 전체가 `[]`여도 된다. 이 경우 사람·얼굴·손·의인화한 사물을 생성하지 않는다.

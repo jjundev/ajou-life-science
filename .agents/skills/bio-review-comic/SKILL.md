@@ -42,6 +42,8 @@ python3 "$SKILL/scripts/comic.py" extract --repo "$REPO" --target "1105" --run "
 4. 원본 근거 **모든 항목**에 컷 번호 또는 생략 이유를 `coverage`로 남긴다. 조건·예외·오개념 판별 기준은 생략하지 않는다. 반복·주변 사례의 생략은 설명한다.
 5. 페이지가 준비되면 `ready`, 해결 불가면 이유를 적고 `held`로 표시한다. 미완료 `draft`는 검사에서 실패한다.
 
+다른 토픽의 주장을 다시 설명하는 페이지는 해당 토픽 ID를 `source_dependencies.topics`에 기록한다. 검토에 실제로 쓰는 별도 도해·위젯 등 로컬 파일도 `source_dependencies.files`에 기록한다. 전체 요약의 범위를 좁히기 어렵다면 `topics: "all"`을 쓴다.
+
 ```bash
 python3 "$SKILL/scripts/comic.py" check --run "$RUN" --phase storyboard
 python3 "$SKILL/scripts/comic.py" prompts --run "$RUN"
@@ -69,13 +71,15 @@ python3 "$SKILL/scripts/comic.py" build --run "$RUN"
 
 ## 4. 내용과 그림 검토
 
-[검토 기준](references/review.md)을 읽는다. 페이지별로 생성자와 다른 독립 검토 에이전트가 원본·콘티의 내용 검토와 **모든 실제 그림**의 구조·방향·개수·의미 검토를 수행한다. 검토자도 대화 이력 없이 시작하며 생성자의 자기평가를 정답으로 전달하지 않는다. 관찰·판정은 전용 보고서에 남기고 메인에는 판정·수정할 컷·보고서 경로만 반환한다. 검토자 확보 불가 시 해당 페이지는 보류한다.
+[검토 기준](references/review.md)을 읽는다. 재실행은 [이전 판정 대조](#재실행원본-변경)를 먼저 한다. 새 검토가 필요한 페이지에는 생성자와 다른 독립 검토 에이전트를 배정한다. 검토자는 원본·콘티의 내용과 **모든 실제 그림**의 구조·방향·개수·의미를 확인한다. 검토자도 대화 이력 없이 시작하며 생성자의 자기평가를 정답으로 전달하지 않는다. 관찰·판정은 전용 보고서에 남기고 메인에는 판정·수정할 컷·보고서 경로만 반환한다. 검토자 확보 불가 시 해당 페이지는 보류한다.
 
 ```bash
-python3 "$SKILL/scripts/comic.py" fingerprints --run "$RUN"
+python3 "$SKILL/scripts/comic.py" fingerprints --run "$RUN" --page "$PAGE"
+python3 "$SKILL/scripts/comic.py" record-review --run "$RUN" --report "$RUN/workers/$PAGE/review.json"
+python3 "$SKILL/scripts/comic.py" check --run "$RUN" --phase reviewed
 ```
 
-메인은 검토 보고서의 실제 관찰·검토 대상 지문을 확인한 뒤 현재 지문과 검토 내용을 `review.json`에 병합하고 `check --phase reviewed`를 실행한다. 전체 이미지를 메인에서 다시 열지 않고, 검토자가 지적한 문제나 판정 충돌이 있는 컷을 확인한다. CLI에 검토를 자동 통과시키는 명령은 없다. 근거 문자열 존재와 기계 검사만으로 의미 검토 완료를 기록하지 않는다. 대사만 바뀌어도 내용/그림 검토 지문이 바뀌며 장면·스타일·그림 의미 변경은 이미지 재등록도 필요하다.
+메인은 보고서의 실제 관찰과 독립 검토자 여부를 확인한 뒤 `record-review`를 순차 실행한다. CLI는 이미 수행된 검토를 확인하고 최초 보고서를 보존한다. 전체 이미지를 메인에서 다시 열지 않고, 검토자가 지적한 문제나 판정 충돌이 있는 컷을 확인한다. 대사만 바뀌어도 내용과 그림 검토 지문이 바뀐다. 장면·스타일·그림 의미가 달라져 프롬프트가 바뀐 그림은 현행 그림 검사를 따른다.
 
 ## 5. 브라우저
 
@@ -88,7 +92,7 @@ python3 "$SKILL/scripts/comic.py" check --run "$RUN" --phase browser
 python3 "$SKILL/scripts/comic.py" publish --run "$RUN"
 ```
 
-발행은 검증된 결과를 **로컬 파일**로 저장한다. 기존 HTML은 새 버전의 `previous.html`로 보존하고, 이미지·제작자료는 고유 버전 폴더에 둔다. CLI가 자동 복사하지 않는 `prompts.json`과 `workers/`의 결과·검토 보고서는 메인이 발행 결과의 실제 `version` 폴더에 상대 경로를 유지해 추가 보존한다. 같은 결과를 재실행하면 중복 버전을 만들지 않는다. 발행 뒤 [정리노트 연결](references/note-links.md)대로 원본에 안내·링크를 자동 추가한다. 연결 실패는 발행 결과와 구분하고 `link-notes --run "$RUN"`으로 재시도한다. `publish --no-link`는 발행만 할 때 쓴다. 성공/보류 수는 `publish` 출력에 따른다. 전부 보류라면 빈 제작물을 발행하지 말고 원인과 실행 폴더만 보고한다.
+발행은 검증된 결과를 **로컬 파일**로 저장한다. 기존 HTML은 새 버전의 `previous.html`로 보존하고, 이미지·제작자료와 `review-evidence/`의 최초 독립 검토 보고서를 고유 버전 폴더에 둔다. `prompts.json`과 `workers/`의 작업 기록은 메인이 실제 `version` 폴더에 상대 경로를 유지해 추가 보존한다. 같은 결과를 재실행하면 중복 버전을 만들지 않는다. 발행 뒤 [정리노트 연결](references/note-links.md)대로 원본에 안내·링크를 자동 추가한다. 연결 실패는 발행 결과와 구분하고 `link-notes --run "$RUN"`으로 재시도한다. `publish --no-link`는 발행만 할 때 쓴다. 성공/보류 수는 `publish` 출력에 따른다. 전부 보류라면 빈 제작물을 발행하지 말고 원인과 실행 폴더만 보고한다.
 
 최종 정리노트의 안내를 읽고 클릭 → 만화 해당 페이지 → 원본 복귀를 실제 조작한다. 연결 재실행은 변경이 없어야 한다.
 
@@ -105,9 +109,11 @@ python3 "$SKILL/scripts/comic.py" link-notes --run "$RUN"
 
 ```bash
 python3 "$SKILL/scripts/comic.py" extract --repo "$REPO" --target "1105" --run "$NEW_RUN" --reuse "$PREVIOUS_RUN"
+python3 "$SKILL/scripts/comic.py" reuse-reviews --from "$PREVIOUS_RUN" --run "$NEW_RUN" --dry-run
+python3 "$SKILL/scripts/comic.py" reuse-reviews --from "$PREVIOUS_RUN" --run "$NEW_RUN"
 ```
 
-검증된 만화 참조 블록만 제외한 원본 내용이 달라지면 기존 RUN은 발행할 수 없다. 참조 블록은 근거·토픽 지문에서도 제외하고 실제 바이트 스냅샷은 보존한다. 관리 블록의 형식/지문이 손상되면 멈춘다. 일반 본문·그림·링크 변경은 무시하지 않는다. 새 RUN에는 같은 토픽 지문의 콘티와 프롬프트·파일 지문이 맞는 그림만 가져온다. 변경 페이지는 다시 작성한다. 이전 검토는 새 RUN에 복사되지 않으므로 재사용 결과도 검토 후 현재 기록을 남긴다. 계약 v2를 사용하며, v1 콘티는 새 필수 항목을 작성하고 재검토한다. 이전 발행자료의 버전 폴더도 `--reuse` 입력으로 사용할 수 있다.
+검증된 만화 참조 블록만 제외한 원본 내용이 달라지면 기존 RUN은 발행할 수 없다. 참조 블록은 근거·토픽 지문에서도 제외하고 실제 바이트 스냅샷은 보존한다. 관리 블록의 형식/지문이 손상되면 멈춘다. 일반 본문·그림·링크 변경은 무시하지 않는다. `extract --reuse`는 같은 토픽의 콘티와 프롬프트·파일 지문이 맞는 그림을 가져온다. `reuse-reviews`는 별도로 페이지별 판정을 대조한다. 이전 RUN 또는 발행 버전 폴더를 두 명령의 입력으로 쓸 수 있다. 검토와 브라우저 검사 진행은 [승계 결과 해석](references/review.md#이전-독립-검토-승계)을 따른다.
 
 ## 디자인 유지
 

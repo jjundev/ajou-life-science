@@ -174,6 +174,8 @@ def _publish_comic(run):
                 for asset in assets.values():
                     if raster(version / asset['file'])['sha256'] != asset['sha256']:
                         raise ValueError('발행 그림 변경')
+                if src.get('review_version'):
+                    check(version, 'reviewed')
                 validate_output(previous)
                 # The HTML may have committed before a transient index-write failure.
                 write(version / 'publication.json', record)
@@ -193,7 +195,15 @@ def _publish_comic(run):
     try:
         for name in ('source.json', 'source.html', 'storyboard.json', 'images.json', 'review.json'):
             shutil.copy2(run / name, version / name)
-        for view in read(run / 'review.json')['browser']['views']:
+        review = read(run / 'review.json')
+        if src.get('review_version'):
+            for page in book['pages']:
+                if page['status'] == 'ready':
+                    relative_name = review['pages'][page['id']]['origin']['report']
+                    dest = local(version, relative_name)
+                    dest.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(local(run, relative_name), dest)
+        for view in review['browser']['views']:
             relative_name = view['screenshot']
             dest = local(version, relative_name)
             dest.parent.mkdir(parents=True, exist_ok=True)
@@ -211,6 +221,8 @@ def _publish_comic(run):
             validate_output(temporary)
             # Recheck source/reviews after staging, before the one atomic replacement.
             check(run, 'browser')
+            if src.get('review_version'):
+                check(version, 'reviewed')
             os.replace(temporary, output)
             committed = True
         finally:

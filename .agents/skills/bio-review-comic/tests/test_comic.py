@@ -16,12 +16,12 @@ sys.path.insert(0, str(SCRIPTS))
 SCRIPT = SCRIPTS / 'comic.py'
 
 
-def png(path):
+def png(path, rgb=(218, 231, 247)):
     """A valid, visibly synthetic test raster, not generated comic content."""
     def chunk(kind, data):
         return struct.pack('>I', len(data)) + kind + data + struct.pack('>I', zlib.crc32(kind + data))
     path.parent.mkdir(parents=True, exist_ok=True)
-    raw = (b'\x00' + bytes((218, 231, 247)) * 640) * 400
+    raw = (b'\x00' + bytes(rgb) * 640) * 400
     path.write_bytes(b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', 640, 400, 8, 2, 0, 0, 0)) + chunk(b'IDAT', zlib.compress(raw)) + chunk(b'IEND', b''))
     return path
 
@@ -83,6 +83,7 @@ class ComicPipeline(unittest.TestCase):
             refs = [e['id'] for e in evidence]
             page.update(clarification={'confusion': '재료 검출과 생명 생성의 혼동', 'understanding': '두 성과를 구별한다', 'evidence': refs}, analogy={'familiar': '부품과 완성품', 'mapping': [{'familiar': '부품', 'biology': '작은 유기물', 'evidence': refs}], 'limit': '생명은 사람이 조립하는 기계와 같지 않다', 'panels': [1], 'limit_panel': 4}, narrative={'mode': 'dialogue', 'cast': ['guide', 'student']}, note_link={'before': '재료와 완성품의 차이를 ', 'label': '재료와 생명 만화', 'after': '에서 비교해 보세요.'})
             page.update(status='ready', question='무엇이 검출되었을까?', summary={'text': '재료와 살아 있는 세포를 구별해요.', 'evidence': refs}, terms=[],
+                        source_dependencies={'topics': [], 'files': []},
                         coverage=[{'evidence': ref, 'panels': [1], 'reason': ''} for ref in refs],
                         panels=[{'scene': f'실험의 관찰 상태 {n}', 'caption': '검출 결과를 확인해요.', 'characters': ['guide', 'student'], 'dialogue': [{'speaker': 'guide', 'text': '세포가 만들어진 것은 아니야.'}, {'speaker': 'student', 'text': '재료 검출과 구별해야겠네요.'}], 'alt': f'실험 결과를 비교하는 장면 {n}', 'evidence': refs} for n in range(1, 5)])
         self.write('storyboard.json', book)
@@ -97,11 +98,16 @@ class ComicPipeline(unittest.TestCase):
 
     def reviews(self, browser=True):
         fp = self.api.fingerprints(self.run)
-        reports = {'pages': {pid: {kind: {'status': 'passed', 'fingerprint': value, 'notes': ['source and rendered panel checked']} for kind, value in data.items()} for pid, data in fp['pages'].items()}}
+        for pid, data in fp['pages'].items():
+            worker = {'page': pid, 'checked_panels': list(range(1, len(fp['review_inputs'][pid]['images']) + 1)), 'issues': []}
+            worker.update({kind: {'status': 'passed', 'fingerprint': value, 'notes': ['Synthetic test verdict']} for kind, value in data.items()})
+            self.write('test-worker.json', worker)
+            self.api.record_review(self.run, self.run / 'test-worker.json')
         if browser:
             png(self.run / 'checks' / 'fixture.png')
+            reports = self.read('review.json')
             reports['browser'] = {'status': 'passed', 'fingerprint': fp['browser'], 'notes': ['fixture browser evidence'], 'views': [{'width': w, 'height': h, 'theme': t, 'screenshot': 'checks/fixture.png'} for w, h in ((1440, 900), (375, 812)) for t in ('light', 'dark')]}
-        self.write('review.json', reports)
+            self.write('review.json', reports)
 
     def test_inventory_covers_review_summary_and_excludes_future_and_links(self):
         src = self.read('source.json')
@@ -228,6 +234,91 @@ class ComicPipeline(unittest.TestCase):
         self.api.extract(self.repo, '1105', newer, reuse=self.run)
         pages = json.loads((newer / 'storyboard.json').read_text())['pages']
         self.assertEqual([p['status'] for p in pages], ['ready', 'draft', 'ready'])
+
+    def test_review_reuse_checks_source_dependencies_and_preserves_original_report(self):
+        book = self.ready()
+        book['pages'][2]['source_dependencies'] = {'topics': ['s0-recap'], 'files': []}
+        self.write('storyboard.json', book)
+        self.images()
+        self.reviews()
+        self.api.build(self.run)
+        archive = Path(self.api.publish(self.run)['version'])
+
+        self.note.write_text(self.note.read_text().replace('재료와 생명을 구별', '재료와 세포를 비교'))
+        with self.assertRaisesRegex(ValueError, '원본.*변경'):
+            self.api.check(archive, 'reviewed')
+        newer = Path(self.tmp.name) / 'newer'
+        self.api.extract(self.repo, '1105', newer, reuse=archive)
+        before = (newer / 'review.json').read_bytes()
+        result = self.api.reuse_reviews(newer, archive, dry_run=True)['pages']
+        self.assertEqual((newer / 'review.json').read_bytes(), before)
+        self.assertEqual(result['s0-miller']['status'], 'eligible')
+        self.assertIn('source_changed', result['s0-recap']['reasons'])
+        self.assertIn('related_source_changed', result['s1-cheatsheet']['reasons'])
+        self.assertEqual(result['s1-cheatsheet']['related_topics'], ['s0-recap'])
+
+        self.api.reuse_reviews(newer, archive)
+        report = json.loads((newer / 'review.json').read_text())
+        self.assertEqual(set(report['pages']), {'s0-miller'})
+        self.assertNotIn('browser', report)
+        original = self.read('review.json')['pages']['s0-miller']['origin']
+        inherited = report['pages']['s0-miller']['origin']
+        self.assertEqual(inherited['sha256'], original['sha256'])
+        self.assertEqual((newer / inherited['report']).read_bytes(), (archive / original['report']).read_bytes())
+        self.assertEqual(inherited['kind'], 'inherited')
+
+    def test_review_reuse_rechecks_report_and_never_supplies_browser_review(self):
+        self.ready(held=True)
+        self.images()
+        self.reviews()
+        newer = Path(self.tmp.name) / 'newer'
+        self.api.extract(self.repo, '1105', newer, reuse=self.run)
+        pages = self.api.reuse_reviews(newer, self.run)['pages']
+        self.assertEqual(pages['s0-recap']['status'], 'held')
+        self.assertEqual(self.api.check(newer, 'reviewed')['status'], 'partial')
+        with self.assertRaisesRegex(ValueError, '브라우저'):
+            self.api.publish(newer)
+        receipt = json.loads((newer / 'review.json').read_text())['pages']['s0-miller']['origin']
+        (newer / receipt['report']).unlink()
+        with self.assertRaisesRegex(ValueError, 's0-miller'):
+            self.api.check(newer, 'reviewed')
+
+    def test_review_reuse_detects_criteria_art_and_external_source_changes(self):
+        book = self.ready()
+        figure = self.repo / 'source-figure.png'
+        png(figure)
+        book['pages'][0]['source_dependencies']['files'] = [figure.name]
+        self.write('storyboard.json', book)
+        self.images()
+        self.reviews(browser=False)
+        newer = Path(self.tmp.name) / 'newer'
+        self.api.extract(self.repo, '1105', newer, reuse=self.run)
+        with patch('comic_reviews.criteria_digest', return_value='new criteria'):
+            result = self.api.reuse_reviews(newer, self.run, dry_run=True)['pages']
+            self.assertTrue(all(p['reasons'] == ['criteria_changed'] for p in result.values()))
+        different = png(Path(self.tmp.name) / 'changed.png', rgb=(233, 215, 191))
+        self.api.register_image(newer, 's0-recap', 1, different)
+        figure.write_bytes(different.read_bytes())
+        result = self.api.reuse_reviews(newer, self.run)['pages']
+        self.assertEqual(result['s0-miller']['reasons'], ['source_files_changed'])
+        self.assertEqual(result['s0-recap']['reasons'], ['images_changed'])
+        self.assertEqual(result['s1-cheatsheet']['status'], 'inherited')
+
+    def test_legacy_approval_cannot_be_inherited_even_when_inputs_match(self):
+        self.ready()
+        self.images()
+        original = self.read('source.json')
+        del original['review_version']
+        self.write('source.json', original)
+        fingerprints = self.api.fingerprints(self.run)['pages']
+        self.write('review.json', {'pages': {pid: {kind: {'status': 'passed', 'fingerprint': fp, 'notes': ['Legacy fixture verdict']}
+                                                 for kind, fp in values.items()} for pid, values in fingerprints.items()}})
+        self.assertEqual(self.api.check(self.run, 'reviewed')['ready'], 3)
+        newer = Path(self.tmp.name) / 'newer'
+        self.api.extract(self.repo, '1105', newer, reuse=self.run)
+        result = self.api.reuse_reviews(newer, self.run)['pages']
+        self.assertTrue(all(p['reasons'] == ['legacy_review'] for p in result.values()))
+        self.assertEqual(json.loads((newer / 'review.json').read_text()), {'pages': {}})
 
     def test_all_held_run_cannot_publish_empty_comic(self):
         book = self.ready()

@@ -10,6 +10,7 @@ from comic_source import compact, digest, existing
 SKILL = Path(__file__).resolve().parents[1]
 TEMPLATE = SKILL / 'assets' / 'comic-template.html'
 CSS = SKILL / 'assets' / 'comic.css'
+REVIEW_VERSION = 1
 
 
 def read(path):
@@ -75,32 +76,39 @@ def raster(path):
     return {'sha256': digest(data), 'width': width, 'height': height, 'extension': ext}
 
 
-def load(run):
+def load(run, *, historical=False):
     run = Path(run).resolve()
     src, book = read(run / 'source.json'), read(run / 'storyboard.json')
-    try:
-        path = existing(src['path'])
-    except ValueError as exc:
-        raise ValueError('원본 정리노트 없음. 이전 결과를 보존하고 원본 경로를 확인하세요.') from exc
     if src.get('schema_version') != 2 or book.get('schema_version') != 2:
         raise ValueError('v1 실행은 보존하고 새 RUN으로 extract --reuse 하세요(v2 계약).')
-    from comic_links import strip_links
-    if digest(strip_links(path.read_bytes().decode('utf-8'))) != src['content_sha256']:
-        raise ValueError('원본 정리노트 변경: 새 RUN으로 extract --reuse 이전RUN을 실행하세요.')
+    if src.get('review_version') not in (None, REVIEW_VERSION):
+        raise ValueError('지원하지 않는 검토 기록 버전')
+    if not historical:
+        from comic_links import strip_links
+        try:
+            path = existing(src['path'])
+        except ValueError as exc:
+            raise ValueError('원본 정리노트 없음. 이전 결과를 보존하고 원본 경로를 확인하세요.') from exc
+        if digest(strip_links(path.read_bytes().decode('utf-8'))) != src['content_sha256']:
+            raise ValueError('원본 정리노트 변경: 새 RUN으로 extract --reuse 이전RUN을 실행하세요.')
     if book.get('source_sha256') != src['sha256']:
         raise ValueError('콘티와 원본 지문 불일치')
     snapshot = run / 'source.html'
-    if not snapshot.is_file() or digest(snapshot.read_bytes()) != src['sha256']:
+    if not snapshot.is_file():
+        raise ValueError('원본 스냅샷 변경 또는 누락')
+    raw = snapshot.read_bytes()
+    if digest(raw) != src['sha256']:
         raise ValueError('원본 스냅샷 변경 또는 누락')
     from comic_source import inventory
-    actual = inventory(path, src['repo'], selection=src.get('selection'), raw=snapshot.read_bytes())
+    actual = inventory(src['path'], src['repo'], selection=src.get('selection'), raw=raw,
+                       review_version=src.get('review_version'))
     if src != actual:
         raise ValueError('원본 근거 목록 변경: source.json을 편집하지 마세요.')
     return run, src, book
 
 
-def validate_storyboard(run):
-    run, src, book = load(run)
+def validate_storyboard(run, *, historical=False, allow_draft=False):
+    run, src, book = load(run, historical=historical)
     if not compact(book.get('style', '')):
         raise ValueError('공통 그림 스타일 없음')
     characters = book.get('characters', [])
@@ -121,6 +129,8 @@ def validate_storyboard(run):
         if page.get('status') == 'held':
             if not compact(page.get('reason', '')):
                 raise ValueError(f'{pid}: 보류 이유 없음')
+            continue
+        if allow_draft and page.get('status') == 'draft':
             continue
         if page.get('status') != 'ready':
             raise ValueError(f'{pid}: 콘티 작성 대기(draft). 완성하거나 이유와 함께 held로 표시하세요.')
@@ -251,19 +261,37 @@ def assets_for(run, jobs, required=True):
     return found
 
 
+def page_content(book, page):
+    return fingerprint({'page': page, 'style': book['style'],
+                        'characters': [c for c in book.get('characters', []) if c['id'] in page['narrative']['cast']]})
+
+
 def state(run):
     run, src, book = validate_storyboard(run)
     jobs = jobs_for(src, book)
     assets = assets_for(run, jobs)
-    pages = {}
+    pages, review_inputs = {}, {}
+    if src.get('review_version'):
+        from comic_reviews import criteria_digest, page_review_inputs, review_fingerprints
+        criteria = criteria_digest()
     for page in book['pages']:
         if page['status'] != 'ready':
             continue
-        content = fingerprint({'page': page, 'style': book['style'], 'characters': [c for c in book.get('characters', []) if c['id'] in page['narrative']['cast']]})
-        images = {j['key']: assets[j['key']]['sha256'] for j in jobs if j['page'] == page['id']}
-        pages[page['id']] = {'content': content, 'visual': fingerprint({'content': content, 'images': images})}
-    browser = fingerprint({'book': book, 'source': src['content_sha256'], 'images': assets, 'template': digest(TEMPLATE.read_bytes()), 'css': digest(CSS.read_bytes())})
-    return {'pages': pages, 'browser': browser}
+        pid = page['id']
+        images = {j['key']: assets[j['key']]['sha256'] for j in jobs if j['page'] == pid}
+        if src.get('review_version'):
+            review_inputs[pid] = page_review_inputs(src, book, page, images, criteria)
+            pages[pid] = review_fingerprints(review_inputs[pid])
+        else:
+            content = page_content(book, page)
+            pages[pid] = {'content': content, 'visual': fingerprint({'content': content, 'images': images})}
+    browser = {'book': book, 'source': src['content_sha256'], 'images': assets,
+               'template': digest(TEMPLATE.read_bytes()), 'css': digest(CSS.read_bytes())}
+    result = {'pages': pages}
+    if src.get('review_version'):
+        browser['page_reviews'] = pages
+        result['review_inputs'] = review_inputs
+    return result | {'browser': fingerprint(browser)}
 
 
 def check(run, phase='storyboard'):
@@ -276,8 +304,13 @@ def check(run, phase='storyboard'):
         expected = state(run)
         report = read(run / 'review.json') if (run / 'review.json').exists() else {}
         for pid, kinds in expected['pages'].items():
+            page_review = report.get('pages', {}).get(pid, {})
+            if src.get('review_version'):
+                from comic_reviews import verified_report
+                verified_report(run, pid, page_review, expected['review_inputs'][pid])
+                continue
             for kind, fp in kinds.items():
-                entry = report.get('pages', {}).get(pid, {}).get(kind, {})
+                entry = page_review.get(kind, {})
                 if entry.get('status') != 'passed' or entry.get('fingerprint') != fp or not entry.get('notes'):
                     raise ValueError(f'{pid}: {kind} 검토 없음 또는 변경 후 재검토 필요')
         if phase == 'browser':
