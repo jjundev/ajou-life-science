@@ -22,7 +22,7 @@ description: 생명과학 장별 웹과제 예상문제를 연습형·시험형�
 
 ### 2. 원천 모으기
 - 출제 패턴: `.agents/skills/bio-review-pack/references/webquiz-style.md`, 이전 장 `웹과제/*/questions.json`.
-- 이 장 범위: `복습노트/*/.assets/장마감_*_<N>장.md`(있으면), 그 장을 다룬 정리노트 MD(`복습노트/*/.assets/정리노트_*.md`), STT(`STT/*.md`)의 "시험"·"중요" 발언.
+- 이 장 범위: `복습노트/*/.assets/장마감_*_<N>장.md`(있으면), 그 장을 다룬 정리노트 MD(`복습노트/*/.assets/정리노트_*.md`), STT(`STT/*.md`)의 "시험"·"중요" 발언. 그 장 마지막 정리노트 다음 날짜부터 생성일까지의 STT·정리노트에서 다룬 다음 장 도입 주제는 경계 주제로 모으고 금지어에서 뺀다(`references/question-blueprint.md`의 `forbidden`·`## 경계 주제`).
 - 기출 풀: `python "$SKILL/scripts/exam_pool.py" "$REPO" <N> --out "$RUN/pool.json"`. `--out`이 `RUN` 폴더도 만든다. 셸 리디렉션(`>`)은 PowerShell에서 한글 인코딩을 바꿀 수 있어 쓰지 않는다.
 - 이전 세트: `웹과제예상/<N>장/.pack/v*/blueprint.md`와 `pack.json`(쓴 기출 번호·주제). `.pack`은 숨김 폴더라 Glob/Grep이 건너뛰므로 이 경로를 직접 연다.
 - 실제 웹과제가 이미 있으면(`웹과제/<N>장/questions.json`) 그 발문은 피하고, 실제 경향을 개요에 반영한다.
