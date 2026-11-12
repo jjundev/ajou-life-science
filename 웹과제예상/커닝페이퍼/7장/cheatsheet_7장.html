@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<!--
+  웹과제 커닝페이퍼 — 7장 진화 사상과 소진화 (A4 세로, 쪽 수 제한 없음)
+  디자인 출처: .agents/skills/bio-review-pack/assets/review-template.html (색 토큰·Pretendard·.layer/.badge/table/fig-* 방식)
+  이 파일은 bio-cheatsheet 스킬의 원본이다. 본문 견본 구역은 부품 카탈로그이고, scripts/build.py가 견본을 버리고
+  spec.json 순서의 구역 조각으로 쪽을 새로 만든다.
+
+  ■ 크기 토큰 위치
+    <style> 맨 위 :root 블록의 "크기 토큰" 줄. 글자 크기·줄간격·간격·모서리는 전부 여기서만 정의한다.
+    --fs-body 하나만 바꾸면 본문·표·흐름·함정 줄이 같이 바뀐다(표는 calc로 본문에 묶여 있다).
+    규칙: 7.5pt(--fs-label)는 라벨·배지·그림 속 글자 전용. 그 밖의 글자는 8pt 이상.
+
+  ■ 쪽
+    <section class="page"> 하나가 A4 한 쪽이다. 쪽은 build.py가 만든다: 쪽 번호 "n / N", 목차 줄(그 쪽 구역 라벨을 " · "로),
+    테마 버튼(1쪽만)을 채운다. 손으로 쪽을 만들거나 고치지 않는다.
+
+  ■ 넘칠 때의 규칙
+    한 쪽 내용은 다음 쪽으로 저절로 넘어가지 않는다. 넘치면 쪽 오른쪽 밖으로 잘려 PDF에서 사라진다.
+    build.py가 넘친 구역부터 그 쪽 끝까지를 다음 쪽으로 옮긴다. 글자 크기는 줄이지 않는다.
+
+  ■ 넘침 경고 (화면 전용, 맨 아래 <script>)
+    브라우저로 열면 각 쪽을 PDF와 같은 크기(A4 본문 194×280mm, 왼쪽 단부터 채움)로 몰래 배치해 본다.
+    잘릴 구역이 있으면 맨 위에 주황 경고 줄이 뜨고, 그 구역에 주황 점선 테두리와 "PDF에서 잘림" 표시가 붙는다.
+    경고·테두리는 인쇄되지 않는다. PDF 출력 전에 확인하거나, 터미널에서 이 명령이 아무것도 출력하지 않아야 한다:
+      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --virtual-time-budget=15000 \
+        --dump-dom "file://$PWD/cheatsheet_7장.html" 2>/dev/null | grep -o 'data-overflow="[^"]*"'
+
+  ■ PDF 출력 명령 (라이트 테마로 출력된다. 이 폴더에서 실행)
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu \
+      --no-pdf-header-footer --run-all-compositor-stages-before-draw --virtual-time-budget=15000 \
+      --print-to-pdf="$PWD/cheatsheet_7장.pdf" "file://$PWD/cheatsheet_7장.html"
+    --virtual-time-budget는 Pretendard 웹폰트가 다 받아질 때까지(document.fonts.ready에 해당) 인쇄를 미룬다.
+    폰트가 빠져 시스템 폰트로 대체되면 줄바꿈이 달라져 쪽이 깨지므로 네트워크가 되는 상태에서 출력한다.
+
+  ■ 테마 (화면 전용)
+    기본은 다크 모드. 1쪽 제목 줄 오른쪽 끝 이모지 버튼(☀️/🌙)(체크박스 #theme-light + CSS :has, JS 없음)으로 바꾼다.
+    새로고침하면 다시 다크로 돌아간다. 인쇄·PDF는 버튼과 상관없이 항상 라이트이고 버튼은 출력되지 않는다.
+
+  ■ 강조 규칙
+    굵게(<b>)만 쓴다. 밑줄·형광 배경·기울임·취소선 금지. 색은 파랑(accent)·주황(warn)·보라(prof) 세 가지뿐.
+    모든 글자는 실제 텍스트로 넣는다(SVG 라벨도 <text>). PDF에서 ⌘F 검색에 걸려야 한다.
+-->
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>7장 진화 사상과 소진화 커닝페이퍼</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <style>
+    :root {
+      color-scheme: dark;
+      /* 색 토큰 — 복습문제 HTML과 동일. 기본은 다크 */
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff;
+      --warn: #f5a15c; --prof: #b69cff;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+
+      /* 크기 토큰 — 인쇄용. 여기만 고친다 */
+      --fs-body: 9pt;                              /* 본문 */
+      --fs-table: calc(var(--fs-body) - 0.5pt);    /* 표 셀 8.5pt */
+      --fs-label: 7.5pt;                           /* 구역 라벨·배지·그림 속 글자 전용 */
+      --fs-sec: calc(var(--fs-body) + 1pt);        /* 구역 제목 10pt */
+      --fs-page: calc(var(--fs-body) + 5pt);       /* 쪽 머리 제목 14pt */
+      --lh: 1.35;
+      --s1: 1mm; --s2: 1.5mm; --s3: 2.5mm; --s4: 4mm;
+      --radius: 1.5mm;
+      --col-gap: 5mm;
+      --fig-max: 35mm;                             /* 축소 도식 최대 높이 */
+      --page-w: 210mm; --page-margin: 8mm;
+      --page-h: 280mm;                             /* A4 297mm − 위아래 여백 16mm − 반올림 여유 1mm */
+      --tap: 8mm;                                  /* 테마 이모지 버튼 크기(화면 전용) */
+    }
+    /* 라이트 모드 — 테마 버튼(#theme-light)을 켰을 때 */
+    :root:has(#theme-light:checked) {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da;
+      --warn: #b54708; --prof: #6941c6;
+    }
+    /* PDF는 항상 라이트 테마 */
+    @media print {
+      :root {
+        color-scheme: light;
+        --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+        --accent: #1677ff; --accent-ink: #1b64da;
+        --warn: #b54708; --prof: #6941c6;
+      }
+    }
+
+    @page { size: A4; margin: 8mm; }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    body {
+      margin: 0; background: var(--bg); color: var(--ink);
+      font-family: var(--font); font-size: var(--fs-body); line-height: var(--lh);
+      word-break: keep-all; overflow-wrap: anywhere;
+      font-variant-numeric: tabular-nums;
+    }
+    b, strong { font-weight: 700; }
+    p { margin: 0; }
+
+    /* ── 쪽 ── */
+    .page {
+      width: min(var(--page-w), 100%); margin: 0 auto; padding: var(--page-margin);
+      display: flex; flex-direction: column;
+    }
+    .page + .page { margin-top: var(--s4); }
+    @media print {
+      .page { width: auto; height: var(--page-h); margin: 0; padding: 0; break-after: page; overflow: hidden; }
+      .page + .page { margin-top: 0; }
+      .page:last-child { break-after: auto; }
+    }
+
+    /* ── 테마 버튼 (화면 전용, 인쇄 안 됨) — 1쪽 제목 줄 오른쪽 끝의 이모지 버튼 ── */
+    .theme-input { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; opacity: 0; }
+    .theme-btn {
+      flex: none; align-self: center; display: inline-flex; align-items: center; justify-content: center;
+      width: var(--tap); height: var(--tap); border-radius: var(--radius);
+      font-size: var(--fs-sec); line-height: 1; cursor: pointer; user-select: none;
+    }
+    @media (hover: hover) { .theme-btn:hover { background: var(--surface); } }
+    :root:has(#theme-light:focus-visible) .theme-btn { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .theme-btn .to-dark { display: none; }
+    :root:has(#theme-light:checked) .theme-btn .to-light { display: none; }
+    :root:has(#theme-light:checked) .theme-btn .to-dark { display: inline; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    @media print { .theme-input, .theme-btn { display: none; } }
+
+    /* 쪽 머리 */
+    .page-head { flex: none; margin-bottom: var(--s3); }
+    .page-title-row { display: flex; align-items: baseline; gap: var(--s3); }
+    .page-title { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-page); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+    .page-no { flex: none; color: var(--ink-2); font-size: var(--fs-body); white-space: nowrap; }
+    .page-bar { height: 2px; background: var(--accent); margin: var(--s2) 0; }
+    .page-toc { margin: 0; color: var(--ink-2); font-size: var(--fs-label); font-weight: 600; }
+
+    /* 본문 2단 */
+    .page-body { flex: 1 1 auto; min-height: 0; column-count: 2; column-gap: var(--col-gap); column-fill: auto; }
+    /* 화면에는 쪽 높이가 없어 auto면 왼쪽 단에만 쌓인다 → 두 단에 고르게 나눈다. PDF는 위의 auto 그대로 */
+    @media screen { .page-body { column-fill: balance; } }
+    @media screen and (max-width: 520px) { .page-body { column-count: 1; } }
+
+    /* ── 구역 (.layer 방식: 라벨 + 1px 구분선) ── */
+    .sec { break-inside: avoid; border-top: 1px solid var(--line); padding-top: var(--s2); margin-bottom: var(--s3); }
+    .sec-label { display: block; color: var(--accent-ink); font-size: var(--fs-label); font-weight: 600; }
+    .sec-title { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s1) var(--s2); margin: 0 0 var(--s1); font-size: var(--fs-sec); font-weight: 700; line-height: 1.3; }
+    .sec > * + * { margin-top: var(--s1); }
+    .sec > .sec-title { margin-top: 0; }
+
+    /* 배지 */
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.4; padding: 0 var(--s1); border-radius: calc(var(--radius) * 0.75); background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+    .badge.prof { color: var(--prof); }
+
+    /* 비교표 (복습문제 table 스타일) */
+    .cmp { border-collapse: collapse; width: 100%; font-size: var(--fs-table); line-height: 1.3; }
+    .cmp th, .cmp td { border-bottom: 1px solid var(--line); padding: var(--s1) var(--s1); text-align: left; vertical-align: top; }
+    .cmp th { color: var(--ink-2); font-weight: 600; }
+    .cmp td:first-child { font-weight: 700; }
+
+    /* 흐름 줄 */
+    .flow { margin: 0; }
+    .flow-arrow { color: var(--ink-2); padding: 0 0.2em; }
+    .flow-num { color: var(--accent-ink); font-weight: 700; white-space: nowrap; }
+
+    /* 함정 줄 (.layer.warn 방식) */
+    .trap { background: var(--surface); border-radius: var(--radius); padding: var(--s2) var(--s3); }
+    .trap-label { display: block; color: var(--warn); font-size: var(--fs-label); font-weight: 600; }
+    .trap-x { display: block; color: var(--ink-2); }
+    .trap-ok { display: block; color: var(--ink); }
+    .trap-x + .trap-ok { margin-top: 0.2em; }
+    .trap-ok + .trap-x { margin-top: var(--s1); }
+
+    /* 키워드–한 줄 정의 목록 */
+    .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--s1) var(--s2); margin: 0; }
+    .kv dt { font-weight: 700; }
+    .kv dd { margin: 0; }
+
+    /* 점 목록 */
+    .pts { margin: 0; padding-left: 1.1em; }
+    .pts li + li { margin-top: 0.15em; }
+
+    /* 축소 도식 */
+    .mini-fig { display: block; margin: 0; }
+    .mini-fig svg { display: block; width: 100%; height: auto; max-height: var(--fig-max); color: var(--ink); }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 1.5; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 1.8; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: var(--fs-label); font-weight: 600; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-label); font-weight: 600; font-family: inherit; }
+
+    /* 교수님: 몰라도 됨 — 구역 맨 끝 */
+    .later { color: var(--ink-2); }
+    .later .badge { margin-right: var(--s1); }
+
+    /* ── 넘침 경고 (화면 전용) ── */
+    /* PDF 배치를 흉내 내는 보이지 않는 복제본. 크기는 인쇄 규칙과 같다 */
+    .page-probe { position: absolute; left: -10000px; top: 0; width: calc(var(--page-w) - 2 * var(--page-margin)); height: var(--page-h);
+      margin: 0; padding: 0; visibility: hidden; pointer-events: none; }
+    .page-probe .page-body { column-count: 2; column-fill: auto; }
+    .page-probe .theme-btn { display: none; }
+    .overflow-alert { width: min(var(--page-w), 100%); margin: 0 auto; padding: var(--s2) var(--page-margin);
+      background: var(--surface); color: var(--warn); font-weight: 700; border-bottom: 2px solid var(--warn); }
+    .overflow-alert span { display: block; color: var(--ink); font-weight: 400; }
+    .sec.is-overflow { outline: 2px dashed var(--warn); outline-offset: var(--s1); }
+    .sec.is-overflow::before { content: "PDF에서 잘림"; display: block; color: var(--warn); font-size: var(--fs-label); font-weight: 700; }
+    @media print { .overflow-alert { display: none; } .sec.is-overflow { outline: none; } .sec.is-overflow::before { content: none; } }
+  </style>
+</head>
+<body>
+
+<!-- 테마 스위치: 기본 다크, 켜면 라이트. 버튼(label)은 1쪽 제목 줄에 있다. 인쇄에서는 숨겨진다. -->
+<input type="checkbox" id="theme-light" class="theme-input">
+
+<!-- ════════════ 1쪽 ════════════ -->
+<section class="page" aria-label="1쪽">
+  <header class="page-head">
+    <div class="page-title-row">
+      <h1 class="page-title">7장 진화 사상과 소진화</h1>
+      <span class="page-no">1 / 7</span>
+      <label for="theme-light" class="theme-btn" title="테마 바꾸기"><span class="to-light" aria-hidden="true">☀️</span><span class="to-dark" aria-hidden="true">🌙</span><span class="sr-only">라이트·다크 모드 바꾸기</span></label>
+    </div>
+    <div class="page-bar" aria-hidden="true"></div>
+    <p class="page-toc">① 시험장 체크 · ② 용어 바꿔 부르기</p>
+  </header>
+
+  <div class="page-body">
+
+    <!-- ① 출처: panic-patterns.md 전체(1~6장 웹과제 사실, 패턴 표 L55–L74). 7장 웹과제 없음(응시 전), 구역 번호는 spec.json ; 1110 장마감_1110_9장.md(9장 1105·1110 수업) -->
+    <section class="sec">
+      <span class="sec-label">① 시험장 체크</span>
+      <h2 class="sec-title">시작 전 30초 점검</h2>
+      <ul class="pts">
+        <li><b>시간 제한: 7장 미확인.</b> 참고로만 1장: 17문항 11분(문항당 약 39초). 2·3·4장: 화면에 시간 제한 없음.</li>
+        <li>보기 순서가 바뀐다(1장: 기출과 같은 Q1·Q7도 순서 변경). <b>번호 말고 내용</b>으로 확인. ③–⑮</li>
+        <li>기출과 다른 문장이 대부분(1장: 15/17). 개념으로 찾고, 표기가 다르면 ②</li>
+        <li>부정형 발문이 많다(1장: 8/17, 6장: 6/14 "옳지 않은 것"). 각 구역 <b>함정 상자부터</b>. ③–⑮</li>
+        <li>그림·사진 판독(1장 Q9·Q14 그림 변형, 3장 Q1 실제 사진). ⑥ 계통수 ⑧ 상동·상사 ⑭ 분포 그래프</li>
+        <li>계산 문항(5장 Q11, 6장 Q13). <b>무엇을 세는지</b> 확인하고 원천의 식이 있는 구역으로. ⑩ ⑪</li>
+        <li>조건이 바뀌면 답이 바뀐다(1장 Q15). ⑩ ⑪ ⑫</li>
+        <li>거꾸로 묻기: 결과·기능으로 원인을 묻는다(1장 Q5·Q8). ⑧ ⑬ ⑭</li>
+        <li>포함·제외 "~이 아닌 것"과 "이 말이면 이것" 단서(1장 Q2·Q4·Q17). ③ ⑦ ⑫</li>
+        <li>체크박스(3장 "최대 4개 선택", 4장 7문항)여도 <b>보기마다 참·거짓</b> 판정. 6장은 전 문항 라디오. ③–⑮</li>
+        <li>ㄱ·ㄴ·ㄷ 조합형(3장 Q12): 진술 하나씩 판정한 뒤 조합 고르기. ③–⑮</li>
+        <li>같은 발문, 다른 답(2장 Q1·Q8·Q10). 외운 답 번호로 고르지 않기. ③–⑮</li>
+        <li>오타(2장 "관계"=광계, 6장 Q1 "ㅊ"). 말이 안 되는 보기는 비슷한 용어로 바꿔 읽기. ②</li>
+        <li>다른 장 개념이 섞임(3장 Q7 "연관"=4장 개념). 응시일까지 배운 <b>8장(종분화·대진화)·9장(생물다양성)</b> 개념이 보기에 나올 수 있는데, <b>이 시트에 8·9장 구역은 없다</b>. 대진화 낱말만 ⑦</li>
+      </ul>
+    </section>
+
+    <!-- ② 출처: 1027 정리노트 L116·L133(휴튼=허튼), L394(개체군=집단), L484(변형 혈통), L581(개체군 유전학), L763·L804(비교해부학=비교형태학), L765·L775(상동·상사), L943–L946(다형성·정량적 변이), L1116(유전적 평형=하디-바인베르크 평형), L1155(조건 바꿔 말하기), L1157("유전자의 빈도"), L1202(영가설)
+         1029 정리노트 L100(보인자=이형접합자), L181·L196·L248(유전자 확산=유전자 흐름), L224(근친교배), L273·L322(유전적 부동, 浮動), L307–L308(병목 현상·창시자 효과), L394·L501(분단성=다형화), L527·L554·L572(성선택·선택적 교배), L657–L658(평형 다형성·이형접합자 이점)
+         1027 복습문제 L156·L546(하디-바인베르그 표기), L494(윌리스=월리스), L571·L573(유전형=유전자형, 집단유전학=개체군 유전학), L1823·L1826(자연선택 없음·폐쇄 집단), L2084(변화를 동반한 계승), P52 L2124(영가설), L2249(영어 이름 대응)
+         1029 복습문제 P2 L110(집단 병목현상), P7 L330(평형다형성), P9 L410(다양화 선택), P38 L1564(유전자 흐름=유전자 확산), P39 L1611(다형화=분단성) -->
+    <section class="sec">
+      <span class="sec-label">② 용어 바꿔 부르기</span>
+      <h2 class="sec-title">같은 것, 다른 이름 <span class="badge">단서: = 표시가 같은 말</span></h2>
+      <table class="cmp">
+        <thead><tr><th>이름들</th><th>구별 단서</th></tr></thead>
+        <tbody>
+          <tr><td>유전자 확산 = 유전자 흐름 (gene flow)</td><td>"이동 없음"이 깨짐. 이미 있는 집단 사이로 드나듦. 소수가 새 집단을 세우면 창시자 효과</td></tr>
+          <tr><td>분단성 선택 = 다형화 선택 (disruptive selection)</td><td>중간 불리 → 봉우리 둘. 기출 보기 '다양화 선택'은 수업 이름에 없음, 분단성 뜻으로 읽어도 봉우리 둘일 때만</td></tr>
+          <tr><td>병목 현상 = 병목현상 = 집단 병목현상 (population bottleneck)</td><td>그 자리에서 시간적 급감. 창시자 효과(founder effect)는 공간적으로 떠나 새 집단. 둘 다 유전적 부동</td></tr>
+          <tr><td>유전적 부동 (genetic drift)</td><td>강의노트: "개체군 내 대립유전자 빈도의 예상치 못한 변화". 부동 = 浮動(떠서 움직임), 원인은 우연</td></tr>
+          <tr><td>평형 다형성 = 평형다형성 (balanced polymorphism)</td><td>여러 대립유전자가 평형 유지(우연한 변화 아님). 이형접합자 이점(heterozygote advantage)과 연결</td></tr>
+          <tr><td>다형성 (polymorphism) = 정성적 변이</td><td>강의노트 표기. 불연속(혈액형). 양적 변이 = 정량적 변이: 연속(키)</td></tr>
+          <tr><td>성선택 (sexual selection) · 선택적 교배</td><td>교수님은 같은 말로 묶음, 강의노트는 별도 항목. 근친교배(inbreeding)는 선택적 교배의 특별한 형태</td></tr>
+          <tr><td>보인자 = 이형접합자 Aa</td><td>환자 = 열성 동형접합자 aa = q², 보인자 = 2pq</td></tr>
+          <tr><td>유전적 평형 = 하디-바인베르크 평형 (genetic equilibrium)</td><td>기출 표기 '하디-바인베르그 원리·법칙'. 진화 없음 기준 = 영가설(null hypothesis)</td></tr>
+          <tr><td>조건 바꿔 말하기</td><td>이동 없음 = 다른 개체군으로부터의 유입 없음(폐쇄 집단) · 자연선택 없음 = 모든 유전자형이 똑같이 생존·번식</td></tr>
+          <tr><td>유전형 = 유전자형</td><td>기출 원문 '유전형'. 강의에서 "유전자의 빈도"로 들린 말 = 유전자형 빈도</td></tr>
+          <tr><td>개체군 = 집단 (population)</td><td>집단유전학 = 개체군 유전학 (population genetics)</td></tr>
+          <tr><td>비교해부학 = 비교형태학 (comparative morphology)</td><td>교수님 / 강의노트 표기. 상동(homology) = 공통조상, 상사(analogy) = 환경</td></tr>
+          <tr><td>휴튼 = 허튼 (Hutton) · 월리스 = 윌리스 (Wallace)</td><td>휴튼은 점진주의(gradualism). 격변설(catastrophism) = 퀴비에, 동일과정설(uniformitarianism) = 라이엘</td></tr>
+          <tr><td>변형 혈통 = 변화를 동반한 계승 (descent with modification)</td><td>다윈이 '진화' 대신 쓴 말. 그림으로 나타낸 것 = 계통수</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+  </div>
+</section>
+
+<!-- ════════════ 2쪽 ════════════ -->
+<section class="page" aria-label="2쪽">
+  <header class="page-head">
+    <div class="page-title-row">
+      <h1 class="page-title">7장 진화 사상과 소진화</h1>
+      <span class="page-no">2 / 7</span>
+    </div>
+    <div class="page-bar" aria-hidden="true"></div>
+    <p class="page-toc">③ 다윈 이전 사상 · ④ 다윈·인위선택·맬서스</p>
+  </header>
+
+  <div class="page-body">
+
+    <!-- ③ 출처: 1027 정리노트 L35–L229 (s0-ladder L37–L77, s0-geology L81–L161, s0-lamarck L165–L229), 1027 복습문제 P6·P11·P55 -->
+    <section class="sec">
+      <span class="sec-label">③ 다윈 이전 사상</span>
+      <h2 class="sec-title">지질 3이론 · 라마르크 <span class="badge">단서: 퀴비에·휴튼·라이엘·기린 목</span></h2>
+      <table class="cmp">
+        <thead><tr><th>이론</th><th>주장</th><th>인물</th></tr></thead>
+        <tbody>
+          <tr><td>격변설 catastrophism</td><td>천재지변으로 <b>갑자기</b> 변해 많은 종 멸종. 화석 = 홍수·지진으로 죽은 생물의 잔해</td><td>퀴비에</td></tr>
+          <tr><td>점진주의 gradualism</td><td>오랜 시간 퇴적·침식으로 <b>서서히</b>. 격변설과 정반대</td><td>휴튼(허튼)</td></tr>
+          <tr><td>동일과정설 uniformitarianism</td><td>과거와 현재의 지질 과정이 <b>같다</b>. 지구 수백만 년 이상</td><td>라이엘</td></tr>
+        </tbody>
+      </table>
+      <dl class="kv">
+        <dt>라이엘 → 다윈</dt><dd>비글호에서 『지질학 원리』 읽음: 지질이 서서히 변하면 생물도 서서히 변할 수 있다</dd>
+        <dt>용불용설</dt><dd>라마르크. 많이 쓰는 기관은 발달, 쓰지 않는 기관은 약해짐</dd>
+        <dt>획득형질의 유전</dt><dd>라마르크. 생애 동안 얻은 형질이 자손에게 전해짐. 일반적으로 틀림(유전자를 안 바꿈). 후성유전학 관점에선 100% 틀린 건 아님</dd>
+        <dt>라마르크 기여</dt><dd>메커니즘은 틀렸지만 <b>생물이 변할 수 있다</b>는 개념을 처음 제안 → 다윈에 영향</dd>
+        <dt>뷔퐁</dt><dd>흔적기관이 과거 조상 시대에는 기능했을 것(교재, 수업 X)</dd>
+      </dl>
+      <ul class="pts">
+        <li>판별: 한 개체가 살면서 얻은 형질 전달 = <b>라마르크</b> / 원래 있던 변이 중 유리한 것이 남음 = <b>다윈</b> / 처음 모습 그대로 창조 = <b>창조설</b> / 지구가 오래되어 서서히 변함 = <b>지질학자</b></li>
+      </ul>
+      <!-- 출처: 1027 복습문제 P11 보기 "허튼–격변설" 해설, 1027 정리노트 L116 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 허튼은 특정 사건에 의해 큰 변화를 겪는 격변설을 주장했다.</span>
+        <span class="trap-ok">✓ 허튼은 <b>점진주의</b>를 주장했다. 격변설은 <b>퀴비에</b>.</span>
+      <!-- 출처: 1027 복습문제 P55 보기 ㄷ 해설, 1027 정리노트 L101·L115 -->
+        <span class="trap-x">✗ 동일과정설은 과거의 지질 과정이 지금 관찰되는 과정과 달랐다고 본다.</span>
+        <span class="trap-ok">✓ 동일과정설은 과거의 지질 과정이 지금과 <b>같다</b>고 본다.</span>
+      <!-- 출처: 1027 복습문제 P6 보기 "가장 잘 적응한 개체의 자손" 해설, 1027 정리노트 L208–L209 -->
+        <span class="trap-x">✗ 라마르크 이론: 현존 생명체는 과거에 가장 잘 적응한 개체의 자손이다.</span>
+        <span class="trap-ok">✓ 그것은 <b>다윈의 자연선택</b>. 라마르크는 <b>생애 동안 획득한 형질을 자손에게 물려준다</b>.</span>
+      </div>
+    </section>
+
+    <!-- ④ 출처: 1027 정리노트 §비글호 항해와 갈라파고스의 관찰 L230–L299, §인위선택과 맬서스의 인구론 L300–L377, 1027 복습문제 P28·P30·P35 -->
+    <section class="sec">
+      <span class="sec-label">④ 다윈·인위선택·맬서스</span>
+      <h2 class="sec-title">다윈의 관찰과 두 영향 <span class="badge prof">교수님 강조</span> <span class="badge">단서: 핀치·부리·군도</span></h2>
+      <dl class="kv">
+        <dt>비글호</dt><dd>1831~1836년 약 5년 세계 일주. 배에서 라이엘 『지질학 원리』</dd>
+        <dt>대륙 관찰</dt><dd>화석(아르마딜로 닮은 멸종종)↔현생 아르마딜로. 뉴트리아는 생태 비슷한 유럽 비버보다 남미 산 설치류와 닮음 → 같은 지역 공통조상</dd>
+        <dt>갈라파고스</dt><dd>군도 = 섬들이 모인 곳. 섬마다 부리가 다른 핀치·바다거북·바다이구아나. 종이 섬마다 약간씩 다르고 가장 가까운 대륙 종과 닮음</dd>
+        <dt>핀치 판정</dt><dd>전문가: 모두 같은(유사한) 핀치 → 대륙에서 온 한 종이 섬마다 달라졌다고 추론</dd>
+        <dt>결정적 관찰</dt><dd><b>군도 안</b> 섬마다 다른 핀치 부리, 핀치·바다거북 종들의 유사성과 차이점(살아 있는 생물 비교)</dd>
+        <dt>섬 생물 친척</dt><dd><b>가장 가까운 대륙</b>. 정치적 소속국·환경 비슷한 먼 섬은 기준 아님</dd>
+        <dt>월리스</dt><dd>자연선택 독자 구상 → 린네학회 공동 발표 → 1859년 『종의 기원』</dd>
+      </dl>
+      <table class="cmp">
+        <thead><tr><th>비교</th><th>인위선택</th><th>자연선택</th></tr></thead>
+        <tbody>
+          <tr><td>고르는 주체</td><td>사람</td><td>환경</td></tr>
+          <tr><td>기준</td><td>사람이 원하는 형질</td><td>생존·번식에 유리한 형질</td></tr>
+          <tr><td>공통 원리</td><td colspan="2">이미 있는 유전되는 차이 중 골라진 형질이 다음 세대에 많아짐</td></tr>
+        </tbody>
+      </table>
+      <ul class="pts">
+        <li>인위선택(artificial selection): 원하는 형질 개체끼리 선택적 교배. 예: 다리 짧은 개끼리 반복 교배 → 치와와·닥스훈트, 젖 많은 소</li>
+        <li>맬서스 인구론: 인구는 농업생산량보다 훨씬 빠르게(2의 n승) 성장 → 제한된 자원을 두고 <b>경쟁</b>. 다윈이 가져온 것 = 경쟁. "후손은 조상을 닮는다(유전)"는 인위선택 항목</li>
+      </ul>
+      <p class="flow">자손 과잉 + 자원 제한(무한히 늘지 않음)<span class="flow-arrow">→</span>경쟁</p>
+      <p class="flow">개체마다 변이 + 변이가 유전<span class="flow-arrow">→</span>유리한 형질 개체가 더 생존·번식</p>
+      <!-- 출처: 1027 정리노트 L286 착각 줄, L260; 1027 복습문제 P35 보기 2·P28 보기 2 해설 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 다윈이 진화를 확신하게 된 갈라파고스의 관찰은 대륙에 따라 서로 다른 종이 발견된 것이다.</span>
+        <span class="trap-ok">✓ 갈라파고스의 결정적 관찰은 <b>군도 안 섬마다</b> 다른 핀치 부리와 핀치·바다거북 종들의 유사성과 차이점이다.</span>
+      </div>
+      <!-- 출처: 1027 정리노트 L358 착각 줄, L327 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 인위선택에서 사람은 원하는 새 형질을 만들어 품종을 얻는다.</span>
+        <span class="trap-ok">✓ 인위선택에서 사람은 원하는 형질을 가진 개체를 <b>골라 교배시킬 뿐</b>이다.</span>
+      </div>
+      <!-- 출처: 1027 복습문제 P30 보기 2 해설; 1027 정리노트 L360 착각 줄 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 많은 변이가 유전된다는 관찰에서 개체들이 제한된 자원을 두고 경쟁한다는 추론이 나온다.</span>
+        <span class="trap-ok">✓ 경쟁이라는 추론은 <b>자손 과잉과 자원 제한</b>의 관찰에서 나온다(맬서스).</span>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- ════════════ 3쪽 ════════════ -->
+<section class="page" aria-label="3쪽">
+  <header class="page-head">
+    <div class="page-title-row">
+      <h1 class="page-title">7장 진화 사상과 소진화</h1>
+      <span class="page-no">3 / 7</span>
+    </div>
+    <div class="page-bar" aria-hidden="true"></div>
+    <p class="page-toc">⑤ 자연선택의 논리 · ⑥ 변형 혈통·계통수</p>
+  </header>
+
+  <div class="page-body">
+
+    <!-- ⑤ 출처: 1027 정리노트 「자연선택의 논리」 L378–L469(관찰·추론 표, 인과 순서, 숨은 조건 1~3, 꼭 기억해요), 1027 복습문제 P15·P18·P20·P23·P24·P31·P34·P36·P37·P42·P56 -->
+    <section class="sec">
+      <span class="sec-label">⑤ 자연선택의 논리</span>
+      <h2 class="sec-title">자연선택: 진화를 가져오는 원리 <span class="badge">단서: 원리·가장 직접적인 결과</span></h2>
+      <table class="cmp">
+        <thead><tr><th>관찰</th><th>추론</th></tr></thead>
+        <tbody>
+          <tr><td>자손 과잉·개체군 크기 제한·자원 제한</td><td>제한된 자원을 두고 <b>경쟁</b></td></tr>
+          <tr><td><b>변이</b>가 있고 많은 변이가 <b>유전</b></td><td>어떤 개체가 더 <b>생존</b>·<b>번식</b></td></tr>
+        </tbody>
+      </table>
+      <p class="flow">유전되는 변이 이미 있음<span class="flow-arrow">→</span>자원 제한으로 경쟁<span class="flow-arrow">→</span>그 환경에 유리한 개체가 더 생존·번식<span class="flow-arrow">→</span>다음 세대 비율 증가(대립유전자 빈도 변화)<span class="flow-arrow">→</span>보편화</p>
+      <ul class="pts">
+        <li>결과(멸종·지리적 변이)가 아니라 <b>원리</b>. 『종의 기원』 = "자연선택이라는 방법에 의한".</li>
+        <li>직접 결과 = 개체군의 <b>대립유전자 빈도 변화</b>. 환경 변화는 원인 쪽, 새 대립유전자는 돌연변이.</li>
+        <li>바뀌는 단위는 개체가 아니라 <b>개체군</b>. 고르는 주체: 자연선택 = 환경, 인위선택 = 사람.</li>
+        <li>유전자가 제어하면 신체 모양·성장률·효소 활성·본능적 행동 모두 대상.</li>
+        <li><b>생존 × 번식</b> 둘 다 필요(교수님: "생존만, 번식만 해서는 안 된다"). 강의노트 표기: 적응도(생존 × 번식)를 높이는 <b>적응형질</b>을 선호.</li>
+        <li>자연선택은 적응형질·선호형질을 <b>보존</b>, 줄어드는 쪽은 불리한 변이. 다윈 이론에 "적응형질을 제거한다"는 없음.</li>
+      </ul>
+      <!-- 출처: 1027 정리노트 L412 "시작 조건: 변이는 선택보다 먼저", L438 착각 줄(필요하니까 변이), 1027 복습문제 P18·P31 보기 "새로운 대립유전자가 만들어진다" 해설 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 자연선택의 가장 직접적인 결과는 새로운 대립유전자가 만들어지는 것이다.</span>
+        <span class="trap-ok">✓ 직접 결과는 <b>이미 있는 대립유전자의 빈도 변화</b>다. 새 대립유전자는 <b>돌연변이</b>로 생긴다.</span>
+      </div>
+      <!-- 출처: 1027 정리노트 L414 숨은 조건 1, L440 착각 줄(살면서 생긴 차이), 1027 복습문제 P23 보기(영양실조로 다리가 짧은 강아지·배운 행동·가지를 잘라 준 나무) 해설 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 영양실조로 다리가 짧아져 구멍에 잘 들어가는 강아지도 자연선택을 받는다.</span>
+        <span class="trap-ok">✓ 살면서 생긴 차이는 <b>유전되지 않아</b> 재료가 아니다. 타고난 점박이 털처럼 <b>유전되는 변이만</b> 자연선택을 받는다.</span>
+      </div>
+      <!-- 출처: 1027 정리노트 L416 숨은 조건 2, L442 착각 줄("잘 적응했다"), 1027 복습문제 P24 보기 "다른 환경에서는 불리하다"·"모든 다른 환경에서도 잘 적응할 것이다", P36·P20 해설 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 어느 환경에 잘 적응한 개체는 다른 환경에서는 불리하다.</span>
+        <span class="trap-ok">✓ 다른 환경에서는 잘 맞지 않을 <b>수도 있다</b>. 적응은 <b>서식 환경을 빼고 정할 수 없다</b>(큰 잎·큰 몸만으로 판단 불가).</span>
+      </div>
+    </section>
+
+    <!-- ⑥ 출처: 1027 정리노트 「변형 혈통과 계통수」 L470–L560(표·꼭 기억해요·용어), 1027 복습문제 P14·P47·P51 -->
+    <section class="sec">
+      <span class="sec-label">⑥ 변형 혈통·계통수</span>
+      <h2 class="sec-title">계통수: 끊긴 가지=멸종, 끝=현존, 갈림점=공통조상 <span class="badge">단서: descent with modification</span></h2>
+      <dl class="kv">
+        <dt>변형 혈통</dt><dd>다윈이 '진화' 대신 쓴 말(descent with modification, '변화를 동반한 계승'). 모든 생물은 하나의 <b>공통조상</b>에서 조금씩 바뀌며 갈라져 내려왔다. 이를 나무로 그린 것이 <b>계통수</b>(樹=나무).</dd>
+      </dl>
+      <figure class="mini-fig">
+        <svg viewBox="0 0 356 130" role="img" aria-label="계통수 읽기: 아래 뿌리는 공통조상, 갈림점은 공통조상, 현재 선까지 닿은 가지 끝은 현존 종, 도중에 끊긴 가지는 멸종">
+          <defs>
+            <marker id="m6-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+              <path class="fig-ink" d="M1 1 L7 4 L1 7"/>
+            </marker>
+          </defs>
+          <line class="fig-ink" x1="12" y1="120" x2="12" y2="30" marker-end="url(#m6-arrow)"/>
+          <text class="fig-muted" x="20" y="124">과거</text>
+          <line class="fig-ink" x1="30" y1="24" x2="250" y2="24" stroke-dasharray="4 3"/>
+          <text class="fig-muted" x="256" y="28">현재 선</text>
+          <line class="fig-ink" x1="100" y1="122" x2="100" y2="98"/>
+          <line class="fig-ink" x1="100" y1="98" x2="50" y2="24"/>
+          <line class="fig-ink" x1="100" y1="98" x2="160" y2="66"/>
+          <line class="fig-ink" x1="160" y1="66" x2="130" y2="24"/>
+          <line class="fig-accent" x1="160" y1="66" x2="205" y2="40"/>
+          <line class="fig-accent" x1="200" y1="35" x2="210" y2="45"/>
+          <line class="fig-accent" x1="210" y1="35" x2="200" y2="45"/>
+          <circle class="fig-dot" cx="100" cy="98" r="4"/>
+          <circle class="fig-dot" cx="160" cy="66" r="4"/>
+          <text class="fig-text" x="50" y="15" text-anchor="middle">현존 종</text>
+          <text class="fig-text" x="130" y="15" text-anchor="middle">현존 종</text>
+          <text class="fig-text" x="216" y="45">끊긴 가지 = 멸종</text>
+          <text class="fig-text" x="172" y="80">갈림점 = 공통조상</text>
+          <text class="fig-text" x="110" y="124">뿌리 = 공통조상</text>
+        </svg>
+      </figure>
+      <ul class="pts">
+        <li>세로축은 <b>시간</b>(아래 과거, 위 현재). 가지가 중간에 끝난 것은 시간 길이가 아니라 계통이 <b>끊겼다</b>는 뜻.</li>
+        <li>새 종이 생긴 곳(새 계통이 나뉜 곳)은 <b>갈림점</b>. 끊긴 가지 끝이 아니다.</li>
+        <li>공통조상의 증거: DNA·단백질 서열, 상동 구조, 화석(사람·침팬지).</li>
+      </ul>
+      <!-- 출처: 1027 정리노트 꼭 기억해요 "계통수의 부분을 바꿔 읽기 쉬워요", 1027 복습문제 P14 보기 2·5 해설 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 계통수에서 꼭대기까지 닿지 않은 가지는 조상으로부터 새로운 종이 기원한 것을 나타낸다.</span>
+        <span class="trap-ok">✓ 꼭대기까지 닿지 않은 가지는 <b>멸종(멸절) 종</b>이다. 새 종의 기원은 <b>갈림점</b>.</span>
+      </div>
+      <!-- 출처: 1027 복습문제 P47 보기 1·4 해설 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 가지가 갈라지는 점은 멸종한 종이고, 도중에 끊긴 가지 끝은 공통조상이다.</span>
+        <span class="trap-ok">✓ 갈라지는 점은 <b>공통조상</b>이고, 도중에 끊긴 가지 끝은 <b>멸종한 종</b>이다.</span>
+      </div>
+      <!-- 출처: 1027 복습문제 P51 보기 1·2 해설 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 다윈의 '변형 혈통'은 자주 쓰는 기관이 발달하고 살면서 얻은 형질이 자손에게 전해진다는 뜻이다.</span>
+        <span class="trap-ok">✓ 그것은 <b>라마르크</b>의 용불용설·획득형질 유전. 변형 혈통은 <b>공통조상에서 조금씩 변하며 갈라져</b> 내려왔다는 뜻.</span>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- ════════════ 4쪽 ════════════ -->
+<section class="page" aria-label="4쪽">
+  <header class="page-head">
+    <div class="page-title-row">
+      <h1 class="page-title">7장 진화 사상과 소진화</h1>
+      <span class="page-no">4 / 7</span>
+    </div>
+    <div class="page-bar" aria-hidden="true"></div>
+    <p class="page-toc">⑦ 종합론·진화 증거 · ⑧ 상동·상사·분자 증거</p>
+  </header>
+
+  <div class="page-body">
+
+    <!-- ⑦ 출처: 1027 정리노트 §2 "현대적 종합론, 소진화와 대진화" L561–L640, "적응·화석·생물지리학의 증거" L644–L748; 1027 복습문제 P9·P13·P16·P17·P21·P27·P33·P41·P46 -->
+    <section class="sec">
+      <span class="sec-label">⑦ 종합론·진화 증거</span>
+      <h2 class="sec-title">기준은 종 수준, 증거는 정황 증거 <span class="badge">단서: 종 수준·시조새·DDT</span></h2>
+      <dl class="kv">
+        <dt>현대적 종합론</dt><dd>다윈이 몰랐던 <b>멘델 유전학</b>(+생태·생리·유전학)을 진화론에 합침 → 형질이 다음 세대로 <b>어떻게 전달되는지</b> 설명. 중심 분야: 개체군 유전학(집단유전학 질문 = 미래 세대 유전자형 빈도)</dd>
+        <dt>진화적 변화</dt><dd>개체군의 유전적 구성이 바뀌어 대물림. 개체 수 증가만으론 부족(영양으로 키 큰 사람 증가 ✗)</dd>
+      </dl>
+      <table class="cmp">
+        <thead><tr><th>구분</th><th>기준</th><th>예</th></tr></thead>
+        <tbody>
+          <tr><td>소진화</td><td>같은 종 안, 개체군의 작은 유전적 변화</td><td>수업: 핀치 부리, 세균 항생제 내성. 기출: 개체군 색깔 작은 변화, HIV 약물 내성. 변형 문제: 해충 살충제 저항성 비율↑</td></tr>
+          <tr><td>대진화</td><td><b>종 수준 이상</b>: 종 출현·소멸</td><td>수업: 새 종 탄생, 공룡 멸종. 기출: 갑작스러운 종 절멸, 공룡→새, 조류(藻類)→육상식물, 사자·호랑이 분기, 인간 출현</td></tr>
+        </tbody>
+      </table>
+      <ul class="pts">
+        <li><b>적응</b>: 짧은 시간에도 관찰(교재 DDT 모기 18개월). DDT는 뿌리기 전 돌연변이로 이미 있던 내성 개체를 <b>골라 남김</b> → 자손이 늘어 집단 구성 변화. 항생제 내성도 같음(소진화) <span class="badge prof">교수님 강조</span></li>
+        <li><b>화석</b>: 시조새 = 공룡과 새의 중간 화석(깃털·속 빈 뼈 + 아직 긴 꼬리)</li>
+        <li><b>생물지리학</b>: 같은 지역 생물끼리 닮음(그 지역 공통조상). 섬 생물의 친척은 가장 가까운 대륙에(갈라파고스 핀치)</li>
+        <li>비교해부학(상동·상사)·비교발생·비교분자 → ⑧</li>
+        <li><b>정황 증거</b>(CCTV 없음) ≠ 증거 없음. 진화를 부정하는 논문은 없음</li>
+        <li>진화 연구가 <b>아닌</b> 것: 부모가 생애 동안 획득한 특성의 유전 연구(라마르크). 짧은 기간 분자실험·결과물 연구·섬의 많은 종 조사·상동기관 변이 연구는 맞음</li>
+      </ul>
+      <!-- 출처: 1027 정리노트 L611 꼭 기억해요(착각: 크기·시간 / 바른 기준: 종 수준), 1027 복습문제 P9 보기 3·5, P33 보기 1 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 소진화와 대진화는 변화의 크기와 걸린 시간으로 나눈다.</span>
+        <span class="trap-ok">✓ 소진화와 대진화는 <b>종 수준(종이 새로 생기거나 사라졌는가)</b>으로 나눈다.</span>
+      </div>
+      <!-- 출처: 1027 정리노트 L613 꼭 기억해요(DNA 유전물질로 바꾸어 읽지 않음), 1027 복습문제 P17 보기 4 해설 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 현대적 종합론은 DNA가 유전물질이라는 것을 보여 준다.</span>
+        <span class="trap-ok">✓ 현대적 종합론은 <b>형질이 다음 세대로 어떻게 전달되는지</b> 보여 준다.</span>
+      </div>
+      <!-- 출처: 1027 복습문제 P16 보기 2·3·4 해설(바하마), 1027 정리노트 L673 생물지리학적 증거 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 섬 생물의 가장 가까운 친척은 위도·환경이 비슷한 먼 섬에 있다.</span>
+        <span class="trap-ok">✓ 섬 생물의 가장 가까운 친척은 <b>가장 가까운 대륙</b>(바하마 → 북아메리카)에 있다.</span>
+      </div>
+    </section>
+
+    <!-- ⑧ 출처: 1027 정리노트 L749–L922(상동과 상사, 보충 흔적기관, 비교발생학과 비교분자생물학), 1027 복습문제 P1·P8·P10·P12·P22·P43·P48·P54·P58 -->
+    <section class="sec">
+      <span class="sec-label">⑧ 상동·상사·분자 증거</span>
+      <h2 class="sec-title">닮은 이유가 조상인가 환경인가 <span class="badge prof">교수님 강조</span> <span class="badge">단서: 상완골·유선형·사이토크롬 c</span></h2>
+      <table class="cmp">
+        <thead><tr><th>구분</th><th>조상 · 구조</th><th>기능</th><th>예</th></tr></thead>
+        <tbody>
+          <tr><td>상동(homology)</td><td>공통조상 공유(유전자 물려받음). 같은 대응 위치, 같은 구성 요소 같은 순서</td><td>달라도 됨(판단 기준 아님)</td><td>사람 팔·돼지 앞다리·돌고래 앞지느러미·박쥐 날개, 새 날개(교재)</td></tr>
+          <tr><td>상사(analogy)</td><td>계열(조상)이 다름. 환경 때문에 겉모양이 비슷해짐</td><td>비슷한 경우가 많음</td><td>펭귄·상어·돌고래의 유선형 몸, 돌고래·상어 지느러미 겉모양</td></tr>
+        </tbody>
+      </table>
+      <p class="flow">상완골 <b class="flow-num">1개</b><span class="flow-arrow">→</span>척골·요골 <b class="flow-num">2개</b><span class="flow-arrow">→</span>수근골<span class="flow-arrow">→</span>손가락 여러 갈래 = 상동기관</p>
+      <dl class="kv">
+        <dt>흔적기관</dt><dd>지금 기능이 거의 없지만 조상 때 기능하던 구조의 흔적. 사람·침팬지 맹장 → <b>상동성</b>의 증거(상사 아님)</dd>
+        <dt>비교해부학</dt><dd>= 강의노트 표기 비교형태학. 성체 구조의 배치를 봄</dd>
+        <dt>비교발생학</dt><dd><b>배아</b> 단계 비교. 척삭동물 배아는 반드시 척삭(notochord, 유연한 기둥) → 사람은 척추 디스크로 줄어듦</dd>
+        <dt>비교분자생물학</dt><dd>DNA 염기서열·단백질 아미노산 서열 비교. 차이 적음 = 최근 분기 = 공통조상이 더 최근</dd>
+        <dt>사이토크롬 c</dt><dd>사람 기준 침팬지 0, 붉은털원숭이 1, 개 13, 거북 21(교재 그림 7.12는 31), 효모 56. 문제에 표가 있으면 그 수대로</dd>
+        <dt>공통 결론</dt><dd>DNA·화석·상동·흔적기관은 모두 인간과 침팬지의 <b>공통조상</b>을 가리킴</dd>
+      </dl>
+      <!-- 출처: 1027 정리노트 "꼭 기억해요" 기능이 같으면 상동 착각, 1027 복습문제 P1 보기(1)·P48 ㄴ 해설 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 두 구조가 상동이려면 두 생물에서 동일한 기능을 가져야 한다.</span>
+        <span class="trap-ok">✓ 기능은 달라도 되고, <b>해부학적·형태적으로 비슷해야</b> 상동이다.</span>
+      <!-- 출처: 1027 정리노트 보충 "흔적기관을 상사로 착각하기 쉬워요", 1027 복습문제 P12 보기(4)·P43 보기(1) 해설 -->
+        <span class="trap-x">✗ 사람과 침팬지가 모두 맹장을 가진 것은 상사의 예다.</span>
+        <span class="trap-ok">✓ 흔적기관 맹장을 함께 가진 것은 <b>상동성</b>의 증거다.</span>
+      <!-- 출처: 1027 복습문제 P54 보기(3) 해설, P10 보기(4) 해설 -->
+        <span class="trap-x">✗ 비교발생학 — 사람과 여러 동물의 사이토크롬 c 아미노산 서열 비교.</span>
+        <span class="trap-ok">✓ 아미노산 서열 비교는 <b>비교분자생물학</b>, 비교발생학은 <b>배아</b> 비교다.</span>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- ════════════ 5쪽 ════════════ -->
+<section class="page" aria-label="5쪽">
+  <header class="page-head">
+    <div class="page-title-row">
+      <h1 class="page-title">7장 진화 사상과 소진화</h1>
+      <span class="page-no">5 / 7</span>
+    </div>
+    <div class="page-bar" aria-hidden="true"></div>
+    <p class="page-toc">⑨ 변이의 원천 · ⑩ 빈도·하디-바인베르크</p>
+  </header>
+
+  <div class="page-body">
+
+    <!-- ⑨ 출처: 1027 정리노트 「개체군 안의 변이와 그 원천」 L923–L986(L950–L956, L969), 1027 복습문제 P19·P38, 1029 정리노트 L188–L217(돌연변이 서술만) -->
+    <section class="sec">
+      <span class="sec-label">⑨ 변이의 원천</span>
+      <h2 class="sec-title">새 대립유전자는 돌연변이, 유성생식은 섞기 <span class="badge">단서: 새롭고 독특한 유전자</span></h2>
+      <table class="cmp">
+        <thead><tr><th>원천</th><th>하는 일</th><th>새 대립유전자</th></tr></thead>
+        <tbody>
+          <tr><td>돌연변이</td><td>DNA가 바뀜(자발적)</td><td><b>만든다</b> — 주된 원인</td></tr>
+          <tr><td>염색체 구조·수 변화</td><td>유전 정보 배치가 달라짐</td><td>변이를 늘림</td></tr>
+          <tr><td>유성생식: 교차·독립 분배·무작위 수정</td><td>있던 대립유전자를 새 조합으로</td><td>섞을 뿐</td></tr>
+        </tbody>
+      </table>
+      <ul class="pts">
+        <li>판별 기준: 새 대립유전자를 <b>만드는가</b>, 이미 있는 것을 <b>섞거나 고르는가</b>.</li>
+        <li>돌연변이: 자외선·여러 화학물질이 더 많이 일으킨다. 대부분 유해하거나 중립, 어쩌다 유익.</li>
+        <li>빠르게 적응한 종 = 새 환경에 맞는 대립유전자를 <b>이미</b> 가지고 있었다. 선택은 이미 있는 변이에 작용.</li>
+      </ul>
+      <!-- 출처: 1027 복습문제 P38 보기 대진화·인위선택·획득형질 해설, 1027 정리노트 L956 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 한 개체군에서 새롭고 독특한 유전자가 생기는 주요 원인은 인위선택이다.</span>
+        <span class="trap-ok">✓ 주요 원인은 <b>돌연변이</b>다. 인위선택은 이미 있는 변이 중에서 고를 뿐이고, 대진화·획득형질도 새 유전자를 만들지 않는다.</span>
+      </div>
+      <!-- 출처: 1027 정리노트 L952–L954, L969 「새로 만들기 ↔ 섞기」 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 유성생식의 교차는 새로운 대립유전자를 만들어 변이를 늘린다.</span>
+        <span class="trap-ok">✓ 교차는 이미 있던 대립유전자를 <b>새 조합으로 섞을 뿐</b>이다. 새 대립유전자는 <b>돌연변이</b>가 만든다.</span>
+      </div>
+      <!-- 출처: 1029 정리노트 L217 착각 줄 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 돌연변이는 대부분 이롭다.</span>
+        <span class="trap-ok">✓ 대부분 <b>유해하거나 중립</b>이다. 어쩌다 생긴 유익돌연변이를 늘리는 것은 <b>자연선택</b>이다.</span>
+      </div>
+    </section>
+
+    <!-- ⑩ 출처: 1027 정리노트 L987–L1253(§유전자형 빈도와 대립유전자 빈도, §하디-바인베르크 원리와 유전적 평형, §영가설), 1029 정리노트 L33–L70(지난 수업 복습), 1027 복습문제 P3·P44·P45·P49·P50·P52·P57 -->
+    <section class="sec">
+      <span class="sec-label">⑩ 빈도·하디-바인베르크</span>
+      <h2 class="sec-title">빈도 계산과 유전적 평형 <span class="badge prof">교수님 강조</span></h2>
+      <table class="cmp">
+        <thead><tr><th>구분</th><th>뜻</th><th>분모(셈 단위)</th></tr></thead>
+        <tbody>
+          <tr><td>유전자형 빈도</td><td>그 유전자형(AA·Aa·aa)을 가진 개체의 비율</td><td>개체 수 N</td></tr>
+          <tr><td>대립유전자 빈도</td><td>대립유전자 전체 중 한 대립유전자의 비율</td><td>대립유전자 총수 2N</td></tr>
+        </tbody>
+      </table>
+      <p class="flow">총수 = 개체 수 × <b class="flow-num">2</b><span class="flow-arrow">→</span>A 개수 = 2×AA + Aa<span class="flow-arrow">→</span>p = A ÷ 2N, q = 1 − p<span class="flow-arrow">→</span>p², 2pq, q²<span class="flow-arrow">→</span>× 다음 세대 개체 수</p>
+      <ul class="pts">
+        <li>빈도만 주면 p = AA 빈도 + ½ Aa 빈도. 예: 450·500·50(1,000개체) → 2,000개 중 1,400 → p = 0.7, q = 0.3.</li>
+        <li><b>p + q = 1</b>, <b>p² + 2pq + q² = (p + q)² = 1</b>. 2pq의 2는 뽑는 순서 두 가지(pq만 쓰면 절반). p = 0.7 → 0.49·0.42·0.09(1,000개체면 490·420·90).</li>
+        <li>하디-바인베르크 원리 다섯 조건: 돌연변이 없음 · 이동 없음(다른 개체군으로부터의 유입 없음) · 개체군 크기 무한 · 자연선택 없음(모든 유전자형이 똑같이 생존·번식) · 무작위 교배. 앞 넷은 p, q를 지키고, 무작위 교배는 p², 2pq, q²로 짝짓는다.</li>
+        <li>유전적 평형: 다섯 조건이 유지되는 한 대립유전자 빈도와 유전자형 빈도가 세대가 지나도 변하지 않음. 다음 세대 p, q는 다시 셀 필요 없음.</li>
+        <li>영가설: 평형 = 진화가 일어나지 않는 조건. 조건이 <b>하나라도</b> 깨져 빈도가 변하면 소진화(자연계에서는 반드시 일어남).</li>
+      </ul>
+      <!-- 출처: 1027 복습문제 P3 보기 "자연선택이 존재한다"·P45 보기 "이웃 개체군과 개체가 자유롭게 드나든다"와 해설, 1027 정리노트 §하디-바인베르크 꼭 기억해요 "조건 표현이 달라도 같은 조건" -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 하디-바인베르크 원리의 조건: 자연선택이 존재한다.</span>
+        <span class="trap-ok">✓ 조건은 자연선택이 <b>없다</b>(모든 유전자형이 똑같이 생존·번식). 개체가 드나드는 것도 조건이 아니라 <b>깨진</b> 상황.</span>
+      </div>
+      <!-- 출처: 1027 복습문제 P49 보기 0.32·0.64·0.96과 해설, 1027 정리노트 §유전자형 빈도와 대립유전자 빈도 꼭 기억해요 "대립유전자 총수" -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 대립유전자 빈도는 그 대립유전자를 가진 개체 수를 개체 수로 나눈 값이다.</span>
+        <span class="trap-ok">✓ 대립유전자 빈도는 대립유전자 <b>개수</b>(2×AA + Aa)를 <b>개체 수 × 2</b>로 나눈 값이다.</span>
+      </div>
+      <!-- 출처: 1027 복습문제 P52 보기 "평형 상태인 개체군에서는 … 소진화가 활발하게 일어난다"와 해설, 1027 정리노트 §영가설 꼭 기억해요 "평형 ↔ 평형이 깨짐" -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 평형 상태인 개체군에서는 대립유전자 빈도가 세대마다 변하므로 소진화가 활발하다.</span>
+        <span class="trap-ok">✓ 평형은 빈도가 <b>변하지 않는</b> 상태(영가설)라 소진화가 <b>일어나지 않는다</b>.</span>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- ════════════ 6쪽 ════════════ -->
+<section class="page" aria-label="6쪽">
+  <header class="page-head">
+    <div class="page-title-row">
+      <h1 class="page-title">7장 진화 사상과 소진화</h1>
+      <span class="page-no">6 / 7</span>
+    </div>
+    <div class="page-bar" aria-hidden="true"></div>
+    <p class="page-toc">⑪ 평형 계산 함정 · ⑫ 소진화 요인·유전자 확산 · ⑬ 유전적 부동</p>
+  </header>
+
+  <div class="page-body">
+
+    <!-- ⑪ 출처: 1029 정리노트 "평형 계산의 함정과 열성 질환 역산" L71–L161, 1029 복습문제 P36·P37 -->
+    <section class="sec">
+      <span class="sec-label">⑪ 평형 계산 함정</span>
+      <h2 class="sec-title">1세대 그대로 금지 · 환자=q²에서 역산 <span class="badge prof">교수님 강조</span></h2>
+      <p class="flow">1세대(평형 깨짐) AA·Aa·aa<span class="flow-arrow">→</span>p = AA + ½Aa, q = aa + ½Aa<span class="flow-arrow">→</span>2세대 p²·2pq·q²<span class="flow-arrow">→</span>3세대부터 같음</p>
+      <p class="flow">예: <b class="flow-num">0.50·0.20·0.30</b><span class="flow-arrow">→</span>p <b class="flow-num">0.60</b>, q <b class="flow-num">0.40</b><span class="flow-arrow">→</span><b class="flow-num">0.36·0.48·0.16</b></p>
+      <p class="flow">환자 비율(aa) = q²<span class="flow-arrow">→</span>q = √q²<span class="flow-arrow">→</span>p = 1 − q<span class="flow-arrow">→</span>보인자(이형접합자 Aa) = 2pq</p>
+      <p class="flow">예: <b class="flow-num">1/400</b> = 0.0025<span class="flow-arrow">→</span>q <b class="flow-num">0.05</b><span class="flow-arrow">→</span>p 0.95<span class="flow-arrow">→</span>2pq <b class="flow-num">0.095</b> (약 9.5%)</p>
+      <ul class="pts">
+        <li>넘어가는 것은 유전자형 빈도가 아니라 <b>p, q</b>. aa = q²는 <b>평형 가정</b>이 있어야 성립.</li>
+        <li>이주 섞이면 개수로: 900명 중 9명 → q 0.1, a 180개 / 1,000명 × 2 = 2,000개 → <b>0.09</b>(P37).</li>
+      </ul>
+      <!-- 출처: 1029 정리노트 꼭 기억해요 착각 1, 1029 복습문제 P36 풀이 2 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 평형이 유지되므로 자손 세대 유전자형 빈도는 1세대 값 그대로다.</span>
+        <span class="trap-ok">✓ 평형은 <b>2세대부터</b>. 1세대에서 p, q를 구해 p², 2pq, q²로 계산한다.</span>
+        <!-- 출처: 1029 정리노트 꼭 기억해요 착각 2, 1029 복습문제 P37 풀이 2 -->
+        <span class="trap-x">✗ 400명 중 1명이 환자면 열성 대립유전자 빈도 q는 0.0025다.</span>
+        <span class="trap-ok">✓ 0.0025는 <b>q²</b>. q는 그 제곱근인 <b>0.05</b>다.</span>
+        <!-- 출처: 1029 정리노트 꼭 기억해요 착각 3 -->
+        <span class="trap-x">✗ 보인자의 빈도는 환자 빈도와 같은 q²이다.</span>
+        <span class="trap-ok">✓ 보인자는 이형접합자 Aa로 <b>2pq</b>, 환자는 aa로 q²이다.</span>
+      </div>
+    </section>
+
+    <!-- ⑫ 출처: 1029 정리노트 "조건이 깨지면 소진화: 돌연변이와 유전자 확산" L162–L258(표 L180–L186, 보충 L222–L230), 1029 복습문제 P5·P38, 1027 복습문제 P2·P5·P25·P26·P39 -->
+    <section class="sec">
+      <span class="sec-label">⑫ 소진화 요인·유전자 확산</span>
+      <h2 class="sec-title">평형 조건 뒤집기 = 소진화 요인 <span class="badge">단서: 이동 없음·유입·유출</span></h2>
+      <table class="cmp">
+        <thead><tr><th>깨진 평형 조건</th><th>소진화 요인</th><th>빈도를 바꾸는 방식</th></tr></thead>
+        <tbody>
+          <tr><td>돌연변이 없음</td><td>돌연변이</td><td>새 대립유전자·새 변이 생성</td></tr>
+          <tr><td>이동 없음</td><td>유전자 확산 = 유전자 흐름</td><td>다른 집단에서 유입·유출</td></tr>
+          <tr><td>개체군 크기 무한</td><td>유전적 부동</td><td>작을수록 우연으로 크게 흔들림</td></tr>
+          <tr><td>자연선택 없음</td><td>자연선택</td><td>잘 살고 번식한 쪽 대립유전자 증가</td></tr>
+          <tr><td>무작위 교배</td><td>선택적 교배(성선택)</td><td>짝으로 더 선택된 형질의 대립유전자 증가</td></tr>
+        </tbody>
+      </table>
+      <ul class="pts">
+        <li><b>유전자 확산(gene flow)</b>: 꽃가루·씨앗 확산, 개체 이주로 이미 있는 집단 사이를 대립유전자가 오감. 유입·유출 모두 해당, 새 유전적 변이를 들여옴. 이주 직후 빈도 = 대립유전자 개수 다시 세기 ÷ (개체 수 × 2).</li>
+        <li><b>돌연변이</b>: DNA 염기서열의 자발적 변화(자외선·화학물질이 늘림). 대부분 유해하거나 중립, 드문 유익돌연변이는 자연선택으로 늘어남.</li>
+        <li><b>근친교배</b>(강의노트: 선택적 교배의 특별한 형태): 동형접합자 증가·이형접합자 감소, 열성 표현형이 자주 나타남. 교재 표 7.3: 선택적 교배는 대립유전자 빈도에 직접 영향 없음, 유전자 평형은 막음.</li>
+        <li><b>획득형질</b>은 유전되지 않아 빈도를 못 바꿈 → 소진화 요인 아님(기출 "빈도를 변화시키는 요소가 아닌 것"의 가장 확실한 고르기).</li>
+        <li>유전적 부동(병목·창시자)은 ⑬, 자연선택 양상은 ⑭.</li>
+      </ul>
+      <!-- 출처: 1029 정리노트 꼭 기억해요 착각 1(L214), 1029 복습문제 P5 풀이 4, 1027 복습문제 P26 보기 2 풀이 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 살면서 얻은 형질(획득형질)도 자손에게 전해져 대립유전자 빈도를 바꾼다.</span>
+        <span class="trap-ok">✓ 획득형질은 <b>유전되지 않아</b> 빈도를 <b>바꾸지 못한다</b>. 소진화 요인이 아니다.</span>
+        <!-- 출처: 1029 정리노트 꼭 기억해요 착각 2(L215), 보충 L222–L226, 1029 복습문제 P38 보기 5 풀이 -->
+        <span class="trap-x">✗ 근친교배처럼 짝이 치우치기만 해도 대립유전자 빈도가 반드시 바뀐다.</span>
+        <span class="trap-ok">✓ 근친교배는 <b>유전자형 빈도</b>(동형접합자↑·이형접합자↓)를 바꾼다. 무작위 교배가 깨진 요인은 유전자 흐름이 아니라 <b>선택적 교배</b>.</span>
+        <!-- 출처: 1029 정리노트 꼭 기억해요 착각 3(L216) -->
+        <span class="trap-x">✗ 몇 개체가 떨어져 나와 새 지역에 새 집단을 세운 것도 유전자 확산이다.</span>
+        <span class="trap-ok">✓ 유전자 확산은 <b>이미 있는 두 집단 사이</b>의 이동. 새 집단을 세우면 <b>창시자 효과</b>(유전적 부동).</span>
+      </div>
+    </section>
+
+    <!-- ⑬ 출처: 1029 정리노트 "유전적 부동: 병목 현상과 창시자 효과" L259–L363, 1029 복습문제 P1·P2·P6·P7·P13·P34·P35 -->
+    <section class="sec">
+      <span class="sec-label">⑬ 유전적 부동</span>
+      <h2 class="sec-title">우연이 빈도를 바꿈 = 유전적 부동 <span class="badge">단서: 우연·예상치 못한 변화</span></h2>
+      <p class="flow">유전적 부동(genetic drift)<span class="flow-arrow">→</span><b>우연</b>한 사건으로 대립유전자 빈도가 예상치 못하게 변함<span class="flow-arrow">→</span>빈도가 변했으니 소진화(진화)</p>
+      <table class="cmp">
+        <thead><tr><th>구분</th><th>무엇이 빈도를 바꿨나 · 상황</th><th>원래 집단 · 보기 단서</th></tr></thead>
+        <tbody>
+          <tr><td>병목 현상</td><td><b>우연</b>(형질 무관). 그 자리에서 개체 수 <b>시간적</b> 급감</td><td>줄어듦. 산불·홍수·폭풍·지진·사냥</td></tr>
+          <tr><td>창시자 효과</td><td><b>우연</b>(창시자 유전자). 소수가 <b>공간적</b>으로 떨어져 새 지역에 새 집단</td><td>그대로. 몇 마리 탈출·폭풍에 실려 섬</td></tr>
+          <tr><td>자연선택</td><td><b>형질</b>에 따른 생존·번식. 유리한 형질 개체가 더 살아남음</td><td>—. 감염 저항성·매에게 잘 띔</td></tr>
+        </tbody>
+      </table>
+      <ul class="pts">
+        <li>병목 현상·창시자 효과는 <b>둘 다</b> 유전적 부동의 한 경우. 기출: 롱 아일랜드 도마뱀 탈출 = 창시자 효과, 산불 다람쥐 = 유전적 부동 / 감염 다람쥐 = 자연선택.</li>
+        <li><b>작은</b> 개체군일수록 영향 큼, 충분히 크면 작음(H-W "크기 무한"이 깨진 경우). 방향 없음: 같은 출발점에서 고정(빈도 1)·소실(빈도 0) 다 가능.</li>
+        <li>유전적 다양성을 보통 <b>줄임</b>(사라진 대립유전자는 돌연변이·유전자 확산 없이 안 돌아옴) → 멸종 확률↑.</li>
+        <li>헷갈리는 이웃: 기존 집단 사이 이동 = 유전자 확산, 친척끼리 교배 = 근친교배, 균형 유지 = 평형 다형성.</li>
+      </ul>
+      <!-- 출처: 1029 정리노트 꼭 기억해요 착각 2, 1029 복습문제 P1 보기 3 풀이 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 유전적 부동으로 변한 집단은 변화가 우연의 결과이므로 진화하지 않는다.</span>
+        <span class="trap-ok">✓ 대립유전자 빈도가 변했으면 원인이 우연이어도 <b>진화한다</b>.</span>
+      </div>
+      <!-- 출처: 1029 정리노트 꼭 기억해요 착각 4, 1029 복습문제 P1 보기 5 풀이 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 유전적 부동으로 변한 집단은 언제나 작은 창시자 집단으로부터 출발한다.</span>
+        <span class="trap-ok">✓ 창시자 효과는 한 경우일 뿐, 그 자리에서 급감하는 <b>병목 현상</b>도 유전적 부동이다.</span>
+      </div>
+      <!-- 출처: 1029 정리노트 꼭 기억해요 착각 1, 1029 복습문제 P6 보기 5·P34 보기 1 풀이 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 산불로 90%가 죽고 남은 다람쥐는 환경에 적응한 개체이므로 자연선택이다.</span>
+        <span class="trap-ok">✓ 형질과 상관없이 운으로 살아남았으므로 <b>유전적 부동(병목 현상)</b>이다.</span>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- ════════════ 7쪽 ════════════ -->
+<section class="page" aria-label="7쪽">
+  <header class="page-head">
+    <div class="page-title-row">
+      <h1 class="page-title">7장 진화 사상과 소진화</h1>
+      <span class="page-no">7 / 7</span>
+    </div>
+    <div class="page-bar" aria-hidden="true"></div>
+    <p class="page-toc">⑭ 자연선택 세 양상 · ⑮ 성선택·이형접합자 이점</p>
+  </header>
+
+  <div class="page-body">
+
+    <!-- ⑭ 출처: 1029 정리노트 "상대적 적응도와 자연선택의 세 양상" L364–L512, 1029 복습문제 P4·P8·P9·P10·P11·P12·P39·P40 -->
+    <section class="sec">
+      <span class="sec-label">⑭ 자연선택 세 양상</span>
+      <h2 class="sec-title">적응도 = 자식 수, 양상 = 분포 모양 <span class="badge">단서: 평균 이동·홀쭉·봉우리 둘</span></h2>
+      <dl class="kv">
+        <dt>상대적 적응도</dt><dd>남긴 생존 <b>자식 수</b>를 다른 개체와 비교한 값. 돈·수명·건강 아님.</dd>
+        <dt>계산</dt><dd>자식을 <b>가장 많이 남긴</b> 개체 = <b>1.0</b>. 흥부 10명 1.0 → 놀부 1명 0.1. 변형: A 12마리 1.0 → B 3마리 3/12 = 0.25, 0마리면 0. 산 기간은 안 씀.</dd>
+        <dt>작용 대상</dt><dd>대립유전자 자체가 아니라 개체의 <b>표현형</b>.</dd>
+      </dl>
+      <table class="cmp">
+        <thead><tr><th>양상</th><th>불리한 쪽</th><th>평균·분포</th><th>예</th></tr></thead>
+        <tbody>
+          <tr><td>방향성 선택</td><td>한쪽 극단</td><td>평균 <b>이동</b>, 봉우리 하나 통째로</td><td>항생제 내성 세균, 상아 짧아진 코끼리, 기린 목, 가뭄 뒤 핀치 부리</td></tr>
+          <tr><td>안정화 선택</td><td>양 극단</td><td>평균 그대로, 폭 <b>좁아짐</b></td><td>출생 체중(수업 퀴즈)</td></tr>
+          <tr><td>분단성 선택 (=다형화 선택)</td><td>중간</td><td>봉우리 <b>둘</b>, 다양해짐</td><td>—</td></tr>
+        </tbody>
+      </table>
+      <figure class="mini-fig">
+        <svg viewBox="0 0 360 126" role="img" aria-label="세 양상의 선택 전 점선 분포와 선택 후 실선 분포: 방향성은 봉우리가 오른쪽으로 이동, 안정화는 같은 자리에서 좁고 높아짐, 분단성은 봉우리가 둘로 갈라짐">
+          <text class="fig-text" x="60" y="16" text-anchor="middle">방향성 선택</text>
+          <text class="fig-text" x="180" y="16" text-anchor="middle">안정화 선택</text>
+          <text class="fig-text" x="300" y="16" text-anchor="middle">분단성 선택</text>
+          <line class="fig-ink" x1="6" y1="100" x2="114" y2="100"/>
+          <line class="fig-ink" x1="126" y1="100" x2="234" y2="100"/>
+          <line class="fig-ink" x1="246" y1="100" x2="354" y2="100"/>
+          <path class="fig-ink" stroke-dasharray="3 3" d="M8 100 C28 100 33 44 48 44 C63 44 68 100 88 100"/>
+          <path class="fig-accent" d="M30 100 C50 100 55 44 70 44 C85 44 90 100 110 100"/>
+          <path class="fig-ink" stroke-dasharray="3 3" d="M140 100 C160 100 165 44 180 44 C195 44 200 100 220 100"/>
+          <path class="fig-accent" d="M157 100 C169 100 172 26 180 26 C188 26 191 100 203 100"/>
+          <path class="fig-ink" stroke-dasharray="3 3" d="M260 100 C280 100 285 44 300 44 C315 44 320 100 340 100"/>
+          <path class="fig-accent" d="M256 100 C266 100 268 52 277 52 C286 52 290 82 300 82 C310 82 314 52 323 52 C332 52 334 100 344 100"/>
+          <text class="fig-muted" x="60" y="118" text-anchor="middle">평균 이동</text>
+          <text class="fig-muted" x="180" y="118" text-anchor="middle">평균 그대로·폭↓</text>
+          <text class="fig-muted" x="300" y="118" text-anchor="middle">봉우리 2개</text>
+        </svg>
+      </figure>
+      <ul class="pts">
+        <li>그림: 점선 = 선택 전, 강조 실선 = 선택 후. 가로축 형질 값, 세로축 개체 수.</li>
+        <li>판별: ① 선택받는 집단(항생제면 <b>세균</b>) ② 늘어난 쪽이 한쪽 끝·가운데·양 끝? ③ 평균 이동 / 폭만 감소 / 봉우리 둘.</li>
+        <li>개체 수 감소로 양상을 정하지 않음. 핀치: 생존자 곡선이 낮음 = 개체군 <b>줄어듦</b>(커졌다 ✗), 평균선은 깊은 부리 쪽 이동.</li>
+        <li>자연선택 직후 다양성: 일반적으로 <b>감소</b>(분단성은 양 극단이 남는 예외). 새 변이는 안 만듦.</li>
+        <li>새 강한 선택: 멸종, 흔한 형태↔드문 형태 역전, 흔한 형태 대체, 변이 감소 → <b>모두</b> 일어날 수 있음.</li>
+        <li>선택 유형이 아닌 보기: 획득형질·"쓰다 보니 변함"(라마르크식), 역진화, '다양화 선택'(수업 이름에 없음. 분단성으로 읽어도 봉우리 둘일 때만, 기린 목처럼 한 방향 이동이면 오답). 표현형 무관한 우연한 죽음(산불)은 유전적 부동.</li>
+      </ul>
+      <!-- 출처: 1029 정리노트 꼭 기억해요 착각 1(L449), 1029 복습문제 P4 보기 3 풀이 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 내성 S. aureus가 1~5%에서 60~70%로 는 것은 세균의 분단성 선택이다.</span>
+        <span class="trap-ok">✓ 내성 있는 한쪽으로 옮겨 갔으므로 세균의 <b>방향성 선택</b>이다.</span>
+      </div>
+      <!-- 출처: 1029 정리노트 꼭 기억해요 착각 2(L450), 1029 복습문제 P4 보기 2 풀이 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 사람이 항생제를 썼으므로 내성 세균 증가는 인간의 방향성 선택이다.</span>
+        <span class="trap-ok">✓ 빈도가 바뀐 것은 <b>세균 집단</b>이다. 사람은 환경만 만들었다.</span>
+      </div>
+      <!-- 출처: 1029 정리노트 꼭 기억해요 착각 4(L452), 1029 복습문제 P40 보기 4 풀이 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 상대적 적응도는 가장 오래 산 개체를 1.0으로 놓고 비교한다.</span>
+        <span class="trap-ok">✓ 자식을 <b>가장 많이 남긴</b> 개체를 1.0으로 놓는다. 오래 산 D(자손 0)는 0이다.</span>
+      </div>
+    </section>
+
+    <!-- ⑮ 출처: 1029 정리노트 "성선택과 성적이형성" L513–L573, "불리한 대립유전자가 남는 이유: 이형접합자 이점" L587–L657, 1029 복습문제 P3·P41·P42, 7장 장마감 §1(이형접합자 이점 = 강의노트 밖 수업 내용, 기출 없음) -->
+    <section class="sec">
+      <span class="sec-label">⑮ 성선택·이형접합자 이점</span>
+      <h2 class="sec-title">성선택은 짝짓기 성공 · 이형접합자 이점은 말라리아가 조건 <span class="badge">기출 밖</span></h2>
+      <dl class="kv">
+        <dt>성선택</dt><dd>이성 중 한쪽(보통 <b>암컷</b>)이 짝을 골라 교배 → 선택받은 형질의 대립유전자 빈도 증가(소진화). 교수님은 선택적 교배와 묶어 말함</dd>
+        <dt>조건</dt><dd>한쪽 성의 선택이 <b>짝짓기 성공</b>을 가름. 생존률·생식력 증가 자체나 '수컷일 것'이 아님</dd>
+        <dt>성적이형성</dt><dd>암수 모양 차이(di 둘, morphism 형태). 한쪽 성의 특정 형질만 골라져 차이가 <b>커짐</b>. 예: 사자 갈기, 공작 꼬리 깃, 사람 몸집</dd>
+      </dl>
+      <p class="flow">이형접합자 이점(평형 다형성의 한 이유) = 이형접합자 상대적 적응도가 두 동형접합자보다 높음<span class="flow-arrow">→</span>불리한 대립유전자 S도 AS 안에 실려 유지</p>
+      <table class="cmp">
+        <thead><tr><th>낫모양 적혈구</th><th>빈혈</th><th>말라리아</th><th>말라리아 지역</th></tr></thead>
+        <tbody>
+          <tr><td>AA</td><td>없음</td><td>저항성 없음</td><td>말라리아로 일찍 죽을 수 있음</td></tr>
+          <tr><td>AS</td><td>약함(불완전 우성)</td><td>저항성(S 하나로 충분)</td><td><b>가장 높음</b></td></tr>
+          <tr><td>SS</td><td>심함</td><td>저항성</td><td>빈혈로 일찍 죽을 수 있음</td></tr>
+        </tbody>
+      </table>
+      <ul class="pts">
+        <li>말라리아(모기가 옮김) 많은 아프리카는 S 빈도 높음, 없는 미국은 낮음. 인종이 아니라 <b>환경</b>.</li>
+        <li>선택은 <b>표현형</b>에 작용. 이형접합자 안에 숨는 것은 열성 <b>대립유전자</b>(열성 동형접합자 aa는 드러나 선택받음).</li>
+      </ul>
+      <!-- 출처: 1029 복습문제 P3 보기 1·3·4와 풀이, 1029 정리노트 L557 착각(성선택 조건) -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 성선택이 일어나려면 생존률이나 생식력이 증가해야 한다.</span>
+        <span class="trap-ok">✓ 이성 중 한쪽이 결정한 <b>선택으로 짝짓기에 영향</b>을 미쳐야 한다(수컷일 필요도 없음).</span>
+      </div>
+      <!-- 출처: 1029 정리노트 L555·L556 착각(암수 비슷해짐, 생존에도 유리), 1029 복습문제 P41 보기 4와 풀이 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 성선택으로 커진 형질은 언제나 생존에도 유리하다.</span>
+        <span class="trap-ok">✓ 공작 깃처럼 생존에 <b>불리할 수 있다</b>. 짝을 더 얻어 자식 수가 늘어 유지되고, 암수 차이는 커진다.</span>
+      </div>
+      <!-- 출처: 1029 정리노트 L647 착각(AS가 어디서나 유리), 1029 복습문제 P42 보기 2와 풀이 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 말라리아가 없어도 AS의 상대적 적응도가 가장 높아 S 빈도가 그대로 유지된다.</span>
+        <span class="trap-ok">✓ 말라리아가 없으면 AS 이점이 사라져 <b>AA가 가장 유리</b>하고 S 빈도는 <b>낮아진다</b>.</span>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- 넘침 경고: 각 쪽을 PDF 크기로 복제해 배치한 뒤, 본문 영역 밖으로 밀려난 구역을 찾는다. 화면 전용, 인쇄에는 영향 없음 -->
+<script>
+(async () => {
+  try { await document.fonts.ready; } catch (e) {}
+  const found = [];
+  document.querySelectorAll('.page:not(.page-probe)').forEach((page, pi) => {
+    const probe = page.cloneNode(true);
+    probe.classList.add('page-probe');
+    probe.removeAttribute('aria-label');
+    document.body.appendChild(probe);
+    const box = probe.querySelector('.page-body').getBoundingClientRect();
+    const real = page.querySelectorAll('.sec');
+    probe.querySelectorAll('.sec').forEach((sec, i) => {
+      const r = sec.getBoundingClientRect();
+      if (r.right > box.right + 1 || r.bottom > box.bottom + 1) {
+        real[i].classList.add('is-overflow');
+        found.push(`${pi + 1}쪽 ${(real[i].querySelector('.sec-label') || {}).textContent || '(라벨 없음)'}`);
+      }
+    });
+    probe.remove();
+  });
+  if (!found.length) return;
+  const alert = document.createElement('div');
+  alert.className = 'overflow-alert';
+  alert.setAttribute('role', 'alert');
+  alert.dataset.overflow = found.join(', ');
+  alert.textContent = `⚠ 구역 ${found.length}개가 넘쳐 PDF에서 잘립니다. 글자를 줄이지 말고 구역을 빼세요.`;
+  const list = document.createElement('span');
+  list.textContent = found.join(' · ');
+  alert.appendChild(list);
+  document.body.prepend(alert);
+})();
+</script>
+
+</body>
+</html>
