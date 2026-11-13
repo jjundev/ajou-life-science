@@ -1,31 +1,47 @@
-"""Run explicitly with the repository Playwright Python; uses test-only rasters."""
+"""Exercise the production browser CLI with synthetic rasters."""
 import argparse
 import copy
-from functools import partial
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+import json
 from pathlib import Path
-import threading
+import subprocess
+import sys
+from urllib.parse import urlsplit
 
-from playwright.sync_api import expect, sync_playwright
-from test_comic import ComicPipeline
+from test_comic import ComicPipeline, SCRIPT
+from comic_links import block_for, managed_blocks, strip_links
 
 
-class QuietHandler(SimpleHTTPRequestHandler):
-    def log_message(self, *args):
-        pass
+def run_check(run, stage, output, *options, expected_exit=0):
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), 'browser-check', '--run', str(run),
+         '--stage', stage, '--out', str(output), *options],
+        text=True, capture_output=True, check=False,
+    )
+    assert result.returncode == expected_exit, result.stdout + result.stderr
+    return json.loads((output / 'report.json').read_text(encoding='utf-8'))
+
+
+def expect_views(report, output, *, round_trips=2):
+    assert report['status'] == 'passed', report
+    assert {(view['width'], view['height'], view['theme']) for view in report['views']} == {
+        (1440, 900, 'light'), (1440, 900, 'dark'), (375, 812, 'light'), (375, 812, 'dark'),
+    }
+    assert len(report['views']) == 4
+    assert report['held'] == [{'id': 's0-recap', 'reason': '그림 검토 보류'}]
+    for view in report['views']:
+        assert (view['pages'], view['panels'], view['link_round_trips']) == (2, 12, round_trips), view
+        assert (output / view['screenshot']).is_file(), view
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', required=True, type=Path)
     args = parser.parse_args()
-    args.output.mkdir(parents=True, exist_ok=True)
     ComicPipeline.setUpClass()
     fixture = ComicPipeline('test_held_pages_stay_visible_and_are_not_complete')
     fixture.setUp()
-    server = None
     try:
-        book = fixture.ready()
+        book = fixture.ready(held=True)
         page = book['pages'][0]
         page['panels'] += [copy.deepcopy(page['panels'][0]) for _ in range(4)]
         page['panels'][3]['caption'] = '가정한 실험 조건에서 얻은 결과와 실제 과거의 사건을 구별해야 해요. ' * 9
@@ -34,107 +50,61 @@ def main():
             panel['characters'] = []
         fixture.write('storyboard.json', book)
         fixture.images()
-        preview = fixture.api.build(fixture.run)
-        fixture.reviews()  # Synthetic fixture reports are never production review evidence.
-        fixture.api.publish(fixture.run)
-        handler = partial(QuietHandler, directory=fixture.tmp.name)
-        server = ThreadingHTTPServer(('127.0.0.1', 0), handler)
-        threading.Thread(target=server.serve_forever, daemon=True).start()
-        url = f'http://127.0.0.1:{server.server_port}/run/preview.html#s0-miller'
-        with sync_playwright() as pw:
-            browser = pw.chromium.launch()
-            results = []
-            try:
-                for width, height in ((1440, 900), (375, 812)):
-                    for theme in ('light', 'dark'):
-                        context = browser.new_context(viewport={'width': width, 'height': height}, color_scheme=theme)
-                        context.route('https://**/*', lambda route: route.abort())
-                        page = context.new_page()
-                        errors = []
-                        page.on('pageerror', lambda error: errors.append(str(error)))
-                        page.goto(url)
-                        expect(page.locator('#s0-miller')).to_be_visible()
-                        expect(page.locator('#s0-miller .comic-panel')).to_have_count(8)
-                        # Check all topics and force lazy images into view before decoding checks.
-                        for topic in ('s0-miller', 's0-recap', 's1-cheatsheet'):
-                            page.goto(url.split('#')[0] + '#' + topic)
-                            for img in page.locator(f'#{topic} img').all():
-                                img.scroll_into_view_if_needed()
-                                expect(img).to_have_js_property('complete', True)
-                                assert img.evaluate('(img) => img.naturalWidth > 0'), 'Raster did not decode'
-                            assert page.locator('.content').evaluate('(el) => el.scrollWidth <= el.clientWidth + 1')
-                            assert page.evaluate('document.documentElement.scrollWidth <= innerWidth + 1')
-                            for scene in page.locator(f'#{topic} .comic-scene').all():
-                                assert scene.evaluate('''el => {
-                                  const box=el.getBoundingClientRect(), image=el.querySelector('img').getBoundingClientRect();
-                                  return [...el.querySelectorAll('.comic-dialogue')].every(b => {
-                                    const r=b.getBoundingClientRect();
-                                    const text=document.createRange(); text.selectNodeContents(b);
-                                    return r.left>=box.left && r.right<=box.right+1 && r.top>=box.top &&
-                                      r.bottom<=image.top+image.height*.36+2 &&
-                                      [...text.getClientRects()].every(t=>t.left>=r.left && t.right<=r.right) &&
-                                      parseFloat(getComputedStyle(b).fontSize)>=17;
-                                  });
-                                }'''), 'Speech must stay inside panel and clear of the art, even for long dialogue'
-                            assert page.locator(f'#{topic} figcaption .comic-dialogue').count()==0
-                        page.goto(url)
-                        # Read state must not create the original note's key.
-                        assert page.evaluate("Object.keys(localStorage).some(k => k.startsWith('od-comic-read:'))")
-                        assert not page.evaluate("Object.keys(localStorage).some(k => k.startsWith('od-note-read:'))")
-                        page.locator('#pager-next').click()
-                        expect(page.locator('#s0-recap')).to_be_visible()
-                        page.keyboard.press('ArrowLeft')
-                        expect(page.locator('#s0-miller')).to_be_visible()
-                        if width < 1024:
-                            page.locator('#toggle-left').click()
-                        page.locator('#panel-left a[href="#s1-cheatsheet"]').click()
-                        expect(page.locator('#s1-cheatsheet')).to_be_visible()
-                        page.locator('#toggle-right').click()
-                        expect(page.locator('#sum-for .sum:not([hidden])')).to_contain_text('재료와 살아 있는 세포')
-                        if width < 1024:
-                            page.keyboard.press('Escape')
-                        else:
-                            page.locator('#toggle-right').click()
-                        page.locator('#theme-toggle').click()
-                        expected_theme = 'dark' if theme == 'light' else 'light'
-                        assert page.locator('html').get_attribute('data-theme') == expected_theme
-                        page.reload()
-                        assert page.locator('html').get_attribute('data-theme') == expected_theme
-                        page.locator('#theme-toggle').click()
-                        # Actual original-note same-tab navigation and return.
-                        link = page.locator('#s1-cheatsheet .comic-source a')
-                        assert link.get_attribute('target') == '_self'
-                        link.scroll_into_view_if_needed()
-                        link.click()
-                        assert 'Test.html' in page.url and page.url.endswith('#s1-cheatsheet')
-                        note_link = page.locator('#s1-cheatsheet [data-bio-comic] a')
-                        assert note_link.get_attribute('target') == '_self'
-                        note_link.click()
-                        expect(page.locator('#s1-cheatsheet')).to_be_visible()
-                        page.go_back()
-                        assert 'Test.html' in page.url
-                        page.go_back()
-                        expect(page.locator('#s1-cheatsheet')).to_be_visible()
-                        page.goto(url)
-                        first = page.locator('.comic-panel img').first
-                        first.scroll_into_view_if_needed()
-                        expect(first).to_have_js_property('complete', True)
-                        first.evaluate('(img) => img.decode()')
-                        page.locator('.content').evaluate('(el) => el.scrollTo(0, 0)')
-                        page.screenshot(path=str(args.output / f'{width}-{theme}.png'), full_page=True, animations='disabled')
-                        assert errors == [], errors
-                        results.append({'width': width, 'theme': theme, 'pages': 3, 'images': 16, 'errors': errors})
-                        context.close()
-            finally:
-                browser.close()
-        import json
-        (args.output / 'results.json').write_text(json.dumps(results, indent=2) + '\n')
-        print(json.dumps({'status': 'passed', 'views': results, 'screenshots': str(args.output.resolve()), 'art': 'synthetic fixtures only'}, indent=2))
+        fixture.api.build(fixture.run)
+        review_path = fixture.run / 'review.json'
+        before = review_path.read_bytes()
+        preview = run_check(fixture.run, 'preview', args.output / 'preview')
+        expect_views(preview, args.output / 'preview')
+        assert review_path.read_bytes() == before
+
+        fixture.reviews()  # Synthetic fixture reports are confined to this test.
+        publication = fixture.api.publish(fixture.run, link_notes=False)
+        version = Path(publication['version'])
+        comic_only = run_check(version, 'published', args.output / 'comic-only', '--comic-only')
+        expect_views(comic_only, args.output / 'comic-only', round_trips=0)
+        assert comic_only['link_mode'] == 'comic-only'
+        assert all(view['comic_to_source_returns'] == 2 for view in comic_only['views'])
+
+        fixture.api.link_notes(fixture.run)
+        current = fixture.note.read_text(encoding='utf-8')
+        changed = current.replace('유기물이 검출되었어요.', '실험에서 유기물이 검출되었어요.')
+        assert changed != current
+        fixture.note.write_text(changed, encoding='utf-8')
+        final = run_check(version, 'published', args.output / 'published')
+        expect_views(final, args.output / 'published')
+        assert final['source_status'] == 'changed_since_publication'
+        assert final['inputs']['note']['sha256'] != preview['inputs']['note']['sha256']
+
+        match, href = next((match, href) for match, href in managed_blocks(changed)
+                           if urlsplit(href).fragment == 's0-miller')
+        wrong_href = href.rsplit('#', 1)[0] + '#s1-cheatsheet'
+        damaged = changed[:match.start()] + block_for(wrong_href, page['note_link']) + changed[match.end():]
+        assert strip_links(damaged) == strip_links(changed)
+        fixture.note.write_text(damaged, encoding='utf-8')
+        expect_bad_fragment(run_check(version, 'published', args.output / 'wrong-fragment', expected_exit=1))
+
+        # A literal href-only edit invalidates the managed block too. Still exercise the click.
+        literal = changed.replace(f'<a href="{href}"', f'<a href="{wrong_href}"', 1)
+        assert literal != changed
+        fixture.note.write_text(literal, encoding='utf-8')
+        negative = run_check(version, 'published', args.output / 'href-only', expected_exit=1)
+        assert negative['source_status'] == 'invalid_managed_links', negative
+        assert [failure['check'] for failure in negative['failures']] == ['note_link_integrity'], negative
+        expect_bad_fragment(negative)
+        print(json.dumps({'status': 'passed', 'reports': str(args.output.resolve())}))
     finally:
-        if server:
-            server.shutdown()
-            server.server_close()
         fixture.doCleanups()
+
+
+def expect_bad_fragment(report):
+    assert report['status'] == 'failed', report
+    assert len(report['views']) == 4
+    for view in report['views']:
+        assert (view['pages'], view['panels'], view['link_round_trips']) == (2, 12, 1), view
+        failure, = view['failures']
+        assert (failure['topic'], failure['check']) == ('s0-miller', 'note_to_comic'), failure
+        assert failure['expected'].endswith('#s0-miller'), failure
+        assert failure['actual'].endswith('#s1-cheatsheet'), failure
 
 
 if __name__ == '__main__':

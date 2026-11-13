@@ -51,7 +51,18 @@ python3 "$SKILL/scripts/comic.py" record-review --run "$RUN" --report "$RUN/work
 
 ## 브라우저 확인
 
-RUN이 저장소 `tmp/` 안에 있으면 저장소 루트에서 HTTP 서버를 띄워 preview.html을 연다. RUN만 서버 루트로 잡으면 원본 정리노트 링크가 서버 밖으로 나가므로 피한다. 실제 화면은 1440×900, 375×812 각각 light/dark 네 조합이다.
+`browser-check`는 로컬 HTTP 서버와 Playwright Chromium으로 1440×900, 375×812 각각 라이트·다크를 연다. 브라우저 검사에 쓸 Python 환경에 Playwright가 없으면 `python3 -m pip install playwright`로 설치하고 `python3 -m playwright install chromium`을 실행한다.
+
+```bash
+python3 "$SKILL/scripts/comic.py" browser-check --run "$RUN" --stage preview --out "$RUN/checks/preview"
+python3 "$SKILL/scripts/comic.py" browser-check --run "$RUN_OR_VERSION" --stage published --out "$FINAL_CHECKS"
+```
+
+미리보기는 최신 렌더와 일치하는 `preview.html`에서 만화 → 원본 → 브라우저 뒤로가기를 확인한다. 발행본은 `publication.json`이 가리키는 HTML과 현재 원본에서 원본 안내 → 만화의 같은 토픽 → 만화의 원본 링크 → 원본의 같은 토픽을 실제로 클릭한다. `--comic-only`는 연결 없이 발행한 경우에 쓰며, 만화 → 원본 → 브라우저 뒤로가기의 건수를 별도로 남긴다. 원본 안내 클릭은 `skipped`로 표시한다. 기존 발행본의 원본 본문이 교정된 경우에는 발행 당시 콘티와 현재 원본을 사용하고 `source_status: changed_since_publication`을 기록한다.
+
+`--out`에는 비어 있는 새 폴더를 지정한다. `report.json`과 조합별 스크린샷을 남긴다. 보고서에는 검사기 지문과 브라우저 버전, 두 HTML의 전체 바이트 지문, 만화 이미지 지문, 통과 건수, 보류 목록과 실패의 토픽·동작·기대값·실제값을 기록한다. 발행본 검사 중 원본 관리 링크 블록이 손상된 경우 무결성 실패를 기록하고 클릭 검사도 수행한다. 외부 요청은 차단해 목록에 남긴다. 필수 동작이 실패하거나 검사 중 입력 지문이 달라지면 종료 코드 1을 반환한다. 결과를 검토한 뒤 직접 관찰과 함께 기존 `review.json`의 브라우저 판정을 기록한다. `check --phase browser`는 그 판정과 화면 증거를 확인한다.
+
+자동 검사와 직접 확인을 합쳐 다음을 확인한다.
 
 1. 모든 페이지에서 컷 수·이미지 로딩(`complete && naturalWidth > 0`)·설명·현재 요약을 확인한다. 말풍선이 figcaption 아래가 아니라 컷 내부에서 읽히는지 확인한다. 질문→응답 순서, 이름으로 화자 구별, 화면 밖 꼬리 방향, 17px 이상 본문 글자, 확대·좁은 화면의 잘림·가림을 확인한다. 실제 사물의 윗부분도 직접 확인한다. 여백 비율 검사만으로 가림이 없다고 단정하지 않는다.
 2. 긴 설명·긴 요약·보충 배지·8컷 페이지를 포함해 가로 넘침 없이 끝까지 읽히는지 확인한다.

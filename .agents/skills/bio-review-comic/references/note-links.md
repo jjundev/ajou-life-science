@@ -27,4 +27,4 @@ python3 "$SKILL/scripts/comic.py" link-notes --run "$RUN"
 
 결과는 note, changed, dry_run, results(page/status/reason/href)다. status는 added/updated/unchanged/skipped. held 페이지는 PAGE_HELD로 새 연결을 건너뛴다. 연결 실패는 `link-notes`로 다시 시도하며 재실행 결과 `changed: false`를 확인한다. 잘못된 위치에 대체 삽입하지 않는다.
 
-최종 노트에서 안내 문맥을 읽고 클릭 → 만화의 해당 페이지 → 원본 링크 또는 뒤로가기를 실제 확인한다. 링크 파일·해시 존재를 모두 검사한다. 만화의 성공/보류와 연결의 성공/누락/실패를 따로 보고한다.
+최종 노트에서 안내 문맥을 읽고 [`browser-check --stage published`](review.md#브라우저-확인)로 원본 안내 링크 → 만화의 해당 페이지 → 만화의 원본 링크를 같은 탭에서 확인한다. 만화의 성공/보류와 연결의 성공/누락/실패를 따로 보고한다.

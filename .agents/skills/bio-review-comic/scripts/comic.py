@@ -126,6 +126,11 @@ def main(argv=None):
     record = commands.add_parser('record-review', help='독립 검토자의 통과 보고서를 검증하고 보존')
     record.add_argument('--run', required=True, type=Path)
     record.add_argument('--report', required=True, type=Path)
+    browser = commands.add_parser('browser-check', help='실제 브라우저에서 4종 화면과 원본 링크 확인')
+    browser.add_argument('--run', required=True, type=Path)
+    browser.add_argument('--stage', required=True, choices=('preview', 'published'))
+    browser.add_argument('--out', required=True, type=Path)
+    browser.add_argument('--comic-only', action='store_true', help='연결 없이 발행한 만화의 역방향 링크 검사 생략')
     register = commands.add_parser('register-image', help='이미지 도구가 반환한 실제 로컬 파일 등록')
     register.add_argument('--run', required=True, type=Path)
     register.add_argument('--page', required=True)
@@ -152,11 +157,14 @@ def main(argv=None):
             result = reuse_reviews(args.run, args.previous, dry_run=args.dry_run)
         elif args.command == 'record-review':
             result = record_review(args.run, args.report)
+        elif args.command == 'browser-check':
+            from comic_browser import browser_check
+            result = browser_check(args.run, args.stage, args.out, comic_only=args.comic_only)
         else:
             result = publish(args.run, link_notes=not args.no_link)
         import json
         print(json.dumps(result, ensure_ascii=False, indent=2))
-        return 0
+        return int(args.command == 'browser-check' and result['status'] != 'passed')
     except (ValueError, OSError, KeyError, TypeError) as exc:
         import json
         print(json.dumps({'error': str(exc)}, ensure_ascii=False), file=sys.stderr)

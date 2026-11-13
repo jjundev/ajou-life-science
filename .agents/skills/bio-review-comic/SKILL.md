@@ -15,7 +15,7 @@ description: '생명과학 정리노트 HTML을 바탕으로 강의 차수별 �
 
 - `SKILL`은 이 파일의 실제 폴더(심볼릭 링크는 원본으로 해석), `REPO`는 저장소 루트다.
 - `RUN`은 **비어 있는 새 폴더**다. 기본은 `REPO/tmp/bio-review-comic/<인자>-<실행ID>/`; 작업은 발행 때 전용 `.assets`에 보존한다. 자동화 브라우저의 HTTP 서버는 `REPO`에서 열어 원본 링크도 접근하게 한다.
-- Python 3.10+ 표준 라이브러리만으로 CLI를 실행한다. 셸 호출 사이 변수 상태를 가정하지 않고 모든 경로는 실제 절대 경로로 전달한다. 경로 검색은 스크립트가 NFC/NFD를 처리한다.
+- Python 3.10+를 사용한다. `browser-check`에는 [Playwright와 Chromium](references/review.md#브라우저-확인)이 필요하며 나머지 명령은 표준 라이브러리로 실행한다. 셸 호출 사이 변수 상태를 가정하지 않고 모든 경로는 실제 절대 경로로 전달한다. 경로 검색은 스크립트가 NFC/NFD를 처리한다.
 - 아래 명령의 `python3 "$SKILL/scripts/comic.py"`를 사용한다. 이미지 생성은 내장 `image_gen` 도구가 담당하며 CLI는 생성 API를 호출하지 않는다.
 
 **연결만 요청한 경우:** 새 만화를 생성하지 않는다. 기존 발행자료의 RUN/버전 폴더를 찾아 [정리노트 연결](references/note-links.md)의 검사·연결·브라우저 왕복만 수행한다. v1 자료는 v2 새 실행·검토·발행으로 전환해야 한다.
@@ -83,20 +83,22 @@ python3 "$SKILL/scripts/comic.py" check --run "$RUN" --phase reviewed
 
 ## 5. 브라우저
 
-`preview.html`을 **1440×900·375×812 각각 라이트·다크**에서 확인한다. **말풍선은 그림과 같은 컷 내부의 위쪽 여백에 HTML로 합성**하며, 그림 아래 figcaption에는 보충 설명만 둔다. 모든 페이지의 그림 로딩·말풍선 읽는 순서·화자 구별·대사 넘침·핵심 사물 가림·현재 요약을 확인하고 대표 페이지에서 목차, 이전·다음, 키보드, 패널/모바일 서랍, 테마, 원본 링크와 뒤로가기를 실제 조작한다. 세부 체크와 검토 JSON 형식은 [검토 기준](references/review.md)을 따른다.
+`browser-check --stage preview`로 **1440×900·375×812 각각 라이트·다크**에서 모든 준비 완료 페이지와 원본 이동·뒤로가기를 확인한다. `--out`은 비어 있는 증거 폴더다. 말풍선이 실제 그림의 핵심 사물을 가리는지, 화자와 읽는 순서가 자연스러운지는 직접 확인한다. 세부 검사와 기록 형식은 [검토 기준](references/review.md)을 따른다.
 
-현재 결과의 브라우저 지문, 4종 화면의 스크린샷 상대 경로와 확인 내용을 `review.json`에 기록한다. 스크린샷은 `RUN/checks/`에 둔다. 고친 부분은 영향받는 내용·그림·브라우저 검토를 갱신한다.
+아래 첫 명령을 실행한 뒤 자동 검사 결과와 직접 관찰을 확인한다. 현재 브라우저 지문, 4종 스크린샷 상대 경로와 확인 내용을 `review.json`에 기록한다. 스크린샷은 `RUN/checks/`에 둔다. 고친 부분은 영향받는 내용·그림·브라우저 검토를 갱신한다.
 
 ```bash
+python3 "$SKILL/scripts/comic.py" browser-check --run "$RUN" --stage preview --out "$RUN/checks/preview"
 python3 "$SKILL/scripts/comic.py" check --run "$RUN" --phase browser
 python3 "$SKILL/scripts/comic.py" publish --run "$RUN"
 ```
 
 발행은 검증된 결과를 **로컬 파일**로 저장한다. 기존 HTML은 새 버전의 `previous.html`로 보존하고, 이미지·제작자료와 `review-evidence/`의 최초 독립 검토 보고서를 고유 버전 폴더에 둔다. `prompts.json`과 `workers/`의 작업 기록은 메인이 실제 `version` 폴더에 상대 경로를 유지해 추가 보존한다. 같은 결과를 재실행하면 중복 버전을 만들지 않는다. 발행 뒤 [정리노트 연결](references/note-links.md)대로 원본에 안내·링크를 자동 추가한다. 연결 실패는 발행 결과와 구분하고 `link-notes --run "$RUN"`으로 재시도한다. `publish --no-link`는 발행만 할 때 쓴다. 성공/보류 수는 `publish` 출력에 따른다. 전부 보류라면 빈 제작물을 발행하지 말고 원인과 실행 폴더만 보고한다.
 
-최종 정리노트의 안내를 읽고 클릭 → 만화 해당 페이지 → 원본 복귀를 실제 조작한다. 연결 재실행은 변경이 없어야 한다.
+발행과 연결 후에는 최종 정리노트의 안내 문맥을 읽고 `browser-check --stage published`로 두 HTML 사이의 클릭 왕복을 확인한다. 연결 재실행은 변경이 없어야 한다. 의도적으로 `publish --no-link`를 썼으면 최종 검사에 `--comic-only`를 추가한다.
 
 ```bash
+python3 "$SKILL/scripts/comic.py" browser-check --run "$RUN" --stage published --out "$RUN/checks/published"
 python3 "$SKILL/scripts/comic.py" link-notes --run "$RUN" --dry-run
 python3 "$SKILL/scripts/comic.py" link-notes --run "$RUN"
 ```
