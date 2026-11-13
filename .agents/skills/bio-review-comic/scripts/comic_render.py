@@ -10,6 +10,7 @@ import shutil
 import uuid
 from urllib.parse import quote, unquote, urlsplit
 
+from comic_browser_evidence import LINK_RECORD, preview_evidence, save_link_status
 from comic_contract import CSS, TEMPLATE, assets_for, check, jobs_for, load, local, raster, read, state, validate_storyboard, write
 from comic_source import digest, nfc, parse
 
@@ -176,13 +177,22 @@ def _publish_comic(run):
                         raise ValueError('발행 그림 변경')
                 if src.get('review_version'):
                     check(version, 'reviewed')
+                if src.get('browser_gate_version'):
+                    archived = version / 'checks' / 'automatic-preview' / 'report.json'
+                    if digest(archived.read_bytes()) != record.get('preview_report_sha256'):
+                        raise ValueError('발행 미리보기 보고서 지문 불일치')
+                    for view in read(archived)['views']:
+                        if digest(local(archived.parent, view['screenshot']).read_bytes()) != view['screenshot_sha256']:
+                            raise ValueError('발행 미리보기 스크린샷 지문 불일치')
                 validate_output(previous)
+            except (ValueError, OSError, KeyError, TypeError):
+                pass
+            else:
                 # The HTML may have committed before a transient index-write failure.
                 write(version / 'publication.json', record)
                 write(root / 'latest.json', record)
                 return record
-            except ValueError:
-                pass
+    evidence = preview_evidence(run) if src.get('browser_gate_version') else None
     output = note.parent / filename
     normalized = [p for p in note.parent.iterdir() if nfc(p.name) == filename]
     if len(normalized) > 1:
@@ -193,6 +203,11 @@ def _publish_comic(run):
     version.mkdir(parents=True, exist_ok=False)
     committed = False
     try:
+        if evidence is not None:
+            checks = version / 'checks' / 'automatic-preview'
+            checks.mkdir(parents=True)
+            for name, raw in evidence.items():
+                (checks / name).write_bytes(raw)
         for name in ('source.json', 'source.html', 'storyboard.json', 'images.json', 'review.json'):
             shutil.copy2(run / name, version / name)
         review = read(run / 'review.json')
@@ -221,6 +236,8 @@ def _publish_comic(run):
             validate_output(temporary)
             # Recheck source/reviews after staging, before the one atomic replacement.
             check(run, 'browser')
+            if evidence is not None and preview_evidence(run) != evidence:
+                raise ValueError('발행 준비 중 미리보기 증거 변경: 다시 발행하세요.')
             if src.get('review_version'):
                 check(version, 'reviewed')
             os.replace(temporary, output)
@@ -229,6 +246,8 @@ def _publish_comic(run):
             if temporary.exists():
                 temporary.unlink()
         record = {**result, 'html': str(output), 'version': str(version), 'fingerprint': current, 'html_sha256': digest(output.read_bytes())}
+        if evidence is not None:
+            record['preview_report_sha256'] = digest(evidence['report.json'])
         write(run / 'publication.json', record)
         write(version / 'publication.json', record)
         write(root / 'latest.json', record)
@@ -243,6 +262,9 @@ def _publish_comic(run):
 def publish(run, link_notes=True):
     """Publication commits first; contextual linking is independently retryable."""
     result = _publish_comic(run)
+    version = Path(result['version'])
+    if result.get('preview_report_sha256') and not (version / LINK_RECORD).exists():
+        save_link_status(version, 'pending' if link_notes else 'skipped', stage='insertion')
     if link_notes:
         from comic_links import link_notes as connect
         try:
@@ -251,5 +273,8 @@ def publish(run, link_notes=True):
             linked = {'status': 'failed', 'error': str(exc), 'retry': 'link-notes --run RUN'}
         result = {**result, 'note_links': linked}
         # Keep evidence of linking beside the archived production inputs.
-        write(Path(result['version']) / 'note-links-result.json', linked)
+        write(version / 'note-links-result.json', linked)
+    if (version / LINK_RECORD).is_file():
+        from comic_browser_evidence import link_status
+        result = {**result, 'link_verification': link_status(version)}
     return result

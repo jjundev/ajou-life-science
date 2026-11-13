@@ -16,13 +16,14 @@ sys.path.insert(0, str(SCRIPTS))
 SCRIPT = SCRIPTS / 'comic.py'
 
 
-def png(path, rgb=(218, 231, 247)):
+def png(path, rgb=(218, 231, 247), size=(640, 400)):
     """A valid, visibly synthetic test raster, not generated comic content."""
     def chunk(kind, data):
         return struct.pack('>I', len(data)) + kind + data + struct.pack('>I', zlib.crc32(kind + data))
     path.parent.mkdir(parents=True, exist_ok=True)
-    raw = (b'\x00' + bytes(rgb) * 640) * 400
-    path.write_bytes(b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', 640, 400, 8, 2, 0, 0, 0)) + chunk(b'IDAT', zlib.compress(raw)) + chunk(b'IEND', b''))
+    width, height = size
+    raw = (b'\x00' + bytes(rgb) * width) * height
+    path.write_bytes(b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', width, height, 8, 2, 0, 0, 0)) + chunk(b'IDAT', zlib.compress(raw)) + chunk(b'IEND', b''))
     return path
 
 
@@ -96,7 +97,7 @@ class ComicPipeline(unittest.TestCase):
                 for n in range(1, len(page['panels']) + 1):
                     self.api.register_image(self.run, page['id'], n, art)
 
-    def reviews(self, browser=True):
+    def reviews(self, browser=True, automatic=True):
         fp = self.api.fingerprints(self.run)
         for pid, data in fp['pages'].items():
             worker = {'page': pid, 'checked_panels': list(range(1, len(fp['review_inputs'][pid]['images']) + 1)), 'issues': []}
@@ -108,6 +109,30 @@ class ComicPipeline(unittest.TestCase):
             reports = self.read('review.json')
             reports['browser'] = {'status': 'passed', 'fingerprint': fp['browser'], 'notes': ['fixture browser evidence'], 'views': [{'width': w, 'height': h, 'theme': t, 'screenshot': 'checks/fixture.png'} for w, h in ((1440, 900), (375, 812)) for t in ('light', 'dark')]}
             self.write('review.json', reports)
+            if automatic and (self.run / 'preview.html').is_file() and fp['pages']:
+                self.preview_fixture()
+
+    def preview_fixture(self):
+        from comic_browser import inputs_for
+        from comic_browser_evidence import PREVIEW_RECORD, VIEWS, ready_panels
+        from comic_contract import write
+        from comic_source import digest
+        inputs = inputs_for(self.run.resolve(), 'preview')
+        panels = ready_panels(inputs.pages)
+        out = self.run / 'checks' / 'fixture-automatic'
+        views = []
+        for width, height, theme in VIEWS:
+            shot = png(out / f'{width}-{theme}.png', size=(width, height))
+            views.append({'width': width, 'height': height, 'theme': theme, 'screenshot': shot.name,
+                          'screenshot_sha256': digest(shot.read_bytes()), 'failures': [],
+                          'panels_by_topic': panels, 'returned_topics': list(panels),
+                          'pages': len(panels), 'panels': sum(panels.values()), 'link_round_trips': len(panels)})
+        path = out / 'report.json'
+        write(path, {'schema_version': 2, 'stage': 'preview', 'status': 'passed', 'link_mode': 'history',
+                     'run': str(self.run.resolve()), 'input_hashes': inputs.hashes(), 'local_resources': {},
+                     'views': views, 'failures': [],
+                     'held': [{'id': p['id'], 'reason': p['reason']} for p in inputs.pages if p['status'] == 'held']})
+        self.write(PREVIEW_RECORD, {'report': str(path), 'sha256': digest(path.read_bytes())})
 
     def test_inventory_covers_review_summary_and_excludes_future_and_links(self):
         src = self.read('source.json')
@@ -224,6 +249,28 @@ class ComicPipeline(unittest.TestCase):
         self.assertEqual(result['status'], 'partial')
         self.assertIn('일부 보류', Path(result['html']).read_text())
 
+    def test_new_run_requires_preview_browser_evidence_before_writing_publication(self):
+        self.ready(); self.images(); self.api.build(self.run); self.reviews(automatic=False)
+        note = self.note.read_bytes()
+        with self.assertRaisesRegex(ValueError, '미리보기.*browser-check'):
+            self.api.publish(self.run)
+        self.assertEqual(self.note.read_bytes(), note)
+        self.assertFalse((self.run / 'publication.json').exists())
+        self.assertFalse((self.note.parent / '.assets').exists())
+
+    def test_existing_run_without_browser_gate_keeps_its_publication_contract(self):
+        source = self.read('source.json')
+        del source['browser_gate_version']
+        self.write('source.json', source)
+        self.ready(); self.images(); self.api.build(self.run); self.reviews(automatic=False)
+        result = self.api.publish(self.run)
+        self.assertTrue(Path(result['html']).is_file())
+        self.assertNotIn('preview_report_sha256', result)
+        new = Path(self.tmp.name) / 'new-with-legacy-inputs'
+        self.api.extract(self.repo, '1105', new, reuse=Path(result['version']))
+        self.assertEqual(json.loads((new / 'source.json').read_text())['browser_gate_version'], 1)
+        self.assertFalse((new / 'browser-preview.json').exists())
+
     def test_extraction_is_non_destructive_and_reuses_only_unchanged_topics(self):
         self.ready(); self.images(); before = (self.run / 'storyboard.json').read_bytes()
         with self.assertRaisesRegex(ValueError, '이미'):
@@ -240,8 +287,8 @@ class ComicPipeline(unittest.TestCase):
         book['pages'][2]['source_dependencies'] = {'topics': ['s0-recap'], 'files': []}
         self.write('storyboard.json', book)
         self.images()
-        self.reviews()
         self.api.build(self.run)
+        self.reviews()
         archive = Path(self.api.publish(self.run)['version'])
 
         self.note.write_text(self.note.read_text().replace('재료와 생명을 구별', '재료와 세포를 비교'))
@@ -510,7 +557,10 @@ class ComicPipeline(unittest.TestCase):
             result = self.api.publish(self.run)
         self.assertTrue(Path(result['html']).is_file())
         self.assertEqual(result['note_links']['status'], 'failed')
-        self.assertTrue(self.api.link_notes(self.run)['changed'])
+        self.assertEqual(result['link_verification']['status'], 'failed')
+        linked = self.api.link_notes(self.run)
+        self.assertTrue(linked['changed'])
+        self.assertEqual(linked['link_verification']['status'], 'pending')
         self.assertFalse(self.api.link_notes(self.run)['changed'])
 
     def test_archived_version_supports_link_only(self):

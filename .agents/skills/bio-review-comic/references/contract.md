@@ -10,6 +10,8 @@
 - `review.json`, `review-evidence/`, `checks/`: 내용·그림·브라우저 판정, 최초 독립 검토 보고서, 화면 증거. 새 계약의 페이지 기록은 `inputs`와 `origin`(`kind`, `report`, `sha256`)을 포함한다. 이전 계약의 발행 버전은 기존 기록 형식으로 확인할 수 있다.
 - `preview.html`, `publication.json`: 미리보기와 발행 결과.
 - `note-links-result.json`: 원본 연결 결과. 실패해도 발행한 만화를 삭제하지 않는다.
+- `browser_gate_version: 1`: 새 추출의 발행 조건. RUN의 `browser-preview.json`은 미리보기 보고서 경로와 지문을 기록한다. 발행 시 보고서와 4종 화면을 버전의 `checks/automatic-preview/`에 보존한다. 필드가 없는 RUN은 기존 발행 계약을 적용한다.
+- `link-verification.json`: 발행 버전의 연결 상태. 최종 보고서와 화면 증거는 해당 버전의 `checks/published/`에 보존한다.
 
 v1 실행은 직접 수정·발행하지 않고 새 RUN에서 `extract --reuse 이전RUN`으로 전환한다. v1 콘티는 새 필수 정보가 없어 자동으로 ready가 되지 않는다. 기존 발행자료는 그대로 보존한다.
 

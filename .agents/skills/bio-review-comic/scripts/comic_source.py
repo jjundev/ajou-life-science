@@ -134,7 +134,7 @@ def outer(node):
     return start if node.tag in VOID else start + ''.join(outer(c) for c in node.children) + f'</{node.tag}>'
 
 
-def inventory(path, repo, selection=None, raw=None, review_version=None):
+def inventory(path, repo, selection=None, raw=None, review_version=None, browser_gate_version=None):
     path, repo = (existing(path), existing(repo)) if raw is None else (Path(path), Path(repo))
     from comic_links import strip_links
     raw_bytes = path.read_bytes() if raw is None else raw
@@ -191,4 +191,6 @@ def inventory(path, repo, selection=None, raw=None, review_version=None):
     result = {'schema_version': 2, 'selection': selection or [], 'content_sha256': digest(raw), 'repo': str(repo), 'path': str(path), 'sha256': digest(raw_bytes), 'title': title, 'range': body.attrs.get('data-range') or path.parent.name, 'topics': topics}
     if review_version is not None:
         result['review_version'] = review_version
+    if browser_gate_version is not None:
+        result['browser_gate_version'] = browser_gate_version
     return result

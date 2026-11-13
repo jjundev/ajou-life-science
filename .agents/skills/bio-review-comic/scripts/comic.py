@@ -8,7 +8,7 @@ from pathlib import Path
 import shutil
 import sys
 
-from comic_contract import REVIEW_VERSION, assets_for, check, jobs_for, local, raster, read, state, validate_storyboard, write
+from comic_contract import BROWSER_GATE_VERSION, REVIEW_VERSION, assets_for, check, jobs_for, local, raster, read, state, validate_storyboard, write
 from comic_render import build, publish
 from comic_reviews import page_fingerprints, record_review, reuse_reviews
 from comic_links import link_notes
@@ -20,7 +20,8 @@ def extract(repo, target, run, reuse=None, page=None):
     if run.exists() and any(run.iterdir()):
         raise ValueError('실행 폴더에 이미 파일이 있습니다. 새 RUN을 사용하세요.')
     path = resolve(repo, target)
-    src = inventory(path, repo, selection=[page] if page else None, review_version=REVIEW_VERSION)
+    src = inventory(path, repo, selection=[page] if page else None, review_version=REVIEW_VERSION,
+                    browser_gate_version=BROWSER_GATE_VERSION)
     if run == path.parent or path.is_relative_to(run):
         raise ValueError('RUN은 원본 정리노트 폴더와 분리하세요.')
     book = {'schema_version': 2, 'characters': [], 'source_sha256': src['sha256'], 'title': f"생명과학 {src['range']} 학습만화", 'style': '생물 구조를 살린 학습만화. 밝은 종이색 배경과 절제된 파란 강조. 같은 대상의 모양·색 유지.', 'pages': []}
@@ -108,11 +109,12 @@ def main(argv=None):
     ext.add_argument('--run', required=True, type=Path)
     ext.add_argument('--reuse', type=Path)
     ext.add_argument('--page', help='명시적으로 한 토픽만 제작하는 샘플 범위')
-    for name in ('prompts', 'build', 'fingerprints', 'publish', 'check', 'link-notes'):
+    for name in ('prompts', 'build', 'fingerprints', 'publish', 'check', 'link-notes', 'link-status'):
         cmd = commands.add_parser(name)
         cmd.add_argument('--run', required=True, type=Path)
         if name == 'link-notes':
             cmd.add_argument('--dry-run', action='store_true')
+            cmd.add_argument('--repair-fragments', action='store_true', help='발행본에 연결된 관리 링크의 토픽 해시만 복구')
         if name == 'publish':
             cmd.add_argument('--no-link', action='store_true', help='만화만 발행; 이후 link-notes로 연결')
         if name == 'check':
@@ -150,7 +152,10 @@ def main(argv=None):
         elif args.command == 'check':
             result = check(args.run, args.phase)
         elif args.command == 'link-notes':
-            result = link_notes(args.run, dry_run=args.dry_run)
+            result = link_notes(args.run, dry_run=args.dry_run, repair_fragments=args.repair_fragments)
+        elif args.command == 'link-status':
+            from comic_browser_evidence import link_status
+            result = link_status(args.run)
         elif args.command == 'fingerprints':
             result = fingerprints(args.run, args.page)
         elif args.command == 'reuse-reviews':

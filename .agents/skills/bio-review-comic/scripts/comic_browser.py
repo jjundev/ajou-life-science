@@ -10,12 +10,14 @@ from pathlib import Path
 from threading import Thread
 from urllib.parse import quote, unquote, urlsplit
 
-from comic_contract import CSS, TEMPLATE, assets_for, jobs_for, local, read, validate_storyboard, write
+from comic_browser_evidence import (
+    LINK_RECORD, PREVIEW_RECORD, VIEWS, preserve_published_report, require_current_resources, save_link_status,
+)
+from comic_contract import CSS, TEMPLATE, assets_for, jobs_for, local, read, validate_storyboard, write_atomic
 from comic_links import strip_links
 from comic_render import render
 from comic_source import digest, existing, nfc
 
-VIEWS = ((1440, 900, 'light'), (1440, 900, 'dark'), (375, 812, 'light'), (375, 812, 'dark'))
 TIMEOUT = 5000
 CHECKER = Path(__file__).resolve()
 
@@ -269,10 +271,11 @@ def inspect_page(tab, authored, expect):
         equal(panel.evaluate('el => el.scrollWidth <= el.clientWidth + 1'), True)
 
 
-def check_view(tab, inputs, origin, root, view, mode, out, expect, error_type):
+def check_view(tab, inputs, origin, root, view, mode, out, expect, error_type, resources, primary):
     width, height, theme = view
     report = {'width': width, 'height': height, 'theme': theme, 'pages': 0, 'panels': 0,
-              'link_round_trips': 0, 'comic_to_source_returns': 0, 'failures': []}
+              'link_round_trips': 0, 'comic_to_source_returns': 0, 'failures': [],
+              'panels_by_topic': {}, 'returned_topics': []}
     failures = report['failures']
     external = set()
     comic_base = url_for(origin, root, inputs.comic)
@@ -294,6 +297,15 @@ def check_view(tab, inputs, origin, root, view, mode, out, expect, error_type):
     def route_request(route):
         url = route.request.url
         if url.startswith(origin + '/'):
+            path = (root / unquote(urlsplit(url).path).lstrip('/')).resolve()
+            if path.is_relative_to(inputs.repo) and path not in primary and path.is_file():
+                name = path.relative_to(inputs.repo).as_posix()
+                try:
+                    sha = digest(path.read_bytes())
+                    if resources.setdefault(name, sha) != sha:
+                        record('local_resource_changed', resources[name], sha)
+                except OSError as exc:
+                    record('local_resource', '로컬 자원 읽기 성공', str(exc))
             route.continue_()
         else:
             external.add(url)
@@ -339,14 +351,17 @@ def check_view(tab, inputs, origin, root, view, mode, out, expect, error_type):
         if shown:
             report['pages'] += 1
             report['panels'] += len(authored['panels'])
+            report['panels_by_topic'][topic] = len(authored['panels'])
         if mode == 'required' and not step('note_to_comic', from_note, note_url, comic_url):
             continue
         if not step('comic_to_note', click_source, tab, note_url, topic, expect):
             continue
         if mode == 'required':
             report['link_round_trips'] += 1
+            report['returned_topics'].append(topic)
         elif step('history_back', back, comic_url):
             report['comic_to_source_returns'] += 1
+            report['returned_topics'].append(topic)
             if mode == 'history':
                 report['link_round_trips'] += 1
 
@@ -363,11 +378,14 @@ def check_view(tab, inputs, origin, root, view, mode, out, expect, error_type):
         tab.screenshot(path=str(out / shot), animations='disabled')
 
     report['screenshot'] = shot if step('screenshot', screenshot) else None
+    if report['screenshot']:
+        report['screenshot_sha256'] = digest((out / shot).read_bytes())
     report['external_requests_blocked'] = sorted(external)
     return report
 
 
 def browser_check(run, stage, out, *, comic_only=False):
+    run = run.resolve()
     out = out.resolve()
     out.mkdir(parents=True, exist_ok=True)
     if any(out.iterdir()):
@@ -376,12 +394,25 @@ def browser_check(run, stage, out, *, comic_only=False):
         raise ValueError('--comic-only는 --stage published에서 사용하세요.')
     mode = 'comic-only' if comic_only else 'required' if stage == 'published' else 'history'
     report_path = out / 'report.json'
-    report = {'schema_version': 1, 'stage': stage, 'link_mode': mode,
+    report = {'schema_version': 2, 'stage': stage, 'link_mode': mode, 'run': str(run),
               'note_to_comic': 'required' if mode == 'required' else 'skipped',
               'views': [], 'failures': [], 'report': str(report_path)}
+    resources = {}
+    version = None
+    publication = None
     try:
-        inputs = inputs_for(run.resolve(), stage)
+        if stage == 'published':
+            publication = read(run / 'publication.json')
+            candidate = existing(publication['version'])
+            if read(candidate / 'publication.json') == publication:
+                version = candidate
+            if comic_only and version and (version / LINK_RECORD).is_file():
+                if read(version / LINK_RECORD)['status'] != 'skipped':
+                    raise ValueError('--comic-only는 원본 연결을 생략한 발행에 사용하세요.')
+        inputs = inputs_for(run, stage)
         before = inputs.hashes()
+        report['input_hashes'] = before
+        primary = {inputs.comic, inputs.note, *inputs.images.values()}
         report['inputs'] = {
             'comic': {'path': str(inputs.comic), 'sha256': before['files']['comic']},
             'note': {'path': str(inputs.note), 'sha256': before['files']['note']},
@@ -413,7 +444,8 @@ def browser_check(run, stage, out, *, comic_only=False):
                         tab = context.new_page()
                         tab.set_default_timeout(TIMEOUT)
                         tab.set_default_navigation_timeout(TIMEOUT)
-                        report['views'].append(check_view(tab, inputs, origin, root, view, mode, out, expect, Error))
+                        report['views'].append(check_view(tab, inputs, origin, root, view, mode, out,
+                                                         expect, Error, resources, primary))
                     finally:
                         context.close()
                 browser.close()
@@ -421,11 +453,20 @@ def browser_check(run, stage, out, *, comic_only=False):
             raise ValueError(f'Chromium 실행 오류. 설치 확인은 python3 -m playwright install chromium. {exc}') from exc
         if inputs.hashes() != before:
             raise ValueError('브라우저 검사 도중 입력 파일이 바뀌었습니다. 다시 실행하세요.')
+        require_current_resources(inputs.repo, resources)
     except (ValueError, OSError, KeyError, TypeError) as exc:
         report['failures'].append({'check': 'run', 'expected': '검사 입력과 환경 정상', 'actual': str(exc)})
     passed = len(report['views']) == len(VIEWS) and not report['failures'] and not any(
         view['failures'] for view in report['views']
     )
     report['status'] = 'passed' if passed else 'failed'
-    write(report_path, report)
+    report['local_resources'] = resources
+    write_atomic(report_path, report)
+    if stage == 'preview':
+        write_atomic(run / PREVIEW_RECORD, {'report': str(report_path), 'sha256': digest(report_path.read_bytes())})
+    elif version and not comic_only and read(version / 'publication.json') == publication:
+        archived_report, report_sha = preserve_published_report(version, report_path, report)
+        save_link_status(version, report['status'], stage='browser', report=archived_report,
+                         report_sha256=report_sha, input_hashes=report.get('input_hashes'),
+                         local_resources=resources)
     return report

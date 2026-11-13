@@ -19,7 +19,7 @@ def managed_blocks(text):
         payload = match[2]
         p = PAYLOAD.fullmatch(payload)
         if digest(payload) != match[1] or not p or p[1] != p[3]:
-            raise ValueError('만화 참조 블록 변경 또는 잘못된 형식')
+            raise ValueError(f'만화 참조 블록 변경 또는 잘못된 형식 (줄 {text.count(chr(10), 0, match.start(2)) + 1})')
         url = urlsplit(unescape(p[1]))
         if url.scheme or url.netloc or url.query or not url.path.endswith('.html') or not url.fragment:
             raise ValueError('만화 참조 목적지 형식 오류')
@@ -82,24 +82,56 @@ def block_for(href, spec):
     return f'\n<!-- bio-comic:v2:{digest(payload)} -->\n{payload}\n<!-- /bio-comic -->\n'
 
 
-def link_notes(run, dry_run=False):
-    from comic_contract import assets_for, check, jobs_for, load, local, raster, read, state, write
-    run, src, book = load(run)
-    check(run, 'browser')
+def link_notes(run, dry_run=False, *, repair_fragments=False):
+    from comic_browser_evidence import LINK_RECORD, link_status, save_link_status
+    from comic_contract import read, write
+    run = Path(run).resolve()
     record = read(run / 'publication.json')
-    target = Path(record['html'])
-    if not target.is_file() or digest(target.read_bytes()) != record.get('html_sha256') or record.get('fingerprint') != state(run)['browser']:
-        raise ValueError('발행한 만화가 없거나 변경됨. publish 후 연결하세요.')
+    version = Path(record['version'])
+    track = record.get('preview_report_sha256') or (version / LINK_RECORD).exists() or repair_fragments
+    try:
+        result = update_note_links(run, record, dry_run=dry_run, repair_fragments=repair_fragments, track=track)
+    except (ValueError, OSError, KeyError) as exc:
+        if not dry_run and track and (version / 'publication.json').is_file() and read(version / 'publication.json') == record:
+            save_link_status(version, 'failed', stage='insertion', error=str(exc))
+        raise
+    if not dry_run:
+        write(run / 'note-links-result.json', result)
+        if track:
+            if result['status'] == 'partial':
+                verification = save_link_status(version, 'failed', stage='insertion', results=result['results'])
+            else:
+                verification = link_status(version)
+                if verification['status'] != 'passed':
+                    verification = save_link_status(version, 'pending', stage='insertion')
+            result['link_verification'] = verification
+    return result
+
+
+def update_note_links(run, record, *, dry_run, repair_fragments, track):
+    from comic_browser_evidence import save_link_status
+    from comic_contract import assets_for, check, jobs_for, load, local, raster, state
+    version = Path(record['version'])
+    if repair_fragments:
+        from comic_browser import inputs_for
+        inputs = inputs_for(run, 'published')
+        target, note, pages = inputs.comic, inputs.note, inputs.pages
+    else:
+        run, src, book = load(run)
+        check(run, 'browser')
+        target, note, pages = Path(record['html']), Path(src['path']), book['pages']
+        if not target.is_file() or digest(target.read_bytes()) != record.get('html_sha256') or record.get('fingerprint') != state(run)['browser']:
+            raise ValueError('발행한 만화가 없거나 변경됨. publish 후 연결하세요.')
+        for asset in assets_for(run, jobs_for(src, book)).values():
+            if raster(local(version, asset['file']))['sha256'] != asset['sha256']:
+                raise ValueError('발행 그림 변경: 다시 발행한 뒤 연결하세요.')
     from comic_render import validate_output
     validate_output(target)
-    for asset in assets_for(run, jobs_for(src, book)).values():
-        if raster(local(Path(record['version']), asset['file']))['sha256'] != asset['sha256']:
-            raise ValueError('발행 그림 변경: 다시 발행한 뒤 연결하세요.')
-    note = Path(src['path'])
     original = note.read_bytes().decode('utf-8')
+    managed_blocks(original)
     text = original
     results = []
-    for page in book['pages']:
+    for page in pages:
         pid = page['id']
         result = {'page': pid, 'status': 'skipped'}
         results.append(result)
@@ -114,6 +146,29 @@ def link_notes(run, dry_run=False):
         targets = [n for n in parse(target.read_text(encoding='utf-8')).walk() if n.attrs.get('id') == pid]
         if len(targets) != 1:
             result['reason'] = 'TARGET_PAGE_MISSING_OR_AMBIGUOUS'; continue
+        href = '/'.join(quote(s, safe='') for s in Path(os.path.relpath(target, note.parent)).parts) + '#' + quote(pid, safe='')
+        matches = []
+        for m, old_href in managed_blocks(text):
+            url = urlsplit(old_href)
+            old_path = (note.parent / unquote(url.path)).resolve()
+            if section['start'] < m.start() < section['end'] and old_path == target.resolve():
+                matches.append((m, url))
+        if len(matches) > 1:
+            result['reason'] = 'REFERENCE_AMBIGUOUS'; continue
+        if repair_fragments:
+            if not matches:
+                result['reason'] = 'REFERENCE_MISSING'; continue
+            m, url = matches[0]
+            result.update(status='unchanged', href=href)
+            if unquote(url.fragment) != pid:
+                payload = PAYLOAD.fullmatch(m[2])
+                fixed_href = payload[1].rsplit('#', 1)[0] + '#' + quote(pid, safe='')
+                fixed = (m[2][:payload.start(1)] + fixed_href + m[2][payload.end(1):payload.start(3)]
+                         + fixed_href + m[2][payload.end(3):])
+                replacement = f'\n<!-- bio-comic:v2:{digest(fixed)} -->\n{fixed}\n<!-- /bio-comic -->\n'
+                text = text[:m.start()] + replacement + text[m.end():]
+                result['status'] = 'updated'
+            continue
         spec = page['note_link']
         children = [n for n in nodes if within(n, section)]
         if spec.get('anchor_id'):
@@ -128,18 +183,9 @@ def link_notes(run, dry_run=False):
             anchor = anchor or next((n for n in children if n['tag'] in ('h2', 'h3')), None)
         if not anchor or not anchor['end'] or anchor['tag'] not in ('div', 'figure', 'section', 'h2', 'h3', 'table', 'ul', 'ol', 'blockquote') or any((p is anchor or within(anchor, p)) and (p['tag'] == 'svg' or 'hidden' in p['attrs'] or 'sum' in (p['attrs'].get('class') or '').split()) for p in [section] + children):
             result['reason'] = 'ANCHOR_INVALID'; continue
-        href = '/'.join(quote(s, safe='') for s in Path(os.path.relpath(target, note.parent)).parts) + '#' + quote(pid, safe='')
         replacement = block_for(href, spec)
-        matches = []
-        for m, old_href in managed_blocks(text):
-            url = urlsplit(old_href)
-            old_path = (note.parent / unquote(url.path)).resolve()
-            if section['start'] < m.start() < section['end'] and old_path == target.resolve() and unquote(url.fragment) == pid:
-                matches.append(m)
         if matches:
-            if len(matches) != 1:
-                result['reason'] = 'REFERENCE_AMBIGUOUS'; continue
-            m = matches[0]
+            m, _ = matches[0]
             result['status'] = 'unchanged' if m[0] == replacement else 'updated'
             text = text[:m.start()] + replacement + text[m.end():]
         else:
@@ -152,15 +198,18 @@ def link_notes(run, dry_run=False):
     changed = text != original
     if changed and not dry_run:
         # Recheck both lesson content and exact bytes before replacing the note.
-        load(run)
+        if repair_fragments:
+            inputs_for(run, 'published')
+        else:
+            load(run)
         if note.read_bytes() != original.encode('utf-8'):
             raise ValueError('연결 중 원본 변경: 다시 확인 후 실행하세요.')
+        if track:
+            save_link_status(version, 'pending', stage='insertion')
         temporary = note.with_name('.' + note.name + '.' + uuid.uuid4().hex + '.tmp')
         try:
             temporary.write_bytes(text.encode('utf-8'))
             os.replace(temporary, note)
         finally:
             if temporary.exists(): temporary.unlink()
-    result = {'status': 'partial' if any(r['status'] == 'skipped' and r.get('reason') != 'PAGE_HELD' for r in results) else 'complete', 'note': str(note), 'changed': changed, 'dry_run': dry_run, 'results': results}
-    if not dry_run: write(run / 'note-links-result.json', result)
-    return result
+    return {'status': 'partial' if any(r['status'] == 'skipped' and r.get('reason') != 'PAGE_HELD' for r in results) else 'complete', 'note': str(note), 'changed': changed, 'dry_run': dry_run, 'results': results}

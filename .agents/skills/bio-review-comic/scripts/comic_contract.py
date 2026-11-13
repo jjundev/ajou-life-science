@@ -4,6 +4,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import struct
+import os
+import tempfile
 
 from comic_source import compact, digest, existing
 
@@ -11,6 +13,7 @@ SKILL = Path(__file__).resolve().parents[1]
 TEMPLATE = SKILL / 'assets' / 'comic-template.html'
 CSS = SKILL / 'assets' / 'comic.css'
 REVIEW_VERSION = 1
+BROWSER_GATE_VERSION = 1
 
 
 def read(path):
@@ -24,6 +27,21 @@ def write(path, value):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+
+def atomic_write(path, raw):
+    with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as file:
+        temporary = Path(file.name)
+        try:
+            file.write(raw)
+            file.close()
+            os.replace(temporary, path)
+        finally:
+            temporary.unlink(missing_ok=True)
+
+
+def write_atomic(path, value):
+    atomic_write(path, (json.dumps(value, ensure_ascii=False, indent=2) + '\n').encode())
 
 
 def fingerprint(value):
@@ -83,6 +101,9 @@ def load(run, *, historical=False):
         raise ValueError('v1 실행은 보존하고 새 RUN으로 extract --reuse 하세요(v2 계약).')
     if src.get('review_version') not in (None, REVIEW_VERSION):
         raise ValueError('지원하지 않는 검토 기록 버전')
+    if 'browser_gate_version' in src and (type(src['browser_gate_version']) is not int or
+                                          src['browser_gate_version'] != BROWSER_GATE_VERSION):
+        raise ValueError('지원하지 않는 브라우저 발행 조건 버전')
     if not historical:
         from comic_links import strip_links
         try:
@@ -101,7 +122,8 @@ def load(run, *, historical=False):
         raise ValueError('원본 스냅샷 변경 또는 누락')
     from comic_source import inventory
     actual = inventory(src['path'], src['repo'], selection=src.get('selection'), raw=raw,
-                       review_version=src.get('review_version'))
+                       review_version=src.get('review_version'),
+                       browser_gate_version=src.get('browser_gate_version'))
     if src != actual:
         raise ValueError('원본 근거 목록 변경: source.json을 편집하지 마세요.')
     return run, src, book

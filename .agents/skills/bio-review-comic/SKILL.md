@@ -85,7 +85,7 @@ python3 "$SKILL/scripts/comic.py" check --run "$RUN" --phase reviewed
 
 `browser-check --stage preview`로 **1440×900·375×812 각각 라이트·다크**에서 모든 준비 완료 페이지와 원본 이동·뒤로가기를 확인한다. `--out`은 비어 있는 증거 폴더다. 말풍선이 실제 그림의 핵심 사물을 가리는지, 화자와 읽는 순서가 자연스러운지는 직접 확인한다. 세부 검사와 기록 형식은 [검토 기준](references/review.md)을 따른다.
 
-아래 첫 명령을 실행한 뒤 자동 검사 결과와 직접 관찰을 확인한다. 현재 브라우저 지문, 4종 스크린샷 상대 경로와 확인 내용을 `review.json`에 기록한다. 스크린샷은 `RUN/checks/`에 둔다. 고친 부분은 영향받는 내용·그림·브라우저 검토를 갱신한다.
+아래 첫 명령은 자동 검사 보고서와 `RUN/browser-preview.json`을 기록한다. 새 RUN의 `publish`는 현재 입력과 4종 증거가 일치할 때만 HTML을 교체한다. 자동 검사 결과와 직접 관찰을 확인한 뒤 현재 브라우저 지문, 4종 스크린샷 상대 경로와 확인 내용을 `review.json`에 기록한다. 변경 후 재검사는 비어 있는 다른 `--out` 폴더를 사용한다. 기존 RUN·발행본은 작성 당시 계약으로 읽는다.
 
 ```bash
 python3 "$SKILL/scripts/comic.py" browser-check --run "$RUN" --stage preview --out "$RUN/checks/preview"
@@ -95,10 +95,11 @@ python3 "$SKILL/scripts/comic.py" publish --run "$RUN"
 
 발행은 검증된 결과를 **로컬 파일**로 저장한다. 기존 HTML은 새 버전의 `previous.html`로 보존하고, 이미지·제작자료와 `review-evidence/`의 최초 독립 검토 보고서를 고유 버전 폴더에 둔다. `prompts.json`과 `workers/`의 작업 기록은 메인이 실제 `version` 폴더에 상대 경로를 유지해 추가 보존한다. 같은 결과를 재실행하면 중복 버전을 만들지 않는다. 발행 뒤 [정리노트 연결](references/note-links.md)대로 원본에 안내·링크를 자동 추가한다. 연결 실패는 발행 결과와 구분하고 `link-notes --run "$RUN"`으로 재시도한다. `publish --no-link`는 발행만 할 때 쓴다. 성공/보류 수는 `publish` 출력에 따른다. 전부 보류라면 빈 제작물을 발행하지 말고 원인과 실행 폴더만 보고한다.
 
-발행과 연결 후에는 최종 정리노트의 안내 문맥을 읽고 `browser-check --stage published`로 두 HTML 사이의 클릭 왕복을 확인한다. 연결 재실행은 변경이 없어야 한다. 의도적으로 `publish --no-link`를 썼으면 최종 검사에 `--comic-only`를 추가한다.
+발행과 연결 후에는 최종 정리노트의 안내 문맥을 읽고 별도 명령인 `browser-check --stage published`로 왕복을 확인한다. `link-status`가 `passed`일 때 연결 완료로 보고한다. 실패하면 발행본을 보존한 채 [원본 연결 복구](references/note-links.md#왕복-실패-복구)를 따른다. 의도적으로 `publish --no-link`를 썼으면 최종 검사에 `--comic-only`를 추가한다.
 
 ```bash
 python3 "$SKILL/scripts/comic.py" browser-check --run "$RUN" --stage published --out "$RUN/checks/published"
+python3 "$SKILL/scripts/comic.py" link-status --run "$RUN"
 python3 "$SKILL/scripts/comic.py" link-notes --run "$RUN" --dry-run
 python3 "$SKILL/scripts/comic.py" link-notes --run "$RUN"
 ```

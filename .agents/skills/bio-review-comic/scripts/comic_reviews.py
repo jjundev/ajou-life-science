@@ -2,11 +2,9 @@
 from __future__ import annotations
 
 import json
-import os
 from pathlib import Path
-import tempfile
 
-from comic_contract import SKILL, assets_for, fingerprint, jobs_for, local, page_content, read, validate_storyboard
+from comic_contract import SKILL, assets_for, atomic_write, fingerprint, jobs_for, local, page_content, read, validate_storyboard
 from comic_source import digest, existing
 
 
@@ -111,17 +109,6 @@ def verified_report(run, pid, entry, inputs):
 def review_data(run):
     path = run / 'review.json'
     return read(path) if path.exists() else {'pages': {}}
-
-
-def atomic_write(path, raw):
-    with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as file:
-        temporary = Path(file.name)
-        try:
-            file.write(raw)
-            file.close()
-            os.replace(temporary, path)
-        finally:
-            temporary.unlink(missing_ok=True)
 
 
 def write_review(run, data):
