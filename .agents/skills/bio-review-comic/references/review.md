@@ -77,3 +77,14 @@ python3 "$SKILL/scripts/comic.py" browser-check --run "$RUN_OR_VERSION" --stage 
 각 조합에서 대표 화면을 `checks/`에 스크린샷으로 저장한다. 검토 지문은 템플릿/CSS·원본·콘티·그림을 포함하므로 이후 변경하면 다시 build하고 영향을 확인해야 한다. 스크린샷은 실제 브라우저에서 캡처하며 테스트 이미지를 검토 증거로 대신하지 않는다.
 
 발행 후 실제 최종 HTML도 한 번 열어 이미지와 원본 링크를 확인한다. 정리노트에 추가된 안내의 문맥과 정확한 페이지 해시도 확인하고, 같은 탭에서 만화 해당 페이지로 이동한 뒤 원본 링크·뒤로가기로 돌아온다. 연결 재실행은 changed: false여야 한다. 최종 링크가 깨지면 연결 성공으로 보고하지 않는다. 실패가 남은 페이지는 이유와 함께 보류하고 나머지 결과와 구별한다.
+
+## 선택형 발행 리허설
+
+```bash
+python3 "$SKILL/scripts/comic.py" rehearse --run "$RUN" --out "$REHEARSAL"
+python3 "$SKILL/scripts/comic.py" publish --run "$RUN" --rehearsal "$REHEARSAL"
+```
+
+`rehearse`는 현재 검토와 해당 RUN에 필요한 미리보기 증거를 확인한 뒤, 비어 있는 `--out`의 `tree/` 아래에 저장소 기준 최종 경로를 재현한다. 버전별 그림, 새 만화와 안내가 삽입된 원본을 그 안에 만들고, 브라우저가 요청한 로컬 자원도 격리본에 복사한다. 실제 발행 폴더 밖에 `--out`을 둔다. 준비 완료 토픽 전부의 컷과 원본 → 만화 → 원본 클릭을 4종에서 검사한다. 실패는 종료 코드 1과 보고서의 토픽·동작으로 확인한다. 리허설만으로 실제 발행 파일이나 연결 상태가 바뀌지 않는다.
+
+`publish --rehearsal`은 `candidate.json`과 `report.json`의 RUN·최종 경로·버전·검사 증거를 대조한다. 원본 전체 바이트, 기존 만화, 검사 후보 또는 읽은 로컬 자원이 달라졌다면 새 `--out`으로 리허설을 다시 실행한다. 성공 시 검사한 HTML 두 개를 그대로 반영하고 리허설 증거를 버전의 `checks/rehearsal/` 아래에 보존한다. `--no-link`와 함께 쓰지 않는다. 발행 후 실제 파일의 왕복은 `browser-check --stage published`로 다시 확인해야 `link-status`가 `passed`가 된다.

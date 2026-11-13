@@ -109,7 +109,6 @@ def link_notes(run, dry_run=False, *, repair_fragments=False):
 
 
 def update_note_links(run, record, *, dry_run, repair_fragments, track):
-    from comic_browser_evidence import save_link_status
     from comic_contract import assets_for, check, jobs_for, load, local, raster, state
     version = Path(record['version'])
     if repair_fragments:
@@ -127,10 +126,27 @@ def update_note_links(run, record, *, dry_run, repair_fragments, track):
                 raise ValueError('발행 그림 변경: 다시 발행한 뒤 연결하세요.')
     from comic_render import validate_output
     validate_output(target)
-    original = note.read_bytes().decode('utf-8')
+    original = note.read_bytes()
+    candidate, result = plan_note_links(original, note, target, target.read_bytes(), pages,
+                                       repair_fragments=repair_fragments)
+    if result['changed'] and not dry_run:
+        if repair_fragments:
+            inputs_for(run, 'published')
+        else:
+            load(run)
+        apply_note_plan(note, original, candidate, version=version if track else None)
+    return {**result, 'dry_run': dry_run}
+
+
+def plan_note_links(original, note, target, comic, pages, *, repair_fragments=False):
+    """Plan the exact note bytes without writing a file or publication state."""
+    from comic_source import parse
+
+    original = original.decode('utf-8')
     managed_blocks(original)
     text = original
     results = []
+    ids = [n.attrs.get('id') for n in parse(comic.decode('utf-8')).walk()]
     for page in pages:
         pid = page['id']
         result = {'page': pid, 'status': 'skipped'}
@@ -142,9 +158,7 @@ def update_note_links(run, record, *, dry_run, repair_fragments, track):
         if len(hits) != 1 or hits[0]['tag'] != 'article' or not hits[0]['end']:
             result['reason'] = 'SECTION_MISSING_OR_AMBIGUOUS'; continue
         section = hits[0]
-        from comic_source import parse
-        targets = [n for n in parse(target.read_text(encoding='utf-8')).walk() if n.attrs.get('id') == pid]
-        if len(targets) != 1:
+        if ids.count(pid) != 1:
             result['reason'] = 'TARGET_PAGE_MISSING_OR_AMBIGUOUS'; continue
         href = '/'.join(quote(s, safe='') for s in Path(os.path.relpath(target, note.parent)).parts) + '#' + quote(pid, safe='')
         matches = []
@@ -195,21 +209,26 @@ def update_note_links(run, record, *, dry_run, repair_fragments, track):
             text = text[:anchor['end']] + replacement + text[anchor['end']:]
             result['status'] = 'added'
         result['href'] = href
-    changed = text != original
-    if changed and not dry_run:
-        # Recheck both lesson content and exact bytes before replacing the note.
-        if repair_fragments:
-            inputs_for(run, 'published')
-        else:
-            load(run)
-        if note.read_bytes() != original.encode('utf-8'):
+    return text.encode('utf-8'), {
+        'status': 'partial' if any(r['status'] == 'skipped' and r.get('reason') != 'PAGE_HELD' for r in results) else 'complete',
+        'note': str(note), 'changed': text != original, 'results': results,
+    }
+
+
+def apply_note_plan(note, original, candidate, *, version=None):
+    """Replace the note only if its preimage still matches the plan."""
+    from comic_browser_evidence import save_link_status
+    if note.read_bytes() != original:
+        raise ValueError('연결 중 원본 변경: 다시 확인 후 실행하세요.')
+    if original == candidate:
+        return
+    if version is not None:
+        save_link_status(version, 'pending', stage='insertion')
+    temporary = note.with_name('.' + note.name + '.' + uuid.uuid4().hex + '.tmp')
+    try:
+        temporary.write_bytes(candidate)
+        if note.read_bytes() != original:
             raise ValueError('연결 중 원본 변경: 다시 확인 후 실행하세요.')
-        if track:
-            save_link_status(version, 'pending', stage='insertion')
-        temporary = note.with_name('.' + note.name + '.' + uuid.uuid4().hex + '.tmp')
-        try:
-            temporary.write_bytes(text.encode('utf-8'))
-            os.replace(temporary, note)
-        finally:
-            if temporary.exists(): temporary.unlink()
-    return {'status': 'partial' if any(r['status'] == 'skipped' and r.get('reason') != 'PAGE_HELD' for r in results) else 'complete', 'note': str(note), 'changed': changed, 'dry_run': dry_run, 'results': results}
+        os.replace(temporary, note)
+    finally:
+        temporary.unlink(missing_ok=True)

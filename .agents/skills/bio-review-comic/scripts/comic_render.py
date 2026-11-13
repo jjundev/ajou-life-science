@@ -12,7 +12,7 @@ from urllib.parse import quote, unquote, urlsplit
 
 from comic_browser_evidence import LINK_RECORD, preview_evidence, save_link_status
 from comic_contract import CSS, TEMPLATE, assets_for, check, jobs_for, load, local, raster, read, state, validate_storyboard, write
-from comic_source import digest, nfc, parse
+from comic_source import digest, existing, nfc, parse
 
 
 def esc(value):
@@ -149,7 +149,47 @@ def archive_html(text, original_directory, archive_directory):
     return re.sub(r'''\b(href|src)=(['"])(.*?)\2''', rebase, text)
 
 
-def _publish_comic(run):
+def publication_paths(src):
+    note = existing(src['path'])
+    suffix = nfc(note.name).removeprefix('정리노트_')
+    filename = '학습만화_' + suffix
+    if src.get('selection'):
+        filename = Path(filename).stem + '_샘플_' + src['selection'][0] + '.html'
+    root = note.parent / '.assets' / ('자료_' + Path(filename).stem)
+    normalized = [p for p in note.parent.iterdir() if nfc(p.name) == filename]
+    if len(normalized) > 1:
+        raise ValueError('발행 대상 NFC/NFD 이름 중복')
+    return note, normalized[0] if normalized else note.parent / filename, root
+
+
+def new_version(root):
+    return root / 'versions' / (datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S') + '-' + uuid.uuid4().hex[:8])
+
+
+def reusable_publication(record, output, src, assets):
+    try:
+        version = Path(record['version'])
+        if Path(record['html']) != output or digest(output.read_bytes()) != record['html_sha256']:
+            return False
+        for asset in assets.values():
+            if raster(local(version, asset['file']))['sha256'] != asset['sha256']:
+                return False
+        if src.get('review_version'):
+            check(version, 'reviewed')
+        if src.get('browser_gate_version'):
+            archived = version / 'checks' / 'automatic-preview' / 'report.json'
+            if digest(archived.read_bytes()) != record.get('preview_report_sha256'):
+                return False
+            for view in read(archived)['views']:
+                if digest(local(archived.parent, view['screenshot']).read_bytes()) != view['screenshot_sha256']:
+                    return False
+        validate_output(output)
+    except (ValueError, OSError, KeyError, TypeError):
+        return False
+    return True
+
+
+def _publish_comic(run, candidate=None):
     run = Path(run).resolve()
     result = check(run, 'browser')
     if not result['ready']:
@@ -160,46 +200,24 @@ def _publish_comic(run):
         raise ValueError('브라우저 확인 대상 preview.html이 없거나 변경됨. build 후 재확인하세요.')
     current = state(run)['browser']
     record = read(run / 'publication.json') if (run / 'publication.json').exists() else {}
-    note = Path(src['path'])
-    suffix = nfc(note.name).removeprefix('정리노트_')
-    filename = '학습만화_' + suffix
-    if src.get('selection'):
-        filename = Path(filename).stem + '_샘플_' + src['selection'][0] + '.html'
-    root = note.parent / '.assets' / ('자료_' + Path(filename).stem)
-    if record.get('fingerprint') == current:
-        previous = Path(record['html'])
-        if previous.is_file() and digest(previous.read_bytes()) == record.get('html_sha256'):
-            version = Path(record['version'])
-            assets = assets_for(run, jobs_for(src, book))
-            try:
-                for asset in assets.values():
-                    if raster(version / asset['file'])['sha256'] != asset['sha256']:
-                        raise ValueError('발행 그림 변경')
-                if src.get('review_version'):
-                    check(version, 'reviewed')
-                if src.get('browser_gate_version'):
-                    archived = version / 'checks' / 'automatic-preview' / 'report.json'
-                    if digest(archived.read_bytes()) != record.get('preview_report_sha256'):
-                        raise ValueError('발행 미리보기 보고서 지문 불일치')
-                    for view in read(archived)['views']:
-                        if digest(local(archived.parent, view['screenshot']).read_bytes()) != view['screenshot_sha256']:
-                            raise ValueError('발행 미리보기 스크린샷 지문 불일치')
-                validate_output(previous)
-            except (ValueError, OSError, KeyError, TypeError):
-                pass
-            else:
-                # The HTML may have committed before a transient index-write failure.
-                write(version / 'publication.json', record)
-                write(root / 'latest.json', record)
-                return record
+    _, output, root = publication_paths(src)
+    assets = assets_for(run, jobs_for(src, book))
+    if (record.get('fingerprint') == current and (candidate is None or candidate.matches(record))
+            and reusable_publication(record, output, src, assets)):
+        version = Path(record['version'])
+        if candidate is not None:
+            candidate.recheck()
+            candidate.archive(version)
+            record = {**record, 'rehearsal_report_sha256': candidate.report_sha256}
+            write(run / 'publication.json', record)
+        # The HTML may have committed before a transient index-write failure.
+        write(version / 'publication.json', record)
+        write(root / 'latest.json', record)
+        return record
     evidence = preview_evidence(run) if src.get('browser_gate_version') else None
-    output = note.parent / filename
-    normalized = [p for p in note.parent.iterdir() if nfc(p.name) == filename]
-    if len(normalized) > 1:
-        raise ValueError('발행 대상 NFC/NFD 이름 중복')
-    if normalized:
-        output = normalized[0]
-    version = root / 'versions' / (datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S') + '-' + uuid.uuid4().hex[:8])
+    if candidate is not None and evidence is not None:
+        candidate.check_preview(evidence)
+    version = candidate.version if candidate is not None else new_version(root)
     version.mkdir(parents=True, exist_ok=False)
     committed = False
     try:
@@ -223,16 +241,20 @@ def _publish_comic(run):
             dest = local(version, relative_name)
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(local(run, relative_name), dest)
-        for asset in assets_for(run, jobs_for(src, book)).values():
+        for key, asset in assets.items():
             dest = local(version, asset['file'])
             dest.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(local(run, asset['file']), dest)
-        text = render(run, output, image_root=version)
+            shutil.copy2(candidate.images[key] if candidate else local(run, asset['file']), dest)
+            if candidate and raster(dest)['sha256'] != asset['sha256']:
+                raise ValueError(f'리허설 그림 변경: {key}')
+        raw = candidate.comic_bytes if candidate else render(run, output, image_root=version).encode('utf-8')
+        if candidate is not None:
+            candidate.archive(version)
         if output.exists():
             (version / 'previous.html').write_text(archive_html(output.read_text(encoding='utf-8'), output.parent, version), encoding='utf-8')
         temporary = output.with_name('.' + output.name + '.' + uuid.uuid4().hex + '.tmp')
         try:
-            temporary.write_text(text, encoding='utf-8')
+            temporary.write_bytes(raw)
             validate_output(temporary)
             # Recheck source/reviews after staging, before the one atomic replacement.
             check(run, 'browser')
@@ -240,6 +262,8 @@ def _publish_comic(run):
                 raise ValueError('발행 준비 중 미리보기 증거 변경: 다시 발행하세요.')
             if src.get('review_version'):
                 check(version, 'reviewed')
+            if candidate is not None:
+                candidate.recheck()
             os.replace(temporary, output)
             committed = True
         finally:
@@ -248,6 +272,8 @@ def _publish_comic(run):
         record = {**result, 'html': str(output), 'version': str(version), 'fingerprint': current, 'html_sha256': digest(output.read_bytes())}
         if evidence is not None:
             record['preview_report_sha256'] = digest(evidence['report.json'])
+        if candidate is not None:
+            record['rehearsal_report_sha256'] = candidate.report_sha256
         write(run / 'publication.json', record)
         write(version / 'publication.json', record)
         write(root / 'latest.json', record)
@@ -259,18 +285,26 @@ def _publish_comic(run):
         raise
 
 
-def publish(run, link_notes=True):
+def publish(run, link_notes=True, *, rehearsal=None):
     """Publication commits first; contextual linking is independently retryable."""
-    result = _publish_comic(run)
+    candidate = None
+    if rehearsal is not None:
+        if not link_notes:
+            raise ValueError('--rehearsal은 원본 연결을 포함한 발행에만 사용하세요.')
+        from comic_rehearsal import load_rehearsal
+        candidate = load_rehearsal(run, rehearsal)
+    result = _publish_comic(run, candidate)
     version = Path(result['version'])
-    if result.get('preview_report_sha256') and not (version / LINK_RECORD).exists():
+    if (result.get('preview_report_sha256') or candidate) and not (version / LINK_RECORD).exists():
         save_link_status(version, 'pending' if link_notes else 'skipped', stage='insertion')
     if link_notes:
         from comic_links import link_notes as connect
         try:
-            linked = connect(run)
+            linked = candidate.apply_note(version) if candidate else connect(run)
         except (ValueError, OSError, KeyError) as exc:
             linked = {'status': 'failed', 'error': str(exc), 'retry': 'link-notes --run RUN'}
+            if candidate is not None:
+                save_link_status(version, 'failed', stage='insertion', error=str(exc))
         result = {**result, 'note_links': linked}
         # Keep evidence of linking beside the archived production inputs.
         write(version / 'note-links-result.json', linked)

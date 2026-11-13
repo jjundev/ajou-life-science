@@ -4,6 +4,8 @@
 
 `publish`는 검토를 통과한 실제 만화를 먼저 발행한 뒤 원본에 관련 안내를 연결한다. `--no-link`는 발행만 한다. 연결이 실패해도 만화는 남긴다.
 
+[리허설 후보로 발행](review.md#선택형-발행-리허설)할 때도 만화를 먼저 교체하고 검사한 원본 HTML을 이어서 저장한다. 그 사이 원본이 변경되거나 저장이 실패하면 만화는 보존하고 연결만 실패로 기록한다. 원인을 해소한 뒤 `link-notes`로 연결을 다시 시도한다.
+
 ```bash
 python3 "$SKILL/scripts/comic.py" link-notes --run "$RUN" --dry-run
 python3 "$SKILL/scripts/comic.py" link-notes --run "$RUN"

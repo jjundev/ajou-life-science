@@ -116,7 +116,9 @@ def main(argv=None):
             cmd.add_argument('--dry-run', action='store_true')
             cmd.add_argument('--repair-fragments', action='store_true', help='발행본에 연결된 관리 링크의 토픽 해시만 복구')
         if name == 'publish':
-            cmd.add_argument('--no-link', action='store_true', help='만화만 발행; 이후 link-notes로 연결')
+            mode = cmd.add_mutually_exclusive_group()
+            mode.add_argument('--no-link', action='store_true', help='만화만 발행; 이후 link-notes로 연결')
+            mode.add_argument('--rehearsal', type=Path, help='통과한 리허설 후보 그대로 발행')
         if name == 'check':
             cmd.add_argument('--phase', choices=('storyboard', 'images', 'reviewed', 'browser'), default='storyboard')
         if name == 'fingerprints':
@@ -133,6 +135,9 @@ def main(argv=None):
     browser.add_argument('--stage', required=True, choices=('preview', 'published'))
     browser.add_argument('--out', required=True, type=Path)
     browser.add_argument('--comic-only', action='store_true', help='연결 없이 발행한 만화의 역방향 링크 검사 생략')
+    rehearsal = commands.add_parser('rehearse', help='격리본에서 최종 경로와 원본 왕복 검사')
+    rehearsal.add_argument('--run', required=True, type=Path)
+    rehearsal.add_argument('--out', required=True, type=Path)
     register = commands.add_parser('register-image', help='이미지 도구가 반환한 실제 로컬 파일 등록')
     register.add_argument('--run', required=True, type=Path)
     register.add_argument('--page', required=True)
@@ -165,11 +170,14 @@ def main(argv=None):
         elif args.command == 'browser-check':
             from comic_browser import browser_check
             result = browser_check(args.run, args.stage, args.out, comic_only=args.comic_only)
+        elif args.command == 'rehearse':
+            from comic_rehearsal import rehearse
+            result = rehearse(args.run, args.out)
         else:
-            result = publish(args.run, link_notes=not args.no_link)
+            result = publish(args.run, link_notes=not args.no_link, rehearsal=args.rehearsal)
         import json
         print(json.dumps(result, ensure_ascii=False, indent=2))
-        return int(args.command == 'browser-check' and result['status'] != 'passed')
+        return int(args.command in ('browser-check', 'rehearse') and result['status'] != 'passed')
     except (ValueError, OSError, KeyError, TypeError) as exc:
         import json
         print(json.dumps({'error': str(exc)}, ensure_ascii=False), file=sys.stderr)

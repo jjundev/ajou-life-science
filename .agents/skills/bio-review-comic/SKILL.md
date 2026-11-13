@@ -15,7 +15,7 @@ description: '생명과학 정리노트 HTML을 바탕으로 강의 차수별 �
 
 - `SKILL`은 이 파일의 실제 폴더(심볼릭 링크는 원본으로 해석), `REPO`는 저장소 루트다.
 - `RUN`은 **비어 있는 새 폴더**다. 기본은 `REPO/tmp/bio-review-comic/<인자>-<실행ID>/`; 작업은 발행 때 전용 `.assets`에 보존한다. 자동화 브라우저의 HTTP 서버는 `REPO`에서 열어 원본 링크도 접근하게 한다.
-- Python 3.10+를 사용한다. `browser-check`에는 [Playwright와 Chromium](references/review.md#브라우저-확인)이 필요하며 나머지 명령은 표준 라이브러리로 실행한다. 셸 호출 사이 변수 상태를 가정하지 않고 모든 경로는 실제 절대 경로로 전달한다. 경로 검색은 스크립트가 NFC/NFD를 처리한다.
+- Python 3.10+를 사용한다. `browser-check`와 `rehearse`에는 [Playwright와 Chromium](references/review.md#브라우저-확인)이 필요하며 나머지 명령은 표준 라이브러리로 실행한다. 셸 호출 사이 변수 상태를 가정하지 않고 모든 경로는 실제 절대 경로로 전달한다. 경로 검색은 스크립트가 NFC/NFD를 처리한다.
 - 아래 명령의 `python3 "$SKILL/scripts/comic.py"`를 사용한다. 이미지 생성은 내장 `image_gen` 도구가 담당하며 CLI는 생성 API를 호출하지 않는다.
 
 **연결만 요청한 경우:** 새 만화를 생성하지 않는다. 기존 발행자료의 RUN/버전 폴더를 찾아 [정리노트 연결](references/note-links.md)의 검사·연결·브라우저 왕복만 수행한다. v1 자료는 v2 새 실행·검토·발행으로 전환해야 한다.
@@ -94,6 +94,8 @@ python3 "$SKILL/scripts/comic.py" publish --run "$RUN"
 ```
 
 발행은 검증된 결과를 **로컬 파일**로 저장한다. 기존 HTML은 새 버전의 `previous.html`로 보존하고, 이미지·제작자료와 `review-evidence/`의 최초 독립 검토 보고서를 고유 버전 폴더에 둔다. `prompts.json`과 `workers/`의 작업 기록은 메인이 실제 `version` 폴더에 상대 경로를 유지해 추가 보존한다. 같은 결과를 재실행하면 중복 버전을 만들지 않는다. 발행 뒤 [정리노트 연결](references/note-links.md)대로 원본에 안내·링크를 자동 추가한다. 연결 실패는 발행 결과와 구분하고 `link-notes --run "$RUN"`으로 재시도한다. `publish --no-link`는 발행만 할 때 쓴다. 성공/보류 수는 `publish` 출력에 따른다. 전부 보류라면 빈 제작물을 발행하지 말고 원인과 실행 폴더만 보고한다.
+
+원본 연결까지 발행 전에 시험하려면 [선택형 발행 리허설](references/review.md#선택형-발행-리허설)을 사용한다. `rehearse`로 실제 최종 경로와 같은 격리본에서 4종 왕복을 확인하고, `publish --rehearsal`에 그 폴더를 넘겨 검사한 두 HTML을 반영한다. 후보나 실제 입력이 바뀌었으면 새 리허설이 필요하다.
 
 발행과 연결 후에는 최종 정리노트의 안내 문맥을 읽고 별도 명령인 `browser-check --stage published`로 왕복을 확인한다. `link-status`가 `passed`일 때 연결 완료로 보고한다. 실패하면 발행본을 보존한 채 [원본 연결 복구](references/note-links.md#왕복-실패-복구)를 따른다. 의도적으로 `publish --no-link`를 썼으면 최종 검사에 `--comic-only`를 추가한다.
 

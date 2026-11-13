@@ -38,30 +38,34 @@ def preview_evidence(run):
         if report['input_hashes'] != inputs.hashes() or report['run'] != str(run):
             raise ValueError('미리보기 보고서의 입력 변경')
         require_current_resources(inputs.repo, report['local_resources'])
-        views = report['views']
-        if len(views) != len(VIEWS) or {(v['width'], v['height'], v['theme']) for v in views} != set(VIEWS):
-            raise ValueError('데스크톱·모바일 라이트·다크 4종 필요')
-        ready = ready_panels(inputs.pages)
-        held = [{'id': p['id'], 'reason': p['reason']} for p in inputs.pages if p['status'] == 'held']
-        if report['held'] != held:
-            raise ValueError('보류 목록 불일치')
-        shots = {}
-        for view in views:
-            if (view['failures'] or view['panels_by_topic'] != ready or view['returned_topics'] != list(ready)
-                    or view['pages'] != len(ready) or view['panels'] != sum(ready.values())
-                    or view['link_round_trips'] != len(ready)):
-                raise ValueError('미리보기 토픽·컷·복귀 검사 누락 또는 실패')
-            name = view['screenshot']
-            shot = local(path.parent, name)
-            info = raster(shot)
-            data = shot.read_bytes()
-            if (Path(name).name != name or name in shots or digest(data) != view['screenshot_sha256'] or
-                    (info['width'], info['height']) != (view['width'], view['height'])):
-                raise ValueError('미리보기 스크린샷 변경 또는 중복')
-            shots[name] = data
-        return shots | {'report.json': raw}
+        return passing_views(report, inputs.pages, path.parent) | {'report.json': raw}
     except (ValueError, OSError, TypeError, KeyError, AttributeError) as exc:
         raise ValueError(f'미리보기 자동 검사 증거 확인 실패: {exc}. browser-check --stage preview를 실행하세요.') from exc
+
+
+def passing_views(report, pages, out):
+    views = report['views']
+    if len(views) != len(VIEWS) or {(v['width'], v['height'], v['theme']) for v in views} != set(VIEWS):
+        raise ValueError('데스크톱·모바일 라이트·다크 4종 필요')
+    ready = ready_panels(pages)
+    held = [{'id': p['id'], 'reason': p['reason']} for p in pages if p['status'] == 'held']
+    if report['held'] != held:
+        raise ValueError('보류 목록 불일치')
+    shots = {}
+    for view in views:
+        if (view['failures'] or view['panels_by_topic'] != ready or view['returned_topics'] != list(ready)
+                or view['pages'] != len(ready) or view['panels'] != sum(ready.values())
+                or view['link_round_trips'] != len(ready)):
+            raise ValueError('토픽·컷·복귀 검사 누락 또는 실패')
+        name = view['screenshot']
+        shot = local(out, name)
+        info = raster(shot)
+        data = shot.read_bytes()
+        if (Path(name).name != name or name in shots or digest(data) != view['screenshot_sha256'] or
+                (info['width'], info['height']) != (view['width'], view['height'])):
+            raise ValueError('브라우저 스크린샷 변경 또는 중복')
+        shots[name] = data
+    return shots
 
 
 def save_link_status(version, status, *, stage, **detail):

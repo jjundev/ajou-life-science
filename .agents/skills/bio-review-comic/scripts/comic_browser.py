@@ -95,7 +95,7 @@ def equal(actual, expected):
 
 
 @contextmanager
-def serve(inputs):
+def serve(inputs, *, snapshot_resource=None):
     # Preview relative links also work when the RUN is a sibling of the repository.
     root = Path(commonpath((inputs.repo, inputs.work)))
     allowed = (inputs.repo, inputs.work)
@@ -103,6 +103,12 @@ def serve(inputs):
     class Handler(SimpleHTTPRequestHandler):
         def send_head(self):
             path = Path(self.translate_path(self.path)).resolve()
+            if snapshot_resource and path.is_relative_to(inputs.repo):
+                try:
+                    snapshot_resource(path)
+                except (ValueError, OSError):
+                    self.send_error(404)
+                    return None
             if not path.is_file() or not any(path.is_relative_to(folder) for folder in allowed):
                 self.send_error(404)
                 return None
@@ -384,15 +390,15 @@ def check_view(tab, inputs, origin, root, view, mode, out, expect, error_type, r
     return report
 
 
-def browser_check(run, stage, out, *, comic_only=False):
+def browser_check(run, stage, out, *, comic_only=False, load_candidate=None, snapshot_resource=None):
     run = run.resolve()
     out = out.resolve()
     out.mkdir(parents=True, exist_ok=True)
-    if any(out.iterdir()):
+    if any(out.iterdir()) and load_candidate is None:
         raise ValueError('브라우저 증거는 비어 있는 --out 폴더에 저장하세요.')
     if comic_only and stage != 'published':
         raise ValueError('--comic-only는 --stage published에서 사용하세요.')
-    mode = 'comic-only' if comic_only else 'required' if stage == 'published' else 'history'
+    mode = 'comic-only' if comic_only else 'required' if stage in ('published', 'rehearsal') else 'history'
     report_path = out / 'report.json'
     report = {'schema_version': 2, 'stage': stage, 'link_mode': mode, 'run': str(run),
               'note_to_comic': 'required' if mode == 'required' else 'skipped',
@@ -409,7 +415,7 @@ def browser_check(run, stage, out, *, comic_only=False):
             if comic_only and version and (version / LINK_RECORD).is_file():
                 if read(version / LINK_RECORD)['status'] != 'skipped':
                     raise ValueError('--comic-only는 원본 연결을 생략한 발행에 사용하세요.')
-        inputs = inputs_for(run, stage)
+        inputs = load_candidate() if load_candidate else inputs_for(run, stage)
         before = inputs.hashes()
         report['input_hashes'] = before
         primary = {inputs.comic, inputs.note, *inputs.images.values()}
@@ -431,7 +437,7 @@ def browser_check(run, stage, out, *, comic_only=False):
             raise ValueError('Playwright가 필요합니다. python3 -m pip install playwright 실행 후 Chromium을 설치하세요.') from exc
         expect.set_options(timeout=TIMEOUT)
         try:
-            with serve(inputs) as (origin, root), sync_playwright() as playwright:
+            with serve(inputs, snapshot_resource=snapshot_resource) as (origin, root), sync_playwright() as playwright:
                 browser = playwright.chromium.launch()
                 report['browser'] = {'engine': 'chromium', 'version': browser.version,
                                      'playwright': package_version('playwright')}
@@ -453,6 +459,10 @@ def browser_check(run, stage, out, *, comic_only=False):
             raise ValueError(f'Chromium 실행 오류. 설치 확인은 python3 -m playwright install chromium. {exc}') from exc
         if inputs.hashes() != before:
             raise ValueError('브라우저 검사 도중 입력 파일이 바뀌었습니다. 다시 실행하세요.')
+        if snapshot_resource:
+            # The HTTP handler materializes fallback resources on first request.
+            # Report the bytes actually served, including first requests for those files.
+            resources.update(snapshot_resource.hashes)
         require_current_resources(inputs.repo, resources)
     except (ValueError, OSError, KeyError, TypeError) as exc:
         report['failures'].append({'check': 'run', 'expected': '검사 입력과 환경 정상', 'actual': str(exc)})
