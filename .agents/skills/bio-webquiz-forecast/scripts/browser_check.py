@@ -28,13 +28,15 @@ from urllib.parse import quote
 
 import build
 from exam_layout import expected_sections
+from exam_build import web_assets
 
 VIEWPORTS = [(1280, 900), (375, 812)]
 THEMES = ["light", "dark"]
 ACTION_TIMEOUT = 3000
 NAV_TIMEOUT = 20000
 SETTLE_MS = 600  # 문항 전환 애니메이션이 끝난 뒤 찍는다
-VENDOR = Path(__file__).resolve().parents[2] / "bio-problem-explain" / "assets" / "vendor"
+
+VENDOR = web_assets.REPO / web_assets.SHARED_DIR
 # 문제판은 CDN의 KaTeX·Pretendard를 쓴다. 같은 버전의 로컬 사본으로 대신 응답해 네트워크를 기다리지 않는다.
 CDN_MAP = {"https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/": VENDOR / "katex",
            "https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/": VENDOR / "pretendard"}

@@ -6,7 +6,11 @@ POLICY='.agents/skills/bio-review-pack/references/'
 def dump(p,x):
  p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(x,ensure_ascii=False,indent=2),encoding='utf-8')
 def make_repo(root):
- root.mkdir(parents=True)
+ from exam_build import web_assets
+ root.mkdir(parents=True, exist_ok=True)
+ shared = root / web_assets.SHARED_DIR
+ if not shared.exists():
+  shutil.copytree(ROOT / web_assets.SHARED_DIR, shared)
  import base64
  (root/'pixel.png').write_bytes(base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jJ1sAAAAASUVORK5CYII='))
  for name in ['webquiz-style.md','note-feedback.md']:

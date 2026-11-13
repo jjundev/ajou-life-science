@@ -1,6 +1,8 @@
 """Regenerate assets/port-provenance.json against the pinned ds-problem-explain source (maintenance only)."""
 import argparse, hashlib, json, subprocess
+import os
 from pathlib import Path
+from bio_web_assets import REPO as BIO_REPO, SHARED_DIR
 
 SKILL = Path(__file__).resolve().parents[1]
 REPO = 'https://github.com/jjundev/ajou-jagual.git'
@@ -27,16 +29,22 @@ def source_bytes(source, relative):
 def build(source):
     check_git(source)
     files = []
-    for path in sorted(p for p in SKILL.rglob('*') if p.is_file()):
-        relative = path.relative_to(SKILL).as_posix()
+    bundle = BIO_REPO / SHARED_DIR
+    paths = sorted(SKILL.rglob('*')) + sorted(bundle.rglob('*'))
+    for path in paths:
+        if not path.is_file():
+            continue
+        relative = Path(os.path.relpath(path, SKILL)).as_posix()
+        upstream = ('assets/vendor/' + path.relative_to(bundle).as_posix()
+                    if path.is_relative_to(bundle) else relative)
         if '__pycache__' in path.parts or relative == 'assets/port-provenance.json':
             continue
         destination = path.read_bytes()
-        original = source_bytes(source, relative)
+        original = source_bytes(source, upstream)
         if original is None:
             source_path, source_hash, reason = None, None, 'local addition'
         else:
-            source_path, source_hash = relative, sha(original)
+            source_path, source_hash = upstream, sha(original)
             reason = 'unchanged pinned copy' if source_hash == sha(destination) else 'biology course adaptation'
         files.append({'source_path': source_path, 'source_sha256': source_hash, 'destination': relative,
                       'destination_sha256': sha(destination), 'change_reason': reason})

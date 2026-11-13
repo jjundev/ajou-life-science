@@ -1,12 +1,11 @@
 """Exercise desktop defaults, breakpoint transitions and saved panel intent."""
-import functools
-import http.server
 import threading
 
 import pytest
 from playwright.sync_api import sync_playwright, expect
 from helpers import acceptance_pack
 from mpe_render import build_explanation
+from mpe_browser import preview_server
 from mpe_shared import parse, outer
 
 
@@ -19,14 +18,10 @@ def panel_page_url(tmp_path, request):
                 text = text.replace(outer(node), '')
             fragments[key] = text
     artifacts = build_explanation(pack, fragments, tmp_path / "stage", tmp_path / "repo")
-    class QuietHandler(http.server.SimpleHTTPRequestHandler):
-        def log_message(self, *args):
-            pass
-    server = http.server.ThreadingHTTPServer(
-        ("127.0.0.1", 0), functools.partial(QuietHandler, directory=str(tmp_path)))
+    server, path = preview_server(artifacts, tmp_path / "repo", pack.path.parent)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
-    yield f"http://127.0.0.1:{server.server_port}/stage/{artifacts.html.name}#p3"
+    yield f"http://127.0.0.1:{server.server_port}/{path}#p3"
     server.shutdown()
     thread.join()
     server.server_close()

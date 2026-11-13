@@ -120,7 +120,8 @@ def test_tampered_output_detected(tmp_path):
     assert check_artifacts(pack,result)
 
 def test_vendor_files_and_hashes_present():
-    vendor=Path(__file__).resolve().parents[1]/'assets/vendor'
+    from bio_web_assets import REPO, SHARED_DIR
+    vendor = REPO / SHARED_DIR
     manifest=json.loads((vendor/'provenance.json').read_text())
     for name,digest in manifest['files'].items(): assert sha256(vendor/name)==digest
     for css in vendor.rglob('*.css'):
@@ -220,7 +221,7 @@ def test_review_outputs_go_under_assets(tmp_path):
     art=build_explanation(pack,fragments,stage,tmp_path/'repo')
     assert check_artifacts(pack,art)==[]
     html=art.html.read_text(encoding='utf-8')
-    assert 'href=".assets/자료_문제설명_' in html and '/vendor/katex/katex.min.css' in html
+    assert 'href="../_shared/' in html and '/katex/katex.min.css' in html
     assert art.html.parent==stage and art.md.parent==stage/'.assets'
     md=unquote(art.md.read_text(encoding='utf-8'))
     assert '](.assets/' not in md

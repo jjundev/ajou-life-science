@@ -39,14 +39,15 @@ def assert_exam_fresh(pack):
     except (OSError,ValueError,KeyError) as exc:raise ExplainError('시험 입력 재추출 필요: '+str(exc)) from exc
 
 def load_exam_source(path,repo):
-    path=inside(existing_path(Path(path)),Path(repo))
+    repo = Path(repo).resolve()
+    path=inside(existing_path(Path(path)),repo)
     if not re.fullmatch(FILENAME_RE,nfc(path.name)):raise ExplainError('시험 파일명 오류')
     checker,sources=exam_api()
     try:
         errors=checker.check_set(path,require_reviews=True)
         if errors:raise ExplainError('시험 입력 재추출 필요: '+' / '.join(errors))
         actual_repo,src=checker.locate(path)
-        if actual_repo.resolve()!=Path(repo).resolve():raise ExplainError('시험 저장소 경로 불일치')
+        if actual_repo.resolve()!=repo:raise ExplainError('시험 저장소 경로 불일치')
         pack=json.loads((src/'pack.json').read_text(encoding='utf-8'))
         root=parse(path.read_text(encoding='utf-8'));cards={n.attrs['id']:n for n in root.find_all(lambda n:n.tag=='article' and 'card' in n.classes)}
         problems=[]
@@ -65,6 +66,7 @@ def load_exam_source(path,repo):
         # Bind authored cards and copied visual assets too.
         for folder in ('cards','assets','vendor'):
             if (src/folder).exists():files.extend(p for p in (src/folder).rglob('*') if p.is_file())
+        files += [repo / name for name in checker.exam_shared_files(repo, path)]
         contexts=tuple(sorted({(str(p),sha256(p)) for p in files}))
         return SourcePack('exam',pack['range'],f'시험예상_v{pack["version"]}',path,sha256(path),tuple(problems),contexts)
     except (OSError,ValueError,KeyError,TypeError,StopIteration) as exc:

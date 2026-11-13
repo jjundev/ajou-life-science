@@ -8,10 +8,11 @@ import re
 import shutil
 from pathlib import Path
 from exam_contract import ExamError,Scope,digest,validate_pack
-from exam_sources import ROOT,sha,local,snapshot,assert_fresh
+from exam_sources import ROOT,sha,local,snapshot,assert_fresh,_module
 from exam_selection import TARGETS,selection_report
 
 ASSETS=Path(__file__).resolve().parents[1]/'assets'
+web_assets = _module('bio_web_assets', ROOT/'.agents/skills/bio-problem-explain/scripts/bio_web_assets.py')
 BINDINGS=('pack.json','blueprint.md','scope.json','source-manifest.json','policy-notes.md','candidates.json','selection-report.md')
 REVIEW_NAMES=('source_visual','content_scope_style','independent','browser')
 @lru_cache(maxsize=1)
@@ -54,13 +55,31 @@ def write_pack(src,selection,scope_data,manifest,policy_notes,policy_summary):
  (src/'policy-notes.md').write_text(policy_notes,encoding='utf-8');(src/'blueprint.md').write_text(blueprint(pack),encoding='utf-8');(src/'selection-report.md').write_text(selection_report(selection),encoding='utf-8')
  return pack
 
+def exam_shared_files(repo, question):
+    """Resolve the bundle declared by a new exam; legacy exams bind their pack vendor."""
+    from urllib.parse import unquote
+    from exam_dom import parse
+
+    question = Path(question)
+    links = parse(question.read_text(encoding='utf-8')).find_all(
+        lambda node: node.tag == 'link' and node.attrs.get('href', '').endswith('/pretendard.css'))
+    for link in links:
+        path = (question.parent / unquote(link.attrs['href'])).resolve()
+        if path.is_relative_to((repo / web_assets.SHARED_DIR.parent).resolve()):
+            bundle = path.parents[1].relative_to(repo.resolve())
+            return web_assets.verified_files(repo, bundle)
+    return {}
+
+
 def question_input_hash(src,question):
  src=Path(src);files=[src/name for name in BINDINGS]+[Path(question)]
  from exam_presentations import pair_paths
  files += [p for p in pair_paths(src) if p not in files]
  for folder in ('cards','vendor','assets'):
   if (src/folder).exists():files+=sorted(p for p in (src/folder).rglob('*') if p.is_file())
- return digest([(os.path.relpath(p,src),sha(p)) for p in files])
+ rows = [(os.path.relpath(p,src),sha(p)) for p in files]
+ rows += [('shared:' + name, value) for name, value in exam_shared_files(src.parents[3], question).items()]
+ return digest(rows)
 
 def initial_question_review(src,question):
  review=dict(input_hash=question_input_hash(src,question),reviews={k:dict(status='not_run',reviewer='',evidence='',items={}) for k in REVIEW_NAMES})
@@ -114,6 +133,10 @@ def render_exam(repo,src):
  errors=validate_pack(pack)
  if errors:raise ExamError('\n'.join(errors))
  assert_fresh(repo,manifest)
+ try:
+  web_assets.verified_files(repo)
+ except ValueError as exc:
+  raise ExamError(str(exc)) from exc
  # Include agent-added evidence, including topic evidence and source/style refs.
  refs=[r for p in pack['problems'] for field in ('source_refs','style_basis') for r in p[field]]
  refs += [r for t in pack['scope_data']['topics'] for r in t['evidence']]
@@ -125,10 +148,8 @@ def render_exam(repo,src):
  for p in pack['problems']:
   card=card_html(repo,src,p,manifest);(src/'cards'/f'{p["id"]}.html').write_text(card,encoding='utf-8');content.append(card)
  dump(src/'source-manifest.json',manifest)
- vendor=ROOT/'.agents/skills/bio-problem-explain/assets/vendor'
- shutil.copytree(vendor,src/'vendor',dirs_exist_ok=True)
  template=(ROOT/'.agents/skills/bio-review-pack/assets/review-template.html').read_text(encoding='utf-8')
- vendor_url=f'.pack/{src.name}/vendor'
+ vendor_url=web_assets.asset_url(repo,src.parent.parent)
  template=re.sub(r'https://cdn.jsdelivr.net/npm/pretendard@[^" ]+/dist/web/static/pretendard.css',vendor_url+'/pretendard/pretendard.css',template)
  template=re.sub(r'https://cdn.jsdelivr.net/npm/katex@[^" ]+/dist/',vendor_url+'/katex/',template)
  template=template.replace('data-panels="review"','data-panels="exam"')

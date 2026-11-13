@@ -133,3 +133,24 @@ def test_republish_preserves_pack_files(tmp_path):
     assert record.read_bytes() == b'{"a": 1}'
     assert (folder / artifacts.html.name).read_bytes() != first
     assert [p.read_bytes() for p in (tmp_path / 'backup2').rglob('*-' + artifacts.html.name)] == [first]
+
+
+def test_publish_uses_shared_fonts_without_copying_them(tmp_path):
+    from urllib.parse import unquote
+    from mpe_shared import parse
+
+    pack, fragments, artifacts = setup(tmp_path)
+    assert not any(p.suffix in {'.woff2', '.woff', '.ttf'} for p in artifacts.files)
+    reviews = approved(pack, fragments, artifacts)
+    publish_explanation(pack, artifacts, fragments, reviews, pack.path.parent, tmp_path / 'backup')
+
+    page = pack.path.parent / artifacts.html.name
+    style = next(n.attrs['href'] for n in parse(page.read_text()).find_all(
+        lambda n: n.tag == 'link' and n.attrs.get('href', '').endswith('pretendard.css')))
+    css = (page.parent / unquote(style)).resolve()
+    assert css.is_relative_to(tmp_path / 'repo/복습노트/_shared') and css.is_file()
+
+    font = css.parent / 'woff2/Pretendard-Regular.woff2'
+    font.write_bytes(b'changed after review')
+    with pytest.raises(ExplainError, match='공용 자원.*Pretendard-Regular'):
+        publish_explanation(pack, artifacts, fragments, reviews, pack.path.parent, tmp_path / 'backup')

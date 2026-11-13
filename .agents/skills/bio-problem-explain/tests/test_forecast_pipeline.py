@@ -186,7 +186,8 @@ def test_forecast_side_files_live_in_pack(tmp_path):
     assert artifacts.md.parent == root / '.pack'
     assert not (root / '.assets').exists()
     html = artifacts.html.read_text(encoding='utf-8')
-    assert 'href=".pack/자료_문제해설_4장_웹과제예상_v5/vendor/katex/katex.min.css"' in html
+    assert 'href="../../복습노트/_shared/' in unquote(html)
+    assert '/katex/katex.min.css"' in html
     md = artifacts.md.read_text(encoding='utf-8')
     assert '](.pack/' not in md
     for target in re.findall(r'\]\((\.\./[^)]+)\)', md):

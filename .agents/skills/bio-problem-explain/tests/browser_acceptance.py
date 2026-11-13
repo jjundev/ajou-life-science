@@ -1,13 +1,15 @@
 """Run synthetic browser acceptance: python browser_acceptance.py EMPTY_SCRATCH."""
-import sys,json,threading,http.server,functools
+import sys,json,threading
 from pathlib import Path
 SKILL=Path(__file__).resolve().parents[1]
 sys.path[:0]=[str(SKILL/'scripts'),str(SKILL/'tests')]
-from helpers import acceptance_pack
+from helpers import acceptance_pack, install_shared_assets
+from mpe_browser import preview_server
 from mpe_render import build_explanation,check_artifacts
 from playwright.sync_api import sync_playwright
 root=Path(sys.argv[1]).resolve();root.mkdir(parents=True,exist_ok=True)
 if any(root.iterdir()): raise SystemExit('acceptance scratch must be empty')
+install_shared_assets(root/'repo')
 pack,fragments=acceptance_pack(root/'repo')
 import shutil
 shutil.rmtree(root/'stage',ignore_errors=True)
@@ -16,11 +18,10 @@ assert check_artifacts(pack,art)==[]
 # p4 stands in for a forecast problem without an original (review sources always carry one)
 import re
 art.html.write_text(re.sub(r'<details class="original" data-original-problem="p4">.*?</details>','',art.html.read_text(),count=1,flags=re.S))
-class Handler(http.server.SimpleHTTPRequestHandler):
- def log_message(self,*args):pass
-server=http.server.ThreadingHTTPServer(('127.0.0.1',0),functools.partial(Handler,directory=str(root)))
-threading.Thread(target=server.serve_forever,daemon=True).start();port=server.server_port
-url=f'http://127.0.0.1:{port}/stage/{art.html.name}'
+server, page_path = preview_server(art, root/'repo', pack.path.parent)
+threading.Thread(target=server.serve_forever, daemon=True).start()
+port = server.server_port
+url = f'http://127.0.0.1:{port}/{page_path}'
 results=[]
 with sync_playwright() as pw:
  browser=pw.chromium.launch()

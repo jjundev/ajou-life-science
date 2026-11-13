@@ -53,7 +53,9 @@ def render_practice(exam, pack):
     template = (REVIEW / 'assets/review-template.html').read_text(encoding='utf-8')
     # Match the locally bundled resources already selected by the exam renderer.
     head = exam.split('</head>', 1)[0]
-    for url in re.findall(r'(?:href|src)="([^"]*\.pack/[^\"]+)"', head):
+    for url in re.findall(r'(?:href|src)="([^"]+)"', head):
+        if '://' in url or url.startswith('//'):
+            continue
         if '/pretendard/' in url:
             template = re.sub(r'https://cdn.jsdelivr.net/npm/pretendard@[^" ]+/dist/web/static/pretendard.css', url, template)
         elif '/katex/' in url:

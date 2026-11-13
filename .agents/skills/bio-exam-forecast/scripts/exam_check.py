@@ -6,7 +6,7 @@ from pathlib import Path
 from urllib.parse import unquote,urlsplit
 from exam_contract import ExamError,Scope,validate_pack,payload
 from exam_sources import assert_fresh,sha,local,web_candidates
-from exam_build import load,blueprint,question_input_hash,initial_question_review,REVIEW_NAMES,BINDINGS,card_html
+from exam_build import load,blueprint,question_input_hash,initial_question_review,REVIEW_NAMES,BINDINGS,card_html,exam_shared_files
 from exam_selection import allocate_quotas
 from exam_dom import parse,inner,outer
 
@@ -83,6 +83,8 @@ def check_set(html,*,require_reviews=False):
    bankcs,_=web_candidates(repo,Scope(tuple(pack['scope'])));bankby={c['id']:c for c in bankcs}
    for p in pack['problems']:
     if p['origin']=='web' and p['mode']=='original' and payload(p)!=payload(bankby.get(p['candidate_id'],{})):errors.append('은행 원문 불일치: '+p['id'])
+  if not require_reviews:
+   exam_shared_files(repo, html)
   if require_reviews:
    review=load(src/'question-review.json')
    if review.get('input_hash')!=question_input_hash(src,html):errors.append('검토 입력 해시 변경')

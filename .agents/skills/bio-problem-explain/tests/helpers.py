@@ -1,6 +1,11 @@
 import json
 from pathlib import Path
+from shutil import copytree
+from bio_web_assets import REPO, SHARED_DIR
 from mpe_types import Problem, SourcePack
+
+def install_shared_assets(repo):
+    copytree(REPO / SHARED_DIR, repo / SHARED_DIR)
 
 def problem():
     return Problem('p1', 1, '행렬', 'HW1 Problem 1', '<p>Find (a), (b).</p>',

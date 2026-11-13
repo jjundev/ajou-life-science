@@ -389,7 +389,13 @@ class TestReviewBrowser(unittest.TestCase):
         self.assertIn('[그림: ' + found['alt'] + ']', block)
 
     def test_prompt_keeps_math_as_tex(self):
-        vendor = REPO / '.agents/skills/bio-problem-explain/assets/vendor/katex'
+        from importlib.util import module_from_spec, spec_from_file_location
+
+        helper = REPO / '.agents/skills/bio-problem-explain/scripts/bio_web_assets.py'
+        spec = spec_from_file_location('bio_web_assets', helper)
+        web_assets = module_from_spec(spec)
+        spec.loader.exec_module(web_assets)
+        vendor = REPO / web_assets.SHARED_DIR / 'katex'
         def serve(route):
             local = vendor / route.request.url.split('/dist/', 1)[1].split('?', 1)[0]
             if local.is_file():

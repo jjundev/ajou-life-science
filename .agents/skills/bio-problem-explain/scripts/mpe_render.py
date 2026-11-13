@@ -8,6 +8,7 @@ import shutil
 from collections import Counter
 from pathlib import Path
 from urllib.parse import unquote, urlsplit, quote
+from bio_web_assets import SHARED_DIR, asset_url, verified_files
 from mpe_contract import validate_fragment, payload_hash, markup_errors
 from mpe_citations import clean_explanation_citations
 from mpe_shared import Node, parse, inner, outer, compact, Ctx, convert, check_md, SIDE, PACK, rebase_md
@@ -153,6 +154,10 @@ def build_explanation(pack, fragments, stage: Path, repo: Path) -> Artifacts:
     errors = [e for p in pack.problems for e in validate_fragment(p, fragments[p.id])]
     if errors:
         raise ExplainError(' / '.join(errors))
+    try:
+        shared_assets = verified_files(repo)
+    except ValueError as exc:
+        raise ExplainError(str(exc)) from exc
     stage.mkdir(parents=True, exist_ok=True)
     stem, fig_name, data_name = names(pack)
     side = side_of(pack)
@@ -161,7 +166,6 @@ def build_explanation(pack, fragments, stage: Path, repo: Path) -> Artifacts:
     data_dir = stage / data_name
     data_dir.mkdir(parents=True)
     (stage / fig_name).mkdir(parents=True)
-    shutil.copytree(ASSETS / 'vendor', data_dir / 'vendor')
     shutil.copy2(ASSETS / 'template-provenance.json', data_dir / 'template-provenance.json')
     articles = []
     toc = []
@@ -212,7 +216,7 @@ def build_explanation(pack, fragments, stage: Path, repo: Path) -> Artifacts:
               'FOOTER': '원 문제·정리노트·PDF는 보존해요.',
               'SCRIPTS': ('<script type="application/json" id="explain-choice-model">'
                           + json.dumps(choices, ensure_ascii=False).replace('</', '<\\/') + '</script>'),
-              'RANGE': f'bio-problem-explain-{pack.profile}-{pack.range}-{pack.slug}', 'VENDOR': data_name + '/vendor'}
+              'RANGE': f'bio-problem-explain-{pack.profile}-{pack.range}-{pack.slug}', 'VENDOR': asset_url(repo, pack.path.parent)}
     text = (ASSETS / 'note-template.html').read_text(encoding='utf-8')
     for key, value in values.items():
         text = text.replace('{{' + key + '}}', value)
@@ -232,6 +236,7 @@ def build_explanation(pack, fragments, stage: Path, repo: Path) -> Artifacts:
                          'input_hash': payload_hash(pack, fragments), 'reading_key': values['RANGE'],
                          'destination': str(pack.path.parent), 'repo': str(repo.resolve()),
                          'problems': [{'id': p.id, 'subparts': list(p.subparts)} for p in pack.problems],
+                         'shared_assets': {'directory': SHARED_DIR.as_posix(), 'files': shared_assets},
                          'files': {p.relative_to(stage).as_posix(): sha256(p) for p in files}})
     return Artifacts(html_path, md_path, manifest_path, tuple(sorted((*files, manifest_path))))
 
@@ -260,6 +265,14 @@ def check_artifacts(pack, artifacts):
             file = root / name
             if not file.resolve().is_relative_to(root) or not file.is_file() or sha256(file) != digest:
                 errors.append('생성 파일 변경/누락: ' + name)
+        repo = Path(manifest['repo'])
+        destination = pack.path.parent
+        shared_assets = manifest.get('shared_assets')
+        if shared_assets is not None:
+            shared_dir = Path(shared_assets['directory'])
+            if shared_assets['files'] != verified_files(repo, shared_dir):
+                errors.append('공용 자원 검토 해시 변경')
+            shared_root = (repo / shared_dir).resolve()
         document = parse(artifacts.html.read_text(encoding='utf-8'))
         main = next(document.find_all(lambda n: n.tag == 'main'))
         # Side-folder MD (review .assets, forecast .pack) drops that prefix from image paths.
@@ -308,7 +321,15 @@ def check_artifacts(pack, artifacts):
                 continue
             path = root / unquote(url.path)
             if node.tag == 'a':
-                path = Path(manifest['destination']) / unquote(url.path)
+                path = destination / unquote(url.path)
+            elif shared_assets is not None and node.tag in ('link', 'script'):
+                path = (destination / unquote(url.path)).resolve()
+                if not path.is_relative_to(shared_root):
+                    errors.append('공용 자원 경로 불일치: ' + href)
+                    continue
+                if (shared_dir / path.relative_to(shared_root)).as_posix() not in shared_assets['files']:
+                    errors.append('기록에 없는 공용 자원: ' + href)
+                    continue
             if not path.is_file():
                 errors.append('자원 없음: ' + href)
             elif node.tag == 'a' and url.fragment:

@@ -18,6 +18,7 @@ import json
 from pathlib import Path
 import re
 import threading
+import unicodedata
 from urllib.parse import quote, unquote, urlsplit
 
 VIEWPORTS = [(1280, 900), (1024, 768), (375, 812)]
@@ -31,6 +32,40 @@ HREF_RE = re.compile(r'<a\b[^>]*\bhref="([^"]+)"', re.I)
 class Quiet(SimpleHTTPRequestHandler):
     def log_message(self, *args):
         pass
+
+
+def preview_server(artifacts, repo, destination):
+    """Expose the stage at its eventual URL, plus the pinned shared files."""
+    stage = artifacts.html.parent.resolve()
+    manifest = json.loads(artifacts.manifest.read_text(encoding='utf-8'))
+    if 'shared_assets' not in manifest:
+        server = ThreadingHTTPServer(('127.0.0.1', 0), partial(Quiet, directory=str(stage)))
+        return server, quote(artifacts.html.name)
+
+    publish_path = destination.resolve().relative_to(repo.resolve())
+    prefix = Path(unicodedata.normalize('NFC', publish_path.as_posix()))
+    shared_dir = Path(manifest['shared_assets']['directory'])
+    shared = (repo / shared_dir).resolve()
+    shared_files = manifest['shared_assets']['files']
+
+    class Preview(Quiet):
+        def translate_path(self, url):
+            relative = Path(unquote(urlsplit(url).path).lstrip('/'))
+            if '..' in relative.parts:
+                return ''
+            if relative.is_relative_to(shared_dir):
+                root, tail = shared, relative.relative_to(shared_dir)
+                if relative.as_posix() not in shared_files:
+                    return ''
+            elif relative.is_relative_to(prefix):
+                root, tail = stage, relative.relative_to(prefix)
+            else:
+                return ''
+            path = (root / tail).resolve()
+            return str(path) if path.is_relative_to(root) and path.is_file() else ''
+
+    server = ThreadingHTTPServer(('127.0.0.1', 0), Preview)
+    return server, quote(unicodedata.normalize('NFC', (publish_path / artifacts.html.name).as_posix()))
 
 
 def link_problems(html_text, publish_dir, stage_dir):
@@ -61,8 +96,13 @@ def run_browser(item, shots=False):
     from playwright.sync_api import sync_playwright
     from mpe_cli import load_artifacts, load_fragments, sync_evidence, read_json
     from mpe_source import sha256
+    from mpe_render import check_artifacts
+    from mpe_types import ExplainError
     pack, folder = item['pack'], item['folder']
     artifacts = load_artifacts(item)
+    errors = check_artifacts(pack, artifacts)
+    if errors:
+        raise ExplainError(' / '.join(errors))
     stage = artifacts.html.parent
     html_text = artifacts.html.read_text(encoding='utf-8')
     model_match = re.search(r'<script[^>]*id="explain-choice-model"[^>]*>(.*?)</script>', html_text, re.S)
@@ -72,10 +112,10 @@ def run_browser(item, shots=False):
     failures, runs = [], []
     links, link_count = link_problems(html_text, pack.path.parent, stage)
     failures += links
-    server = ThreadingHTTPServer(('127.0.0.1', 0), partial(Quiet, directory=str(stage)))
+    server, page_path = preview_server(artifacts, item['repo'], pack.path.parent)
     threading.Thread(target=server.serve_forever, daemon=True).start()
     origin = f'http://127.0.0.1:{server.server_port}/'
-    url = origin + quote(artifacts.html.name)
+    url = origin + page_path
     shot_dir = folder / 'browser-shots'
     try:
         with sync_playwright() as pw:
