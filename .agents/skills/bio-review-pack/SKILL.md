@@ -165,6 +165,7 @@ python3 "$SKILL/scripts/check_html.py" --manifest "$RUN/manifest.json" --note "$
 
 ### 6. 리뷰
 - **본문–요약 전수 대조(항상, lite 포함):** `references/content-rules.md`의 같은 이름 절과 `references/review-prompt.md`를 따른다. 일반 본문·교수님 강조·보충의 핵심 주장마다 대응하는 요약 문장을 `RUN/summary-audit.md`에 기록한다. 개념·인과·성립 조건·오개념 구분의 누락을 수정·재검토하며, 생략 가능한 비유·반복은 이유를 남긴다. 본문이나 요약을 수정하면 해당 행도 다시 대조한다. 최종 감사표를 재조립으로 `.pack/summary-audit.md`에 보존한다. 용어 설명을 읽기 전 첫 문장만 따로 읽고 대상·핵심 관계·비교 대상의 누락을 검토한다. 학습 토픽별 `첫 문장 검토` 행(핵심 관계·차이 / 실제 첫 문장 / 판정과 이유)을 기존 감사표에 추가하고 수정 후 재검토한다. 구조·문장 반복 검사 통과와 첫 문장·전체 요약 의미 검토 완료를 구별해 보고한다.
+- **본문 밀도 검토(항상, lite 포함):** `references/review-prompt.md`의 같은 이름 절대로 펼쳐진 본문의 중복, 문단으로 풀린 비교·과정, warn 표에 빠진 혼동 지점, 접힘에 묻힌 강조 발언을 토픽마다 확인해 섹션 작성자에게 되돌린다.
 - 카드 검사와 별도로 `references/review-prompt.md`의 **본문 피드백 검토 (항상, lite 포함)**를 수행한다. `RUN/note-feedback-audit.md`의 전체 ID를 본문 문장과 대조하고, 누락은 섹션을 고쳐 재조립·재검사한다. 완료 후 최종 감사표를 `.pack/`에 저장한다. 원본 채점 미확인은 그대로 유지한다.
 - 브리프는 `references/review-prompt.md`에 있다. 두 리뷰어를 한 메시지에서 병렬로 띄운다.
   - **블라인드 풀이 검사**(항상, `lite` 포함): `references/review-prompt.md`의 "블라인드 풀이 검사" 스니펫으로 `RUN/work/blind-<range>.md`를 만든 뒤 리뷰어 1명에게 정리노트와 이 사본만 준다.

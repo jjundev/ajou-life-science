@@ -20,6 +20,15 @@ class TestNoteTemplate(unittest.TestCase):
     def test_brand_is_slot(self):
         self.assertIn('<strong class="brand">{{BRAND}}</strong>', self.text)
 
+    def test_body_format_styles(self):
+        for sel in ("table.compare", "table.pairs", "table.pairs del", ".define", "ol.chain > li + li::before",
+                    "details.more > summary", ".layer.prof > details > summary.layer-title"):
+            with self.subTest(sel=sel):
+                self.assertIn(sel, self.text)
+
+    def test_chain_arrow_is_hidden_from_screen_readers(self):
+        self.assertIn('content: "→" / "";', self.text)
+
     def test_preview_styles(self):
         for sel in (".layer.listen", ".layer.listen .layer-title", ".badge.exam"):
             with self.subTest(sel=sel):

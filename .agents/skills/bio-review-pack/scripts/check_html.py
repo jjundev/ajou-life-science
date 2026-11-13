@@ -2,7 +2,8 @@
 """
 정리노트/복습문제 HTML 검사기 (표준 라이브러리만 사용).
 
-- 공통 검사: lang, 중복 id, 외부 리소스 허용 목록, 수식 구분자, 링크, 남은 슬롯, 위젯 정적 대체물, 로컬 그림 파일, 용어 목록의 "용어" 라벨
+- 공통 검사: lang, 중복 id, 외부 리소스 허용 목록, 수식 구분자, 링크, 남은 슬롯, 위젯 정적 대체물, 로컬 그림 파일, 용어 목록의 "용어" 라벨,
+  토픽 본문의 함정 표(3열)·사슬(고리 2~5개)·접힘 제목
 - manifest 검사: 섹션·토픽 id, 필수 용어, 레이어, 보충 배지, 예고 밖 금지어, 링크, 문제 카드
 CLI:
   check_html.py FILE [FILE ...]
@@ -349,11 +350,39 @@ def supplement_summary_problems(source: str) -> list[Problem]:
     return out
 
 
+CHAIN_LINKS = (2, 5)
+
+
+def body_format_problems(source: str) -> list[Problem]:
+    """토픽 본문의 함정 표·사슬·접힘 마크업 모양을 검사한다. 내용 유형에 맞는 형식을 골랐는지는 검토자가 판단한다."""
+    from html2md import Builder, Node
+    tree = Builder()
+    tree.feed(source)
+    out = []
+    for topic in tree.root.find_all(lambda n: n.tag == 'article' and 'topic' in n.classes):
+        where = topic.attrs.get('id', 'topic')
+        for table in topic.find_all(lambda n: n.tag == 'table' and 'pairs' in n.classes):
+            rows = [[c for c in r.children if isinstance(c, Node) and c.tag in ('th', 'td')]
+                    for r in table.find_all(lambda n: n.tag == 'tr')]
+            if len(rows) < 2 or any(len(r) != 3 for r in rows) or any(c.tag != 'th' for c in rows[0]):
+                out.append(Problem('pairs-shape', where, '함정 표는 3열 머리행 + 한 행 이상이어야 함'))
+        for chain in topic.find_all(lambda n: n.tag == 'ol' and 'chain' in n.classes):
+            links = [c for c in chain.children if isinstance(c, Node) and c.tag == 'li']
+            if not CHAIN_LINKS[0] <= len(links) <= CHAIN_LINKS[1]:
+                out.append(Problem('chain-shape', where, f'사슬 고리 {len(links)}개 (2~5개, 더 길면 ol.steps)'))
+        for fold in topic.find_all(lambda n: n.tag == 'details'):
+            summaries = [c for c in fold.children if isinstance(c, Node) and c.tag == 'summary']
+            if not summaries or not summaries[0].text().strip():
+                out.append(Problem('fold-summary', where, '접힘에 제목(summary) 필요'))
+    return out
+
+
 def check_common(doc: Doc, source: str, path: Path) -> list[Problem]:
     name = Path(path).name
     out: list[Problem] = []
     out += page_summary_problems(source)
     out += supplement_summary_problems(source)
+    out += body_format_problems(source)
     if doc.lang != "ko":
         out.append(Problem("lang", name, f"<html lang> = {doc.lang!r}"))
     out += [Problem("duplicate-id", name, i) for i in sorted(doc.duplicate_ids)]
