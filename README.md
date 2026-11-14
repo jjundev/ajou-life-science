@@ -62,3 +62,5 @@ python3 scripts/split_textbook.py --src "교과서/생명과ᄒ�
 python3 -m unittest discover tests -v
 ```
 
+
+<!-- study-hub-rollout-probe-20261114 -->
