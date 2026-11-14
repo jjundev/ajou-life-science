@@ -201,6 +201,9 @@ def inline(node, ctx):
     if t in ("i", "em"):
         s = inner().strip()
         return f"*{s}*" if s else ""
+    if t == "del":
+        s = inner().strip()
+        return f"~~{s}~~" if s else ""
     if t == "code":
         return f"`{node.text()}`"
     if t in ("sub", "sup"):

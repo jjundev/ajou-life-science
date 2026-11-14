@@ -100,6 +100,25 @@
     ol.steps { padding-left: 1.4em; }
     ol.steps li { margin: var(--s2) 0; }
 
+    /* 본문 형식: 비교표 · 함정 표 · 한 줄 정의 · 사슬 · 접힘 */
+    table.compare, table.pairs { font-size: var(--fs-sub); }
+    table.compare { table-layout: fixed; }
+    table.compare th:first-child { width: 24%; }
+    table.compare tbody th, table.pairs tbody th { color: var(--ink); font-weight: 700; }
+    table.pairs del { color: var(--ink-2); }
+    .define { margin: var(--s3) 0; font-size: var(--fs-sub); color: var(--ink-2); }
+    .define strong, .define b { color: var(--ink); }
+    ol.chain { list-style: none; display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) 0; margin: var(--s3) 0 var(--s4); padding: 0; font-size: var(--fs-sub); }
+    ol.chain > li { position: relative; margin: 0; padding: var(--s2) var(--s3); border-radius: var(--radius); background: var(--surface); }
+    ol.chain > li + li { margin-left: var(--s5); }
+    ol.chain > li + li::before { content: "→"; content: "→" / ""; position: absolute; top: 50%; left: calc(-1 * var(--s5)); width: var(--s5); transform: translateY(-50%); text-align: center; color: var(--ink-2); }
+    details.more { margin-top: var(--s4); font-size: var(--fs-sub); }
+    details.more > summary, .layer.prof > details > summary { cursor: pointer; padding: var(--s1) 0; }
+    details.more > summary { font-weight: 700; color: var(--ink-2); }
+    details.more ul { padding-left: 1.2em; }
+    .layer.prof > details > summary.layer-title { display: list-item; margin-bottom: 0; }
+    .layer.prof > details[open] > summary.layer-title { margin-bottom: var(--s3); }
+
     /* 그림 · 수식 · 표 */
     .figure { margin: var(--s4) 0; text-align: center; }
     .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
@@ -379,15 +398,17 @@
       <text class="fig-text" x="300" y="98" font-size="13">긴 꼬리</text>
       <text class="fig-text" x="540" y="190" font-size="13">넘겨주는 끝</text>
       <text class="fig-muted" x="270" y="175" font-size="12">소식이 가는 쪽</text>
-    </svg><figcaption>소식은 받는 가지에서 들어와 꼬리 끝으로 나가요.</figcaption></figure>
+    </svg><figcaption>화살표를 따라 소식이 어디로 가는지 보세요.</figcaption></figure>
   </div>
   <div class="layer formal"><span class="layer-title">정확히 말하면</span>
-    <p>뉴런(neuron)은 크게 세 부분으로 나뉘어요.</p>
-    <ul>
-      <li><strong>수상돌기(dendrite)</strong>: 신호를 받아들이는 돌기예요. 고등학교 용어로는 가지돌기예요. 흥분성 입력의 한 예에서는 수상돌기 막의 채널을 통해 Na⁺가 들어와 국소 막전위가 바뀌어요. 그 변화가 세포체와 축삭 시작부에 영향을 줘요(자세한 과정은 <a href="#s2-action">활동전위: 탈분극·재분극·과분극</a>).</li>
-      <li><strong>세포체(cell body)</strong>: 핵과 미토콘드리아 같은 세포소기관이 있는 부분이에요. 핵은 세포체 안의 소기관이지, 신호를 받는 돌기가 아니에요.</li>
-      <li><strong>축삭(axon)</strong>: 신호가 빠져나가는 긴 돌기예요. 세포체가 축삭으로 좁아지는 곳이 <strong>축삭둔덕</strong>(axon hillock)이에요. 바로 이어지는 <strong>축삭 초기분절</strong>(axon initial segment)이 대표적인 활동전위 시작점이에요. 축삭 끝은 <strong>축삭말단</strong>(axon terminal)이에요.</li>
-    </ul>
+    <p class="define"><strong>뉴런(neuron)의 세 부분</strong></p>
+    <div class="table-wrap"><table class="compare">
+      <thead><tr><th scope="col"><span class="sr-only">비교 기준</span></th><th scope="col">수상돌기(dendrite)</th><th scope="col">세포체(cell body)</th><th scope="col">축삭(axon)</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">모양·구조</th><td>가지돌기</td><td>핵·미토콘드리아 등 세포소기관</td><td>세포체에서 이어지는 긴 돌기</td></tr>
+        <tr><th scope="row">신호에서 하는 일</th><td>시냅스 입력을 받음</td><td>여러 입력을 합침</td><td>활동전위를 말단까지 전도</td></tr>
+      </tbody>
+    </table></div>
     <figure class="figure"><svg id="fig-neuron-parts" viewBox="0 0 660 230" role="img" aria-label="수상돌기, 세포체와 그 안의 핵, 축삭둔덕, 축삭 초기분절, 축삭, 축삭말단을 이름표로 표시하고 신호 방향을 화살표 선으로 나타낸 뉴런 구조도">
       <g class="fig-ink">
         <line x1="40" y1="65" x2="112" y2="102"/><line x1="30" y1="112" x2="106" y2="112"/><line x1="40" y1="165" x2="112" y2="124"/>
@@ -410,22 +431,19 @@
       <text class="fig-text" x="330" y="100" font-size="13">축삭</text>
       <text class="fig-text" x="560" y="190" font-size="13">축삭말단</text>
       <text class="fig-muted" x="250" y="200" font-size="12">신호가 가는 방향</text>
-    </svg><figcaption>테두리 원이 세포체, 그 안의 색칠된 점이 핵이에요. 신호는 수상돌기에서 축삭말단 쪽으로 가요.</figcaption></figure>
-    <p>한 뉴런 안에서 신호가 가는 순서는 이렇게 정해져 있어요.</p>
-    <ol class="steps">
-      <li>수상돌기가 신호를 받아요.</li>
-      <li>신호가 세포체를 거쳐요.</li>
-      <li>수상돌기와 세포체의 입력이 합쳐져 축삭 초기분절이 역치에 닿으면 활동전위가 생겨요.</li>
-      <li>활동전위가 축삭을 따라 이동해요.</li>
-      <li>축삭말단에서 다음 세포로 신호를 넘겨요(<a href="#s3-synapse-types">시냅스: 화학적 시냅스와 전기적 시냅스</a>).</li>
-    </ol>
-    <p>뉴런은 기능에 따라 세 가지로 나뉘어요.</p>
-    <ul>
-      <li><strong>구심성 뉴런</strong>(afferent neuron) = 감각뉴런(sensory neuron): 감각을 받아들여 신호를 안쪽(중심)으로 들여보내는 뉴런이에요.</li>
-      <li><strong>원심성 뉴런</strong>(efferent neuron) = 운동뉴런(motor neuron): 근육세포로 신호를 내보내는, 중심에서 멀어지는 쪽 뉴런이에요.</li>
-      <li><strong>연합뉴런</strong>(interneuron): 구심성 뉴런과 원심성 뉴런 사이에서 정보를 통합해요.</li>
-    </ul>
-    <p>그래서 정보는 감각을 받아들인 구심성 뉴런에서 그 사이의 연합뉴런을 거쳐, 근육으로 내보내는 원심성 뉴런 순서로 흘러요.</p>
+    </svg><figcaption>테두리 원이 세포체, 그 안의 색칠된 점이 핵이에요.</figcaption></figure>
+    <p>흥분성 입력에서 수상돌기 막의 채널로 Na⁺가 들어오면 그 자리의 막전위가 올라가요. 이 국소 변화는 다른 수상돌기와 세포체의 입력과 합쳐질 수 있어요.</p>
+    <ol class="chain"><li>수상돌기 입력</li><li>세포체를 거친 신호</li><li>역치 도달 시 축삭 초기분절 발화</li><li>축삭 전도</li><li>축삭말단에서 다음 세포로 전달</li></ol>
+    <p class="define"><strong>축삭둔덕(axon hillock)</strong> = 세포체가 축삭으로 좁아지는 부위</p>
+    <p class="define"><strong>축삭말단(axon terminal)</strong> = 다음 세포로 신호를 넘기는 축삭 끝</p>
+    <p class="define"><strong>기능에 따른 세 뉴런</strong></p>
+    <div class="table-wrap"><table class="compare">
+      <thead><tr><th scope="col"><span class="sr-only">비교 기준</span></th><th scope="col">구심성 뉴런(afferent neuron)</th><th scope="col">연합뉴런(interneuron)</th><th scope="col">원심성 뉴런(efferent neuron)</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">수업 용어</th><td>감각뉴런(sensory neuron)</td><td>연합뉴런</td><td>운동뉴런(motor neuron)</td></tr>
+        <tr><th scope="row">방향과 역할</th><td>감각 입력을 중심으로</td><td>두 뉴런 사이에서 정보 통합</td><td>중심에서 근육세포로</td></tr>
+      </tbody>
+    </table></div>
     <figure class="figure"><svg id="fig-neuron-flow" viewBox="0 0 660 120" role="img" aria-label="감각에서 구심성 뉴런, 연합뉴런, 원심성 뉴런을 거쳐 근육으로 신호가 가는 세 칸 흐름도">
       <g class="fig-ink">
         <rect x="90" y="35" width="140" height="50" rx="8"/>
@@ -447,26 +465,30 @@
       <text class="fig-text" x="612" y="64" font-size="13">근육</text>
       <text class="fig-muted" x="120" y="108" font-size="12">들어가는 쪽</text>
       <text class="fig-muted" x="445" y="108" font-size="12">내보내는 쪽</text>
-    </svg><figcaption>테두리 상자 세 개가 기능에 따른 세 종류예요. 감각 신호는 구심성 뉴런으로 들어가 연합뉴런을 거쳐 원심성 뉴런으로 근육에 나가요.</figcaption></figure>
-    <p>영어 이름도 같은 방향으로 읽어요. 구심성 뉴런(afferent neuron)은 중심으로 들어가는 쪽, 원심성 뉴런(efferent neuron)은 중심에서 멀어지는 쪽이에요.</p>
+    </svg><figcaption>테두리 상자 하나가 뉴런의 한 종류를 나타내요.</figcaption></figure>
+    <p>암기법(교수님). 구심력의 “구심”은 중심으로 들어가는 방향이에요.</p>
+    <details class="more"><summary>더 자세히</summary>
+      <p>관련 개념은 <a href="#s2-action">활동전위: 탈분극·재분극·과분극</a>과 <a href="#s3-synapse-types">시냅스: 화학적 시냅스와 전기적 시냅스</a>에서 이어져요.</p>
+    </details>
   </div>
 <!-- bio-comic:v2:0713bc29a807f3893a976d8b3e9c35a25c9ec2096207d94d0a782554b0ff459a -->
 <p class="comic-note" data-bio-comic="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s0-neuron">신호를 받는 수상돌기와 활동전위가 시작되는 축삭 시작부를 구별하려면 <a href="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s0-neuron" target="_self">학습만화</a>를 펼쳐 보세요.</p>
 <!-- /bio-comic -->
 
-  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
-    <p>교수님은 구심성과 원심성을 물리의 구심력·원심력에 빗대어 정리했어요. 구심력은 중심으로 들어가는 쪽이라 감각뉴런이 구심성이고, 멀어지는 쪽이 원심성이에요.</p>
+  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
     <blockquote>구심력이 들어가는 쪽이잖아. 그래서 감각뉴런을 구심성 뉴런.</blockquote>
-    <p>수상돌기는 고등학교에서 배운 가지돌기와 같은 부위라고 짚었어요.</p>
-  </div>
+  </details></div>
   <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
-    <ul>
-      <li>구심성과 원심성 중 어느 쪽이 감각인지 뒤바꾸기 쉬워요. 구심력처럼 들어가는 쪽이 구심성 뉴런 = 감각뉴런이고, 멀어지는 쪽이 원심성 뉴런 = 운동뉴런(근육으로 내보냄)이에요. 연합뉴런은 그 둘 사이에 있어요.</li>
-      <li>신호를 받는 부위를 축삭이나 세포체로 착각하기 쉬워요. 이온 흐름으로 생긴 전기신호를 받는 안테나는 수상돌기이고, 축삭은 신호를 내보내는 길이에요.</li>
-      <li>핵을 신호 받는 부위로 고르지 마세요. 핵은 세포체 안에 있는 세포소기관이에요.</li>
-      <li>강의노트의 영어 표기 "dentrite"는 철자 오류이고, 바른 표기는 dendrite예요.</li>
-      <li>축삭둔덕은 세포체와 축삭이 이어지는 부위예요. 활동전위는 보통 둔덕 바로 다음의 축삭 초기분절에서 시작해요. 축삭말단은 다음 세포로 신호를 넘기는 끝이에요.</li>
-    </ul>
+    <div class="table-wrap"><table class="pairs">
+      <thead><tr><th scope="col">묻는 것</th><th scope="col">틀리기 쉬운 답</th><th scope="col">맞는 답</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">감각을 중심으로 들여보내는 뉴런</th><td><del>원심성 뉴런</del></td><td>구심성 뉴런</td></tr>
+        <tr><th scope="row">시냅스 입력을 받는 가지</th><td><del>축삭 또는 세포체</del></td><td>수상돌기</td></tr>
+        <tr><th scope="row">핵은 어떤 부분인가요?</th><td><del>입력 신호를 받는 돌기</del></td><td>세포체 안의 소기관</td></tr>
+        <tr><th scope="row">대표적인 활동전위 시작점</th><td><del>축삭둔덕 또는 축삭말단</del></td><td>둔덕에 바로 이어지는 축삭 초기분절(axon initial segment)</td></tr>
+        <tr><th scope="row">수상돌기의 영어 표기</th><td><del>dentrite</del></td><td>dendrite</td></tr>
+      </tbody>
+    </table></div>
   </div>
   <div class="sum" hidden>
     <p class="sum-lead">뉴런 안에서 신호는 수상돌기로 들어와 세포체를 지나 축삭으로 나가고, 기능으로는 신호를 들여보내는 구심성, 내보내는 원심성, 그 사이의 연합뉴런으로 나눠요.</p>
@@ -499,25 +521,23 @@
       <text class="fig-text" x="210" y="65" font-size="13">담요처럼 감싼 도우미 세포</text>
       <text class="fig-text" x="250" y="150" font-size="13">감싸지 않은 틈(동그라미 선)</text>
       <text class="fig-text" x="160" y="190" font-size="13">받쳐 주는 별 모양 도우미</text>
-    </svg><figcaption>어떤 도우미는 긴 꼬리를 담요처럼 감싸고, 감싸지 않은 틈이 군데군데 남아요.</figcaption></figure>
+    </svg><figcaption>덮개 사이에서 긴 꼬리가 드러난 곳을 살펴보세요.</figcaption></figure>
   </div>
   <div class="layer formal"><span class="layer-title">정확히 말하면</span>
-    <p><strong>신경아교세포(glial cell)</strong>는 신경계에서 뉴런을 보조하는 세포예요. 뉴런은 축삭을 따라 활동전위를 전달하고, 신경아교세포는 영양 공급·지지·수초 형성 등으로 뉴런의 활동을 도와요.</p>
-    <p>신경아교세포의 대표적인 역할은 세 가지예요.</p>
-    <ul>
-      <li>뉴런에 영양분을 제공해요.</li>
-      <li>뉴런을 물리적으로 지지해요.</li>
-      <li>미엘린 수초를 만들어요.</li>
-    </ul>
-    <p>종류마다 맡은 일이 달라요.</p>
-    <ul>
-      <li><strong>성상세포(astrocyte)</strong>: 별(星) 모양이라 붙은 이름이에요. 뉴런을 물리적으로 지지해요. 수초를 만드는 세포가 아니에요.</li>
-      <li><strong>희소돌기아교세포</strong>(oligodendrocyte)와 <strong>슈반세포</strong>(Schwann cell): 각각 중추신경계와 말초신경계에서 미엘린 수초를 만들어요.</li>
-    </ul>
-    <p><strong>미엘린 수초(myelin sheath)</strong>는 축삭을 감싸고 있는 지질 막이에요. 이 막은 따로 만들어 붙인 물질이 아니라, 희소돌기아교세포나 슈반세포라는 세포 자체가 축삭을 여러 겹 감싼 것이에요. 지질 함량이 높아 전기적 절연체로 작용해요.</p>
-    <p>수초는 축삭 전체를 끊김 없이 덮지 않아요. 수초와 수초 사이사이에 축삭이 노출된 틈이 있는데, 이것이 <strong>랑비에 결절(node of Ranvier)</strong>이에요.</p>
-    <p>수초가 있는 신경을 <strong>유수신경</strong>, 수초가 없는 신경을 무수신경이라고 해요. 지름이 비슷하면 유수신경이 신호를 더 빠르게 전달해요. 왜 빠른지는 <a href="#s2-conduction">전도 속도: 축삭의 지름과 도약전도</a>에서 랑비에 결절과 함께 이어져요.</p>
-    <p>성상세포는 뉴런의 환경을 유지하고 지지해요. 희소돌기아교세포와 슈반세포는 축삭을 세포막으로 여러 겹 감싸 수초를 만들어요.</p>
+    <p class="define"><strong>신경아교세포(glial cell)</strong> = 영양 공급·물리적 지지·수초 형성 등으로 뉴런을 돕는 세포</p>
+    <div class="table-wrap"><table class="compare">
+      <thead><tr><th scope="col"><span class="sr-only">비교 기준</span></th><th scope="col">성상세포(astrocyte)</th><th scope="col">희소돌기아교세포(oligodendrocyte)</th><th scope="col">슈반세포(Schwann cell)</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">역할</th><td>물리적 지지·뉴런 환경 유지</td><td>미엘린 수초 형성</td><td>미엘린 수초 형성</td></tr>
+        <tr><th scope="row">수초를 만드는 곳</th><td>수초를 만들지 않음</td><td>중추신경계</td><td>말초신경계</td></tr>
+      </tbody>
+    </table></div>
+    <p class="define"><strong>미엘린 수초(myelin sheath)</strong> = 아교세포 자체의 막이 축삭을 여러 겹 감싸 이룬 지질성 절연막</p>
+    <p class="define"><strong>랑비에 결절(node of Ranvier)</strong> = 수초 사이에 축삭이 드러난 틈</p>
+    <p>수초가 있으면 유수신경, 없으면 무수신경이에요. 지름이 비슷하면 유수신경이 더 빨라요. 그 이유는 <a href="#s2-conduction">전도 속도: 축삭의 지름과 도약전도</a>에서 확인해요.</p>
+    <details class="more"><summary>더 자세히</summary>
+      <p>성상세포는 별(星) 모양에서 붙은 이름이에요.</p>
+    </details>
   </div>
 <!-- bio-comic:v2:302336979c69a497c86b4f2d5744a47b4bbd6025b3216ef736f54f461339d42a -->
 <p class="comic-note" data-bio-comic="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s0-glia">수초와 랑비에 결절의 위치, 수초를 만드는 세포를 구별하려면 <a href="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s0-glia" target="_self">학습만화</a>를 펼쳐 보세요.</p>
@@ -525,22 +545,22 @@
 
 <p class="interactive-note" data-bio-interactive="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_03_%EC%88%98%EC%B4%88%EC%99%80_%EB%8F%84%EC%95%BD%EC%A0%84%EB%8F%84.html">모형을 돌려 수초 사이에 드러난 결절을 <a href="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_03_%EC%88%98%EC%B4%88%EC%99%80_%EB%8F%84%EC%95%BD%EC%A0%84%EB%8F%84.html" target="_self">수초와 도약전도 모형</a>의 구조 모드에서 찾아보세요.</p>
 
-  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
-    <p>교수님은 미엘린 수초가 축삭을 덮은 모습을 담요에 빗댔어요.</p>
+  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
     <blockquote>담요처럼 이렇게 덮고 있는데요.</blockquote>
-    <p>그리고 수초가 아교세포의 세포막에서 만들어진다는 점을 짚었어요.</p>
     <blockquote>이 지질 막 자체가 세포예요.</blockquote>
-    <p>아교세포의 세포막이 여러 겹 감겨 수초를 이룬다는 뜻이에요.</p>
-    <p>수업에서는 신경아교세포가 뉴런보다 훨씬 많다고 설명했어요. 실제로 두 세포의 비율은 뇌 부위와 동물 종에 따라 달라요. 성인 남성의 뇌 전체를 센 연구에서는 뉴런과 비뉴런 세포의 수가 비슷했어요. 비뉴런에는 아교세포 외에 혈관을 이루는 세포 등도 포함돼요. <a href="https://pubmed.ncbi.nlm.nih.gov/19226510/">Azevedo 외, 2009</a></p>
-  </div>
+  </details></div>
   <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
-    <ul>
-      <li>교수님이 "슈반세포, 미엘린 수초는 장소만 다르고 똑같은 기능"이라고 말했지만 말실수예요. 중추에서 수초를 만드는 세포는 <strong>희소돌기아교세포</strong>, 말초에서 수초를 만드는 세포는 <strong>슈반세포</strong>예요. 미엘린 수초는 이 세포들이 축삭을 감싸 만든 막이지, 슈반세포와 나란히 비교하는 세포 종류가 아니에요.</li>
-      <li>축삭을 따라 활동전위를 전도하는 일은 뉴런이 해요. 아교세포가 만든 수초는 그 전도를 빠르게 해 줘요.</li>
-      <li>수초를 축삭의 일부나 세포 밖 물질로 생각하기 쉬워요. 수초는 다른 세포(아교세포)가 축삭을 감싼 지질 막이에요.</li>
-      <li>랑비에 결절을 수초가 덮인 부분으로 착각하지 마세요. 랑비에 결절은 수초 사이에 축삭이 드러난 틈이에요.</li>
-      <li>성상세포가 수초를 만든다고 고르지 마세요. 성상세포는 뉴런을 물리적으로 지지해요.</li>
-    </ul>
+    <div class="table-wrap"><table class="pairs">
+      <thead><tr><th scope="col">묻는 것</th><th scope="col">틀리기 쉬운 답</th><th scope="col">맞는 답</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">중추에서 슈반세포와 같은 일을 하는 세포</th><td><del>미엘린 수초</del></td><td>희소돌기아교세포</td></tr>
+        <tr><th scope="row">축삭을 따라 활동전위를 전도하는 세포</th><td><del>아교세포</del></td><td>뉴런</td></tr>
+        <tr><th scope="row">수초는 어디에서 오나요?</th><td><del>축삭 자체 또는 세포 밖 물질</del></td><td>축삭을 감싸는 아교세포의 막</td></tr>
+        <tr><th scope="row">랑비에 결절의 위치</th><td><del>수초가 덮은 구간</del></td><td>수초 사이 노출 구간</td></tr>
+        <tr><th scope="row">성상세포의 역할</th><td><del>수초 형성</del></td><td>뉴런 지지</td></tr>
+      </tbody>
+    </table></div>
+    <p>교수님은 아교세포가 뉴런보다 훨씬 많다고 설명했어요. 실제 비율은 뇌 부위·동물 종에 따라 달라요. 성인 남성의 뇌 전체를 센 연구에서는 뉴런과 비뉴런 세포 수가 비슷했고, 비뉴런에는 아교세포와 혈관 세포 등이 포함돼요. <a href="https://pubmed.ncbi.nlm.nih.gov/19226510/">Azevedo 외, 2009</a></p>
   </div>
   <div class="layer supp" id="s0-glia-supp-1"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
     <p>교재는 두 수초 형성 세포가 있는 장소를 나눠 적어요. 희소돌기아교세포는 중추신경계(뇌와 척수)에 있고, 슈반세포는 말초신경계(뇌·척수 바깥의 신경)에 있어요. 즉 슈반세포는 말초신경계에서 수초를 만드는 신경아교세포예요. 교재 그림에서는 슈반세포의 세포막이 축삭을 젤리 롤처럼 300번 이상 감고 있어, 수초가 아교세포의 세포막에서 만들어진다는 점을 보여 줘요.</p>
@@ -591,12 +611,16 @@
     </svg><figcaption>왼쪽은 전압 차가 없는 예라 농도 차가 이온이 흐르는 방향을 정해요. 실제 세포막에서는 전압 차도 작용해요. 오른쪽 펌프는 에너지를 써서 이온을 옮겨요.</figcaption></figure>
   </div>
   <div class="layer formal"><span class="layer-title">정확히 말하면</span>
-    <p>뉴런의 세포막에는 이온 이동에 관여하는 채널과 펌프가 있어요.</p>
-    <ul>
-      <li><strong>채널(channel, 통로)</strong>: 열린 채널에서는 이온이 <strong>전기화학 기울기(electrochemical gradient)</strong>를 따라 수동으로 이동해요. 농도 차는 이온을 농도가 낮은 쪽으로, 전압 차는 전하에 따라 끌리는 쪽으로 움직이게 해요. 두 효과를 합쳐 순이동 방향을 정하며 이온이 지나가는 데 ATP를 직접 쓰지 않아요. 이온 채널은 종류에 따라 특정 이온을 더 잘 통과시켜요(선택성).</li>
-      <li><strong>펌프(pump)</strong>: 에너지를 써서 이온을 전기화학 기울기에 거슬러 옮길 수 있어요. 이를 능동수송(active transport)이라고 해요. Na⁺/K⁺ 펌프가 ATP를 쓰는 원리는 <a href="../0910/정리노트_0910_Cells_and_Cellular_Respiration.html#s2-atp-use">세포 호흡 단원의 ATP를 쓰는 곳</a>에서 배운 용질 수송과 같아요.</li>
-    </ul>
-    <p><strong>Na⁺/K⁺ 펌프</strong>(강의노트 표기: Na⁺/K⁺ 능동수송펌프)는 ATP를 가수분해해 얻은 에너지로 Na⁺ 3개를 세포 밖으로 내보내고, 동시에 K⁺ 2개를 세포 안으로 들여보내요. 그 결과 Na⁺는 세포 바깥에, K⁺는 세포 안쪽에 더 많은 상태가 만들어지고 유지돼요. 바깥에 Na⁺가 이미 많이 쌓여 있어도 ATP를 쓰기 때문에 계속 내보낼 수 있어요. K⁺도 안쪽에 이미 많지만 계속 들여보내요.</p>
+    <div class="table-wrap"><table class="compare">
+      <thead><tr><th scope="col"><span class="sr-only">비교 기준</span></th><th scope="col">채널(channel, 통로)</th><th scope="col">Na⁺/K⁺ 펌프(pump)</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">이온 이동 방향</th><td>열린 통로에서 전기화학 기울기를 따른 수동 이동</td><td>전기화학 기울기를 거스르는 능동수송(active transport)</td></tr>
+        <tr><th scope="row">ATP</th><td>이온 통과에 직접 쓰지 않음</td><td>ATP 가수분해로 에너지 공급</td></tr>
+        <tr><th scope="row">이동 대상·결과</th><td>종류에 따라 특정 이온을 더 잘 통과시킴(선택성)</td><td>Na⁺는 바깥, K⁺는 안쪽 농도가 높은 상태 유지</td></tr>
+      </tbody>
+    </table></div>
+    <p class="define"><strong>전기화학 기울기(electrochemical gradient)</strong> = 농도 차와 전압 차가 이온 이동에 미치는 효과의 합</p>
+    <p>농도 차는 농도가 낮은 쪽으로 이온을 움직이게 하고, 전압 차는 이온의 전하에 따라 끌리거나 밀리는 방향을 정해요. 순이동 방향은 두 효과를 함께 봐요.</p>
     <figure class="figure"><svg id="fig-s1-pump-ratio" viewBox="0 0 640 230" role="img" aria-label="막을 가로지르는 테두리 타원의 Na⁺/K⁺ 펌프가 ATP 에너지를 써서 Na⁺ 3개를 세포 밖으로 올려 보내고 K⁺ 2개를 세포 안으로 내려 보낸다. 그 결과 바깥에는 Na⁺, 안쪽에는 K⁺가 많아진다">
       <text x="30" y="40" class="fig-muted" font-size="13">세포 밖</text><text x="30" y="215" class="fig-muted" font-size="13">세포 안</text>
       <line x1="20" y1="100" x2="620" y2="100" class="fig-ink"/><line x1="20" y1="140" x2="620" y2="140" class="fig-ink"/>
@@ -611,8 +635,12 @@
       <text x="400" y="218" class="fig-text" font-size="13">K⁺ 2개 안으로</text>
       <text x="620" y="70" text-anchor="end" class="fig-muted" font-size="12">바깥에 Na⁺가 많아요</text>
       <text x="620" y="170" text-anchor="end" class="fig-muted" font-size="12">안쪽에 K⁺가 많아요</text>
-    </svg><figcaption>Na⁺ 3개는 밖으로, K⁺ 2개는 안으로 옮기며 ATP를 써요.</figcaption></figure>
-    <p>Na⁺/K⁺ 펌프는 ATP를 써서 이온을 기울기에 거슬러 옮기고, 열린 채널에서는 이온이 전기화학 기울기를 따라 흘러요. 펌프가 만드는 Na⁺·K⁺ 농도 차는 <a href="#s1-resting">휴지전위가 생기는 이유</a>의 바탕이에요.</p>
+    </svg><figcaption>화살표는 한 번 작동할 때 펌프가 이온을 옮기는 방향을 보여 줘요.</figcaption></figure>
+    <p>암기법(교수님). “나트륨은 나간다.”</p>
+    <p>펌프가 유지하는 농도 차는 <a href="#s1-resting">휴지전위가 생기는 이유</a>의 바탕이에요.</p>
+    <details class="more"><summary>더 자세히</summary>
+      <p>강의노트에서는 “Na⁺/K⁺ 능동수송펌프”로 표기해요. ATP가 수송에 쓰이는 원리는 <a href="../0910/정리노트_0910_Cells_and_Cellular_Respiration.html#s2-atp-use">세포 호흡 단원의 ATP를 쓰는 곳</a>에서 이어져요.</p>
+    </details>
   </div>
 <!-- bio-comic:v2:5fae66155a5a66294b715f65259a0a8a8f9adfc4bed6905e913d076d36584d95 -->
 <p class="comic-note" data-bio-comic="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s1-channel-pump">채널이 따르는 방향과 펌프가 옮기는 Na⁺·K⁺의 방향과 개수를 구별하려면 <a href="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s1-channel-pump" target="_self">학습만화</a>를 펼쳐 보세요.</p>
@@ -620,16 +648,19 @@
 
 <p class="interactive-note" data-bio-interactive="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_04_%ED%8E%8C%ED%94%84%EC%99%80_%ED%9C%B4%EC%A7%80%EC%A0%84%EC%9C%84.html">Na⁺ 3개가 밖으로 나가고 K⁺ 2개가 안으로 들어오는 순서를 <a href="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_04_%ED%8E%8C%ED%94%84%EC%99%80_%ED%9C%B4%EC%A7%80%EC%A0%84%EC%9C%84.html" target="_self">펌프와 휴지전위 모형</a>의 펌프 모드에서 재생해 보세요.</p>
 
-  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
     <blockquote>“펌프는 전기를 꽂아야 작동이 되잖아.”</blockquote>
-    <p>펌프는 에너지가 있어야 일한다는 비유예요. 수업에서는 채널의 수동 이동을 농도 차로 설명했어요. 전하를 띤 이온은 막전위의 영향도 받으므로 순이동 방향은 전기화학 기울기로 판단해요.</p>
-    <p>펌프 방향은 이름으로 외우라고 했어요. 나트륨은 나간다, 나트륨이니까 밖으로 나가고 칼륨은 들어와요. 세 개를 내보내고 두 개를 들여보낸다고 숫자도 짚었어요.</p>
-  </div>
+  </details></div>
   <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
-    <p><strong>펌프가 안으로 들이는 이온</strong>: 칼슘으로 착각하기 쉬워요. 수업 중에 교수님도 “칼슘”이라고 했다가 바로 칼륨으로 고쳤어요. 안으로 들어가는 것은 칼륨(K⁺)이에요.</p>
-    <p><strong>방향과 비율</strong>: Na⁺ 2개 밖, K⁺ 3개 안처럼 숫자를 뒤바꾸기 쉬워요. Na⁺ 3개가 밖으로, K⁺ 2개가 안으로 가요. 그래서 펌프가 돌면 Na⁺는 바깥, K⁺는 안쪽 농도가 높아져요.</p>
-    <p><strong>채널과 펌프의 에너지</strong>: 열린 채널을 통한 수동 이동은 농도 차와 전압 차가 함께 정하며, 이온을 통과시킬 때 ATP를 직접 쓰지 않아요. Na⁺/K⁺ 펌프는 ATP를 써서 전기화학 기울기에 거슬러 이온을 옮겨요.</p>
-    <p><strong>펌프의 일과 채널의 일</strong>: 펌프는 안팎의 이온 농도 차를 꾸준히 유지해 음의 휴지전위가 유지되도록 도와요. 활동전위 때 막전위가 갑자기 치솟거나 휴지전위 아래로 내려가는(과분극) 빠른 변화는 채널이 열리고 닫혀서 생겨요.</p>
+    <div class="table-wrap"><table class="pairs">
+      <thead><tr><th scope="col">묻는 것</th><th scope="col">틀리기 쉬운 답</th><th scope="col">맞는 답</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">펌프가 들여보내는 이온</th><td><del>칼슘(Ca²⁺)</del></td><td>칼륨(K⁺)</td></tr>
+        <tr><th scope="row">한 번에 옮기는 수와 방향</th><td><del>Na⁺ 2개 밖, K⁺ 3개 안</del></td><td>Na⁺ 3개 밖, K⁺ 2개 안</td></tr>
+        <tr><th scope="row">이온을 옮기는 데 ATP를 직접 쓰는 쪽</th><td><del>열린 채널</del></td><td>Na⁺/K⁺ 펌프</td></tr>
+        <tr><th scope="row">활동전위의 급상승과 과분극을 만드는 변화</th><td><del>펌프의 빠른 작동</del></td><td>채널의 개폐</td></tr>
+      </tbody>
+    </table></div>
   </div>
   <div class="sum" hidden>
     <p class="sum-lead">열린 채널에서는 이온이 전기화학 기울기를 따라 수동으로 흐르고, Na⁺/K⁺ 펌프는 ATP를 써서 Na⁺는 바깥, K⁺는 안쪽에 많은 상태를 유지해요.</p>
@@ -657,18 +688,20 @@
       <line x1="530" y1="147" x2="430" y2="147" class="fig-ink"/><polyline points="440,141 430,147 440,153" class="fig-ink"/>
       <text x="540" y="96" class="fig-text" font-size="13">K⁺ 유출</text>
       <text x="540" y="151" class="fig-text" font-size="13">Na⁺ 유입</text>
-    </svg><figcaption>쉬는 동안에도 K⁺는 새어 나가고 Na⁺는 들어와요. 안쪽 전위는 바깥을 기준으로 음수예요. 화살표는 이동 방향을 나타내요.</figcaption></figure>
+    </svg><figcaption>화살표는 쉬는 동안의 이온 이동 방향을 나타내요.</figcaption></figure>
   </div>
   <div class="layer formal"><span class="layer-title">정확히 말하면</span>
-    <p><strong>막전위(membrane potential)</strong>는 세포막을 사이에 둔 세포 안과 밖의 전압 차이예요. 이온이 막 안팎에 <strong>불균등</strong>하게 분포하고, 막이 이온마다 다른 정도로 통과시키면 막 안팎에 전압 차가 생겨요.</p>
-    <p><strong>휴지전위(resting potential)</strong>는 자극받지 않은 뉴런에서 안정적으로 유지되는 막전위예요. 강의노트는 −50 ~ −60 mV를 제시해요. <a href="#s2-action">활동전위 그래프</a>와 실무율 모형의 −70 mV는 파형을 설명하는 예시값이에요. 음수는 세포 안쪽 전위가 바깥보다 낮다는 뜻이에요. 막 안팎에 전위 차가 있는 상태를 <strong>분극</strong>(polarized) 상태라고 해요. 이때 Na⁺는 바깥 농도가, K⁺는 안쪽 농도가 높아요.</p>
-    <p><strong>휴지전위가 형성되고 유지되는 과정</strong>을 따라가 볼게요.</p>
+    <p class="define"><strong>막전위(membrane potential)</strong> = 세포 밖을 기준으로 잰 세포 안쪽 전압</p>
+    <p class="define"><strong>휴지전위(resting potential)</strong> = 자극받지 않은 뉴런에서 안정적으로 유지되는 막전위</p>
+    <p class="define"><strong>분극(polarized) 상태</strong> = 막 안팎에 전위 차가 있는 상태</p>
+    <p class="define"><strong>누설 채널(leaky channel)</strong> = 휴지 상태에도 열린 통로</p>
+    <p>막 안팎에 이온이 불균등하게 분포하고 막이 이온마다 다른 정도로 통과시키면 전압 차가 생겨요.</p>
     <ol class="steps">
-      <li><strong>농도 기울기 만들기</strong>: <a href="#s1-channel-pump">Na⁺/K⁺ 펌프</a>가 ATP를 써서 Na⁺ 3개를 밖으로, K⁺ 2개를 안으로 옮겨요. 그래서 Na⁺는 바깥에, K⁺는 안쪽에 많아져요.</li>
-      <li><strong>문 없는 채널로 새기</strong>: 휴지 상태에서도 열려 있는 통로를 <strong>누설 채널(leaky channel)</strong>이라고 해요. 대표적인 뉴런의 휴지 상태에서는 막이 Na⁺보다 K⁺를 더 잘 통과시켜요. 이를 K⁺ 투과성이 더 크다고 해요.</li>
-      <li><strong>K⁺가 잘 통하는 막</strong>: 누설 채널로 K⁺는 주로 밖으로, Na⁺는 주로 안으로 이동해요. K⁺가 빠져나가 안쪽 전위가 낮아질수록 안쪽의 음의 전위가 K⁺를 안으로 끌어당겨 K⁺가 밖으로 나가려는 힘이 줄어요. 높은 K⁺ 투과성 때문에 휴지전위는 K⁺의 안팎 이동이 균형을 이루는 전압(K⁺ 평형전위)에 가까워요.</li>
-      <li><strong>세포 안의 음이온</strong>: DNA처럼 음전하를 띤 큰 분자와 일부 음전하 단백질은 막을 자유롭게 건너지 못해 세포 안에 남아요. 강의노트는 음전하 분자의 예로 단백질, 아미노산, 핵산을 들어요.</li>
-      <li><strong>휴지 상태의 전류 균형</strong>: 여러 이온이 계속 움직여도, 누설 채널과 펌프 등을 통한 안팎의 전체 전류가 균형을 이루면 막전위가 일정하게 유지돼요. 각 이온의 순이동량은 막의 투과성과 전기화학 기울기에 함께 좌우돼요.</li>
+      <li><strong>농도 차 유지.</strong> 세포 호흡이 공급한 ATP로 <a href="#s1-channel-pump">Na⁺/K⁺ 펌프</a>가 Na⁺ 3개를 밖으로, K⁺ 2개를 안으로 옮겨요. 한 번에 순양전하 1개가 밖으로 가고, Na⁺는 밖에, K⁺는 안에 많이 유지돼요.</li>
+      <li><strong>높은 K⁺ 투과성.</strong> 대표적인 뉴런의 휴지 막은 K⁺를 Na⁺보다 잘 통과시켜요. K⁺는 주로 밖으로, Na⁺는 주로 안으로 이동해요.</li>
+      <li><strong>안쪽 전위 하강.</strong> K⁺가 빠져나갈수록 더 음성이 된 안쪽이 K⁺를 끌어당겨 추가 유출을 줄여요. K⁺ 투과성이 높아서 휴지전위는 K⁺의 순이동이 없는 K⁺ 평형전위에 가까워져요.</li>
+      <li><strong>세포 안에 남는 음이온.</strong> 인산을 가진 DNA와 일부 음전하 단백질처럼 큰 분자는 막을 자유롭게 넘지 못해요. 강의노트의 음전하 분자 예에는 단백질·아미노산·핵산이 있어요.</li>
+      <li><strong>전류 균형.</strong> 각 이온의 순이동은 투과성과 전기화학 기울기에 따라 달라요. 펌프·누설 채널 등을 통한 전체 막전류의 합이 0이면, 이온이 움직이는 동안에도 전위가 안정돼요.</li>
     </ol>
     <figure class="figure"><svg id="fig-s1-resting-causes" viewBox="0 0 640 250" role="img" aria-label="펌프가 Na⁺와 K⁺의 농도 차를 유지한다. 휴지 상태의 막은 K⁺를 더 잘 통과시키고, DNA와 일부 단백질은 세포 안에 남는다. 전체 막전류가 균형을 이룰 때 안쪽 전위가 바깥보다 낮게 유지된다.">
       <rect x="15" y="20" width="190" height="90" rx="10" class="fig-ink"/><rect x="225" y="20" width="190" height="90" rx="10" class="fig-ink"/><rect x="435" y="20" width="190" height="90" rx="10" class="fig-ink"/>
@@ -680,9 +713,8 @@
       <line x1="530" y1="110" x2="390" y2="170" class="fig-ink"/><polyline points="401.5,171.6 390,170 396.9,160.6" class="fig-ink"/>
       <rect x="150" y="172" width="340" height="60" rx="10" class="fig-accent"/>
       <text x="320" y="207" text-anchor="middle" class="fig-text" font-size="14">전체 전류가 균형을 이룬 음의 휴지전위</text>
-    </svg><figcaption>막은 휴지 상태에서 K⁺를 특히 잘 통과시켜요. 펌프가 농도 차를 지키고 전체 막전류가 균형을 이루면 휴지전위가 유지돼요.</figcaption></figure>
-    <p><strong>Na⁺/K⁺ 펌프의 주요 역할</strong>은 Na⁺·K⁺의 농도 차를 장기적으로 유지하는 것이에요. Na⁺ 3개를 내보내고 K⁺ 2개를 들여보내므로 펌프 자체도 한 번 작동할 때 순양전하 1개를 밖으로 보내요. 활동전위에서 막전위가 급상승하고 다시 내려가는 빠른 변화는 채널이 열리고 닫히면서 생겨요(<a href="#s2-action">활동전위: 탈분극·재분극·과분극</a>).</p>
-    <p><strong>ATP와 이온 농도 차</strong>: 세포 호흡은 펌프에 필요한 ATP를 공급해요. Na⁺/K⁺ 펌프가 그 ATP를 써서 이온을 직접 옮겨 농도 차를 지켜요.</p>
+    </svg><figcaption>통로 옆 화살표를 펌프가 옮기는 방향과 비교해 보세요.</figcaption></figure>
+    <p><a href="#s2-action">활동전위: 탈분극·재분극·과분극</a>에서는 채널 개폐로 막전위가 빠르게 바뀌며 상승 중 0을 지나 양수가 될 수 있어요.</p>
   </div>
 <!-- bio-comic:v2:92880647e8a3fed795f666b3ecf95d5a6f050e91bd6366c630fdac392a05bb95 -->
 <p class="comic-note" data-bio-comic="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s1-resting">농도 차를 유지하는 펌프와 휴지전위에 영향을 주는 누설 채널을 구별하려면 <a href="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s1-resting" target="_self">학습만화</a>를 펼쳐 보세요.</p>
@@ -690,18 +722,23 @@
 
 <p class="interactive-note" data-bio-interactive="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_04_%ED%8E%8C%ED%94%84%EC%99%80_%ED%9C%B4%EC%A7%80%EC%A0%84%EC%9C%84.html">ATP 공급을 끊은 직후와 시간이 지난 뒤의 이온 농도 차를 <a href="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_04_%ED%8E%8C%ED%94%84%EC%99%80_%ED%9C%B4%EC%A7%80%EC%A0%84%EC%9C%84.html" target="_self">펌프와 휴지전위 모형</a>의 휴지전위 모드에서 비교해 보세요.</p>
 
-  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
     <blockquote>“단순히 이것 때문에 세포 내부가 음, 바깥이 양인 게 아닙니다.”</blockquote>
-    <p>펌프를 설명한 직후 이렇게 짚고, 채널을 사람이 지나가는 문에 비유했어요. 문이 달린 통로에서 문을 떼어 내면 문이 없는 통로가 되고, 문이 없으니 “질질 새잖아”, 그래서 누설 채널이라고 했어요.</p>
-    <p>두 번째 이유로 앞 단원의 DNA를 다시 불러왔어요. DNA는 염기, 당, 인산으로 되어 있고 인산 때문에 음전하를 띤다고 했던 것을 떠올리게 했어요. 수업에서는 누설 채널 수로 K⁺ 유출이 Na⁺ 유입보다 많다고 설명했어요. 실제 순이동량을 판단하려면 각 이온의 투과성과 전기화학 기울기를 함께 봐야 해요.</p>
-  </div>
+    <p>교수님은 누설 채널을 문을 떼어 낸 통로에 비유했어요. 문이 없으니 “질질 새잖아”라고 했어요.</p>
+  </details></div>
   <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
-    <p><strong>휴지전위 수치</strong>: 수업에서는 “−70 mV 정도”, “대략 −60 mV”라는 예가 나왔어요. 강의노트에 적힌 범위는 −50 ~ −60 mV이고, 활동전위 그래프에서 휴지전위는 −70 mV로 설정했어요.</p>
-    <p><strong>펌프와 막의 투과성</strong>: 펌프는 이온 농도 차를 유지하고, 휴지 상태의 높은 K⁺ 투과성이 막전위를 K⁺ 평형전위 쪽으로 끌어당겨요.</p>
-    <p><strong>이온 이동량과 전류 균형</strong>: 각 이온의 순이동량은 투과성에 더해 농도 차와 전압 차를 함께 고려해 판단해요. 휴지전위가 유지될 때는 모든 막전류를 더한 값이 0이에요.</p>
-    <p><strong>불균등한 이온 분포</strong>: Na⁺는 바깥에, K⁺는 안쪽에 많아요. 이 농도 차와 이온마다 다른 막 투과성이 휴지전위의 바탕이에요.</p>
-    <p><strong>안팎의 부호</strong>: 막전위는 세포 밖 전위를 기준으로 잰 안쪽 전위예요. 휴지 상태에서 음수이고, 활동전위 그래프의 상승 구간에서는 0을 지나 양수가 돼요.</p>
-    <p><strong>펌프의 주요 역할</strong>: ATP를 써서 Na⁺와 K⁺의 농도 차를 유지해요. 활동전위의 급상승과 과분극은 채널 투과성의 빠른 변화로 생겨요.</p>
+    <div class="table-wrap"><table class="pairs">
+      <thead><tr><th scope="col">묻는 것</th><th scope="col">틀리기 쉬운 답</th><th scope="col">맞는 답</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">휴지전위의 수치</th><td><del>항상 −70 mV</del></td><td>강의노트 −50 ~ −60 mV, <a href="#s2-action">활동전위 그래프</a> 예시 −70 mV</td></tr>
+        <tr><th scope="row">휴지 상태에서 막전위의 부호</th><td><del>세포 밖 기준 양수</del></td><td>세포 밖 기준 음수</td></tr>
+        <tr><th scope="row">휴지 상태의 전체 막전류</th><td><del>모든 이온의 이동이 정지</del></td><td>막전류의 합이 0</td></tr>
+        <tr><th scope="row">각 이온의 순이동량</th><td><del>누설 채널 수만으로 결정</del></td><td>막 투과성과 농도·전압 차로 결정</td></tr>
+        <tr><th scope="row">휴지전위를 K⁺ 평형전위에 가깝게 하는 성질</th><td><del>펌프의 전하 이동만</del></td><td>휴지 막의 높은 K⁺ 투과성</td></tr>
+        <tr><th scope="row">활동전위 중 막전위의 빠른 변화</th><td><del>Na⁺/K⁺ 펌프</del></td><td>이온 채널의 개폐</td></tr>
+      </tbody>
+    </table></div>
+    <p>교수님은 “−70 mV 정도”와 “대략 −60 mV”를 예로 들었어요. 펌프가 옮기는 전하만으로 안쪽이 음수가 된다고 판단하면, 막 투과성의 역할을 놓쳐요.</p>
   </div>
   <div class="sum" hidden>
     <p class="sum-lead">펌프가 유지하는 이온 농도 차와 높은 K⁺ 투과성 때문에 휴지전위는 음수예요. 막을 지나는 전체 전류가 균형을 이루면 이 값이 유지돼요.</p>
@@ -731,18 +768,10 @@
     </svg><figcaption>K⁺가 나가는 문이 느릿느릿 닫혀서, 막전위가 처음 자리보다 살짝 더 내려갔다가 돌아와요.</figcaption></figure>
   </div>
   <div class="layer formal"><span class="layer-title">정확히 말하면</span>
-    <p><b>활동전위(action potential)</b>는 뉴런의 축삭을 따라 이동하는 전기적 충격이에요. 막전위가 짧은 시간 동안 급격히 올랐다가 내려오는 변화예요. 아래 예에서는 막전위가 음수에서 양수로 올라갔다가 돌아와요.</p>
-    <p>그래서 신경신호를 가장 정확히 표현하면 <b>막을 사이에 둔 전위차(막전위)의 변화</b>예요. 이온이 막을 드나들며 그 자리의 막전위가 바뀌고, 그 변화가 옆 자리로 전파돼요(<a href="#s2-conduction">전도 속도: 축삭의 지름과 도약전도</a>).</p>
-    <p>판별 기준: 축삭을 따라 이동하는 것은 막전위가 바뀌는 "사건"이에요. 뉴런이 맞붙은 자리(시냅스)나 자극이 없을 때의 값(휴지전위)은 장소나 상태이지 이동하는 충격이 아니에요.</p>
-
-    <p><b>어디서 처음 생기나요?</b> 시작 신호와 활동전위가 생기는 자리는 달라요.</p>
-    <ol class="steps">
-      <li>예를 들어 시냅스 전 뉴런이 흥분성 신호를 보내는 신경전달물질을 분비해요.</li>
-      <li>시냅스 후 뉴런의 수상돌기에 있는 리간드 개폐성 채널이 열려 Na⁺ 등이 들어오면 그 자리의 막전위가 조금 올라가요.</li>
-      <li>이 국소 막전위 변화는 세포 안의 국소 전류를 통해 수동으로 퍼져요. 수상돌기와 세포체의 여러 입력이 합쳐져 축삭둔덕 근처의 <b>축삭 초기분절(axon initial segment, AIS)</b>에 영향을 줘요.</li>
-      <li>축삭 초기분절에는 <b>전압 개폐성 Na⁺ 채널</b>이 밀집해 있어요. 막전위가 올라갈수록 이 채널이 열릴 가능성이 커져요.</li>
-      <li>막전위가 <b>역치</b>에 이르면 Na⁺ 유입으로 막전위가 더 올라가고, 그 결과 더 많은 Na⁺ 채널이 열려요. 보통 이곳에서 활동전위가 처음 생겨 축삭말단 쪽으로 전해져요.</li>
-    </ol>
+    <p class="define"><strong>활동전위(action potential)</strong> = 막전위가 짧은 시간에 급히 오르내리며 축삭을 따라 전파되는 전기적 충격</p>
+    <p class="define"><strong>역치</strong> = Na⁺ 유입의 증폭으로 활동전위가 시작되는 기준 전위</p>
+    <p>활동전위가 처음 생기는 곳에는 전압 개폐성 Na⁺ 채널이 밀집해 있어요. 수상돌기·세포체의 여러 입력이 합쳐져 그곳이 역치에 닿으면 Na⁺ 유입이 탈분극을 스스로 증폭해요.</p>
+    <ol class="chain"><li>흥분성 전달물질 결합</li><li>수상돌기의 리간드 개폐성 채널 열림·Na⁺ 유입</li><li>국소 전류로 수동 전달</li><li>축삭 초기분절(axon initial segment, AIS)이 역치에 도달</li><li>활동전위 발생</li></ol>
     <figure class="figure"><svg id="fig-ap-start" viewBox="0 0 560 200" role="img" aria-label="수상돌기에서 생긴 국소 막전위 변화가 세포체를 거쳐 수동으로 퍼진다. 축삭둔덕 바로 다음의 축삭 초기분절에 원을 표시했다. 이곳에서 활동전위가 시작해 축삭말단 쪽으로 전해진다.">
       <circle class="fig-ink" cx="110" cy="100" r="35"/>
       <line class="fig-ink" x1="78" y1="86" x2="30" y2="62"/>
@@ -762,9 +791,7 @@
       <text class="fig-muted" x="110" y="158" text-anchor="middle">세포체</text>
       <text class="fig-muted" x="345" y="150" text-anchor="middle">전도 방향</text>
       <text class="fig-muted" x="545" y="160" text-anchor="end">축삭말단</text>
-    </svg><figcaption>수상돌기에서 생긴 국소 막전위 변화가 퍼져 축삭둔덕 근처에 도달해요. 원으로 표시한 축삭 초기분절에서 활동전위가 시작해 축삭말단 쪽으로 전해져요.</figcaption></figure>
-
-    <p><b>시간–막전위 그래프로 보는 과정</b></p>
+    </svg><figcaption>원은 축삭둔덕 바로 다음의 축삭 초기분절이에요.</figcaption></figure>
     <figure class="figure"><svg id="fig-ap-graph" viewBox="0 0 560 310" role="img" aria-label="예시 막전위 그래프. 휴지전위 −70 mV에서 역치 −55 mV를 지나 최고치 +30 mV에 이른다. 최고치 부근에서 Na⁺ 채널이 불활성화되고 지연성 K⁺ 채널의 작용이 커져 재분극, 과분극, 휴지전위 회복으로 이어진다.">
       <line class="axis" x1="70" y1="260" x2="540" y2="260"/>
       <line class="axis" x1="70" y1="30" x2="70" y2="260"/>
@@ -791,24 +818,20 @@
       <text class="fig-muted" x="440" y="216" text-anchor="middle">회복</text>
       <line class="fig-ink" x1="352" y1="246" x2="352" y2="282"/>
       <text class="fig-text" x="300" y="298" text-anchor="middle">과분극(K⁺ 채널이 늦게 닫힘)</text>
-    </svg><figcaption>교재 그림 12.5처럼 휴지전위 −70 mV를 예로 들었어요. 이 그래프의 위쪽 점선은 모형의 역치 −55 mV, 아래쪽 점선은 휴지전위예요. 강의노트의 휴지전위 범위는 −50 ~ −60 mV예요.</figcaption></figure>
+    </svg><figcaption>교재 그림 12.5처럼 위 점선은 예시 역치 −55 mV, 아래 점선은 예시 휴지전위를 표시해요.</figcaption></figure>
     <ol class="steps">
-      <li><b>휴지 상태</b>: 안쪽이 −로 분극되어 있고, 전압 개폐성 Na⁺ 채널은 닫혀 있어요.</li>
-      <li><b>역치까지</b>: 국소 입력으로 축삭 초기분절의 막전위가 휴지전위에서 역치 쪽으로 올라가요.</li>
-      <li><b>탈분극</b>: 전압 개폐성 Na⁺ 채널이 열려 Na⁺가 들어오면 막전위가 더 올라가고, 그 결과 더 많은 Na⁺ 채널이 열려요. 예시에서는 막전위가 0을 넘어 양수로 솟아요. 바깥 Na⁺가 많은 까닭은 Na⁺/K⁺ 펌프가 계속 밖으로 퍼내기 때문이에요(<a href="#s1-channel-pump">채널과 Na⁺/K⁺ 펌프</a>).</li>
-      <li><b>최고치</b>: 정점 부근에서는 많은 Na⁺ 채널이 <b>불활성화</b>되어 Na⁺ 유입이 줄어요. 같은 탈분극에 반응한 지연성 K⁺ 채널도 이미 열리기 시작해 두 작용의 시기가 겹쳐요.</li>
-      <li><b>재분극</b>: Na⁺ 유입이 줄고 K⁺ 유출이 우세해지면서 막전위가 휴지전위 쪽으로 내려가요.</li>
-      <li><b>과분극</b>: 지연성 K⁺ 채널이 천천히 닫혀 K⁺가 계속 빠져나가면, 막전위가 잠시 휴지전위보다 낮아져요.</li>
-      <li><b>회복</b>: 지연성 K⁺ 채널이 닫히면 휴지전위로 돌아와요. 재분극과 함께 불활성화됐던 Na⁺ 채널도 다시 열릴 수 있는 상태로 회복해요.</li>
+      <li><strong>휴지 상태.</strong> 안쪽이 음수로 분극되어 있고 전압 개폐성 Na⁺ 채널은 닫혀 있어요.</li>
+      <li><strong>역치까지.</strong> 국소 입력으로 막전위가 기준값까지 올라가요.</li>
+      <li><strong>탈분극.</strong> Na⁺ 유입이 우세해 막전위가 덜 음수가 되고 예시에서는 0을 넘어가요. Na⁺가 밖에 많은 까닭은 <a href="#s1-channel-pump">채널과 Na⁺/K⁺ 펌프</a>에서 봐요.</li>
+      <li><strong>정점 부근.</strong> 많은 Na⁺ 채널이 불활성화돼 유입이 줄어요. 같은 탈분극에 늦게 반응한 지연성 K⁺ 채널의 작동 시기는 이 과정과 겹쳐요.</li>
+      <li><strong>재분극.</strong> K⁺ 유출이 우세해 막전위가 휴지전위 쪽으로 내려가요.</li>
+      <li><strong>과분극.</strong> 지연성 K⁺ 채널이 천천히 닫혀 유출이 이어지면 잠시 휴지전위 아래로 내려가요.</li>
+      <li><strong>회복.</strong> K⁺ 채널이 닫히면 휴지전위로 돌아와요. 불활성화된 Na⁺ 채널도 재분극과 함께 다시 열릴 수 있게 회복해요.</li>
     </ol>
-    <div class="table-wrap"><table>
-      <tr><th>그래프 구간</th><th>막전위</th><th>이온과 채널</th><th>이름</th></tr>
-      <tr><td>올라가는 선</td><td>−에서 +로 솟음</td><td>Na⁺ 채널 열림, Na⁺ 유입</td><td>탈분극</td></tr>
-      <tr><td>내려가는 선</td><td>+에서 −로 돌아감</td><td>Na⁺ 채널 불활성화로 유입 감소, K⁺ 유출 우세</td><td>재분극</td></tr>
-      <tr><td>휴지전위 아래로 처진 곳</td><td>휴지전위보다 더 −</td><td>K⁺ 채널이 늦게 닫혀 K⁺가 더 나감</td><td>과분극</td></tr>
-      <tr><td>다시 평평해진 곳</td><td>휴지전위</td><td>지연성 K⁺ 채널 닫힘</td><td>회복(휴지 상태)</td></tr>
-    </table></div>
-    <p><b>상태 이름 구별하기</b>: 휴지 상태에서 막전위가 덜 음수가 되는 변화가 <b>탈분극</b>이에요. 재분극은 막전위가 휴지전위 쪽으로 돌아가는 변화이고, 과분극은 휴지전위보다 더 낮아진 상태예요. 역치는 충분한 Na⁺ 유입이 더 많은 Na⁺ 채널을 열어 활동전위를 일으키는 기준 전위예요.</p>
+    <p>이온이 막을 드나들며 그 자리의 전위가 바뀌고, 이 변화가 다음 자리로 이어져요. 전파 방식은 <a href="#s2-conduction">전도 속도: 축삭의 지름과 도약전도</a>에서 봐요.</p>
+    <details class="more"><summary>더 자세히</summary>
+      <p>개폐성은 “개(開) = 열다, 폐(閉) = 닫다”라는 뜻이에요.</p>
+    </details>
   </div>
 <!-- bio-comic:v2:573fe57fe0c557f3b73b1b4fac7c4746698eb27362923e76623c499b5ab37cbf -->
 <p class="comic-note" data-bio-comic="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s2-action">Na⁺ 채널의 불활성화와 K⁺ 채널의 느린 닫힘을 구별하려면 <a href="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s2-action" target="_self">학습만화</a>를 펼쳐 보세요.</p>
@@ -816,21 +839,23 @@
 
 <p class="interactive-note" data-bio-interactive="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_01_%ED%99%9C%EB%8F%99%EC%A0%84%EC%9C%84%EC%99%80_%EC%8B%A4%EB%AC%B4%EC%9C%A8.html">막전위가 오르고 내려갈 때 Na⁺ 유입과 K⁺ 유출이 파형의 어느 구간에서 두드러지는지 <a href="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_01_%ED%99%9C%EB%8F%99%EC%A0%84%EC%9C%84%EC%99%80_%EC%8B%A4%EB%AC%B4%EC%9C%A8.html" target="_self">활동전위와 실무율 모형</a>의 파형 모드에서 확인해 보세요.</p>
 
-  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
+  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
     <blockquote>"나트륨 채널 열리고 닫히고, 칼륨 채널 열리고 닫히고. 닫히는데 좀 천천히 닫힌다."</blockquote>
-    <p>교수님은 파형의 순서를 짚었어요. 지연성 K⁺ 채널이 늦게 닫혀 과분극이 생긴다는 점을 기억해요. 실제 채널의 작동 시기는 겹쳐요.</p>
-    <p>채널을 사람처럼 표현했어요. Na⁺ 채널의 불활성화를 "어, 너무 많이 됐다", K⁺ 채널의 느린 닫힘을 "아이고, 이제 닫혀야지"라는 비유로 설명했어요. 불활성화된 Na⁺ 채널은 재분극 뒤에 다시 열릴 수 있는 상태로 돌아와요.</p>
-    <p>개폐성의 개(開)는 열다, 폐(閉)는 닫다라는 뜻이에요. 문이 달려 열리고 닫히는 채널이라는 말이에요.</p>
-  </div>
+    <p>교수님은 Na⁺ 채널이 불활성화되는 때를 “어, 너무 많이 됐다”, K⁺ 채널의 느린 닫힘을 “아이고, 이제 닫혀야지”라고 비유했어요.</p>
+  </details></div>
   <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
-    <ul>
-      <li><b>시작 신호와 활동전위의 자리</b>: 수상돌기에서 생긴 국소 막전위 변화가 수동으로 퍼져요. 강의에서 축삭둔덕이라고 부른 시작 부위는 정확히는 그 바로 다음의 축삭 초기분절이에요. 보통 활동전위는 여기서 시작해 축삭말단까지 전해져요.</li>
-      <li><b>문 있는 채널과 문 없는 채널</b>: 누설 채널은 휴지 상태에서도 열려 있어요. 축삭 초기분절에서는 전압 개폐성 Na⁺ 채널이 활동전위의 상승을 일으켜요.</li>
-      <li><b>탈분극과 활동전위</b>: 두 말을 같은 것으로 쓰기 쉬워요. 교수님도 "탈분극이 됐죠"를 "활동전위가 생겼죠"로 고쳐 말했어요. 탈분극은 막전위가 올라가는 한 구간이고, 활동전위는 탈분극부터 회복까지의 전체 변화예요.</li>
-      <li><b>재분극과 과분극</b>: 둘 다 "내려가는 것"이라 섞이기 쉬워요. 재분극은 휴지전위 쪽으로 내려오는 변화이고, 과분극은 휴지전위보다 더 내려간 상태예요.</li>
-      <li><b>채널이 작동하는 시기</b>: Na⁺ 채널이 빠르게 열리고, 지연성 K⁺ 채널은 같은 탈분극에 더 늦게 반응해 열려요. 정점 부근에서 Na⁺ 채널의 불활성화와 K⁺ 채널의 작동이 겹쳐요. Na⁺ 유입이 줄고 K⁺ 유출이 우세해지면 재분극이 시작돼요.</li>
-      <li><b>막전위의 방향</b>: 막전위가 덜 음수가 되는 것이 탈분극이에요. 과분극에서는 휴지전위보다 더 음수가 돼요.</li>
-    </ul>
+    <div class="table-wrap"><table class="pairs">
+      <thead><tr><th scope="col">묻는 것</th><th scope="col">틀리기 쉬운 답</th><th scope="col">맞는 답</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">활동전위가 이동하는 대상</th><td><del>시냅스라는 장소 또는 휴지전위 값</del></td><td>막전위가 변하는 사건</td></tr>
+        <tr><th scope="row">활동전위가 보통 처음 생기는 곳</th><td><del>수상돌기</del></td><td>축삭둔덕 바로 다음 초기분절</td></tr>
+        <tr><th scope="row">상승을 일으키는 채널</th><td><del>휴지 때도 열린 누설 채널</del></td><td>전압 개폐성 Na⁺ 채널</td></tr>
+        <tr><th scope="row">탈분극과 활동전위의 관계</th><td><del>동일한 이름</del></td><td>상승 구간과 전체 파형</td></tr>
+        <tr><th scope="row">휴지전위보다 낮은 구간</th><td><del>재분극</del></td><td>과분극</td></tr>
+        <tr><th scope="row">정점 부근의 두 채널</th><td><del>Na⁺ 채널이 모두 닫힌 뒤 K⁺ 채널 작동</del></td><td>Na⁺ 불활성화와 K⁺ 채널 작동이 겹침</td></tr>
+      </tbody>
+    </table></div>
+    <p>교수님은 “탈분극이 됐죠”를 “활동전위가 생겼죠”로 바로잡았어요.</p>
   </div>
   <div class="sum" hidden>
     <p class="sum-lead">축삭 초기분절이 역치에 이르면 Na⁺ 유입으로 막전위가 솟아요. Na⁺ 채널이 불활성화되고 K⁺ 유출이 우세해져 재분극이 일어나며, K⁺ 채널이 느리게 닫혀 과분극이 생길 수 있어요.</p>
@@ -863,17 +888,27 @@
       <text class="fig-muted" x="540" y="194" text-anchor="end">5번</text>
       <line class="fig-ink" stroke-dasharray="3 4" x1="150" y1="165" x2="490" y2="165"/>
       <text class="fig-muted" x="300" y="158" text-anchor="middle">같은 조건에서 비슷한 높이</text>
-    </svg><figcaption>같은 뉴런에 자극을 계속 주는 예예요. 자극이 더 강하면 비슷한 높이의 활동전위가 더 자주 생길 수 있어요.</figcaption></figure>
+    </svg><figcaption>같은 뉴런에 자극을 준 두 경우에서 봉우리의 높이와 간격을 비교해 보세요.</figcaption></figure>
   </div>
   <div class="layer formal"><span class="layer-title">정확히 말하면</span>
-    <p><b>실무율(all-or-nothing)</b>: 발화할 수 있는 뉴런의 축삭 초기분절이 <b>역치</b>에 이르면 Na⁺ 유입이 막을 더 탈분극시켜 더 많은 전압 개폐성 Na⁺ 채널을 열어요. 이렇게 활동전위 하나가 생겨요. 역치 아래에서는 자극 세기에 따라 크기가 달라지는 국소 막전위 변화만 일어나요.</p>
-    <p><b>활동전위의 크기</b>: 같은 뉴런을 같은 조건에서 보면 활동전위 한 번의 크기는 대체로 일정해요. Na⁺ 유입이 탈분극을 증폭하고 Na⁺ 채널의 불활성화와 K⁺ 유출이 막전위를 되돌려요. 축삭에서도 이 과정이 이어져 신호의 크기가 유지돼요. 활동전위의 발생 여부를 0과 1에 비유해 <b>디지털</b> 신호라고 설명할 수 있어요.</p>
-    <p><b>자극 세기와 빈도</b>: 자극이 계속되면 같은 시간 동안 생기는 활동전위의 횟수(<b>빈도</b>)로 세기의 차이를 전할 수 있어요.</p>
-    <ol class="steps">
-      <li><b>약한 자극</b>: 축삭 초기분절이 역치에 이르지 못하면 활동전위가 생기지 않아요. 겨우 역치에 닿는 입력은 한 번 발화시키거나, 지속될 때 낮은 빈도로 발화시킬 수 있어요.</li>
-      <li><b>강한 자극이 지속될 때</b>: 한 번 발화하면 Na⁺ 채널이 불활성화되어 잠시 다시 발화할 수 없어요(<b>절대 불응기</b>). 이후 Na⁺ 채널이 회복 중이고 일부 K⁺ 채널이 아직 열려 있으면 평소보다 강한 자극이 필요해요(<b>상대 불응기</b>). 강한 자극이 이어지면 발화할 수 있는 상태로 회복된 뒤 역치에 더 빨리 도달해, 활동전위가 더 자주 생길 수 있어요.</li>
-    </ol>
-    <p><b>아날로그와 디지털</b>: 수상돌기·세포체에서 생기는 국소 막전위 변화의 크기는 입력에 따라 연속적으로 달라져요. 축삭 초기분절에서는 그 입력을 합친 결과가 역치에 이르면 활동전위가 발생해요.</p>
+    <p class="define"><strong>실무율(all-or-nothing)</strong> = 발화 가능한 뉴런의 축삭 초기분절이 역치에 닿으면 활동전위 발생</p>
+    <div class="table-wrap"><table class="compare">
+      <thead><tr><th scope="col"><span class="sr-only">비교 기준</span></th><th scope="col">국소 막전위 변화</th><th scope="col">활동전위</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">대표적인 자리</th><td>수상돌기·세포체</td><td>축삭 초기분절에서 시작해 축삭으로 전파</td></tr>
+        <tr><th scope="row">크기</th><td>입력에 따라 연속적으로 달라짐(아날로그)</td><td>같은 뉴런·같은 조건에서 한 번의 크기는 대체로 일정</td></tr>
+        <tr><th scope="row">역치 아래</th><td>크기가 작은 변화도 가능</td><td>발생하지 않음(발생 여부는 0 또는 1로 비유)</td></tr>
+      </tbody>
+    </table></div>
+    <p>역치에 닿으면 Na⁺ 유입이 더 많은 전압 개폐성 Na⁺ 채널을 열고, 이후 Na⁺ 채널의 불활성화와 K⁺ 유출이 전위를 되돌려요. 축삭을 따라 같은 과정이 이어져 크기가 유지돼요.</p>
+    <div class="table-wrap"><table class="compare">
+      <thead><tr><th scope="col"><span class="sr-only">비교 기준</span></th><th scope="col">절대 불응기</th><th scope="col">상대 불응기</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">채널 상태</th><td>Na⁺ 채널 불활성화</td><td>Na⁺ 채널 회복 중·일부 K⁺ 채널 열림</td></tr>
+        <tr><th scope="row">재발화</th><td>다시 발화할 수 없음</td><td>평소보다 강한 자극 필요</td></tr>
+      </tbody>
+    </table></div>
+    <p>겨우 역치에 닿는 입력은 한 번 발화시키거나 지속될 때 낮은 빈도로 발화시킬 수 있어요. 자극이 강하고 오래 이어지면 회복 뒤 더 빨리 역치에 닿아서 같은 시간에 더 자주 발화할 수 있어요.</p>
     <div class="widget" id="widget-allornone"><h4>직접 해 보기: 자극 세기와 활동전위</h4>
       <p class="widget-help">같은 뉴런에 60 ms 동안 자극을 주는 모형이에요. 위의 막대는 국소 막전위 변화의 크기를 나타내요. 아래 축삭 기록에서 활동전위가 생기는 조건과 횟수를 확인해 보세요. 이 모형의 휴지전위는 −70 mV, 활동전위의 최고치는 +30 mV로 설정했어요.</p>
       <div class="controls">
@@ -895,24 +930,25 @@
       </div>
     </div>
 <p class="interactive-note" data-bio-interactive="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_01_%ED%99%9C%EB%8F%99%EC%A0%84%EC%9C%84%EC%99%80_%EC%8B%A4%EB%AC%B4%EC%9C%A8.html">세 가지 자극에서 봉우리 높이와 같은 시간 동안의 횟수를 <a href="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_01_%ED%99%9C%EB%8F%99%EC%A0%84%EC%9C%84%EC%99%80_%EC%8B%A4%EB%AC%B4%EC%9C%A8.html" target="_self">활동전위와 실무율 모형</a>의 실무율 모드에서 비교해 보세요.</p>
-
   </div>
 <!-- bio-comic:v2:a57439a2a3c018f88eed72310a5b0bc9986f0bf95eba83a3536ddb063415f048 -->
 <p class="comic-note" data-bio-comic="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s2-all-or-none">자극에 따라 변하는 활동전위의 개수와 한 번의 높이를 구별하려면 <a href="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s2-all-or-none" target="_self">학습만화</a>를 펼쳐 보세요.</p>
 <!-- /bio-comic -->
 
-  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
-    <p>교수님이 먼저 물었어요. "활동전위는 디지털 신호일까요, 아날로그 신호일까요?" 기준은 자극이 세지면 활동전위 크기도 커지느냐였어요.</p>
+  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
+    <p>교수님은 활동전위가 생기는지를 시험 결과에 빗댔어요. “기면 기고 아니면 아니다”는 채널 하나보다 축삭에서의 발화 여부에 해당해요.</p>
     <blockquote>"1점 차이가 아니고 합격, 불합격"</blockquote>
-    <p>실무율을 시험의 합격·불합격에 비유하며 "기면 기고 아니면 아니다"라고 했어요. 이 비유는 채널 하나의 열림보다, 축삭에서 활동전위가 생기는지를 설명하는 데 알맞아요.</p>
-    <p>속삭이는 소리와 크게 말하는 소리를 구별하는 예를 들었어요. 같은 뉴런에서 발화 빈도의 차이가 자극 세기를 전달하는 한 방법이에요.</p>
-  </div>
+    <p>속삭이는 소리와 크게 말하는 소리의 차이를 자극 세기의 예로 들었어요.</p>
+  </details></div>
   <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
-    <ul>
-      <li><b>디지털과 아날로그</b>: 수상돌기·세포체의 국소 막전위는 입력에 따라 연속적으로 달라져요. 축삭 초기분절에서 역치에 이르면 활동전위가 생겨요.</li>
-      <li><b>활동전위의 크기와 빈도</b>: 같은 뉴런의 같은 조건에서 한 번의 활동전위 크기는 대체로 일정해요. 자극이 강하게 이어지면 일정 시간 동안 활동전위가 더 자주 생길 수 있어요.</li>
-      <li><b>역치 미만</b>: 역치에 못 미치는 자극은 국소 막전위를 바꿀 수 있어요. 활동전위는 역치에 닿을 때 생겨요.</li>
-    </ul>
+    <div class="table-wrap"><table class="pairs">
+      <thead><tr><th scope="col">묻는 것</th><th scope="col">틀리기 쉬운 답</th><th scope="col">맞는 답</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">입력에 따라 크기가 연속적으로 바뀌는 신호</th><td><del>한 번의 활동전위</del></td><td>국소 막전위 변화</td></tr>
+        <tr><th scope="row">지속 자극이 강해질 때 주로 변하는 값</th><td><del>활동전위 한 번의 높이</del></td><td>발화 빈도</td></tr>
+        <tr><th scope="row">역치에 못 미친 입력의 결과</th><td><del>막전위 변화도 없음</del></td><td>활동전위 없이 국소 변화 가능</td></tr>
+      </tbody>
+    </table></div>
   </div>
   <div class="sum" hidden>
     <p class="sum-lead">발화할 수 있는 뉴런이 역치에 이르면 활동전위가 생겨요. 같은 뉴런의 같은 조건에서는 한 번의 크기가 대체로 일정하고, 지속 자극의 세기는 발화 빈도에 반영될 수 있어요.</p>
@@ -943,17 +979,19 @@
     </svg><figcaption>동그라미는 신호가 다시 생기는 곳이에요. 아래 줄에서는 덮개 아래를 따라 신호가 이어져 더 멀리 떨어진 다음 틈을 깨워요.</figcaption></figure>
   </div>
   <div class="layer formal"><span class="layer-title">정확히 말하면</span>
-    <p><b>전도</b>: 한 자리에서 Na⁺가 들어와 막이 탈분극하면, 전위 차로 인해 축삭 내부에 국소 전류가 흘러 다음 자리를 탈분극시켜요. 그 자리의 막전위가 역치에 이르면 전압 개폐성 Na⁺ 채널이 열려 새 활동전위가 생기고, 같은 일이 반복돼요. 지나온 자리는 재분극을 거쳐 휴지전위로 돌아가요. 그래서 활동전위는 뉴런을 따라 이동하는 <b>탈분극의 파동</b>으로 전파되고, 크기는 일정하게 유지돼요. 축삭말단에 닿으면 신경전달물질이 분비돼요(<a href="#s3-release">화학 시냅스의 전달 순서</a>).</p>
-    <p><b>속도의 문제</b>: <b>축삭의 지름</b>이 클수록 축삭 내부의 전류 흐름에 대한 저항이 줄어, 다른 조건이 같으면 빠르게 전달돼요. 하지만 축삭을 한없이 굵게 할 수는 없어요. 가는 축삭에서도 전달을 빠르게 만드는 방식이 도약전도예요.</p>
-    <p><b>도약전도(saltatory conduction)</b>가 빠른 이유를 차례로 보면 이래요.</p>
-    <ol class="steps">
-      <li>미엘린 수초는 막을 가로질러 새는 전류를 줄이는 <b>절연체</b>예요(<a href="#s0-glia">신경아교세포와 미엘린 수초</a>).</li>
-      <li>수초 사이에 드러난 <b>랑비에 결절</b>에는 전압 개폐성 Na⁺ 채널이 집중돼요. 수초에 덮인 구간의 축삭막에도 이온 채널이 있어요.</li>
-      <li>한 결절에서 활동전위가 생기면 국소 전류가 수초 아래의 축삭 내부를 따라 수동적으로 흘러 다음 결절의 막을 탈분극시켜요.</li>
-      <li>다음 결절이 역치에 이르면 활동전위가 다시 생겨요. 결절마다 활동전위가 재생되어 건너뛰는 것처럼 보여요.</li>
-      <li>수초가 없는 축삭에서는 전압 개폐성 Na⁺ 채널이 막을 따라 분포해요. 국소 전류가 가까운 막을 탈분극시키고 활동전위가 연속해서 재생돼요. 비슷한 지름의 수초 있는 축삭보다 전도가 느려요.</li>
-    </ol>
-    <p>영어 이름 saltatory conduction을 보면, 결절에서 결절로 건너뛰듯 활동전위가 재생되는 모습을 떠올리면 돼요.</p>
+    <p class="define"><strong>전도</strong> = 한 자리의 막전위 변화가 다음 자리의 활동전위를 일으키며 이어지는 과정</p>
+    <ol class="chain"><li>먼저 열린 Na⁺ 채널과 탈분극</li><li>축삭 내부의 국소 전류</li><li>다음 막이 역치에 도달</li><li>다음 자리에서 활동전위 재생</li></ol>
+    <p>지나온 자리는 재분극을 거쳐 휴지전위로 돌아오고, 다음 자리에서 새로 발화하므로 전파되는 활동전위의 크기는 유지돼요. 축삭말단에 닿으면 <a href="#s3-release">화학 시냅스의 전달 순서</a>가 시작될 수 있어요.</p>
+    <p>다른 조건이 같다면 지름이 큰 축삭은 내부 전류에 대한 저항이 작아 전도가 빨라요. 축삭을 계속 굵게 하지 않고도 전도를 빠르게 하는 방식이 도약전도예요.</p>
+    <p class="define"><strong>도약전도(saltatory conduction)</strong> = 유수 축삭에서 활동전위가 랑비에 결절마다 재생되는 전도</p>
+    <div class="table-wrap"><table class="compare">
+      <thead><tr><th scope="col"><span class="sr-only">비교 기준</span></th><th scope="col">유수 축삭</th><th scope="col">무수 축삭</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">전압 개폐성 Na⁺ 채널</th><td>랑비에 결절에 집중</td><td>축삭막을 따라 분포</td></tr>
+        <tr><th scope="row">국소 전류가 이어지는 범위</th><td>수초 아래 축삭 내부를 따라 다음 결절까지 수동 전달</td><td>가까운 이웃 막까지 수동 전달</td></tr>
+        <tr><th scope="row">재생·속도</th><td>다음 결절이 역치에 닿을 때마다 재생, 비슷한 지름에서 빠름</td><td>이웃한 구간에서 연속 재생</td></tr>
+      </tbody>
+    </table></div>
     <figure class="figure"><svg id="fig-cond-axon" viewBox="0 0 560 230" role="img" aria-label="위의 수초 없는 축삭에서는 Na⁺ 채널이 축삭막을 따라 분포한다. 아래의 수초 있는 축삭에서는 Na⁺ 채널이 랑비에 결절에 집중되어 있고, 축삭 안쪽 화살표는 수초 아래로 이어지는 국소 전류를 가리킨다.">
       <text class="fig-text" x="10" y="24">수초 없는 축삭: 가까운 막에서 차례로 재생</text>
       <line class="fig-ink" x1="60" y1="55" x2="530" y2="55"/>
@@ -977,16 +1015,15 @@
       <line class="fig-ink" x1="200" y1="204" x2="200" y2="210"/>
       <text class="fig-muted" x="200" y="224" text-anchor="middle">랑비에 결절</text>
       <text class="fig-muted" x="395" y="224" text-anchor="middle">수초(절연체, 전선 피복)</text>
-    </svg><figcaption>짧은 세로선은 전도에 관여하는 Na⁺ 채널의 분포를 나타내요. 유수 축삭에서는 이 채널이 결절에 집중돼요. 화살표는 수초 아래 축삭 내부를 흐르는 국소 전류예요.</figcaption></figure>
-    <p><b>미엘린 수초의 성질</b>: 지질이 많은 막이라 전류 누출을 줄이고, 결절 사이의 전압 변화를 빠르게 전달해요. 수초가 없는 무수 축삭도 있어요.</p>
-    <p><b>다발성 경화증(multiple sclerosis)</b>: 면역계가 중추신경계의 미엘린 수초를 손상시키는 <b>자가면역질환</b>이에요.</p>
-    <ol class="steps">
-      <li>수초가 손상되면 막을 가로질러 새는 전류가 늘어요.</li>
-      <li>다음 결절을 탈분극시키는 전류가 줄어 역치에 늦게 닿거나 아예 닿지 못할 수 있어요.</li>
-      <li>그래서 전도가 느려지거나 차단될 수 있어요.</li>
-      <li>운동 경로에서 전도가 막히면 근력 저하나 마비가 생길 수 있어요. 다발성 경화증에서는 수초 손상과 함께 축삭 자체가 손상되는 경우도 있어요.</li>
-    </ol>
-    <p><b>활동전위를 판별하는 기준</b>(자세한 과정은 <a href="#s2-action">활동전위: 탈분극·재분극·과분극</a>): 막전위가 빠르게 탈분극했다 재분극하는 변화이며 축삭을 따라 전파돼요. 역치에서 전압 개폐성 Na⁺ 채널이 열려 Na⁺가 유입되며 시작하고, 정점 부근에서 Na⁺ 채널의 불활성화가 진행돼요. 많은 뉴런에서 활동전위는 축삭둔덕에 인접한 축삭 초기 분절에서 시작해 축삭말단 쪽으로 전해져요. Ca²⁺는 활동전위가 말단에 닿은 뒤에 말단으로 들어와 신경전달물질 분비를 돕는 이온이에요.</p>
+    </svg><figcaption>짧은 세로선은 전도에 관여하는 Na⁺ 채널, 화살표는 축삭 내부의 국소 전류예요.</figcaption></figure>
+    <p><a href="#s0-glia">신경아교세포와 미엘린 수초</a>에서 본 지질성 수초는 축삭막을 가로지르는 전류 누출을 줄여요. 수초가 덮인 부분에도 이온 채널이 있어요.</p>
+    <p class="define"><strong>다발성 경화증(multiple sclerosis)</strong> = 면역계가 중추신경계 수초를 손상시키는 자가면역질환</p>
+    <ol class="chain"><li>수초 손상</li><li>전류 누출 증가</li><li>다음 결절의 탈분극 감소</li><li>역치 도달 지연 또는 실패</li><li>전도 지연 또는 차단</li></ol>
+    <p>운동 경로의 전도가 차단되면 근력 저하나 마비가 생길 수 있어요. 다발성 경화증에서는 탈수초에 축삭 자체의 손상이 동반되기도 해요.</p>
+    <p>축삭을 전도하는 <a href="#s2-action">활동전위: 탈분극·재분극·과분극</a>의 시작점은 보통 축삭 초기분절이에요. 역치에서 Na⁺ 유입이 증가하고 정점 부근에는 Na⁺ 채널의 불활성화가 진행돼요. Ca²⁺는 활동전위가 말단에 도착한 뒤 말단으로 들어와 전달물질 분비를 도와요.</p>
+    <details class="more"><summary>더 자세히</summary>
+      <p>교수님은 면역은 14장에서 배운다고 했어요.</p>
+    </details>
   </div>
 <!-- bio-comic:v2:13f6e083ab58bb2c7d49d85a620dbc163bc70dfa498cd9491900d4bc5f26b38f -->
 <p class="comic-note" data-bio-comic="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s2-conduction">전류가 퍼지는 구간과 활동전위가 재생되는 결절을 구별하려면 <a href="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s2-conduction" target="_self">학습만화</a>를 펼쳐 보세요.</p>
@@ -994,19 +1031,21 @@
 
 <p class="interactive-note" data-bio-interactive="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_03_%EC%88%98%EC%B4%88%EC%99%80_%EB%8F%84%EC%95%BD%EC%A0%84%EB%8F%84.html">같은 거리를 가는 두 축삭에서 활동전위가 어디서 다시 생기고 어느 쪽이 먼저 도착하는지 <a href="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_03_%EC%88%98%EC%B4%88%EC%99%80_%EB%8F%84%EC%95%BD%EC%A0%84%EB%8F%84.html" target="_self">수초와 도약전도 모형</a>의 전도 모드에서 비교해 보세요.</p>
 
-  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
-    <p>전도를 <b>파도타기</b> 응원에 비유했어요. 일어섰다 앉고, 일어섰다 앉고 하며 옆으로 전해져요.</p>
-    <p>도약전도에서도 같은 비유를 썼어요. 수초가 없으면 이웃한 학생이 차례로 일어나고, 수초가 있으면 1번, 10번, 20번처럼 떨어진 자리에서 일어난다는 비유예요. 학생이 일어나는 자리가 활동전위를 재생하는 곳이고, 그 사이에서는 전류가 축삭 내부를 따라 이어져요.</p>
-    <p>수초를 <b>전선 피복</b>에 비유했어요. 피복을 벗긴 전선에서 누전이 생기듯, 수초가 손상되면 축삭막을 가로질러 새는 전류가 늘어요.</p>
-    <p>면역은 14장에서 배운다고 했어요.</p>
-  </div>
+  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
+    <p>교수님은 전도를 파도타기에 비유했어요. 무수 축삭에서는 옆 학생이 차례로 일어나고, 유수 축삭에서는 1번·10번·20번처럼 떨어진 학생이 일어나요.</p>
+    <p>수초는 전선의 피복, 수초가 손상될 때 새는 전류는 피복이 벗겨진 전선의 누전에 빗댔어요.</p>
+  </details></div>
   <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
-    <ul>
-      <li><b>지름과 도약전도</b>: 빨라지는 방법이 하나뿐이라고 생각하기 쉬워요. 축삭의 지름이 클수록 빠르고, 따로 도약전도는 지름이 작은 축삭에서도 전도 속도를 높여요. 강의노트 소제목도 "도약전도는 지름이 작은 축삭에서 전도 속도를 증가"예요.</li>
-      <li><b>탈수초와 축삭 손상</b>: 탈수초는 축삭을 감싼 미엘린 수초의 손상이에요. 축삭이 이어져 있어도 탈수초 때문에 전도가 느려지거나 막힐 수 있어요. 다발성 경화증에서는 축삭 손상도 동반될 수 있어요.</li>
-      <li><b>수초와 활동전위의 자리</b>: 정상 유수 축삭에서 활동전위는 Na⁺ 채널이 집중된 결절에서 재생돼요. 수초로 덮인 막에도 이온 채널이 있으며, 결절 사이는 국소 전류의 수동 전달로 이어져요.</li>
-      <li><b>모든 뉴런에 수초?</b>: 수초를 모든 뉴런의 보호층으로 고르기 쉬워요. 수초가 없는 무수신경도 있어서, 수초는 일부 뉴런만 덮어요.</li>
-    </ul>
+    <div class="table-wrap"><table class="pairs">
+      <thead><tr><th scope="col">묻는 것</th><th scope="col">틀리기 쉬운 답</th><th scope="col">맞는 답</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">가느다란 축삭에서 전도를 빠르게 하는 방식</th><td><del>굵은 축삭에서만 전도 속도 증가</del></td><td>수초가 있는 축삭의 도약전도</td></tr>
+        <tr><th scope="row">탈수초의 뜻</th><td><del>축삭 자체가 끊어짐</del></td><td>축삭을 감싼 수초의 손상</td></tr>
+        <tr><th scope="row">유수 축삭에서 활동전위가 재생되는 곳</th><td><del>수초 아래 전 구간</del></td><td>랑비에 결절</td></tr>
+        <tr><th scope="row">수초를 갖는 축삭</th><td><del>모든 뉴런의 축삭</del></td><td>유수 축삭</td></tr>
+      </tbody>
+    </table></div>
+    <p>강의노트는 “도약전도는 지름이 작은 축삭에서 전도 속도를 증가”라고 짚어요. 축삭 자체가 이어져 있어도 탈수초로 전도가 늦어지거나 막힐 수 있어요.</p>
   </div>
   <div class="sum" hidden>
     <p class="sum-lead">굵은 축삭은 내부 저항이 작아 전도가 빨라요. 가는 축삭도 수초가 있으면 결절 사이로 전류가 수동적으로 퍼지고 활동전위가 결절마다 재생되는 도약전도로 빨라져요.</p>
@@ -1044,28 +1083,30 @@
     </svg><figcaption>왼쪽은 알갱이가 틈을 건너가고, 오른쪽은 알갱이가 터널 속을 곧장 지나가요.</figcaption></figure>
   </div>
   <div class="layer formal"><span class="layer-title">정확히 말하면</span>
-    <p>시냅스(synapse)는 뉴런과 뉴런이 맞붙어 신호를 넘겨주는 곳이에요. 신호를 넘겨주는 앞쪽 세포를 시냅스 전 뉴런(presynaptic neuron), 신호를 받는 뒤쪽 세포를 시냅스 후 뉴런(postsynaptic neuron)이라고 해요. 강의노트의 "시냅스전세포·시냅스후세포"도 같은 뜻이에요.</p>
-    <p>이름은 놓인 위치가 아니라 신호가 가는 방향으로 정해요. 신경전달물질을 내보내는 축삭말단을 가진 쪽이 시냅스 전 뉴런이고, 그 물질을 받는 쪽(주로 수상돌기)이 시냅스 후 뉴런이에요.</p>
-    <p>시냅스는 신호를 넘기는 방식에 따라 둘로 나뉘어요.</p>
-    <div class="table-wrap"><table>
-      <thead><tr><th>구분</th><th>무엇으로 넘기나</th><th>두 세포 사이</th></tr></thead>
+    <p class="define"><strong>시냅스(synapse)</strong> = 뉴런이 다음 세포에 신호를 넘기는 접점</p>
+    <p class="define"><strong>시냅스 전 뉴런(presynaptic neuron)</strong> = 신호를 보내는 쪽</p>
+    <p class="define"><strong>시냅스 후 뉴런(postsynaptic neuron)</strong> = 신호를 받는 쪽</p>
+    <div class="table-wrap"><table class="compare">
+      <thead><tr><th scope="col"><span class="sr-only">비교 기준</span></th><th scope="col">화학적 시냅스(chemical synapse)</th><th scope="col">전기적 시냅스(electrical synapse)</th></tr></thead>
       <tbody>
-        <tr><td>화학적 시냅스(chemical synapse)</td><td>신경전달물질(neurotransmitter)이라는 화학물질</td><td>시냅스 틈(synaptic cleft)으로 떨어져 있어요. 물질이 이 틈을 건너가야 신호가 넘어가요.</td></tr>
-        <tr><td>전기적 시냅스(electrical synapse)</td><td>이온이 직접 이동해요(수업에서는 나트륨 이온을 예로 들었어요)</td><td>두 세포 사이에 터널 같은 통로가 뚫려 있어, 그 통로로 이온이 곧장 옮겨 가요.</td></tr>
+        <tr><th scope="row">건너가는 것</th><td>신경전달물질(neurotransmitter)</td><td>이온(수업 예: Na⁺)</td></tr>
+        <tr><th scope="row">두 세포 사이</th><td>시냅스 틈(synaptic cleft)</td><td>두 세포를 잇는 통로</td></tr>
+        <tr><th scope="row">넘기는 방식</th><td>보내는 축삭말단에서 방출, 받는 쪽의 수용체(주로 수상돌기)에 결합</td><td>통로를 통한 이온의 직접 이동</td></tr>
       </tbody>
     </table></div>
-    <p>판별 기준은 "무엇이 건너가는가"예요. 화학물질(신경전달물질)이 틈을 건너가면 화학적 시냅스, 통로를 지나 이온이 바로 옮겨 가면 전기적 시냅스예요. 전기적 시냅스에는 신경전달물질이 건너가는 시냅스 틈 단계가 없어요.</p>
-    <p>수업에서 자세히 배운 것은 화학적 시냅스예요. 신경전달물질이 어떻게 나와서 어떻게 작용하는지는 <a href="#s3-release">화학 시냅스의 전달 순서</a>에서 이어져요.</p>
+    <p>시냅스 전·후는 신호의 방향으로 정해요. 수업에서 자세히 다루는 것은 화학적 시냅스예요. <a href="#s3-release">화학 시냅스의 전달 순서</a>로 이어져요.</p>
+    <p>교수님은 소리와 시각 신호가 어떻게 뇌에 닿는지, 생각과 감정은 어떻게 생기는지 이해하기 위해 이 단원을 공부한다고 설명했어요.</p>
+    <details class="more"><summary>더 자세히</summary>
+      <p>강의노트의 “시냅스전세포·시냅스후세포”는 같은 뜻이에요.</p>
+    </details>
   </div>
 <!-- bio-comic:v2:6b836f20411595fd042fddfc86de785596564937a1bed66dbd19ef29a8067f8a -->
 <p class="comic-note" data-bio-comic="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s3-synapse-types">전달물질이 틈을 건너는 경우와 이온이 직접 이동하는 경우를 구별하려면 <a href="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s3-synapse-types" target="_self">학습만화</a>를 펼쳐 보세요.</p>
 <!-- /bio-comic -->
 
-  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
-    <p>전기적 시냅스의 통로를 터널에 비유하셨어요.</p>
+  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
     <blockquote>"터널처럼 통로가 있어 가지고 … 나트륨 이온이 직접 이동하는 경우"</blockquote>
-    <p>그리고 범위를 정해 주셨어요. "일단 우리가 배우는 거는 화학적 시냅스입니다." 이 단원을 배우는 이유로는 소리와 시각 신호가 어떻게 뇌까지 가는지, 생각과 감정은 어떻게 생기는지를 드셨어요.</p>
-  </div>
+  </details></div>
   <div class="sum" hidden>
     <p class="sum-lead">신호를 넘기는 두 방식은 건너가는 것이 달라요: 화학적 시냅스는 틈을 건너는 신경전달물질, 전기적 시냅스는 통로로 직접 옮겨 가는 이온이에요.</p>
     <p class="panel-label">용어</p>
@@ -1096,17 +1137,23 @@
     </svg><figcaption>그림 속 받는 자리는 이온이 지나는 문이에요. 알갱이가 틈을 건너 이 자리에 붙으면 문이 열려요.</figcaption></figure>
   </div>
   <div class="layer formal"><span class="layer-title">정확히 말하면</span>
-    <p><strong>먼저 준비된 것.</strong> 아세틸콜린 같은 소분자 신경전달물질은 대개 축삭말단에서 만들어져 그 자리에서 작은 시냅스 소포(synaptic vesicle)에 담겨요. 엔도르핀 같은 신경펩타이드는 세포체에서 합성·포장되어, 운동단백질이 미세소관을 따라 소포를 축삭말단으로 옮겨요. 두 경우 모두 전달물질이 든 소포가 말단에서 방출을 기다려요.</p>
-    <p><strong>전달 순서.</strong> 활동전위는 보통 축삭 초기분절에서 생겨 축삭을 따라 시냅스 전 뉴런의 축삭말단까지 전도돼요. 그다음 일은 이렇게 이어져요.</p>
+    <p class="define"><strong>방출 전 준비</strong></p>
+    <div class="table-wrap"><table class="compare">
+      <thead><tr><th scope="col"><span class="sr-only">비교 기준</span></th><th scope="col">소분자 신경전달물질</th><th scope="col">신경펩타이드</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">예</th><td>아세틸콜린</td><td>엔도르핀</td></tr>
+        <tr><th scope="row">합성·포장 장소</th><td>대개 축삭말단에서 합성해 작은 시냅스 소포(synaptic vesicle)에 포장</td><td>세포체에서 합성·포장</td></tr>
+        <tr><th scope="row">말단에서 방출될 준비</th><td>그 자리에서 대기</td><td>운동단백질이 미세소관을 따라 포장된 소포를 운반</td></tr>
+      </tbody>
+    </table></div>
+    <p class="define"><strong>화학적 시냅스에서 신호를 넘기는 순서</strong></p>
     <ol class="steps">
-      <li>활동전위가 시냅스 전 뉴런의 축삭말단에 도착해요.</li>
-      <li>축삭말단 막의 전압개폐성 Ca²⁺ 채널이 열려요. 이 채널을 여는 것은 <strong>막전위 변화</strong>예요. 채널이 전압 차이를 스스로 인식해 열려요.</li>
-      <li>Ca²⁺가 축삭말단 안으로 쏟아져 들어와요. 전기 신호(활동전위)가 Ca²⁺ 유입이라는 화학적 변화를 일으킨 거예요.</li>
-      <li>Ca²⁺가 있어야 소포의 막이 <strong>시냅스 전 뉴런(축삭말단)의 세포막</strong>과 융합해요. 융합하면서 신경전달물질이 바깥, 곧 시냅스 틈으로 쏟아져 나가요.</li>
-      <li>신경전달물질은 시냅스 틈을 확산해 건너가요.</li>
-      <li>시냅스 후 뉴런(주로 수상돌기)의 세포막에 있는 수용체에 결합해요. 호르몬과 호르몬 수용체처럼 열쇠와 자물쇠로 꼭 맞아요.</li>
-      <li>이 그림처럼 수용체 자체가 채널인 경우에는 전달물질이 결합하면 채널이 열려요. 이 채널을 여는 것은 <strong>물질(리간드)의 결합</strong>이에요. 이런 채널이 리간드 개폐성 이온 채널(ligand-gated ion channel)이에요.</li>
-      <li>열린 채널로 이온이 이동해요. Na⁺가 들어와 막이 탈분극되고 축삭 초기분절에서 역치에 이르면 활동전위가 생길 수 있어요. 열린 채널과 막전위에 따라 다른 효과가 나타날 수 있어요(<a href="#s3-excite-inhibit">흥분성 신호와 억제성 신호</a>).</li>
+      <li><strong>도착.</strong> 축삭 초기분절에서 시작한 활동전위가 축삭을 지나 시냅스 전 뉴런의 축삭말단에 닿아요.</li>
+      <li><strong>Ca²⁺ 유입.</strong> 말단 막의 전압개폐성 Ca²⁺ 채널이 막전위 변화로 열려 칼슘 이온이 들어와요.</li>
+      <li><strong>융합과 방출.</strong> 유입된 Ca²⁺가 소포와 시냅스 전 막의 융합을 일으켜 전달물질이 틈으로 나와요.</li>
+      <li><strong>확산과 결합.</strong> 전달물질이 틈을 건너 시냅스 후 막의 수용체에 결합해요. 호르몬과 수용체처럼 맞는 상대와 결합하지만 신경전달물질은 시냅스에서 작용하는 신호물질이에요.</li>
+      <li><strong>채널 조절.</strong> 그림처럼 수용체 자체가 리간드 개폐성 이온 채널(ligand-gated ion channel)이면 결합으로 채널이 직접 열려요. 수용체가 세포 안 신호를 거쳐 채널을 간접 조절하는 경우도 있어요.</li>
+      <li><strong>시냅스 후 효과.</strong> 열린 통로로 Na⁺가 들어와 탈분극되고 초기분절이 역치에 이르면 다음 활동전위가 생길 수 있어요. 열린 채널과 당시 전위에 따라 <a href="#s3-excite-inhibit">흥분성 신호와 억제성 신호</a>가 갈려요.</li>
     </ol>
     <figure class="figure"><svg id="fig-s3-chemical-synapse" viewBox="0 0 720 390" role="img" aria-label="교재 그림 12.7과 같은 이름으로 그린 화학 시냅스 구조. 위쪽 시냅스 전 뉴런의 축삭말단 옆벽에 전압개폐성 Ca²⁺ 채널이 있고 테두리 고리로 그린 Ca²⁺가 안으로 들어온다. 말단 안에는 테두리 원인 시냅스 소포가 있고 그 안의 색칠된 점이 신경전달물질이다. 소포 하나는 시냅스 전 막과 이어져 열려 있고, 신경전달물질이 시냅스 틈을 건너 아래 시냅스 후 막의 리간드 개폐성 이온 채널에 붙는다. 이 예시에서는 열린 채널을 지나 이온이 아래로 들어간다">
       <line class="fig-ink" x1="340" y1="8" x2="340" y2="56"/><path class="fig-ink" d="M332 46 L340 58 L348 46"/>
@@ -1134,20 +1181,16 @@
       <text class="fig-text" x="160" y="322">시냅스 후 뉴런(수상돌기)</text>
       <text class="fig-text" x="150" y="362">수용체의 예: 리간드 개폐성 이온 채널</text><line class="fig-ink" x1="300" y1="348" x2="300" y2="298"/>
       <text class="fig-text" x="150" y="384">(통과하는 이온은 채널 종류에 따라 다름)</text>
-    </svg><figcaption>교재 그림 12.7(p.267)과 같은 이름으로 그렸어요. 테두리 원이 시냅스 소포, 색칠된 점이 신경전달물질, 작은 테두리 고리가 Ca²⁺예요. 소포는 시냅스 전 막과 이어져 열리고, 신경전달물질은 시냅스 틈을 건너 시냅스 후 막의 수용체에 붙어요. 이 그림은 수용체 자체가 이온 채널인 경우를 보여 줘요.</figcaption></figure>
-    <p><strong>위치 관계.</strong> 소포는 시냅스 전 뉴런의 축삭말단 안에 있고, 그 축삭말단의 세포막(시냅스 전 막)과 융합해요. 전압개폐성 Ca²⁺ 채널도 이 축삭말단 막에 있어요. 시냅스 틈 건너편의 시냅스 후 막에 수용체가 있어요. 그림에 그린 수용체는 리간드 개폐성 이온 채널이에요. 틈을 건너가는 것은 방출된 신경전달물질이고, 소포 자체는 건너가지 않아요.</p>
-    <p><strong>두 개폐성 채널의 구별.</strong> 무엇이 채널을 여는지로 나눠요.</p>
-    <div class="table-wrap"><table>
-      <thead><tr><th>채널</th><th>있는 곳</th><th>여는 것</th></tr></thead>
+    </svg><figcaption>교재 그림 12.7(p.267)과 같은 이름을 썼어요. 테두리 원은 시냅스 소포, 색칠된 점은 신경전달물질, 작은 테두리 고리는 Ca²⁺예요.</figcaption></figure>
+    <div class="table-wrap"><table class="compare">
+      <thead><tr><th scope="col"><span class="sr-only">비교 기준</span></th><th scope="col">전압개폐성 Na⁺ 채널</th><th scope="col">전압개폐성 Ca²⁺ 채널</th><th scope="col">리간드 개폐성 이온 채널</th></tr></thead>
       <tbody>
-        <tr><td>전압개폐성 Na⁺ 채널</td><td>축삭 초기분절과 축삭</td><td>막전위 변화(역치 도달)</td></tr>
-        <tr><td>전압개폐성 Ca²⁺ 채널</td><td>시냅스 전 뉴런의 축삭말단</td><td>막전위 변화(활동전위 도착)</td></tr>
-        <tr><td>리간드 개폐성 이온 채널</td><td>시냅스 후 뉴런의 세포막(수상돌기)</td><td>신경전달물질(리간드)의 결합</td></tr>
+        <tr><th scope="row">예시 위치</th><td>축삭 초기분절과 축삭</td><td>시냅스 전 뉴런의 축삭말단</td><td>시냅스 후 막(예: 수상돌기)</td></tr>
+        <tr><th scope="row">여는 조건</th><td>막전위 변화(역치 도달)</td><td>막전위 변화(활동전위 도착)</td><td>신경전달물질(리간드)의 결합</td></tr>
       </tbody>
     </table></div>
-    <p>수업 그림에서는 수용체 자체가 채널이었어요. 세포 안의 신호 전달을 거쳐 이온 채널의 작동을 바꾸는 수용체도 있어요.</p>
-    <p><strong>전달 단계와 전도 구간.</strong> 그림 속 전달물질은 축삭말단의 소포에 저장되었다가 방출되어, 시냅스 틈을 확산해 건너 시냅스 후 막의 수용체에 결합하는 화학물질이에요. 이 전달 단계에 직접 들어가는 구조는 축삭말단의 전압개폐성 Ca²⁺ 채널, 시냅스 소포, 시냅스 후 막의 수용체예요. 축삭은 랑비에 결절을 포함해 활동전위가 축삭말단까지 전도되는 구간이에요. 이 구간을 지나는 것은 전기 신호이고, 신경전달물질이 방출되는 곳도 아니에요.</p>
-    <p>수용체에 결합한다는 점은 호르몬과 호르몬 수용체와 닮았지만, 신경전달물질은 시냅스에서 작용하는 신호물질로 호르몬과 따로 불러요. 수업에서 본 신경전달물질은 아세틸콜린, 글루탐산 같은 아미노산, 도파민·세로토닌, 기체인 산화질소처럼 여러 가지예요(<a href="#s4-transmitters">여러 가지 신경전달물질</a>). 산화질소처럼 필요한 곳에서 만들어져 소포 없이 확산하는 신호물질도 있어요.</p>
+    <p>축삭과 랑비에 결절은 활동전위의 전도 구간이에요. 신호를 다음 세포에 넘기는 단계에 직접 참여하는 구조는 말단의 Ca²⁺ 채널과 소포, 시냅스 후 막의 수용체예요.</p>
+    <p><a href="#s4-transmitters">여러 가지 신경전달물질</a>에는 아세틸콜린·글루탐산·도파민·세로토닌이 있어요. 산화질소처럼 필요한 곳에서 만들어져 소포 없이 확산하는 신호물질도 있어요.</p>
   </div>
 <!-- bio-comic:v2:cc20ab4ed50a7ce480a1392eb4ebb78ff834a019e3ad3026bac73cefdbdd38ba -->
 <p class="comic-note" data-bio-comic="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s3-release">Ca²⁺ 유입부터 시냅스 후 수용체 결합까지의 순서와 위치를 보려면 <a href="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s3-release" target="_self">학습만화</a>를 펼쳐 보세요.</p>
@@ -1155,23 +1198,26 @@
 
 <p class="interactive-note" data-bio-interactive="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_02_%ED%99%94%ED%95%99_%EC%8B%9C%EB%83%85%EC%8A%A4%EC%9D%98_%EC%8B%A0%ED%98%B8_%EC%A0%84%EB%8B%AC.html">Ca²⁺가 들어온 뒤 소포가 어느 막과 융합하는지 <a href="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_02_%ED%99%94%ED%95%99_%EC%8B%9C%EB%83%85%EC%8A%A4%EC%9D%98_%EC%8B%A0%ED%98%B8_%EC%A0%84%EB%8B%AC.html" target="_self">화학 시냅스 모형</a>에서 단계별로 재생해 보세요.</p>
 
-  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
-    <p>리간드 개폐성 이온 채널을 카드키 문에 비유하셨어요. 전압개폐성은 벽의 전압차를 스스로 인식해 열리는 문이고, 리간드 개폐성은 카드키를 대야 열리는 문이에요.</p>
+  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
+    <p>교수님은 리간드 개폐성 채널을 카드키 문으로 비유하고 소포 운반에서는 “미세소관 기억나요?”라고 물었어요.</p>
     <blockquote>"카드키를 딱 대면은 얘가 탁 열려 … 카드키가 리간드인 거죠."</blockquote>
-    <p>Ca²⁺의 역할도 짚으셨어요. "칼슘이 있어야 이게 융합이 돼요."</p>
-    <p>소포 운반은 세포 단원과 이으셨어요. "미세소관 기억나요?" 수업에서 설명한 소포의 장거리 운반은 신경펩타이드에 해당해요. 운동단백질이 소포를 싣고 미세소관 위를 걸어가요.</p>
-  </div>
+  </details></div>
   <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
-    <ul>
-      <li><strong>전압개폐성과 리간드 개폐성을 같은 채널로 착각하기 쉬워요.</strong> 축삭 초기분절의 Na⁺ 채널과 축삭말단의 Ca²⁺ 채널은 막전위 변화로 열리는 전압개폐성이에요. 그림의 시냅스 후 막에는 신경전달물질이 결합하면 열리는 리간드 개폐성 채널이 있어요. 축삭말단의 Ca²⁺ 채널은 시냅스에 있어도 신경전달물질이 아니라 활동전위로 열려요.</li>
-      <li><strong>수용체가 언제나 채널이라고 착각하기 쉬워요.</strong> 수업 그림은 수용체 자체가 채널인 경우예요. 세포 내 신호를 거쳐 채널을 간접 조절하는 수용체도 있어요.</li>
-      <li><strong>소포와 소포체를 헷갈리기 쉬워요.</strong> 세포막과 융합하는 것은 신경전달물질을 담은 소포(vesicle)예요. 소포체(ER)가 아니에요. 교수님도 "소포체의 막이, 소포의 막이"라고 바로 고쳐 말하셨어요.</li>
-      <li><strong>소포가 시냅스 후 뉴런의 막과 융합한다고 착각하기 쉬워요.</strong> 소포는 시냅스 전 뉴런(축삭말단)의 세포막과 융합해요. 시냅스 틈을 건너가는 것은 소포가 아니라 방출된 신경전달물질이에요.</li>
-      <li><strong>방출이 시냅스 후 뉴런 쪽에서 일어난다고 착각하기 쉬워요.</strong> 활동전위가 도착해 방출이 일어나는 곳은 시냅스 전 뉴런의 축삭말단이에요.</li>
-      <li><strong>활동전위가 축삭말단에서 생긴다고 착각하기 쉬워요.</strong> 활동전위는 보통 축삭 초기분절에서 생겨 축삭말단까지 전도돼요.</li>
-      <li><strong>미세소관이 스스로 걷는다고 착각하기 쉬워요.</strong> 신경펩타이드를 담은 소포를 나르는 운동단백질은 미세소관을 길로 써요.</li>
-      <li><strong>축삭말단과 축삭을 같은 단계로 묶기 쉬워요.</strong> 축삭말단(Ca²⁺ 채널, 소포)은 전달 단계에 직접 참여하지만, 축삭은 활동전위를 말단까지 전도하는 구간이에요.</li>
-    </ul>
+    <div class="table-wrap"><table class="pairs">
+      <thead><tr><th scope="col">묻는 것</th><th scope="col">틀리기 쉬운 답</th><th scope="col">맞는 답</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">말단의 Ca²⁺ 채널을 여는 자극</th><td><del>신경전달물질 결합</del></td><td>활동전위 도착에 따른 막전위 변화</td></tr>
+        <tr><th scope="row">시냅스 후 수용체의 종류</th><td><del>모두 이온 채널</del></td><td>이온 채널인 수용체와 채널을 간접 조절하는 수용체</td></tr>
+        <tr><th scope="row">방출 때 막과 융합하는 구조</th><td><del>소포체(ER)</del></td><td>시냅스 소포</td></tr>
+        <tr><th scope="row">소포가 융합하는 쪽</th><td><del>시냅스 후 막</del></td><td>말단의 시냅스 전 막</td></tr>
+        <tr><th scope="row">시냅스 틈을 건너가는 것</th><td><del>소포 자체</del></td><td>방출된 신경전달물질</td></tr>
+        <tr><th scope="row">전달물질이 방출되는 곳</th><td><del>시냅스 후 뉴런</del></td><td>시냅스 전 축삭말단</td></tr>
+        <tr><th scope="row">활동전위의 대표적 시작점</th><td><del>축삭말단</del></td><td>축삭 초기분절</td></tr>
+        <tr><th scope="row">미세소관을 따라 소포를 나르는 주체</th><td><del>미세소관 자체</del></td><td>운동단백질</td></tr>
+        <tr><th scope="row">랑비에 결절이 속한 구간</th><td><del>시냅스 전달·방출 구간</del></td><td>축삭의 전도 구간</td></tr>
+      </tbody>
+    </table></div>
+    <p>교수님은 “소포체의 막”을 “소포의 막”으로 바로 고쳤고, Ca²⁺가 있어야 막이 융합한다고 강조했어요.</p>
   </div>
   <div class="sum" hidden>
     <p class="sum-lead">활동전위가 축삭말단에 오면 전압개폐성 Ca²⁺ 채널이 열려 Ca²⁺가 들어와요. 소포가 시냅스 전 막과 융합하고, 방출된 전달물질이 틈을 건너 시냅스 후 수용체에 결합해요.</p>
@@ -1202,26 +1248,24 @@
       <text class="fig-text" x="150" y="185" text-anchor="middle">흥분</text>
       <text class="fig-text" x="300" y="185" text-anchor="middle">억제</text>
       <text class="fig-text" x="450" y="185" text-anchor="middle">억제</text>
-    </svg><figcaption>Na⁺가 들어와 흥분하는 예와, K⁺가 나가거나 Cl⁻가 들어와 억제되는 예예요. 오른쪽 화살표는 Cl⁻가 들어오는 조건을 보여 줘요. Cl⁻의 이동 방향은 막전위와 Cl⁻ 평형전위에 따라 달라져요.</figcaption></figure>
+    </svg><figcaption>오른쪽 Cl⁻ 화살표는 Cl⁻가 유입되는 조건의 예예요.</figcaption></figure>
   </div>
   <div class="layer formal"><span class="layer-title">정확히 말하면</span>
-    <p>신경전달물질은 시냅스 후 수용체에 결합해 이온 채널을 직접 열거나 세포 안의 신호 전달을 거쳐 조절할 수 있어요(<a href="#s3-release">화학 시냅스의 전달 순서</a>). 활동전위가 생길 가능성을 높이면 흥분, 낮추면 억제예요. 효과는 열린 채널이 통과시키는 이온과 당시 막전위에 따라 달라져요.</p>
-    <div class="table-wrap"><table>
-      <thead><tr><th>열리는 채널</th><th>이온의 순이동</th><th>막전위 변화</th><th>가능한 효과</th></tr></thead>
+    <p class="define"><strong>흥분성 신호</strong> = 활동전위가 생길 가능성을 높이는 신호</p>
+    <p class="define"><strong>억제성 신호</strong> = 활동전위가 생길 가능성을 낮추는 신호</p>
+    <p class="define"><strong>이온의 평형전위</strong> = 그 이온의 안팎 이동이 균형을 이뤄 순이동이 없는 막전위</p>
+    <p>같은 전달물질도 시냅스 후 막의 수용체와 현재 막전위에 따라 효과가 달라요. 수용체가 채널을 여는 방식은 <a href="#s3-release">화학 시냅스의 전달 순서</a>에서 이어져요.</p>
+    <div class="table-wrap"><table class="compare">
+      <thead><tr><th scope="col"><span class="sr-only">비교 기준</span></th><th scope="col">Na⁺가 통과하는 채널</th><th scope="col">K⁺ 채널</th><th scope="col">Cl⁻ 채널</th></tr></thead>
       <tbody>
-        <tr><td>Na⁺가 통과하는 채널</td><td>Na⁺ 유입이 우세한 경우</td><td>막전위가 올라가요(탈분극).</td><td>역치에 가까워져 흥분해요.</td></tr>
-        <tr><td>K⁺ 채널</td><td>K⁺ 유출이 우세한 경우</td><td>막전위가 더 음의 값으로 가요(과분극).</td><td>역치에서 멀어져 억제돼요.</td></tr>
-        <tr><td>Cl⁻ 채널</td><td>막전위가 Cl⁻ 평형전위보다 높으면 유입, 낮으면 유출, 같으면 순이동이 없어요.</td><td>막전위를 Cl⁻ 평형전위 쪽으로 끌어요.</td><td>과분극되거나, 흥분 입력이 만드는 전압 상승이 작아져 억제될 수 있어요.</td></tr>
+        <tr><th scope="row">이온의 순이동</th><td>Na⁺ 유입이 우세한 경우</td><td>K⁺ 유출이 우세한 경우</td><td>Cl⁻ 평형전위보다 막전위가 높으면 유입, 낮으면 유출, 같으면 순이동 없음</td></tr>
+        <tr><th scope="row">막전위 변화</th><td>상승(탈분극)</td><td>하강(과분극)</td><td>Cl⁻ 평형전위 쪽으로 이동</td></tr>
+        <tr><th scope="row">발화 효과</th><td>역치에 가까워져 흥분</td><td>역치에서 멀어져 억제</td><td>과분극 또는 동시 흥분성 입력의 약화로 억제 가능</td></tr>
       </tbody>
     </table></div>
-    <p><strong>채널이 열렸을 때의 억제.</strong> 활동전위는 막전위가 역치까지 올라가야 생겨요(<a href="#s2-action">활동전위</a>). 과분극이 일어나면 막전위가 역치에서 멀어져요. Cl⁻ 평형전위가 휴지전위와 비슷하고 역치보다 낮으면, Cl⁻ 채널이 열릴 때 막전위가 거의 그대로일 수도 있어요. 이때 흥분성 신호가 동시에 와서 막전위를 올리면 열린 Cl⁻ 채널을 통한 이온 이동이 그 상승을 줄여요. 이렇게 과분극 없이도 억제될 수 있어요.</p>
-    <p><strong>따지는 순서.</strong> 채널이 열렸을 때 활동전위가 더 잘 생기는지 살펴봐요.</p>
-    <ol class="steps">
-      <li>시냅스 후 막에서 어떤 이온이 통과하는 채널이 열리는지 확인해요.</li>
-      <li>막전위와 이온의 평형전위로 순이동 방향을 확인해요. 평형전위는 그 이온이 양쪽으로 같은 양만큼 이동해 순이동이 없는 막전위예요.</li>
-      <li>막전위가 역치에 더 쉽게 도달하는지 판단해요. 채널이 열린 상태에서 다른 흥분성 입력으로 막전위를 올리기 어려워질 수도 있어요.</li>
-    </ol>
-    <p>같은 전달물질도 받는 뉴런의 수용체와 막전위에 따라 효과가 달라져요. 강의노트의 "자극적인 효과 / 억제효과"가 이 뜻이에요. 수업의 Cl⁻ 채널 사례에서는 GABA가 Cl⁻를 주로 통과시키는 GABA<sub>A</sub> 수용체에 결합해요(<a href="#s4-transmitters">여러 가지 신경전달물질</a>).</p>
+    <ol class="chain"><li>열린 채널이 통과시키는 이온</li><li>막전위와 평형전위로 이동 방향 확인</li><li>역치에 더 잘 닿는지 판단</li></ol>
+    <p><a href="#s2-action">활동전위</a>는 역치에 도달해야 생겨요. Cl⁻ 평형전위가 휴지전위와 비슷하고 역치보다 낮으면, Cl⁻ 채널만 열릴 때 막전위가 거의 그대로일 수 있어요. 이때 흥분 입력이 막전위를 올리면 Cl⁻ 이동이 그 상승을 줄여요.</p>
+    <p>강의노트의 “자극적인 효과 / 억제효과”가 이 구분이에요. 수업의 Cl⁻ 채널 사례는 GABA가 GABA<sub>A</sub> 수용체에 결합하는 경우예요(<a href="#s4-transmitters">여러 가지 신경전달물질</a>).</p>
   </div>
 <!-- bio-comic:v2:21a483e03902d98fc120b5a8ab9ea33c667e6c18fe40c121b1970fb6f3b495ed -->
 <p class="comic-note" data-bio-comic="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s3-excite-inhibit">Cl⁻ 채널이 열려도 과분극 없이 억제될 수 있는 조건을 보려면 <a href="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s3-excite-inhibit" target="_self">학습만화</a>를 펼쳐 보세요.</p>
@@ -1230,11 +1274,15 @@
 <p class="interactive-note" data-bio-interactive="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_02_%ED%99%94%ED%95%99_%EC%8B%9C%EB%83%85%EC%8A%A4%EC%9D%98_%EC%8B%A0%ED%98%B8_%EC%A0%84%EB%8B%AC.html">흥분성과 억제성을 바꿔 시냅스 후 뉴런에서 이온이 들어오는 예를 <a href="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_02_%ED%99%94%ED%95%99_%EC%8B%9C%EB%83%85%EC%8A%A4%EC%9D%98_%EC%8B%A0%ED%98%B8_%EC%A0%84%EB%8B%AC.html" target="_self">화학 시냅스 모형</a>의 5단계에서 비교해 보세요.</p>
 
   <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
-    <ul>
-      <li><strong>신경전달물질이 결합하면 언제나 흥분한다고 착각하기 쉬워요.</strong> 전달물질이 결합한 뒤 활동전위가 더 쉽게 생기면 흥분, 더 어렵게 생기면 억제예요. 열린 채널과 막전위를 함께 봐요.</li>
-      <li><strong>이온의 이동 방향을 거꾸로 쓰기 쉬워요.</strong> Cl⁻는 막전위가 Cl⁻ 평형전위보다 높으면 들어와 막전위를 낮춰요. 막전위가 평형전위보다 낮으면 Cl⁻가 나가 막전위를 올려요.</li>
-      <li><strong>억제를 "신경전달물질이 결합하지 않음"으로 착각하기 쉬워요.</strong> 수용체에 결합한 결과 활동전위가 덜 생길 수 있어요. 과분극이 일어나거나, 막전위가 거의 그대로인 상태에서 함께 들어온 흥분성 신호가 약해지는 경우가 있어요.</li>
-    </ul>
+    <div class="table-wrap"><table class="pairs">
+      <thead><tr><th scope="col">묻는 것</th><th scope="col">틀리기 쉬운 답</th><th scope="col">맞는 답</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">전달물질이 결합한 결과</th><td><del>언제나 흥분</del></td><td>수용체·이온·막전위에 따라 흥분 또는 억제</td></tr>
+        <tr><th scope="row">Cl⁻가 순유입하는 조건</th><td><del>막전위가 Cl⁻ 평형전위보다 낮음</del></td><td>막전위가 Cl⁻ 평형전위보다 높음</td></tr>
+        <tr><th scope="row">억제성 신호가 생기는 방식</th><td><del>수용체에 전달물질이 결합하지 않음</del></td><td>결합한 뒤 발화가 어려워짐</td></tr>
+        <tr><th scope="row">과분극 없이 가능한 변화</th><td><del>억제 불가능</del></td><td>동시 흥분성 입력 약화</td></tr>
+      </tbody>
+    </table></div>
   </div>
   <div class="sum" hidden>
     <p class="sum-lead">흥분은 활동전위를 더 쉽게, 억제는 더 어렵게 만들어요. Cl⁻의 순이동은 막전위와 Cl⁻ 평형전위의 차이에 따라 달라지고, 과분극 없이도 억제될 수 있어요.</p>
@@ -1286,55 +1334,54 @@
     </svg><figcaption>왼쪽은 쿠라레가 근육에서 아세틸콜린(색칠된 동그라미)을 받는 자리를 막아 근육이 축 늘어져요. 오른쪽은 파상풍 독이 운동뉴런을 억제하는 GABA와 글리신의 방출을 막아 근육이 지나치게 수축해요.</figcaption></figure>
   </div>
   <div class="layer formal"><span class="layer-title">정확히 말하면</span>
-    <p>수업에서는 신경전달물질이 100가지 넘게 알려졌다고 소개했어요. 전달물질과 받는 세포의 수용체 종류에 따라 흥분하거나 억제될 수 있어요(<a href="#s3-excite-inhibit">흥분성 신호와 억제성 신호</a>).</p>
-    <p><strong>아세틸콜린(acetylcholine)</strong>은 운동뉴런과 근육 사이에서 쓰이는 대표적인 신경전달물질이에요.</p>
-    <ul>
-      <li>운동뉴런이 골격근을 자극할 때 분비돼요. 신경근접합부에서 근육의 니코틴성 아세틸콜린 수용체에 결합해요. 이 수용체는 Na⁺와 K⁺를 통과시키는 리간드 개폐성 양이온 채널이에요.</li>
-      <li>아세틸콜린이 수용체에 <strong>결합하면</strong> 채널이 열려요. 근육의 휴지전위 부근에서는 Na⁺가 들어오고 K⁺가 나가며, 들어오는 양전하가 더 많아 탈분극돼요. 역치에 이르면 전압개폐성 Na⁺ 채널이 열려 근육에 활동전위가 생기고 근육이 수축해요.</li>
-      <li>뇌에서도 신경전달물질로 쓰여요. <strong>알츠하이머병</strong>에서는 아세틸콜린을 사용하는 일부 뇌 뉴런이 퇴화해 관련 신호가 약해질 수 있어요.</li>
-    </ul>
-    <p><strong>쿠라레(curare)</strong>는 원주민이 <strong>독화살</strong> 촉에 바르는 식물 독이에요. 대표 성분인 튜보쿠라린은 근육의 니코틴성 아세틸콜린 수용체에 아세틸콜린과 경쟁해 결합해요. 운동뉴런에서 아세틸콜린이 분비되어도 근육이 충분히 탈분극하지 못해 이완성 마비가 일어날 수 있어요.</p>
-    <p><strong>글루탐산·아스파르트산</strong>은 아미노산인 신경전달물질로, 기억과 학습에 중요해요.</p>
-    <p><strong>GABA</strong>(감마 아미노부티르산)는 글루탐산에서 만들어지는 대표적인 <strong>억제성</strong> 신경전달물질이에요. 수업의 Cl⁻ 사례는 GABA<sub>A</sub> 수용체에 해당해요. 이 수용체는 Cl⁻를 주로 통과시키는 채널이고, 열린 채널은 과분극이나 흥분성 입력 약화를 일으킬 수 있어요. GABA<sub>B</sub>는 세포 안의 신호 전달을 거쳐 K⁺ 채널을 여는 등 간접적으로 작용해요.</p>
-    <p><strong>파상풍</strong> 독은 척수의 억제 뉴런에서 GABA와 글리신의 방출을 막아요. "억제를 억제"하는 이중 부정이라 순서대로 따라가야 해요.</p>
-    <ol class="steps">
-      <li>평소에는 GABA와 글리신이 운동뉴런의 발화를 억제해 근육으로 가는 수축 신호가 지나치지 않게 해요.</li>
-      <li>파상풍 독이 억제 뉴런에서 소포 융합을 막아 GABA와 글리신의 방출을 줄여요. 운동뉴런에 걸리던 브레이크가 풀려요.</li>
-      <li>운동뉴런이 과도하게 발화해 근육 경직과 경련이 생겨요.</li>
-    </ol>
-    <div class="table-wrap"><table>
-      <thead><tr><th>독</th><th>막는 대상</th><th>근육 상태</th></tr></thead>
+    <p class="define"><strong>아세틸콜린(acetylcholine)</strong> = 운동뉴런과 골격근 사이에서 쓰이는 대표 전달물질</p>
+    <p>신경근접합부의 니코틴성 수용체는 아세틸콜린이 결합하면 열리는 양이온 채널이에요. 근육의 휴지전위 부근에서는 Na⁺가 들어오고 K⁺가 나가며 순양전하 유입으로 탈분극돼요. 역치에 이르면 전압개폐성 Na⁺ 채널이 열려 근육의 활동전위와 수축이 이어져요.</p>
+    <p class="define"><strong>글루탐산·아스파르트산</strong> = 기억·학습에 중요한 아미노산 신경전달물질</p>
+    <p class="define"><strong>GABA(감마 아미노부티르산)</strong> = 글루탐산에서 만들어지는 대표 억제성 전달물질</p>
+    <div class="table-wrap"><table class="compare">
+      <thead><tr><th scope="col"><span class="sr-only">비교 기준</span></th><th scope="col">GABA<sub>A</sub> 수용체</th><th scope="col">GABA<sub>B</sub> 수용체</th></tr></thead>
       <tbody>
-        <tr><td>쿠라레(독화살)</td><td>근육의 니코틴성 아세틸콜린 수용체</td><td>힘이 빠지는 이완성 마비</td></tr>
-        <tr><td>파상풍 독</td><td>억제 뉴런의 GABA·글리신 방출</td><td>경직·경련</td></tr>
+        <tr><th scope="row">작동 방식</th><td>Cl⁻를 주로 통과시키는 채널</td><td>세포 안 신호를 거쳐 간접 조절</td></tr>
+        <tr><th scope="row">이온 통로 예</th><td>Cl⁻ 채널 자체가 열림</td><td>K⁺ 채널 열림 등</td></tr>
       </tbody>
     </table></div>
-    <p>쿠라레는 <strong>근육이 받는 흥분 신호</strong>를 차단해 수축을 줄이고, 파상풍 독은 <strong>운동뉴런이 받는 억제 신호</strong>를 차단해 수축을 늘려요.</p>
-    <p><strong>노르에피네프린</strong>, 에피네프린, <strong>도파민</strong>, <strong>세로토닌</strong>도 모두 신경전달물질이에요.</p>
-    <ul>
-      <li>노르에피네프린·에피네프린: 위급한 상황에서 근육에 혈액을 보내 힘을 쓰게 해요.</li>
-      <li>도파민: 의식, 기억, 기분, 감각, 근육 움직임, 수면에 관여하고, 기분 좋은 느낌과 관련돼요.</li>
-      <li>세로토닌: 식욕, 생식, 근육 움직임, 수면, 불안에 관여해요. 우울증에는 유전·생물학적 요인과 심리·환경 요인이 함께 관여해요. 세로토닌의 단순한 부족만으로 우울증을 설명할 수 없어요. 일부 항우울제가 세로토닌 신호에 작용하는 방식은 <a href="#s4-removal">신경전달물질의 제거와 약물</a>에서 이어져요.</li>
-    </ul>
+    <p>열린 Cl⁻ 채널은 과분극 또는 흥분성 입력 약화를 일으킬 수 있어요(<a href="#s3-excite-inhibit">흥분성 신호와 억제성 신호</a>). 평소 척수 억제 뉴런의 GABA와 글리신은 운동뉴런의 발화를 억제해 근육 수축 신호가 지나치지 않게 해요.</p>
+    <div class="table-wrap"><table class="compare">
+      <thead><tr><th scope="col"><span class="sr-only">비교 기준</span></th><th scope="col">쿠라레(curare)</th><th scope="col">파상풍 독</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">작용하는 곳</th><td>골격근의 니코틴성 아세틸콜린 수용체</td><td>척수에서 운동뉴런을 억제하는 뉴런의 말단</td></tr>
+        <tr><th scope="row">막는 것</th><td>튜보쿠라린이 아세틸콜린과 수용체 자리를 경쟁해 충분한 탈분극 차단</td><td>소포 융합을 막아 GABA·글리신 방출 감소</td></tr>
+        <tr><th scope="row">결과</th><td>근육이 받는 흥분 감소, 이완성 마비 가능</td><td>운동뉴런이 받는 억제 감소, 과도한 발화로 경직·경련</td></tr>
+      </tbody>
+    </table></div>
+    <p>아세틸콜린은 뇌에서도 쓰여요. 알츠하이머병에서 아세틸콜린을 쓰는 일부 뇌 뉴런이 퇴화하면 관련 신호가 약해질 수 있어요.</p>
+    <ul><li><strong>노르에피네프린·에피네프린.</strong> 위급할 때 근육에 혈액을 보내 힘을 쓸 수 있게 해요.</li><li><strong>도파민.</strong> 의식·기억·기분·감각·근육 움직임·수면과 기분 좋은 느낌에 관련돼요.</li><li><strong>세로토닌.</strong> 식욕·생식·근육 움직임·수면·불안에 관여해요.</li></ul>
+    <p>우울증에는 유전·생물학적 요인과 심리·환경 요인이 함께 관여해요. 일부 항우울제의 세로토닌 신호 조절은 <a href="#s4-removal">신경전달물질의 제거와 약물</a>에서 다뤄요.</p>
+    <details class="more"><summary>더 자세히</summary>
+      <p>수업에서는 신경전달물질이 100가지 넘게 알려졌다고 소개했어요.</p>
+    </details>
   </div>
 <!-- bio-comic:v2:ffb2cb98d79ac2a4d13a681751e05064cd49e051700cc7dde4a79948f799954b -->
 <p class="comic-note" data-bio-comic="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s4-transmitters">근육에 가는 흥분을 막았을 때와 운동뉴런의 억제를 풀었을 때를 구별하려면 <a href="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s4-transmitters" target="_self">학습만화</a>를 펼쳐 보세요.</p>
 <!-- /bio-comic -->
 
-  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
-    <p>독화살 이야기로 쿠라레를 시작하셨어요. 화살을 맞으면 왜 쓰러지느냐고 물으신 뒤, 아파서도 창피해서도 아니라 근육이 마비돼서라고 답하셨어요.</p>
+  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
+    <p>교수님은 원주민이 화살촉에 발랐던 식물 독 쿠라레로 마비 이야기를 시작했어요.</p>
     <blockquote>아파서 쓰러지나? 쪽팔려서 쓰러지나?</blockquote>
-    <p>파상풍 독에서는 학생들에게 결과를 되물으셨어요.</p>
     <blockquote>억제를 억제하니까 어떻게 된다?</blockquote>
-    <p>답은 근육이 너무 지나치게 수축해 버린다는 것이었어요. 수업에서 예로 든 GABA와 함께 글리신의 방출도 영향을 받아요. 글루탐산·아스파르트산은 아미노산이고 기억이나 학습에 중요하다고 짚으셨어요.</p>
-  </div>
+  </details></div>
   <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
-    <ul>
-      <li><strong>쿠라레와 파상풍 독을 같은 결과로 착각하기 쉬워요.</strong> 쿠라레는 근육의 아세틸콜린 수용체에 작용해 이완성 마비를 일으켜요. 파상풍 독은 GABA와 글리신의 방출을 막아 운동뉴런의 억제를 줄이고 경직과 경련을 일으켜요.</li>
-      <li><strong>"억제를 억제"를 "더 억제됨"으로 읽기 쉬워요.</strong> 억제가 사라지는 것이므로 결과는 흥분(과수축) 쪽이에요. 브레이크를 막으면 차가 멈추지 않는 것과 같아요.</li>
-      <li><strong>쿠라레가 아세틸콜린 분비를 막는다고 착각하기 쉬워요.</strong> 아세틸콜린은 분비되지만, 붙을 자리(수용체)를 쿠라레가 차지해 작용하지 못해요.</li>
-      <li><strong>알츠하이머와 짝지어지는 물질을 도파민으로 착각하기 쉬워요.</strong> 수업에서 알츠하이머와 연결한 물질은 아세틸콜린이에요. 강의노트에 있는 도파민 관련 질환은 수업에서 말하지 않았어요.</li>
-    </ul>
+    <div class="table-wrap"><table class="pairs">
+      <thead><tr><th scope="col">묻는 것</th><th scope="col">틀리기 쉬운 답</th><th scope="col">맞는 답</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">쿠라레와 파상풍 독의 운동 결과</th><td><del>둘 다 이완성 마비</del></td><td>쿠라레는 이완성 마비, 파상풍 독은 경직·경련</td></tr>
+        <tr><th scope="row">“억제를 억제”한 결과</th><td><del>운동뉴런이 더 억제됨</del></td><td>운동뉴런의 억제가 풀려 과수축</td></tr>
+        <tr><th scope="row">쿠라레가 차단하는 것</th><td><del>운동뉴런의 아세틸콜린 분비</del></td><td>근육 수용체에서 아세틸콜린의 작용</td></tr>
+        <tr><th scope="row">수업에서 알츠하이머병과 연결한 전달물질</th><td><del>도파민</del></td><td>아세틸콜린</td></tr>
+        <tr><th scope="row">우울증의 원인</th><td><del>세로토닌 부족 하나로 설명</del></td><td>생물학·심리·환경 요인이 함께 관여</td></tr>
+      </tbody>
+    </table></div>
+    <p>강의노트의 도파민 관련 질환은 이번 수업에서 말하지 않았어요. 교수님은 파상풍에서 억제 신호가 줄면 수축이 지나쳐진다고 강조했어요.</p>
   </div>
   <div class="sum" hidden>
     <p class="sum-lead">쿠라레는 근육에서 아세틸콜린의 작용을 막아 이완성 마비를 일으켜요. 파상풍 독은 GABA와 글리신의 방출을 막아 운동뉴런의 억제를 풀고 경직과 경련을 일으켜요.</p>
@@ -1387,21 +1434,28 @@
     </svg><figcaption>왼쪽처럼 쪽지(색칠된 동그라미)는 흩어지거나 잘리거나 다시 들어가 사라지는데, 오른쪽처럼 돌아가는 문을 막으면 쪽지가 틈에 오래 남아 신호가 계속 가요.</figcaption></figure>
   </div>
   <div class="layer formal"><span class="layer-title">정확히 말하면</span>
-    <p>신호물질(신경전달물질과 호르몬)은 전달한 뒤 사라져야 해요. 수용체 근처에 계속 남아 있으면 결합이 이어져 신호가 계속되기 때문이에요. 시냅스 틈의 신경전달물질은 세 가지 길로 사라져요.</p>
-    <ol class="steps">
-      <li><strong>확산</strong>: 시냅스 틈 밖으로 퍼져 나가 사라져요.</li>
-      <li><strong>분해</strong>: 효소가 잘라 없애요. 예: 아세틸콜린 분해 효소가 아세틸콜린을 잘라요.</li>
-      <li><strong>재흡수(reuptake)</strong>: 시냅스 전 뉴런이 회수해 다시 써요. 도파민·세로토닌도 분비된 뒤 시냅스 전 뉴런으로 돌아가 필요할 때 다시 분비돼요. 회수도 아무렇게나 일어나지 않고, 물질을 붙잡아 안으로 넣어 주는 단백질이 맡아요.</li>
-    </ol>
-    <p><strong>재흡수를 막으면 왜 양이 늘어날까요?</strong> 새로 더 만드는 것이 아니에요. 시냅스 틈에 있는 양은 들어오는 양(분비)과 빠져나가는 양(제거)으로 정해지는데, 빠져나가는 길 하나를 막으면 이미 분비된 물질이 갈 데가 없어 시냅스 틈에 오래 남아요. 그래서 한 번 분비된 물질이 수용체에 계속 작용해, 양이 많아진 것과 같은 효과가 나요.</p>
-    <ul>
-      <li><strong>세로토닌 재흡수 억제제</strong>: 우울증 치료제예요. 세로토닌 합성을 늘리는 것이 아니라 재흡수를 막아, 분비된 세로토닌이 시냅스 틈에 남아 양이 많아지는 효과를 내요.</li>
-      <li><strong>코카인</strong>: 도파민 재흡수를 억제해요. 한 번 분비된 도파민이 남아 기분 좋은 느낌이 계속돼요. 남용하면 점점 더 많은 양을 요구하게 되어 중독돼요. 코카인은 신경전달물질 자체가 아니라 재흡수를 막는 약물이에요.</li>
-    </ul>
-    <p>판별 기준: 이런 약물은 활동전위가 전도되는 길이 아니라 <strong>시냅스</strong>, 곧 시냅스 틈에 있는 신경전달물질의 양과 수용체 결합에 작용해요. 재흡수는 시냅스 전 뉴런 말단이 시냅스 틈의 물질을 회수하는 일이기 때문이에요.</p>
-    <p><strong>엔도르핀</strong>은 극심한 고통을 줄여 주는 신경전달물질이에요. <strong>모르핀</strong>은 양귀비가 만드는 마약 성분인데, 우연히 엔도르핀과 모양이 비슷해 엔도르핀 수용체에 붙어 같은 작용을 해요. 그래서 고통이 심한 환자의 진통제로 써요. 모르핀은 재흡수를 막는 것이 아니라 수용체에 직접 붙어 흉내 내는 방식이에요.</p>
-    <p>기체도 신경전달물질이 될 수 있어요. 일산화탄소와 <strong>산화질소(NO)</strong>가 예예요. 산화질소는 혈관을 팽창시켜요. 수업 설명에 따르면 산화질소를 없애는 효소가 있고, 비아그라가 그 효소를 방해해 혈관 팽창이 오래 가요. 비아그라는 원래 순환계(혈압) 약으로 만들어졌어요.</p>
-    <p><strong>효과의 크기를 판단하는 원리.</strong> 신경전달물질은 수용체에 결합해야 효과가 나고, 시냅스 틈에 많이·오래 있을수록 결합이 늘어나요. 수업에서 다룬 재흡수 억제와 분해 효소(예: 아세틸콜린 분해 효소) 억제는 제거를 늦춰 효과를 키워요. 같은 원리로 추론하면, 합성을 늘려 더 많이 분비하거나(수업에서도 세로토닌을 "많이 합성하는 방법도 있겠지만"이라고 언급) 시냅스 후 뉴런의 수용체 수를 늘려 결합할 자리를 늘려도 효과가 커질 수 있어요.</p>
+    <p>신경전달물질과 호르몬은 신호를 보낸 뒤 제거돼야 해요. 수용체 곁에 남으면 결합과 신호가 계속되기 때문이에요.</p>
+    <div class="table-wrap"><table class="compare">
+      <thead><tr><th scope="col"><span class="sr-only">비교 기준</span></th><th scope="col">확산</th><th scope="col">분해</th><th scope="col">재흡수(reuptake)</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">제거 방식</th><td>시냅스 틈 밖으로 퍼짐</td><td>효소가 분자를 자름</td><td>운반단백질이 분비한 뉴런으로 회수</td></tr>
+        <tr><th scope="row">예나 결과</th><td>틈의 전달물질 감소</td><td>아세틸콜린 분해 효소의 작용</td><td>도파민·세로토닌 회수 뒤 재사용 가능</td></tr>
+      </tbody>
+    </table></div>
+    <p>시냅스 틈에 있는 양은 분비량과 제거량에 좌우돼요. 재흡수 억제는 나가는 길을 줄여 이미 분비된 물질이 틈에 더 오래 머물고 수용체에 더 오래 작용하게 해요.</p>
+    <div class="table-wrap"><table class="compare">
+      <thead><tr><th scope="col"><span class="sr-only">비교 기준</span></th><th scope="col">세로토닌 재흡수 억제제</th><th scope="col">코카인</th><th scope="col">모르핀</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">작용</th><td>세로토닌 회수 억제</td><td>수업 예: 도파민 회수 억제</td><td>엔도르핀 수용체에 직접 결합해 작용 모방</td></tr>
+        <tr><th scope="row">효과</th><td>시냅스 틈에 세로토닌이 오래 남음, 우울증 치료에 사용</td><td>이미 분비된 도파민의 작용이 이어짐</td><td>극심한 통증 완화에 사용</td></tr>
+      </tbody>
+    </table></div>
+    <p>도파민의 작용이 길어지면 기분 좋은 느낌이 이어질 수 있고, 코카인 남용은 내성과 중독으로 이어질 수 있어요. 엔도르핀은 심한 고통을 줄이는 신경전달물질이고, 모르핀은 양귀비에서 얻는 성분이에요.</p>
+    <p>기체 전달물질에는 일산화탄소와 산화질소(NO)가 있어요. NO는 혈관을 팽창시켜요. 수업에서는 비아그라가 “산화질소를 없애는 효소”를 막아 이 효과가 오래간다고 단순화했어요.</p>
+    <p>전달물질의 효과는 수용체 결합에 달려 있어요. 재흡수나 분해 효소를 막으면 제거가 늦어지고, 합성·분비량이나 시냅스 후 수용체 수가 늘어도 결합과 효과가 커질 수 있어요. 교수님은 세로토닌을 더 합성하는 방법도 언급했어요.</p>
+    <details class="more"><summary>더 자세히</summary>
+      <p>수업에서는 비아그라가 원래 순환계의 혈압에 작용하는 약으로 개발됐다고 소개했어요.</p>
+    </details>
   </div>
 <p class="interactive-note" data-bio-interactive="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_02_%ED%99%94%ED%95%99_%EC%8B%9C%EB%83%85%EC%8A%A4%EC%9D%98_%EC%8B%A0%ED%98%B8_%EC%A0%84%EB%8B%AC.html">전달물질이 틈 밖으로 퍼지면서 수용체 채널이 닫히는 모습을 <a href="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_02_%ED%99%94%ED%95%99_%EC%8B%9C%EB%83%85%EC%8A%A4%EC%9D%98_%EC%8B%A0%ED%98%B8_%EC%A0%84%EB%8B%AC.html" target="_self">화학 시냅스 모형</a>의 마지막 단계에서 확인해 보세요.</p>
 
@@ -1409,23 +1463,24 @@
 <p class="comic-note" data-bio-comic="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s4-removal">신경전달물질의 세 제거 경로와 재흡수 차단의 효과를 구별하려면 <a href="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s4-removal" target="_self">학습만화</a>를 펼쳐 보세요.</p>
 <!-- /bio-comic -->
 
-  <div class="layer prof"><span class="layer-title">교수님 말씀</span>
-    <p>신호물질이 전달 후 사라져야 한다는 것을 일상 비유로 설명하셨어요. 수업 중 무언가를 건네주러 온 사람은 건네주고 가지, 같이 수업을 듣지 않아요.</p>
+  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
     <blockquote>택배 아저씨가 택배 전달해주고 같이 살아? 택배만 전달해주고 가죠.</blockquote>
-    <p>재흡수를 방해하는 것은 택배를 주고 가려는 사람을 "못 간다" 하고 붙잡는 것과 같다고 하셨어요. 붙잡는다고 택배가 새로 나오는 건 아니라는 말도 덧붙이셨어요. 새로 만들지 않아도 양이 늘어나는 효과를 이렇게 강조하셨어요.</p>
-    <blockquote>굳이 세로토닌을 더 만들 필요가 없죠.</blockquote>
-    <p>벽에 머리를 부딪히면 처음엔 아프다가 조금 지나면 덜 아픈 것이 엔도르핀 덕분이라고 하셨어요. 양귀비를 함부로 키우면 안 되는 이유로 모르핀을 소개하셨어요.</p>
-  </div>
+    <p>교수님은 재흡수 억제를 배송을 마치고 돌아가려는 기사를 붙잡는 일에 빗댔어요. 벽에 머리를 부딪힌 뒤 처음보다 덜 아픈 경우로 엔도르핀의 효과를 설명하고, 양귀비 이야기로 모르핀을 소개했어요.</p>
+  </details></div>
   <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
-    <ul>
-      <li><strong>재흡수 억제제가 신경전달물질을 더 만들게 한다고 착각하기 쉬워요.</strong> 합성은 그대로이고, 이미 분비된 것이 시냅스 틈에 오래 남아 양이 많아진 효과를 내요.</li>
-      <li><strong>엔도르핀을 호르몬으로만 기억하기 쉬워요.</strong> 교수님이 "호르몬도, 아 신경전달물질도"라고 고쳐 말씀하셨고, 이 수업에서는 신경전달물질로 다뤘어요.</li>
-      <li><strong>비아그라 설명을 정확한 기작으로 착각하기 쉬워요.</strong> 수업에서는 "산화질소를 없애는 효소"를 막는다고 단순화한 설명이었어요.</li>
-      <li><strong>코카인을 신경전달물질로 착각하기 쉬워요.</strong> 엔도르핀·아세틸콜린·도파민·GABA는 신경전달물질 자체이고, 코카인은 도파민 같은 물질의 재흡수를 막는 약물이에요.</li>
-      <li><strong>모르핀도 재흡수를 막는다고 착각하기 쉬워요.</strong> 모르핀은 엔도르핀과 모양이 비슷해 엔도르핀 수용체에 직접 붙어요.</li>
-      <li><strong>약물이 작용하는 장소를 활동전위가 전도되는 축삭 쪽으로 착각하기 쉬워요.</strong> 재흡수 억제 약물은 시냅스 틈의 전달물질 양에 작용하므로 장소는 시냅스예요.</li>
-      <li><strong>신경전달물질이 사라지지 않아도 괜찮다고 생각하기 쉬워요.</strong> 사라지지 않으면 수용체 결합이 이어져 신호가 계속돼요.</li>
-    </ul>
+    <div class="table-wrap"><table class="pairs">
+      <thead><tr><th scope="col">묻는 것</th><th scope="col">틀리기 쉬운 답</th><th scope="col">맞는 답</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">재흡수 억제를 통한 전달물질 증가</th><td><del>새 물질의 합성 증가</del></td><td>이미 분비된 물질이 틈에 오래 남음</td></tr>
+        <tr><th scope="row">수업에서 엔도르핀을 분류한 말</th><td><del>호르몬만</del></td><td>신경전달물질</td></tr>
+        <tr><th scope="row">수업의 비아그라 설명 수준</th><td><del>정확한 분자 기작</del></td><td>혈관 팽창 효과를 설명한 단순화</td></tr>
+        <tr><th scope="row">코카인의 역할</th><td><del>엔도르핀·아세틸콜린·도파민·GABA처럼 전달물질 자체</del></td><td>재흡수를 막는 약물</td></tr>
+        <tr><th scope="row">모르핀의 작용</th><td><del>재흡수 차단</del></td><td>엔도르핀 수용체에 직접 결합</td></tr>
+        <tr><th scope="row">재흡수 억제가 작용하는 장소</th><td><del>전도 중인 축삭</del></td><td>신호를 주고받는 시냅스</td></tr>
+        <tr><th scope="row">신호물질이 제거되지 않으면</th><td><del>수용체 신호가 그대로 끝남</del></td><td>결합과 신호가 이어짐</td></tr>
+      </tbody>
+    </table></div>
+    <p>교수님은 엔도르핀을 소개하며 “호르몬도, 아 신경전달물질도”라고 고쳐 말했어요. 재흡수 억제에 대해서는 “굳이 세로토닌을 더 만들 필요가 없죠”라고 강조했어요.</p>
   </div>
   <div class="layer supp" id="s4-removal-supp-1"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>
     <p>교재는 코카인이 시냅스 틈에서 재흡수하는 운반단백질에 결합해, 노르에피네프린·도파민·세로토닌이 분비되었던 뉴런으로 재흡수되는 것을 막는다고 설명해요. 그 결과 시냅스의 신경전달물질 농도가 높아져 원래 작용이 커지고, 노르에피네프린에 의한 높은 에너지, 도파민에 의한 도취감, 세로토닌에 의한 자신감을 느낀다고 해요. 수업에서는 도파민 재흡수만 말했어요.</p>

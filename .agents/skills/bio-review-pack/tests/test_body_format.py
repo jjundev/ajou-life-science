@@ -95,7 +95,7 @@ class TestNewStructurePack(unittest.TestCase):
         (note_md, review_md), _ = html2md.convert_pack(self.note, self.review)
         self.assertEqual(html2md.check_md(self.note, note_md), [])
         md = Path(note_md).read_text(encoding="utf-8")
-        for expected in ("| 나타내는 것 | 값들의 가운데 | 퍼진 정도 |", "| 분산의 단위 | 원래 단위 | 원래 단위의 제곱 |",
+        for expected in ("| 나타내는 것 | 값들의 가운데 | 퍼진 정도 |", "| 분산의 단위 | ~~원래 단위~~ | 원래 단위의 제곱 |",
                          "1. 평균 구하기", "<details><summary>더 자세히</summary>", "<details><summary>교수님 말씀</summary>"):
             with self.subTest(expected=expected):
                 self.assertIn(expected, md)
