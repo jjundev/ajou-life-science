@@ -270,7 +270,7 @@ class TestBlindCopySnippet(unittest.TestCase):
     <figure class="figure"><img src=".assets/figures_x/p1.png" alt="세포 그림"></figure>
     <ul class="choices"><li>(1) 가</li><li>(2) 나</li></ul></div>
   <details class="original"><summary>원문 정보 보기</summary>기출 3강 합본 12번</details>
-  <details class="hint"><summary>힌트 보기</summary>HINT_ONE</details>
+  <details class="hint" open><summary>힌트 보기</summary>HINT_ONE</details>
   <details class="solution"><summary>풀이 보기</summary><p class="answer">정답: (2)</p> SOLUTION_ONE</details>
 </article>
 <article class="card" id="p2" data-source="웹과제 3장 4">
@@ -279,7 +279,7 @@ class TestBlindCopySnippet(unittest.TestCase):
     <figure class="figure"><svg viewBox="0 0 10 10" aria-label="막 구조"><rect id="p2-r" width="5" height="5"/><text x="1" y="8">ATP</text></svg></figure>
     <ul class="choices"><li>A. 하나</li><li>B. 둘</li></ul></div>
   <details class="original"><summary>원문 정보 보기</summary>웹과제 3장 4번</details>
-  <details class="hint"><summary>힌트 보기</summary>HINT_TWO</details>
+  <details class="hint" open><summary>힌트 보기</summary>HINT_TWO</details>
   <details class="solution"><summary>풀이 보기</summary><p class="answer">정답: B</p> SOLUTION_TWO</details>
 </article>
 </main>

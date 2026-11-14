@@ -168,9 +168,10 @@ def _check(html_path: Path | str, *, strict: bool) -> tuple[list[str], bool]:
         if leaks:
             probs.append(f"[title-leak] {cid}: 제목 {', '.join(repr(t) for t in leaks)}가 정답 보기에만 있음"
                          " — 발문이 묻는 대상만 제목에 쓴다")
-        order = re.findall(r'<h3>|<div class="problem">|<details class="(?:original|hint|solution)">', c["body"])
-        if order != ["<h3>", '<div class="problem">', '<details class="original">',
-                     '<details class="hint">', '<details class="solution">']:
+        order = re.findall(r'<h3>|<div class="problem">|<details class="(?:original|hint|solution)"[^>]*>', c["body"])
+        norm_order = [re.sub(r'\s+open(?=[>\s]|$)', '', tag) for tag in order]
+        if norm_order != ["<h3>", '<div class="problem">', '<details class="original">',
+                          '<details class="hint">', '<details class="solution">']:
             probs.append(f"[structure] {cid}: 순서 {order}")
         if "수업과의 연결" not in c["body"] or not NOTE_LINK_RE.search(c["body"]):
             probs.append(f"[structure] {cid}: 수업과의 연결 줄 또는 정리노트 앵커 링크 없음")
@@ -207,8 +208,17 @@ def _check(html_path: Path | str, *, strict: bool) -> tuple[list[str], bool]:
             probs.append(f"[wording] 세트: '{w}'")
     if re.search(r"[①-⑳]", all_text):
         probs.append("[wording] 세트: 원문자 ①~⑳")
-    if re.search(r"<details[^>]*\sopen[\s>=]", source):
-        probs.append("[open-details] 세트: 펼친 details 있음")
+    for tag in re.findall(r"<details\b[^>]*>", source):
+        cls_m = re.search(r'\bclass="([^"]*)"', tag)
+        classes = set(cls_m.group(1).split()) if cls_m else set()
+        if "hint" not in classes and re.search(r"\sopen(?:[\s>=]|$)", tag):
+            probs.append("[open-details] 세트: 힌트 밖 펼친 details 있음")
+            break
+    if pack.get("chapter", 0) >= 7:
+        for cid, c in graded.items():
+            hint_tags = re.findall(r'<details\b[^>]*\bclass="[^"]*\bhint\b[^"]*"[^>]*>', c["body"])
+            if hint_tags and not all(re.search(r"\sopen(?:[\s>=]|$)", t) for t in hint_tags):
+                probs.append(f"[hint-open] {cid}: details.hint에 open 속성 필요")
 
     earlier_stems, earlier_sources = _earlier(src, pack["version"])
     if not pack.get("legacy"):

@@ -28,7 +28,7 @@ def card_html(i: int, answer: str, *, types: str = "계산", kind: str = "예상
             f'  <h3>P{i}. [{kind}] 제목 {i}</h3>\n'
             f'  <div class="problem"><p>{stem}</p>\n    <ul class="choices">{choices}</ul></div>\n'
             f'  <details class="original"><summary>원문 정보 보기</summary>예상 문제예요.</details>\n'
-            f'  <details class="hint"><summary>힌트 보기</summary>힌트예요.</details>\n'
+            f'  <details class="hint" open><summary>힌트 보기</summary>힌트예요.</details>\n'
             f'  <details class="solution"><summary>풀이 보기</summary>\n'
             f'    <ol class="steps">{diag}<li>수업과의 연결: 노트와 이어져요(<a href="{LINK}">정리노트</a>).</li></ol>\n'
             f'    <p class="answer">정답: {answer}</p>\n  </details>\n</article>\n')

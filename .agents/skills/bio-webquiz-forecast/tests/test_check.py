@@ -159,6 +159,12 @@ class TestCheck(unittest.TestCase):
         p1 = self._titled("번식 장벽의 종류", opts)
         self.assertNotIn("title-leak", codes(check.check(self.built(cards=base_cards(p1=p1)))))
 
+    def test_hint_must_be_open_and_non_hint_closed(self):
+        closed_hint = card_html(1, "A").replace('<details class="hint" open>', '<details class="hint">')
+        self.assertIn("hint-open", codes(check.check(self.built(cards=base_cards(p1=closed_hint)))))
+        open_sol = card_html(1, "A").replace('<details class="solution">', '<details class="solution" open>')
+        self.assertIn("open-details", codes(check.check(self.built(version=2, cards=base_cards(p1=open_sol)))))
+
 
 if __name__ == "__main__":
     unittest.main()

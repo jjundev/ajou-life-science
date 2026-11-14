@@ -24,7 +24,7 @@
     <figure class="figure"><img src=".assets/figures_<range>/pN.png" alt="한국어 그림 설명"></figure>   ← 기출 그림 문항만
     <ul class="choices"><li>(1) …</li><li>(2) …</li></ul></div>
   <details class="original"><summary>원문 정보 보기</summary>기출 3강 합본 12번 (PDF 3쪽)</details>
-  <details class="hint"><summary>힌트 보기</summary>…한두 문장…</details>
+  <details class="hint" open><summary>힌트 보기</summary>…한두 문장…</details>
   <details class="solution"><summary>풀이 보기</summary>
     <ol class="steps"><li>(1) 틀려요. …</li><li>(2) 맞아요. …</li></ol>
     <p class="answer">정답: (2)</p>

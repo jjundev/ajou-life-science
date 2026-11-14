@@ -64,6 +64,7 @@ class Container:
     text: str = ""
     hrefs: list[str] = field(default_factory=list)
     child_classes: set[str] = field(default_factory=set)
+    open_non_hint_details: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -114,6 +115,8 @@ class _Parser(HTMLParser):
             self.doc.id_section[el_id] = sec
         if con is not None:
             self.doc.containers[con].child_classes |= classes
+            if tag == "details" and "open" in a and "card" in self.doc.containers[con].classes and "hint" not in classes:
+                self.doc.containers[con].open_non_hint_details.append(a.get("class") or "(none)")
         if wid is not None:
             self.doc.widgets[wid] |= classes
         if el_id and classes & CONTAINER_CLASSES:
@@ -396,6 +399,10 @@ def check_common(doc: Doc, source: str, path: Path) -> list[Problem]:
             for i, m in enumerate(TERMS_RE.finditer(source)) if not m.group(1)]
     out += [Problem("widget-static-missing", wid, "위젯에 .widget-static 정적 대체물이 없음")
             for wid, classes in sorted(doc.widgets.items()) if "widget-static" not in classes]
+    for con_id, con in doc.containers.items():
+        if "card" in con.classes and con.open_non_hint_details:
+            out.append(Problem("open-details", con_id,
+                               f"힌트 외 details가 펼쳐져 있음: {', '.join(con.open_non_hint_details)}"))
     if 'review-interaction-model' in doc.scripts_by_id:
         import review_interaction
         try:

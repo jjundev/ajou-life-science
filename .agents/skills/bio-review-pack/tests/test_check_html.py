@@ -152,8 +152,12 @@ class TestPack(unittest.TestCase):
         self.assertEqual(self.codes(), ["card-source"])
 
     def test_card_missing_hint(self):
-        self.edit("cards/p1.html", '<details class="hint"><summary>힌트 보기</summary>더해서 개수로 나눈다.</details>', "")
+        self.edit("cards/p1.html", '<details class="hint" open><summary>힌트 보기</summary>더해서 개수로 나눈다.</details>', "")
         self.assertEqual(self.codes(), ["card-parts"])
+
+    def test_card_open_solution_rejected(self):
+        self.edit("cards/p1.html", '<details class="solution">', '<details class="solution" open>')
+        self.assertEqual(self.codes(), ["open-details"])
 
     def test_widget_static_required(self):
         self.edit("sections/s1.html", 'class="widget-static"', 'class="widget-snap"')
