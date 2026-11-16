@@ -1,6 +1,6 @@
 # 최종 복습문제의 문제설명 연결
 
-bio-problem-explain 스킬의 "실행" 1~7단계를 이 팩의 최종 복습문제에 적용한다. 절차를 여기서 다시 쓰지 않고 그 단계 번호를 가리킨다. 신규·보강·`lite` 모두 전체 절차를 실행한다.
+bio-problem-explain 스킬의 "실행" 1~7단계를 이 팩의 최종 복습문제에 적용한다. 절차를 여기서 다시 쓰지 않고 그 단계 번호를 가리킨다. 신규·보강 모두 전체 절차를 실행한다.
 
 **준비** (팩 생성 시작 전, 0단계에서 확인)
 - EXPLAIN_SKILL = 이 스킬의 형제 `bio-problem-explain`의 원본 절대 경로(`.agents/skills/bio-problem-explain`; `.claude/skills/` 링크 경로가 아니다).
@@ -18,7 +18,7 @@ bio-problem-explain 스킬의 "실행" 1~7단계를 이 팩의 최종 복습문�
 3. 실행 2~3단계: `source.json`의 전체 문항·소문항을 읽고 기출 합본·웹과제·교과서·강의노트·정리노트·`.pack/`의 해당 쪽을 실제로 대조한 뒤 `explanations/pN.html`을 쓴다. 필수 구역·선택 구역과 요약은 해설기의 `references/authoring.md`를 따른다. 객관식은 판단 기준을 먼저 제시하고 모든 선지에 적용해 선택·제외 이유를 설명하며 불필요한 반복을 덜어낸다. CLI는 설명을 자동 저작하지 않는다.
 4. 실행 4단계: 정답을 보지 않은 별도 재풀이와 교과서 대조로 모든 소문항을 검산하고 `evidence/`에 둔다. 원문 오타·복수 정답·답안지 충돌은 disputed로 보류한다.
 5. 실행 5단계: `build` 후 `check`. build는 검토를 `not_run`으로 되돌리며 기계 통과는 정답·실화면 승인이 아니다.
-6. 실행 6단계: `source_visual`/`content`/`independent`/`browser`를 실제로 수행해 `review.json`에 기록한다. `lite`에서도 생략하지 않는다. 끝나면 서버를 종료한다.
+6. 실행 6단계: `source_visual`/`content`/`independent`/`browser`를 실제로 수행해 `review.json`에 기록한다. 끝나면 서버를 종료한다.
 7. 실행 7단계: 네 검토가 모두 `pass`일 때만 `publish`한다. 발행 뒤 최종 경로·원본 보존을 다시 확인한다. 원본이 바뀌면 extract부터, 조각이나 stage가 바뀌면 build와 전체 검토부터 다시 한다.
 
 **보존과 산출**

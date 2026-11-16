@@ -18,9 +18,9 @@ class TestNoteFeedbackFlow(unittest.TestCase):
         self.assertIn("note-feedback-audit.md", writer)
         self.assertIn("카드 포함 여부", writer)
 
-    def test_lite_checks_feedback_not_only_generated_cards(self):
+    def test_pack_checks_feedback_not_only_generated_cards(self):
         review = (SKILL / "references/review-prompt.md").read_text(encoding="utf-8")
-        self.assertIn("## 본문 피드백 검토 (항상, lite 포함)", review)
+        self.assertIn("## 본문 피드백 검토", review)
         self.assertIn("note-feedback-audit.md", review)
         self.assertIn("본문 문장", review)
 

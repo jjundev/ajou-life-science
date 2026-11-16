@@ -27,7 +27,7 @@ class TestSkillFiles(unittest.TestCase):
         cls.text = SKILL_MD.read_text(encoding="utf-8")
 
     def test_augment_mode_documented(self):
-        self.assertIn("`[MMDD | MMDD-MMDD] [lite] [augment]`", self.text)
+        self.assertIn("`[MMDD | MMDD-MMDD] [augment]`", self.text)
         body = self.text[self.text.index("## 보강 모드"):self.text.index("## 오류 처리")]
         for s in ("scripts/augment.py", "extract", "build", "--only review", "IDS=", ".pack/manifest.json",
                   "풀이기록", "금지어 미복원", "기존 카드 번호"):
@@ -102,15 +102,11 @@ class TestSkillFiles(unittest.TestCase):
         self.assertIn("- 문제설명:", body)
         self.assertIn("복습팩 생성됨 / 문제설명 보류", body)
 
-    def test_lite_keeps_explain_review(self):
-        line = next(l for l in self.text.splitlines() if l.startswith("- `lite`"))
-        self.assertIn("문제설명", line)
-        self.assertIn("생략하지 않는다", line)
-
     def test_reference_exists_without_forbidden_words(self):
         t = (SKILL / "references" / "problem-explain.md").read_text(encoding="utf-8")
         self.assertNotRegex(t, r"자구알|자료구조|\bds\b|ds-")
-        for s in ("ABS_REVIEW", "EXPLAIN_RUN", "bio-problem-explain", "복습팩 생성됨 / 문제설명 보류"):
+        for s in ("ABS_REVIEW", "EXPLAIN_RUN", "bio-problem-explain", "복습팩 생성됨 / 문제설명 보류",
+                  "source_visual", "content", "independent", "browser"):
             self.assertIn(s, t)
 
 
