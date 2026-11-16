@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<!--
+  웹과제 커닝페이퍼 — 9장 생물다양성 (A4 세로, 쪽 수 제한 없음)
+  디자인 출처: .agents/skills/bio-review-pack/assets/review-template.html (색 토큰·Pretendard·.layer/.badge/table/fig-* 방식)
+  이 파일은 bio-cheatsheet 스킬의 원본이다. 본문 견본 구역은 부품 카탈로그이고, scripts/build.py가 견본을 버리고
+  spec.json 순서의 구역 조각으로 쪽을 새로 만든다.
+
+  ■ 크기 토큰 위치
+    <style> 맨 위 :root 블록의 "크기 토큰" 줄. 글자 크기·줄간격·간격·모서리는 전부 여기서만 정의한다.
+    --fs-body 하나만 바꾸면 본문·표·흐름·함정 줄이 같이 바뀐다(표는 calc로 본문에 묶여 있다).
+    규칙: 7.5pt(--fs-label)는 라벨·배지·그림 속 글자 전용. 그 밖의 글자는 8pt 이상.
+
+  ■ 쪽
+    <section class="page"> 하나가 A4 한 쪽이다. 쪽은 build.py가 만든다: 쪽 번호 "n / N", 목차 줄(그 쪽 구역 라벨을 " · "로),
+    테마 버튼(1쪽만)을 채운다. 손으로 쪽을 만들거나 고치지 않는다.
+
+  ■ 넘칠 때의 규칙
+    한 쪽 내용은 다음 쪽으로 저절로 넘어가지 않는다. 넘치면 쪽 오른쪽 밖으로 잘려 PDF에서 사라진다.
+    build.py가 넘친 구역부터 그 쪽 끝까지를 다음 쪽으로 옮긴다. 글자 크기는 줄이지 않는다.
+
+  ■ 넘침 경고 (화면 전용, 맨 아래 <script>)
+    브라우저로 열면 각 쪽을 PDF와 같은 크기(A4 본문 194×280mm, 왼쪽 단부터 채움)로 몰래 배치해 본다.
+    잘릴 구역이 있으면 맨 위에 주황 경고 줄이 뜨고, 그 구역에 주황 점선 테두리와 "PDF에서 잘림" 표시가 붙는다.
+    경고·테두리는 인쇄되지 않는다. PDF 출력 전에 확인하거나, 터미널에서 이 명령이 아무것도 출력하지 않아야 한다:
+      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --virtual-time-budget=15000 \
+        --dump-dom "file://$PWD/cheatsheet_9장.html" 2>/dev/null | grep -o 'data-overflow="[^"]*"'
+
+  ■ PDF 출력 명령 (라이트 테마로 출력된다. 이 폴더에서 실행)
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu \
+      --no-pdf-header-footer --run-all-compositor-stages-before-draw --virtual-time-budget=15000 \
+      --print-to-pdf="$PWD/cheatsheet_9장.pdf" "file://$PWD/cheatsheet_9장.html"
+    --virtual-time-budget는 Pretendard 웹폰트가 다 받아질 때까지(document.fonts.ready에 해당) 인쇄를 미룬다.
+    폰트가 빠져 시스템 폰트로 대체되면 줄바꿈이 달라져 쪽이 깨지므로 네트워크가 되는 상태에서 출력한다.
+
+  ■ 테마 (화면 전용)
+    기본은 다크 모드. 1쪽 제목 줄 오른쪽 끝 이모지 버튼(☀️/🌙)(체크박스 #theme-light + CSS :has, JS 없음)으로 바꾼다.
+    새로고침하면 다시 다크로 돌아간다. 인쇄·PDF는 버튼과 상관없이 항상 라이트이고 버튼은 출력되지 않는다.
+
+  ■ 강조 규칙
+    굵게(<b>)만 쓴다. 밑줄·형광 배경·기울임·취소선 금지. 색은 파랑(accent)·주황(warn)·보라(prof) 세 가지뿐.
+    모든 글자는 실제 텍스트로 넣는다(SVG 라벨도 <text>). PDF에서 ⌘F 검색에 걸려야 한다.
+-->
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>9장 생물다양성 커닝페이퍼</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <style>
+    :root {
+      color-scheme: dark;
+      /* 색 토큰 — 복습문제 HTML과 동일. 기본은 다크 */
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff;
+      --warn: #f5a15c; --prof: #b69cff;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+
+      /* 크기 토큰 — 인쇄용. 여기만 고친다 */
+      --fs-body: 9pt;                              /* 본문 */
+      --fs-table: calc(var(--fs-body) - 0.5pt);    /* 표 셀 8.5pt */
+      --fs-label: 7.5pt;                           /* 구역 라벨·배지·그림 속 글자 전용 */
+      --fs-sec: calc(var(--fs-body) + 1pt);        /* 구역 제목 10pt */
+      --fs-page: calc(var(--fs-body) + 5pt);       /* 쪽 머리 제목 14pt */
+      --lh: 1.35;
+      --s1: 1mm; --s2: 1.5mm; --s3: 2.5mm; --s4: 4mm;
+      --radius: 1.5mm;
+      --col-gap: 5mm;
+      --fig-max: 35mm;                             /* 축소 도식 최대 높이 */
+      --page-w: 210mm; --page-margin: 8mm;
+      --page-h: 280mm;                             /* A4 297mm − 위아래 여백 16mm − 반올림 여유 1mm */
+      --tap: 8mm;                                  /* 테마 이모지 버튼 크기(화면 전용) */
+    }
+    /* 라이트 모드 — 테마 버튼(#theme-light)을 켰을 때 */
+    :root:has(#theme-light:checked) {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da;
+      --warn: #b54708; --prof: #6941c6;
+    }
+    /* PDF는 항상 라이트 테마 */
+    @media print {
+      :root {
+        color-scheme: light;
+        --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+        --accent: #1677ff; --accent-ink: #1b64da;
+        --warn: #b54708; --prof: #6941c6;
+      }
+    }
+
+    @page { size: A4; margin: 8mm; }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    body {
+      margin: 0; background: var(--bg); color: var(--ink);
+      font-family: var(--font); font-size: var(--fs-body); line-height: var(--lh);
+      word-break: keep-all; overflow-wrap: anywhere;
+      font-variant-numeric: tabular-nums;
+    }
+    b, strong { font-weight: 700; }
+    p { margin: 0; }
+
+    /* ── 쪽 ── */
+    .page {
+      width: min(var(--page-w), 100%); margin: 0 auto; padding: var(--page-margin);
+      display: flex; flex-direction: column;
+    }
+    .page + .page { margin-top: var(--s4); }
+    @media print {
+      .page { width: auto; height: var(--page-h); margin: 0; padding: 0; break-after: page; overflow: hidden; }
+      .page + .page { margin-top: 0; }
+      .page:last-child { break-after: auto; }
+    }
+
+    /* ── 테마 버튼 (화면 전용, 인쇄 안 됨) — 1쪽 제목 줄 오른쪽 끝의 이모지 버튼 ── */
+    .theme-input { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; opacity: 0; }
+    .theme-btn {
+      flex: none; align-self: center; display: inline-flex; align-items: center; justify-content: center;
+      width: var(--tap); height: var(--tap); border-radius: var(--radius);
+      font-size: var(--fs-sec); line-height: 1; cursor: pointer; user-select: none;
+    }
+    @media (hover: hover) { .theme-btn:hover { background: var(--surface); } }
+    :root:has(#theme-light:focus-visible) .theme-btn { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .theme-btn .to-dark { display: none; }
+    :root:has(#theme-light:checked) .theme-btn .to-light { display: none; }
+    :root:has(#theme-light:checked) .theme-btn .to-dark { display: inline; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    @media print { .theme-input, .theme-btn { display: none; } }
+
+    /* 쪽 머리 */
+    .page-head { flex: none; margin-bottom: var(--s3); }
+    .page-title-row { display: flex; align-items: baseline; gap: var(--s3); }
+    .page-title { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-page); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+    .page-no { flex: none; color: var(--ink-2); font-size: var(--fs-body); white-space: nowrap; }
+    .page-bar { height: 2px; background: var(--accent); margin: var(--s2) 0; }
+    .page-toc { margin: 0; color: var(--ink-2); font-size: var(--fs-label); font-weight: 600; }
+
+    /* 본문 2단 */
+    .page-body { flex: 1 1 auto; min-height: 0; column-count: 2; column-gap: var(--col-gap); column-fill: auto; }
+    /* 화면에는 쪽 높이가 없어 auto면 왼쪽 단에만 쌓인다 → 두 단에 고르게 나눈다. PDF는 위의 auto 그대로 */
+    @media screen { .page-body { column-fill: balance; } }
+    @media screen and (max-width: 520px) { .page-body { column-count: 1; } }
+
+    /* ── 구역 (.layer 방식: 라벨 + 1px 구분선) ── */
+    .sec { break-inside: avoid; border-top: 1px solid var(--line); padding-top: var(--s2); margin-bottom: var(--s3); }
+    .sec-label { display: block; color: var(--accent-ink); font-size: var(--fs-label); font-weight: 600; }
+    .sec-title { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s1) var(--s2); margin: 0 0 var(--s1); font-size: var(--fs-sec); font-weight: 700; line-height: 1.3; }
+    .sec > * + * { margin-top: var(--s1); }
+    .sec > .sec-title { margin-top: 0; }
+
+    /* 배지 */
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.4; padding: 0 var(--s1); border-radius: calc(var(--radius) * 0.75); background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+    .badge.prof { color: var(--prof); }
+
+    /* 비교표 (복습문제 table 스타일) */
+    .cmp { border-collapse: collapse; width: 100%; font-size: var(--fs-table); line-height: 1.3; }
+    .cmp th, .cmp td { border-bottom: 1px solid var(--line); padding: var(--s1) var(--s1); text-align: left; vertical-align: top; }
+    .cmp th { color: var(--ink-2); font-weight: 600; }
+    .cmp td:first-child { font-weight: 700; }
+
+    /* 흐름 줄 */
+    .flow { margin: 0; }
+    .flow-arrow { color: var(--ink-2); padding: 0 0.2em; }
+    .flow-num { color: var(--accent-ink); font-weight: 700; white-space: nowrap; }
+
+    /* 함정 줄 (.layer.warn 방식) */
+    .trap { background: var(--surface); border-radius: var(--radius); padding: var(--s2) var(--s3); }
+    .trap-label { display: block; color: var(--warn); font-size: var(--fs-label); font-weight: 600; }
+    .trap-x { display: block; color: var(--ink-2); }
+    .trap-ok { display: block; color: var(--ink); }
+    .trap-x + .trap-ok { margin-top: 0.2em; }
+    .trap-ok + .trap-x { margin-top: var(--s1); }
+
+    /* 키워드–한 줄 정의 목록 */
+    .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--s1) var(--s2); margin: 0; }
+    .kv dt { font-weight: 700; }
+    .kv dd { margin: 0; }
+
+    /* 점 목록 */
+    .pts { margin: 0; padding-left: 1.1em; }
+    .pts li + li { margin-top: 0.15em; }
+
+    /* 축소 도식 */
+    .mini-fig { display: block; margin: 0; }
+    .mini-fig svg { display: block; width: 100%; height: auto; max-height: var(--fig-max); color: var(--ink); }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 1.5; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 1.8; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: var(--fs-label); font-weight: 600; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-label); font-weight: 600; font-family: inherit; }
+
+    /* 교수님: 몰라도 됨 — 구역 맨 끝 */
+    .later { color: var(--ink-2); }
+    .later .badge { margin-right: var(--s1); }
+
+    /* ── 넘침 경고 (화면 전용) ── */
+    /* PDF 배치를 흉내 내는 보이지 않는 복제본. 크기는 인쇄 규칙과 같다 */
+    .page-probe { position: absolute; left: -10000px; top: 0; width: calc(var(--page-w) - 2 * var(--page-margin)); height: var(--page-h);
+      margin: 0; padding: 0; visibility: hidden; pointer-events: none; }
+    .page-probe .page-body { column-count: 2; column-fill: auto; }
+    .page-probe .theme-btn { display: none; }
+    .overflow-alert { width: min(var(--page-w), 100%); margin: 0 auto; padding: var(--s2) var(--page-margin);
+      background: var(--surface); color: var(--warn); font-weight: 700; border-bottom: 2px solid var(--warn); }
+    .overflow-alert span { display: block; color: var(--ink); font-weight: 400; }
+    .sec.is-overflow { outline: 2px dashed var(--warn); outline-offset: var(--s1); }
+    .sec.is-overflow::before { content: "PDF에서 잘림"; display: block; color: var(--warn); font-size: var(--fs-label); font-weight: 700; }
+    @media print { .overflow-alert { display: none; } .sec.is-overflow { outline: none; } .sec.is-overflow::before { content: none; } }
+  </style>
+</head>
+<body>
+
+<!-- 테마 스위치: 기본 다크, 켜면 라이트. 버튼(label)은 1쪽 제목 줄에 있다. 인쇄에서는 숨겨진다. -->
+<input type="checkbox" id="theme-light" class="theme-input">
+
+<!-- ════════════ 1쪽 ════════════ -->
+<section class="page" aria-label="1쪽">
+  <header class="page-head">
+    <div class="page-title-row">
+      <h1 class="page-title">9장 생물다양성</h1>
+      <span class="page-no">1 / 9</span>
+      <label for="theme-light" class="theme-btn" title="테마 바꾸기"><span class="to-light" aria-hidden="true">☀️</span><span class="to-dark" aria-hidden="true">🌙</span><span class="sr-only">라이트·다크 모드 바꾸기</span></label>
+    </div>
+    <div class="page-bar" aria-hidden="true"></div>
+    <p class="page-toc">① 시험장 체크</p>
+  </header>
+
+  <div class="page-body">
+
+    <!-- ① 출처: .agents/skills/bio-cheatsheet/references/panic-patterns.md 1–8장 사실·패턴 표(L69–L94); 웹과제/8장/note-feedback.md L8; 9장 웹과제 없음(응시 전) -->
+    <section class="sec">
+    <span class="sec-label">① 시험장 체크</span>
+    <h2 class="sec-title">발문·조건부터 표시, 보기마다 판정</h2>
+    <p class="flow">9장 웹과제는 응시 전: 문항 수·시간 제한 미확인. 1장: 17문항 / 11분(시간이 확인된 유일한 장).</p>
+    <ul class="pts">
+    <li>보기 순서 바뀜: 번호 말고 내용으로 확인 → ③–⑯</li>
+    <li>다른 문장·다른 표기: 개념으로 찾고 낯선 이름은 ② → ②</li>
+    <li>부정형(1장: 8/17): ‘아닌·옳지 않은’ 표시 후 각 구역 함정 상자부터 → ③–⑯</li>
+    <li>부정형 없는 ‘가장 옳은 것’ 연속(8장: 0/14): 보기마다 틀린 낱말 하나를 찾기 → ③–⑯</li>
+    <li>그림 변형·실제 사진(3장 Q1 사진): 구조·표지부터 판독 → ⑦ ⑩ ⑫ ⑭</li>
+    <li>조건 바꾸기: 산소 유무·영양 방식·대상 생물이 바뀌면 답이 바뀜 → ⑤ ⑦ ⑧</li>
+    <li>거꾸로 묻기(기능 → 대상): 결과로 생물 무리·구조를 고르기 → ⑦ ⑧ ⑪ ⑬</li>
+    <li>포함·제외: ‘속하지 않는 것’을 물을 무리 목록 → ⑧ ⑨ ⑪ ⑬ ⑮</li>
+    <li>체크박스(3장·4장): ‘최대 4개’는 선택 개수 안내. 보기마다 참·거짓 → ③–⑯</li>
+    <li>합답형(3장 Q12, 7장 Q3, 8장 Q7): 진술별 판정 뒤 조합 고르기 → ⑦ ⑨ ⑮</li>
+    <li>익숙한 발문(2장 Q1·Q8·Q10): 외운 답 번호로 고르지 않기 → ③–⑯</li>
+    <li>오타(8장: Q2 학명 ‘varuabilis’): 비슷한 용어로 바꿔 읽기 → ② ⑯</li>
+    <li>시나리오 → 개념 이름(8장 Q5·Q9·Q12): 사례 속 결정 단서로 고르기 → ⑦ ⑧ ⑩ ⑬</li>
+    <li>다른 장 개념 섞임: 8장 웹과제 Q4 RNA 세계 가설(1105 수업 9장 시작에 설명)·Q14 생명 역사 사건 순서 배열. 응시일까지 배운 장 개념도 후보 → ③ ④ ⑤ ⑥</li>
+    </ul>
+    </section>
+
+  </div>
+</section>
+
+<!-- ════════════ 2쪽 ════════════ -->
+<section class="page" aria-label="2쪽">
+  <header class="page-head">
+    <div class="page-title-row">
+      <h1 class="page-title">9장 생물다양성</h1>
+      <span class="page-no">2 / 9</span>
+    </div>
+    <div class="page-bar" aria-hidden="true"></div>
+    <p class="page-toc">② 용어 바꿔 부르기 · ③ 유기물 합성·원시세포</p>
+  </header>
+
+  <div class="page-body">
+
+    <!-- ② 출처: 1105 정리노트 L125(뉴클레오타이드), L186·L188(RNA 우선 가설·리보자임), L257–L262(산소발생형·비산소발생형, 남세균 cyanobacteria), L330(환형 DNA=고리형 DNA), L456(세포막=원형질막), L747(Bacteria·Archaea), L755(극호염·극호열), L837·L839(지질 외피 envelope, 박테리오파지=파지), L856·L876(외피 coat/envelope)
+         1105 복습문제 P1 L43·L63(외피 또는 캡시드=단백질 coat), P2 L104(극호염성), P3 L124·L144(세대기간=세대시간), P5 L202·L225·L232(진정세균영역, 산소 비발생형), P8 L326(고세균영역)
+         1110 정리노트 L50·L63(진정세균), L127(위족='가짜 발'), L199·L718(깃편모충류=입깃편모충류), L274·L302·L303(육상식물, 이끼=선태류, 무종자 관다발식물), L286(선태류 bryophytes), L347(열매 fruit), L351(수분=꽃가루받이), L360(속씨식물=현화식물), L426(공진화=공동진화), L920–L924(사람류=호미닌), L940(직립보행=두 발 걷기), L988(허벅지뼈=대퇴골)
+         1110 복습문제 P1 L54(진정세균영역), P4 L174–L177(꽃가루받이 매개자, 과실, 현화식물), P5 L212(꽃가루 매개자), P10 L414(선태식물), P12 L496·L515(무악류), P13 L532(무악어류), P15 L616(2분법), P17 L693(직립자세와 두 발 걷기), P23 L962(공동진화=공진화)
+         웹과제 8장 questions.json Q4(RNA 세계 가설, 리보자임, 뉴클레오티드), Q14(광합성 생물에 의한 산소 발생 근거=남세균, 육상 식물) -->
+    <section class="sec">
+      <span class="sec-label">② 용어 바꿔 부르기</span>
+      <h2 class="sec-title">같은 것, 다른 이름 <span class="badge">단서: = 표시가 같은 말</span></h2>
+      <table class="cmp">
+        <thead><tr><th>이름들</th><th>구별 단서</th></tr></thead>
+        <tbody>
+          <tr><td>RNA 우선 가설 (RNA-first hypothesis) = RNA 세계 가설 (RNA world hypothesis)</td><td>8장 Q4 표기. 근거 = 리보자임(ribozyme, 촉매 RNA): 정보 저장 + 촉매. 단백질 우선 가설과 구별</td></tr>
+          <tr><td>뉴클레오타이드 = 뉴클레오티드 (nucleotide)</td><td>DNA·RNA의 재료. 아미노산은 단백질(폴리펩티드) 재료</td></tr>
+          <tr><td>광합성 생물에 의한 산소 발생 = 산소발생형 광합성 (남세균, cyanobacteria)</td><td>8장 Q14 표기. 전자공여체가 물. 비산소발생형 = 산소 비발생형: 황 이용(녹색세균)</td></tr>
+          <tr><td>세균 (Bacteria) = 진정세균 = 진정세균영역</td><td>전형적 벽 성분은 펩티도글리칸. 고세균 (Archaea) = 고세균영역과 다른 영역. 둘 다 원핵생물</td></tr>
+          <tr><td>극호염 (extreme halophile) = 극호염성</td><td>매우 짠 곳. 극호열 (hyperthermophile)은 다른 말: 매우 뜨거운 곳. 높은 염분 보기면 고세균영역 쪽</td></tr>
+          <tr><td>세대기간 = 세대시간</td><td>짧으면 같은 시간에 세대·복제 기회↑. 복제당 돌연변이율↑은 아님</td></tr>
+          <tr><td>환형 DNA (circular DNA) = 고리형 DNA</td><td>세균·미토콘드리아·엽록체. 핵의 염색체는 선형</td></tr>
+          <tr><td>세포막 = 원형질막</td><td>원핵세포의 안팎 경계. 세포벽·외막·협막과 다른 층</td></tr>
+          <tr><td>외피: 단백질 coat = 캡시드 (capsid) / 지질 외피 = envelope</td><td>같은 말 '외피'가 두 층. 기출 "외피 또는 캡시드"는 단백질층. 지질 외피는 일부 바이러스만, 숙주 막 유래</td></tr>
+          <tr><td>박테리오파지 (bacteriophage) = 파지 (phage)</td><td>세균에 감염하는 바이러스. 머리에 DNA, 꼬리가 세균에 닿음</td></tr>
+          <tr><td>이분법 = 2분법</td><td>일부 원생생물의 분열. 원생생물 전체의 특징 아님</td></tr>
+          <tr><td>위족 (pseudopodium) = '가짜 발'</td><td>교수님 비유. 아메바의 이동·먹이 감싸기. 소화는 식포</td></tr>
+          <tr><td>깃편모충류 (choanoflagellates) = 입깃편모충류</td><td>해면 깃세포와 닮은 현생 단세포. 동물과 가까운 계통, 직접 조상 아님</td></tr>
+          <tr><td>육상식물 = 육상 식물</td><td>8장 Q14 띄어쓰기. 이끼(선태류)부터 포함. 녹조류·미역·김은 제외</td></tr>
+          <tr><td>선태류 (bryophytes) = 선태식물 = 이끼</td><td>관다발·종자 없음. 양치류 (ferns) = 무종자 관다발식물</td></tr>
+          <tr><td>속씨식물 (angiosperms) = 현화식물</td><td>밑씨가 씨방 안. 겉씨식물 (gymnosperms)은 밑씨가 씨방에 싸이지 않고 꽃·열매 없음</td></tr>
+          <tr><td>열매 (fruit) = 과실</td><td>씨방 → 열매. 밑씨 → 종자, 수정란 → 배</td></tr>
+          <tr><td>수분 (pollination) = 꽃가루받이</td><td>꽃가루가 암쪽에 도착. 수정 (fertilization) = 정자 세포·난세포 결합. 꽃가루받이 매개자 = 꽃가루 매개자</td></tr>
+          <tr><td>공진화 (Coevolution) = 공동진화</td><td>여러 세대에 걸친 상호 선택압. 즉각·의도적 변화 아님</td></tr>
+          <tr><td>무악류 = 무악어류</td><td>턱 없는 척추동물(먹장어·칠성장어). 턱 있는 쪽은 유악어류·유악동물</td></tr>
+          <tr><td>사람류 = 호미닌 (hominins)</td><td>구별 기준: 습관적 직립보행 = 두발보행 = 직립자세와 두 발 걷기. 마주 보는 엄지는 영장류 공유</td></tr>
+          <tr><td>허벅지뼈 = 대퇴골</td><td>루시(오스트랄로피테쿠스 아파렌시스)의 보행 단서. 뇌 크기는 두개골로 따로</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ③ 출처: 1105 정리노트 L34–L171(s0-miller L50–L100, s0-protocell L118–L166), 1105 복습문제 P9 -->
+    <section class="sec">
+      <span class="sec-label">③ 유기물 합성·원시세포</span>
+      <h2 class="sec-title">밀러-유레이 실험과 원시세포 <span class="badge">단서: 메탄·암모니아·방전</span></h2>
+      <dl class="kv">
+        <dt>가설</dt><dd>오파린-할데인: 초기 지구는 산소 적고 수소·메탄·암모니아·수증기 많은 <b>환원 조건</b>(가정)</dd>
+        <dt>입력</dt><dd>밀러-유레이(Miller–Urey): 수증기+수소·메탄·암모니아 순환, <b>전기 방전</b>=번개 에너지</dd>
+        <dt>측정</dt><dd>약 일주일 순환·냉각 뒤 용액 <b>성분 분석</b>(색 변화 아님) → <b>아미노산</b> 검출</dd>
+        <dt>결론</dt><dd>가정한 조건에서 간단한 유기물의 <b>비생물적 합성 가능성</b>. 살아 있는 세포 생성 아님</dd>
+        <dt>다른 후보</dt><dd>환원적 심해 열수구, 운석의 아미노산(우주 유입) — 가설. 우주에서 왔어도 최초 합성 질문은 남음</dd>
+        <dt>규산염</dt><dd>유리 용기의 규산염이 반응에 영향 가능(수업 영상 해석) — 실험 전체 무효는 아님</dd>
+      </dl>
+      <p class="flow">간단한 유기물<span class="flow-arrow">→</span>거대분자 조립<span class="flow-arrow">→</span>막으로 구획<span class="flow-arrow">→</span>복제·분열 가능한 세포</p>
+      <ul class="pts">
+        <li>아미노산→폴리펩티드, 뉴클레오타이드→DNA·RNA. <b>진흙</b> 속 금속 이온이 조건에 따라 아미노산 연결 촉매.</li>
+        <li>인지질 머리는 물 쪽, 꼬리는 서로 마주 보며 <b>인지질 이중층</b> 자가 조립 → 닫힌 소낭이 안팎을 나눔.</li>
+        <li><b>원시세포(protocell)</b> = 경계와 내부 물질을 가진 초기 세포의 모형. 복제·분열 체계가 더 필요, 실제 경로는 미확정.</li>
+        <li>교수님: “생명까지는 아니고, 유기물까지 나왔다.”</li>
+      </ul>
+      <!-- 출처: 1105 복습문제 P9 보기 4와 풀이 4, 정리노트 L75 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 밀러 실험에서 아미노산이 검출되었으므로 살아 있는 최초의 세포를 만든 것이 확실하다.</span>
+        <span class="trap-ok">✓ 아미노산 검출은 간단한 유기물의 <b>비생물적 합성 가능성</b>만 보여 준다(세포 구조·자기 복제 미확인).</span>
+      </div>
+      <!-- 출처: 1105 정리노트 L76, L96 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 밀러-유레이 실험에 넣은 기체는 모두 무기물이다.</span>
+        <span class="trap-ok">✓ 넣은 기체 중 <b>메탄은 유기물</b>이다.</span>
+      </div>
+      <!-- 출처: 1105 정리노트 L147, L166 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 인지질 이중층이 닫힌 소낭은 유전정보 복제와 세대 유지까지 가능한 세포다.</span>
+        <span class="trap-ok">✓ 닫힌 소낭은 <b>구획화 모형</b>이며 <b>복제·분열 체계가 더 필요</b>하다.</span>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- ════════════ 3쪽 ════════════ -->
+<section class="page" aria-label="3쪽">
+  <header class="page-head">
+    <div class="page-title-row">
+      <h1 class="page-title">9장 생물다양성</h1>
+      <span class="page-no">3 / 9</span>
+    </div>
+    <div class="page-bar" aria-hidden="true"></div>
+    <p class="page-toc">④ RNA 우선 가설 · ⑤ 남세균과 산소</p>
+  </header>
+
+  <div class="page-body">
+
+    <!-- ④ 출처: 1105 정리노트 L172–L236(s0-rna 정확히 말하면·꼭 기억해요·용어), 1105 복습문제 P10, 8장 웹과제 questions.json Q4, 8장 note-feedback L49–L54 -->
+    <section class="sec">
+      <span class="sec-label">④ RNA 우선 가설</span>
+      <h2 class="sec-title">RNA = 정보 + 촉매 <span class="badge">단서: 리보자임·정보와 촉매를 함께</span></h2>
+      <dl class="kv">
+        <dt>리보자임(ribozyme)</dt><dd>촉매 기능을 가진 <b>RNA 자체</b>. 모든 촉매가 단백질은 아님, 모든 RNA가 촉매도 아님</dd>
+        <dt>RNA 우선 가설</dt><dd>초기 RNA가 염기서열에 정보 저장 + 일부 RNA가 촉매로 RNA 합성·자기 복제를 도왔을 <b>가능성</b></dd>
+        <dt>지지 근거</dt><dd>한 분자 종류가 정보·촉매를 함께 맡음 → 단백질 효소가 먼저 있어야 한다는 부담(시작의 문제)을 줄임</dd>
+        <dt>RNA 재료</dt><dd>뉴클레오티드 중합체. 아미노산은 단백질의 재료</dd>
+        <dt>DNA로 넘어감</dt><dd>RNA는 OH기로 반응성이 커 불안정 → 상대적으로 안정한 DNA가 장기 저장을 맡게 되었을 <b>가능성</b>(수업 설명, 경로 미확정. 전혀 안 변한다는 뜻 아님)</dd>
+      </dl>
+      <ul class="pts">
+        <li>가설 범위: <b>초기 생명</b>의 정보·촉매 체계. 현재 세포는 유전정보를 주로 <b>DNA</b>에 저장.</li>
+        <li>리보자임 존재는 가설 지지일 뿐, 원시 RNA의 완전한 자기 복제 직접 증거·현대 세포 재현이 아님. 단백질 우선 가설도 소개됨, 경로 미확정.</li>
+      </ul>
+      <!-- 출처: 1105 정리노트 L209(꼭 기억해요 표 2행)·L229, 8장 questions.json Q4 issues -->
+      <!-- 출처: 1105 복습문제 P10 보기 4와 해설 4 -->
+      <!-- 출처: 8장 questions.json Q4 option_diagnostics C, 1105 정리노트 L190·L230 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 리보자임의 발견으로 모든 RNA가 재료 없이 완전한 자기 복제를 했음이 입증되었다.</span>
+        <span class="trap-ok">✓ 일부 RNA가 초기 복제를 <b>도왔을 가능성</b>을 지지할 뿐, 최초 복제의 조건·경로는 <b>미확정</b>이다.</span>
+        <span class="trap-x">✗ 리보자임은 RNA를 감싼 단백질 껍질이므로 단백질 우선 가설을 지지한다.</span>
+        <span class="trap-ok">✓ 리보자임은 촉매 기능을 하는 <b>RNA 자체</b>이며 RNA 우선 가설을 지지한다.</span>
+        <span class="trap-x">✗ RNA는 DNA보다 견고하고 안정해서 초기 정보 분자가 되었다.</span>
+        <span class="trap-ok">✓ RNA는 OH기로 반응성이 커 <b>불안정</b>하고, <b>DNA</b>가 상대적으로 안정해 장기 저장을 맡는다.</span>
+      </div>
+    </section>
+
+    <!-- ⑤ 출처: 1105 정리노트 L237–L307(남세균이 물을 쓰자 산소가 생겼어요), 1105 복습문제 P4·P5·P20, 8장 웹과제 Q14 -->
+    <section class="sec">
+      <span class="sec-label">⑤ 남세균과 산소</span>
+      <h2 class="sec-title">남세균: 물을 쓰는 광합성 → 산소 <span class="badge">단서: 전자공여체·물 분해</span></h2>
+      <table class="cmp">
+        <thead><tr><th>구분</th><th>산소발생형</th><th>비산소발생형</th></tr></thead>
+        <tbody>
+          <tr><td>예</td><td>남세균(cyanobacteria)</td><td>황을 쓰는 광합성 세균(녹색세균)</td></tr>
+          <tr><td>에너지원</td><td>빛</td><td>빛</td></tr>
+          <tr><td>전자공여체</td><td><b>물</b></td><td>예: 황화수소</td></tr>
+          <tr><td>산소 방출</td><td>명반응의 물 분해로 발생</td><td>물 분해 산소 없음</td></tr>
+        </tbody>
+      </table>
+      <p class="flow">물 분해(명반응)<span class="flow-arrow">→</span>전자 공급 + O₂ 방출 (캘빈 회로는 O₂를 내지 않음)</p>
+      <dl class="kv">
+        <dt>광독립영양</dt><dd>남세균: 에너지원 빛, 탄소원 CO₂ (빛 = 에너지, 물 = 전자)</dd>
+        <dt>스트로마톨라이트</dt><dd>광합성 미생물 활동 + 퇴적물의 층상 구조(세균 한 개의 몸 화석 아님)</dd>
+        <dt>시기</dt><dd>물 쓰는 광합성 출현 약 <b>30억 년 전</b>(근사). 출현·화석·대기 산소 축적은 같은 날짜 아님 → 이후 산소 호흡 발달</dd>
+        <dt>초기 지구</dt><dd>산소 부족 → 발효·무산소 호흡과 연결</dd>
+      </dl>
+      <!-- 출처: 1105 복습문제 P5 보기 녹색세균과 풀이, P4 풀이(남세균) -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 진정세균 중 녹색세균은 산소를 발생시키는 광합성을 한다.</span>
+        <span class="trap-ok">✓ 녹색세균은 황을 이용하는 산소 <b>비발생형</b>, 산소발생형은 <b>남세균</b>이다.</span>
+      </div>
+      <!-- 출처: 1105 복습문제 P20 보기 2·5와 풀이, 정리노트 L300(조건 변화의 적용) -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 빛을 쓰는 광합성 원핵생물은 전자공여체와 관계없이 모두 산소를 방출한다.</span>
+        <span class="trap-ok">✓ 전자공여체가 <b>물</b>일 때만 물 분해로 산소를 방출한다(황화수소 이용 쪽은 산소 없음).</span>
+      </div>
+      <!-- 출처: 8장 웹과제 Q14 option_diagnostics A -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 8장: 최초의 진핵생물 출현 → 광합성 생물에 의한 산소 발생 → 영장류 탄생.</span>
+        <span class="trap-ok">✓ 8장: 광합성에 의한 산소 발생이 진핵생물 출현보다 <b>앞선다</b>.</span>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- ════════════ 4쪽 ════════════ -->
+<section class="page" aria-label="4쪽">
+  <header class="page-head">
+    <div class="page-title-row">
+      <h1 class="page-title">9장 생물다양성</h1>
+      <span class="page-no">4 / 9</span>
+    </div>
+    <div class="page-bar" aria-hidden="true"></div>
+    <p class="page-toc">⑥ 세포내공생·다세포 · ⑦ 원핵세포 구조·영양 방식</p>
+  </header>
+
+  <div class="page-body">
+
+    <!-- ⑥ 출처: 1105 정리노트 L308–L425(삼킨 세균이 소기관이 되었다는 증거, 같이 살기에서 역할 나누기로), 1105 복습문제 P11·P12 -->
+    <section class="sec">
+      <span class="sec-label">⑥ 세포내공생·다세포</span>
+      <h2 class="sec-title">막 함입 vs 세포내공생, 군체 vs 분화 <span class="badge">단서: 환형 DNA·세균형 리보솜</span></h2>
+      <table class="cmp">
+        <thead><tr><th>구분</th><th>A 막의 함입</th><th>B 세포내공생</th></tr></thead>
+        <tbody>
+          <tr><td>일어난 일</td><td>세포막이 안으로 접힘</td><td>삼킨 세균을 소화 않고 함께 생활</td></tr>
+          <tr><td>설명하는 구조</td><td>핵막·소포체·골지체</td><td>미토콘드리아·엽록체</td></tr>
+          <tr><td>조상</td><td>숙주의 기존 세포막</td><td>산소 호흡 세균→미토콘드리아, 이후 남세균→엽록체</td></tr>
+        </tbody>
+      </table>
+      <ul class="pts">
+        <li>공생 증거: 두 소기관의 자체 <b>환형 DNA</b>(핵은 선형), 크기·rRNA 서열이 <b>세균형</b>인 리보솜, 현재 관찰되는 공생 사례(가능성만 뒷받침, 과거 사건을 직접 본 것 아님).</li>
+        <li>자체 리보솜 = 세포 안에서 일부 단백질 합성 가능. 세포 밖 완전 독립 생활은 아님.</li>
+        <li>마굴리스 주장은 처음 거절, 증거 축적으로 수용.</li>
+        <li>처음 진핵생물은 단세포. <b>군체</b>(같은 종의 세포가 모여 삶, 수업 모형은 역할 분담 없음) → <b>분화</b>(구조·기능 특수화: 운동·수축·자극 전달) = 다세포성 발달의 가능한 경로. 실제 군체의 분화 정도는 다양.</li>
+        <li>분화 판정은 세포 수·겉모양이 아니라 실제 역할이 나뉘는지로.</li>
+      </ul>
+      <!-- 출처: 1105 복습문제 P11 보기 4와 풀이 4; 정리노트 L344·L363(엽록체 범위); 복습문제 P12 보기 3과 풀이 3 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 막 함입으로 생긴 내부막도 모두 독립 세균이었으므로 자체 환형 DNA를 가진다.</span>
+        <span class="trap-ok">✓ 막 함입으로 생긴 내부막은 자체 환형 DNA를 <b>가져야 하는 것은 아니다</b>(세균 기원은 미토콘드리아·엽록체).</span>
+        <span class="trap-x">✗ 세포내공생으로 모든 진핵세포가 엽록체를 가진다.</span>
+        <span class="trap-ok">✓ 엽록체는 남세균과의 <b>추가 공생이 일어난 계통</b>에만 있다.</span>
+        <span class="trap-x">✗ 다세포체에서 기능이 다른 세포는 반드시 서로 다른 종이다.</span>
+        <span class="trap-ok">✓ <b>같은 종</b>의 세포가 서로 다른 기능으로 분화할 수 있다.</span>
+      </div>
+    </section>
+
+    <!-- ⑦ 출처: 1105 정리노트 L431–L566(작은 세포의 필수 장비, 에너지원과 탄소원은 서로 다른 질문), 1105 복습문제 P3·P6·P13·P14 -->
+    <section class="sec">
+      <span class="sec-label">⑦ 원핵세포 구조·영양 방식</span>
+      <h2 class="sec-title">원핵세포 장비와 영양 두 축 <span class="badge">단서: 핵양체·펩티도글리칸·에너지원/탄소원</span></h2>
+      <dl class="kv">
+        <dt>원핵생물</dt><dd>핵막으로 둘러싸인 핵이 없음. 일반적으로 진핵보다 작고 단순, 막성 소기관(미토콘드리아·엽록체·소포체·골지체) 없음</dd>
+        <dt>핵양체</dt><dd>DNA가 단백질과 모인 영역(nucleoid). 주 염색체는 대부분 <b>환형</b> DNA</dd>
+        <dt>리보솜</dt><dd>원핵에도 있음 → 단백질 합성</dd>
+        <dt>세포벽</dt><dd>전형적 세균은 <b>펩티도글리칸</b>(고세균의 전형 성분 아님). 식물은 셀룰로스</dd>
+        <dt>선택 구조</dt><dd>외막(벽 바깥)·협막(별도 보호층)·섬모(부착)·편모(이동)는 종류에 따라 있음</dd>
+        <dt>모양</dt><dd>구균(둥근)·간균(막대)·나선균(나선)</dd>
+      </dl>
+      <p class="flow">광/화학 = <b>에너지원</b>(빛/화학물질 산화)<span class="flow-arrow">→</span>독립/종속 = <b>탄소원</b>(CO₂/유기물)</p>
+      <table class="cmp">
+        <thead><tr><th>유형</th><th>에너지원</th><th>탄소원</th><th>수업의 예</th></tr></thead>
+        <tbody>
+          <tr><td>광독립영양</td><td>빛</td><td>CO₂</td><td>식물, 남세균</td></tr>
+          <tr><td>화학독립영양</td><td>화학물질 산화</td><td>CO₂</td><td>일부 세균</td></tr>
+          <tr><td>광종속영양</td><td>빛</td><td>유기물</td><td>일부 세균</td></tr>
+          <tr><td>화학종속영양</td><td>화학물질 산화</td><td>유기물</td><td>동물, 많은 세균</td></tr>
+        </tbody>
+      </table>
+      <ul class="pts">
+        <li>세균 집단 전체에 네 유형이 모두 있음(한 종이 네 유형을 다 하는 것 아님).</li>
+        <li>짧은 세대기간 → 변이·선택 기회 증가. 복제당 돌연변이율이 높다는 뜻은 아님.</li>
+      </ul>
+      <!-- 출처: 1105 복습문제 P3 보기 3과 풀이 3, 정리노트 L451·L501 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 세균은 대부분 유전체로서 선형의 DNA를 지닌다.</span>
+        <span class="trap-ok">✓ 세균은 대부분 유전체로서 <b>환형</b>의 DNA를 지닌다.</span>
+        <!-- 출처: 1105 복습문제 P6 보기 1·5와 풀이 1·5, 정리노트 L473·L489 -->
+        <span class="trap-x">✗ 원핵생물은 리보솜을 가지지 않지만 진핵생물은 가지고 있다.</span>
+        <span class="trap-ok">✓ 원핵생물<b>도</b> 리보솜을 <b>가진다</b>. 차이는 <b>핵막</b>의 유무다(진핵에도 단세포가 있다).</span>
+        <!-- 출처: 1105 정리노트 L546 꼭 기억해요 표, 1105 복습문제 P13 보기 1과 풀이 1·6 -->
+        <span class="trap-x">✗ 빛에서 에너지를 얻는 미생물은 광독립영양이다.</span>
+        <span class="trap-ok">✓ 빛을 쓰고 탄소를 <b>유기물</b>에서 얻으면 <b>광종속영양</b>이다. 탄소원을 따로 본다.</span>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- ════════════ 5쪽 ════════════ -->
+<section class="page" aria-label="5쪽">
+  <header class="page-head">
+    <div class="page-title-row">
+      <h1 class="page-title">9장 생물다양성</h1>
+      <span class="page-no">5 / 9</span>
+    </div>
+    <div class="page-bar" aria-hidden="true"></div>
+    <p class="page-toc">⑧ 세균 무리·독소·항생제 · ⑨ 고세균</p>
+  </header>
+
+  <div class="page-body">
+
+    <!-- ⑧ 출처: 1105 정리노트 L572–L730(세균의 여러 무리와 오래 버티는 형태 / 독소와 항생제 내성은 다른 문제), 1105 복습문제 P7 -->
+    <section class="sec">
+      <span class="sec-label">⑧ 세균 무리·독소·항생제</span>
+      <h2 class="sec-title">내생포자·독소·항생제 내성 <span class="badge">단서: 휴면·LPS·선택압</span></h2>
+      <!-- 출처: 1105 정리노트 L586–L605 -->
+      <dl class="kv">
+        <dt>내생포자</dt><dd>일부 세균이 불리한 환경에서 유전물질을 보호하는 휴면 형태. 건조·열에 높은 저항성, 조건이 좋아지면 다시 성장·분열. 효과는 개체 수 증가가 아닌 <b>원래 세균의 생존</b>. 예: 탄저균</dd>
+        <dt>클라미디아</dt><dd>숙주세포 안에서 증식하는 세포 내 기생 <b>세균</b>(바이러스 아님)</dd>
+        <dt>광합성 세균</dt><dd>녹색세균: 황 이용, 산소 안 냄 / 남세균: 물 이용, 산소 방출</dd>
+        <dt>그람양성</dt><dd>탄저균·스타필로코커스·스트렙토코커스·락토바실루스(유산균). 나선균: 매독</dd>
+      </dl>
+      <!-- 출처: 1105 정리노트 L659–L664, L689–L690 -->
+      <table class="cmp">
+        <thead><tr><th>구분</th><th>외독소</th><th>내독소</th></tr></thead>
+        <tbody>
+          <tr><td>성분</td><td>독성 단백질</td><td>일부 세균의 외막 지질다당류(LPS) 성분</td></tr>
+          <tr><td>나오는 경로</td><td>세균이 분비</td><td>세균이 죽어 용균될 때 방출될 수 있음</td></tr>
+          <tr><td>예</td><td>보툴리눔 독소(근육 마비)</td><td>‘내’ = 외막 성분(저장 후 분비 아님)</td></tr>
+        </tbody>
+      </table>
+      <!-- 출처: 1105 정리노트 L666–L675, L690–L695, L699 -->
+      <p class="flow">항생제(선택압)<span class="flow-arrow">→</span>감수성 세균 사멸·생장 억제<span class="flow-arrow">→</span>내성 세균 상대적 생존·증식<span class="flow-arrow">→</span>집단 내성 비율 증가 = 자연선택</p>
+      <ul class="pts">
+        <li>항생제 = 세균을 죽이거나 생장을 억제하는 물질. 내성은 <b>세균 집단</b>의 성질(사람이 약에 익숙해지는 것 아님).</li>
+        <li>세균을 끓여 죽여도 이미 만들어진 독소는 남을 수 있다.</li>
+        <li>슈퍼박테리아 = 여러 항생제에 내성인 세균(항상 전혀 안 듣는다는 뜻 아님).</li>
+        <li><span class="badge prof">교수님 강조</span> 질병으로 알려진 세균은 세균 전체의 일부.</li>
+      </ul>
+      <!-- 출처: 1105 복습문제 P7 보기 1·5와 풀이(기출 9강 20번), 1105 정리노트 L707 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 효과가 없으면 투약량을 계속 늘리고, 나아진 느낌이 들면 남은 약을 멈춘다.</span>
+        <span class="trap-ok">✓ <b>문제를 일으킨 세균의 종류를 확인 후 그에 맞게 처방</b>하는 것이 최선이다.</span>
+      <!-- 출처: 1105 정리노트 L692, L722 -->
+        <span class="trap-x">✗ 세균이 항생제에 맞춰 의도적으로 내성 돌연변이를 만든다.</span>
+        <span class="trap-ok">✓ 이미 있는 <b>유전적 차이에 따른 선택</b>으로 내성 비율이 늘어난다.</span>
+      <!-- 출처: 1105 정리노트 L616, L637 -->
+        <span class="trap-x">✗ 내생포자는 모든 멸균 조건에서도 살아남는다.</span>
+        <span class="trap-ok">✓ 내생포자는 <b>조건에 따라</b> 높은 저항성을 보인다.</span>
+      </div>
+    </section>
+
+    <!-- ⑨ 출처: 1105 정리노트 '고세균도 핵이 없는 세포예요' L731–L807, 1105 복습문제 P2·P8·P16 -->
+    <section class="sec">
+      <span class="sec-label">⑨ 고세균</span>
+      <h2 class="sec-title">고세균: 핵 없음, 그러나 세균과 다른 영역 <span class="badge">단서: rRNA·메탄생성균</span></h2>
+      <table class="cmp">
+        <thead><tr><th>기준</th><th>세균</th><th>고세균</th><th>진핵생물</th></tr></thead>
+        <tbody>
+          <tr><td>핵막 핵</td><td>없음(원핵)</td><td>없음(원핵)</td><td>있음</td></tr>
+          <tr><td>막·벽·기작</td><td>전형적 벽 성분: 펩티도글리칸</td><td>세균과 다른 막 지질·벽. 단백질 합성 등 일부 기작은 진핵과 유사</td><td>일부 기작이 고세균과 유사</td></tr>
+          <tr><td>수업 예</td><td>대장균·남세균·유산균</td><td>메탄생성균</td><td>원생생물·식물·균류(효모)·동물</td></tr>
+        </tbody>
+      </table>
+      <ul class="pts">
+        <li>워즈(Woese): <b>rRNA</b> 염기서열 비교로 고세균을 세균과 구별 → 3영역(세균·고세균·진핵). 핵막은 세포 구조 기준, rRNA는 영역 근거.</li>
+        <li>고세균은 전통 4계(원생생물·식물·균류·동물) 중 하나가 아니라 <b>별도 영역</b>. 4계는 모두 진핵생물.</li>
+        <li>극호염(매우 짠 곳)·극호열(매우 뜨거운 곳): 높은 염분 서식 생물 → 고세균영역이 가장 유력(기출). 단 염분만으로 분류 확정 불가.</li>
+        <li>아스가르드 고세균: 진핵생물 기원 연구에 중요(핵이 있다는 뜻 아님). 일부 호열성 고세균의 내열성 DNA 중합효소 → PCR.</li>
+      </ul>
+      <p class="flow"><b>메탄생성균</b> <span class="badge prof">교수님 강조</span> 무산소 늪·동물의 장: H₂가 전자 줌<span class="flow-arrow">→</span>CO₂가 받음<span class="flow-arrow">→</span>메탄(온실가스, 소 장내 메탄)</p>
+      <!-- 출처: 1105 정리노트 L785 '꼭 기억해요' 표(메탄생성균과 남세균), 1105 복습문제 P16 보기 해설 -->
+      <!-- 출처: 1105 정리노트 L782·L802 '꼭 기억해요' 표·용어(분자 기작과 핵), 1105 복습문제 P8 해설 -->
+      <!-- 출처: 1105 정리노트 L784·L804 '꼭 기억해요' 표·용어(서식지), 1105 복습문제 P2 보기 3 해설 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 메탄생성균과 남세균은 둘 다 세균영역에 속한다.</span>
+        <span class="trap-ok">✓ 메탄생성균은 <b>고세균영역</b>, 남세균은 세균영역이다. 둘 다 원핵생물.</span>
+        <span class="trap-x">✗ 고세균은 일부 기작이 진핵생물과 유사하므로 핵막으로 둘러싸인 핵을 가진다.</span>
+        <span class="trap-ok">✓ 고세균은 <b>핵막으로 둘러싸인 핵이 없는</b> 원핵생물이다(5개 중 다른 하나: 4계 vs 고세균, 원핵 4개 vs 효모).</span>
+        <span class="trap-x">✗ 고세균은 모두 극한 환경에서만 살며, 서식지만으로 분류가 확정된다.</span>
+        <span class="trap-ok">✓ 극호염·극호열은 <b>일부</b> 고세균이며, 분류에는 <b>rRNA 등 추가 근거</b>가 필요하다.</span>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- ════════════ 6쪽 ════════════ -->
+<section class="page" aria-label="6쪽">
+  <header class="page-head">
+    <div class="page-title-row">
+      <h1 class="page-title">9장 생물다양성</h1>
+      <span class="page-no">6 / 9</span>
+    </div>
+    <div class="page-bar" aria-hidden="true"></div>
+    <p class="page-toc">⑩ 바이러스 · ⑪ 원생생물</p>
+  </header>
+
+  <div class="page-body">
+
+    <!-- ⑩ 출처: 1105 정리노트 L813–L1023(4. 바이러스는 왜 숙주가 필요할까: 유전물질을 감싼 입자 / 침입·복제·방출 / 빠른 변이와 숙주 의존성), 1105 복습문제 P1·P15·P17·P18·P19 -->
+    <section class="sec">
+      <span class="sec-label">⑩ 바이러스</span>
+      <h2 class="sec-title">캡시드·외피·숙주 의존 <span class="badge">단서: 캡시드·파지·뉴라미니다아제</span></h2>
+      <!-- 출처: 1105 정리노트 L825, L835–L837, L856, L875–L876 -->
+      <figure class="mini-fig">
+        <svg viewBox="0 0 340 110" role="img" aria-label="외피가 있는 바이러스: 바깥 A 지질 외피, 안쪽 B 캡시드, 가운데 C 핵산">
+          <circle class="fig-ink" cx="70" cy="55" r="48"/>
+          <polygon class="fig-accent" points="102,55 86,82.7 54,82.7 38,55 54,27.3 86,27.3"/>
+          <path class="fig-ink" d="M52 55 q6 -10 12 0 t12 0 t12 0"/>
+          <line class="fig-ink" x1="112" y1="31" x2="144" y2="22"/>
+          <line class="fig-ink" x1="102" y1="55" x2="144" y2="55"/>
+          <line class="fig-ink" x1="84" y1="60" x2="144" y2="88"/>
+          <text class="fig-text" x="148" y="22">A 지질 외피(envelope)</text>
+          <text class="fig-muted" x="148" y="35">일부만 · 숙주에서 나올 때 얻음</text>
+          <text class="fig-text" x="148" y="55">B 캡시드(capsid)</text>
+          <text class="fig-muted" x="148" y="68">유전체 감싸는 단백질 껍질</text>
+          <text class="fig-text" x="148" y="88">C 핵산 유전체</text>
+          <text class="fig-muted" x="148" y="101">종류별 DNA 또는 RNA</text>
+        </svg>
+      </figure>
+      <!-- 출처: 1105 정리노트 L831–L841, L855–L859, L876–L879 -->
+      <dl class="kv">
+        <dt>바이러스</dt><dd>살아 있는 세포에 감염해 숙주세포의 장치로 증식하는 <b>비세포성 입자</b></dd>
+        <dt>없는 것</dt><dd>자체 에너지 대사시스템·리보솜·펩티도글리칸 세포벽. 단, 일부는 복제 효소를 암호화·보유(효소 0개 아님)</dd>
+        <dt>유전체</dt><dd>DNA/RNA × 단일/이중가닥 = 네 유형, 한 바이러스는 <b>그중 한 유형</b></dd>
+        <dt>‘외피’라는 말</dt><dd>coat = 단백질 캡시드, envelope = 일부에만 있는 지질막. <b>재료로 구별</b></dd>
+        <dt>숙주</dt><dd>동물·식물·세균 등 종류별로 다름(모두 사람 병원체 아님). 파지(박테리오파지) = 세균 감염 바이러스. 수업 예(복합형)는 머리에 DNA·꼬리로 세균 접촉</dd>
+      </dl>
+      <!-- 출처: 1105 정리노트 L899–L905, L915–L919, L931 -->
+      <p class="flow">침입: 맞는 수용체(코로나19 ACE2, HIV CD4·CCR5)<span class="flow-arrow">→</span>복제: 중합효소, 뉴클레오타이드 닮은 물질이 핵산 합성 방해<span class="flow-arrow">→</span>방출: 인플루엔자 뉴라미니다아제(자나미비르가 억제)</p>
+      <!-- 출처: 1105 정리노트 L915, L919, L968–L980, L988–L991 -->
+      <ul class="pts">
+        <li>항생제 = 세균 표적. 항바이러스제 = 증식의 <b>특정 단계</b> 표적.</li>
+        <li>감기: 여러 바이러스 / 독감: 인플루엔자.</li>
+        <li>많은 RNA 바이러스: 복제 정확도 낮고 교정 제한적 → 돌연변이. 인플루엔자: 유전변이 → 표면 단백질 변화 → 기존 항체 인식 저하 가능(전부 무효 아님).</li>
+        <li>단순 구조 ≠ 세포보다 먼저. 기원 가설: 세포가 먼저, 세포 DNA·RNA 절편이 단백질에 싸여 나옴(가능성).</li>
+      </ul>
+      <!-- 출처: 1105 복습문제 P1 보기 1과 풀이(기출 9강 1번) -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 바이러스는 생활사에 필요한 에너지를 생산하는 대사시스템을 갖추고 있다.</span>
+        <span class="trap-ok">✓ 독립적인 에너지 대사시스템이 <b>없어 숙주세포에 의존</b>한다.</span>
+      <!-- 출처: 1105 복습문제 P17 보기 3과 풀이, 1105 정리노트 L837 -->
+        <span class="trap-x">✗ 바깥 지질 외피는 바이러스가 숙주와 무관하게 스스로 합성한 세포막이다.</span>
+        <span class="trap-ok">✓ 지질 외피는 숙주세포에서 나올 때 얻는 <b>숙주 유래</b> 막이다.</span>
+      <!-- 출처: 1105 복습문제 P18 보기 1·5와 풀이, 1105 정리노트 L905 -->
+        <span class="trap-x">✗ 뉴라미니다아제만 억제하면 감염된 세포의 핵산 복제가 즉시 멈춘다.</span>
+        <span class="trap-ok">✓ 세포 안 복제는 <b>이어질 수 있고</b>, 다른 세포로의 <b>확산이 줄어든다</b>.</span>
+      </div>
+    </section>
+
+    <!-- ⑪ 출처: 1110 정리노트 L44–L64(분류 체계), L82–L121(원생생물 다양성·수축포·식포·위족), L170–L218(조류·적조·녹조류·산호), 1110 복습문제 P2·P6·P7·P15·P19·P20 -->
+    <section class="sec">
+      <span class="sec-label">⑪ 원생생물</span>
+      <h2 class="sec-title">원생생물: 다양성·구조·조류 <span class="badge prof">교수님 강조</span> <span class="badge">단서: 수축포·식포·위족·적조</span></h2>
+      <p class="flow">두 계(식물·동물)<span class="flow-arrow">→</span>다섯 계<span class="flow-arrow">→</span>세 영역(세균·고세균·진핵생물) 안에 진핵 네 계(원생생물·식물·균류·동물)</p>
+      <ul class="pts">
+        <li><b>원생생물</b> = 동물·육상식물·균류에 넣지 않은 진핵생물 묶음. 핵은 공통, 단일 계통군 아님. 분류하기 어려운 극심한 다양성을 지닌 집단.</li>
+        <li>단세포(짚신벌레·아메바·유글레나)와 다세포(미역·다시마·김)가 <b>모두</b> 있다. 기생은 <b>일부</b>만(말라리아·수면병·감자역병 원인 생물).</li>
+        <li>영양: 종속영양(짚신벌레·아메바), 독립영양(해조류), 혼합영양(유글레나).</li>
+      </ul>
+      <dl class="kv">
+        <dt>수축포</dt><dd>담수 짚신벌레에서 삼투로 들어온 <b>물을 모아 배출</b></dd>
+        <dt>식포</dt><dd>먹이를 막으로 둘러싸 만든 <b>소화</b> 공간</dd>
+        <dt>위족</dt><dd>아메바가 몸을 뻗어 <b>이동·먹이 감싸기</b>(위장 아님)</dd>
+      </dl>
+      <table class="cmp">
+        <thead><tr><th>이름</th><th>정체·예</th></tr></thead>
+        <tbody>
+          <tr><td>규조류</td><td>규산질 껍질의 광합성 원생생물</td></tr>
+          <tr><td>갈조류 / 홍조류</td><td>미역·다시마 / 김 (수업 분류에서 원생생물)</td></tr>
+          <tr><td>녹조류</td><td>육상식물과 가장 가까운 현생 계통(직접 조상 아님)</td></tr>
+          <tr><td>깃편모충류</td><td>해면 깃세포와 닮음, DNA도 동물과 가까움</td></tr>
+          <tr><td>적조·녹조</td><td>생물군이 아닌 대량 번성 <b>현상</b>. 적조는 일부 와편모조류</td></tr>
+        </tbody>
+      </table>
+      <p class="flow">적조: 대량 번성<span class="flow-arrow">→</span>호흡·사체 분해<span class="flow-arrow">→</span>용존 산소 감소<span class="flow-arrow">→</span>물고기 위협 (독소는 일부 종류만)</p>
+      <ul class="pts">
+        <li>산호는 <b>동물</b>, 광합성 공생 조류는 별개 생물. 백화가 오래가면 생존 위협(즉시 사망 아님).</li>
+        <li>해조류·육상식물의 공통 능력은 <b>광합성</b>. 해조류 전반은 종자를 만들지 않음.</li>
+      </ul>
+      <!-- 출처: 1110 복습문제 P15 보기 '펩티도글리칸 세포벽' 해설, 정리노트 L116 -->
+      <!-- 출처: 1110 정리노트 L213·L242 꼭 기억해요, 복습문제 P20 보기 '적조는 홍조류의 다른 이름' 해설 -->
+      <!-- 출처: 1110 정리노트 L117 꼭 기억해요, 복습문제 P19 해설 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 펩티도글리칸 세포벽은 원생생물의 특징이다.</span>
+        <span class="trap-ok">✓ 펩티도글리칸 세포벽은 <b>진정세균</b>의 특징이다.</span>
+        <span class="trap-x">✗ 적조는 홍조류, 녹조는 녹조류라는 분류군의 다른 이름이다.</span>
+        <span class="trap-ok">✓ 적조·녹조는 대량 번성 <b>현상</b>이고, 홍조류·녹조류는 <b>생물군</b>이다.</span>
+        <span class="trap-x">✗ 짚신벌레는 수축포에서 먹이를 소화하고 식포로 물을 배출한다.</span>
+        <span class="trap-ok">✓ 짚신벌레는 <b>식포</b>에서 먹이를 소화하고 <b>수축포</b>로 물을 배출한다.</span>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- ════════════ 7쪽 ════════════ -->
+<section class="page" aria-label="7쪽">
+  <header class="page-head">
+    <div class="page-title-row">
+      <h1 class="page-title">9장 생물다양성</h1>
+      <span class="page-no">7 / 9</span>
+    </div>
+    <div class="page-bar" aria-hidden="true"></div>
+    <p class="page-toc">⑫ 식물 육상 적응·번식 · ⑬ 균류</p>
+  </header>
+
+  <div class="page-body">
+
+    <!-- ⑫ 출처: 1110 정리노트 L256–L477(물 밖에서 마르지 않고 서는 법 / 꽃가루·밑씨·씨방은 서로 다른 단계 / 꽃과 동물이 서로에게 미친 진화적 영향), 1110 복습문제 P4·P5·P18·P21·P22·P23 -->
+    <section class="sec">
+      <span class="sec-label">⑫ 식물 육상 적응·번식</span>
+      <h2 class="sec-title">큐티클·관다발·밑씨·씨방 <span class="badge">단서: 선태류·양치류·솔방울·열매</span></h2>
+      <!-- 출처: 1110 정리노트 L276–L284, L304, L319–L320 -->
+      <dl class="kv">
+        <dt>큐티클</dt><dd>몸 표면 왁스성 층. 수분 손실과 기체 직접 출입을 줄임</dd>
+        <dt>기공</dt><dd>여닫아 기체 교환(CO₂ 유입)·물 손실 조절. 물속 검정말처럼 <b>없는 식물도</b> 있음</dd>
+        <dt>관다발</dt><dd>물관(물·무기 양분) + 체관(광합성 산물). 리그닌이 조직을 단단하게 해 수직 성장 지지</dd>
+      </dl>
+      <!-- 출처: 1110 정리노트 L286–L291, L301–L303, 복습문제 P21 -->
+      <table class="cmp">
+        <thead><tr><th>구분</th><th>선태류(이끼)</th><th>양치류</th><th>겉씨·속씨식물</th></tr></thead>
+        <tbody>
+          <tr><td>관다발</td><td>없음</td><td>있음</td><td>있음</td></tr>
+          <tr><td>종자</td><td>없음, 포자</td><td>없음, 포자</td><td>있음</td></tr>
+        </tbody>
+      </table>
+      <!-- 출처: 1110 정리노트 L341–L349, L372, 복습문제 P18 보기 1·2 -->
+      <table class="cmp">
+        <thead><tr><th>구분</th><th>겉씨식물</th><th>속씨식물(현화식물)</th></tr></thead>
+        <tbody>
+          <tr><td>생식 구조</td><td>암·수 솔방울(소나무), 꽃 없음</td><td>꽃</td></tr>
+          <tr><td>꽃가루·밑씨</td><td>둘 다 있음</td><td>둘 다 있음</td></tr>
+          <tr><td>밑씨 위치</td><td>씨방에 싸이지 않음</td><td>씨방 안</td></tr>
+          <tr><td>열매</td><td>없음</td><td>씨방 → 열매</td></tr>
+        </tbody>
+      </table>
+      <!-- 출처: 1110 정리노트 L351–L354, L373–L376, 복습문제 P22 -->
+      <p class="flow">수분(꽃가루가 암쪽 도착)<span class="flow-arrow">→</span>수정(꽃가루관 따라 온 정자 세포 + 난세포)<span class="flow-arrow">→</span>발달<span class="flow-arrow">→</span>산포(완성된 종자·열매가 퍼짐)·휴면·발아</p>
+      <p class="flow">수정란 → <b>배</b> · 밑씨 → <b>종자</b>(배·영양조직·종피) · 씨방 → <b>열매</b>(속씨만)</p>
+      <!-- 출처: 1110 정리노트 L341, L388–L390, L426–L436, L452, L455, 복습문제 P4 보기 4, P5, P18 보기 4, P23 -->
+      <ul class="pts">
+        <li>정자 세포는 꽃가루 안, 난세포는 밑씨 안에서 발달. 꽃가루는 종자·수정란이 아닌 수분 때 옮겨지는 운반 단위.</li>
+        <li>(교재 보충) 겉씨식물 포자체도 포자를 만들지만 생식 구조 안에 머문다. 포자를 <b>외부로 퍼뜨린다</b>는 보기는 다름.</li>
+        <li>(교재 보충) 속씨식물 물관요소 → 물 빠른 이동. 관다발 자체는 속씨식물만의 것 아님.</li>
+        <li><b>꽃</b>의 진화로 동물 매개자와 공진화(공동진화): 여러 세대의 상호 선택압, 의도적·즉시 변화 아님. 풍매화 = 바람, 충매화 = 곤충(동물매개엔 박쥐·벌새도).</li>
+      </ul>
+      <!-- 출처: 1110 복습문제 P18 보기 1·3과 풀이(기출 9강 27), 정리노트 L372 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 겉씨식물은 꽃과 열매가 없으므로 종자도 가지지 않는다.</span>
+        <span class="trap-ok">✓ 겉씨식물은 꽃·열매가 없지만 <b>꽃가루와 종자는 가진다</b>.</span>
+      <!-- 출처: 1110 복습문제 P18 보기 5와 풀이(기출 9강 27), 정리노트 L349 -->
+        <span class="trap-x">✗ 겉씨식물의 꽃가루받이는 물 없이는 이루어질 수 없다.</span>
+        <span class="trap-ok">✓ 겉씨식물의 꽃가루받이는 바람 등으로 <b>물 없이도</b> 이루어진다.</span>
+      <!-- 출처: 1110 복습문제 P4 보기 5와 풀이(기출 9강 합본 7번), 정리노트 L388 -->
+        <span class="trap-x">✗ 현화식물의 화석을 통해 다른 식물군과 연결되는 진화 경향을 잘 파악할 수 있다.</span>
+        <span class="trap-ok">✓ 초기 속씨식물 화석이 <b>빈약해</b> 다른 식물군과의 초기 연결을 추적하기 <b>어렵다</b>.</span>
+      </div>
+    </section>
+
+    <!-- ⑬ 출처: 1110 정리노트 L478–L692(눈에 보이는 버섯 아래의 실 / 밖에서 잘게 자른 다음 흡수해요 / 지의류와 균근의 교환 상대), 1110 복습문제 P1·P9·P10·P11·P14·P16·P24·P25 -->
+    <section class="sec">
+      <span class="sec-label">⑬ 균류</span>
+      <h2 class="sec-title">균사·키틴·세포외 소화·공생 <span class="badge">단서: 버섯·효모·mycorrhiza</span></h2>
+      <!-- 출처: 1110 정리노트 L496–L518, L538–L547; 복습문제 P1·P9·P10 풀이 -->
+      <dl class="kv">
+        <dt>균사</dt><dd>다세포 균류 몸을 이루는 <b>실 한 가닥</b>(hypha)</dd>
+        <dt>균사체</dt><dd>여러 균사가 이어진 덩어리(mycelium). 땅속에 넓게 퍼짐. 버섯 = 포자 만드는 생식 구조</dd>
+        <dt>키틴</dt><dd>균류 <b>세포벽</b> 대표 성분(곤충에선 외골격 재료 → 같은 분류라는 뜻 아님)</dd>
+        <dt>세포 수</dt><dd>효모 = <b>단세포</b> 균류, 버섯·많은 곰팡이 = 다세포</dd>
+        <dt>생식</dt><dd>포자는 중요한 번식 수단(유성·무성). 포자로만 번식한다고 일반화 X</dd>
+        <dt>계통</dt><dd>균류는 식물보다 <b>동물</b>과 가까움(후편모생물)</dd>
+        <dt>역할</dt><dd>버섯·항생제(일부 Penicillium) 생산, 육상 분해자. 일부는 특정 유기오염물 분해(금속은 분해 X)</dd>
+      </dl>
+      <!-- 출처: 1110 정리노트 L569–L581, L597–L600, L624 -->
+      <p class="flow">효소를 세포 밖에 분비<span class="flow-arrow">→</span>먹이를 작은 분자로 분해(세포외 소화)<span class="flow-arrow">→</span>작은 분자 흡수</p>
+      <ul class="pts">
+        <li>균류 = 종속영양(광합성 X). 동물은 주로 섭식 뒤 <b>몸 안</b>, 균류는 <b>몸 밖</b>에서 소화.</li>
+        <li>살아 있는 숙주 = 기생, 죽은 유기물 = 부생.</li>
+        <li><span class="badge prof">교수님 강조</span> 분해자가 없으면 죽은 생물의 탄소가 CO₂ 등으로 돌아가지 못해 다시 순환하기 어렵다.</li>
+      </ul>
+      <!-- 출처: 1110 정리노트 L647–L653, L657, L669–L674 -->
+      <table class="cmp">
+        <thead><tr><th>구분</th><th>지의류</th><th>균근</th></tr></thead>
+        <tbody>
+          <tr><td>균류의 상대</td><td>남세균·녹조류(광합성 생물)</td><td>식물 뿌리</td></tr>
+          <tr><td>균류가 얻음</td><td>광합성 생물이 만든 유기물</td><td>식물이 만든 탄수화물 등</td></tr>
+          <tr><td>균류가 줌</td><td>물·무기양분</td><td>물·무기이온, 특히 <b>인</b></td></tr>
+          <tr><td>특징</td><td>척박한 곳 토양 형성, 민감한 종류는 대기 지표</td><td>균사가 뿌리 밖 흙 틈까지 뻗음</td></tr>
+        </tbody>
+      </table>
+      <!-- 출처: 1110 복습문제 P16 보기 5와 풀이(기출 9강 25), P25 보기 2 풀이 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 균근에서 균류는 식물에게 탄수화물을, 식물은 균류에게 인을 제공한다.</span>
+        <span class="trap-ok">✓ <b>식물</b>이 균류에게 탄수화물을, <b>균류</b>가 식물에게 인을 제공한다.</span>
+      <!-- 출처: 1110 복습문제 P14 보기 5와 풀이(기출 9강 22), 정리노트 L515 -->
+        <span class="trap-x">✗ 균류와 동물은 둘 다 다세포 구조를 지닌다.</span>
+        <span class="trap-ok">✓ 효모처럼 <b>단세포</b>인 균류도 있다.</span>
+      <!-- 출처: 1110 복습문제 P14 보기 3 풀이(기출 9강 22), P11 보기 3 풀이, 정리노트 L597 -->
+        <span class="trap-x">✗ 균류는 동물처럼 먹이를 먼저 몸 안으로 들여 소화한다.</span>
+        <span class="trap-ok">✓ 균류는 효소를 분비해 <b>몸 밖에서</b> 소화한 뒤 흡수한다(둘 다 종속영양). 단, 기출 "둘 다 외부에서 먹이를 섭취한다"는 종속영양이라는 넓은 뜻으로 공통점이 출제 의도.</span>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- ════════════ 8쪽 ════════════ -->
+<section class="page" aria-label="8쪽">
+  <header class="page-head">
+    <div class="page-title-row">
+      <h1 class="page-title">9장 생물다양성</h1>
+      <span class="page-no">8 / 9</span>
+    </div>
+    <div class="page-bar" aria-hidden="true"></div>
+    <p class="page-toc">⑭ 동물 대칭·척삭 · ⑮ 양막류·포유류</p>
+  </header>
+
+  <div class="page-body">
+
+    <!-- ⑭ 출처: 1110 정리노트 L693–L830(동물이라고 모두 대칭인 것은 아니에요 / 척삭동물 안에 척추동물이 있어요), 1110 복습문제 P3·P8·P13·P26 -->
+    <section class="sec">
+      <span class="sec-label">⑭ 동물 대칭·척삭</span>
+      <h2 class="sec-title">대칭면 수 · 척삭⊃척추 <span class="badge prof">교수님 강조</span> <span class="badge">단서: 자르는 면·말미잘·인두열</span></h2>
+      <!-- 출처: 1110 정리노트 L711–L718, L726, L739; 1110 복습문제 P8·P26 풀이 -->
+      <table class="cmp">
+        <thead><tr><th>구분</th><th>좌우대칭</th><th>방사대칭</th><th>비대칭</th></tr></thead>
+        <tbody>
+          <tr><td>대칭면</td><td>양쪽 대응하는 한 평면</td><td>중심축 지나는 여러 평면</td><td>일정한 대칭면 없음</td></tr>
+          <tr><td>예</td><td>사람</td><td>말미잘</td><td>일반적인 해면동물</td></tr>
+        </tbody>
+      </table>
+      <ul class="pts">
+        <li>동물 공통: 다세포 진핵·세포벽 없음·종속영양, <b>대부분</b> 운동성. 대칭성은 공통 형질 <b>아님</b>(대부분이 좌우대칭 또는 방사대칭).</li>
+        <li>해면: 진정한 조직 없음, 깃세포가 물 흐름으로 먹이 입자 거름(입깃편모충류와 모양 닮음). 몸 일부가 떨어져 새 개체 = 무성생식도 함.</li>
+        <li>몸 가르는 평면 그림 = 대칭(조직층·체강·체절화·발생 양식 아님). 앞뒤가 다르면 방사대칭 아님.</li>
+      </ul>
+      <!-- 출처: 1110 정리노트 L774–L788, L800–L803, L815, L825–L830; 1110 복습문제 P13 풀이 -->
+      <dl class="kv">
+        <dt>척삭</dt><dd>척삭동물이 생애 어느 단계에 갖는 <b>유연한 지지 기둥</b>. 함께: 등쪽 속 빈 신경삭·인두열·근육성 꼬리. 사람은 배아 때 나타나 척추 사이 원반에 일부 남음</dd>
+        <dt>척추</dt><dd>뼈 등으로 이루어진 등뼈. 척추동물 = 척삭동물의 <b>일부</b>. 내부골격(뼈 또는 연골)이 근육 지지·신경계와 기관 보호</dd>
+        <dt>척추동물 안</dt><dd>턱 없는 계통(먹장어·칠성장어 = 무악류) / 턱 있는 계통(턱으로 큰 먹이 포획·방어)</dd>
+        <dt>사지류</dt><dd>다리가 나타난 계통 = 양서류 + 양막류</dd>
+        <dt>단계통·측계통</dt><dd>공통 조상 + 모든 후손 = 단계통. 사지류를 뺀 ‘어류’처럼 후손 일부 제외 = 측계통</dd>
+      </dl>
+      <p class="flow">척삭동물<span class="flow-arrow">⊃</span>척추동물<span class="flow-arrow">⊃</span>사지류(양서류·양막류)</p>
+      <!-- 출처: 1110 복습문제 P13 보기 4와 풀이(기출 9강 19), 1110 정리노트 L801, L815 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 뼈는 척삭동물문 모두가 공유하는 조상형질이다.</span>
+        <span class="trap-ok">✓ <b>척삭</b>은 척삭동물 공통 형질이고, 뼈가 <b>없는</b> 척삭동물도 있다.</span>
+      <!-- 출처: 1110 복습문제 P3 보기 3과 풀이(기출 9강 합본 6번), 1110 정리노트 L739 -->
+        <span class="trap-x">✗ 모든 동물은 유성생식을 한다.</span>
+        <span class="trap-ok">✓ 해면동물은 <b>무성생식도</b> 한다(“유성생식만”이 거짓, “유성생식도 가능”과는 다른 명제).</span>
+      <!-- 출처: 1110 정리노트 L726–L727(꼭 기억해요) -->
+        <span class="trap-x">✗ 말미잘은 사람처럼 좌우대칭이고, 대칭성은 모든 동물의 공통 형질이다.</span>
+        <span class="trap-ok">✓ 말미잘은 <b>방사대칭</b>이고, 대칭면이 <b>없는</b> 동물(해면)도 있다.</span>
+      </div>
+    </section>
+
+    <!-- ⑮ 출처: 1110 정리노트 「몸과 배를 건조에서 보호해요」 L836–L901(L850–L866 본문, L872–L877 꼭 기억해요, L879 교수님 강조, L893–L896 용어), 1110 복습문제 P12(기출 9강 17)·P27·P30 -->
+    <section class="sec">
+      <span class="sec-label">⑮ 양막류·포유류</span>
+      <h2 class="sec-title">육상 건조 → 양막란으로 배 보호 <span class="badge prof">교수님 강조</span> <span class="badge">단서: 배외막·육상 생식</span></h2>
+      <ul class="pts">
+        <li>건조 방어 둘: 물이 잘 안 통하는 <b>피부</b> = 몸 보호 / <b>배외막</b> = 물 밖 배 발생 보호.</li>
+        <li><b>양막류</b> = 파충류·포유류. 조류도 계통상 파충류 쪽 양막류.</li>
+        <li>척추동물 중 육상 생식에 처음 본격 적응한 무리 = 양막류(처음 땅을 밟은 집단과 구별). 양서류는 수중 생식 의존이 흔함.</li>
+      </ul>
+      <dl class="kv">
+        <dt>양막란</dt><dd>배를 보호하고 물질 교환을 돕는 배외막을 갖춘 구조</dd>
+        <dt>양막</dt><dd>배 둘레를 감싸 보호</dd>
+        <dt>요막</dt><dd>배설물 저장과 기체 교환</dd>
+        <dt>난황낭</dt><dd>영양 저장·전달</dd>
+        <dt>장막</dt><dd>바깥쪽에서 기체 교환</dd>
+      </dl>
+      <table class="cmp">
+        <thead><tr><th>포유류</th><th>단공류</th><th>유대류</th><th>태반류</th></tr></thead>
+        <tbody>
+          <tr><td>출산</td><td>알을 낳음</td><td>짧은 자궁 발생 뒤 출산</td><td>자궁에서 더 오래 발생 뒤 출산</td></tr>
+          <tr><td>이후 발달</td><td>몸 밖 알에서 발생</td><td>육아낭에서 이어감</td><td>태반으로 영양, 출생 전 발달 마침</td></tr>
+        </tbody>
+      </table>
+      <p class="flow">포유류 공통 기준 = 새끼에게 <b>젖</b>을 먹임(알 낳는지 아님)</p>
+      <!-- 출처: 1110 정리노트 L877 꼭 기억해요 「알을 낳는 단공류」 행, L861; 1110 복습문제 P30 보기 해설 -->
+      <!-- 출처: 1110 정리노트 L876 꼭 기억해요 「양막란이 있다는 뜻」 행 -->
+      <!-- 출처: 1110 복습문제 P12(기출 9강 17) 사지류 보기 해설, 1110 정리노트 L874–L875 꼭 기억해요 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 단공류는 알을 낳으므로 포유류에서 제외된다.</span>
+        <span class="trap-ok">✓ 단공류는 알을 낳지만 <b>젖으로 새끼를 키우는 포유류</b>다.</span>
+        <span class="trap-x">✗ 모든 양막류는 몸 밖에 껍질 있는 알을 낳는다.</span>
+        <span class="trap-ok">✓ 양막류의 핵심은 <b>배외막</b>이며, 알을 몸 밖에 낳는지는 <b>무리마다 다르다</b>.</span>
+        <span class="trap-x">✗ 최초로 육상 생식에 적응한 척추동물 군은 사지류다.</span>
+        <span class="trap-ok">✓ 최초로 육상 생식에 적응한 군은 <b>양막류</b>다(사지류에는 물에 알 낳는 양서류도 포함).</span>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- ════════════ 9쪽 ════════════ -->
+<section class="page" aria-label="9쪽">
+  <header class="page-head">
+    <div class="page-title-row">
+      <h1 class="page-title">9장 생물다양성</h1>
+      <span class="page-no">9 / 9</span>
+    </div>
+    <div class="page-bar" aria-hidden="true"></div>
+    <p class="page-toc">⑯ 사람류·화석 증거</p>
+  </header>
+
+  <div class="page-body">
+
+    <!-- ⑯ 출처: 1110 정리노트 §5 L902–L1098(s4-primate·s4-fossil·s4-origin), 1110 복습문제 P17(기출 9강 26)·P28·P29 -->
+    <section class="sec">
+      <span class="sec-label">⑯ 사람류·화석 증거</span>
+      <h2 class="sec-title">사람류 = 습관적 두 발 걷기 · 루시 · 아프리카 기원 <span class="badge">단서: 루시·허벅지뼈·유전적 다양성</span></h2>
+      <p class="flow">영장류<span class="flow-arrow">→</span>유인원(사람 포함)<span class="flow-arrow">→</span>사람류(호미닌)<span class="flow-arrow">→</span>호모 속<span class="flow-arrow">→</span>호모 사피엔스</p>
+      <ul class="pts">
+        <li>영장류 공유 형질: 마주 보는 엄지, 유연한 어깨·엉덩이 관절, 큰 뇌·학습능력, 사회생활 → 사람류 구별 기준 아님.</li>
+        <li>사람류 구별 주요 적응: <b>습관적 직립보행</b>(일상적 두 발 걷기). 다른 유인원의 잠깐 두 발 서기와 구별.</li>
+        <li>사람의 엄지발가락에 엄지손가락의 맞섬을 일반화하지 않음.</li>
+      </ul>
+      <table class="cmp">
+        <thead><tr><th>루시</th><th>보행</th><th>뇌 확대</th></tr></thead>
+        <tbody>
+          <tr><td>본 자료</td><td>허벅지뼈(대퇴골) 기울기·관절 형태</td><td>두개골</td></tr>
+          <tr><td>해석</td><td>무릎이 몸 중심 아래 → 두 발로 체중 지지</td><td>현대인보다 작은 뇌 용적</td></tr>
+        </tbody>
+      </table>
+      <ul class="pts">
+        <li>루시 = 오스트랄로피테쿠스 아파렌시스 화석. 두발보행 + 작은 뇌가 한 화석에 → <b>두발보행이 뇌 확대보다 먼저</b>를 지지.</li>
+        <li>화산재 발자국 = 별도 보행 자료. 모양·배열·하중을 함께(깊이 하나로 판정 X).</li>
+        <li>루시 ≠ 최초의 인간·확인된 직접 조상. 현생 침팬지가 그대로 사람이 된 것 아님.</li>
+      </ul>
+      <dl class="kv">
+        <dt>아프리카 기원설</dt><dd>아프리카에서 기원 → 다른 지역으로 확산. 근거: 아프리카의 가장 오래된 화석 + 아프리카 집단의 큰 유전적 다양성</dd>
+        <dt>다지역설</dt><dd>여러 지역 옛 인류 집단이 유전자 교류하며 현대인으로 진화</dd>
+        <dt>유전적 다양성</dt><dd>집단 안의 DNA 차이 크기. 개인 우열·진화 단계 아님. 자료 하나로 기원 확정 X, 화석·DNA가 함께 지지</dd>
+        <dt>네안데르탈인</dt><dd>호모 사피엔스와 한동안 공존. 고대 DNA 비교 → 일부 현대인 계통에 교배로 유전자 유입. 멸종 원인은 별개(확정 안 함)</dd>
+      </dl>
+      <!-- 출처: 1110 복습문제 P17(기출 9강 26) 보기 "마주보는 엄지" + 풀이; 정리노트 L940 -->
+      <div class="trap">
+        <span class="trap-label">함정</span>
+        <span class="trap-x">✗ 사람류를 다른 유인원과 구별 짓는 주요 적응은 마주 보는 엄지손가락이다.</span>
+        <span class="trap-ok">✓ 사람류를 다른 유인원과 구별 짓는 주요 적응은 <b>직립자세와 두 발 걷기</b>다.</span>
+        <!-- 출처: 1110 정리노트 L1001·L1022, 복습문제 P29 "작은 두개골만으로 네 발 보행" 보기 풀이 -->
+        <span class="trap-x">✗ 루시는 뇌가 작으므로 네 발로 걸었다고 판정할 수 있다.</span>
+        <span class="trap-ok">✓ 보행은 <b>허벅지뼈·관절 형태</b>로 따로 판단하며, 루시는 두발보행과 작은 뇌를 함께 보인다.</span>
+        <!-- 출처: 1110 정리노트 L941·L1003·L1020 -->
+        <span class="trap-x">✗ 오스트랄로피테쿠스(루시)는 호모 속에 속하는 최초의 인간이다.</span>
+        <span class="trap-ok">✓ 오스트랄로피테쿠스는 사람류이지만 호모 속에 <b>속하지 않는</b> 초기 사람류다.</span>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- 넘침 경고: 각 쪽을 PDF 크기로 복제해 배치한 뒤, 본문 영역 밖으로 밀려난 구역을 찾는다. 화면 전용, 인쇄에는 영향 없음 -->
+<script>
+(async () => {
+  try { await document.fonts.ready; } catch (e) {}
+  const found = [];
+  document.querySelectorAll('.page:not(.page-probe)').forEach((page, pi) => {
+    const probe = page.cloneNode(true);
+    probe.classList.add('page-probe');
+    probe.removeAttribute('aria-label');
+    document.body.appendChild(probe);
+    const box = probe.querySelector('.page-body').getBoundingClientRect();
+    const real = page.querySelectorAll('.sec');
+    probe.querySelectorAll('.sec').forEach((sec, i) => {
+      const r = sec.getBoundingClientRect();
+      if (r.right > box.right + 1 || r.bottom > box.bottom + 1) {
+        real[i].classList.add('is-overflow');
+        found.push(`${pi + 1}쪽 ${(real[i].querySelector('.sec-label') || {}).textContent || '(라벨 없음)'}`);
+      }
+    });
+    probe.remove();
+  });
+  if (!found.length) return;
+  const alert = document.createElement('div');
+  alert.className = 'overflow-alert';
+  alert.setAttribute('role', 'alert');
+  alert.dataset.overflow = found.join(', ');
+  alert.textContent = `⚠ 구역 ${found.length}개가 넘쳐 PDF에서 잘립니다. 글자를 줄이지 말고 구역을 빼세요.`;
+  const list = document.createElement('span');
+  list.textContent = found.join(' · ');
+  alert.appendChild(list);
+  document.body.prepend(alert);
+})();
+</script>
+
+</body>
+</html>
