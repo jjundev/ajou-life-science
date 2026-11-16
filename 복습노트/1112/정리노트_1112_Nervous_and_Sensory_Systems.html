@@ -112,10 +112,21 @@
     ol.chain > li { position: relative; margin: 0; padding: var(--s2) var(--s3); border-radius: var(--radius); background: var(--surface); }
     ol.chain > li + li { margin-left: var(--s5); }
     ol.chain > li + li::before { content: "→"; content: "→" / ""; position: absolute; top: 50%; left: calc(-1 * var(--s5)); width: var(--s5); transform: translateY(-50%); text-align: center; color: var(--ink-2); }
-    details.more { margin-top: var(--s4); font-size: var(--fs-sub); }
-    details.more > summary, .layer.prof > details > summary { cursor: pointer; padding: var(--s1) 0; }
-    details.more > summary { font-weight: 700; color: var(--ink-2); }
-    details.more ul { padding-left: 1.2em; }
+    .more-toggle {
+      margin-inline-start: .35em; min-height: 28px; padding: 0 .3em;
+      border: 0; background: transparent; color: var(--accent-ink);
+      font-family: inherit; font-size: var(--fs-label); font-weight: 600; line-height: 1.25;
+      white-space: nowrap; cursor: pointer; touch-action: manipulation;
+    }
+    @media (hover: hover) { .more-toggle:hover { text-decoration: underline; } }
+    .more-heading { margin-bottom: var(--s2); }
+    .more-heading > h3 { display: inline; }
+    .more-panel {
+      margin: var(--s2) 0 var(--s3); padding: var(--s2) var(--s3);
+      border-inline-start: 2px solid var(--line); background: var(--surface);
+      font-size: var(--fs-sub);
+    }
+    .layer.prof > details > summary { cursor: pointer; padding: var(--s1) 0; }
     .layer.prof > details > summary.layer-title { display: list-item; margin-bottom: 0; }
     .layer.prof > details[open] > summary.layer-title { margin-bottom: var(--s3); }
 
@@ -437,7 +448,8 @@
     <ol class="chain"><li>수상돌기 입력</li><li>세포체를 거친 신호</li><li>역치 도달 시 축삭 초기분절 발화</li><li>축삭 전도</li><li>축삭말단에서 다음 세포로 전달</li></ol>
     <p class="define"><strong>축삭둔덕(axon hillock)</strong> = 세포체가 축삭으로 좁아지는 부위</p>
     <p class="define"><strong>축삭말단(axon terminal)</strong> = 다음 세포로 신호를 넘기는 축삭 끝</p>
-    <p class="define"><strong>기능에 따른 세 뉴런</strong></p>
+    <p class="define"><strong>기능에 따른 세 뉴런</strong> <button class="more-toggle" type="button" aria-controls="s0-neuron-more" aria-expanded="false" aria-label="보충: 뉴런 신호의 관련 개념" hidden>+ 보충</button></p>
+    <p class="more-panel" id="s0-neuron-more">관련 개념은 <a href="#s2-action">활동전위: 탈분극·재분극·과분극</a>과 <a href="#s3-synapse-types">시냅스: 화학적 시냅스와 전기적 시냅스</a>에서 이어져요.</p>
     <div class="table-wrap"><table class="compare">
       <thead><tr><th scope="col"><span class="sr-only">비교 기준</span></th><th scope="col">구심성 뉴런(afferent neuron)</th><th scope="col">연합뉴런(interneuron)</th><th scope="col">원심성 뉴런(efferent neuron)</th></tr></thead>
       <tbody>
@@ -468,15 +480,12 @@
       <text class="fig-muted" x="445" y="108" font-size="12">내보내는 쪽</text>
     </svg><figcaption>테두리 상자 하나가 뉴런의 한 종류를 나타내요.</figcaption></figure>
     <p>암기법(교수님). 구심력의 “구심”은 중심으로 들어가는 방향이에요.</p>
-    <details class="more"><summary>더 자세히</summary>
-      <p>관련 개념은 <a href="#s2-action">활동전위: 탈분극·재분극·과분극</a>과 <a href="#s3-synapse-types">시냅스: 화학적 시냅스와 전기적 시냅스</a>에서 이어져요.</p>
-    </details>
   </div>
 <!-- bio-comic:v2:0713bc29a807f3893a976d8b3e9c35a25c9ec2096207d94d0a782554b0ff459a -->
 <p class="comic-note" data-bio-comic="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s0-neuron">신호를 받는 수상돌기와 활동전위가 시작되는 축삭 시작부를 구별하려면 <a href="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s0-neuron" target="_self">학습만화</a>를 펼쳐 보세요.</p>
 <!-- /bio-comic -->
 
-  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
+  <div class="layer prof"><details open><summary class="layer-title">교수님 말씀</summary>
     <blockquote>구심력이 들어가는 쪽이잖아. 그래서 감각뉴런을 구심성 뉴런.</blockquote>
   </details></div>
   <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
@@ -525,7 +534,8 @@
     </svg><figcaption>덮개 사이에서 긴 꼬리가 드러난 곳을 살펴보세요.</figcaption></figure>
   </div>
   <div class="layer formal"><span class="layer-title">정확히 말하면</span>
-    <p class="define"><strong>신경아교세포(glial cell)</strong> = 영양 공급·물리적 지지·수초 형성 등으로 뉴런을 돕는 세포</p>
+    <p class="define"><strong>신경아교세포(glial cell)</strong> = 영양 공급·물리적 지지·수초 형성 등으로 뉴런을 돕는 세포 <button class="more-toggle" type="button" aria-controls="s0-glia-more" aria-expanded="false" aria-label="보충: 성상세포 이름의 유래" hidden>+ 보충</button></p>
+    <p class="more-panel" id="s0-glia-more">성상세포는 별(星) 모양에서 붙은 이름이에요.</p>
     <div class="table-wrap"><table class="compare">
       <thead><tr><th scope="col"><span class="sr-only">비교 기준</span></th><th scope="col">성상세포(astrocyte)</th><th scope="col">희소돌기아교세포(oligodendrocyte)</th><th scope="col">슈반세포(Schwann cell)</th></tr></thead>
       <tbody>
@@ -536,9 +546,6 @@
     <p class="define"><strong>미엘린 수초(myelin sheath)</strong> = 아교세포 자체의 막이 축삭을 여러 겹 감싸 이룬 지질성 절연막</p>
     <p class="define"><strong>랑비에 결절(node of Ranvier)</strong> = 수초 사이에 축삭이 드러난 틈</p>
     <p>수초가 있으면 유수신경, 없으면 무수신경이에요. 지름이 비슷하면 유수신경이 더 빨라요. 그 이유는 <a href="#s2-conduction">전도 속도: 축삭의 지름과 도약전도</a>에서 확인해요.</p>
-    <details class="more"><summary>더 자세히</summary>
-      <p>성상세포는 별(星) 모양에서 붙은 이름이에요.</p>
-    </details>
   </div>
 <!-- bio-comic:v2:302336979c69a497c86b4f2d5744a47b4bbd6025b3216ef736f54f461339d42a -->
 <p class="comic-note" data-bio-comic="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s0-glia">수초와 랑비에 결절의 위치, 수초를 만드는 세포를 구별하려면 <a href="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s0-glia" target="_self">학습만화</a>를 펼쳐 보세요.</p>
@@ -546,7 +553,7 @@
 
 <p class="interactive-note" data-bio-interactive="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_03_%EC%88%98%EC%B4%88%EC%99%80_%EB%8F%84%EC%95%BD%EC%A0%84%EB%8F%84.html">모형을 돌려 수초 사이에 드러난 결절을 <a href="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_03_%EC%88%98%EC%B4%88%EC%99%80_%EB%8F%84%EC%95%BD%EC%A0%84%EB%8F%84.html" target="_self">수초와 도약전도 모형</a>의 구조 모드에서 찾아보세요.</p>
 
-  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
+  <div class="layer prof"><details open><summary class="layer-title">교수님 말씀</summary>
     <blockquote>담요처럼 이렇게 덮고 있는데요.</blockquote>
     <blockquote>이 지질 막 자체가 세포예요.</blockquote>
   </details></div>
@@ -638,10 +645,8 @@
       <text x="620" y="170" text-anchor="end" class="fig-muted" font-size="12">안쪽에 K⁺가 많아요</text>
     </svg><figcaption>화살표는 한 번 작동할 때 펌프가 이온을 옮기는 방향을 보여 줘요.</figcaption></figure>
     <p>암기법(교수님). “나트륨은 나간다.”</p>
-    <p>펌프가 유지하는 농도 차는 <a href="#s1-resting">휴지전위가 생기는 이유</a>의 바탕이에요.</p>
-    <details class="more"><summary>더 자세히</summary>
-      <p>강의노트에서는 “Na⁺/K⁺ 능동수송펌프”로 표기해요. ATP가 수송에 쓰이는 원리는 <a href="../0910/정리노트_0910_Cells_and_Cellular_Respiration.html#s2-atp-use">세포 호흡 단원의 ATP를 쓰는 곳</a>에서 이어져요.</p>
-    </details>
+    <p>펌프가 유지하는 농도 차는 <a href="#s1-resting">휴지전위가 생기는 이유</a>의 바탕이에요. <button class="more-toggle" type="button" aria-controls="s1-channel-pump-more" aria-expanded="false" aria-label="보충: Na⁺/K⁺ 펌프의 표기와 ATP" hidden>+ 보충</button></p>
+    <p class="more-panel" id="s1-channel-pump-more">강의노트에서는 “Na⁺/K⁺ 능동수송펌프”로 표기해요. ATP가 수송에 쓰이는 원리는 <a href="../0910/정리노트_0910_Cells_and_Cellular_Respiration.html#s2-atp-use">세포 호흡 단원의 ATP를 쓰는 곳</a>에서 이어져요.</p>
   </div>
 <!-- bio-comic:v2:5fae66155a5a66294b715f65259a0a8a8f9adfc4bed6905e913d076d36584d95 -->
 <p class="comic-note" data-bio-comic="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s1-channel-pump">채널이 따르는 방향과 펌프가 옮기는 Na⁺·K⁺의 방향과 개수를 구별하려면 <a href="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s1-channel-pump" target="_self">학습만화</a>를 펼쳐 보세요.</p>
@@ -649,7 +654,7 @@
 
 <p class="interactive-note" data-bio-interactive="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_04_%ED%8E%8C%ED%94%84%EC%99%80_%ED%9C%B4%EC%A7%80%EC%A0%84%EC%9C%84.html">Na⁺ 3개가 밖으로 나가고 K⁺ 2개가 안으로 들어오는 순서를 <a href="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_04_%ED%8E%8C%ED%94%84%EC%99%80_%ED%9C%B4%EC%A7%80%EC%A0%84%EC%9C%84.html" target="_self">펌프와 휴지전위 모형</a>의 펌프 모드에서 재생해 보세요.</p>
 
-  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
+  <div class="layer prof"><details open><summary class="layer-title">교수님 말씀</summary>
     <blockquote>“펌프는 전기를 꽂아야 작동이 되잖아.”</blockquote>
   </details></div>
   <div class="layer warn"><span class="layer-title">꼭 기억해요</span>
@@ -723,7 +728,7 @@
 
 <p class="interactive-note" data-bio-interactive="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_04_%ED%8E%8C%ED%94%84%EC%99%80_%ED%9C%B4%EC%A7%80%EC%A0%84%EC%9C%84.html">ATP 공급을 끊은 직후와 시간이 지난 뒤의 이온 농도 차를 <a href="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_04_%ED%8E%8C%ED%94%84%EC%99%80_%ED%9C%B4%EC%A7%80%EC%A0%84%EC%9C%84.html" target="_self">펌프와 휴지전위 모형</a>의 휴지전위 모드에서 비교해 보세요.</p>
 
-  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
+  <div class="layer prof"><details open><summary class="layer-title">교수님 말씀</summary>
     <blockquote>“단순히 이것 때문에 세포 내부가 음, 바깥이 양인 게 아닙니다.”</blockquote>
     <p>교수님은 누설 채널을 문을 떼어 낸 통로에 비유했어요. 문이 없으니 “질질 새잖아”라고 했어요.</p>
   </details></div>
@@ -771,7 +776,8 @@
   <div class="layer formal"><span class="layer-title">정확히 말하면</span>
     <p class="define"><strong>활동전위(action potential)</strong> = 막전위가 짧은 시간에 급히 오르내리며 축삭을 따라 전파되는 전기적 충격</p>
     <p class="define"><strong>역치</strong> = Na⁺ 유입의 증폭으로 활동전위가 시작되는 기준 전위</p>
-    <p>활동전위가 처음 생기는 곳에는 전압 개폐성 Na⁺ 채널이 밀집해 있어요. 수상돌기·세포체의 여러 입력이 합쳐져 그곳이 역치에 닿으면 Na⁺ 유입이 탈분극을 스스로 증폭해요.</p>
+    <p>활동전위가 처음 생기는 곳에는 전압 개폐성 Na⁺ 채널이 밀집해 있어요. 수상돌기·세포체의 여러 입력이 합쳐져 그곳이 역치에 닿으면 Na⁺ 유입이 탈분극을 스스로 증폭해요. <button class="more-toggle" type="button" aria-controls="s2-action-more" aria-expanded="false" aria-label="보충: 개폐성의 뜻" hidden>+ 보충</button></p>
+    <p class="more-panel" id="s2-action-more">개폐성은 “개(開) = 열다, 폐(閉) = 닫다”라는 뜻이에요.</p>
     <ol class="chain"><li>흥분성 전달물질 결합</li><li>수상돌기의 리간드 개폐성 채널 열림·Na⁺ 유입</li><li>국소 전류로 수동 전달</li><li>축삭 초기분절(axon initial segment, AIS)이 역치에 도달</li><li>활동전위 발생</li></ol>
     <figure class="figure"><svg id="fig-ap-start" viewBox="0 0 560 200" role="img" aria-label="수상돌기에서 생긴 국소 막전위 변화가 세포체를 거쳐 수동으로 퍼진다. 축삭둔덕 바로 다음의 축삭 초기분절에 원을 표시했다. 이곳에서 활동전위가 시작해 축삭말단 쪽으로 전해진다.">
       <circle class="fig-ink" cx="110" cy="100" r="35"/>
@@ -830,9 +836,6 @@
       <li><strong>회복.</strong> K⁺ 채널이 닫히면 휴지전위로 돌아와요. 불활성화된 Na⁺ 채널도 재분극과 함께 다시 열릴 수 있게 회복해요.</li>
     </ol>
     <p>이온이 막을 드나들며 그 자리의 전위가 바뀌고, 이 변화가 다음 자리로 이어져요. 전파 방식은 <a href="#s2-conduction">전도 속도: 축삭의 지름과 도약전도</a>에서 봐요.</p>
-    <details class="more"><summary>더 자세히</summary>
-      <p>개폐성은 “개(開) = 열다, 폐(閉) = 닫다”라는 뜻이에요.</p>
-    </details>
   </div>
 <!-- bio-comic:v2:573fe57fe0c557f3b73b1b4fac7c4746698eb27362923e76623c499b5ab37cbf -->
 <p class="comic-note" data-bio-comic="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s2-action">Na⁺ 채널의 불활성화와 K⁺ 채널의 느린 닫힘을 구별하려면 <a href="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s2-action" target="_self">학습만화</a>를 펼쳐 보세요.</p>
@@ -840,7 +843,7 @@
 
 <p class="interactive-note" data-bio-interactive="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_01_%ED%99%9C%EB%8F%99%EC%A0%84%EC%9C%84%EC%99%80_%EC%8B%A4%EB%AC%B4%EC%9C%A8.html">막전위가 오르고 내려갈 때 Na⁺ 유입과 K⁺ 유출이 파형의 어느 구간에서 두드러지는지 <a href="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_01_%ED%99%9C%EB%8F%99%EC%A0%84%EC%9C%84%EC%99%80_%EC%8B%A4%EB%AC%B4%EC%9C%A8.html" target="_self">활동전위와 실무율 모형</a>의 파형 모드에서 확인해 보세요.</p>
 
-  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
+  <div class="layer prof"><details open><summary class="layer-title">교수님 말씀</summary>
     <blockquote>"나트륨 채널 열리고 닫히고, 칼륨 채널 열리고 닫히고. 닫히는데 좀 천천히 닫힌다."</blockquote>
     <p>교수님은 Na⁺ 채널이 불활성화되는 때를 “어, 너무 많이 됐다”, K⁺ 채널의 느린 닫힘을 “아이고, 이제 닫혀야지”라고 비유했어요.</p>
   </details></div>
@@ -936,7 +939,7 @@
 <p class="comic-note" data-bio-comic="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s2-all-or-none">자극에 따라 변하는 활동전위의 개수와 한 번의 높이를 구별하려면 <a href="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s2-all-or-none" target="_self">학습만화</a>를 펼쳐 보세요.</p>
 <!-- /bio-comic -->
 
-  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
+  <div class="layer prof"><details open><summary class="layer-title">교수님 말씀</summary>
     <p>교수님은 활동전위가 생기는지를 시험 결과에 빗댔어요. “기면 기고 아니면 아니다”는 채널 하나보다 축삭에서의 발화 여부에 해당해요.</p>
     <blockquote>"1점 차이가 아니고 합격, 불합격"</blockquote>
     <p>속삭이는 소리와 크게 말하는 소리의 차이를 자극 세기의 예로 들었어요.</p>
@@ -1018,13 +1021,11 @@
       <text class="fig-muted" x="395" y="224" text-anchor="middle">수초(절연체, 전선 피복)</text>
     </svg><figcaption>짧은 세로선은 전도에 관여하는 Na⁺ 채널, 화살표는 축삭 내부의 국소 전류예요.</figcaption></figure>
     <p><a href="#s0-glia">신경아교세포와 미엘린 수초</a>에서 본 지질성 수초는 축삭막을 가로지르는 전류 누출을 줄여요. 수초가 덮인 부분에도 이온 채널이 있어요.</p>
-    <p class="define"><strong>다발성 경화증(multiple sclerosis)</strong> = 면역계가 중추신경계 수초를 손상시키는 자가면역질환</p>
+    <p class="define"><strong>다발성 경화증(multiple sclerosis)</strong> = 면역계가 중추신경계 수초를 손상시키는 자가면역질환 <button class="more-toggle" type="button" aria-controls="s2-conduction-more" aria-expanded="false" aria-label="보충: 면역을 배우는 단원" hidden>+ 보충</button></p>
+    <p class="more-panel" id="s2-conduction-more">교수님은 면역은 14장에서 배운다고 했어요.</p>
     <ol class="chain"><li>수초 손상</li><li>전류 누출 증가</li><li>다음 결절의 탈분극 감소</li><li>역치 도달 지연 또는 실패</li><li>전도 지연 또는 차단</li></ol>
     <p>운동 경로의 전도가 차단되면 근력 저하나 마비가 생길 수 있어요. 다발성 경화증에서는 탈수초에 축삭 자체의 손상이 동반되기도 해요.</p>
     <p>축삭을 전도하는 <a href="#s2-action">활동전위: 탈분극·재분극·과분극</a>의 시작점은 보통 축삭 초기분절이에요. 역치에서 Na⁺ 유입이 증가하고 정점 부근에는 Na⁺ 채널의 불활성화가 진행돼요. Ca²⁺는 활동전위가 말단에 도착한 뒤 말단으로 들어와 전달물질 분비를 도와요.</p>
-    <details class="more"><summary>더 자세히</summary>
-      <p>교수님은 면역은 14장에서 배운다고 했어요.</p>
-    </details>
   </div>
 <!-- bio-comic:v2:13f6e083ab58bb2c7d49d85a620dbc163bc70dfa498cd9491900d4bc5f26b38f -->
 <p class="comic-note" data-bio-comic="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s2-conduction">전류가 퍼지는 구간과 활동전위가 재생되는 결절을 구별하려면 <a href="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s2-conduction" target="_self">학습만화</a>를 펼쳐 보세요.</p>
@@ -1032,7 +1033,7 @@
 
 <p class="interactive-note" data-bio-interactive="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_03_%EC%88%98%EC%B4%88%EC%99%80_%EB%8F%84%EC%95%BD%EC%A0%84%EB%8F%84.html">같은 거리를 가는 두 축삭에서 활동전위가 어디서 다시 생기고 어느 쪽이 먼저 도착하는지 <a href="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_03_%EC%88%98%EC%B4%88%EC%99%80_%EB%8F%84%EC%95%BD%EC%A0%84%EB%8F%84.html" target="_self">수초와 도약전도 모형</a>의 전도 모드에서 비교해 보세요.</p>
 
-  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
+  <div class="layer prof"><details open><summary class="layer-title">교수님 말씀</summary>
     <p>교수님은 전도를 파도타기에 비유했어요. 무수 축삭에서는 옆 학생이 차례로 일어나고, 유수 축삭에서는 1번·10번·20번처럼 떨어진 학생이 일어나요.</p>
     <p>수초는 전선의 피복, 수초가 손상될 때 새는 전류는 피복이 벗겨진 전선의 누전에 빗댔어요.</p>
   </details></div>
@@ -1086,7 +1087,8 @@
   <div class="layer formal"><span class="layer-title">정확히 말하면</span>
     <p class="define"><strong>시냅스(synapse)</strong> = 뉴런이 다음 세포에 신호를 넘기는 접점</p>
     <p class="define"><strong>시냅스 전 뉴런(presynaptic neuron)</strong> = 신호를 보내는 쪽</p>
-    <p class="define"><strong>시냅스 후 뉴런(postsynaptic neuron)</strong> = 신호를 받는 쪽</p>
+    <p class="define"><strong>시냅스 후 뉴런(postsynaptic neuron)</strong> = 신호를 받는 쪽 <button class="more-toggle" type="button" aria-controls="s3-synapse-types-more" aria-expanded="false" aria-label="보충: 시냅스 전·후 뉴런의 강의노트 표기" hidden>+ 보충</button></p>
+    <p class="more-panel" id="s3-synapse-types-more">강의노트의 “시냅스전세포·시냅스후세포”는 같은 뜻이에요.</p>
     <div class="table-wrap"><table class="compare">
       <thead><tr><th scope="col"><span class="sr-only">비교 기준</span></th><th scope="col">화학적 시냅스(chemical synapse)</th><th scope="col">전기적 시냅스(electrical synapse)</th></tr></thead>
       <tbody>
@@ -1097,15 +1099,12 @@
     </table></div>
     <p>시냅스 전·후는 신호의 방향으로 정해요. 수업에서 자세히 다루는 것은 화학적 시냅스예요. <a href="#s3-release">화학 시냅스의 전달 순서</a>로 이어져요.</p>
     <p>교수님은 소리와 시각 신호가 어떻게 뇌에 닿는지, 생각과 감정은 어떻게 생기는지 이해하기 위해 이 단원을 공부한다고 설명했어요.</p>
-    <details class="more"><summary>더 자세히</summary>
-      <p>강의노트의 “시냅스전세포·시냅스후세포”는 같은 뜻이에요.</p>
-    </details>
   </div>
 <!-- bio-comic:v2:6b836f20411595fd042fddfc86de785596564937a1bed66dbd19ef29a8067f8a -->
 <p class="comic-note" data-bio-comic="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s3-synapse-types">전달물질이 틈을 건너는 경우와 이온이 직접 이동하는 경우를 구별하려면 <a href="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s3-synapse-types" target="_self">학습만화</a>를 펼쳐 보세요.</p>
 <!-- /bio-comic -->
 
-  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
+  <div class="layer prof"><details open><summary class="layer-title">교수님 말씀</summary>
     <blockquote>"터널처럼 통로가 있어 가지고 … 나트륨 이온이 직접 이동하는 경우"</blockquote>
   </details></div>
   <div class="sum" hidden>
@@ -1199,7 +1198,7 @@
 
 <p class="interactive-note" data-bio-interactive="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_02_%ED%99%94%ED%95%99_%EC%8B%9C%EB%83%85%EC%8A%A4%EC%9D%98_%EC%8B%A0%ED%98%B8_%EC%A0%84%EB%8B%AC.html">Ca²⁺가 들어온 뒤 소포가 어느 막과 융합하는지 <a href="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_02_%ED%99%94%ED%95%99_%EC%8B%9C%EB%83%85%EC%8A%A4%EC%9D%98_%EC%8B%A0%ED%98%B8_%EC%A0%84%EB%8B%AC.html" target="_self">화학 시냅스 모형</a>에서 단계별로 재생해 보세요.</p>
 
-  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
+  <div class="layer prof"><details open><summary class="layer-title">교수님 말씀</summary>
     <p>교수님은 리간드 개폐성 채널을 카드키 문으로 비유하고 소포 운반에서는 “미세소관 기억나요?”라고 물었어요.</p>
     <blockquote>"카드키를 딱 대면은 얘가 탁 열려 … 카드키가 리간드인 거죠."</blockquote>
   </details></div>
@@ -1298,7 +1297,12 @@
 </article>
     </section>
     <section id="s4"><h2>5. 신경전달물질과 약물</h2>
-<article class="topic" id="s4-transmitters"><h3>여러 가지 신경전달물질</h3><div class="tags"><span class="tag date">1112 수업</span><span class="tag slide">12장 p3</span></div>
+<article class="topic" id="s4-transmitters">
+  <div class="more-heading">
+    <h3>여러 가지 신경전달물질</h3> <button class="more-toggle" type="button" aria-controls="s4-transmitters-more" aria-expanded="false" aria-label="보충: 알려진 신경전달물질의 수" hidden>+ 보충</button>
+  </div>
+  <p class="more-panel" id="s4-transmitters-more">수업에서는 신경전달물질이 100가지 넘게 알려졌다고 소개했어요.</p>
+  <div class="tags"><span class="tag date">1112 수업</span><span class="tag slide">12장 p3</span></div>
   <div class="layer eli5"><span class="layer-title">쉽게 말하면</span>
     <p class="lead">근육을 움직이는 쪽지와 그 신호를 줄이는 쪽지는 서로 다른 곳에서 작용해요.</p>
     <figure class="figure"><svg id="fig-transmitter-poisons" viewBox="0 0 640 270" role="img" aria-label="왼쪽에서 쿠라레가 근육의 아세틸콜린 수용체 자리를 차지해 근육이 축 늘어진다. 오른쪽에서는 파상풍 독이 억제 뉴런에서 운동뉴런으로 가는 GABA·글리신의 방출을 막아 운동뉴런의 억제가 약해지고 근육이 지나치게 수축한다.">
@@ -1358,15 +1362,12 @@
     <p>아세틸콜린은 뇌에서도 쓰여요. 알츠하이머병에서 아세틸콜린을 쓰는 일부 뇌 뉴런이 퇴화하면 관련 신호가 약해질 수 있어요.</p>
     <ul><li><strong>노르에피네프린·에피네프린.</strong> 위급할 때 근육에 혈액을 보내 힘을 쓸 수 있게 해요.</li><li><strong>도파민.</strong> 의식·기억·기분·감각·근육 움직임·수면과 기분 좋은 느낌에 관련돼요.</li><li><strong>세로토닌.</strong> 식욕·생식·근육 움직임·수면·불안에 관여해요.</li></ul>
     <p>우울증에는 유전·생물학적 요인과 심리·환경 요인이 함께 관여해요. 일부 항우울제의 세로토닌 신호 조절은 <a href="#s4-removal">신경전달물질의 제거와 약물</a>에서 다뤄요.</p>
-    <details class="more"><summary>더 자세히</summary>
-      <p>수업에서는 신경전달물질이 100가지 넘게 알려졌다고 소개했어요.</p>
-    </details>
   </div>
 <!-- bio-comic:v2:ffb2cb98d79ac2a4d13a681751e05064cd49e051700cc7dde4a79948f799954b -->
 <p class="comic-note" data-bio-comic="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s4-transmitters">근육에 가는 흥분을 막았을 때와 운동뉴런의 억제를 풀었을 때를 구별하려면 <a href="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s4-transmitters" target="_self">학습만화</a>를 펼쳐 보세요.</p>
 <!-- /bio-comic -->
 
-  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
+  <div class="layer prof"><details open><summary class="layer-title">교수님 말씀</summary>
     <p>교수님은 원주민이 화살촉에 발랐던 식물 독 쿠라레로 마비 이야기를 시작했어요.</p>
     <blockquote>아파서 쓰러지나? 쪽팔려서 쓰러지나?</blockquote>
     <blockquote>억제를 억제하니까 어떻게 된다?</blockquote>
@@ -1452,11 +1453,9 @@
       </tbody>
     </table></div>
     <p>도파민의 작용이 길어지면 기분 좋은 느낌이 이어질 수 있고, 코카인 남용은 내성과 중독으로 이어질 수 있어요. 엔도르핀은 심한 고통을 줄이는 신경전달물질이고, 모르핀은 양귀비에서 얻는 성분이에요.</p>
-    <p>기체 전달물질에는 일산화탄소와 산화질소(NO)가 있어요. NO는 혈관을 팽창시켜요. 수업에서는 비아그라가 “산화질소를 없애는 효소”를 막아 이 효과가 오래간다고 단순화했어요.</p>
+    <p>기체 전달물질에는 일산화탄소와 산화질소(NO)가 있어요. NO는 혈관을 팽창시켜요. 수업에서는 비아그라가 “산화질소를 없애는 효소”를 막아 이 효과가 오래간다고 단순화했어요. <button class="more-toggle" type="button" aria-controls="s4-removal-more" aria-expanded="false" aria-label="보충: 비아그라 개발 배경" hidden>+ 보충</button></p>
+    <p class="more-panel" id="s4-removal-more">수업에서는 비아그라가 원래 순환계의 혈압에 작용하는 약으로 개발됐다고 소개했어요.</p>
     <p>전달물질의 효과는 수용체 결합에 달려 있어요. 재흡수나 분해 효소를 막으면 제거가 늦어지고, 합성·분비량이나 시냅스 후 수용체 수가 늘어도 결합과 효과가 커질 수 있어요. 교수님은 세로토닌을 더 합성하는 방법도 언급했어요.</p>
-    <details class="more"><summary>더 자세히</summary>
-      <p>수업에서는 비아그라가 원래 순환계의 혈압에 작용하는 약으로 개발됐다고 소개했어요.</p>
-    </details>
   </div>
 <p class="interactive-note" data-bio-interactive="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_02_%ED%99%94%ED%95%99_%EC%8B%9C%EB%83%85%EC%8A%A4%EC%9D%98_%EC%8B%A0%ED%98%B8_%EC%A0%84%EB%8B%AC.html">전달물질이 틈 밖으로 퍼지면서 수용체 채널이 닫히는 모습을 <a href="%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_02_%ED%99%94%ED%95%99_%EC%8B%9C%EB%83%85%EC%8A%A4%EC%9D%98_%EC%8B%A0%ED%98%B8_%EC%A0%84%EB%8B%AC.html" target="_self">화학 시냅스 모형</a>의 마지막 단계에서 확인해 보세요.</p>
 
@@ -1464,7 +1463,7 @@
 <p class="comic-note" data-bio-comic="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s4-removal">신경전달물질의 세 제거 경로와 재흡수 차단의 효과를 구별하려면 <a href="%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1112_Nervous_and_Sensory_Systems.html#s4-removal" target="_self">학습만화</a>를 펼쳐 보세요.</p>
 <!-- /bio-comic -->
 
-  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary>
+  <div class="layer prof"><details open><summary class="layer-title">교수님 말씀</summary>
     <blockquote>택배 아저씨가 택배 전달해주고 같이 살아? 택배만 전달해주고 가죠.</blockquote>
     <p>교수님은 재흡수 억제를 배송을 마치고 돌아가려는 기사를 붙잡는 일에 빗댔어요. 벽에 머리를 부딪힌 뒤 처음보다 덜 아픈 경우로 엔도르핀의 효과를 설명하고, 양귀비 이야기로 모르핀을 소개했어요.</p>
   </details></div>
@@ -1966,6 +1965,19 @@ var AON = (function () {
       sync();
     })();
   </script>
+  <script id="more-ui">
+    document.querySelectorAll('.more-toggle').forEach((button) => {
+      const panel = document.getElementById(button.getAttribute('aria-controls'));
+      panel.hidden = true;
+      button.hidden = false;
+      button.addEventListener('click', () => {
+        const expanded = panel.hidden;
+        panel.hidden = !expanded;
+        button.setAttribute('aria-expanded', String(expanded));
+        button.textContent = expanded ? '− 보충' : '+ 보충';
+      });
+    });
+  </script>
   <script id="pager-ui">
     (function () {
       const root = document.documentElement;
@@ -2069,7 +2081,7 @@ var AON = (function () {
       main.addEventListener('touchstart', (e) => {
         const t = e.touches[0];
         sx = t.clientX; sy = t.clientY;
-        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details, .more-toggle, .more-panel'));
       }, { passive: true });
       main.addEventListener('touchend', (e) => {
         if (skip) return;

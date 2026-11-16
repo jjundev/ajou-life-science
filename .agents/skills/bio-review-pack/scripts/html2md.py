@@ -191,7 +191,7 @@ def inline(node, ctx):
         return escape_text(re.sub(r"\s+", " ", node))
     t, cls = node.tag, node.classes
     inner = lambda: "".join(inline(c, ctx) for c in node.children)
-    if t in ("script", "style", "svg", "input", "nav"):
+    if t in ("script", "style", "svg", "input", "nav") or "more-toggle" in cls:
         return ""
     if t == "br":
         return "<br>"
@@ -399,7 +399,7 @@ def heading(level, node, ctx, anchor=None):
 
 def block(node, ctx):
     t, cls = node.tag, node.classes
-    if t in ("nav", "script", "style") or "topbar" in cls or "progress" in cls:
+    if t in ("nav", "script", "style") or cls & {"topbar", "progress", "more-toggle"}:
         return []
     if t in ("h1", "h2", "h3", "h4"):
         anchor = node.attrs.get("id")
@@ -442,7 +442,8 @@ def block(node, ctx):
         rest = Node("div")
         rest.children = [c for c in node.children if c is not summary]
         body = children_blocks(rest, ctx)
-        return [f"<details><summary>{stext}</summary>", ""] + body + ["", "</details>"]
+        opened = " open" if "open" in node.attrs and node.parent is not None and "prof" in node.parent.classes else ""
+        return [f"<details{opened}><summary>{stext}</summary>", ""] + body + ["", "</details>"]
     if t == "summary":
         return []
     if t == "label" and "done" in cls:

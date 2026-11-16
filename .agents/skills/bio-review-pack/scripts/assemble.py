@@ -60,7 +60,8 @@ def read_fragment(path: Path, m: dict) -> str:
 
 
 def build_note(m: dict, run_dir: Path) -> str:
-    sections, scripts = [], []
+    more_ui = (ASSETS / "note-more.js").read_text(encoding="utf-8").rstrip()
+    sections, scripts = [], [f'<script id="more-ui">\n{more_ui}\n</script>']
     for sec in m["sections"]:
         body, found = split_scripts(read_fragment(run_dir / "sections" / f"{sec['id']}.html", m))
         scripts += found

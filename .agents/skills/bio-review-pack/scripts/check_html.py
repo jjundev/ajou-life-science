@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import argparse
 import json
-from collections import defaultdict
+from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from html.parser import HTMLParser
 from pathlib import Path
@@ -361,6 +361,7 @@ def body_format_problems(source: str) -> list[Problem]:
     from html2md import Builder, Node
     tree = Builder()
     tree.feed(source)
+    more_ui = any(tree.root.find_all(lambda n: n.tag == 'script' and n.attrs.get('id') == 'more-ui'))
     out = []
     for topic in tree.root.find_all(lambda n: n.tag == 'article' and 'topic' in n.classes):
         where = topic.attrs.get('id', 'topic')
@@ -377,6 +378,20 @@ def body_format_problems(source: str) -> list[Problem]:
             summaries = [c for c in fold.children if isinstance(c, Node) and c.tag == 'summary']
             if not summaries or not summaries[0].text().strip():
                 out.append(Problem('fold-summary', where, '접힘에 제목(summary) 필요'))
+            if more_ui and 'more' in fold.classes:
+                out.append(Problem('more-legacy', where, '보충은 본문 끝의 more-toggle과 more-panel로 연결'))
+            if more_ui and 'prof' in fold.parent.classes and 'open' not in fold.attrs:
+                out.append(Problem('prof-default-open', where, '교수님 말씀에 details open 필요'))
+        buttons = list(topic.find_all(lambda n: 'more-toggle' in n.classes))
+        panels = Counter(n.attrs.get('id', '') for n in topic.find_all(lambda n: 'more-panel' in n.classes))
+        targets = Counter(n.attrs.get('aria-controls', '') for n in buttons)
+        if targets != panels or '' in targets or any(count != 1 for count in targets.values()):
+            out.append(Problem('more-target', where, '같은 토픽의 버튼과 보충 영역을 고유 id로 일대일 연결'))
+        for button in buttons:
+            if (button.tag != 'button' or button.attrs.get('type') != 'button'
+                    or button.attrs.get('aria-expanded') != 'false' or 'hidden' not in button.attrs
+                    or not button.attrs.get('aria-label', '').strip() or button.text().strip() != '+ 보충'):
+                out.append(Problem('more-toggle', where, '보충 버튼의 초기 상태 또는 접근성 문구 확인'))
     return out
 
 

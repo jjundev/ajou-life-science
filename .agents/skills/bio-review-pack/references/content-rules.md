@@ -46,10 +46,11 @@
 <article class="topic" id="…"><h3>…</h3><div class="tags"><span class="tag date">MMDD 수업</span><span class="tag slide">3장 p12</span></div>
   <div class="layer eli5"><span class="layer-title">쉽게 말하면</span><p class="lead">한 문장 비유</p> …그림… </div>
   <div class="layer formal"><span class="layer-title">정확히 말하면</span> …비교표·사슬·한 줄 정의·조건 문장(아래 「내용 유형별 형식」)…
-    <details class="more"><summary>더 자세히</summary> …표기·유래·교차 링크·부연… </details>   ← 접을 내용이 있을 때만, formal의 맨 끝
+    <p>관련 본문 문장 <button class="more-toggle" type="button" aria-controls="s0-topic-more-1" aria-expanded="false" aria-label="보충: 관련 용어의 표기" hidden>+ 보충</button></p>
+    <div class="more-panel" id="s0-topic-more-1"><p>…표기·유래·교차 링크·부연…</p></div>
   </div>
   <div class="layer warn"><span class="layer-title">꼭 기억해요</span> …table.pairs(혼동 지점마다 한 행)… </div>   ← layers에 warn이 있을 때만
-  <div class="layer prof"><details><summary class="layer-title">교수님 말씀</summary> …비유·일화, 원문은 blockquote… </details></div>
+  <div class="layer prof"><details open><summary class="layer-title">교수님 말씀</summary> …비유·일화, 원문은 blockquote… </details></div>
   <div class="layer supp"><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p>…</p><p>출처: 교재 3장 p.68</p></div>   ← manifest supp=true만
   <div class="layer supp"><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p>…</p><p>출처: 0922 수업, 강의노트 3장 p2</p></div>   ← 수업 자료에는 있는데 노트에서 빠진 사실
   <div class="sum" hidden>…페이지 요약(아래)…</div>                                                    ← layers가 빈 목록이 아닌 토픽만, 맨 끝
@@ -57,7 +58,8 @@
 ```
 - 레이어 제목과 배지 글자는 위와 글자 그대로 쓴다. 이모지, 장식 기호(★, ↗, → 같은 화살표 아이콘), "아래를 보세요" 같은 안내 문장은 쓰지 않는다.
 - warn 레이어는 오개념 방어가 목적이다. 요약의 `⚠️ 혼동 지점`마다 `table.pairs`에 한 행을 쓴다: 묻는 것 | 틀리기 쉬운 답(`<del>`) | 맞는 답. 표·사슬에 이미 있는 사실은 다시 설명하지 않고 답만 적는다. 짧은 답으로 떨어지지 않는 혼동(조건이 붙는 구분 등)만 표 아래에 "무엇을 무엇으로 착각하기 쉬운지 → 바른 구분" 문장 한 쌍으로 쓴다.
-- prof 레이어는 `<details>`로 접고, 비유·일화와 그 원문 인용만 둔다. 시험 언급·강조 발언은 warn에, 암기법은 formal의 해당 사실 바로 옆에 `(교수님)`을 붙여 한 줄로 올리고 prof에서 되풀이하지 않는다. 접을 비유·일화가 없으면 manifest에 prof가 있어도 `<details>` 안에 강조 발언의 원문 인용만 둔다.
+- prof 레이어는 `<details open>`으로 처음부터 펼쳐 두고, 비유·일화와 그 원문 인용만 둔다. 시험 언급·강조 발언은 warn에, 암기법은 formal의 해당 사실 바로 옆에 `(교수님)`을 붙여 한 줄로 올리고 prof에서 되풀이하지 않는다. 비유·일화가 없으면 manifest에 prof가 있어도 `<details open>` 안에 강조 발언의 원문 인용만 둔다.
+- 표기·유래·이어 읽기처럼 선택해서 읽을 정보가 있을 때 해당 문장이나 소제목 끝에 `+ 보충` 버튼을 둔다. 해당 블록 바로 아래에 `more-panel`을 두고, 토픽 ID에서 파생한 고유 id를 버튼의 `aria-controls`와 일치시킨다. 버튼의 `aria-label`에 무엇을 보충하는지 적고, `hidden`은 버튼에만 붙인다. 조립된 HTML에서 설명의 접힘과 `+ 보충`·`− 보충` 전환을 처리한다.
 - `s0-recap` 토픽(지난 수업 복습)은 formal 레이어에 요점 3~5줄과 이전 팩 링크만 둔다.
 - 템플릿이 토픽 하나를 한 화면에 보여 준다. 토픽은 그것만 읽어도 이해되게 쓰고, 앞 토픽에 기대는 말 대신 `<a href="#토픽id">토픽 제목</a>`으로 잇는다.
 - 요약·예고 섹션: 치트시트는 표(`<div class="table-wrap"><table>`)로, 행마다 "주제 | 시험 직전 한 줄"이며 성립 조건과 분류 경계를 한 줄 안에 보존한다. 예고는 `<ul>`, 링크는 `<ul><li><a>`.
@@ -73,7 +75,7 @@
 | 고리가 6개 이상이거나 단계마다 위치·입력·출력 설명이 필요한 과정 | 단계 목록 | `ol.steps` |
 | 용어의 뜻 | 한 줄 정의 | `p.define` |
 | 성립 조건·예외·동기·인과 | 문장, 한 문단 3문장 이하 | `p` |
-| 표기·명칭 유래·다른 단원 링크·부연 | 접힘 | formal 끝의 `details.more` |
+| 표기·명칭 유래·다른 단원 링크·부연 | 본문 옆에서 여는 보충 | 해당 문장 끝의 `button.more-toggle`과 바로 아래 `.more-panel` |
 
 ```html
 <div class="table-wrap"><table class="compare">
@@ -82,7 +84,6 @@
 </table></div>
 <p class="define"><strong>전기화학 기울기(electrochemical gradient)</strong> = 농도 차 + 전압 차</p>
 <ol class="chain"><li>ATP 가수분해</li><li>Na⁺ 3개 밖으로 · K⁺ 2개 안으로</li><li>바깥은 Na⁺, 안쪽은 K⁺가 많은 상태</li></ol>
-<details class="more"><summary>더 자세히</summary><ul><li>강의노트는 "Na⁺/K⁺ 능동수송펌프"로 적어요.</li></ul></details>
 
 <!-- warn -->
 <div class="table-wrap"><table class="pairs">

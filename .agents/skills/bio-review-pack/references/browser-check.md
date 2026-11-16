@@ -63,6 +63,8 @@ const textNodes = Array.from(document.querySelectorAll('main *, #panel-right *')
 위젯마다 그 토픽으로 넘긴 뒤 슬라이더 하나를 바꾸고(`input` 이벤트) readout 값이 `.widget-static` 표의 같은 설정 값과 같은지 확인한다.
 
 ## 모바일·다크
+정리노트에서는 보충이 있는 토픽을 열어 문장 끝의 `+ 보충`을 탭한다. 해당 설명이 아래에 펼쳐지고 버튼이 `− 보충`으로 바뀌는지, 다시 탭하면 원래 상태로 돌아가는지 확인한다. 데스크톱에서는 키보드의 Space 또는 Enter로 확인한다. 교수님 말씀이 있는 토픽은 처음부터 펼쳐지는지 확인한다.
+
 `resize_window`(`preset: "mobile"`, `colorScheme: "dark"`) → 새로고침 → `clientWidth > 0` 확인 → 위 스크립트 재실행(`hScroll: []`) → 스크린샷으로 그림·위젯 글자가 보이는지 확인 → 상단 바의 테마 버튼(`#theme-toggle`)을 눌러 `document.body` 배경색이 바뀌고 `aria-label`이 반대 모드로 바뀌는지 확인한 뒤 `localStorage.removeItem('od-theme')`로 지운다 → `preset: "desktop"`, `colorScheme: "light"`로 되돌린다.
 
 ## 복습문제

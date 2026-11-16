@@ -116,6 +116,20 @@
     details.more > summary, .layer.prof > details > summary { cursor: pointer; padding: var(--s1) 0; }
     details.more > summary { font-weight: 700; color: var(--ink-2); }
     details.more ul { padding-left: 1.2em; }
+    .more-toggle {
+      margin-inline-start: .35em; min-height: 28px; padding: 0 .3em;
+      border: 0; background: transparent; color: var(--accent-ink);
+      font-family: inherit; font-size: var(--fs-label); font-weight: 600; line-height: 1.25;
+      white-space: nowrap; cursor: pointer; touch-action: manipulation;
+    }
+    @media (hover: hover) { .more-toggle:hover { text-decoration: underline; } }
+    .more-heading { margin-bottom: var(--s2); }
+    .more-heading > h3 { display: inline; }
+    .more-panel {
+      margin: var(--s2) 0 var(--s3); padding: var(--s2) var(--s3);
+      border-inline-start: 2px solid var(--line); background: var(--surface);
+      font-size: var(--fs-sub);
+    }
     .layer.prof > details > summary.layer-title { display: list-item; margin-bottom: 0; }
     .layer.prof > details[open] > summary.layer-title { margin-bottom: var(--s3); }
 
@@ -786,7 +800,7 @@
       main.addEventListener('touchstart', (e) => {
         const t = e.touches[0];
         sx = t.clientX; sy = t.clientY;
-        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details, .more-toggle, .more-panel'));
       }, { passive: true });
       main.addEventListener('touchend', (e) => {
         if (skip) return;
