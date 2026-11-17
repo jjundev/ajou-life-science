@@ -1,0 +1,2633 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>생명과학 복습문제 1117</title>
+  <meta name="description" content="복습문제 43선 — 1117 수업 범위">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('od-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']})"></script>
+  <style>
+    /* ---------- 토큰 ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #b54708; --prof: #6941c6; --supp: #067647; --danger: #d92d20;
+      --scroll: #c9d0db; --scroll-hover: #9aa3b2;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --fs-body: 17px; --fs-lead: 20px; --fs-small: 14px; --fs-label: 13px; --fs-fig: 12px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+      --radius: 8px; --measure: 680px; --tap: 48px; --btn-min: 160px;
+      --dur: 220ms; --dur-exit: 150ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+      /* 예전 조각이 참조할 수 있는 이름 */
+      --surface-2: var(--surface); --accent-soft: var(--surface); --warn-soft: var(--surface);
+      --prof-soft: var(--surface); --supp-soft: var(--surface); --eli5: var(--accent-ink); --eli5-soft: var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+        --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+        --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+        --scroll: #3f414b; --scroll-hover: #5b5e6a;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+      --scroll: #3f414b; --scroll-hover: #5b5e6a;
+    }
+
+    /* ---------- 기본 ---------- */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent-ink); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+
+    /* ---------- 상단 바 ---------- */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s2) var(--s4); display: flex; align-items: center; gap: var(--s3); min-height: 56px; }
+    .brand { flex: 1 1 auto; min-width: 0; font-size: var(--fs-body); font-weight: 700; white-space: nowrap; }
+    .text-btn { flex: none; min-height: 44px; min-width: 44px; padding: 0 var(--s3); border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); font: 600 var(--fs-small)/1 var(--font); cursor: pointer; }
+    .bar { height: 2px; background: var(--line); overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+
+    /* ---------- 본문 ---------- */
+    main { flex: 1 0 auto; width: 100%; max-width: var(--measure); margin: 0 auto; padding: var(--s6) var(--s5) var(--s7); }
+    .hero h1 { font-size: clamp(28px, 6vw, 36px); line-height: 1.3; margin: 0 0 var(--s3); letter-spacing: -0.02em; }
+    .hero p { color: var(--ink-2); margin: 0; }
+    section { margin-top: var(--s7); }
+    section > h2 { font-size: 22px; line-height: 1.4; margin: 0 0 var(--s4); }
+    .topic { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .topic h3 { margin: 0 0 var(--s2); font-size: clamp(24px, 5vw, 28px); line-height: 1.35; letter-spacing: -0.01em; }
+    .tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+    .tag { font-size: var(--fs-label); line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+
+    /* 레이어: 배경 없이 라벨과 구분선으로 나눈다 */
+    .layer { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .layer.eli5 { margin-top: 0; padding-top: 0; border-top: 0; }
+    .layer > :first-child { margin-top: 0; }
+    .layer > :last-child { margin-bottom: 0; }
+    .layer-title { display: block; font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); margin-bottom: var(--s2); }
+    .layer.eli5 .layer-title { color: var(--accent-ink); }
+    .layer.eli5 .lead { font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; margin: 0 0 var(--s3); }
+    .layer.prof .layer-title { color: var(--prof); }
+    .layer.warn { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn .layer-title { color: var(--warn); }
+    .layer.supp .badge.supp { margin-bottom: var(--s2); }
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
+    .badge.supp { color: var(--supp); }
+    blockquote { margin: var(--s2) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
+    ol.steps { padding-left: 1.4em; }
+    ol.steps li { margin: var(--s2) 0; }
+
+    /* 그림 · 수식 · 표 */
+    .figure { margin: var(--s4) 0; text-align: center; }
+    .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
+    .figure img { max-width: 100%; height: auto; }
+    .figure figcaption { font-size: var(--fs-small); color: var(--ink-2); margin-top: var(--s1); }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: var(--s1) 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+    th, td { border-bottom: 1px solid var(--line); padding: var(--s2); text-align: left; vertical-align: top; }
+    th { color: var(--ink-2); font-weight: 600; }
+    td:first-child, th:first-child { min-width: 6em; }
+
+    /* 위젯 */
+    .widget { background: var(--surface); border-radius: var(--radius); padding: var(--s4); margin: var(--s5) 0; }
+    .widget h4 { margin: 0 0 var(--s1); font-size: var(--fs-body); }
+    .widget-help { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s3); }
+    .controls { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--s2); font-size: var(--fs-small); }
+    .controls label { display: flex; align-items: center; gap: var(--s2); min-height: 44px; }
+    .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .widget svg { width: 100%; height: auto; background: var(--bg); border-radius: var(--radius); }
+    .readout { font-size: var(--fs-small); margin-top: var(--s2); }
+    .legend { font-size: var(--fs-label); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .sw { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: var(--s1); border-radius: 2px; }
+    .sw.truth { background: var(--ink-2); } .sw.fit { background: var(--accent); } .sw.train { background: var(--accent); height: 10px; width: 10px; border-radius: 50%; }
+    .sw.test { background: var(--warn); height: 10px; width: 10px; border-radius: 50%; } .sw.like { background: var(--accent); } .sw.prior { background: var(--prof); } .sw.post { background: var(--supp); }
+    .axis { stroke: var(--line); stroke-width: 1.5; }
+    .tick { fill: var(--ink-2); font-size: 11px; }
+    .plot-truth { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .plot-fit { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+    .pt-train { fill: var(--accent); }
+    .pt-test { fill: var(--warn); }
+    .plot-like { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .plot-prior { fill: none; stroke: var(--prof); stroke-width: 2; stroke-dasharray: 6 4; }
+    .plot-post { fill: none; stroke: var(--supp); stroke-width: 3; }
+    .mark-ml { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .mark-map { stroke: var(--supp); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 2; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 2.5; }
+    .fig-danger { stroke: var(--danger); fill: none; stroke-width: 2.5; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: 13px; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-fig); font-family: inherit; }
+
+    footer { width: 100%; max-width: var(--measure); margin: 0 auto; padding: 0 var(--s5) var(--s6); color: var(--ink-2); font-size: var(--fs-small); }
+
+    /* ---------- 문제 카드 ---------- */
+    .card { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .card h3 { margin: 0 0 var(--s4); font-size: clamp(22px, 5vw, 26px); line-height: 1.4; letter-spacing: -0.01em; }
+    .problem { margin: 0 0 var(--s5); }
+    .problem ol { padding-left: 1.4em; }
+    details { border-top: 1px solid var(--line); }
+    .card details:last-of-type { border-bottom: 1px solid var(--line); }
+    details[open] { padding-bottom: var(--s4); }
+    details > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: var(--s3);
+      min-height: var(--tap); cursor: pointer; font-weight: 600; }
+    details > summary::-webkit-details-marker { display: none; }
+    details > summary::after { content: ""; flex: none; width: 8px; height: 8px; margin-right: var(--s1);
+      border-right: 2px solid var(--ink-2); border-bottom: 2px solid var(--ink-2); transform: rotate(45deg); transition: transform 150ms ease-out; }
+    details[open] > summary::after { transform: rotate(-135deg); }
+    details.original { color: var(--ink-2); font-size: var(--fs-small); }
+    details.original > summary { color: var(--ink); font-size: var(--fs-body); }
+    .answer { font-weight: 700; background: var(--surface); border-radius: var(--radius); padding: var(--s3) var(--s4); }
+    .link-back { font-size: var(--fs-small); color: var(--ink-2); margin: var(--s5) 0 var(--s4); }
+    .top-link { flex: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--s2);
+      font-size: var(--fs-small); font-weight: 600; text-decoration: none; }
+    .js .card { padding: 0; border-top: 0; }
+    @media (prefers-reduced-motion: reduce) { details > summary::after { transition: none; } }
+
+    /* ---------- 하단 이동 바 ---------- */
+    .pager { position: sticky; bottom: 0; z-index: 10; background: var(--bg); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .pager-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s3) var(--s4); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); }
+    .pager-count { font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; min-width: 4em; }
+    .btn { min-height: var(--tap); min-width: var(--btn-min); padding: 0 var(--s6); border-radius: var(--radius); border: 0; font: 700 var(--fs-body)/1 var(--font); cursor: pointer; white-space: nowrap;
+      transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+    .btn-ghost { justify-self: start; background: var(--surface); color: var(--ink); }
+    .btn-primary { justify-self: end; background: var(--btn-bg); color: var(--on-btn); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    @media (hover: hover) {
+      .text-btn:hover, .btn-ghost:not(:disabled):hover { background: var(--line); }
+      .btn-primary:not(:disabled):hover { box-shadow: inset 0 0 0 100px rgba(0, 0, 0, .14); }
+    }
+
+    /* ---------- 목차 시트 ---------- */
+    .sheet { width: min(100%, var(--measure)); max-width: 100%; max-height: 80dvh; margin: auto auto 0; padding: 0; border: 0;
+      border-radius: 16px 16px 0 0; background: var(--bg); color: var(--ink); }
+    .sheet::backdrop { background: rgba(0, 0, 0, .4); }
+    .sheet-inner { padding: var(--s4) var(--s5) calc(var(--s5) + env(safe-area-inset-bottom)); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s2); }
+    .sheet-head h2 { margin: 0; font-size: var(--fs-lead); }
+    .toc { display: flex; flex-direction: column; }
+    .toc > a, .toc-group > a { display: block; padding: var(--s3) 0 var(--s1); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); text-decoration: none; }
+    .toc-list { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+    .toc-list a { display: flex; align-items: center; gap: var(--s3); min-height: var(--tap); padding: var(--s2) var(--s3); margin: 0 calc(-1 * var(--s3));
+      border-radius: var(--radius); color: var(--ink); text-decoration: none; line-height: 1.4; }
+    .toc-list a[aria-current="true"] { background: var(--surface); font-weight: 700; color: var(--accent-ink); }
+    .toc-list .toc-title { flex: 1 1 0; min-width: 0; }
+    @media (hover: hover) { .toc-list a:hover { background: var(--surface); } }
+
+    /* ---------- 한 화면에 하나씩 (JS가 켤 때만) ---------- */
+    html:not(.js) .pager, html:not(.js) #toc-open { display: none; }
+    html:not(.js) .sheet { display: block; position: static; width: 100%; max-height: none; margin: 0 auto; border-radius: 0; border-bottom: 1px solid var(--line); }
+    html:not(.js) .sheet-close { display: none; }
+    .js main > .hero:not(.is-current), .js main > section:not(.is-on), .js .screen:not(.is-current) { display: none; }
+    .js main > section { margin-top: 0; }
+    .js main > section > h2 { font-size: var(--fs-label); font-weight: 600; color: var(--accent-ink); margin: 0 0 var(--s2); }
+    .js .topic { padding: 0; border-top: 0; }
+    .js .hero { padding-top: 12vh; }
+    .js footer { display: none; }
+    .js body.at-end footer { display: block; }
+    .screen.enter-next { animation: enter-next var(--dur) var(--ease-out); }
+    .screen.enter-prev { animation: enter-prev var(--dur) var(--ease-out); }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .screen.enter-next, .screen.enter-prev { animation: none; }
+      .bar > span, .btn { transition: none; }
+    }
+    @media (max-width: 480px) {
+      main { padding: var(--s5) var(--s4) var(--s6); }
+      footer { padding: 0 var(--s4) var(--s5); }
+      .btn { min-width: 120px; padding: 0 var(--s5); }
+    }
+    @media print {
+      .topbar, .pager, .sheet { display: none !important; }
+      .js main > .hero, .js main > section, .js .screen, .js footer { display: block !important; }
+    }
+
+    /* ---------- 좌우 패널 (drawer) ---------- */
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    body { height: 100vh; height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
+    .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
+    .panel-toggle svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-toggle .strip { fill: transparent; stroke: none; transition: fill 150ms ease-out; }
+    .panel-toggle[aria-expanded="true"] { color: var(--accent-ink); }
+    .panel-toggle[aria-expanded="true"] .strip { fill: currentColor; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .i-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .theme-toggle .i-sun { display: block; }
+      :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
+    }
+
+    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
+    .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
+    .content { grid-column: 2; }
+    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
+    .content::-webkit-scrollbar, .panel-inner::-webkit-scrollbar { width: 8px; }
+    .content::-webkit-scrollbar-track, .panel-inner::-webkit-scrollbar-track { background: transparent; }
+    .content::-webkit-scrollbar-thumb, .panel-inner::-webkit-scrollbar-thumb { background: var(--scroll); border-radius: 8px; border: 2px solid var(--bg); }
+    .content::-webkit-scrollbar-thumb:hover, .panel-inner::-webkit-scrollbar-thumb:hover { background: var(--scroll-hover); }
+    @supports (scrollbar-color: auto) { .content, .panel-inner { scrollbar-width: thin; scrollbar-color: var(--scroll) transparent; } }
+    .panel-resize { display: none; }
+    .panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 44px; margin-bottom: var(--s2); }
+    .panel-head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-lead); line-height: 1.4; }
+    .panel-sub { margin: 0 0 var(--s4); font-weight: 700; line-height: 1.45; }
+    .panel-empty { margin: 0; color: var(--ink-2); }
+    .panel-label { display: block; margin: var(--s5) 0 var(--s2); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+
+    /* 진행 상태 */
+    .panel-meta { margin: 0 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .panel-meta b { color: var(--ink); }
+    .progress { height: 4px; margin-bottom: var(--s3); border-radius: 2px; background: var(--line); overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+    .panel .toc-list a { margin: 0 calc(-1 * var(--s2)); padding: var(--s2); font-size: var(--fs-panel); }
+    .toc-mark { flex: none; display: block; width: 20px; height: 20px; color: var(--ink-2); }
+    .toc-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .toc-mark.is-done { color: var(--accent-ink); }
+
+    /* 복습문제: 원문 · 힌트 · 풀이 */
+    .aid details:last-of-type { border-bottom: 1px solid var(--line); }
+    .aid details.original > summary { font-size: var(--fs-panel); }
+    .solved-btn { display: flex; align-items: center; justify-content: center; gap: var(--s2); width: 100%; min-height: var(--tap); margin-top: var(--s5); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .solved-btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
+
+    /* 정리노트: 섹션 요약 */
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+    .eq-list li:first-child { padding-top: 0; }
+    .eq-name { display: block; font-size: var(--fs-small); font-weight: 600; color: var(--ink-2); }
+    .eq-list .katex-display { margin: var(--s1) 0 0; text-align: left; }
+    .eq-list .katex-display > .katex { text-align: left; }
+    .terms { margin: 0; }
+    .terms dt { font-weight: 700; margin-top: var(--s3); }
+    .terms dt:first-child { margin-top: 0; }
+    .terms dd { margin: var(--s1) 0 0; }
+    .flow { margin: 0; padding-left: 1.4em; }
+    .flow li { margin: var(--s2) 0; }
+
+    @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
+
+    /* 넓은 화면: 본문 옆에 붙는 패널 */
+    @media (min-width: 1024px) {
+      .layout { --l: var(--panel-l-user, var(--panel-l)); }
+      .layout[data-left="closed"] { --l: 0px; }
+      .panel-left { width: var(--l); }
+      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
+      .panel-left .panel-resize { right: 0; }
+      .panel-right .panel-resize { left: 0; }
+      .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
+      .panel-left .panel-resize::after { right: 0; }
+      .panel-right .panel-resize::after { left: 0; }
+      .panel-resize:focus-visible { outline: none; }
+      .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
+      @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
+      body.is-resizing { cursor: col-resize; user-select: none; }
+      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
+      .scrim, .panel-close { display: none; }
+    }
+    @keyframes panel-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 좁은 화면: 가장자리에서 밀려 나오는 drawer */
+    @media (max-width: 1023.98px) {
+      .panel { position: fixed; top: 0; bottom: 0; z-index: 40; visibility: hidden;
+        transition: transform var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .panel-left { left: 0; width: min(var(--drawer-l), 88vw); transform: translateX(-100%); }
+      .panel-right { right: 0; width: min(var(--drawer-r), 88vw); transform: translateX(100%); }
+      .panel.is-open { visibility: visible; transform: none; transition: transform var(--dur) var(--ease-out); }
+      .panel-inner { padding-top: calc(var(--s3) + env(safe-area-inset-top)); padding-bottom: calc(var(--s6) + env(safe-area-inset-bottom)); }
+      .scrim { position: fixed; inset: 0; z-index: 35; background: var(--scrim); opacity: 0; visibility: hidden;
+        transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
+      html:not(.js) .panel-left { display: none; }
+    }
+    @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
+      .panel.is-shown { animation: none; }
+      .panel-resize::after { transition: none; }
+    }
+    @media print {
+      body { display: block; height: auto; overflow: visible; }
+      .layout { display: block; }
+      .content { overflow: visible; }
+      .panel, .scrim { display: none !important; }
+    }
+  </style>
+</head>
+<body data-screens="article.card" data-panels="review" data-range="1117">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <strong class="brand">복습문제</strong>
+      <a class="top-link" href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html">정리노트</a>
+      <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>풀이</span></button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
+  </header>
+  <div class="layout" data-left="open" data-right="closed">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
+      <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-left-title">문제 목록</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-meta">푼 문제 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <nav class="toc" aria-label="목차"><a href="#partB">B 기출</a><a href="#partC">C 변형</a></nav>
+      </div>
+    </aside>
+    <div class="content">
+  <main>
+    <div class="hero">
+      <h1>복습문제 43선 — 1117 수업 범위</h1>
+      <p>기출 29개와 생성 변형 14개를 풀어 봐요. 변형 연습은 기본 13개·심화 1개예요. 먼저 스스로 풀어 보고, 풀이를 열어 확인해요.</p>
+    </div>
+    <section id="partB"><h2>B. 기출</h2>
+<article class="card" id="p1" data-source="기출 12강 1">
+  <h3>P1. 시각중추가 있는 엽</h3>
+  <div class="problem"><p>시각중추는 어디에 위치하는가?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 시상하부</li>
+      <li data-choice="2">(2) 두정엽</li>
+      <li data-choice="3">(3) 전두엽</li>
+      <li data-choice="4">(4) 후두엽</li>
+      <li data-choice="5">(5) 측두엽</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 1번 (PDF 1쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>대뇌 네 엽을 앞(이마)·위(정수리)·옆·뒤로 놓고, 뒤통수를 세게 맞으면 무엇을 잃을 수 있다고 했는지 떠올려요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 시상하부는 대뇌의 엽이 아니라 시상 아래에 있는 구조로, 체온·나트륨 농도·식욕 같은 항상성을 조절하는 중추예요.</li>
+      <li data-explains="2">(2) 틀려요. 두정엽(정수리 쪽)은 체성 감각 영역이 있는 곳이에요.</li>
+      <li data-explains="3">(3) 틀려요. 전두엽(이마 쪽)은 운동 영역과 계획성을 맡아요. 게이지 사례에서 전두엽이 손상되자 계획 없이 살게 되었어요.</li>
+      <li data-explains="4">(4) 맞아요. 후두엽(뒤통수 쪽)이 시각을 맡아요. 볼 때 PET·fMRI에서 후두엽이 활성화되는 것도 같은 근거예요.</li>
+      <li data-explains="5">(5) 틀려요. 측두엽(옆머리 쪽)은 청각과 언어에 관여해요.</li>
+      <li>수업과의 연결: 1117 수업에서 "뒤통수 세게 맞으면은 시각을 잃을 수도 있죠"라며 4엽과 기능을 짝지은 내용과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s3-lobes">대뇌의 네 엽과 언어 영역</a>).</li>
+    </ol>
+    <p class="answer">정답: (4)</p>
+  </details>
+</article>
+<article class="card" id="p2" data-source="기출 12강 2">
+  <h3>P2. 감각수용기의 정의와 유형</h3>
+  <div class="problem"><p>감각수용기에 대한 설명으로 옳은 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 보기 모두 잘못된 설명이다</li>
+      <li data-choice="2">(2) 활동전위와 역치를 만드는 세포이다</li>
+      <li data-choice="3">(3) 대부분의 동물에 공통적인 5가지 유형이 존재한다</li>
+      <li data-choice="4">(4) 두 신경세포 사이의 시냅스를 넘어가는 화학물질이다</li>
+      <li data-choice="5">(5) 중추신경계에 위치한다</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 2번 (PDF 1쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>수용기는 "무엇을 감지하는 곳"이에요. 기계·광·화학·온도·통각으로 나눈 분류를 떠올려요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. (3)이 옳은 설명이라 "모두 잘못"이 될 수 없어요.</li>
+      <li data-explains="2">(2) 틀려요. 감각수용기는 빛·소리·화학 물질 같은 환경 정보를 감지하는 기관이에요. 역치는 활동전위가 생기기 위해 넘어야 하는 막전위 값이지 세포가 만드는 것이 아니에요.</li>
+      <li data-explains="3">(3) 맞아요. 강의노트대로 대부분의 동물에 공통적인 5가지 기본 수용기 유형(기계 수용기, 광수용기, 화학 수용기, 온도 수용기, 통각 수용기)이 있어요.</li>
+      <li data-explains="4">(4) 틀려요. 시냅스를 넘어가는 화학물질은 신경전달물질이에요.</li>
+      <li data-explains="5">(5) 틀려요. 수용기는 눈의 망막, 귀, 혀, 피부처럼 몸 곳곳의 감각기관에 있어요. 온도 수용기 일부가 시상하부에 있지만, 수용기 전체를 "중추신경계에 위치한다"고 설명할 수는 없어요.</li>
+      <li>수업과의 연결: 1117 수업에서 강의노트 p5의 수용기 5분류를 짚고, 캡사이신은 화학이 아니라 통각 수용이라고 덧붙인 내용과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s4-receptors">감각수용기의 다섯 종류</a>).</li>
+    </ol>
+    <p class="answer">정답: (3)</p>
+  </details>
+</article>
+<article class="card" id="p3" data-source="기출 12강 6">
+  <h3>P3. 밀착연접으로 막힌 뇌의 모세혈관</h3>
+  <div class="problem"><p>일반적인 상피세포와는 달리 뇌의 상피세포는 밀착연접에 의해 단단하게 붙어 있다. 따라서 혈액에 녹아 있는 대부분의 물질들은 뇌로 들어갈 수 없다. 이 구조를 무엇이라 하는가?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 대뇌겉질</li>
+      <li data-choice="2">(2) 망상체</li>
+      <li data-choice="3">(3) 혈액뇌장벽 (BBB)</li>
+      <li data-choice="4">(4) 회색질</li>
+      <li data-choice="5">(5) 대뇌변연계</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 6번 (PDF 1쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>중추신경계를 지키는 세 가지(뼈, 뇌척수액, 그리고 혈관 쪽 장벽) 중 "밀착연접"이 나온 것을 골라요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 대뇌겉질은 대뇌 표면의 세포층으로 고위 뇌기능을 맡는 곳이지 혈관 구조가 아니에요.</li>
+      <li data-explains="2">(2) 틀려요. 망상체는 뇌간 중심부에 뉴런이 그물처럼 얽힌 곳으로, 중요한 감각 신호를 골라내는 필터 역할을 해요.</li>
+      <li data-explains="3">(3) 맞아요. 뇌 모세혈관의 상피세포가 밀착연접으로 촘촘히 붙어 세균·바이러스·독성 물질이 뇌로 들어가지 못하게 막는 구조가 혈액뇌장벽(BBB)이에요.</li>
+      <li data-explains="4">(4) 틀려요. 회색질은 세포체와 수상돌기가 모인 회색 부분으로, 축삭이 모인 백질과 구분하는 이름이에요.</li>
+      <li data-explains="5">(5) 틀려요. 대뇌변연계는 편도체·해마 등으로 이루어진 "감정의 뇌"예요.</li>
+      <li>수업과의 연결: 1117 수업에서 일반 모세혈관은 틈이 있지만 뇌 모세혈관은 밀착연접으로 "실로 꿰매듯" 붙어 있다고 비교한 내용과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s1-protection">중추신경계를 지키는 세 가지</a>).</li>
+    </ol>
+    <p class="answer">정답: (3)</p>
+  </details>
+</article>
+<article class="card" id="p4" data-source="기출 12강 7">
+  <h3>P4. 좌반구가 맡지 않는 능력</h3>
+  <div class="problem"><p>다음 중 대뇌의 좌측반구에서 조절하지 않는 능력은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 추론 능력</li>
+      <li data-choice="2">(2) 음악적 예술적 능력</li>
+      <li data-choice="3">(3) 말하기 능력</li>
+      <li data-choice="4">(4) 쓰기 능력</li>
+      <li data-choice="5">(5) 수학문제 풀이 능력</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 7번 (PDF 1쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>좌뇌는 언어·논리·수학, 우뇌는 공간감각·예술·직관이에요. 다섯 개 중 우뇌 쪽에 속하는 하나를 찾아요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 추론(논리·분석)은 좌측 반구가 맡아요. 강의노트도 좌측 반구가 "말하기와 쓰기, 추론, 수학적 계산"에 관여한다고 써요.</li>
+      <li data-explains="2">(2) 맞아요. 음악적·예술적 능력은 공간인지, 직감적 사고와 함께 우측 반구가 맡아요. 그래서 좌측 반구가 조절하지 않는 능력이에요.</li>
+      <li data-explains="3">(3) 틀려요. 말하기는 언어 기능이라 좌측 반구가 맡아요. 분리뇌 실험에서 오른쪽 뇌로만 간 정보를 말하지 못한 것도 언어 중추가 왼쪽에 있기 때문이에요.</li>
+      <li data-explains="4">(4) 틀려요. 쓰기도 언어 기능이라 좌측 반구가 맡아요.</li>
+      <li data-explains="5">(5) 틀려요. 수학 계산은 좌측 반구의 기능이에요.</li>
+      <li>수업과의 연결: 1117 수업에서 좌뇌는 언어·과학·논리·분석·수학, 우뇌는 공간감각·예술·직관력·상상력이라고 나눈 내용과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s3-hemispheres">좌우 반구와 뇌량</a>).</li>
+    </ol>
+    <p class="answer">정답: (2)</p>
+  </details>
+</article>
+<article class="card" id="p5" data-source="기출 12강 9">
+  <h3>P5. 소리가 지나가는 귀 구조의 순서</h3>
+  <div class="problem"><p>척추동물의 귀에서 음파에 의해 활성화되는 구조의 순서는?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 타원창, 고막, 반규관, 골지힘줄기관, 망치뼈, 모루뼈, 등자뼈</li>
+      <li data-choice="2">(2) 귓바퀴, 고막, 망치뼈, 모루뼈, 등자뼈, 타원창, 달팽이관</li>
+      <li data-choice="3">(3) 기저막, 피개막, 이석, 통낭, 구형낭, 망치뼈, 달팽이</li>
+      <li data-choice="4">(4) 유스타키오관, 타원창, 전정관, 티파니관, 달팽이관, 귓바퀴</li>
+      <li data-choice="5">(5) 코르티기관, 망치뼈, 모루뼈, 등자뼈, 청각신경, 고막</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 9번 (PDF 1쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>소리는 바깥에서 안으로 들어가요. 고막 → 세 개의 뼈 → 타원창 → 달팽이관 순서를 지키는 보기를 찾아요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 타원창이 고막보다 먼저 올 수 없고, 반규관과 골지힘줄기관은 수업에서 다루지 않았고(강의노트에도 없어요), 수업에서 배운 소리 전달 경로(고막 → 세 뼈 → 타원창 → 달팽이관)에 없는 구조예요. 세 뼈 다음에 와야 할 타원창·달팽이관도 빠져 있어요.</li>
+      <li data-explains="2">(2) 맞아요. 귓바퀴가 음파를 모으고 → 고막이 떨리고 → 가운데귀의 망치뼈·모루뼈·등자뼈가 진동을 증폭해 → 타원창을 떨게 하고 → 달팽이관 속 액체가 진동해요. 바깥에서 안으로 가는 순서가 맞아요.</li>
+      <li data-explains="3">(3) 틀려요. 기저막과 피개막(덮개막)은 달팽이관 안의 코르티 기관에 있는 구조라 망치뼈보다 먼저 활성화될 수 없어요. 이석·통낭·구형낭은 수업에서 다루지 않았고(강의노트에도 없어요), 수업에서 배운 소리 전달 경로에 없는 구조예요.</li>
+      <li data-explains="4">(4) 틀려요. 유스타키오관은 수업에서 다루지 않았어요(강의노트 12장 p6). 가운데귀와 목구멍을 잇는 관으로 압력 변화로부터 고막을 보호하는 통로이지 소리 진동이 지나는 길이 아니에요. 전정관·티파니관도 수업에서 다루지 않은 이름이에요. 소리를 모으는 귓바퀴가 맨 끝에 있는 것도 순서가 거꾸로예요.</li>
+      <li data-explains="5">(5) 틀려요. 소리를 감지하는 코르티기관이 맨 앞에, 처음 진동을 받는 고막이 맨 끝에 있어 순서가 거꾸로예요.</li>
+      <li>수업과의 연결: 1117 수업에서 "진동이 고막을 떨게 하고, 세 개의 뼈가 지렛대처럼 증폭해 타원창을 떨게 하고, 달팽이관 액체가 진동한다"고 짚은 경로와 이어져요. 수업에서는 귓바퀴와 세 뼈의 이름(망치뼈·모루뼈·등자뼈)을 말하지 않았고, 강의노트 12장 p6에 "바깥귀는 귓바퀴를 이용하여 음파를 모은다", "망치뼈, 모루뼈, 등자뼈 등 3개의 뼈를 거쳐 타원창에 도달"로 나와 있어요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s4-hearing">귀: 진동이 활동전위가 되기까지</a>).</li>
+    </ol>
+    <p class="answer">정답: (2)</p>
+  </details>
+</article>
+<article class="card" id="p6" data-source="기출 12강 15">
+  <h3>P6. 청각 모세포가 있는 곳</h3>
+  <div class="problem"><p>청각수용기의 구조 중에서 속귀로 전달된 소리의 진동을 감지하는 모세포가 존재하는 곳은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 타원창</li>
+      <li data-choice="2">(2) 코르티기관</li>
+      <li data-choice="3">(3) 유스타키오관</li>
+      <li data-choice="4">(4) 고막</li>
+      <li data-choice="5">(5) 반고리관</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 15번 (PDF 2쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>달팽이관 안에서 기저막·모세포·덮개막을 한데 묶어 부르는 이름을 떠올려요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 타원창은 등자뼈의 진동을 달팽이관 속 액체로 넘겨주는 막이에요. 모세포는 그 안쪽에 있어요.</li>
+      <li data-explains="2">(2) 맞아요. 달팽이관 안의 코르티 기관이 기저막·모세포·덮개막으로 이루어져 있어요. 기저막이 떨리면 모세포의 털이 덮개막에 닿아 구부러지고 활동전위가 생겨요.</li>
+      <li data-explains="3">(3) 틀려요. 유스타키오관은 수업에서 다루지 않았어요(강의노트 12장 p6). 가운데귀와 목구멍을 잇는 관으로, 바깥 기압 변화로 고막이 손상되지 않게 해요. 진동을 감지하는 곳이 아니에요.</li>
+      <li data-explains="4">(4) 틀려요. 고막은 공기의 진동을 처음 받아 세 개의 뼈로 넘기는 막이에요. 속귀가 아니라 바깥귀와 가운데귀 사이에 있어요.</li>
+      <li data-explains="5">(5) 틀려요. 반고리관은 수업에서 다루지 않았고, 청각이 아니라 평형 감각과 관련된 속귀 구조예요. 소리의 진동을 감지하는 모세포는 코르티 기관에 있어요.</li>
+      <li>수업과의 연결: 1117 수업에서 "기저막이 떨리면서 모세포가 흔들리면 털이 덮개막을 건드리고 … 활동 전위가 뇌로 전달된다. 그것만 기억하면 됩니다"라고 강조한 내용과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s4-hearing">귀: 진동이 활동전위가 되기까지</a>).</li>
+    </ol>
+    <p class="answer">정답: (2)</p>
+  </details>
+</article>
+<article class="card" id="p7" data-source="기출 12강 16">
+  <h3>P7. 뇌량이 잇는 것</h3>
+  <div class="problem"><p>뇌량(corpus callosum)이 연결하는 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 좌우 두 대뇌 반구</li>
+      <li data-choice="2">(2) 뇌하수체와 시상하부</li>
+      <li data-choice="3">(3) 척수의 회백질과 백질</li>
+      <li data-choice="4">(4) 소뇌와 척수</li>
+      <li data-choice="5">(5) 전두엽과 후두엽</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 16번 (PDF 2쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>간질 환자에게서 잘라 분리뇌가 되게 한 다리 같은 구조가 무엇과 무엇 사이에 있었는지 떠올려요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. 뇌량은 두꺼운 축삭 뭉치로, 좌반구와 우반구 사이를 다리처럼 이어 정보를 주고받게 해요.</li>
+      <li data-explains="2">(2) 틀려요. 뇌하수체는 시상하부 바로 아래에 튀어나와 붙어 있는 구조예요. 뇌량이 둘을 잇는 것이 아니에요.</li>
+      <li data-explains="3">(3) 틀려요. 회백질(회색질)과 백질은 척수 단면에서 세포체 쪽과 축삭 쪽을 나누어 부르는 이름이에요. 뇌량과 관계없어요.</li>
+      <li data-explains="4">(4) 틀려요. 뇌량은 대뇌 안에서 좌우 반구를 잇는 구조라 소뇌나 척수와는 관계없어요.</li>
+      <li data-explains="5">(5) 틀려요. 전두엽과 후두엽은 같은 반구 안의 앞쪽과 뒤쪽 엽이에요. 뇌량은 앞뒤가 아니라 좌우를 이어요.</li>
+      <li>수업과의 연결: 1117 수업에서 "뇌량이라고 합니다, 뇌량"을 반복하며, 뇌량을 자른 분리뇌 환자는 오른쪽 뇌로만 간 정보를 왼쪽 언어 중추로 넘기지 못해 말하지 못한다고 설명한 내용과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s3-hemispheres">좌우 반구와 뇌량</a>).</li>
+    </ol>
+    <p class="answer">정답: (1)</p>
+  </details>
+</article>
+<article class="card" id="p8" data-source="기출 12강 17">
+  <h3>P8. 뇌 구조와 기능 짝짓기</h3>
+  <div class="problem"><p>구조와 기능이 올바르게 연결된 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 후각엽 : 대뇌겉질의 운동중추를 조절</li>
+      <li data-choice="2">(2) 시상하부 : 호르몬 분비, 일주기 리듬을 관장</li>
+      <li data-choice="3">(3) 시상 : 대뇌변연계를 통한 감정신호의 전달</li>
+      <li data-choice="4">(4) 편도체 : 감각정보를 대뇌로 전달</li>
+      <li data-choice="5">(5) 기저핵 : 후각수용체로부터 나오는 신호를 대뇌겉질로 전달</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 17번 (PDF 2쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>시상은 감각 정보의 중개소, 편도체는 공포 같은 정서 기억, 후각엽은 후각 정보가 들어오는 곳이에요. 기능이 서로 바뀌어 붙은 짝을 지워 나가요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 후각엽은 후각 정보가 들어오는 곳이에요. 운동 영역은 전두엽에 있어요.</li>
+      <li data-explains="2">(2) 맞아요. 시상하부는 체온·나트륨 농도·식욕 같은 항상성을 조절하는 중추이고, 바로 아래 뇌하수체와 이어져 호르몬 분비를 조절해요. 다만 호르몬 분비는 수업에서 다루지 않았고(교재 12장 p.271), 하루 주기의 리듬(일주기 리듬)을 맡는다는 것은 교재·강의노트 밖 외부 자료예요.</li>
+      <li data-explains="3">(3) 틀려요. 시상의 주된 기능은 온몸에서 척수·뇌간을 거쳐 올라온 감각 정보를 대뇌로 중계하는 것이에요. 교수님이 시상을 변연계 구성원으로 꼽기는 했지만, 정서가 담긴 경험 정보를 변연계로 보내는 일은 편도체 쪽이에요. 그래서 이 짝은 틀렸다고 판정해요.</li>
+      <li data-explains="4">(4) 틀려요. 감각정보를 대뇌로 전달하는 것은 시상의 기능이에요. 편도체는 공포와 관련된 정서 기억을 맡아요. (3)과 (4)는 기능이 서로 바뀌어 있어요.</li>
+      <li data-explains="5">(5) 틀려요. 후각수용체에서 온 신호를 받는 곳은 후각엽이에요. 기저핵은 수업에서 변연계 구성 요소로 이름만 나왔어요.</li>
+      <li>수업과의 연결: 1117 수업에서 시상(감각 중개)·시상하부(항상성)·뇌하수체의 위치를 그림으로 두 번 짚고, 편도체를 "공포와 관련된 기억"으로 설명한 내용과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s2-thalamus">시상·시상하부와 망상체</a>).</li>
+    </ol>
+    <p class="answer">정답: (2)</p>
+    <p>인쇄된 답안지와 같은 답이에요. (3)은 교수님이 시상을 변연계에 속한다고 말한 점 때문에 헷갈릴 수 있지만, 시상의 대표 기능은 감각 정보를 대뇌로 중계하는 것이고 감정 신호 전달은 편도체의 몫이라 틀린 짝으로 판정했어요. 시상하부가 호르몬 분비와 일주기 리듬을 관장한다는 부분은 수업에서 직접 말하지 않았어요. 호르몬 분비는 교재 12장 p.271, 일주기 리듬은 교재·강의노트 밖 외부 자료예요. 수업에서 배운 "시상하부 = 항상성 조절 중추"와 다른 보기의 기능 뒤바뀜만으로도 (2)를 고를 수 있어요.</p>
+  </details>
+</article>
+<article class="card" id="p9" data-source="기출 12강 19">
+  <h3>P9. 뇌와 말초를 잇고 반사를 조절하는 곳</h3>
+  <div class="problem"><p>뇌와 말초신경계 사이의 신경신호를 전달하며, 운동반사를 조절하는 연합뉴런 신경망을 가지고 있는 중추신경계의 구조는?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 편도체</li>
+      <li data-choice="2">(2) 시상하부</li>
+      <li data-choice="3">(3) 척수</li>
+      <li data-choice="4">(4) 뇌간</li>
+      <li data-choice="5">(5) 망상체</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 19번 (PDF 2쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>뜨거운 냄비에서 손을 뗄 때 뇌보다 먼저 명령을 내린 곳이자, 손상되면 아래쪽 몸이 마비되는 곳을 떠올려요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 편도체는 공포와 관련된 정서 기억을 맡는 변연계 구조예요.</li>
+      <li data-explains="2">(2) 틀려요. 시상하부는 체온·식욕 같은 항상성을 조절하는 중추예요.</li>
+      <li data-explains="3">(3) 맞아요. 척수는 뇌와 말초신경 사이에서 올라가고 내려가는 신호를 모두 전달하고, 연합뉴런으로 척수 반사(회수 반사)를 직접 일으켜요. 강의노트의 척수 정의와 문장이 같아요.</li>
+      <li data-explains="4">(4) 틀려요. 뇌간(연수)도 구토·삼키기 반사를 맡지만, 뇌간은 뇌의 일부예요. "뇌와 말초신경계 사이"에서 신호를 전달한다는 조건에 맞는 것은 척수예요.</li>
+      <li data-explains="5">(5) 틀려요. 망상체는 뇌간 중심부에서 중요한 감각 신호를 골라내는 필터 역할을 해요.</li>
+      <li>수업과의 연결: 1117 수업에서 척수의 기능 두 가지(뇌와 말초 사이 신호 전달, 척수 반사)를 짚고 뜨거운 냄비 예로 연합뉴런을 거치는 회수 반사를 설명한 내용과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s1-spinal-reflex">척수와 척수 반사</a>).</li>
+    </ol>
+    <p class="answer">정답: (3)</p>
+  </details>
+</article>
+<article class="card" id="p10" data-source="기출 12강 20">
+  <h3>P10. 자율신경계의 두 갈래</h3>
+  <div class="problem"><p>자율신경계는 다시 _________로 나눌 수 있다.</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 교감신경계와 부교감신경계</li>
+      <li data-choice="2">(2) 구심성계와 원심성계</li>
+      <li data-choice="3">(3) 말초신경계와 중추신경계</li>
+      <li data-choice="4">(4) 수의적 조절과 불수의적 조절</li>
+      <li data-choice="5">(5) 골격근과 민무늬근의 연결</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 20번 (PDF 2쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>신경계를 큰 것부터 나눠 내려가요: 중추·말초 → 구심·원심 → 체성·자율 → 그다음 단계예요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. 자율신경계는 위험할 때 우세한 교감신경계(싸움 혹은 도망)와 휴식할 때 우세한 부교감신경계로 나뉘고, 둘의 효과는 정반대예요.</li>
+      <li data-explains="2">(2) 틀려요. 구심성·원심성은 말초신경계를 신호 방향(들어옴·나감)으로 나눈 것이에요. 자율신경계는 그중 원심성 쪽에 속해요.</li>
+      <li data-explains="3">(3) 틀려요. 중추·말초는 신경계 전체를 처음 나누는 기준이에요. 자율신경계는 말초신경계 안에 들어 있어요.</li>
+      <li data-explains="4">(4) 틀려요. 수의적·불수의적 조절은 체성신경계(수의적)와 자율신경계(불수의적)를 가르는 기준이에요. 자율신경계 자체가 불수의적이라 이것으로 다시 나눌 수 없어요.</li>
+      <li data-explains="5">(5) 틀려요. 골격근은 체성신경계가 조절하는 근육이에요. 자율신경계를 나누는 이름이 아니에요.</li>
+      <li>수업과의 연결: 1117 수업에서 "자율신경계 = 교감 + 부교감, 기능은 정반대"라며 교감선생님 비유로 두 신경을 대비한 내용과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s0-autonomic">교감신경과 부교감신경</a>).</li>
+    </ol>
+    <p class="answer">정답: (1)</p>
+  </details>
+</article>
+<article class="card" id="p11" data-source="기출 12강 21">
+  <h3>P11. 뇌 영상에서 (A) 행동 찾기</h3>
+  <div class="problem"><p>위 그림을 참고하였을 때 (A)에 들어갈 행동으로 가장 올바른 것은?</p>
+    <figure class="figure"><img src=".assets/figures_1117/p11.png" alt="뇌를 옆에서 찍은 활성 영상 네 장. 아래 화살표는 왼쪽이 뇌의 앞쪽임을 나타낸다. 왼쪽 위 '듣기'는 뇌의 가운데 부분, 오른쪽 위 (A)는 뇌의 맨 뒤쪽, 왼쪽 아래 '말하기'는 앞쪽 위 부분, 오른쪽 아래 '생각하기'는 앞쪽 아래 부분이 빨갛게 활성화되어 있다. 오른쪽 색 막대는 흰색·빨강이 최대, 보라가 최저 활성이다."></figure>
+    <ul class="choices">
+      <li data-choice="1">(1) 냄새 구분</li>
+      <li data-choice="2">(2) 일반 운동</li>
+      <li data-choice="3">(3) 보기(시각)</li>
+      <li data-choice="4">(4) 얼굴 인식</li>
+      <li data-choice="5">(5) 맛의 판별</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 21번 (PDF 2쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>그림 아래 화살표가 가리키는 쪽이 뇌의 앞쪽이에요. (A)에서 가장 빨갛게 활성화된 곳이 앞쪽인지 뒤쪽인지 보고, 그 엽이 맡은 일을 떠올려요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>그림 읽기: 이런 영상(PET·fMRI)은 활성화된 뉴런이 포도당과 산소를 많이 쓰는 곳을 색으로 보여 줘요. 화살표가 왼쪽을 가리키므로 왼쪽이 앞(이마), 오른쪽이 뒤(뒤통수)예요. (A)는 뇌의 맨 뒤쪽, 곧 후두엽이 가장 강하게 활성화되어 있어요.</li>
+      <li data-explains="1">(1) 틀려요. 냄새는 화학 수용기가 받아들이는 자극이고, 수업에서 후각과 짝지은 부위는 변연계의 후각엽이에요. 뒤통수의 후두엽과 이어지는 행동이 아니에요.</li>
+      <li data-explains="2">(2) 틀려요. 몸을 움직이는 운동 영역은 전두엽에 있어요. 운동이라면 뇌의 앞쪽이 활성화되어야 하는데, (A)는 맨 뒤쪽이 활성화되어 있어요.</li>
+      <li data-explains="3">(3) 맞아요. 후두엽은 시각을 맡아요. 수업에서도 "볼 때는 후두엽"이 활성화된다고 예를 들었고, 뒤통수를 세게 맞으면 시각을 잃을 수 있다고 했어요.</li>
+      <li data-explains="4">(4) 틀려요. 얼굴을 알아보려면 먼저 봐야 하지만, 얼굴 인식은 본 정보를 해석해 누구인지 알아내는 단계라 후두엽 하나와 짝지은 기능이 아니에요. 수업에서 후두엽과 짝지은 기능은 '시각' 그 자체이고, 그림도 듣기·말하기·생각하기처럼 기본 행동을 비교하고 있어요.</li>
+      <li data-explains="5">(5) 틀려요. 맛은 혀의 화학 수용기가 맛 분자를 감지하는 감각이에요. 뒤통수의 후두엽이 맡은 감각이 아니에요.</li>
+      <li>수업과의 연결: 1117 수업의 대뇌 네 엽(후두엽 = 시각)과, PET·fMRI로 "볼 때는 후두엽, 들을 때는 다른 부위"가 활성화된다는 설명과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s3-imaging">뇌 영상과 디폴트 모드 네트워크</a>).</li>
+    </ol>
+    <p class="answer">정답: (3)</p>
+  </details>
+</article>
+<article class="card" id="p12" data-source="기출 12강 22">
+  <h3>P12. 청각수용기는 어느 유형일까</h3>
+  <div class="problem"><p>청각수용기는 5가지 기본적인 수용기 유형 중 어떤 수용기에 속하는가?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 온도수용기</li>
+      <li data-choice="2">(2) 통각수용기</li>
+      <li data-choice="3">(3) 광수용기</li>
+      <li data-choice="4">(4) 기계수용기</li>
+      <li data-choice="5">(5) 화학수용기</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 22번 (PDF 2쪽, 보기 (4)·(5)는 3쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>소리는 공기의 진동이에요. 귀 속 모세포가 무엇 때문에 구부러지는지 떠올려 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 온도수용기는 차가움·뜨거움, 곧 열에너지의 흐름을 감지해요. 피부와 시상하부에 있고 소리와는 관계없어요.</li>
+      <li data-explains="2">(2) 틀려요. 통각수용기는 조직 손상이나 유해한 화학물질을 통증으로 감지해요. 고추의 캡사이신이 여기에 해당해요.</li>
+      <li data-explains="3">(3) 틀려요. 광수용기는 빛 에너지를 감지하는 눈 망막의 간상세포·원추세포예요.</li>
+      <li data-explains="4">(4) 맞아요. 소리는 공기의 진동이고, 이 진동이 고막 → 세 개의 뼈 → 타원창 → 달팽이관의 기저막을 흔들어 모세포의 털을 물리적으로 구부려요. 털 속 기계적 개폐성 채널이 열려 신호가 생기므로, 압력·움직임 같은 물리적 자극을 받는 기계수용기예요.</li>
+      <li data-explains="5">(5) 틀려요. 화학수용기는 맛 분자·냄새 분자 같은 화학 물질을 감지해요(미각·후각).</li>
+      <li>수업과의 연결: 1117 수업의 수용기 다섯 분류에서 청각과 고유 수용기의 위치 감각을 모두 기계 수용기로 묶은 설명과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s4-receptors">감각수용기의 다섯 종류</a>).</li>
+    </ol>
+    <p class="answer">정답: (4)</p>
+  </details>
+</article>
+<article class="card" id="p13" data-source="기출 12강 23">
+  <h3>P13. 기억과 관련된 회색질 부위</h3>
+  <div class="problem"><p>대뇌겉질의 회색질 부위는 다양한 기능을 조절한다. 그 중, 정보를 전두엽으로 보내는 데 관여하며 특히 “기억”과 관련된 부위는?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 해마</li>
+      <li data-choice="2">(2) 시상</li>
+      <li data-choice="3">(3) 시상하부</li>
+      <li data-choice="4">(4) 편도체</li>
+      <li data-choice="5">(5) 기저핵</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 23번 (PDF 3쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>영화 〈메멘토〉 주인공처럼 오늘 본 것을 내일 기억하지 못하게 되는 손상은 어느 부위의 손상이었는지 떠올려 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. 해마는 정보를 전두엽으로 보내는 데 관여하고, 단기기억을 장기기억으로 바꾸는 일을 해요. 해마가 손상되면 단기기억과 손상 전의 장기기억은 남지만 새 장기기억을 만들지 못해요.</li>
+      <li data-explains="2">(2) 틀려요. 시상은 감각 정보를 대뇌로 전달하는 중계소예요. 기억을 만드는 부위가 아니에요.</li>
+      <li data-explains="3">(3) 틀려요. 시상하부는 체온 조절 같은 항상성을 맡고 뇌하수체와 이어져 있어요. 기억 형성과는 관계가 멀어요.</li>
+      <li data-explains="4">(4) 틀려요. 편도체도 기억과 관련이 있지만 공포처럼 정서가 담긴 경험 정보를 다뤄요(편도체를 없앤 쥐는 고양이를 무서워하지 않았어요). 정보를 전두엽으로 보내며 기억 저장 자체에 관여하는 부위는 해마예요.</li>
+      <li data-explains="5">(5) 틀려요. 기저핵은 수업에서 변연계를 이루는 부위로 이름만 나왔고, 기억을 맡는 부위로 배우지 않았어요(수업 밖: 주로 움직임 조절에 관여해요. 출처: 교재 12장 p.272).</li>
+      <li>수업과의 연결: 1117 수업의 해마 손상 영상(메멘토)과 "단기기억도 장기기억도 문제없고, 단기 → 장기 전환이 안 된다"는 강조와 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s2-limbic">변연계: 편도체와 해마</a>).</li>
+    </ol>
+    <p class="answer">정답: (1)</p>
+  </details>
+</article>
+<article class="card" id="p14" data-source="기출 12강 24">
+  <h3>P14. 말초에서 중추로 들어오는 뉴런</h3>
+  <div class="problem"><p>다음 중 말초신경계(PNS)에서 중추신경계(central nervous system, CNS)로 신호를 전달하는 뉴런은 어느 것인가?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 원심성 뉴런</li>
+      <li data-choice="2">(2) 운동뉴런</li>
+      <li data-choice="3">(3) 구심성 뉴런</li>
+      <li data-choice="4">(4) 억제성 뉴런</li>
+      <li data-choice="5">(5) 연합뉴런</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 24번 (PDF 3쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>"나가는 것은 원심성, 들어오는 것은 구심성"이에요. 말초에서 중추로 가는 방향은 들어오는 쪽일까요, 나가는 쪽일까요?</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 원심성 뉴런은 중추신경계에서 효과기(근육 등)로 신호를 내보내는, 나가는 뉴런이에요. 방향이 반대예요.</li>
+      <li data-explains="2">(2) 틀려요. 운동뉴런은 척수·뇌의 명령을 근육으로 전달하는 원심성 뉴런이에요. 역시 중추에서 말초로 나가요.</li>
+      <li data-explains="3">(3) 맞아요. 구심성 뉴런(감각뉴런)은 감각 정보를 말초에서 중추신경계로 들여보내요. 뜨거운 냄비를 만졌을 때 척수로 신호를 보내는 것도 구심성 뉴런이에요.</li>
+      <li data-explains="4">(4) 틀려요. 억제성은 신호를 받은 쪽을 흥분시키지 않고 억누르는 효과를 말해요(척수 반사에서 이완할 근육이 받는 신호). 신호가 흐르는 방향으로 나눈 이름이 아니에요.</li>
+      <li data-explains="5">(5) 틀려요. 연합뉴런은 중추신경계(척수·뇌) 안에서 들어온 정보를 통합해 원심성 뉴런으로 넘겨줘요. 말초와 중추를 잇는 뉴런이 아니에요.</li>
+      <li>수업과의 연결: 1117 수업의 신경계 구분(중추·말초, 구심성·원심성)과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s0-divisions">중추·말초, 구심·원심, 체성·자율</a>).</li>
+    </ol>
+    <p class="answer">정답: (3)</p>
+  </details>
+</article>
+<article class="card" id="p15" data-source="기출 12강 25">
+  <h3>P15. 간상세포의 광색소 이름</h3>
+  <div class="problem"><p>광수용기에서 간상세포의 레티날-옵신 광색소를 무엇이라고 하는가?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 로돕신</li>
+      <li data-choice="2">(2) 아마크린세포</li>
+      <li data-choice="3">(3) 수평세포</li>
+      <li data-choice="4">(4) 양극세포</li>
+      <li data-choice="5">(5) 포톱신</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 25번 (PDF 3쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>먼저 보기에서 '세포'와 '광색소'를 나눠요. 남은 광색소 둘 중 컬러 사진(포토)이 떠오르는 쪽은 원추세포 것이었어요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. 간상세포의 광색소는 로돕신이고, 단백질인 옵신에 빛을 흡수하는 색소 레티날이 붙어 있어요. 레티날이 빛을 흡수하면 구조가 바뀌어 신호가 시작돼요.</li>
+      <li data-explains="2">(2) 틀려요. 아마크린세포는 광수용기의 신호를 받아 주는 망막 세포 중 하나예요. 광색소가 아니라 세포예요.</li>
+      <li data-explains="3">(3) 틀려요. 수평세포도 광수용기의 신호를 받아 주는 망막 세포예요. 광색소가 아니에요.</li>
+      <li data-explains="4">(4) 틀려요. 양극세포는 간상세포·원추세포 바로 아래 층에서 신호를 받는 세포예요. 광색소가 아니에요.</li>
+      <li data-explains="5">(5) 틀려요. 포톱신은 원추세포의 광색소예요(세 종류가 있어 색을 구분해요). 간상세포의 광색소가 아니에요.</li>
+      <li>수업과의 연결: 1117 수업의 "간상세포 = 로돕신, 원추세포 = 포톱신(포토, 컬러 사진)" 대비와, 수평·양극·아마크린세포는 "이런 것들이 있다는 것만 알면 된다"는 설명과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s5-photoreceptors">간상세포와 원추세포</a>).</li>
+    </ol>
+    <p class="answer">정답: (1)</p>
+  </details>
+</article>
+<article class="card" id="p16" data-source="기출 12강 28">
+  <h3>P16. 반사를 생물학적으로 설명하기</h3>
+  <div class="problem"><p>무릎반사는 사람이 생각하지 않고도 자동적으로 무엇을 하는 것을 알 수 있다. 생물학적 용어로 반사를 가장 잘 설명한 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 오직 어린 아이들만 반사를 수행할 수 있다</li>
+      <li data-choice="2">(2) 신경계에서, 척수 반사를 수행하기 전 고위 뇌 부위가 관여한다는 것을 의미한다</li>
+      <li data-choice="3">(3) 반사는 연합뉴런의 작용 없이 이루어진다</li>
+      <li data-choice="4">(4) 신경계에서, 척수 반사의 수행은 뇌의 참여 없이도 가능하다는 것을 의미한다</li>
+      <li data-choice="5">(5) 뇌로부터의 명령이 하달된 후에는 무릎 반사 시간이 더 짧아진다 ‘</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 28번 (PDF 3쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>뜨거운 냄비에 손을 댔을 때 손을 떼라는 명령을 누가 먼저 내렸는지, 뜨겁다는 느낌은 언제 왔는지 떠올려 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 뜨거운 냄비에서 손을 떼는 회수 반사처럼 반사는 어른에게서도 늘 일어나요. 나이와 상관없는 신경계의 기본 기능이에요.</li>
+      <li data-explains="2">(2) 틀려요. 순서가 반대예요. 척수가 먼저 운동뉴런에 직접 명령해 반응이 일어나고, 뇌는 따로 신호를 받아 나중에 인지해요(통증은 손을 뗀 뒤에 느껴요).</li>
+      <li data-explains="3">(3) 틀려요. 수업의 회수 반사는 감각뉴런 → 척수의 연합뉴런 → 운동뉴런 순서로 일어나고, 강의노트도 척수 회백질에 반사에 관여하는 연합뉴런이 있다고 해요. 회수 반사처럼 연합뉴런을 거치는 반사가 있으므로 '연합뉴런의 작용 없이 이루어진다'는 일반 진술은 틀려요.</li>
+      <li data-explains="4">(4) 맞아요. 척수 반사는 척수가 직접 근육에 명령하는 것이라 뇌의 참여 없이도 일어나요. 그래서 생각하지 않고도 자동적이고 빨라요. 뇌로 가는 신호가 아예 없는 것은 아니고, 반응이 일어난 뒤 따로 인지해요.</li>
+      <li data-explains="5">(5) 틀려요. 반사는 뇌의 명령을 기다리지 않고 척수에서 바로 일어나요. 뇌의 명령이 하달되는 것은 반사가 일어나는 조건이 아니고, 뇌를 거친다면 경로가 길어질 뿐 반사가 더 빨라지지 않아요.</li>
+      <li>수업과의 연결: 1117 수업의 척수 기능 두 가지 중 척수 반사(위급할 때 척수가 직접 근육에 명령)와, "반사여도 뇌로 신호가 안 가는 건 아니다"라는 설명과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s1-spinal-reflex">척수와 척수 반사</a>).</li>
+    </ol>
+    <p class="answer">정답: (4)</p>
+  </details>
+</article>
+<article class="card" id="p17" data-source="기출 12강 29">
+  <h3>P17. 사람 눈에 없는 구조</h3>
+  <div class="problem"><p>다음 중 인간의 눈에서 발견할 수 없는 구조는 무엇인가?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 홍채</li>
+      <li data-choice="2">(2) 반사판</li>
+      <li data-choice="3">(3) 수정체</li>
+      <li data-choice="4">(4) 맹점</li>
+      <li data-choice="5">(5) 각막</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 29번 (PDF 3쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>빛이 사람 눈에 들어가 망막에 닿기까지 지나는 구조와, 망막에서 상이 보이지 않는 곳을 차례로 떠올려 지워 봐요. 남는 하나가 답이에요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 홍채는 사람 눈에 있어요. 눈동자 색을 띠고, 동공 크기를 조절해 들어오는 빛의 양을 바꿔요.</li>
+      <li data-explains="2">(2) 맞아요. 반사판은 수업에서 다루지 않았지만, 나머지 넷이 모두 수업에서 배운 사람 눈의 구조이므로 남는 반사판이 답이에요(수업 밖: 반사판은 고양이 같은 일부 동물의 망막 뒤에서 빛을 되돌려 약한 빛에서도 잘 보게 하는 층이고, 사람 눈에는 없어요).</li>
+      <li data-explains="3">(3) 틀려요. 수정체는 사람 눈의 렌즈예요. 섬모체근이 두께를 조절해 먼 곳은 얇게, 가까운 곳은 두껍게 만들어 상을 망막에 맺게 해요.</li>
+      <li data-explains="4">(4) 틀려요. 맹점은 사람 눈에 있어요. 시신경이 빠져나가는 자리에는 간상·원추세포가 없어 상이 맺혀도 보이지 않아요. 한쪽 눈을 가리면 드러나요.</li>
+      <li data-explains="5">(5) 틀려요. 각막은 빛이 처음 들어오는 사람 눈의 맨 바깥 막이에요.</li>
+      <li>수업과의 연결: 1117 수업의 빛의 경로(각막 → 동공·홍채 → 수정체 → 망막)와, 사람 눈에는 맹점이 있고 문어·오징어 눈에는 없다는 비교와 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s5-eye">눈의 구조와 초점 맞추기</a>).</li>
+    </ol>
+    <p class="answer">정답: (2)</p>
+  </details>
+</article>
+<article class="card" id="p18" data-source="기출 12강 30">
+  <h3>P18. 몸의 위치를 느끼는 수용기</h3>
+  <div class="problem"><p>인간의 수용기 중에서 중추신경계가 몸의 균형을 유지하거나 손발의 위치를 감지하기 위해 사용하는 자극을 감지하는 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 자기수용기</li>
+      <li data-choice="2">(2) 고유수용기</li>
+      <li data-choice="3">(3) 온도수용기</li>
+      <li data-choice="4">(4) 전기수용기</li>
+      <li data-choice="5">(5) 미각수용기</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 30번 (PDF 3쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>눈을 감아도 내 팔과 발가락이 어디 있는지, 근육이 얼마나 수축했는지 아는 감각을 떠올려 봐요. 수업에서 따로 이름을 붙여 소개했어요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 수업에서 자기 수용기는 일부 동물이 자기장(자석의 힘)을 느끼는 수용기로 소개됐어요. 손발의 위치를 느끼는 사람의 수용기가 아니에요. 다른 자료에서는 몸의 위치 감각을 '자기(自己) 수용 감각'이라고도 불러 헷갈릴 수 있으니, 수업 용어인 고유 수용기로 기억해요.</li>
+      <li data-explains="2">(2) 맞아요. 고유수용기는 팔이나 발가락이 어디 있는지, 근육이 얼마나 수축했는지, 물건이 얼마나 무거운지를 느껴요. 중추신경계는 이 정보로 균형을 잡고 손발 위치를 알아요. 다섯 유형으로는 기계 수용기에 속해요.</li>
+      <li data-explains="3">(3) 틀려요. 온도수용기는 차가움·뜨거움을 감지해요. 피부와 시상하부에 있어요.</li>
+      <li data-explains="4">(4) 틀려요. 전기수용기는 일부 동물이 전기 신호를 느끼는 수용기로 소개됐어요. 손발 위치 감각과는 관계없어요.</li>
+      <li data-explains="5">(5) 틀려요. 미각수용기는 맛 분자를 감지하는 화학 수용기예요.</li>
+      <li>수업과의 연결: 1117 수업에서 고유 수용기를 위치·근육 상태를 느끼는 수용기로 소개하고, 다섯 분류에서는 기계 수용기로 묶은 설명과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s4-receptors">감각수용기의 다섯 종류</a>).</li>
+    </ol>
+    <p class="answer">정답: (2)</p>
+  </details>
+</article>
+<article class="card" id="p19" data-source="기출 12강 34">
+  <h3>P19. 척수와 뇌가 이루는 것</h3>
+  <div class="problem"><p>다음 괄호 안에 알맞은 말을 고르시오.<br>“척수와 뇌는 (&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;) 를 구성한다.”</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 체성신경계</li>
+      <li data-choice="2">(2) 중추신경계</li>
+      <li data-choice="3">(3) 자율신경계</li>
+      <li data-choice="4">(4) 말초신경계</li>
+      <li data-choice="5">(5) 교감신경계</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 34번 (PDF 4쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>등으로 길게 뻗은 척수가 뇌와 같은 쪽에 묶이는지, 온몸으로 뻗어 나간 신경 쪽에 묶이는지 생각해 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 체성신경계는 말초신경계의 원심성 부분 중 골격근에 연결되어 수의적으로 몸을 움직이는 쪽이에요. 뇌와 척수가 아니에요.</li>
+      <li data-explains="2">(2) 맞아요. 중추신경계는 뇌와 척수로 이루어져요. 등으로 뻗은 척수도 중추신경계예요.</li>
+      <li data-explains="3">(3) 틀려요. 자율신경계는 말초신경계의 원심성 부분 중 심장·장처럼 의식적으로 조절할 수 없는 기관을 맡는 쪽이에요.</li>
+      <li data-explains="4">(4) 틀려요. 말초신경계는 뇌나 척수에서 온몸으로 뻗어 나가는 신경이에요. 뇌와 척수 자체는 말초가 아니에요.</li>
+      <li data-explains="5">(5) 틀려요. 교감신경계는 자율신경계의 한 갈래로, 위험한 상황에서 심박수·혈압을 올려요. 말초신경계에 속해요.</li>
+      <li>수업과의 연결: 1117 수업의 "중추신경계 = 뇌 + 척수", 말초 → 원심성 → 체성·자율 → 교감·부교감으로 이어지는 구분과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s0-divisions">중추·말초, 구심·원심, 체성·자율</a>).</li>
+    </ol>
+    <p class="answer">정답: (2)</p>
+  </details>
+</article>
+<article class="card" id="p20" data-source="기출 12강 38">
+  <h3>P20. 광수용기 설명에서 틀린 것</h3>
+  <div class="problem"><p>다음 광수용기에 대한 설명 중 <u>틀린 것은</u> ?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 척추동물의 간상세포는 색깔을 감지하고 원추세포는 낮은 광도의 빛을 감지한다</li>
+      <li data-choice="2">(2) 시선경다발이 지나가는 곳에 맹점이 존재한다</li>
+      <li data-choice="3">(3) 포유류와 조류의 경우 원추세포가 망막의 좁은 부위에 밀집되어 있다</li>
+      <li data-choice="4">(4) 인간 눈에서 수정체는 섬모체(모양체)와 섬모체근에 고정되어 있다</li>
+      <li data-choice="5">(5) 섬모체근(모양체근)이 이완 하면 수정체는 멀리 있는 물체의 상을 망막에 맺게 한다</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 38번 (PDF 4쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>어두운 곳에서 사물이 흑백으로 보이는 까닭을 떠올리면, 간상세포와 원추세포 중 어느 쪽이 약한 빛을, 어느 쪽이 색을 맡는지 정리돼요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 그래서 이 보기가 틀린 것의 답이에요. 두 세포의 기능이 뒤바뀌었어요. 간상세포는 색을 구분하지 못하지만 낮은 광도(약한 빛)에 반응하고, 원추세포는 세 종류가 있어 색깔을 구분하지만 강한 빛에만 반응해요. 그래서 어두운 곳에서는 간상세포만 반응해 흑백으로 보여요.</li>
+      <li data-explains="2">(2) 맞아요. 원문의 '시선경'은 시신경을 뜻해요. 시신경이 빠져나가는 자리에는 광수용기가 없어 상이 맺혀도 보이지 않는 맹점이 생겨요.</li>
+      <li data-explains="3">(3) 맞아요. 원추세포는 망막의 좁은 부위인 중심오목(중심와)에 몰려 있어요. 상이 이곳에 맺히면 가장 또렷하게 보여요.</li>
+      <li data-explains="4">(4) 맞아요. 수업 밖이지만 맞는 진술이에요. 수정체는 섬모체에서 뻗은 가는 섬유에 매달려 고정되어 있고, 섬모체근이 수축·이완하며 수정체 두께를 바꿔요. 확실히 틀린 보기 (1)을 먼저 찾으면 돼요.</li>
+      <li data-explains="5">(5) 맞아요. 강의노트는 섬모체근(모양체근)이 수축하면 수정체가 둥글어져 가까운 곳의 상을 맺는다고 해요. 반대로 이완하면 수정체가 얇아져 먼 곳의 상을 망막에 맺어요(수업: 먼 곳은 얇게, 가까운 곳은 두껍게).</li>
+      <li>수업과의 연결: 1117 수업의 "간상(1종, 약한 빛, 흑백) ↔ 원추(3종, 강한 빛, 색)" 대비, 중심오목·맹점, 섬모체근의 수정체 두께 조절과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s5-photoreceptors">간상세포와 원추세포</a>).</li>
+    </ol>
+    <p class="answer">정답: (1)</p>
+  </details>
+</article>
+<article class="card" id="p21" data-source="기출 12강 40">
+  <h3>P21. 말초신경계 설명 중 잘못된 것</h3>
+  <div class="problem"><p>말초신경계에 관한 설명으로 잘못된 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 자율신경계는 서로 대립적으로 작용하는 교감신경계와 부교감신경으로 구성된다.</li>
+      <li data-choice="2">(2) 말초신경계는 구심성뉴런과 원심성뉴런으로 구성된다.</li>
+      <li data-choice="3">(3) 교감신경계는 심장박동수와 혈압을 증가시키며, 소화작용을 억제한다.</li>
+      <li data-choice="4">(4) 체성신경계는 일차적으로 불수의적인 움직임을 조절한다.</li>
+      <li data-choice="5">(5) 말초신경의 원심성 부위는 체성신경계와 자율신경계로 나뉜다.</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 40번 (PDF 4쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>체성신경계와 자율신경계를 나누는 기준이 "의식적으로 조절할 수 있느냐"였다는 점을 떠올려 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. 자율신경계는 교감신경계와 부교감신경계로 이루어지고, 두 계의 효과는 정반대예요. "부교감신경으로"는 원문 표기를 그대로 옮긴 것이고 부교감신경계를 뜻해요.</li>
+      <li data-explains="2">(2) 맞아요. 중추신경계로 들어오는 뉴런이 구심성, 중추신경계에서 나가는 뉴런이 원심성이에요. 말초신경계는 이 두 방향의 뉴런으로 이루어져요.</li>
+      <li data-explains="3">(3) 맞아요. 교감신경계는 싸움 혹은 도망 상황에서 심박수와 혈압을 올리고 소화는 억제해요.</li>
+      <li data-explains="4">(4) 틀려요. 체성신경계는 골격근에 연결되어 의식적으로 조절하는 수의적인 움직임을 맡아요. 불수의적인 조절은 심장·장을 맡는 자율신경계의 특징이에요.</li>
+      <li data-explains="5">(5) 맞아요. 원심성 신경계는 의식적으로 조절할 수 있느냐에 따라 체성신경계와 자율신경계로 나뉘어요.</li>
+      <li>수업과의 연결: 1117 수업에서 교수님이 체성(골격근, 수의적)과 자율(심장·장, 불수의적)을 "의식적으로 조절할 수 있느냐 없느냐"로 가른 내용과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s0-divisions">중추·말초, 구심·원심, 체성·자율</a>).</li>
+    </ol>
+    <p class="answer">정답: (4)</p>
+  </details>
+</article>
+<article class="card" id="p22" data-source="기출 12강 41">
+  <h3>P22. 색깔을 직접 만드는 것</h3>
+  <div class="problem"><p>인간에 의해 감지되는 다양한 색깔은 직접적으로 다음 중 어느 것에 의해 일어나는가?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 원추세포에 있는 세 가지 종류의 포톱신 분자의 활성에 의해</li>
+      <li data-choice="2">(2) 간상세포의 신경 충격이 측면슬형핵을 거쳐 전달되므로</li>
+      <li data-choice="3">(3) 모든 광수용기가 빛에 의해 똑같이 자극되어</li>
+      <li data-choice="4">(4) 시각교차에 의해 다른 대뇌 반구로 상이 전달되어</li>
+      <li data-choice="5">(5) 아마크린세포에 의한 측면 억제에 의해</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 합본 41번 (PDF 4쪽 문제, 5쪽 보기)</details>
+  <details class="hint" open><summary>힌트 보기</summary>색을 구분하는 광수용기가 간상세포와 원추세포 중 어느 쪽이었는지, 그 세포의 광색소 이름이 무엇이었는지 떠올려 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. 원추세포는 레드·그린·블루 세 종류가 있고, 원반 막 속의 광색소 포톱신이 빛을 흡수해요. 이 세 종류의 원추세포가 빛에 반응해 색깔을 구분해요.</li>
+      <li data-explains="2">(2) 틀려요. 간상세포는 한 종류뿐이라 색을 구분하지 못하고, 약한 빛에 반응해 사물을 흑백으로 보게 해요. 측면슬형핵은 수업에서 다루지 않았지만, 간상세포 신호는 어느 경로를 거쳐도 색을 만들지 못해요.</li>
+      <li data-explains="3">(3) 틀려요. 모든 광수용기가 똑같이 자극되면 색을 서로 가를 차이가 생기지 않아요. 색은 종류가 다른 세 원추세포가 있어야 구분돼요.</li>
+      <li data-explains="4">(4) 틀려요. 시각교차는 각 눈의 왼쪽 시야를 오른쪽 뇌로, 오른쪽 시야를 왼쪽 뇌로 보내는 배선이에요. 정보가 어느 반구로 가는지를 정할 뿐 색을 감지하는 원인이 아니에요.</li>
+      <li data-explains="5">(5) 틀려요. 아마크린세포는 광수용기의 신호를 받아 주는 망막 세포 중 하나예요. 측면 억제는 수업에서 다루지 않았고, 빛을 직접 흡수해 색 정보를 만드는 것은 원추세포의 포톱신이에요.</li>
+      <li>수업과의 연결: 1117 수업에서 교수님이 간상세포(1종, 약한 빛, 흑백, 로돕신)와 원추세포(3종, 강한 빛, 색, 포톱신)를 대비하고 포톱신을 "포토, 컬러 사진"으로 외우게 한 내용과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s5-photoreceptors">간상세포와 원추세포</a>).</li>
+    </ol>
+    <p class="answer">정답: (1)</p>
+  </details>
+</article>
+<article class="card" id="p23" data-source="기출 13강 18">
+  <h3>P23. 가지를 치는 공기통로 D</h3>
+  <div class="problem"><p>폐포에 이를 때까지 점점 더 가지를 치는 공기통로인 <u>D 구조물</u>을 무엇이라고 하는가?</p>
+    <figure class="figure"><img src=".assets/figures_1117/p23.png" alt="사람 호흡계 그림. 코통로, 인두, 입, 후두덮개가 이름으로 표시되어 있고, A부터 G까지의 표지가 목과 가슴 속 구조를 가리킨다. D는 폐 안쪽의 관을 가리킨다."></figure>
+    <ul class="choices">
+      <li data-choice="1">(1) 횡경막</li>
+      <li data-choice="2">(2) 후두</li>
+      <li data-choice="3">(3) 늑막근</li>
+      <li data-choice="4">(4) 기관</li>
+      <li data-choice="5">(5) 기관지</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 13강 합본 18번 (PDF 2쪽, 그림은 17·18번 공용)</details>
+  <details class="hint" open><summary>힌트 보기</summary>공기의 길(인두 → 후두 → 기관 → … → 폐포)에서 나뭇가지처럼 갈라진다고 해서 붙은 이름을 떠올려 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 횡경막은 수업에서 다루지 않았어요. 교재 13장 기준으로 흉곽과 복강 사이의 근육층이라 공기가 지나가는 통로가 아니에요.</li>
+      <li data-explains="2">(2) 틀려요. 후두는 인두 다음, 기관 위쪽에 있는 통로예요. 폐 안에서 가지를 치는 구조가 아니에요.</li>
+      <li data-explains="3">(3) 틀려요. 늑막근은 수업에서 다루지 않았어요. 이름 그대로 근육을 가리키는 말이라 공기 통로가 아니에요.</li>
+      <li data-explains="4">(4) 틀려요. 기관은 후두 아래로 이어지는 한 줄기 관이에요. 아직 갈라지기 전 부분이에요.</li>
+      <li data-explains="5">(5) 맞아요. 기관이 두 갈래로 나뉜 뒤 폐 안에서 계속 가지를 치는 관이 기관지예요. 가지처럼 나뉜다고 해서 기관지라는 이름이 붙었고, 그림의 D도 폐 안쪽의 관을 가리켜요.</li>
+      <li>수업과의 연결: 1117 수업에서 인두(목구멍) → 후두 → 기관 → 기관지 → 세기관지 → 폐포 순서와 기관·기관지·세기관지의 이름 구분을 짚은 내용과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s6-airway">공기의 길과 폐포</a>).</li>
+    </ol>
+    <p class="answer">정답: (5)</p>
+  </details>
+</article>
+<article class="card" id="p24" data-source="기출 13강 28">
+  <h3>P24. 공기가 마지막에 닿는 구조</h3>
+  <div class="problem"><p>포유동물이 호흡을 할 때, 공기는 최종적으로 조밀한 모세혈관 네트워크로 둘러싸인 이것에 도달하게 된다. 이것이 뜻하는 구조와 그 특성을 올바르게 짝 지은 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 기관, 좁은 표면적</li>
+      <li data-choice="2">(2) 세기관지, 넓은 표면적</li>
+      <li data-choice="3">(3) 폐포, 넓은 표면적</li>
+      <li data-choice="4">(4) 후두, 한쪽방향으로만 공기 흐름</li>
+      <li data-choice="5">(5) 세기관지, 양압 호흡</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 13강 합본 28번 (PDF 4쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>공기가 마지막에 도착하는 곳은 포도송이처럼 생겼다고 했어요. 그런 모양이 기체 교환에 왜 유리한지도 함께 생각해 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 기관은 후두 다음의 통로일 뿐 공기가 마지막에 도달하는 곳이 아니에요. 기체를 교환하는 곳은 표면적이 좁은 것이 아니라 넓어야 해요.</li>
+      <li data-explains="2">(2) 틀려요. 세기관지는 폐포 바로 앞까지 공기를 나르는 가는 통로예요. 모세혈관에 둘러싸여 기체를 교환하는 최종 도달 지점은 그 끝에 달린 폐포예요.</li>
+      <li data-explains="3">(3) 맞아요. 기관지가 여러 번 갈라진 끝마다 폐포가 포도송이처럼 달려 있어 전체 표면적이 아주 넓고, 폐포를 모세혈관이 덮고 있어요. 표면적이 넓을수록 확산이 빨라져요.</li>
+      <li data-explains="4">(4) 틀려요. 후두는 공기 통로의 앞부분이라 최종 도달 지점이 아니에요. 공기 흐름 방향은 수업에서 다루지 않았지만, 구조부터 틀렸어요.</li>
+      <li data-explains="5">(5) 틀려요. 세기관지는 최종 도달 지점이 아니에요. 양압 호흡은 수업에서 다루지 않았지만, 구조부터 틀렸어요.</li>
+      <li>수업과의 연결: 1117 수업에서 교수님이 폐포를 포도송이에 비유하고, 분지가 매우 많아 전체 폐포 표면적이 넓은 이유를 확산 속도로 설명한 내용과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s6-airway">공기의 길과 폐포</a>).</li>
+    </ol>
+    <p class="answer">정답: (3)</p>
+  </details>
+</article>
+<article class="card" id="p25" data-source="기출 13강 30">
+  <h3>P25. 기체 교환이 일어나는 혈관벽</h3>
+  <div class="problem"><p>O<sub>2</sub>와 CO<sub>2</sub> 등의 실제 기체 교환은 다음 중 어떤 유형의 혈관벽을 통해 일어나는가?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 모세혈관</li>
+      <li data-choice="2">(2) 세정맥</li>
+      <li data-choice="3">(3) 정맥</li>
+      <li data-choice="4">(4) 동맥</li>
+      <li data-choice="5">(5) 세동맥</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 13강 합본 30번 (PDF 4쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>수업에서 폐포를 무엇이 덮고 있어서 기체 교환이 일어난다고 했는지 떠올려 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. 폐포를 모세혈관이 덮고 있고, O<sub>2</sub>는 폐포 막 → 모세혈관 막 → 혈액으로, CO<sub>2</sub>는 그 반대로 확산해요. 실제 교환은 가장 가는 혈관인 모세혈관의 벽에서 일어나요.</li>
+      <li data-explains="2">(2) 틀려요. 세정맥은 수업에서 다루지 않았어요. 교재 13장 기준으로 모세혈관을 지난 혈액을 모아 정맥으로 보내는 혈관이라, 교환을 마친 혈액이 지나가는 길이에요.</li>
+      <li data-explains="3">(3) 틀려요. 정맥은 수업에서 다루지 않았어요. 교재 13장 기준으로 온몸의 혈액을 심장 쪽으로 되돌려 보내는 혈관이고, 벽이 여러 층으로 되어 있어(동맥보다는 얇지만 한 층짜리 모세혈관 벽과 달라요) 기체 교환 장소가 아니에요.</li>
+      <li data-explains="4">(4) 틀려요. 동맥은 수업에서 다루지 않았어요. 교재 13장 기준으로 심장에서 나온 혈액을 온몸으로 보내는 굵고 벽이 두꺼운 혈관이라, 혈액을 나르는 통로이지 교환 장소가 아니에요.</li>
+      <li data-explains="5">(5) 틀려요. 세동맥은 수업에서 다루지 않았어요. 교재 13장 기준으로 동맥에서 갈라져 모세혈관으로 혈액을 보내는 혈관이고, 교환은 그다음 모세혈관에서 일어나요.</li>
+      <li>수업과의 연결: 1117 수업에서 폐포를 덮은 모세혈관과 폐포 안 공기 사이에서 기체가 확산으로 오간다고 설명한 내용과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s6-airway">공기의 길과 폐포</a>).</li>
+    </ol>
+    <p class="answer">정답: (1)</p>
+  </details>
+</article>
+<article class="card" id="p26" data-source="기출 13강 33">
+  <h3>P26. 호흡을 조절하는 중추의 위치</h3>
+  <div class="problem"><p>호흡량과 호흡깊이를 조절하는 중추는 어디에 위치하는가?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 소뇌</li>
+      <li data-choice="2">(2) 정맥</li>
+      <li data-choice="3">(3) 뇌간</li>
+      <li data-choice="4">(4) 시상</li>
+      <li data-choice="5">(5) 대뇌</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 13강 합본 33번 (PDF 4쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>달리면 숨이 저절로 가빠지게 하는 부위가 연수였어요. 연수가 뇌의 어느 큰 부분에 속하는지 떠올려 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 소뇌는 이번 수업에서 다루지 않았어요. 교재에서 소뇌는 몸의 균형과 운동 조정을 맡는 부위로 나오고, 호흡 중추가 아니에요.</li>
+      <li data-explains="2">(2) 틀려요. 정맥은 혈관이에요. 신호를 처리하는 중추가 될 수 없어요.</li>
+      <li data-explains="3">(3) 맞아요. 뇌간은 아래부터 연수·뇌교·중뇌로 이루어져요. 연수가 호흡 리듬을 만들고 조절하며, 뇌교가 그 리듬을 부드럽게 해요.</li>
+      <li data-explains="4">(4) 틀려요. 시상은 뇌간 위에서 온몸의 감각 정보를 대뇌로 중개하는 부위예요.</li>
+      <li data-explains="5">(5) 틀려요. 대뇌는 전두엽·두정엽·측두엽·후두엽으로 나뉘어 운동, 체성 감각, 언어·청각, 시각 같은 기능을 맡아요. 호흡을 저절로 조절하는 중추는 뇌간에 있어요.</li>
+      <li>수업과의 연결: 1117 수업에서 교수님이 연수를 호흡 리듬 생성·조절, 뇌교를 호흡 리듬을 부드럽게 하는 곳으로 대비하고, 뇌간까지 기능을 잃은 뇌사는 인공호흡기가 필요하지만 뇌간이 살아 있는 식물인간은 스스로 숨을 쉰다고 설명한 내용과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s2-brainstem">뇌간: 중뇌·뇌교·연수</a>).</li>
+    </ol>
+    <p class="answer">정답: (3)</p>
+  </details>
+</article>
+<article class="card" id="p27" data-source="기출 13강 37">
+  <h3>P27. 폐에서 산소가 혈액으로 가는 방식</h3>
+  <div class="problem"><p>폐에서 공기로부터 혈액으로 산소가 전해지는 과정은 무엇을 통해 이루어지는가?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 단순확산</li>
+      <li data-choice="2">(2) 삼투</li>
+      <li data-choice="3">(3) 촉진확산</li>
+      <li data-choice="4">(4) 능동수송</li>
+      <li data-choice="5">(5) 어느 것도 아님</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 13강 합본 37번 (PDF 4쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>교수님이 "벽을 뚫는 게 아니고"라며 스스로 고친 기체 교환의 원리를 떠올려 봐요. 그 원리에 에너지나 수송 단백질이 필요한지도 확인해요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. 폐포 안 공기의 산소 농도가 혈액보다 높아서 산소가 농도 차이를 따라 에너지 없이 저절로 옮겨 가요. 산소는 작은 비극성 분자라 수송 단백질 없이 막의 지질 부분을 바로 지나가므로 단순확산이에요.</li>
+      <li data-explains="2">(2) 틀려요. 삼투는 물 분자가 선택적 투과막을 지나가는 현상이에요. 산소의 이동이 아니에요.</li>
+      <li data-explains="3">(3) 틀려요. 촉진확산도 농도기울기를 따르지만, 특정 분자만 통과시키는 수송 단백질(채널 단백질, 운반체 단백질)을 거쳐요. 산소는 단백질 없이 막을 바로 지나가요.</li>
+      <li data-explains="4">(4) 틀려요. 능동수송은 농도기울기와 반대로 물질을 옮기며 ATP가 필요해요. 폐의 기체 교환은 에너지를 쓰지 않는 확산이에요.</li>
+      <li data-explains="5">(5) 틀려요. 보기 (1)의 단순확산이 바로 이 과정이라 "어느 것도 아님"은 성립하지 않아요.</li>
+      <li>수업과의 연결: 1117 수업에서 교수님이 "기체가 교환되는 원리는 확산"이라고 되풀이하고 확산 속도를 면적·거리·농도 차이로 설명한 내용과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s6-diffusion">기체 교환은 확산</a>). 단순확산·촉진확산·삼투·능동수송의 구분은 0910 정리노트 보충의 막수송 표에 있어요(<a href="../0910/정리노트_0910_Cells_and_Cellular_Respiration.html#s2-atp-use">ATP를 쓰는 곳</a>).</li>
+    </ol>
+    <p class="answer">정답: (1)</p>
+  </details>
+</article>
+<article class="card" id="p28" data-source="기출 13강 40">
+  <h3>P28. 공기가 지나가는 경로</h3>
+  <div class="problem"><p>다음 중 공기가 호흡계를 지나가는 경로로 옳은 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 인두 – 후두 – 기관 – 기관지 – 세기관지 – 폐포</li>
+      <li data-choice="2">(2) 후두 – 인두 – 기관 – 세기관지 – 기관지 – 폐포</li>
+      <li data-choice="3">(3) 인두 – 기관 – 후두 – 세기관지 – 기관지 – 폐포</li>
+      <li data-choice="4">(4) 기관 – 인두 – 후두 – 세기관지 – 폐포 – 기관지</li>
+      <li data-choice="5">(5) 인두 – 후두 – 기관 – 세기관지 – 폐포 – 기관지</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 13강 합본 40번 (PDF 5쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>목구멍(인두) 다음이 후두, 그다음이 한 줄기 기관이에요. 거기서부터 관이 갈라지며 점점 가늘어져요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. 인두 → 후두 → 기관 → 기관지 → 세기관지 → 폐포 순서로, 굵은 관이 갈라져 가늘어진 끝에 폐포가 달려 있어요.</li>
+      <li data-explains="2">(2) 틀려요. 인두와 후두의 순서가 바뀌었고, 기관지와 세기관지의 순서도 바뀌었어요.</li>
+      <li data-explains="3">(3) 틀려요. 후두가 기관 뒤로 갔고, 세기관지가 기관지보다 앞에 왔어요.</li>
+      <li data-explains="4">(4) 틀려요. 기관이 맨 앞에 왔고, 폐포 뒤에 기관지가 붙어 있어요. 폐포는 공기가 마지막에 도달하는 곳이에요.</li>
+      <li data-explains="5">(5) 틀려요. 인두 → 후두 → 기관까지는 맞지만 기관지가 맨 끝으로 밀려났어요. 세기관지는 기관지가 갈라져 생긴 더 작은 관이라 기관지보다 앞에 올 수 없어요.</li>
+      <li>수업과의 연결: 1117 수업에서 코·입 → 인두 → 후두 → 기관 → 기관지 → 세기관지 → 폐포 순서와 기관·기관지·세기관지의 이름 구분을 짚은 내용과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s6-airway">공기의 길과 폐포</a>).</li>
+    </ol>
+    <p class="answer">정답: (1)</p>
+  </details>
+</article>
+<article class="card" id="p29" data-source="기출 13강 44">
+  <h3>P29. 산소를 혈액으로 옮기는 구조</h3>
+  <div class="problem"><p>대기의 O<sub>2</sub> 중 1/3을 인간의 혈액으로 이동시키게 하는 구조는?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 폐포</li>
+      <li data-choice="2">(2) 기관지</li>
+      <li data-choice="3">(3) 세기관지</li>
+      <li data-choice="4">(4) 기관</li>
+      <li data-choice="5">(5) 인두</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 13강 합본 44번 (PDF 5쪽)</details>
+  <details class="hint" open><summary>힌트 보기</summary>보기 가운데 공기와 혈액이 실제로 맞닿아 기체를 주고받는 구조를 찾아봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. 모세혈관이 덮고 있는 폐포에서 산소가 혈액으로 확산해요. 발문의 "1/3"은 수업과 강의노트에 없는 수치라 판단에 쓰지 않아요. 보기 중 공기 속 산소를 혈액으로 옮기는 구조는 폐포뿐이에요.</li>
+      <li data-explains="2">(2) 틀려요. 기관지는 공기를 폐 안으로 나르며 갈라지는 통로예요. 기체 교환 장소가 아니에요.</li>
+      <li data-explains="3">(3) 틀려요. 세기관지는 폐포 바로 앞까지 공기를 나르는 가는 통로예요. 교환은 그 끝의 폐포에서 일어나요.</li>
+      <li data-explains="4">(4) 틀려요. 기관은 후두 아래로 이어지는 한 줄기 통로예요.</li>
+      <li data-explains="5">(5) 틀려요. 인두는 목구멍으로, 공기 통로의 입구 쪽이에요.</li>
+      <li>수업과의 연결: 1117 수업에서 O<sub>2</sub>가 폐포 공간 → 폐포 막 → 모세혈관 막 → 혈액으로 이동한다고 설명한 내용과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s6-airway">공기의 길과 폐포</a>).</li>
+    </ol>
+    <p class="answer">정답: (1)</p>
+  </details>
+</article>
+    </section>
+    <section id="partC"><h2>C. 변형 연습</h2>
+<article class="card" id="p30" data-source="생성 변형 s0-autonomic">
+  <h3>P30. [변형] 말초신경계 진술 다시 가르기</h3>
+  <div class="problem"><p>말초신경계에 관한 설명으로 잘못된 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 체성신경계는 골격근에 연결되어 의식적으로 조절된다.</li>
+      <li data-choice="2">(2) 구심성 뉴런은 감각 정보를 중추신경계 쪽으로 들여보낸다.</li>
+      <li data-choice="3">(3) 교감신경계가 활성화되면 소화 작용이 촉진된다.</li>
+      <li data-choice="4">(4) 부교감신경계는 휴식할 때 심박수와 혈압을 낮춘다.</li>
+      <li data-choice="5">(5) 자율신경계는 심장·장처럼 의식적으로 조절할 수 없는 기관을 조절한다.</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary>기출 12강 40번 발문에 정답을 바꾼 생성 변형이에요. 다루는 혼동: 교감·부교감의 효과 방향. 근거 토픽: 교감신경과 부교감신경(s0-autonomic).</details>
+  <details class="hint" open><summary>힌트 보기</summary>교감선생님을 만나 도망치는 순간, 몸이 에너지를 근육 쪽으로 몰아줄지 음식 소화 쪽으로 몰아줄지 떠올려 봐요.</details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. 체성신경계는 골격근에 연결되어 있고, 의식적으로 조절할 수 있는 수의적 신경계예요.</li>
+      <li data-explains="2">(2) 맞아요. 들어오는 뉴런이 구심성이에요. 감각뉴런이 구심성 신경으로 중추신경계에 정보를 들여보내요.</li>
+      <li data-explains="3">(3) 틀려요. 교감신경계는 싸움 혹은 도망 상황에서 근육에 에너지를 몰아주므로 소화를 억제해요. 소화를 촉진하는 것은 휴식할 때 작용하는 부교감신경계예요.</li>
+      <li data-explains="4">(4) 맞아요. 부교감신경계는 휴식 상황에서 심박수와 혈압을 내리고 소화를 촉진해요. 교감신경계와 효과가 정반대예요.</li>
+      <li data-explains="5">(5) 맞아요. 자율신경계는 심장·장처럼 의식적으로 조절할 수 없는 기관을 불수의적으로 조절해요.</li>
+      <li>원문 정답과 달라진 점: 원문(기출 12강 40번)의 정답은 체성신경계를 불수의적이라고 한 진술이었는데, 이 문제에서는 체성신경계를 바르게 고친 진술을 (1)에 참으로 두고, 교감신경계의 소화 효과를 뒤집은 (3)을 정답으로 바꿨어요.</li>
+      <li>수업과의 연결: 1117 수업에서 교수님이 교감·부교감의 효과가 "정반대"라며 심박수·혈압·소화 방향을 되풀이해 대비하고, 교감선생님 비유로 도망치는 상황(교감)과 집에서 쉬는 상황(부교감)을 나눈 내용과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s0-autonomic">교감신경과 부교감신경</a>).</li>
+    </ol>
+    <p class="answer">정답: (3)</p>
+  </details>
+</article>
+<article class="card" id="p31" data-source="생성 변형 s5-retina">
+  <h3>P31. [변형] 중심오목에 몰린 세포</h3>
+  <div class="problem"><p>다음 광수용기에 대한 설명 중 <u>틀린 것은</u> ?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 간상세포는 약한 빛에도 반응하지만 색깔을 구분하지 못한다.</li>
+      <li data-choice="2">(2) 원추세포는 세 종류가 있어 색깔을 구분한다.</li>
+      <li data-choice="3">(3) 맹점에는 간상세포와 원추세포가 없다.</li>
+      <li data-choice="4">(4) 중심오목에는 간상세포가 가장 빽빽하게 모여 있다.</li>
+      <li data-choice="5">(5) 로돕신은 옵신과 레티날로 이루어진다.</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary><p>기출 12강 38번 발문에 정답을 바꾼 생성 변형이에요. 다루는 혼동: 중심오목에 모인 광수용기의 종류(원추세포와 간상세포). 근거 토픽: <a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s5-retina">중심오목·맹점과 망막의 배선</a></p></details>
+  <details class="hint" open><summary>힌트 보기</summary><p>상이 중심오목에 맺히면 가장 선명하게 보이는데, 희미한 별은 왜 곁눈질로 봐야 보이는지 함께 떠올려요.</p></details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. 간상세포는 한 종류뿐이라 색은 구분하지 못하지만, 약한 빛에도 반응해서 어두운 곳에서 사물이 흑백으로 보이게 해요.</li>
+      <li data-explains="2">(2) 맞아요. 원추세포는 빨강·초록·파랑에 반응하는 세 종류가 있어서 색깔을 구분해요. 대신 강한 빛에만 반응해요.</li>
+      <li data-explains="3">(3) 맞아요. 맹점은 신경 다발이 망막을 뚫고 나가는 자리라 광수용기가 아예 없어요. 그래서 상이 맺혀도 보이지 않아요.</li>
+      <li data-explains="4">(4) 틀려요. 중심오목에는 원추세포가 몰려 있고 간상세포는 없어요. 간상세포는 중심오목 주위에 있어요. 그래서 중심오목에서는 밝은 것이 가장 선명하게 보이지만 약한 빛은 오히려 잘 보이지 않아요.</li>
+      <li data-explains="5">(5) 맞아요. 간상세포의 광색소인 로돕신은 단백질인 옵신과 빛을 흡수하는 색소인 레티날로 이루어져요.</li>
+      <li>원문 정답과 달라진 점: 원문은 간상세포와 원추세포의 기능을 뒤바꾼 진술이 정답이었는데, 이 문제에서는 그 기능을 바르게 쓴 (1)이 맞는 진술이고, 중심오목에 모인 세포 종류를 뒤바꾼 (4)가 정답이에요.</li>
+      <li>수업과의 연결: 1117 수업에서 교수님이 중심오목에는 원추세포가 몰려 있고 간상세포가 없어서, 희미한 별은 곁눈질로 봐야 보인다고 설명한 내용이에요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s5-retina">중심오목·맹점과 망막의 배선</a>).</li>
+    </ol>
+    <p class="answer">정답: (4)</p>
+  </details>
+</article>
+<article class="card" id="p32" data-source="생성 변형 s4-hearing">
+  <h3>P32. [변형] 높은 음이 흔드는 기저막 위치</h3>
+  <div class="problem"><p>그림은 달팽이관을 곧게 펴서 그 안의 기저막을 위치 A~E로 나누어 나타낸 모식도이다. 소리의 진동은 타원창 쪽에서 들어온다. 진동수가 매우 큰 높은 음이 들어올 때 가장 크게 진동하는 기저막 위치는?</p>
+    <figure class="figure"><svg id="p32-fig-basilar" viewBox="0 34 500 140" role="img" aria-labelledby="p32-fig-basilar-title"><title id="p32-fig-basilar-title">달팽이관을 곧게 편 기저막 모식도. 왼쪽 끝에 타원창이 있고 소리 진동이 그쪽에서 들어온다. 기저막은 타원창 쪽이 좁고 달팽이관 끝 쪽으로 갈수록 넓어진다. 타원창 쪽부터 위치 A, B, C, D, E가 차례로 표시되어 있다.</title>
+      <text class="fig-muted" x="2" y="66">소리 진동</text>
+      <line class="fig-accent" x1="8" y1="100" x2="34" y2="100"/>
+      <polygon class="fig-dot" points="34,94 43,100 34,106"/>
+      <ellipse class="fig-ink" cx="54" cy="100" rx="8" ry="24"/>
+      <text class="fig-text" x="32" y="146">타원창</text>
+      <polygon class="fig-ink" points="72,92 480,66 480,134 72,108"/>
+      <line class="fig-ink" x1="110" y1="56" x2="110" y2="87"/>
+      <line class="fig-ink" x1="200" y1="56" x2="200" y2="81"/>
+      <line class="fig-ink" x1="290" y1="56" x2="290" y2="76"/>
+      <line class="fig-ink" x1="380" y1="56" x2="380" y2="70"/>
+      <line class="fig-ink" x1="460" y1="56" x2="460" y2="65"/>
+      <circle class="fig-dot" cx="110" cy="100" r="4"/>
+      <circle class="fig-dot" cx="200" cy="100" r="4"/>
+      <circle class="fig-dot" cx="290" cy="100" r="4"/>
+      <circle class="fig-dot" cx="380" cy="100" r="4"/>
+      <circle class="fig-dot" cx="460" cy="100" r="4"/>
+      <text class="fig-text" x="105" y="50">A</text>
+      <text class="fig-text" x="195" y="50">B</text>
+      <text class="fig-text" x="285" y="50">C</text>
+      <text class="fig-text" x="375" y="50">D</text>
+      <text class="fig-text" x="455" y="50">E</text>
+      <text class="fig-text" x="230" y="154">기저막</text>
+      <text class="fig-muted" x="388" y="160">달팽이관 끝 쪽</text>
+    </svg></figure>
+    <ul class="choices">
+      <li data-choice="1">(1) A</li>
+      <li data-choice="2">(2) B</li>
+      <li data-choice="3">(3) C</li>
+      <li data-choice="4">(4) D</li>
+      <li data-choice="5">(5) E</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 음높이에 따라 반응하는 기저막 위치(앞부분과 끝). 근거 토픽: <a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s4-hearing">귀: 진동이 활동전위가 되기까지</a></p></details>
+  <details class="hint" open><summary>힌트 보기</summary><p>그림에서 타원창이 어느 쪽 끝에 있는지 먼저 찾아요. 나이가 들면 어느 쪽 모세포부터 손상되어 높은 음을 못 듣게 되는지 떠올려요.</p></details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>그림 읽기: 타원창이 있는 왼쪽이 기저막의 앞부분이에요. A가 타원창에 가장 가깝고, E로 갈수록 달팽이관 끝에 가까워요.</li>
+      <li data-explains="1">(1) 맞아요. 높은 음(진동수가 큰 소리)은 타원창에 가까운 기저막 앞부분을 가장 크게 흔들어요. 그림에서 그 자리는 A예요.</li>
+      <li data-explains="2">(2) 틀려요. B는 A보다 끝 쪽이라, A가 맡는 음보다 조금 낮은 음에 크게 진동하는 자리예요.</li>
+      <li data-explains="3">(3) 틀려요. C는 기저막의 가운데쯤이라 중간 높이의 음을 맡는 자리예요. 가장 높은 음은 앞부분이 맡아요.</li>
+      <li data-explains="4">(4) 틀려요. D는 끝 쪽에 가까워 낮은 음에 크게 진동하는 자리예요. 높은 음과 낮은 음의 위치를 뒤바꾸면 이 보기를 고르게 돼요.</li>
+      <li data-explains="5">(5) 틀려요. E는 달팽이관 끝이라 가장 낮은 음에 크게 진동하는 자리예요.</li>
+      <li>수업과의 연결: 1117 수업에서 교수님이 높은 음은 고막·타원창에 가까운 앞부분, 낮은 음일수록 뒷부분(끝)이 반응하고, 나이가 들면 앞부분 모세포부터 손상되어 높은 음을 못 듣게 된다고 설명한 내용이에요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s4-hearing">귀: 진동이 활동전위가 되기까지</a>).</li>
+    </ol>
+    <p class="answer">정답: (1)</p>
+  </details>
+</article>
+<article class="card" id="p33" data-source="생성 변형 s4-hearing">
+  <h3>P33. [변형] 소리를 키우면 달라지는 것</h3>
+  <div class="problem"><p>같은 높이(진동수)의 음을 처음에는 작게 틀었다가 점점 크게 키웠다. 소리가 커지는 동안 귀와 청각 신경에서 일어나는 변화로 옳은 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 청각 신경에서 생기는 활동전위 하나하나의 크기가 커진다.</li>
+      <li data-choice="2">(2) 가장 크게 진동하는 기저막 위치가 달팽이관 끝 쪽으로 옮겨 간다.</li>
+      <li data-choice="3">(3) 청각 신경에서 활동전위가 생기는 빈도가 늘어난다.</li>
+      <li data-choice="4">(4) 소리가 커질수록 모세포가 덜 흔들려 활동전위가 사라진다.</li>
+      <li data-choice="5">(5) 모세포 대신 원추세포가 진동을 받아들인다.</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 소리의 크기(진폭)와 높이(진동수)를 구분하는 방식. 근거 토픽: <a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s4-hearing">귀: 진동이 활동전위가 되기까지</a></p></details>
+  <details class="hint" open><summary>힌트 보기</summary><p>높이는 그대로이고 크기만 바뀌었어요. 소리의 크기는 진폭이고, 진폭이 크다는 것은 자극이 세다는 뜻이에요. 지난 수업에서 자극의 세기가 활동전위의 무엇으로 바뀐다고 했는지 떠올려요.</p></details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 활동전위는 역치에 닿으면 생기고 그 크기는 대체로 일정해요(실무율). 자극이 세져도 활동전위 하나의 크기가 커지지 않아요.</li>
+      <li data-explains="2">(2) 틀려요. 기저막의 어느 위치가 반응하는지는 음의 높이(진동수)가 정해요. 이 상황에서는 높이가 그대로라 반응하는 위치도 그대로예요.</li>
+      <li data-explains="3">(3) 맞아요. 소리가 커지면 진폭, 곧 자극의 세기가 커져요. 크기가 일정한 활동전위가 더 자주 생겨서, 뇌는 빈도로 소리의 크기를 구분해요.</li>
+      <li data-explains="4">(4) 틀려요. 진폭이 커지면 기저막과 모세포가 더 크게 흔들려요. 자극이 세질수록 활동전위가 사라지는 것이 아니라 더 자주 생겨요.</li>
+      <li data-explains="5">(5) 틀려요. 원추세포는 눈의 망막에 있는 광수용기예요. 귀에서 진동을 받아들이는 것은 기저막에 붙은 모세포예요.</li>
+      <li>수업과의 연결: 1117 수업에서 교수님이 "큰 소리, 작은 소리는 진폭"이고 빈도로 구분하며, 높은 음·낮은 음은 진동수로 기저막의 다른 부위가 반응한다고 반복해 대비한 내용이에요. 활동전위의 크기는 일정하고 자극이 세면 더 자주 발화한다는 1112 수업 내용과 이어져요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s4-hearing">귀: 진동이 활동전위가 되기까지</a>, <a href="../1112/정리노트_1112_Nervous_and_Sensory_Systems.html#s2-all-or-none">1112 실무율과 자극의 세기</a>).</li>
+    </ol>
+    <p class="answer">정답: (3)</p>
+  </details>
+</article>
+<article class="card" id="p34" data-source="생성 변형 s5-retina">
+  <h3>P34. [변형] 희미한 별은 망막의 어디에</h3>
+  <div class="problem"><p>그림은 사람 눈의 단면을 단순하게 나타낸 모식도이고, (가)~(다)는 망막의 세 위치이다. 맑은 밤하늘에서 아주 희미한 별을 가장 잘 감지하려면 별의 상이 어느 위치에 맺혀야 하는지와 그 이유를 옳게 짝지은 것은?</p>
+    <figure class="figure"><svg id="p34-fig-retina" viewBox="0 0 500 300" role="img" aria-labelledby="p34-fig-retina-title"><title id="p34-fig-retina-title">사람 눈의 단면 모식도. 왼쪽에서 들어온 빛이 수정체를 지나 오른쪽 안쪽 벽의 망막에 닿는다. (가)는 망막 한가운데에서 망막이 바깥쪽으로 오목하게 들어간 곳이다. (나)는 망막이 끊기고 그 자리에서 신경 다발이 눈 밖으로 빠져나가는 곳이다. (다)는 망막 한가운데에서 위쪽으로 떨어진 주변이다.</title>
+      <text class="fig-text" x="20" y="118">빛</text>
+      <line class="fig-ink" x1="20" y1="130" x2="138" y2="130" stroke-dasharray="6 5"/>
+      <line class="fig-ink" x1="20" y1="170" x2="138" y2="170" stroke-dasharray="6 5"/>
+      <circle class="fig-ink" cx="240" cy="150" r="118"/>
+      <ellipse class="fig-ink" cx="150" cy="150" rx="10" ry="34"/>
+      <text class="fig-muted" x="132" y="210">수정체</text>
+      <path class="fig-accent" d="M274.2,56.0 A100,100 0 0 1 337.8,129.2 Q366,150 337.8,170.8 A100,100 0 0 1 332.7,187.5 M326.6,200.0 A100,100 0 0 1 274.2,244.0"/>
+      <line class="fig-ink" x1="332.7" y1="187.5" x2="467" y2="253"/>
+      <line class="fig-ink" x1="326.6" y1="200.0" x2="461" y2="266"/>
+      <text class="fig-muted" x="206" y="252">망막</text>
+      <line class="fig-ink" x1="236" y1="246" x2="266" y2="238"/>
+      <circle class="fig-dot" cx="352" cy="150" r="3.5"/>
+      <circle class="fig-dot" cx="329.9" cy="193.8" r="3.5"/>
+      <circle class="fig-dot" cx="297.4" cy="68.1" r="3.5"/>
+      <text class="fig-text" x="368" y="155">(가)</text>
+      <line class="fig-ink" x1="312" y1="199" x2="324" y2="196"/>
+      <text class="fig-text" x="284" y="206">(나)</text>
+      <line class="fig-ink" x1="283" y1="88" x2="293" y2="74"/>
+      <text class="fig-text" x="258" y="100">(다)</text>
+    </svg></figure>
+    <ul class="choices">
+      <li data-choice="1">(1) (가), 원추세포가 몰려 있어 가장 선명하게 보이기 때문</li>
+      <li data-choice="2">(2) (나), 신경 다발이 모여 있어 신호가 가장 빨리 전달되기 때문</li>
+      <li data-choice="3">(3) (다), 약한 빛에도 반응하는 간상세포가 많이 있기 때문</li>
+      <li data-choice="4">(4) (가), 간상세포가 가장 빽빽하게 모여 있기 때문</li>
+      <li data-choice="5">(5) (나), 광수용기가 가장 많이 모여 있기 때문</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 중심오목(원추세포만 있음)과 맹점(광수용기 없음)과 망막 주변(간상세포 있음). 근거 토픽: <a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s5-retina">중심오목·맹점과 망막의 배선</a></p></details>
+  <details class="hint" open><summary>힌트 보기</summary><p>먼저 그림에서 오목하게 들어간 곳과 신경 다발이 빠져나가는 곳이 각각 무엇인지 정해요. 그다음 약한 빛에 반응하는 광수용기가 어디에 있는지 떠올려요.</p></details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>그림 읽기: (가)는 망막이 오목하게 들어간 중심오목, (나)는 신경 다발이 망막을 뚫고 나가 망막이 끊긴 맹점, (다)는 중심에서 떨어진 망막 주변이에요. 희미한 별빛은 약한 빛이라 간상세포가 있는 곳에 상이 맺혀야 해요.</li>
+      <li data-explains="1">(1) 틀려요. (가) 중심오목에 원추세포가 몰려 있어 밝은 것은 가장 선명하게 보이는 것은 맞아요. 하지만 원추세포는 강한 빛에만 반응해서 희미한 별빛은 오히려 잘 보이지 않아요.</li>
+      <li data-explains="2">(2) 틀려요. (나)는 맹점이라 간상세포와 원추세포가 없어요. 상이 맺혀도 보이지 않아요.</li>
+      <li data-explains="3">(3) 맞아요. 간상세포는 중심오목 주위에 있어서 (다) 같은 주변에 상이 맺히면 약한 빛에도 반응해요. 희미한 별을 곁눈질로 봐야 보이는 이유예요.</li>
+      <li data-explains="4">(4) 틀려요. (가) 중심오목에는 원추세포가 몰려 있고 간상세포는 없어요. 위치와 세포 종류가 모두 틀렸어요.</li>
+      <li data-explains="5">(5) 틀려요. (나) 맹점은 광수용기가 하나도 없는 자리예요. 신경 다발이 지나가느라 광수용기가 들어설 자리가 없어요.</li>
+      <li>수업과의 연결: 1117 수업에서 교수님이 밝은 별은 똑바로 보면 잘 보이고 희미한 별은 곁눈질로 봐야 보인다며, 곁눈질하면 상이 간상세포가 있는 옆자리에 맺히기 때문이라고 설명한 내용이에요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s5-retina">중심오목·맹점과 망막의 배선</a>).</li>
+    </ol>
+    <p class="answer">정답: (3)</p>
+  </details>
+</article>
+<article class="card" id="p35" data-source="생성 변형 s3-hemispheres">
+  <h3>P35. [변형] 분리뇌 환자가 본 열쇠</h3>
+  <div class="problem"><p>뇌전증 치료를 위해 뇌량을 자른 환자에게 화면 한가운데의 점을 바라보게 한 뒤, 왼쪽 시야에만 열쇠 그림을 아주 잠깐 보여 주었다. 그다음 가림막 뒤에 놓인 여러 물건을 손으로만 더듬어 방금 본 것을 고르게 했다. 이 환자에게서 예상되는 결과로 옳은 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 열쇠를 봤다고 바로 말할 수 있다.</li>
+      <li data-choice="2">(2) 무엇을 봤는지 말하지 못하지만, 왼손으로는 여러 물건 중 열쇠를 골라낼 수 있다.</li>
+      <li data-choice="3">(3) 무엇을 봤는지 말하지 못하지만, 오른손으로는 여러 물건 중 열쇠를 골라낼 수 있다.</li>
+      <li data-choice="4">(4) 무엇을 봤는지 말하지도 못하고, 어느 손으로도 열쇠를 골라내지 못한다.</li>
+      <li data-choice="5">(5) 왼쪽 눈을 가리고 같은 실험을 하면 열쇠를 봤다고 말할 수 있다.</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 시야 교차, 언어 중추의 위치, 몸의 교차 지배. 근거 토픽: <a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s3-hemispheres">좌우 반구와 뇌량</a></p></details>
+  <details class="hint" open><summary>힌트 보기</summary><p>세 가지를 차례로 따져요. 왼쪽 시야의 정보는 어느 반구로 가는지, 말을 만드는 언어 중추는 어느 반구에 있는지, 그 반구가 몸의 어느 쪽 손을 움직이는지예요.</p></details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>따라가기: 왼쪽 시야의 열쇠 그림은 우반구로 가요. 언어 중추는 좌반구에 있는데 뇌량이 잘려 우반구의 정보가 좌반구로 넘어가지 못해요. 대신 우반구는 몸의 왼쪽을 지배해요.</li>
+      <li data-explains="1">(1) 틀려요. 열쇠 그림은 우반구에만 들어갔고, 말을 만드는 언어 중추는 좌반구에 있어요. 뇌량이 없어 정보가 언어 중추로 가지 못하므로 말할 수 없어요.</li>
+      <li data-explains="2">(2) 맞아요. 언어 중추가 있는 좌반구로 정보가 넘어가지 못해 말은 못 하지만, 열쇠를 본 우반구가 몸의 왼쪽을 지배하므로 왼손으로는 열쇠를 골라낼 수 있어요.</li>
+      <li data-explains="3">(3) 틀려요. 오른손은 좌반구가 지배해요. 좌반구는 열쇠 정보를 받지 못했으니 오른손으로는 골라내지 못해요. 교차 지배를 놓치면 이 보기를 고르게 돼요.</li>
+      <li data-explains="4">(4) 틀려요. 열쇠 정보는 우반구에 들어가 있어요. 말로는 못 하지만 우반구가 움직이는 왼손으로는 고를 수 있어요.</li>
+      <li data-explains="5">(5) 틀려요. 시야 교차는 눈 단위가 아니라 시야 단위예요. 왼쪽 눈을 가려도 오른쪽 눈의 왼쪽 시야 정보는 여전히 우반구로 가므로 말할 수 없어요.</li>
+      <li>수업과의 연결: 1117 수업에서 교수님이 시야 교차는 "단순히 오른쪽 눈, 왼쪽 눈이 아닙니다"라고 강조하며, 뇌량을 자른 환자는 왼쪽 시야로 본 스푼을 손으로 쓸 수는 있지만 말하지 못한다고 언어 중추가 왼쪽에 있다는 것으로 설명한 내용이에요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s3-hemispheres">좌우 반구와 뇌량</a>).</li>
+    </ol>
+    <p class="answer">정답: (2)</p>
+  </details>
+</article>
+<article class="card" id="p36" data-source="생성 변형 s2-limbic">
+  <h3>P36. [변형] 해마가 손상되면 잃는 것</h3>
+  <div class="problem"><p>사고로 해마가 손상된 환자에 대한 설명으로 옳은 것만을 있는 대로 고른 것은?</p>
+    <ul>
+      <li>ㄱ. 손상되기 전부터 알던 친구의 이름을 기억한다.</li>
+      <li>ㄴ. 방금 들은 전화번호를 몇 분 동안은 기억할 수 있다.</li>
+      <li>ㄷ. 오늘 처음 배운 내용을 다음 날에도 기억한다.</li>
+    </ul>
+    <ul class="choices">
+      <li data-choice="1">(1) ㄱ</li>
+      <li data-choice="2">(2) ㄴ</li>
+      <li data-choice="3">(3) ㄷ</li>
+      <li data-choice="4">(4) ㄱ, ㄴ</li>
+      <li data-choice="5">(5) ㄱ, ㄴ, ㄷ</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 해마 손상을 단기기억 상실이나 장기기억 상실로 착각하는 것(실제로는 단기기억을 장기기억으로 바꾸지 못함). 근거 토픽: <a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s2-limbic">변연계: 편도체와 해마</a></p></details>
+  <details class="hint" open><summary>힌트 보기</summary><p>진술마다 손상 전에 저장된 기억인지, 지금 잠깐 붙잡는 기억인지, 새로 오래 저장해야 하는 기억인지 나눠요. 해마는 컴퓨터의 "저장 버튼"에 비유됐어요.</p></details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>ㄱ. 맞아요. 손상 전에 이미 저장된 장기기억은 그대로 남아 있어서 오래 알던 친구를 기억해요.</li>
+      <li>ㄴ. 맞아요. 단기기억 자체는 정상이라 방금 들은 전화번호를 잠깐 기억할 수 있어요.</li>
+      <li>ㄷ. 틀려요. 해마는 단기기억을 장기기억으로 전환해요. 해마가 손상되면 오늘 배운 내용이 새 장기기억으로 저장되지 않아 다음 날에는 기억하지 못해요.</li>
+      <li data-explains="1">(1) 틀려요. ㄴ도 맞는 진술이에요. 해마 손상 환자의 단기기억은 정상이에요.</li>
+      <li data-explains="2">(2) 틀려요. ㄱ도 맞는 진술이에요. 손상 전의 장기기억은 남아 있어요.</li>
+      <li data-explains="3">(3) 틀려요. ㄷ은 새 장기기억이 만들어진다는 진술이라 해마 손상 환자에게는 맞지 않아요.</li>
+      <li data-explains="4">(4) 맞아요. 맞는 진술은 ㄱ과 ㄴ이에요. 잃는 것은 기억 자체가 아니라 단기기억을 장기기억으로 바꾸는 과정이에요.</li>
+      <li data-explains="5">(5) 틀려요. ㄷ이 틀린 진술이라 셋 다 고를 수 없어요.</li>
+      <li>수업과의 연결: 1117 수업에서 교수님이 해마가 손상된 사람은 "단기기억 자체는 문제가 없어. 장기기억 자체도 문제가 없죠"라고 반복하며, 10분 뒤 시험은 만점이지만 내일 시험은 0점이라고 설명한 내용이에요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s2-limbic">변연계: 편도체와 해마</a>).</li>
+    </ol>
+    <p class="answer">정답: (4)</p>
+  </details>
+</article>
+<article class="card" id="p37" data-source="생성 변형 s2-brainstem">
+  <h3>P37. [변형] medulla oblongata가 하는 일</h3>
+  <div class="problem"><p>medulla oblongata에 대한 설명으로 옳은 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 몸에서 올라온 감각 정보를 대뇌 피질로 중개한다.</li>
+      <li data-choice="2">(2) 뇌간의 맨 아래 부분으로, 호흡 리듬을 만들고 심박수와 구토 반사, 삼키기 반사를 조절한다.</li>
+      <li data-choice="3">(3) 눈동자의 움직임을 조절한다.</li>
+      <li data-choice="4">(4) 호흡 리듬을 만들지는 않고, 이미 만들어진 리듬을 부드럽게 다듬기만 한다.</li>
+      <li data-choice="5">(5) 단기기억을 장기기억으로 전환한다.</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 영어 이름으로 묻는 뇌간 세 부분(중뇌·뇌교·연수)의 기능 구분. 근거 토픽: <a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s2-brainstem">뇌간: 중뇌·뇌교·연수</a></p></details>
+  <details class="hint" open><summary>힌트 보기</summary><p>먼저 영어 이름이 뇌간의 세 부분 중 어느 것인지 우리말 이름으로 바꿔요. 달리면 숨이 저절로 가빠지고, 토할 때 감사해야 한다던 부분을 떠올려요.</p></details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>이름 바꾸기: medulla oblongata는 연수예요. 뇌간은 아래부터 연수, 뇌교, 중뇌로 이루어져요.</li>
+      <li data-explains="1">(1) 틀려요. 감각 정보를 대뇌 피질로 중개하는 것은 뇌간 위에 있는 시상이에요.</li>
+      <li data-explains="2">(2) 맞아요. 연수는 뇌간의 맨 아래 부분으로, 호흡 리듬을 만들어 호흡을 조절하고 심박수, 구토 반사, 삼키기 반사도 맡아요.</li>
+      <li data-explains="3">(3) 틀려요. 눈동자의 움직임을 조절하는 것은 뇌간의 맨 위 부분인 중뇌예요.</li>
+      <li data-explains="4">(4) 틀려요. 호흡 리듬을 부드럽게 다듬는 것은 뇌교의 일이에요. 연수는 호흡 리듬을 직접 만들어요.</li>
+      <li data-explains="5">(5) 틀려요. 단기기억을 장기기억으로 전환하는 것은 변연계의 해마예요.</li>
+      <li>수업과의 연결: 1117 수업에서 교수님이 뇌교는 호흡 리듬을 부드럽게 만들고, 연수는 호흡 리듬을 만들며 "호흡률, 심박동률 전부 연수가 조절"한다고 반복해 대비한 내용이에요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s2-brainstem">뇌간: 중뇌·뇌교·연수</a>).</li>
+    </ol>
+    <p class="answer">정답: (2)</p>
+  </details>
+</article>
+<article class="card" id="p38" data-source="생성 변형 s2-brainstem">
+  <h3>P38. [변형] 식물인간과 뇌사의 차이</h3>
+  <div class="problem"><p>사고 뒤 식물인간 상태가 된 환자에 대한 설명으로 옳지 않은 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 뇌간은 기능이 남아 있다.</li>
+      <li data-choice="2">(2) 연수가 호흡 리듬을 만들어 스스로 숨을 쉴 수 있다.</li>
+      <li data-choice="3">(3) 연수가 맡는 삼키기 반사 같은 반사가 남아 있을 수 있다.</li>
+      <li data-choice="4">(4) 뇌사 환자와 구별되는 핵심은 뇌간이 살아 있느냐이다.</li>
+      <li data-choice="5">(5) 뇌간까지 기능을 잃어 스스로 숨 쉬지 못하므로 인공호흡기가 꼭 필요하다.</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 뇌사(뇌간까지 기능 상실)와 식물인간(뇌간 생존). 근거 토픽: <a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s2-brainstem">뇌간: 중뇌·뇌교·연수</a></p></details>
+  <details class="hint" open><summary>힌트 보기</summary><p>뇌사와 식물인간을 가르는 기준은 한 가지예요. 뇌간이 살아 있는지 정하고, 뇌간의 연수가 하는 일을 이어서 떠올려요.</p></details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. 식물인간은 뇌간이 살아 있는 상태예요.</li>
+      <li data-explains="2">(2) 맞아요. 뇌간이 살아 있으니 그 아래 부분인 연수가 호흡 리듬을 만들어 호흡을 조절해요. 그래서 인공호흡기 없이도 숨을 쉴 수 있어요.</li>
+      <li data-explains="3">(3) 맞아요. 삼키기 반사는 연수가 맡는 반사라서, 연수가 살아 있는 식물인간에게는 남아 있을 수 있어요.</li>
+      <li data-explains="4">(4) 맞아요. 뇌사는 뇌간까지 기능을 잃은 상태이고 식물인간은 뇌간이 살아 있는 상태라, 둘의 차이는 뇌간이 살아 있느냐예요.</li>
+      <li data-explains="5">(5) 틀려요. 뇌간까지 기능을 잃어 인공호흡기가 꼭 필요한 것은 뇌사 환자의 특징이에요. 식물인간은 연수가 살아 있어 스스로 숨을 쉬어요.</li>
+      <li>수업과의 연결: 1117 수업에서 교수님이 뇌사와 식물인간의 차이를 "뇌간이 살아 있느냐, 뇌간까지 죽었느냐"로 설명하며, 식물인간은 호흡이 조절되어 인공호흡기가 필요 없다고 한 내용이에요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s2-brainstem">뇌간: 중뇌·뇌교·연수</a>).</li>
+    </ol>
+    <p class="answer">정답: (5)</p>
+  </details>
+</article>
+<article class="card" id="p39" data-source="생성 변형 s4-receptors">
+  <h3>P39. [변형] 감각과 수용기의 짝</h3>
+  <div class="problem"><p>감각과 그 감각을 받아들이는 수용기의 짝으로 옳지 않은 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 소리 – 기계 수용기(mechanoreceptor)</li>
+      <li data-choice="2">(2) 팔이 어디에 있는지 – 고유 수용기(proprioceptor)</li>
+      <li data-choice="3">(3) 고추의 캡사이신이 주는 매운 느낌 – 화학 수용기(chemoreceptor)</li>
+      <li data-choice="4">(4) 피부에 닿은 얼음의 차가움 – 온도 수용기(thermoreceptor)</li>
+      <li data-choice="5">(5) 사탕의 단맛 – 화학 수용기(chemoreceptor)</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 매운맛(통각)과 다섯 가지 맛(화학 수용), 자극의 종류로 나누는 수용기 이름. 근거 토픽: <a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s4-receptors">감각수용기의 다섯 종류</a></p></details>
+  <details class="hint" open><summary>힌트 보기</summary><p>짝마다 그 감각을 일으키는 자극이 진동·위치 같은 물리적 자극인지, 맛 분자 같은 화학 물질인지, 온도인지, 통증인지 가려요. 맛이 몇 가지라고 했는지도 떠올려요.</p></details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. 소리는 공기의 진동이라는 기계적 자극이라, 모세포 같은 기계 수용기가 받아들여요.</li>
+      <li data-explains="2">(2) 맞아요. 팔이나 발가락이 어디 있는지, 근육이 얼마나 수축했는지는 고유 수용기가 느껴요. 고유 수용기는 기계 수용기의 한 종류로 묶여요.</li>
+      <li data-explains="3">(3) 틀려요. 매운맛은 다섯 가지 맛(짠맛, 단맛, 쓴맛, 신맛, 감칠맛)에 들지 않아요. 캡사이신이 주는 매운 느낌은 화학 수용이 아니라 통증을 느끼는 통각 수용기(nociceptor)가 받아들여요.</li>
+      <li data-explains="4">(4) 맞아요. 차가움과 뜨거움은 온도 수용기가 느껴요. 온도 수용기는 피부와 시상하부에 있어요.</li>
+      <li data-explains="5">(5) 맞아요. 단맛은 맛 분자라는 화학 물질이 자극이라 화학 수용기가 받아들여요.</li>
+      <li>수업과의 연결: 1117 수업에서 교수님이 맛은 짠맛·단맛·쓴맛·신맛·감칠맛 다섯 가지이고, 고추의 캡사이신은 화학 수용이 아니라 통각 수용이라고 짚은 내용이에요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s4-receptors">감각수용기의 다섯 종류</a>).</li>
+    </ol>
+    <p class="answer">정답: (3)</p>
+  </details>
+</article>
+<article class="card" id="p40" data-source="생성 변형 s6-diffusion">
+  <h3>P40. [변형] 숨쉬기가 힘든 두 가지 이유</h3>
+  <div class="problem"><p>다음 두 상황에서는 모두 폐포와 모세혈관 사이의 산소 확산이 느려져 숨쉬기가 힘들어진다. 각 상황에서 확산을 느리게 만드는 요인을 옳게 짝지은 것은?</p>
+    <ul>
+      <li>(가) 해발 고도가 매우 높은 산에 올랐을 때</li>
+      <li>(나) 폐렴으로 염증이 생겨 폐포와 모세혈관 사이에 액체가 찼을 때</li>
+    </ul>
+    <ul class="choices">
+      <li data-choice="1">(1) (가) 거리 증가, (나) 농도 차이 감소</li>
+      <li data-choice="2">(2) (가) 농도 차이 감소, (나) 거리 증가</li>
+      <li data-choice="3">(3) (가) 표면적 증가, (나) 농도 차이 증가</li>
+      <li data-choice="4">(4) (가), (나) 모두 능동수송에 쓸 ATP가 부족해짐</li>
+      <li data-choice="5">(5) (가) 농도 차이 증가, (나) 거리 감소</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 높은 산(농도 차이 감소)과 폐렴(거리 증가)이 바꾸는 확산 속도의 서로 다른 변수. 근거 토픽: <a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s6-diffusion">기체 교환은 확산</a></p></details>
+  <details class="hint" open><summary>힌트 보기</summary><p>확산 속도는 표면적과 농도 차이에 비례하고, 거리에 반비례해요. 높은 산에서는 공기의 무엇이 줄어드는지, 액체가 차면 폐포와 모세혈관 사이의 무엇이 늘어나는지 생각해요.</p></details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li>상황 판정: (가) 높은 산은 대기 중 산소가 적어서 대기와 모세혈관 안의 산소 농도 차이가 줄어요. (나) 액체가 차면 폐포와 모세혈관 사이의 거리가 멀어져요. 둘 다 확산 속도를 느리게 해요.</li>
+      <li data-explains="1">(1) 틀려요. 두 상황의 요인을 서로 뒤바꿨어요. 높은 산에서 줄어드는 것은 산소 농도 차이이고, 거리가 늘어나는 것은 액체가 찬 폐렴 쪽이에요.</li>
+      <li data-explains="2">(2) 맞아요. (가)는 농도 차이 감소, (나)는 거리 증가예요. 농도 차이가 작아져도, 거리가 멀어져도 확산 속도는 느려져요.</li>
+      <li data-explains="3">(3) 틀려요. 표면적이 늘거나 농도 차이가 커지면 확산은 오히려 빨라져요. 숨쉬기가 힘든 이유가 될 수 없어요.</li>
+      <li data-explains="4">(4) 틀려요. 기체 교환은 에너지를 쓰지 않고 농도가 높은 곳에서 낮은 곳으로 저절로 움직이는 확산이에요. ATP를 쓰는 능동수송이 아니에요.</li>
+      <li data-explains="5">(5) 틀려요. 농도 차이가 커지고 거리가 줄면 확산은 빨라져요. 두 요인의 방향을 모두 거꾸로 썼어요.</li>
+      <li>수업과의 연결: 1117 수업에서 교수님이 "우리 호흡의 원리는 확산입니다"라고 강조하고, 높은 산은 농도 차이가 줄어서, 코로나 폐렴은 폐에 물이 차 거리가 멀어져서 숨쉬기가 힘들다고 서로 다른 변수로 설명한 내용이에요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s6-diffusion">기체 교환은 확산</a>).</li>
+    </ol>
+    <p class="answer">정답: (2)</p>
+  </details>
+</article>
+<article class="card" id="p41" data-source="생성 변형 s6-why-breathe">
+  <h3>P41. [변형] 폐포로 들어온 산소는 어디에 쓰일까</h3>
+  <div class="problem"><p>숨을 들이쉬면 폐포로 들어온 산소가 폐포를 둘러싼 모세혈관으로 들어가고, 혈액을 타고 몸 깊은 곳의 세포까지 간다. 이 산소가 몸속 세포에서 하는 일로 옳은 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 폐포에서 곧바로 ATP를 만들고, 몸속 세포에는 그 ATP를 전해 준다.</li>
+      <li data-choice="2">(2) 해당과정에서 포도당을 직접 반으로 쪼갠다.</li>
+      <li data-choice="3">(3) 확산으로는 들어갈 수 없어 능동수송으로만 세포 안에 들어간다.</li>
+      <li data-choice="4">(4) 세포호흡의 전자전달계 맨 끝에서 전자를 받는 최종 전자수용체가 된다.</li>
+      <li data-choice="5">(5) 세포호흡에서 내보내는 이산화탄소를 만드는 재료가 된다.</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 생리적 호흡(폐의 기체 교환)과 세포호흡(세포 안 ATP 합성)의 구별, 산소와 이산화탄소의 역할. 근거 토픽: <a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s6-why-breathe">왜 숨을 쉬어야 할까</a>, <a href="../0910/정리노트_0910_Cells_and_Cellular_Respiration.html#s5-etc">전자전달계: 전자가 산소까지 층층이</a></p></details>
+  <details class="hint" open><summary>힌트 보기</summary><p>폐는 산소를 혈액에 넣어 주는 곳이고, ATP는 세포 안에서 만들어져요. 세포호흡에서 산소가 맨 마지막에 무엇을 받아 주는지 떠올려요.</p></details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 폐에서 일어나는 것은 산소를 들이고 이산화탄소를 내보내는 생리적 호흡(기체 교환)이에요. 포도당으로 ATP를 만드는 세포호흡은 각 세포 안에서 일어나고, 그래서 산소를 세포까지 보내는 거예요.</li>
+      <li data-explains="2">(2) 틀려요. 해당과정은 산소 없이 세포질에서 효소가 포도당을 피루브산 두 개로 쪼개는 단계예요. 이때 포도당의 전자를 받는 것은 산소가 아니라 NAD⁺예요.</li>
+      <li data-explains="3">(3) 틀려요. 산소는 작고 비극성이라 수송 단백질 없이 막의 지질 부분을 직접 통과하는 단순확산으로 농도가 높은 쪽에서 낮은 쪽으로 들어가요. 에너지가 필요 없어요.</li>
+      <li data-explains="4">(4) 맞아요. 포도당에서 나온 전자는 NADH를 거쳐 미토콘드리아 내막의 전자전달계를 층층이 내려오고, 맨 끝에서 산소가 전자와 H⁺를 받아 물이 돼요. 산소가 이 최종 전자수용체 역할을 해야 세포가 에너지를 얻을 수 있어서 숨을 쉬어야 해요.</li>
+      <li data-explains="5">(5) 틀려요. 이산화탄소는 포도당의 탄소가 피루브산 산화와 시트르산 회로에서 떨어져 나온 것이에요. 들이마신 산소는 전자를 받아 이산화탄소가 아니라 물이 돼요.</li>
+      <li>수업과의 연결: 1117 수업에서 13장을 시작하며 "에너지를 얻으려면 산소가 최종 전자 수용체로 전자를 받아 줘야 하고, 깊은 곳 세포에 산소를 넣어 줄 혈액에 산소를 넣는 것이 폐"라고 설명한 내용이에요. 산소가 전자를 받아 물이 되는 과정은 0910 수업의 전자전달계에서 배웠어요(<a href="../0910/정리노트_0910_Cells_and_Cellular_Respiration.html#s5-etc">전자전달계: 전자가 산소까지 층층이</a>, <a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s6-why-breathe">왜 숨을 쉬어야 할까</a>).</li>
+    </ol>
+    <p class="answer">정답: (4)</p>
+  </details>
+</article>
+<article class="card" id="p42" data-source="생성 변형 s1-spinal-reflex">
+  <h3>P42. [변형] 압정을 밟았을 때 다리의 두 근육이 받는 신호</h3>
+  <div class="problem"><p>맨발로 걷다가 압정을 밟자, 생각하기도 전에 무릎을 굽혀 발을 들어 올렸다. 이 척수 반사에서 척수의 연합뉴런을 거쳐 같은 다리의 두 근육(굽히는 근육과 펴는 근육)의 운동뉴런으로 가는 신호에 대한 설명으로 옳은 것은? (단, 다리를 굽히는 근육이 수축하면 무릎이 굽혀지고, 다리를 펴는 근육이 수축하면 무릎이 펴진다.)</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 다리를 굽히는 근육의 운동뉴런에는 흥분성 신호가, 다리를 펴는 근육의 운동뉴런에는 억제성 신호가 간다.</li>
+      <li data-choice="2">(2) 두 근육의 운동뉴런에 모두 흥분성 신호가 가서 두 근육이 함께 수축한다.</li>
+      <li data-choice="3">(3) 다리를 굽히는 근육의 운동뉴런에는 억제성 신호가, 다리를 펴는 근육의 운동뉴런에는 흥분성 신호가 간다.</li>
+      <li data-choice="4">(4) 뇌가 먼저 통증을 느끼고 운동 명령을 내려야 발을 들어 올릴 수 있다.</li>
+      <li data-choice="5">(5) 감각뉴런이 연합뉴런을 거치지 않고 다리 근육에 직접 연결되어 근육을 수축시킨다.</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 반사에서 수축할 근육과 이완할 근육이 받는 신호(흥분성·억제성)의 짝, 반사 경로의 순서. 근거 토픽: <a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s1-spinal-reflex">척수와 척수 반사</a></p></details>
+  <details class="hint" open><summary>힌트 보기</summary><p>무릎을 굽히려면 어느 근육이 수축하고 어느 근육이 이완해야 할지 먼저 정해요. 수축할 근육과 이완할 근육이 받는 신호는 서로 달라요.</p></details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 맞아요. 무릎을 굽히려면 굽히는 근육은 수축하고 펴는 근육은 이완해야 해요. 수축할 근육의 운동뉴런에는 흥분성 신호, 이완할 근육의 운동뉴런에는 억제성 신호가 동시에 가요.</li>
+      <li data-explains="2">(2) 틀려요. 두 근육이 같이 수축하면 서로 반대 방향으로 당겨 무릎이 굽혀지지 않아요. 펴는 근육은 억제성 신호를 받아 이완해야 해요.</li>
+      <li data-explains="3">(3) 틀려요. 짝이 뒤바뀌었어요. 이렇게 신호가 가면 펴는 근육이 수축해 무릎이 펴져요. 다리를 펼 때의 신호이지 발을 들어 올릴 때의 신호가 아니에요.</li>
+      <li data-explains="4">(4) 틀려요. 척수 반사는 뇌를 기다리지 않고 척수가 먼저 근육에 명령해요. 감각 신호가 뇌로도 가긴 하지만, 통증은 발을 든 뒤에 느껴요.</li>
+      <li data-explains="5">(5) 틀려요. 반사 경로는 감각뉴런 → 척수의 연합뉴런 → 운동뉴런 → 근육 순서예요. 근육에 명령을 전하는 것은 운동뉴런이고, 감각뉴런은 근육에 직접 붙지 않아요.</li>
+      <li>수업과의 연결: 1117 수업에서 뜨거운 냄비에 손을 대는 회수 반사로, 수축하는 이두근에는 흥분성, 이완하는 삼두근에는 억제성 신호가 가고 "같이 수축하면 팔이 안 구부러진다", "펼 때는 반대"라고 설명한 내용을 다리에 옮긴 거예요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s1-spinal-reflex">척수와 척수 반사</a>).</li>
+    </ol>
+    <p class="answer">정답: (1)</p>
+  </details>
+</article>
+<article class="card" id="p43" data-source="생성 변형 s1-protection">
+  <h3>P43. [변형] 약물이 뇌로 들어가지 못하는 이유</h3>
+  <div class="problem"><p>약물 X는 혈액 속 농도가 충분히 높고, 근육 같은 다른 조직에는 모세혈관 벽의 틈을 지나 잘 퍼진다. 그런데 뇌 조직으로는 거의 들어가지 못했다. 그 이유로 가장 타당한 것은?</p>
+    <ul class="choices">
+      <li data-choice="1">(1) 뇌를 감싼 뇌척수액이 약물 X를 분해하기 때문이다.</li>
+      <li data-choice="2">(2) 뇌 모세혈관 벽의 상피세포가 밀착연접으로 단단히 붙어 있어 틈이 거의 없기 때문이다.</li>
+      <li data-choice="3">(3) 두개골이 혈액 속 약물 X가 뇌로 가는 것을 막기 때문이다.</li>
+      <li data-choice="4">(4) 뇌에는 모세혈관이 없어 혈액이 뇌 조직까지 오지 못하기 때문이다.</li>
+      <li data-choice="5">(5) 뇌 모세혈관은 일반 모세혈관보다 상피세포가 더 느슨하게 붙어 있기 때문이다.</li>
+    </ul></div>
+  <details class="original"><summary>원문 정보 보기</summary><p>원문 기출이 아닌 생성 변형이에요. 다루는 혼동: 중추신경계 보호 세 가지(뼈·뇌척수액·혈액뇌장벽)의 역할 구별, 일반 모세혈관과 뇌 모세혈관의 차이, 혈액뇌장벽의 양면성. 근거 토픽: <a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s1-protection">중추신경계를 지키는 세 가지</a></p></details>
+  <details class="hint" open><summary>힌트 보기</summary><p>다른 조직에서는 통과한 모세혈관 벽을 뇌에서는 왜 통과하지 못하는지, 두 곳 모세혈관 벽의 세포가 어떻게 붙어 있는지 비교해요.</p></details>
+  <details class="solution"><summary>풀이 보기</summary>
+    <ol class="steps">
+      <li data-explains="1">(1) 틀려요. 뇌척수액은 뇌를 물에 담가 충격을 흡수하고(두부 비유), 영양분 공급과 노폐물 제거를 도와요. 혈액 속 약물을 분해해 막는 역할이 아니에요.</li>
+      <li data-explains="2">(2) 맞아요. 일반 모세혈관은 벽의 상피세포가 느슨하게 붙어 틈이 있어 작은 분자가 빠져나가요. 뇌 모세혈관은 상피세포가 밀착연접으로 실로 꿰매듯 단단히 붙어 틈이 없어서, 혈액뇌장벽이 바이러스·독성 물질과 함께 약물도 막아요.</li>
+      <li data-explains="3">(3) 틀려요. 두개골은 바깥 충격에서 뇌를 지키는 뼈예요. 혈액은 혈관을 타고 두개골 안으로 들어오므로, 뼈가 혈액 속 물질을 걸러 내지는 못해요.</li>
+      <li data-explains="4">(4) 틀려요. 뇌에도 모세혈관이 있고, 그 모세혈관 벽이 바로 혈액뇌장벽이에요. 뇌는 포도당과 산소를 많이 쓰므로 혈액 공급이 꼭 필요해요.</li>
+      <li data-explains="5">(5) 틀려요. 거꾸로예요. 상피세포가 느슨하게 붙어 틈이 있는 것은 일반 모세혈관이고, 그랬다면 약물 X가 뇌에도 잘 들어갔을 거예요.</li>
+      <li>수업과의 연결: 1117 수업에서 중추신경계 보호 기작 세 가지(뼈, 뇌척수액, 혈액뇌장벽)를 배우며, 밀착연접이 세균·바이러스를 막아 주지만 중추신경계에 작용할 약도 막아서 장벽을 통과하는 전구물질로 넣는 방법을 쓴다고 한 양면성이에요(<a href="정리노트_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s1-protection">중추신경계를 지키는 세 가지</a>).</li>
+    </ol>
+    <p class="answer">정답: (2)</p>
+  </details>
+</article>
+    </section>
+  </main>
+  <footer>출처: 2023·2024 생명과학 기출(12강·13강 합본). 정답은 인쇄된 답안지와 독립 판단을 대조했고, 어긋난 곳은 풀이에 밝혔습니다. 변형 연습은 수업 내용으로 만든 생성 문제입니다.</footer>
+    </div>
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="panel-right-title">
+      <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-right-title">풀이 도움</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-empty">문제로 넘어가면 그 문제의 교과서 원문, 힌트, 풀이가 여기에 나옵니다. 먼저 스스로 풀어 본 뒤 여세요.</p>
+        <div class="aids"></div>
+        <button class="solved-btn" id="solved-btn" type="button" aria-pressed="false" hidden><span>푼 문제로 표시</span></button>
+      </div>
+    </aside>
+  </div>
+  <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
+  <nav class="pager" aria-label="화면 이동">
+    <div class="pager-inner">
+      <button class="btn btn-ghost" id="pager-prev" type="button">이전</button>
+      <span class="pager-count" id="pager-count"></span>
+      <button class="btn btn-primary" id="pager-next" type="button">시작하기</button>
+    </div>
+  </nav>
+  <p class="sr-only" id="pager-status" aria-live="polite"></p>
+
+  <script id="theme-ui">
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const sysDark = matchMedia('(prefers-color-scheme: dark)');
+      const KEY = 'od-theme';
+      const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+      function label() {
+        const next = isDark() ? '라이트 모드로 전환' : '다크 모드로 전환';
+        btn.setAttribute('aria-label', next);
+        btn.title = next;
+      }
+      btn.addEventListener('click', () => {
+        const t = isDark() ? 'light' : 'dark';
+        // 시스템 설정과 같아지면 저장을 지워 다시 시스템을 따른다
+        if ((t === 'dark') === sysDark.matches) { delete root.dataset.theme; try { localStorage.removeItem(KEY); } catch (e) {} }
+        else { root.dataset.theme = t; try { localStorage.setItem(KEY, t); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+        label();
+      });
+      sysDark.addEventListener('change', label);
+      window.addEventListener('storage', (e) => {
+        if (e.key !== KEY) return;
+        if (e.newValue === 'light' || e.newValue === 'dark') root.dataset.theme = e.newValue; else delete root.dataset.theme;
+        label();
+      });
+      label();
+    })();
+  </script>
+  <script id="panels-ui">
+    (function () {
+      const body = document.body;
+      const layout = document.querySelector('.layout');
+      const kind = body.dataset.panels;
+      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const scrim = document.getElementById('panel-scrim');
+      const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
+      const wideMq = matchMedia('(min-width: 1024px)');
+      const roomyMq = matchMedia('(min-width: 1280px)');
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      // 푼 기록은 탭(세션) 단위로만 유지: 뒤로가기·새로고침엔 남고, 창을 닫고 다시 열면 초기화
+      const tabStore = {
+        get(k, d) { try { const v = sessionStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      const PREF = 'od-panels:' + kind;
+      // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
+      const RANGE = body.dataset.range || '';
+      const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+      const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+      let overlay = null;
+
+      // ---------- 열고 닫기 ----------
+      function docked() {
+        const pref = store.get(PREF, {});
+        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+      }
+      function sync() {
+        const wide = wideMq.matches;
+        const d = docked();
+        ['left', 'right'].forEach((side) => {
+          const open = wide ? d[side] : overlay === side;
+          const p = panels[side];
+          layout.dataset[side] = open ? 'open' : 'closed';
+          p.classList.toggle('is-open', !wide && open);
+          p.inert = !open;
+          if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
+          toggles[side].setAttribute('aria-expanded', String(open));
+        });
+        const drawer = !wide && overlay !== null;
+        scrim.classList.toggle('is-on', drawer);
+        body.classList.toggle('drawer-open', drawer);
+        blockers.forEach((el) => { el.inert = drawer; });
+      }
+      function openDrawer(side) {
+        overlay = side;
+        sync();
+        requestAnimationFrame(() => panels[side].querySelector('[data-panel-close]').focus());
+      }
+      function closeDrawer(refocus) {
+        if (overlay === null) return;
+        const side = overlay;
+        overlay = null;
+        sync();
+        if (refocus) toggles[side].focus();
+      }
+      function toggle(side) {
+        if (wideMq.matches) {
+          const d = docked();
+          d[side] = !d[side];
+          store.set(PREF, d);
+          sync();
+          if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+        } else if (overlay === side) closeDrawer(true);
+        else openDrawer(side);
+      }
+
+      toggles.left.addEventListener('click', () => toggle('left'));
+      toggles.right.addEventListener('click', () => toggle('right'));
+      scrim.addEventListener('click', () => closeDrawer(true));
+      document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
+      panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
+
+      // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      function applyWidths() {
+        const w = store.get(PREF + ':w', {});
+        ['left', 'right'].forEach((side) => {
+          if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
+          else layout.style.removeProperty(WIDTH[side].prop);
+        });
+      }
+      function maxFor(side) {
+        const other = side === 'left' ? panels.right : panels.left;
+        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
+      }
+      function setWidth(side, px, save) {
+        const v = Math.round(Math.min(Math.max(px, WIDTH[side].min), maxFor(side)));
+        layout.style.setProperty(WIDTH[side].prop, v + 'px');
+        panels[side].querySelector('.panel-resize').setAttribute('aria-valuenow', String(v));
+        if (save) { const w = store.get(PREF + ':w', {}); w[side] = v; store.set(PREF + ':w', w); }
+      }
+      function resetWidth(side) {
+        const w = store.get(PREF + ':w', {});
+        delete w[side];
+        store.set(PREF + ':w', w);
+        layout.style.removeProperty(WIDTH[side].prop);
+      }
+      document.querySelectorAll('.panel-resize').forEach((handle) => {
+        const side = handle.dataset.side;
+        const dir = side === 'left' ? 1 : -1;
+        handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
+        handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
+        handle.addEventListener('pointerdown', (e) => {
+          if (!wideMq.matches || e.button !== 0) return;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startW = panels[side].getBoundingClientRect().width;
+          handle.setPointerCapture(e.pointerId);
+          body.classList.add('is-resizing');
+          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const up = () => {
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', up);
+            handle.removeEventListener('pointercancel', up);
+            body.classList.remove('is-resizing');
+            setWidth(side, panels[side].getBoundingClientRect().width, true);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', up);
+          handle.addEventListener('pointercancel', up);
+        });
+        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('keydown', (e) => {
+          const step = e.shiftKey ? 64 : 16;
+          const cur = panels[side].getBoundingClientRect().width;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+        });
+      });
+      applyWidths();
+      const onMq = () => { overlay = null; sync(); };
+      wideMq.addEventListener('change', onMq);
+      roomyMq.addEventListener('change', onMq);
+
+      // ---------- 목차의 진행 표시 ----------
+      const progressN = document.getElementById('progress-n');
+      const progressBar = document.getElementById('progress-bar');
+      const progressTotal = document.getElementById('progress-total');
+      function markToc(done, total, doneLabel) {
+        panels.left.querySelectorAll('.toc-list a').forEach((a) => {
+          const id = decodeURIComponent(a.getAttribute('href').slice(1));
+          let mark = a.querySelector('.toc-mark');
+          if (!mark) {
+            mark = document.createElement('span');
+            mark.className = 'toc-mark';
+            mark.setAttribute('aria-hidden', 'true');
+            const state = document.createElement('span');
+            state.className = 'sr-only toc-state';
+            a.append(mark, state);
+          }
+          const isDone = done.has(id);
+          mark.classList.toggle('is-done', isDone);
+          mark.innerHTML = isDone ? ICON_DONE : ICON_TODO;
+          a.querySelector('.toc-state').textContent = isDone ? ' (' + doneLabel + ')' : '';
+        });
+        progressN.textContent = String(done.size);
+        progressTotal.textContent = String(total);
+        progressBar.style.transform = 'scaleX(' + (total ? done.size / total : 0) + ')';
+      }
+      function revealCurrent() {
+        const link = panels.left.querySelector('.toc-list a[aria-current="true"]');
+        if (link && layout.dataset.left === 'open') link.scrollIntoView({ block: 'nearest' });
+      }
+
+      // ---------- 복습문제: 오른쪽 = 원문 · 힌트 · 풀이 ----------
+      function setupReview() {
+        const KEY = 'od-review-solved:' + RANGE;
+        const cards = Array.from(document.querySelectorAll('main article.card'));
+        const aids = panels.right.querySelector('.aids');
+        const empty = panels.right.querySelector('.panel-empty');
+        const btn = document.getElementById('solved-btn');
+        const groups = {};
+        const solved = new Set(tabStore.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        cards.forEach((card) => {
+          const g = document.createElement('div');
+          g.className = 'aid';
+          g.dataset.cardId = card.id;
+          g.hidden = true;
+          card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
+          aids.appendChild(g);
+          groups[card.id] = g;
+        });
+        let curId = null;
+        function paintBtn() {
+          const on = solved.has(curId);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.innerHTML = (on ? ICON_DONE : ICON_TODO) + '<span>' + (on ? '푼 문제 · 표시 해제' : '푼 문제로 표시') + '</span>';
+        }
+        btn.addEventListener('click', () => {
+          if (!curId) return;
+          if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
+          tabStore.set(KEY, Array.from(solved));
+          paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:answer', ({detail}) => {
+          if (!cards.some(c => c.id === detail.id)) return;
+          if (detail.restored && detail.selected !== null) return;
+          if (detail.selected === null) solved.delete(detail.id);
+          else solved.add(detail.id);
+          tabStore.set(KEY, Array.from(solved));
+          if (curId) paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          curId = s.matches('article.card') ? s.id : null;
+          Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
+          empty.hidden = Boolean(curId);
+          btn.hidden = !curId;
+          if (curId) paintBtn();
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(solved, cards.length, '푼 문제');
+          revealCurrent();
+        });
+      }
+
+      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
+      function setupNote() {
+        const KEY = 'od-note-read:' + RANGE;
+        const topics = Array.from(document.querySelectorAll('main article.topic'));
+        const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
+        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
+        const box = panels.right.querySelector('.sums');
+        const sums = {};
+        topics.forEach((t) => {
+          const el = t.querySelector(':scope > .sum');
+          if (!el) return;
+          el.hidden = true;
+          box.appendChild(el);
+          sums[t.id] = el;
+        });
+        const empty = document.getElementById('sum-empty');
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          const key = s.matches('article.topic') ? s.id : 'intro';
+          Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
+          empty.hidden = Boolean(sums[key]);
+          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(read, topics.length, '읽음');
+          revealCurrent();
+        });
+      }
+
+      if (kind === 'review') setupReview();
+      if (kind === 'note') setupNote();
+      sync();
+    })();
+  </script>
+  <script id="pager-ui">
+    (function () {
+      const root = document.documentElement;
+      const main = document.querySelector('main');
+      const hero = main.querySelector('.hero');
+      const screens = [hero].concat(Array.from(main.querySelectorAll(document.body.dataset.screens)));
+      if (screens.length < 2) { root.classList.remove('js'); return; }
+      screens.forEach((s) => s.classList.add('screen'));
+
+      const last = screens.length - 1;
+      const prevBtn = document.getElementById('pager-prev');
+      const nextBtn = document.getElementById('pager-next');
+      const count = document.getElementById('pager-count');
+      const bar = document.getElementById('pager-bar');
+      const status = document.getElementById('pager-status');
+      const toc = document.querySelector('#panel-left .toc');
+      const scroller = document.querySelector('.content');
+      const titleOf = (s) => ((s.querySelector('h3') || s.querySelector('h1') || {}).textContent || '').trim();
+      let cur = -1;
+
+      // 목차: 섹션 링크 아래에 화면(토픽·카드) 목록을 붙인다
+      const tocLinks = [];
+      Array.from(toc.querySelectorAll(':scope > a')).forEach((a) => {
+        const sec = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+        const group = document.createElement('div');
+        group.className = 'toc-group';
+        a.replaceWith(group);
+        group.appendChild(a);
+        if (!sec) return;
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        screens.forEach((s, i) => {
+          if (!sec.contains(s)) return;
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#' + s.id;
+          link.innerHTML = '<span class="toc-title"></span>';
+          link.firstChild.textContent = titleOf(s);
+          li.appendChild(link);
+          list.appendChild(li);
+          tocLinks[i] = link;
+        });
+        group.appendChild(list);
+      });
+
+      function indexFor(hash) {
+        const id = decodeURIComponent((hash || '').replace(/^#/, ''));
+        const el = id && document.getElementById(id);
+        if (!el || !main.contains(el)) return { i: 0 };
+        const i = screens.findIndex((s) => s.contains(el) || el.contains(s));
+        return { i: Math.max(i, 0), target: i >= 0 && screens[i].contains(el) && screens[i] !== el ? el : null };
+      }
+
+      function render(i, target) {
+        const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
+        if (i !== cur) {
+          if (cur >= 0) document.dispatchEvent(new CustomEvent('od:leave', { detail: { index: cur, screen: screens[cur] } }));
+          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
+          main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
+          const s = screens[i];
+          const sec = s.closest('section');
+          if (sec) sec.classList.add('is-on');
+          s.classList.add('is-current');
+          if (dir) { s.classList.remove('enter-next', 'enter-prev'); void s.offsetWidth; s.classList.add(dir); }
+          cur = i;
+          document.body.classList.toggle('at-end', i === last);
+          prevBtn.disabled = i === 0;
+          nextBtn.textContent = i === 0 ? '시작하기' : i === last ? '처음으로' : '다음';
+          count.textContent = i === 0 ? '' : i + ' / ' + last;
+          bar.style.transform = 'scaleX(' + (i / last) + ')';
+          status.textContent = i === 0 ? titleOf(s) : i + ' / ' + last + ', ' + titleOf(s);
+          tocLinks.forEach((link, k) => link && link.setAttribute('aria-current', String(k === i)));
+          document.dispatchEvent(new CustomEvent('od:screen', { detail: { index: i, screen: s } }));
+        }
+        if (target) target.scrollIntoView({ block: 'start' });
+        else scroller.scrollTo(0, 0);
+      }
+
+      function go(i) {
+        i = Math.min(Math.max(i, 0), last);
+        if (i === cur) return;
+        const url = i === 0 ? location.pathname + location.search : '#' + screens[i].id;
+        history.pushState(null, '', url);
+        render(i);
+      }
+
+      prevBtn.addEventListener('click', () => go(cur - 1));
+      nextBtn.addEventListener('click', () => go(cur === last ? 0 : cur + 1));
+      const fromUrl = () => { const r = indexFor(location.hash); render(r.i, r.target); };
+      window.addEventListener('hashchange', fromUrl);
+      window.addEventListener('popstate', fromUrl);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+
+      // 좌우로 밀어서 넘기기 (가로로 스크롤되는 영역은 제외)
+      let sx = 0, sy = 0, skip = true;
+      main.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (skip) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 64 && Math.abs(dx) > 2 * Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      fromUrl();
+    })();
+  </script>
+<!-- review-interaction:start -->
+<style>
+/* Progressive enhancement: original source remains readable without scripts. */
+.review-ready .choices { list-style:none; padding:0; }
+.review-ready .choices > li { margin:0 0 var(--s3); }
+.review-choice {
+  display:block; width:100%; min-height:44px; text-align:left; font:inherit;
+  color:var(--ink); background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:12px 16px; cursor:pointer; overflow-wrap:anywhere;
+}
+.review-choice:hover { border-color:var(--accent); }
+.review-choice:focus-visible, .review-reset:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+.review-choice[aria-expanded] { position:relative; padding-right:44px; }
+.review-choice[aria-expanded]::after { content:""; position:absolute; right:18px; top:20px; width:8px; height:8px; border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor; transform:rotate(45deg); }
+.review-choice[aria-expanded="true"]::after { transform:rotate(225deg); top:24px; }
+.review-choice[data-result="correct"], .review-choice[data-result="intended"] { border:3px solid var(--accent); }
+.review-choice[data-result="selected"] { border:3px solid var(--danger); }
+.review-choice[data-result="uncertain"] { border:3px solid var(--ink-2); }
+.review-choice-label { display:block; margin-top:6px; font-size:var(--fs-small); font-weight:700; color:var(--ink); }
+.review-choice-label[hidden], .review-diagnostic[hidden], .review-extra[hidden],
+.review-reset[hidden], .review-diagnostics[hidden] { display:none; }
+.review-diagnostics { list-style:none; padding:0; margin:0; }
+.review-diagnostic { padding:12px 16px 8px; color:var(--ink-2); overflow-wrap:anywhere; }
+.review-status { margin:var(--s3) 0; font-weight:650; }
+.review-status:empty { display:none; }
+.review-reset { min-height:44px; margin:var(--s2) 0 var(--s4); }
+.review-choice-content { padding:var(--s2) 0; }
+/* Look comes from the template's .solved-btn; only visibility and focus live here. */
+.review-unsure[hidden] { display:none; }
+.review-unsure.solved-btn[aria-pressed="true"] { border-color:#ffa030; color:#ffa030; }
+.review-unsure:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+.review-feedback {
+  position:fixed; top:calc(env(safe-area-inset-top) + 72px); left:50%; z-index:100;
+  transform:translateX(-50%); width:max-content; max-width:calc(100vw - 32px);
+  display:flex; align-items:center; gap:12px; padding:10px 16px;
+  border:2px solid var(--line); border-radius:12px; background:var(--bg);
+  color:var(--ink); font-weight:700; pointer-events:none;
+  animation:review-feedback-in 180ms ease-out both;
+}
+.review-feedback[data-result="correct"] { border-color:var(--accent); }
+.review-feedback[data-result="incorrect"] { border-color:var(--danger); }
+.review-feedback[data-result="copied"], .review-feedback[data-result="manual"] { border-color:var(--accent); }
+.review-feedback[data-result="copied"] .review-feedback-icon { border-radius:50%; background:var(--accent); }
+.review-feedback[data-result="copied"] .review-feedback-icon::after {
+  content:""; position:absolute; left:7px; top:3px; width:5px; height:10px;
+  border:solid var(--on-btn); border-width:0 2px 2px 0; rotate:45deg;
+}
+.review-feedback[data-result="unsure"] .review-feedback-icon { display:none; }
+.review-feedback[data-result="manual"] .review-feedback-icon { display:none; }
+.review-feedback-icon { position:relative; flex:none; width:20px; height:20px; }
+.review-feedback[data-result="correct"] .review-feedback-icon {
+  border-radius:50%; background:var(--accent); transform:scale(.45);
+  animation:review-pop 350ms ease-out both;
+}
+.review-feedback[data-result="correct"] .review-feedback-icon::before,
+.review-feedback[data-result="correct"] .review-feedback-icon::after {
+  content:""; position:absolute; left:8px; top:8px; width:4px; height:4px;
+  border-radius:50%; background:var(--accent);
+  box-shadow:0 -16px var(--accent), 16px 0 var(--accent), 0 16px var(--accent), -16px 0 var(--accent);
+  animation:review-burst 650ms ease-out both;
+}
+.review-feedback[data-result="correct"] .review-feedback-icon::after {
+  rotate:45deg; animation-delay:80ms;
+}
+.review-feedback[data-result="incorrect"] .review-feedback-icon {
+  animation:review-shake 320ms ease-in-out;
+}
+.review-feedback[data-result="incorrect"] .review-feedback-icon::before,
+.review-feedback[data-result="incorrect"] .review-feedback-icon::after {
+  content:""; position:absolute; left:9px; top:0; width:3px; height:20px;
+  border-radius:2px; background:var(--danger); rotate:45deg;
+}
+.review-feedback[data-result="incorrect"] .review-feedback-icon::after { rotate:-45deg; }
+@keyframes review-feedback-in {
+  from { opacity:0; translate:0 -8px; } to { opacity:1; translate:0 0; }
+}
+@keyframes review-pop {
+  from { transform:scale(.35); opacity:.5; } to { transform:scale(.65); opacity:1; }
+}
+@keyframes review-shake {
+  0%,100% { translate:0; } 25%,75% { translate:-5px; } 50% { translate:5px; }
+}
+@keyframes review-burst {
+  from { opacity:1; scale:.45; } to { opacity:0; scale:1.5; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .review-feedback, .review-feedback-icon, .review-feedback-icon::before,
+  .review-feedback-icon::after { animation:none !important; }
+  .review-feedback[data-result="correct"] .review-feedback-icon::before,
+  .review-feedback[data-result="correct"] .review-feedback-icon::after { display:none; }
+}
+.review-export-bar {
+  display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:12px;
+  max-width:var(--measure); margin:0 auto; padding:12px 16px 0;
+}
+body:not(.at-end) .review-export-bar { display:none; }
+.review-export-note { margin:0; font-size:var(--fs-small); color:var(--ink-2); }
+.review-export-note:empty { display:none; }
+@media print {
+  .review-export-bar { display:none !important; }
+  .review-feedback { display:none !important; }
+  .review-reset, .review-status, .review-choice-label, .review-unsure { display:none !important; }
+  .review-diagnostic[hidden] { display:list-item !important; }
+  .review-diagnostics[hidden] { display:block !important; }
+  .review-choice::after { display:none; }
+  .review-extra[hidden] { display:block !important; }
+  .review-choice { border:0 !important; box-shadow:none !important; padding:0; }
+}
+
+</style>
+<script id="review-interaction-model" type="application/json">{"cards": {"p1": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "10f475389efc0adb035b475f6148f24c4d677a15ee5d94353491f14215f42e83"}, "p10": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "41ccddfc1caf8e71d3996bf304e281d7ab055b300f40ced7d84b18e2b8331dc7"}, "p11": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 1, "id": "1", "index": 0}, {"diagnostic": 2, "id": "2", "index": 1}, {"diagnostic": 3, "id": "3", "index": 2}, {"diagnostic": 4, "id": "4", "index": 3}, {"diagnostic": 5, "id": "5", "index": 4}], "version": "deef1b9adc76bc614d2e2fa3bb7e865613fd2dd393bd6025d37b1f4ac9a0fdc9"}, "p12": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "8ad3aeeae8b44c814c8d4ca7613a919e1f52a9f1a0e8166cfa0b8dc0fbc4ee18"}, "p13": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "80b54a9cda06ccc19370c43e0210e17e7e542a3c8506dd655da1513e5dfd9429"}, "p14": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "ea23e09ff699adc17a89f5a5fdcc6606a03c3d4c9418077d55d44f05db15fb09"}, "p15": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "7d775ab398805a8f6b42f15f0d9ab2127fd42e76095ac448c271645505913fe6"}, "p16": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "dfc773e6eb39d12b2b02e278f7e32c57701c8c0db9779666160277833732991d"}, "p17": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "c7e3414715e3cde31aedd96086832d25a475816d91905cb64235b181cfe8f044"}, "p18": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "0a3b962fb3f7079fd35ef65e0780daaffc1ec4232da0c549aeb113991fc5ab72"}, "p19": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "957d28d89a9219aa8115061569ead165f388a5f98e87dc8689155997f7122e12"}, "p2": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "91262e478bb831d600b5cef33c65665ceb55e979187b003b11ef9f5330d6b182"}, "p20": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "a5dfcc4d158245596873686a9dda868dc26da1aa7ede6dbe70d1ddeaceb713d5"}, "p21": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "68da452820535c79eb9282524b7a5466cc23175186255e823860b4feaaa67f07"}, "p22": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "73b37fa056678e5540f6751b68918fd1bf5d4147bf53eef9dc41351a7a620769"}, "p23": {"answer": "5", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "a5389e18f94f8b2e19a3629c717386592cb63d183bd98bba392f240f32afc3b3"}, "p24": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "29530497086d499f529e84422ca9954cd2f404ad18568921fc667acec089f80e"}, "p25": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "511b22f118c71d60abb35a19404a64f5dcc0254fc53b3d8dbfaec05140e87c21"}, "p26": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "31af69440aa74ab6aa4833bdca849fd6f77c72eb8a028fe61baff708ddea7e1e"}, "p27": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "d7e7c5f8f364779090393e8d24548bb5ed056718800eb57ec4143c383c041a12"}, "p28": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "f6f0b90d60f74116b0d974967efe767553fb298de418400846adb91c93558e98"}, "p29": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "4c44d5bde4b43c0e116a58438cc8a2cf117086160e7790e5b9fa821e468cae9e"}, "p3": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "f77e46005995eaceb4b35d1bd407327724c75ba92dae49de554f3ad86a5b8b2f"}, "p30": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "469e849f36c09d2045461fa48888f327a8c58cbfd7ea942a8d3e623860f79497"}, "p31": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "52dba45fff99716a629ae7e9ef1c8f947717205b01033e4b5cf12f6fcc9b94cc"}, "p32": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 1, "id": "1", "index": 0}, {"diagnostic": 2, "id": "2", "index": 1}, {"diagnostic": 3, "id": "3", "index": 2}, {"diagnostic": 4, "id": "4", "index": 3}, {"diagnostic": 5, "id": "5", "index": 4}], "version": "4e13cc723d99215cb3a5a07fb4141ed69c3f65171a96a389e80d494927e1f260"}, "p33": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "4c2a9a5b44f9101a8780e88503940382a18fcc52f4dbd771e442eae6bd9ca53d"}, "p34": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 1, "id": "1", "index": 0}, {"diagnostic": 2, "id": "2", "index": 1}, {"diagnostic": 3, "id": "3", "index": 2}, {"diagnostic": 4, "id": "4", "index": 3}, {"diagnostic": 5, "id": "5", "index": 4}], "version": "6e821c2ce0fa792224ea4d932cc65879feb91adee4712724db891a5e888218fe"}, "p35": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 1, "id": "1", "index": 0}, {"diagnostic": 2, "id": "2", "index": 1}, {"diagnostic": 3, "id": "3", "index": 2}, {"diagnostic": 4, "id": "4", "index": 3}, {"diagnostic": 5, "id": "5", "index": 4}], "version": "17c12ceb6518331c084e3e8f4908ba93e04c21f36bd4c09938c75408b1784544"}, "p36": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 3, "id": "1", "index": 0}, {"diagnostic": 4, "id": "2", "index": 1}, {"diagnostic": 5, "id": "3", "index": 2}, {"diagnostic": 6, "id": "4", "index": 3}, {"diagnostic": 7, "id": "5", "index": 4}], "version": "cc6825dc1c005b7472e3cf9353a215a59a3167c4b96097149ec53936eaaa8730"}, "p37": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 1, "id": "1", "index": 0}, {"diagnostic": 2, "id": "2", "index": 1}, {"diagnostic": 3, "id": "3", "index": 2}, {"diagnostic": 4, "id": "4", "index": 3}, {"diagnostic": 5, "id": "5", "index": 4}], "version": "a0dc1ea7930df2eb320c71508cb924bca898b2e3c161c03358f9c9e064bcb74f"}, "p38": {"answer": "5", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "f7a022f76a8f3f642f4869cd2fdb4dc301586f9269dcad3061b2f6dcf5758c12"}, "p39": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "3031e1a874ab47fb233e9e44eb24ef59491d6dd702fd9cc599d98087fe34b6dd"}, "p4": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "d3062637c127943fb9bef84e50dc64fc820b56667564e636e5ab98b178a3f7d4"}, "p40": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 1, "id": "1", "index": 0}, {"diagnostic": 2, "id": "2", "index": 1}, {"diagnostic": 3, "id": "3", "index": 2}, {"diagnostic": 4, "id": "4", "index": 3}, {"diagnostic": 5, "id": "5", "index": 4}], "version": "605fc1f19eff9581b5d34ddc3a106d905288737c3354d81a73427313e9d29bc5"}, "p41": {"answer": "4", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "ba6be3001ba5999c2d2cd620d0d17aa8bdbc7789259abab303922aeb45581ffc"}, "p42": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "61ed25ae002296279d1e5376b2fb00c7f8b8303bb4269b7f6dd181c6ac886083"}, "p43": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "2359a21b2e1d0a74d5179ac68577ade1370537996cef87eab57c1fe270e5add7"}, "p5": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "6ab3316d4ff976b41b22a1034c4cd81425b6a499b0792d534f64045fa51cc3a3"}, "p6": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "f76948166abc2da2d3ee2ea3b5433786906fa5885c995e56b550083d1acf7a7f"}, "p7": {"answer": "1", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "06fc1447db54bdb273379a6b62ca833e1925473b7919b36c94b2cadbe77ebd17"}, "p8": {"answer": "2", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "6d81fd5619fea9190526820d016197fd77fbfe11efe79173fb46678b104f531c"}, "p9": {"answer": "3", "mode": "single", "notice": "", "options": [{"diagnostic": 0, "id": "1", "index": 0}, {"diagnostic": 1, "id": "2", "index": 1}, {"diagnostic": 2, "id": "3", "index": 2}, {"diagnostic": 3, "id": "4", "index": 3}, {"diagnostic": 4, "id": "5", "index": 4}], "version": "706b0e2a9fd427965f87298ded3037d45df72c10c71b43286658aff911ba1d31"}}, "documentId": "복습문제_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html", "errors": [], "schema": 1, "skipped": []}</script>
+<script>
+(function (scope) {
+  'use strict';
+  const GROUPS = [
+    ['incorrect', '오답'],
+    ['unsure', '애매함 표시(맞혔지만 확신 없음)'],
+    ['pending', '자기채점 대기'],
+    ['unanswered', '미응답'],
+    ['ambiguous', '출제 모호'],
+  ];
+  const KIND = {review:'복습문제', exam:'시험 예상문제'};
+  const GROUP_RULE = '2. 다시 볼 문항을 개념별로 묶고, 반복되거나 선행 개념인 묶음부터 다뤄.';
+  const DEEP_RULE = '2. 오답·애매함·미응답 문항이 없어. 아래 맞힌 문항이 다룬 개념을 조건을 바꾼 변형 질문으로 하나씩 확인해서, 실제로 이해했는지 찍었는지 가려 줘.';
+
+  function countBy(items) {
+    const counts = {correct:0, unsure:0, incorrect:0, unanswered:0, ambiguous:0, pending:0};
+    items.forEach(item => {counts[item.status] = (counts[item.status] || 0) + 1;});
+    return counts;
+  }
+  function summaryLine(items) {
+    const c = countBy(items);
+    let line = `- 문항 ${items.length}개 · 응답 ${items.length - c.unanswered} · 정답 ${c.correct + c.unsure}(그중 애매함 ${c.unsure})` +
+      ` · 오답 ${c.incorrect} · 미응답 ${c.unanswered}`;
+    if (c.pending) line += ` · 자기채점 대기 ${c.pending}`;
+    if (c.ambiguous) line += ` · 출제 모호 ${c.ambiguous}`;
+    return line;
+  }
+  function answerLine(item) {
+    if (item.format === 'short') {
+      const mine = item.selected == null ? '없음' : `"${item.selected}"`;
+      const accepted = item.accepted && item.accepted.length ? ` (허용: ${item.accepted.join(', ')})` : '';
+      return `내 답: ${mine} / 정답: ${item.answer}${accepted}`;
+    }
+    const mine = item.selected == null ? '없음' : `[${item.selected}]`;
+    return `내 답: ${mine} / 정답: [${item.answer}]`;
+  }
+  function itemBlock(item) {
+    const lines = [`#### ${item.id}. ${item.title}`, `문제: ${item.stem}`];
+    if (item.format !== 'short' && item.options && item.options.length) {
+      lines.push('보기:');
+      item.options.forEach(opt => lines.push(`- [${opt.id}] ${opt.text}`));
+    }
+    lines.push(answerLine(item));
+    if (item.explanations && item.explanations.length) {
+      lines.push('해설:');
+      item.explanations.forEach(e => lines.push(e.label ? `- ${e.label}: ${e.text}` : `- ${e.text}`));
+    }
+    return lines.join('\n');
+  }
+  function buildReviewPrompt(record) {
+    const items = record.items || [];
+    const range = record.range;
+    const review = items.filter(item => item.status !== 'correct');
+    const correct = items.filter(item => item.status === 'correct');
+    const out = [
+      '# 생명과학 복기 요청',
+      '',
+      `너는 내 생명과학 튜터야. 아래는 내가 방금 푼 ${KIND[record.kind] || KIND.review}(${range})의 풀이 기록이야. 이 기록을 출발점으로 내 약한 개념을 찾아 대화로 보완 학습을 진행해 줘.`,
+      '',
+      '## 진행 규칙',
+      '1. 먼저 기록에서 보이는 핵심 진단을 짧게 공유해. 확인된 사실(내 선택, 정답)과 네 가설을 구분하고, 정답률만으로 이해도를 단정하지 마.',
+      review.length ? GROUP_RULE : DEEP_RULE,
+      '3. 한 번에 한 개념만 겨냥한 질문을 하나씩 내. 보기는 숫자로 달고, "모르겠다"와 "답은 골랐지만 찍었거나 확신이 없다"를 별도 숫자 보기로 넣어. 나는 숫자만 답해도 돼.',
+      '4. 원래 문항을 그대로 다시 묻지 말고, 조건이나 비교 대상을 한 가지만 바꾼 새 질문으로 확인해.',
+      '5. 내가 틀리거나 확신이 없으면 맞는 부분과 잘못 연결한 부분을 짚고, 표현을 바꾼 재확인 질문을 한 번 더 내. 설명을 본 뒤 맞힌 것은 "코칭 후 이해"로 기록하고 원래 알던 것으로 치지 마.',
+      `6. "출제 모호" 문항은 내 오개념의 증거로 쓰지 마. 해설은 진단 근거로만 쓰고, 이 범위(${range}) 수업 밖 내용으로 넓히지 마.`,
+      '7. "자기채점 대기" 단답형은 먼저 내 답이 정답·허용답과 같은 뜻인지 판정해 줘.',
+      '8. 모든 묶음을 다루거나 내가 그만하자고 하면 다음 다섯 항목으로 정리해 줘: 내가 어려웠던 부분 / 코칭한 부분 / 학습한 부분 / 아직 어려운 부분 / 복습해야 할 부분.',
+      '',
+      '## 기록 요약',
+      `- 자료: ${record.documentId}`,
+      summaryLine(items),
+      '',
+    ];
+    if (review.length) {
+      out.push('## 다시 볼 문항', '');
+      GROUPS.forEach(([status, title]) => {
+        const group = review.filter(item => item.status === status);
+        if (!group.length) return;
+        out.push(`### ${title}`, '');
+        group.forEach(item => out.push(itemBlock(item), ''));
+      });
+    }
+    if (correct.length) {
+      out.push('## 확신 있게 맞힌 문항');
+      correct.forEach(item => out.push(`- ${item.id}. ${item.title}`));
+      out.push('');
+    }
+    out.push('준비됐으면 핵심 진단부터 공유하고 첫 질문을 내 줘.');
+    return out.join('\n') + '\n';
+  }
+
+  function problemText(problemEl) {
+    const clone = problemEl.cloneNode(true);
+    clone.querySelectorAll('.choices').forEach(node => node.remove());
+    // KaTeX may already have rendered; restore its TeX source instead of MathML + glyph text.
+    clone.querySelectorAll('.katex').forEach(node => {
+      const tex = node.querySelector('annotation[encoding="application/x-tex"]');
+      if (!tex) return;
+      const fence = node.closest('.katex-display') ? '$$' : '$';
+      node.replaceWith(clone.ownerDocument.createTextNode(fence + tex.textContent.trim() + fence));
+    });
+    clone.querySelectorAll('img').forEach(img => {
+      img.replaceWith(clone.ownerDocument.createTextNode(` [그림: ${img.getAttribute('alt') || ''}] `));
+    });
+    return clone.textContent.replace(/\s+/g, ' ').trim();
+  }
+
+  function execCopy(win, text) {
+    const doc = win.document;
+    const area = doc.createElement('textarea');
+    area.value = text;
+    area.setAttribute('readonly', '');
+    area.style.position = 'fixed';
+    area.style.top = '0';
+    area.style.left = '-9999px';
+    area.style.opacity = '0';
+    doc.body.append(area);
+    try {
+      area.select();
+      return doc.execCommand('copy') === true;
+    } catch (_) {
+      return false;
+    } finally {
+      area.remove();
+    }
+  }
+  async function copyText(win, text) {
+    const clipboard = win.navigator && win.navigator.clipboard;
+    if (clipboard && typeof clipboard.writeText === 'function') {
+      try {
+        await clipboard.writeText(text);
+        return true;
+      } catch (_) {}
+    }
+    return execCopy(win, text);
+  }
+
+  const DIALOG_CSS = `
+.review-prompt-dialog{width:min(44rem,calc(100vw - 2rem));max-height:calc(100vh - 2rem);padding:1rem 1.1rem;border:1px solid #c9ccd3;border-radius:10px;background:#fff;color:#1d2330;box-shadow:0 12px 36px rgba(0,0,0,.18)}
+.review-prompt-dialog::backdrop{background:rgba(15,20,30,.45)}
+.review-prompt-dialog h2{margin:0 0 .35rem;font-size:1.05rem}
+.review-prompt-dialog p{margin:0 0 .6rem;font-size:.9rem;color:#4a5263}
+.review-prompt-dialog textarea{display:block;box-sizing:border-box;width:100%;height:min(55vh,28rem);padding:.6rem;border:1px solid #c9ccd3;border-radius:6px;font:13px/1.5 ui-monospace,Consolas,monospace;resize:vertical}
+.review-prompt-dialog .review-prompt-actions{display:flex;justify-content:flex-end;margin-top:.7rem}
+.review-prompt-dialog button{padding:.4rem 1rem;border:1px solid #c9ccd3;border-radius:6px;background:#f4f5f7;color:inherit;font:inherit;cursor:pointer}
+@media (prefers-color-scheme:dark){.review-prompt-dialog{background:#1e222b;color:#e6e8ee;border-color:#3a404d}.review-prompt-dialog p{color:#aab1c0}.review-prompt-dialog textarea{background:#14171d;color:#e6e8ee;border-color:#3a404d}.review-prompt-dialog button{background:#2a2f3a;border-color:#3a404d}}
+`;
+  function openPromptDialog(doc, text) {
+    if (!doc.getElementById('review-prompt-style')) {
+      const style = doc.createElement('style');
+      style.id = 'review-prompt-style';
+      style.textContent = DIALOG_CSS;
+      doc.head.append(style);
+    }
+    let dialog = doc.querySelector('dialog.review-prompt-dialog');
+    if (!dialog) {
+      dialog = doc.createElement('dialog');
+      dialog.className = 'review-prompt-dialog';
+      dialog.setAttribute('aria-labelledby', 'review-prompt-title');
+      const title = doc.createElement('h2');
+      title.id = 'review-prompt-title';
+      title.textContent = '복기 프롬프트';
+      const note = doc.createElement('p');
+      note.textContent = 'Ctrl+C(⌘C)로 복사해 AI 채팅에 붙여 넣으세요.';
+      const area = doc.createElement('textarea');
+      area.readOnly = true;
+      area.setAttribute('aria-label', '복기 프롬프트');
+      const actions = doc.createElement('div');
+      actions.className = 'review-prompt-actions';
+      const close = doc.createElement('button');
+      close.type = 'button';
+      close.textContent = '닫기';
+      close.addEventListener('click', () => dialog.close());
+      actions.append(close);
+      dialog.append(title, note, area, actions);
+      doc.body.append(dialog);
+    }
+    const area = dialog.querySelector('textarea');
+    area.value = text;
+    if (!dialog.open) dialog.showModal();
+    area.focus();
+    area.select();
+    return dialog;
+  }
+
+  const api = {buildReviewPrompt, problemText, copyText, openPromptDialog};
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else scope.ReviewPrompt = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
+(function (scope) {
+  'use strict';
+  function stripDiagnosticPrefix(text, id) {
+    const match = text.match(/^\s*(?:\((\d+)\)|([A-Z])[.)])\s*/);
+    return match && (match[1] || match[2]) === id ? text.slice(match[0].length) : text;
+  }
+  function scrollAnswerIntoView(scroller, selectedLi, answerLi, selectedButton, answerButton) {
+    if (!scroller || !selectedLi.getClientRects().length) return;
+    const viewport = scroller.getBoundingClientRect();
+    const height = scroller.clientHeight;
+    const margin = 16;
+    const span = (a, b) => {
+      const x = a.getBoundingClientRect(), y = b.getBoundingClientRect();
+      return {top:Math.min(x.top, y.top), bottom:Math.max(x.bottom, y.bottom)};
+    };
+    let target = span(selectedLi, answerLi);
+    if (target.bottom - target.top > height - 2 * margin)
+      target = span(selectedButton, answerButton);
+    if (target.bottom - target.top > height - 2 * margin)
+      target = span(selectedButton, selectedButton);
+    scroller.scrollTop += (target.top + target.bottom - viewport.top - viewport.bottom) / 2;
+  }
+  function grade(card, selected) {
+    if (!card.options.some(o => o.id === selected)) return null;
+    if (card.mode === 'ambiguous') return 'ambiguous';
+    return selected === card.answer ? 'correct' : 'incorrect';
+  }
+  function storageKey(documentId, cardId) {
+    return 'od-review-attempt:v1:' + encodeURIComponent(documentId) + ':' + encodeURIComponent(cardId);
+  }
+  function readAttempt(storage, key, card) {
+    try {
+      const value = JSON.parse(storage.getItem(key));
+      return value && value.version === card.version && grade(card, value.selected) !== null ? value.selected : null;
+    } catch { return null; }
+  }
+  function readUnsure(storage, key, card) {
+    try {
+      const value = JSON.parse(storage.getItem(key));
+      return !!value && value.version === card.version && grade(card, value.selected) === 'correct' && value.unsure === true;
+    } catch { return false; }
+  }
+  function writeAttempt(storage, key, card, selected, unsure) {
+    try {
+      if (selected === null) storage.removeItem(key);
+      else storage.setItem(key, JSON.stringify({version:card.version, selected, unsure:unsure === true}));
+    } catch {}
+  }
+  function promptApi(scope) {
+    if (scope && scope.ReviewPrompt) return scope.ReviewPrompt;
+    if (typeof require === 'function') {
+      try { return require('./review-prompt.js'); } catch {}
+    }
+    return null;
+  }
+  // Capture plain text before enhancement moves nodes or adds badges.
+  function captureCardText(card, choices, diagnostics, options, solution) {
+    const prompt = promptApi(card.ownerDocument && card.ownerDocument.defaultView);
+    const read = el => !el ? '' : prompt ? prompt.problemText(el) : el.textContent.replace(/\s+/g, ' ').trim();
+    const heading = card.querySelector('h3');
+    const problem = card.querySelector('.problem');
+    const list = Array.isArray(options) ? options : [];
+    const used = new Set(list.map(o => o.diagnostic));
+    const texts = {
+      // The prompt already prints the card id, so drop the "P1." label from the heading.
+      title: heading ? heading.textContent.replace(/\s+/g, ' ').trim().replace(/^P\d+\.\s*/i, '') : '',
+      stem: read(problem),
+      options: list.map(o => ({id:o.id, text:stripDiagnosticPrefix(read(choices[o.index]).trim(), o.id)})),
+      diagnostics: {},
+      extras: diagnostics.filter((_, i) => !used.has(i)).map(read).filter(Boolean)
+    };
+    list.forEach(o => { texts.diagnostics[o.id] = stripDiagnosticPrefix(read(diagnostics[o.diagnostic]).trim(), o.id); });
+    return texts;
+  }
+  function buildPromptRecord(model, texts, ids, selectedById, unsureById, range) {
+    const items = ids.map(id => {
+      const data = model.cards[id];
+      const t = texts[id] || {title:'', stem:'', options:[], diagnostics:{}, extras:[]};
+      const raw = selectedById[id];
+      const result = grade(data, raw);
+      const selected = result === null ? null : raw;
+      const status = result === null ? 'unanswered'
+        : result === 'correct' && unsureById && unsureById[id] === true ? 'unsure' : result;
+      const diagnostic = optionId => (t.diagnostics || {})[optionId] || '';
+      const explanations = [];
+      if (selected !== null && selected !== data.answer)
+        explanations.push({label:'내 선택 [' + selected + ']', text:diagnostic(selected)});
+      explanations.push({label:(data.mode === 'ambiguous' ? '출제 의도상 답 [' : '정답 [') + data.answer + ']',
+        text:diagnostic(data.answer)});
+      (t.extras || []).forEach(text => explanations.push({label:'', text}));
+      if (data.notice) explanations.push({label:'출제 주의', text:data.notice});
+      return {id, title:t.title, stem:t.stem, format:'mcq', options:t.options, selected,
+        answer:data.answer, accepted:null, status, explanations};
+    });
+    return {kind:'review', documentId:model.documentId, range:range || '', items};
+  }
+  function mount(root, model, storage) {
+    if (!model || model.schema !== 1 || !model.cards) return;
+    const win = root.defaultView;
+    const emit = (id, selected, result, restored = false) => root.dispatchEvent(
+      new win.CustomEvent('od:answer', {detail:{id, selected, result, restored}}));
+    const element = (tag, cls, text) => {
+      const el = root.createElement(tag);
+      el.className = cls;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    };
+    const selectedById = {};
+    const unsureById = {};
+    const texts = {};
+    let feedback = null;
+    let feedbackTimer = null;
+    let feedbackOwner = null;
+    function clearFeedback(owner = null) {
+      if (owner !== null && owner !== feedbackOwner) return;
+      if (feedbackTimer !== null) win.clearTimeout(feedbackTimer);
+      feedbackTimer = null;
+      if (feedback) feedback.remove();
+      feedback = null;
+      feedbackOwner = null;
+    }
+    function showFeedback(result, id, message, duration) {
+      clearFeedback();
+      if (!message && result !== 'correct' && result !== 'incorrect') return;
+      feedback = element('div', 'review-feedback');
+      feedback.dataset.reviewFeedback = '';
+      feedback.dataset.result = result;
+      feedback.setAttribute('aria-hidden', 'true');
+      feedback.append(
+        element('span', 'review-feedback-icon'),
+        element('span', 'review-feedback-text', message || (result === 'correct' ? '정답이에요' : '다시 확인해요'))
+      );
+      root.body.append(feedback);
+      feedbackOwner = id;
+      feedbackTimer = win.setTimeout(clearFeedback, duration || 1100);
+    }
+    const UNSURE_ICON_OFF = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+    const UNSURE_ICON_ON = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+    for (const [id, data] of Object.entries(model.cards)) {
+      const card = root.getElementById(id);
+      if (!card || card.classList.contains('review-ready')) continue;
+      const aid = Array.from(root.querySelectorAll('.aid')).find(n => n.dataset.cardId === id);
+      const solution = (aid || card).querySelector('details.solution');
+      const choices = Array.from(card.querySelectorAll('.choices > li'));
+      const diagnostics = solution ? Array.from(solution.querySelectorAll('ol.steps > li')) : [];
+      const options = data.options;
+      try { texts[id] = captureCardText(card, choices, diagnostics, options, solution); } catch {}
+      // Validate every reference before moving a single original node.
+      if (!solution || !Array.isArray(options) || choices.length !== options.length ||
+          !options.length || !options.some(o => o.id === data.answer) ||
+          new Set(options.map(o => o.index)).size !== options.length ||
+          new Set(options.map(o => o.diagnostic)).size !== options.length ||
+          options.some(o => !choices[o.index] || !diagnostics[o.diagnostic])) continue;
+      const positions = diagnostics.map(n => ({node:n, parent:n.parentNode, next:n.nextSibling}));
+      const diagnosticTexts = [];
+      const choiceNodes = choices.map(n => Array.from(n.childNodes));
+      const summary = solution.querySelector('summary');
+      const summaryText = summary ? summary.textContent : '';
+      const originalOpen = solution.open;
+      const originalHidden = solution.hidden;
+      let status, reset, notice, unsureBtn;
+      try {
+        // Some future cards supply the caution only as metadata. Keep its full
+        // explanation in the solution panel, without duplicating existing prose.
+        const compact = text => text.replace(/\s+/g, '');
+        if (data.mode === 'ambiguous' && data.notice &&
+            !compact(solution.textContent).includes(compact(data.notice))) {
+          notice = element('p', 'review-notice', data.notice);
+          solution.append(notice);
+        }
+        const controls = options.map(o => {
+          const li = choices[o.index];
+          const button = element('button', 'review-choice');
+          button.type = 'button';
+          const complex = li.querySelector('a,button,input,select,textarea,table,div,p,figure,ul,ol');
+          if (complex) {
+            button.textContent = o.id + '번 선택';
+            const content = element('div', 'review-choice-content');
+            content.id = id + '-choice-content-' + o.index;
+            content.append(...Array.from(li.childNodes));
+            button.setAttribute('aria-describedby', content.id);
+            li.append(button, content);
+          } else {
+            button.append(...Array.from(li.childNodes));
+            li.append(button);
+          }
+          const badge = element('span', 'review-choice-label');
+          badge.hidden = true;
+          button.append(badge);
+          button.setAttribute('aria-pressed', 'false');
+          const list = element('ol', 'review-diagnostics');
+          list.id = id + '-review-diagnostics-' + o.index;
+          const diagnostic = diagnostics[o.diagnostic];
+          const first = diagnostic.firstChild;
+          if (first && first.nodeType === 3) {
+            diagnosticTexts.push({node:first, text:first.textContent});
+            first.textContent = stripDiagnosticPrefix(first.textContent, o.id);
+          }
+          diagnostic.classList.add('review-diagnostic');
+          diagnostic.hidden = true;
+          list.append(diagnostic);
+          li.append(list);
+          return {id:o.id, button, badge, diagnostic, list};
+        });
+        status = element('p', 'review-status');
+        status.setAttribute('role', 'status');
+        status.setAttribute('aria-live', 'polite');
+        reset = element('button', 'review-reset text-btn', '다시 풀기');
+        reset.type = 'button';
+        card.querySelector('.choices').before(status);
+        card.querySelector('.choices').after(reset);
+        const key = storageKey(model.documentId, id);
+        let selected = readAttempt(storage, key, data);
+        let unsure = selected !== null && readUnsure(storage, key, data);
+        selectedById[id] = selected;
+        unsureById[id] = unsure;
+        unsureBtn = element('button', 'review-unsure solved-btn');
+        unsureBtn.type = 'button';
+        // Same look and place as the 푼 문제 button: bottom of the aid panel.
+        (aid || solution).append(unsureBtn);
+        const expanded = new Set(selected === null ? [] : [selected, data.answer]);
+        function paintDisclosure(c) {
+          const answered = selected !== null;
+          const open = answered && expanded.has(c.id);
+          c.diagnostic.hidden = !open;
+          c.list.hidden = !open;
+          if (answered) {
+            c.button.setAttribute('aria-expanded', String(open));
+            c.button.setAttribute('aria-controls', c.list.id);
+          } else {
+            c.button.removeAttribute('aria-expanded');
+            c.button.removeAttribute('aria-controls');
+          }
+        }
+        function paint() {
+          const answered = selected !== null;
+          const result = grade(data, selected);
+          reset.hidden = !answered;
+          unsureBtn.hidden = result !== 'correct';
+          unsureBtn.innerHTML = (unsure ? UNSURE_ICON_ON : UNSURE_ICON_OFF) +
+            '<span>' + (unsure ? '애매함 표시 취소' : '애매함으로 표시') + '</span>';
+          unsureBtn.setAttribute('aria-pressed', String(unsure));
+          unsureBtn.dataset.unsure = String(unsure);
+          status.textContent = !answered ? '' : result === 'ambiguous'
+            ? '단일 정답 판정 주의'
+            : result === 'correct' ? '정답이에요.' : '정답이 아니에요. 보기별 이유를 확인해 보세요.';
+          status.dataset.result = result || '';
+          controls.forEach(c => {
+            c.button.dataset.selected = String(c.id === selected);
+            if (answered) c.button.removeAttribute('aria-pressed');
+            else c.button.setAttribute('aria-pressed', 'false');
+            c.button.dataset.result = !answered ? '' : c.id === data.answer
+              ? (data.mode === 'ambiguous' ? 'intended' : 'correct')
+              : c.id === selected ? (data.mode === 'ambiguous' ? 'uncertain' : 'selected') : '';
+            c.badge.hidden = !answered;
+            c.badge.textContent = !answered ? '' : [
+              c.id === selected ? '내 선택' : '',
+              c.id === data.answer ? (data.mode === 'ambiguous' ? '출제 의도상 답' : '정답')
+                : data.mode === 'single' ? '정답 아님' : ''
+            ].filter(Boolean).join(' · ');
+            paintDisclosure(c);
+          });
+          solution.hidden = !answered;
+          solution.open = answered;
+          if (summary) summary.textContent = '추가 해설 · 수업과의 연결';
+        }
+        controls.forEach(c => c.button.addEventListener('click', () => {
+          if (selected !== null) {
+            if (expanded.has(c.id)) expanded.delete(c.id);
+            else expanded.add(c.id);
+            paintDisclosure(c);
+            return;
+          }
+          selected = c.id;
+          selectedById[id] = selected;
+          unsure = false;
+          unsureById[id] = false;
+          expanded.add(selected);
+          expanded.add(data.answer);
+          writeAttempt(storage, key, data, selected);
+          paint();
+          emit(id, selected, grade(data, selected));
+          showFeedback(grade(data, selected), id);
+          const selectedOption = options.find(o => o.id === selected);
+          const answerOption = options.find(o => o.id === data.answer);
+          const selectedControl = controls.find(control => control.id === selected);
+          const answerControl = controls.find(control => control.id === data.answer);
+          win.requestAnimationFrame(() => {
+            if (!card.isConnected || !card.getClientRects().length) return;
+            scrollAnswerIntoView(root.querySelector('.content'),
+              choices[selectedOption.index], choices[answerOption.index],
+              selectedControl.button, answerControl.button);
+          });
+        }));
+        reset.addEventListener('click', () => {
+          clearFeedback(id);
+          selected = null;
+          selectedById[id] = null;
+          unsure = false;
+          unsureById[id] = false;
+          expanded.clear();
+          writeAttempt(storage, key, data, null);
+          paint();
+          emit(id, null, null);
+          controls[0].button.focus();
+        });
+        unsureBtn.addEventListener('click', () => {
+          if (selected === null) return;
+          unsure = !unsure;
+          unsureById[id] = unsure;
+          writeAttempt(storage, key, data, selected, unsure);
+          paint();
+          showFeedback('unsure', id, unsure ? '애매함으로 표시했어요' : '애매함 표시를 취소했어요');
+        });
+        card.classList.add('review-ready');
+        solution.classList.add('review-extra');
+        paint();
+        if (selected !== null) emit(id, selected, grade(data, selected), true);
+        else {
+          try {
+            if (storage.getItem(key) !== null) {
+              writeAttempt(storage, key, data, null);
+              emit(id, null, null, true);
+            }
+          } catch {}
+        }
+      } catch (error) {
+        // Keep a readable static question if enhancement cannot be completed.
+        diagnosticTexts.forEach(p => { p.node.textContent = p.text; });
+        choices.forEach((li, i) => li.replaceChildren(...choiceNodes[i]));
+        positions.slice().reverse().forEach(p => {
+          p.node.hidden = false;
+          p.node.classList.remove('review-diagnostic');
+          p.parent.insertBefore(p.node, p.next);
+        });
+        for (const el of [status, reset, notice, unsureBtn]) if (el) el.remove();
+        solution.hidden = originalHidden;
+        solution.open = originalOpen;
+        if (summary) summary.textContent = summaryText;
+        solution.classList.remove('review-extra');
+        card.classList.remove('review-ready');
+        win.console.warn('문항 상호작용을 적용하지 못했습니다:', id, error);
+      }
+    }
+    const exportCards = Array.from(root.querySelectorAll('main article.card')).filter(el => model.cards[el.id]);
+    const pager = root.querySelector('.pager');
+    const prompt = promptApi(win);
+    if (prompt && exportCards.length && pager && !pager.querySelector('.review-export-bar')) {
+      const ids = exportCards.map(el => el.id);
+      const bar = element('div', 'review-export-bar');
+      const button = element('button', 'btn btn-primary review-export', '복기 프롬프트 복사');
+      button.type = 'button';
+      const note = element('p', 'review-export-note sr-only');
+      note.setAttribute('role', 'status');
+      note.setAttribute('aria-live', 'polite');
+      bar.append(button, note);
+      pager.prepend(bar);
+      root.addEventListener('od:screen', () => { note.textContent = ''; });
+      button.addEventListener('click', async () => {
+        if (button.disabled) return;
+        button.disabled = true;
+        let outcome;
+        try {
+          const record = buildPromptRecord(model, texts, ids, selectedById, unsureById, root.body.dataset.range || '');
+          const text = prompt.buildReviewPrompt(record);
+          outcome = await prompt.copyText(win, text) ? 'copied' : 'manual';
+          if (outcome === 'manual') prompt.openPromptDialog(root, text);
+        }
+        finally { button.disabled = false; }
+        const message = outcome === 'copied' ? '복기 프롬프트를 복사했어요. AI 채팅에 붙여 넣으세요'
+          : '자동 복사가 막혀 있어요. 열린 창에서 직접 복사해 주세요';
+        note.textContent = message + '.';
+        showFeedback(outcome, 'export', message, 2200);
+      });
+    }
+    // Existing page CSS hides side panels when printing. Move original details,
+    // including static questions, into their cards for print, then restore them.
+    if (!root.documentElement.dataset.reviewPrint) {
+      root.documentElement.dataset.reviewPrint = 'ready';
+      let printPositions = [];
+      win.addEventListener('beforeprint', () => {
+        if (printPositions.length) return;
+        root.querySelectorAll('.aid[data-card-id]').forEach(aid => {
+          const card = root.getElementById(aid.dataset.cardId);
+          if (!card) return;
+          Array.from(aid.children).forEach(node => {
+            printPositions.push({node, parent:aid, open:node.open});
+            if (node.tagName === 'DETAILS') node.open = true;
+            card.append(node);
+          });
+        });
+      });
+      win.addEventListener('afterprint', () => {
+        printPositions.forEach(p => {p.parent.append(p.node); p.node.open = p.open;});
+        printPositions = [];
+      });
+    }
+  }
+  const api = {stripDiagnosticPrefix, grade, storageKey, readAttempt, readUnsure, writeAttempt, mount,
+    captureCardText, buildPromptRecord};
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else scope.ReviewInteraction = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
+</script>
+<script>(function () {
+      function start() {
+        try {
+          let storage = null;
+          try { storage = window.sessionStorage; } catch {}
+          ReviewInteraction.mount(document, JSON.parse(document.getElementById('review-interaction-model').textContent), storage);
+        } catch (error) { console.warn('복습문제 상호작용 초기화 실패:', error); }
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
+      else start();
+    })();</script>
+<!-- review-interaction:end -->
+</body>
+</html>
