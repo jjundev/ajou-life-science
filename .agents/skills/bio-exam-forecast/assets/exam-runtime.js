@@ -145,18 +145,30 @@
   const aid = document.getElementById('exam-aid');
   const empty = document.querySelector('#panel-right .panel-empty');
   const valueOf = (card, model) => model.format === 'mcq' ? (card.querySelector('input:checked')?.value || '') : card.querySelector('input[type=text]').value;
+  const tocIcons = {
+    empty: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>',
+    done: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>',
+    incorrect: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6m0-6-6 6"/></svg>',
+    pending: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.88 2.08C12.5 12.15 12 12.75 12 14m0 2.25h.01"/></svg>'
+  };
   function progress() {
+    const results = new Map(attempt?.cards.map(card => [card.id, card.result]));
     let answered = 0;
     for (const [id, model] of Object.entries(models)) {
-      const done = Boolean(valueOf(document.getElementById(id), model).trim());
+      const value = valueOf(document.getElementById(id), model);
+      const done = Boolean(value.trim());
+      const result = results.get(id) ?? (practice && checked.has(id) ? gradeValue(value, model) : null);
       answered += Number(done);
       const link = document.querySelector('.toc-list a[href="#' + id + '"]');
       if (link) {
         let mark = link.querySelector('.toc-mark');
         if (!mark) { mark = document.createElement('span'); mark.className = 'toc-mark'; mark.setAttribute('aria-hidden', 'true'); link.append(mark); }
-        mark.classList.toggle('is-done', done);
-        mark.innerHTML = done ? '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>' : '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
-        link.setAttribute('aria-label', link.querySelector('.toc-title').textContent + (done ? ' · 응답함' : ' · 미응답'));
+        const icon = tocIcons[result] ?? (done ? tocIcons.done : tocIcons.empty);
+        mark.classList.toggle('is-done', icon === tocIcons.done);
+        mark.dataset.result = result ?? '';
+        mark.innerHTML = icon;
+        const label = labels[result] ?? (done ? '응답함' : '미응답');
+        link.setAttribute('aria-label', link.querySelector('.toc-title').textContent + ' · ' + label);
       }
     }
     document.getElementById('progress-n').textContent = answered;
@@ -224,7 +236,7 @@
     checked.add(card.id);
     card.querySelector('.result').textContent = labels[gradeValue(value, models[card.id])];
     card.querySelectorAll('.solution,.provenance').forEach(n => { n.hidden = false; });
-    showAid(); syncControls();
+    progress(); showAid(); syncControls();
     const toggle = document.getElementById('toggle-right');
     if (toggle.getAttribute('aria-expanded') !== 'true') toggle.click();
   }
@@ -283,7 +295,7 @@
     submitted = true;
     if (!practice) document.querySelectorAll('.exam-input input').forEach(n => { n.disabled = true; });
     document.getElementById('submit-exam').textContent = '전체 결과';
-    renderResults(); showAid(); openResults();
+    progress(); renderResults(); showAid(); openResults();
 
   });
   function resetExam() {
