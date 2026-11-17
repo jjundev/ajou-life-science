@@ -130,7 +130,9 @@ def copy_figures(run_dir: Path, out_dir: Path, range_: str) -> int:
 
 
 PACK_RECORDS = ("manifest.json", "question-audit.md", "key-check.md", "variants.md", "problem-pages.txt",
-                "note-feedback-audit.md", "summary-audit.md")
+                "note-feedback-audit.md", "summary-audit.md", "blind-results.md")
+BODY_REVIEW_RECORDS = ("note-feedback-audit.md", "summary-audit.md", "blind-results.md")
+REPORTS_DIR = Path("work") / "reports"  # 서브에이전트 상세 기록(TSV). references/report-contract.md
 APPEND_ON_AUGMENT = ("question-audit.md", "key-check.md", "variants.md")
 
 
@@ -151,7 +153,7 @@ def save_pack_records(run_dir: Path | str, out_dir: Path | str, mode: str, added
     pack.mkdir(parents=True, exist_ok=True)
     today = today or date.today().isoformat()
     for name in PACK_RECORDS:
-        if mode == "augment" and name in ("note-feedback-audit.md", "summary-audit.md"):
+        if mode == "augment" and name in BODY_REVIEW_RECORDS:
             continue  # augment는 본문을 바꾸지 않으므로 새 본문 검토로 덮어쓰지 않는다.
         src, dst = run_dir / name, pack / name
         if not src.is_file():
@@ -161,6 +163,12 @@ def save_pack_records(run_dir: Path | str, out_dir: Path | str, mode: str, added
             dst.write_text(f"{old}\n\n## {today} 보강\n\n{src.read_text(encoding='utf-8')}", encoding="utf-8")
         else:
             shutil.copyfile(src, dst)
+    reports = run_dir / REPORTS_DIR
+    if mode == "full" and reports.is_dir():  # 상세 검토 기록은 메인 컨텍스트 대신 여기에 남는다
+        dst = pack / "reports"
+        if dst.exists():
+            shutil.rmtree(dst)
+        shutil.copytree(reports, dst)
     log = pack / "log.md"
     head = "" if log.is_file() else "# 팩 실행 기록\n\n"
     line = f"- {today} {mode}: 추가 {_ids_text(added_ids)}" + (f" — {note}" if note else "") + "\n"

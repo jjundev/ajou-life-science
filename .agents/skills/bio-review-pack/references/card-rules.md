@@ -2,18 +2,21 @@
 
 ## 작성자 브리프 (메인 에이전트가 카드 10개당 1명, 병렬, model: opus)
 
+메인 에이전트는 이 파일을 읽지 않는다. 작성자에게 "`<SKILL>/references/card-rules.md`를 전부 읽고 맨 위 작성자 브리프를 따른다"와 값 `RUN`, `SKILL`, `담당 카드 id`(예: `p1`–`p10`), `N`(장)만 넘긴다. 금지어는 작성자가 `<RUN>/manifest.json`의 `forbidden_outside_preview`에서 직접 읽는다.
+
 ---
 생명과학 복습문제 카드 `<담당 카드 id>`를 쓴다.
 
-- 읽기: `<SKILL>/references/card-rules.md`(이 파일 전체), `<SKILL>/references/problem-selection.md`의 원칙과 4절, `problem-selection.md` 6절(변형 연습 카드를 맡았을 때)
+- 읽기: `<SKILL>/references/card-rules.md`(이 파일 전체), `<SKILL>/references/report-contract.md`, `<SKILL>/references/problem-selection.md`의 원칙과 4절, `problem-selection.md` 6절(변형 연습 카드를 맡았을 때)
 - 계약: `<RUN>/manifest.json`의 `problems` 중 담당 카드 — id, `source`, `anchor`, `level`, `date`, `terms`, `answer`를 그대로 따른다.
-- 금지어: `<forbidden 목록>` — 카드 어디에도 쓰지 않는다. "다음 시간에 배울 …" 같은 예고도 쓰지 않는다.
+- 금지어: manifest `forbidden_outside_preview` 전체 — 카드 어디에도 쓰지 않는다. "다음 시간에 배울 …" 같은 예고도 쓰지 않는다.
 - 근거: 원문 위치 `<RUN>/problem-pages.txt`(기출 PNG는 `<RUN>/work/exam/`), 웹과제 bank `<RUN>/repo/웹과제/<N>장/questions.json`, 정답 대조 `<RUN>/key-check.md`, 변형 설계 `<RUN>/variants.md`, 정리노트 토픽 제목은 manifest.
 - 출력: `<RUN>/cards/<pid>.html` 문제마다 한 파일, 기출 그림은 `<RUN>/figures/<pid>.png`(웹과제 SVG 그림은 파일로 만들지 않고 카드에 인라인). 다른 곳에 쓰지 않는다.
 - 임시·보조 파일은 `<RUN>/work/` 아래에만 둔다. 저장소와 `<RUN>` 밖(scratchpad 루트, `/tmp` 등)에는 아무것도 쓰지 않는다. 한글(NFD) 파일명은 Python `os.listdir` + `unicodedata.normalize('NFC', …)`로 찾아 연다.
 - 확인용으로 브라우저 탭을 열었으면 보고 전에 모두 닫는다(메인 에이전트의 브라우저 검사가 탭 수 제한에 걸린다).
-- 자기 검사: 카드별 `terms`가 글자 그대로 있는지, `정답:` 줄이 `answer`와 같은지, 모든 보기에 진단이 있는지, 원문 문항이면 문제와 보기가 원문과 글자까지 같은지(줄바꿈 흔적만 고친다), 변형이면 `RUN/variants.md`의 혼동 묶음을 겨냥하는지, 원문자(①~⑳)와 금지어와 STT 녹음 시각이 하나도 없는지, 기출 그림이면 `<img src>`가 `.assets/figures_<range>/<pid>.png`이고 그 파일을 `<RUN>/figures/`에 만들었는지, 웹과제 그림이면 SVG가 인라인이고 모든 `id`에 `<pid>-` 접두어가 붙었으며 `explained` SVG가 풀이 밖에 없는지, 변형 연습 그림(인라인 SVG)도 모든 `id`와 그 id를 가리키는 `aria-labelledby`·`url(#…)`에 `<pid>-` 접두어가 붙었는지. 어긋나면 고치지 말고 보고에 적는다.
-- 보고: 카드별 한 줄(출처, 정답, 답안지 오류 여부), 풀이에 정리노트에 없는 사실이 필요했던 곳.
+- 자기 검사: 카드별 `terms`가 글자 그대로 있는지, `정답:` 줄이 `answer`와 같은지, 모든 보기에 진단이 있는지, 원문 문항이면 문제와 보기가 원문과 글자까지 같은지(줄바꿈 흔적만 고친다), 변형이면 `RUN/variants.md`의 혼동 묶음을 겨냥하는지, 원문자(①~⑳)와 금지어와 STT 녹음 시각이 하나도 없는지, 기출 그림이면 `<img src>`가 `.assets/figures_<range>/<pid>.png`이고 그 파일을 `<RUN>/figures/`에 만들었는지, 웹과제 그림이면 SVG가 인라인이고 모든 `id`에 `<pid>-` 접두어가 붙었으며 `explained` SVG가 풀이 밖에 없는지, 변형 연습 그림(인라인 SVG)도 모든 `id`와 그 id를 가리키는 `aria-labelledby`·`url(#…)`에 `<pid>-` 접두어가 붙었는지. 어긋나면 고치지 말고 기록에 적는다.
+- 보고: `report-contract.md`의 영수증 형식만 쓴다. 카드별 한 줄(출처, 정답, 답안지 오류 여부)과 풀이에 정리노트에 없는 사실이 필요했던 곳은 `<RUN>/work/reports/notes-cards-<첫 카드 id>.tsv`에 쓴다. 영수증의 `결함`에는 계약과 어긋난 카드, 정리노트에 없는 사실이 필요했던 카드의 id만 한 줄씩 적는다.
+- 수정 요청을 받으면: `<RUN>/work/fixes/cards-<첫 카드 id>.txt`를 읽고 모두 고친 뒤 항목별 처리를 `fixed-cards-<첫 카드 id>.tsv`에 쓰고 영수증만 보고한다.
 ---
 
 ## 마크업

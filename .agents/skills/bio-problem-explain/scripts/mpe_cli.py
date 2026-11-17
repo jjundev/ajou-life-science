@@ -131,6 +131,49 @@ def current_review(item, fragments):
         raise ExplainError('설명 조각 또는 원본 변경: build부터 다시 실행하세요')
     return review
 
+def review_status(item):
+    """review.json을 통째로 읽지 않도록 검토별 상태와 통과하지 못한 항목만 한 줄씩 낸다."""
+    review = read_json(inside(item['folder'] / 'review.json', item['run']))
+    lines = []
+    for kind in REVIEW_KINDS:
+        part = review.get(kind) or {}
+        items = part.get('items') if isinstance(part.get('items'), dict) else {}
+        bad = sorted(k for k, v in items.items() if not isinstance(v, dict) or v.get('status') != 'pass')
+        line = f"{kind}: {part.get('status', 'not_run')}"
+        if items:
+            line += f" (항목 {len(items) - len(bad)}/{len(items)} pass)"
+        if bad:
+            line += ' — ' + ', '.join(bad[:12]) + (f' 외 {len(bad) - 12}건' if len(bad) > 12 else '')
+        lines.append(line)
+    return lines
+
+def card_answer(problem):
+    if problem.choice:
+        return problem.choice.answer
+    if problem.short_answer:
+        return problem.short_answer.canonical
+    return problem.reference_answer
+
+def _plain(answer):
+    return re.sub(r'[\s()`.]', '', str(answer)).lower()
+
+def compare_answers(item, path):
+    """독립 검산자의 답(TSV: 문항 id, 답)을 카드 정답과 대조한다. 검산자는 정답을 보지 않으므로 대조는 컨트롤러가 여기서 한다."""
+    got = {}
+    for line in Path(path).read_text(encoding='utf-8').splitlines():
+        cells = [c.strip() for c in line.split('\t')]
+        if len(cells) >= 2 and cells[0] and not cells[0].startswith('#'):
+            got[cells[0].split(':', 1)[0]] = cells[1]
+    problems = item['pack'].problems
+    missing = [p.id for p in problems if p.id not in got]
+    wrong = [f"{p.id} ({p.source}): 검산 {got[p.id]} / 카드 {card_answer(p)}" for p in problems
+             if p.id in got and _plain(got[p.id]) != _plain(card_answer(p))]
+    lines = [f"독립 검산 대조: {len(problems) - len(missing) - len(wrong)}/{len(problems)} 일치 · 불일치 {len(wrong)} · 답 없음 {len(missing)}"]
+    lines += wrong
+    if missing:
+        lines.append('답 없음: ' + ', '.join(missing))
+    return lines, bool(wrong or missing)
+
 def sync_evidence(item, fragments):
     """Copy evidence written after build into the current stage and rebind hashes; reviews stay as recorded.
 
@@ -426,6 +469,10 @@ def main(argv=None):
     blinding = commands.add_parser('import-blind')
     blinding.add_argument('--run', type=Path, required=True)
     blinding.add_argument('--ledger', type=Path, required=True)
+    commands.add_parser('review-status').add_argument('--run', type=Path, required=True)
+    comparing = commands.add_parser('compare-answers')
+    comparing.add_argument('--run', type=Path, required=True)
+    comparing.add_argument('--from', dest='answers', type=Path, required=True, help='독립 검산 답 TSV(문항 id<TAB>답)')
     browsing = commands.add_parser('browser')
     browsing.add_argument('--run', type=Path, required=True)
     browsing.add_argument('--shots', action='store_true', help='뷰포트·테마별 스크린샷 저장')
@@ -446,6 +493,14 @@ def main(argv=None):
             print(error, file=sys.stderr)
         for item in items:
             try:
+                if args.command == 'review-status':
+                    print(*review_status(item), sep='\n')
+                    continue
+                if args.command == 'compare-answers':
+                    lines, bad = compare_answers(item, args.answers)
+                    print(*lines, sep='\n')
+                    failed = failed or bad
+                    continue
                 fragments = load_fragments(item)
                 if args.command == 'build':
                     build(item, fragments)

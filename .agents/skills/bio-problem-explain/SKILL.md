@@ -58,6 +58,39 @@ description: 생명과학 복습노트의 기존 복습문제 또는 명시 경�
 - 저작: 문항 10개당 에이전트 1명을 **한 메시지에서 병렬로** 띄운다. forecast(p1–p15)는 p1–p5, p6–p10, p11–p15 세 명이다. 모델은 opus, `lite`이면 sonnet이다. 저작 에이전트는 `explanations/pN.html`과 evidence만 쓰고 build·check·브라우저 검사를 돌리지 않는다. 메인 에이전트가 모두 모은 뒤 한 번 실행한다. 각 에이전트에게 자기 문항 ID, `source.json` 경로, [저작 규칙](references/authoring.md), 위 참조 자료를 준다. 서브에이전트가 없으면 같은 묶음을 차례로 직접 쓴다.
 - 독립 검산: 저작 에이전트와 **별도인** 에이전트 1명이 맡는다. 이 에이전트에게는 카드의 정답·풀이·설명 조각을 주지 않고 문항(지문·보기·그림)과 정리노트·교과서·강의노트만 준다. 다시 푼 답을 컨트롤러가 카드 정답과 `.pack/key-check.md`(없으면 `.pack/variants.md`의 `의도한 정답과 이유` 열)에 대조한다. forecast에서는 컨트롤러가 해당 버전 pack.json/blueprint.md로 대조한다. forecast 자동 연결에서는 예상 스킬 7단계 블라인드 리뷰어(정답·풀이를 보지 않은 별도 에이전트)의 ledger를 `mpe_cli.py import-blind`로 승계하며, 카드 해시·답·이의 조건이 맞지 않으면 별도 독립 검산자가 다시 푼다. 독립 검산자에게 그 정답키·설계표·개요의 정답을 제공하지 않는다. 기준은 [검토 기록](references/verification.md)의 independent 항목이다.
 
+## 컨트롤러 컨텍스트와 보고 계약
+
+컨트롤러(메인 에이전트)의 컨텍스트는 실행 순서를 정하는 데만 쓴다. 검토는 하나도 줄이지 않고, 결과가 돌아오는 형태만 줄인다. 복습팩 스킬의 [보고 계약](../bio-review-pack/references/report-contract.md)과 같은 원칙이다.
+
+- **읽는 범위:** 컨트롤러는 이 파일만 읽는다. [저작 규칙](references/authoring.md)은 저작 에이전트가, [검토 기록](references/verification.md)은 검토 에이전트가 직접 읽는다. 컨트롤러가 두 파일과 `source.json`·설명 조각·evidence·스크린샷을 통째로 열지 않는다. 브리프에는 파일 경로와 값(문항 ID 묶음, RUN, 대상 폴더, 참조 자료 경로)만 넣는다.
+- **보고는 영수증:** 모든 서브에이전트는 산출물을 파일에 쓰고 아래 형식(최대 12줄)만 돌려준다. 문항별 표, 근거 인용, 통과한 항목 목록은 보고 본문에 싣지 않는다.
+  ```
+  결과: 완료 | 결함 있음 | 막힘
+  파일: <쓴 파일 경로들>
+  수: <문항 N · pass N · fail N · disputed N>
+  결함: <문항 id> — <한 줄> (최대 8줄, 넘으면 "외 N건"과 파일 경로)
+  막힘: <쓰지 못한 파일·읽지 못한 자료와 이유>
+  ```
+- **역할별 산출 파일** (`<대상>`은 RUN 안의 대상 폴더):
+  | 역할 | 쓰는 파일 | 영수증의 결함 줄 |
+  |---|---|---|
+  | 저작 | `<대상>/explanations/pN.html`, `<대상>/evidence/author-<첫 id>.md` | 문항 결함·인쇄 정답 오류·충돌 의심 문항 id |
+  | 독립 검산 | `<대상>/evidence/independent-<range>.md`(재풀이 기록), `<대상>/evidence/independent-answers.tsv`(문항 id, 탭, 답), `<RUN>/independent-review.json` | 풀 수 없었던 문항 id |
+  | source_visual 검토 | `<RUN>/source_visual-review.json`, 결함은 `<대상>/evidence/source_visual-fixes.tsv` | fail 문항 id |
+  | content 검토 | `<RUN>/content-review.json`, `<대상>/evidence/content-review.md`, 결함은 `<대상>/evidence/content-fixes.tsv` | fail 문항 id |
+  | browser 검토 | `mpe_cli.py browser --shots` 실행 뒤 스크린샷을 직접 보고 `<RUN>/browser-review.json` | 실패한 화면·문항 |
+  - `*-fixes.tsv`는 `문항 id · 구역 · 문제 · 고칠 문장 지시` 네 칸이다. 컨트롤러는 지시를 옮겨 적지 않고 저작 에이전트에게 그 경로만 보낸다.
+  - 독립 검산자는 정답을 모르므로 `independent-review.json`의 item을 "재풀이 완료" 기준으로 쓴다. 컨트롤러가 아래 `compare-answers`로 카드 정답과 대조하고, **전부 일치할 때만** `review-merge --kind independent`를 한다. 불일치 문항은 4단계의 (A)~(C)로 판정한다.
+  - browser 검토도 서브에이전트 1명이 맡는다(sonnet 가능). 컨트롤러는 스크린샷을 열지 않는다.
+  - Write 도구가 보고서로 보이는 `.md` 쓰기를 거부하면 고쳐 쓰려 하지 말고 Bash로 쓴다. `.json`·`.tsv`·`.html`은 거부되지 않는다.
+- **컨트롤러가 쓰는 명령:** 긴 출력은 모두 파일로 보내고 요약만 본다.
+  ```sh
+  SKILL=…; RUN=…; python3 "$SKILL/scripts/mpe_cli.py" compare-answers --run "$RUN" --from "<대상>/evidence/independent-answers.tsv"
+  SKILL=…; RUN=…; python3 "$SKILL/scripts/mpe_cli.py" review-status --run "$RUN"
+  ```
+  `compare-answers`는 일치 수와 불일치 문항만, `review-status`는 네 검토의 상태와 통과하지 못한 항목 id만 출력한다. `review.json`(수십 KB)과 `source.json`을 `cat`으로 출력하지 않는다. `build`·`check`·`browser`가 실패하면 출력의 마지막 몇 줄만 본다(`2>&1 | tail -5`).
+- **브라우저 실행 파일:** `mpe_cli.py browser`는 기본 Chromium이 없으면(`Executable doesn't exist`, Playwright 패키지와 내려받은 브라우저의 revision 불일치) `MPE_CHROMIUM`에 지정한 실행 파일, 그다음 `PLAYWRIGHT_BROWSERS_PATH`·`/opt/pw-browsers`·`~/.cache/ms-playwright`·`~/Library/Caches/ms-playwright`의 설치된 Chromium을 새 revision부터 써서 다시 띄운다. 래퍼 스크립트를 따로 짜지 않는다. 그래도 실패하면 browser 검토를 `not_run`으로 두고 보류로 보고한다.
+
 ## 실행
 
 저장소 루트에서 Python 3.10 이상을 사용한다. 실행기는 표준 라이브러리만 필요하다. 설치만으로 실제 수업 산출물을 만들지 않는다.
@@ -68,7 +101,7 @@ description: 생명과학 복습노트의 기존 복습문제 또는 명시 경�
    SKILL=…; REPO=…; RUN=…; python3 "$SKILL/scripts/mpe_cli.py" extract --repo "$REPO" --target 1008 --run "$RUN"
    ```
 
-2. 대상 디렉터리의 `source.json`을 읽는다. 문항 ID·전체 문제·소문항·보기·원문·그림·참고 풀이를 확인한다. 카드의 출처(기출 합본 쪽, 웹과제 questions.json 항목), 교과서·강의노트의 해당 장, 관련 정리노트를 필요한 범위에서 실제로 읽고 원 페이지와 대조한다. `.pack/key-check.md`와 `.pack/question-audit.md`에서 그 문항의 정답 대조·보류 기록을 확인한다(없는 팩이면 건너뛴다). `data-source="생성 변형 …"` 카드는 `.pack/variants.md`에서 같은 id 행(근거 토픽, 형태 열의 교재 쪽, 의도한 정답과 이유)을 읽는다. STT는 필요한 경우 보조로 사용한다. 수업 밖 보충은 표시한다. `source.json`을 수동 수정하면 재추출 검사가 거부한다.
+2. (저작 에이전트) 대상 디렉터리의 `source.json`을 읽는다. 컨트롤러는 문항 수와 id 목록만 확인한다. 문항 ID·전체 문제·소문항·보기·원문·그림·참고 풀이를 확인한다. 카드의 출처(기출 합본 쪽, 웹과제 questions.json 항목), 교과서·강의노트의 해당 장, 관련 정리노트를 필요한 범위에서 실제로 읽고 원 페이지와 대조한다. `.pack/key-check.md`와 `.pack/question-audit.md`에서 그 문항의 정답 대조·보류 기록을 확인한다(없는 팩이면 건너뛴다). `data-source="생성 변형 …"` 카드는 `.pack/variants.md`에서 같은 id 행(근거 토픽, 형태 열의 교재 쪽, 의도한 정답과 이유)을 읽는다. STT는 필요한 경우 보조로 사용한다. 수업 밖 보충은 표시한다. `source.json`을 수동 수정하면 재추출 검사가 거부한다.
    forecast는 복습노트 `.pack/`의 key-check·variants 대신 `웹과제예상/<N>장/.pack/v<K>/`의 pack.json/blueprint.md를 읽고 원문 그대로와 변형·새 예상문항을 구분한다. 기존 실제 기출로 표시하지 않는다.
 3. [저작 규칙](references/authoring.md)을 읽고 `explanations/pN.html`을 작성한다(위 분담대로 병렬 저작). 필수 직계 구역은 `understand → recall → solve → verify`다. `start`는 recall 뒤, `pitfall`·`retry`는 verify 뒤에 별도의 도움이 있을 때만 넣으며 빈 구역·반복 문장은 생략한다. 문항 결함·인쇄 정답 오류의 공개와 대처는 아래 규칙을 유지한다. 모든 소문항의 solve/verify 표지, 펼친 답과 우측 요약이 필요하다. 객관식 recall에는 확인할 대상·관계·적용 조건을 판단 기준으로 제시하고, solve는 모든 선지의 실제 주장에 그 기준을 적용해 선택·제외 이유를 쓴다. 진술의 참·거짓과 답으로서의 적합성을 구별한다. 요약에는 핵심 기준과 결론만 짧게 남긴다. CLI는 설명을 자동 저작하지 않는다. 모든 profile의 문항마다 recall에 관련 정리노트의 실제 개념 앵커 링크를 최소 1개 넣는다. 대응 절이 없을 때만 [저작 규칙](references/authoring.md)의 `data-note-link-omitted` 선언과 `content.note_link_exceptions` 내용 검토 승인을 사용한다. 링크와 생략 사유 모두 없는 문항은 build/check/publish에서 거부한다. 링크 개수만 채우지 말고 개념 적합성을 문항별 검토한다.
 4. 정답을 보지 않은 별도 에이전트의 재풀이, 교과서 쪽 대조, 교배표 재계산 등으로 답을 확인하고 `evidence/`에 근거를 보관한다. 원문 충돌과 문항 결함은 구분한다.
@@ -82,7 +115,7 @@ description: 생명과학 복습노트의 기존 복습문제 또는 명시 경�
    SKILL=…; RUN=…; python3 "$SKILL/scripts/mpe_cli.py" check --run "$RUN"
    ```
 
-6. [검토 기록](references/verification.md)을 읽고 실제 source_visual/content/independent/browser 결과를 `review.json`에 기록한다. review.json 전체를 손으로 다시 쓰지 않고 검토 종류마다 `review-merge --kind <종류> --from <검토 JSON>`으로 넣는다. 사용한 참조 파일의 절대 path와 SHA-256은 `review-merge --add-reference <경로>`로 references에 기록한다.
+6. 검토 에이전트들이 [검토 기록](references/verification.md)을 읽고 실제 source_visual/content/independent/browser 검토를 수행해 검토 JSON을 쓴다(위 「컨트롤러 컨텍스트와 보고 계약」의 파일). 컨트롤러는 그 결과를 `review.json`에 기록한다. review.json 전체를 손으로 다시 쓰지 않고 검토 종류마다 `review-merge --kind <종류> --from <검토 JSON>`으로 넣는다. 사용한 참조 파일의 절대 path와 SHA-256은 `review-merge --add-reference <경로>`로 references에 기록한다.
 
    ```sh
    SKILL=…; RUN=…; python3 "$SKILL/scripts/mpe_cli.py" browser --run "$RUN" --shots
@@ -90,7 +123,7 @@ description: 생명과학 복습노트의 기존 복습문제 또는 명시 경�
    SKILL=…; RUN=…; python3 "$SKILL/scripts/mpe_cli.py" review-merge --run "$RUN" --add-reference "<읽은 자료 절대 경로>"
    ```
    브라우저 확인은 일회용 Playwright 스크립트를 짜지 않고 `mpe_cli.py browser`(약 25초)를 쓴다. 결과는 `evidence/explain-browser.json`, 스크린샷은 대상 폴더의 `browser-shots/`에 남는다. PASS는 기계 확인이므로 스크린샷을 직접 보고 간격·겹침·그림을 판단한 뒤 browser 검토를 기록한다. 구조 통과를 정답 검증으로 기록하지 않는다. 로컬 브라우저에서 1280×900/375×812, light/dark의 모든 문항·목차·이전/다음·요약·수식·그림·표를 확인한다. 콘솔·KaTeX 오류·누락 자원·외부 요청·문서 가로 넘침은 0이어야 한다. stage의 원 문제/개념 링크는 최종 발행 디렉터리 기준이므로 실제 원 파일과 anchor도 대조한다. 문제는 넓은 화면에서 목차 오른쪽·본문 왼쪽의 문제 패널 [문제 | 원문] 탭(원문 탭은 원문이 있는 문항만)으로 기본 표시되고, 패널 머리 버튼이나 끌어서 붙이기·떼기로 오른쪽에 붙이거나 띄운 창(이동·크기 조절)으로 바꿀 수 있으며 방식·위치는 `od-panels:explain:v2:prob`에 기억된다. 요약은 오른쪽 요약 패널, 좁은 화면에서 해설 위 접힘 버튼으로 표시된다. 템플릿 결함은 근거를 보고하며 임의로 템플릿을 수정하지 않는다. 네 검토는 `lite`에서도 생략하지 않는다.
-7. 실제 검토 네 가지(source_visual·content·independent·browser)가 모두 pass이고 현재 해시가 일치하면 사용자 호출 범위에서 추가 확인 없이 발행한다. 미검토·변경·실패·disputed는 해당 팩의 발행을 막는다.
+7. `review-status`로 실제 검토 네 가지(source_visual·content·independent·browser)가 모두 pass인지 확인하고, 현재 해시가 일치하면 사용자 호출 범위에서 추가 확인 없이 발행한다. 미검토·변경·실패·disputed는 해당 팩의 발행을 막는다.
 
    ```sh
    SKILL=…; RUN=…; python3 "$SKILL/scripts/mpe_cli.py" publish --run "$RUN"

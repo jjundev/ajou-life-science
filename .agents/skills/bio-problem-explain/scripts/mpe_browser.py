@@ -17,6 +17,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import json
 from pathlib import Path
 import re
+import sys
 import threading
 import unicodedata
 from urllib.parse import quote, unquote, urlsplit
@@ -91,6 +92,53 @@ def link_problems(html_text, publish_dir, stage_dir):
     return out, len(seen)
 
 
+from mpe_types import ExplainError
+
+
+def chromium_candidates(roots=None):
+    """설치된 Chromium 실행 파일을 새 revision부터 찾는다. Playwright 패키지와 내려받은 브라우저의 revision이 다를 때 쓴다."""
+    import os
+    if roots is None:
+        roots = [os.environ.get('PLAYWRIGHT_BROWSERS_PATH'), '/opt/pw-browsers',
+                 Path.home() / '.cache/ms-playwright', Path.home() / 'Library/Caches/ms-playwright',
+                 Path.home() / 'AppData/Local/ms-playwright']
+    names = ('headless_shell', 'chrome-headless-shell', 'chrome', 'Chromium', 'chrome.exe', 'headless_shell.exe')
+    found = []
+    for root in roots:
+        root = Path(root) if root else None
+        if not root or not root.is_dir():
+            continue
+        for folder in root.iterdir():
+            if not folder.name.startswith('chromium'):
+                continue
+            digits = re.sub(r'\D', '', folder.name.rsplit('-', 1)[-1])
+            for path in folder.rglob('*'):
+                if path.name in names and path.is_file() and os.access(path, os.X_OK):
+                    found.append((int(digits or 0), 'headless' in path.name.lower(), str(path)))
+    return [path for _, _, path in sorted(found, reverse=True)]
+
+
+def launch_chromium(pw):
+    """기본 실행이 'Executable doesn't exist'로 실패하면 MPE_CHROMIUM 또는 설치된 다른 revision으로 다시 띄운다."""
+    import os
+    try:
+        return pw.chromium.launch()
+    except Exception as first:
+        if "Executable doesn't exist" not in str(first):
+            raise
+        for path in [os.environ.get('MPE_CHROMIUM'), *chromium_candidates()]:
+            if not path:
+                continue
+            try:
+                browser = pw.chromium.launch(executable_path=path)
+                print(f'browser: 기본 Chromium 없음 → {path}', file=sys.stderr)
+                return browser
+            except Exception:
+                continue
+        raise ExplainError('Chromium 실행 파일 없음: `python3 -m playwright install chromium`을 실행하거나 '
+                           'MPE_CHROMIUM에 실행 파일 절대 경로를 지정하세요') from first
+
+
 def run_browser(item, shots=False):
     """Return True when any check failed."""
     from playwright.sync_api import sync_playwright
@@ -119,7 +167,7 @@ def run_browser(item, shots=False):
     shot_dir = folder / 'browser-shots'
     try:
         with sync_playwright() as pw:
-            browser = pw.chromium.launch()
+            browser = launch_chromium(pw)
             for width, height in VIEWPORTS:
                 for theme in THEMES:
                     label = f'{width}x{height} {theme}'

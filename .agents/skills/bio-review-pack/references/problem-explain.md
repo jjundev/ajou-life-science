@@ -12,8 +12,21 @@ bio-problem-explain 스킬의 "실행" 1~7단계를 이 팩의 최종 복습문�
 - EXPLAIN_RUN = `<scratchpad>/bio-problem-explain/<range>/`(scratchpad가 없으면 `/tmp/bio-problem-explain/<range>/`). 팩마다 비어 있는 새 폴더다. 같은 range를 다시 돌리면 `<range>-2/`처럼 새 폴더를 쓴다.
 - 5~8단계에 미해결 기계·내용·브라우저 검사가 있거나 0문항 팩이면 실행하지 않고 보류로 보고한다.
 
+**메인이 하는 일** (컨텍스트 규율)
+- 메인은 `EXPLAIN_SKILL/SKILL.md`만 읽는다. `references/authoring.md`는 저작 에이전트가, `references/verification.md`는 검토 에이전트가 읽는다. 메인이 두 파일·`source.json`·설명 조각·`review.json`·스크린샷을 통째로 열지 않는다.
+- 메인은 CLI(`extract`, `build`, `check`, `compare-answers`, `review-merge`, `review-status`, `publish`)만 실행하고, 저작·독립 검산·`source_visual`·`content`·`browser` 검토는 모두 서브에이전트가 한다. 서브에이전트의 보고는 해설 스킬 「컨트롤러 컨텍스트와 보고 계약」의 영수증이다. 43문항짜리 표가 보고 본문으로 돌아오면 받아 적지 말고 파일로 다시 쓰게 한다.
+
+  | 에이전트 (모델) | 메인이 넘기는 값 | 돌아오는 것 |
+  |---|---|---|
+  | 저작 (opus), 10문항당 1명 | EXPLAIN_SKILL, EXPLAIN_RUN, 대상 폴더, 담당 문항 id, REPO | 영수증 |
+  | 독립 검산 (opus), 1명 | 문항 사본·정리노트·교과서·강의노트 경로(정답·풀이·조각은 주지 않는다) | 영수증, `independent-answers.tsv` |
+  | source_visual 검토, content 검토 (opus), 각 1명 | EXPLAIN_SKILL, EXPLAIN_RUN, 대상 폴더, REPO | 영수증, `<종류>-review.json`, `<종류>-fixes.tsv` |
+  | browser 검토 (sonnet), 1명 | EXPLAIN_SKILL, EXPLAIN_RUN | 영수증, `browser-review.json` |
+- 검토가 fail이면 저작 에이전트에게 `<종류>-fixes.tsv` 경로만 보내 고치게 하고, build와 네 검토를 다시 한다.
+- 원 복습문제 카드에서 오류가 드러나면(예: 독립 검산이 카드 풀이의 사실 오류를 찾음) 8b를 멈추고, 복습팩 6단계 방식으로 카드를 고쳐 4·5·8단계를 다시 통과시킨 뒤 새 EXPLAIN_RUN(`<range>-2/`)에서 extract부터 다시 한다. 이 재추출은 한 번만 하고, 다시 어긋나면 보류로 보고한다.
+
 **절차** (`EXPLAIN_SKILL/SKILL.md`를 읽고 그대로 따른다)
-1. `EXPLAIN_SKILL/SKILL.md`와 `references/authoring.md`, `references/verification.md`를 읽는다.
+1. `EXPLAIN_SKILL/SKILL.md`를 읽는다(`references/authoring.md`와 `references/verification.md`는 서브에이전트가 읽는다).
 2. 실행 1단계: `--target ABS_REVIEW`(최종 HTML 절대 경로)로 `extract`한다. 날짜나 최신 팩 선택에 맡기지 않는다. 모든 ABS 자리는 실제 절대 경로다.
 3. 실행 2~3단계: `source.json`의 전체 문항·소문항을 읽고 기출 합본·웹과제·교과서·강의노트·정리노트·`.pack/`의 해당 쪽을 실제로 대조한 뒤 `explanations/pN.html`을 쓴다. 필수 구역·선택 구역과 요약은 해설기의 `references/authoring.md`를 따른다. 객관식은 판단 기준을 먼저 제시하고 모든 선지에 적용해 선택·제외 이유를 설명하며 불필요한 반복을 덜어낸다. CLI는 설명을 자동 저작하지 않는다.
 4. 실행 4단계: 정답을 보지 않은 별도 재풀이와 교과서 대조로 모든 소문항을 검산하고 `evidence/`에 둔다. 원문 오타·복수 정답·답안지 충돌은 disputed로 보류한다.
@@ -24,7 +37,7 @@ bio-problem-explain 스킬의 "실행" 1~7단계를 이 팩의 최종 복습문�
 **보존과 산출**
 - 산출은 `복습노트/<range>/문제설명_<range>_<slug>.html`과 `복습노트/<range>/.assets/`의 `문제설명_<range>_<slug>.md`, `figures_문제설명_<range>_<slug>/`, `자료_문제설명_<range>_<slug>/`다.
 - 원 복습문제·정리노트·MD·그림·`.pack/`·`.assets/풀이기록/`을 수정하지 않는다. 정리노트·복습문제에 링크를 넣지 않는다. 설명 소유 파일만 백업·교체한다.
-- 커밋·푸시는 별도 요청이 있을 때만 한다(커밋 제안은 `git add 복습노트/<range>`에 설명 파일이 포함된다).
+- 커밋·푸시는 별도 요청이 있을 때만 한다(커밋 제안은 `git add 복습노트/<range>`에 설명 파일이 포함된다). stop hook이 커밋·푸시를 요구하는 환경은 SKILL.md 「컨텍스트 규율」 5번을 따른다.
 
 **결과 보고**
 - 발행(published) 또는 보류(withheld)와 이유, HTML/MD 경로, EXPLAIN_RUN, 백업 경로, 네 검토 결과를 적는다.

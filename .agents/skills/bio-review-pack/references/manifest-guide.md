@@ -1,6 +1,6 @@
 # manifest.json 작성 규칙 (메인 에이전트)
 
-manifest는 이번 팩의 계약이다. 작성자, 검사기, 조립기가 모두 이 파일을 기준으로 삼는다.
+manifest는 이번 팩의 계약이다. 메인 에이전트는 요약 전체가 아니라 발췌(`RUN/summaries/stt-*.digest.md`)로 최상위 값과 `sections`·`topics`·`links`를 쓰고, `problems`·`parts`는 문항 감사 에이전트의 `work/problems.json`을 `pack_run.py merge-problems`로 넣는다(아래 "요약"은 메인에게는 발췌를 뜻한다). 작성자, 검사기, 조립기가 모두 이 파일을 기준으로 삼는다.
 정본 예시: `tests/fixtures/mini-run/manifest.json`.
 작성 후 반드시 `python3 <SKILL>/scripts/manifest.py <RUN>/manifest.json` → `OK`.
 
