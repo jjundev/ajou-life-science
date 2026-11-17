@@ -11,7 +11,7 @@ import uuid
 from urllib.parse import quote, unquote, urlsplit
 
 from comic_browser_evidence import LINK_RECORD, preview_evidence, save_link_status
-from comic_contract import CSS, TEMPLATE, assets_for, check, jobs_for, load, local, raster, read, state, validate_storyboard, write
+from comic_contract import REVIEW_VERSION, CSS, TEMPLATE, assets_for, check, jobs_for, load, local, raster, read, state, validate_storyboard, write
 from comic_source import digest, existing, nfc, parse
 
 
@@ -23,10 +23,13 @@ def relative(path, directory):
     return quote(os.path.relpath(path, directory).replace(os.sep, '/'), safe='/.-_')
 
 
-def render(run, output, image_root=None):
-    run, src, book = validate_storyboard(run)
-    jobs = jobs_for(src, book)
-    assets = assets_for(run, jobs)
+def render(run, output, image_root=None, *, page_context=None, planned=False):
+    if page_context is None:
+        run, src, book = validate_storyboard(run)
+        assets = assets_for(run, jobs_for(src, book, run=run))
+    else:
+        src, book, page, assets = page_context
+        book = {**book, 'pages': [page]}
     image_root = Path(image_root) if image_root else run
     output = Path(output)
     sections, titles, section_ids = {}, {}, {}
@@ -54,8 +57,15 @@ def render(run, output, image_root=None):
 
             panels = []
             for n, panel in enumerate(page['panels'], 1):
-                asset = assets[f"{page['id']}/{n:02}"]
-                image_href = relative(image_root / asset['file'], output.parent)
+                if planned:
+                    art = '<p class="comic-caption" data-planned-scene>그림 계획 · ' + esc(panel['scene']) + '</p>'
+                    space = ''
+                else:
+                    asset = assets[f"{page['id']}/{n:02}"]
+                    image_href = relative(image_root / asset['file'], output.parent)
+                    art = f'<img src="{esc(image_href)}" alt="{esc(panel["alt"])}" width="{asset["width"]}" height="{asset["height"]}" loading="lazy" decoding="async">'
+                    # Reserve a quiet zone within the art for the HTML speech.
+                    space = f'<div class="comic-art-space" style="aspect-ratio:{asset["width"]} / {asset["height"] * 0.64:g}" aria-hidden="true"></div>' if panel.get('dialogue') else ''
                 dialogue = []
                 for line in panel.get('dialogue', []):
                     speaker = line['speaker']
@@ -63,9 +73,6 @@ def render(run, output, image_root=None):
                     offscreen = speaker not in panel.get('characters', [])
                     dialogue.append(f'<p class="comic-dialogue comic-voice-{side}" data-speaker="{esc(speaker)}" data-offscreen="{str(offscreen).lower()}"><span class="comic-speaker">{esc(characters[speaker]["name"])}</span>{esc(line["text"])}</p>')
                 balloons = '<div class="comic-balloon-layer">' + ''.join(dialogue) + '</div>' if dialogue else ''
-                # A growing top row keeps readable speech clear of the lower 60% art.
-                # Unlike fixed absolute coordinates this also works at 375px and zoom.
-                space = f'<div class="comic-art-space" style="aspect-ratio:{asset["width"]} / {asset["height"] * 0.64:g}" aria-hidden="true"></div>' if dialogue else ''
                 analogy = page['analogy']
                 explanation = ''
                 if n == analogy['panels'][0]:
@@ -74,7 +81,7 @@ def render(run, output, image_root=None):
                 if n == analogy['limit_panel']:
                     explanation += '<p class="comic-limit"><strong>여기까지의 비유예요</strong> ' + esc(analogy['limit']) + '</p>'
                 panels.append(f'''<li class="comic-panel" data-panel="{n}">
-<figure><div class="comic-scene">{balloons}<img src="{esc(image_href)}" alt="{esc(panel['alt'])}" width="{asset['width']}" height="{asset['height']}" loading="lazy" decoding="async">{space}</div>
+<figure><div class="comic-scene">{balloons}{art}{space}</div>
 <figcaption><span class="comic-number">{n}컷</span>{labels(panel['evidence'])}<p class="comic-caption">{esc(panel['caption'])}</p>{explanation}</figcaption></figure></li>''')
             content = '<p class="comic-question">' + esc(page['question']) + '</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화">' + ''.join(panels) + '</ol>'
             terms = ''.join(f'<dt>{esc(t["term"])}</dt><dd>{labels(t["evidence"])}{esc(t["text"])}</dd>' for t in page.get('terms', []))
@@ -201,7 +208,8 @@ def _publish_comic(run, candidate=None):
     current = state(run)['browser']
     record = read(run / 'publication.json') if (run / 'publication.json').exists() else {}
     _, output, root = publication_paths(src)
-    assets = assets_for(run, jobs_for(src, book))
+    jobs = jobs_for(src, book, run=run)
+    assets = assets_for(run, jobs)
     if (record.get('fingerprint') == current and (candidate is None or candidate.matches(record))
             and reusable_publication(record, output, src, assets)):
         version = Path(record['version'])
@@ -229,13 +237,21 @@ def _publish_comic(run, candidate=None):
         for name in ('source.json', 'source.html', 'storyboard.json', 'images.json', 'review.json'):
             shutil.copy2(run / name, version / name)
         review = read(run / 'review.json')
+        if src.get('review_version') == REVIEW_VERSION:
+            from comic_page import preserve_art_references
+            preserve_art_references(version, jobs)
         if src.get('review_version'):
             for page in book['pages']:
                 if page['status'] == 'ready':
-                    relative_name = review['pages'][page['id']]['origin']['report']
-                    dest = local(version, relative_name)
-                    dest.parent.mkdir(parents=True, exist_ok=True)
-                    shutil.copy2(local(run, relative_name), dest)
+                    entry = review['pages'][page['id']]
+                    if src['review_version'] == REVIEW_VERSION:
+                        reports = {row['origin']['report'] for history in entry.values() for row in history.values()}
+                    else:
+                        reports = {entry['origin']['report']}
+                    for relative_name in reports:
+                        dest = local(version, relative_name)
+                        dest.parent.mkdir(parents=True, exist_ok=True)
+                        shutil.copy2(local(run, relative_name), dest)
         for view in review['browser']['views']:
             relative_name = view['screenshot']
             dest = local(version, relative_name)

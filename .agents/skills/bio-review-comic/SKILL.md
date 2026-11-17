@@ -40,46 +40,33 @@ python3 "$SKILL/scripts/comic.py" extract --repo "$REPO" --target "1105" --run "
 2. 각 페이지의 혼동 지점·도달할 이해(`clarification`) → 비유 대응·한계(`analogy`) → 설명형/대화형과 cast(`narrative`) → 4~8컷의 관찰 대상·행동·대사 → 근거·우측 요약을 쓴다. 화자의 질문·설명·자기수정이 핵심 추론을 이끈다. **대화 참여와 그림 출연은 별개**다. 비유 장면은 관련 사물과 작동 관계에 집중하고 화자는 화면 밖에서 말할 수 있다. 인물의 표정·행동 자체가 이해를 도울 때만 해당 컷 `characters`에 넣는다. 모든 컷을 사물 중심으로 구성해도 된다.
 3. `note_link`에는 그 페이지로 이동해 무엇을 구별할지 한 문장으로 적는다. 혼동을 설명하는 기존 블록 ID가 적절하면 anchor_id로 지정한다.
 4. 원본 근거 **모든 항목**에 컷 번호 또는 생략 이유를 `coverage`로 남긴다. 조건·예외·오개념 판별 기준은 생략하지 않는다. 반복·주변 사례의 생략은 설명한다.
-5. 페이지가 준비되면 `ready`, 해결 불가면 이유를 적고 `held`로 표시한다. 미완료 `draft`는 검사에서 실패한다.
+5. 콘티가 준비되면 `ready`, 실제 보류 사유가 있으면 `held`로 표시한다. 다른 페이지의 `draft`는 페이지별 작업을 막지 않으며, 전체 검사에서는 작성 완료나 보류 사유가 필요하다.
 
 다른 토픽의 주장을 다시 설명하는 페이지는 해당 토픽 ID를 `source_dependencies.topics`에 기록한다. 검토에 실제로 쓰는 별도 도해·위젯 등 로컬 파일도 `source_dependencies.files`에 기록한다. 전체 요약의 범위를 좁히기 어렵다면 `topics: "all"`을 쓴다.
 
+## 3. 페이지별 내용 검토와 그림 생성
+
+[콘티·검토 기준](references/review.md)과 [작업자 계약](references/agents.md)을 사용한다. 콘티가 준비된 페이지부터 고정 입력을 만들고, 콘티 작성자와 다른 검토자가 **그림 생성 전에** 고정 미리보기의 대사·캡션·그림 계획에서 읽히는 단서를 원본의 조건·예외와 대조한다. 실패하면 콘티를 수정해 다시 배정한다.
+
 ```bash
-python3 "$SKILL/scripts/comic.py" check --run "$RUN" --phase storyboard
-python3 "$SKILL/scripts/comic.py" prompts --run "$RUN"
+python3 "$SKILL/scripts/comic.py" prepare --run "$RUN" --page "$PAGE" --stage content
+python3 "$SKILL/scripts/comic.py" record-review --run "$RUN" --report "$CONTENT_REPORT"
+python3 "$SKILL/scripts/comic.py" prepare --run "$RUN" --page "$PAGE" --stage generate
+python3 "$SKILL/scripts/comic.py" register-image --run "$RUN" --report "$GENERATION_REPORT"
 ```
 
-검사는 근거 존재·대응과 구조를 확인한다. 설명의 의미가 옳다는 판정은 4단계에서 별도로 한다.
+현재 내용 통과 판정이 있는 페이지부터 그림을 만든다. [이미지 제작](references/images.md)에 따라 생성 작업자에게 배정 출력의 `file`만 전달한다. 이미지 호출에는 컷에서 실제로 그릴 장면과 고정 참조만 넘긴다. `pending: 0`이면 등록된 그림을 재사용한다. 이미지 호출·파일 확보가 실패하면 성공한 컷을 먼저 등록한다. 실제 그림 검토에서 떨어진 컷은 `prepare --stage generate --redo --panel 컷번호`로 재배정한다. 페이지별 수정 시도를 묶고 해결할 수 없으면 이유를 적어 보류한다.
 
-## 3. 그림 생성과 등록
-
-[이미지 제작](references/images.md)과 [에이전트 작업 계약](references/agents.md)을 읽는다. **페이지당 생성 에이전트 하나**에 해당 페이지의 4~8컷을 맡긴다. 이 스킬은 생성·독립 검토의 서브에이전트 위임을 요청한다. 대화 이력 없이 시작하고, 경로·페이지 ID·작업 계약을 전달한다. 메인은 콘티·배분·순차 등록·발행을 담당하며 생성 이미지와 상세 로그는 작업 에이전트의 컨텍스트에 둔다. 실제 동시 실행 한도에서 메인 슬롯을 제외한 만큼 생성자와 검토자를 배치한다.
-
-생성자는 `prompts.json`의 작업별 `prompt`로 **내장 이미지 생성 도구를 컷마다 호출**한다. 각각 다른 장면을 한 프롬프트의 변형 옵션으로 대신하지 않는다. 앞서 만든 대상의 외형이 중요하면 실제 이전 컷을 참조 이미지로 제공한다. 원본 텍스트를 이미지에 새기지 않고 한국어·라벨·정확한 표기는 HTML로 표시한다.
-
-- `reusable: true`인 그림은 프롬프트와 파일 지문이 맞으므로 재사용 후보이다. 실제 장면의 적합성은 내용/그림 검토에서 확인한다.
-- 생성자는 실제 로컬 파일과 컷별 결과를 전용 결과 파일에 남기고 짧은 요약만 반환한다. 메인은 경로·컷 목록·현재 프롬프트 지문을 확인한 뒤 아래 `register-image`를 **순차 실행**한다. 공유 `images.json`은 생성자가 수정하지 않는다. 파일 경로를 지어내거나 비트맵 대신 SVG·도형·빈 이미지로 채우지 않는다.
-- 위임 불가·생성 도구 사용 불가·아티팩트 저장 실패면 원인과 함께 해당 페이지를 `held`로 표시한다. 메인 생성으로 조용히 전환하거나 별도 유료 API/키를 자동으로 사용하지 않는다.
+## 4. 실제 그림과 합성 화면
 
 ```bash
-python3 "$SKILL/scripts/comic.py" register-image --run "$RUN" --page s0-miller --panel 1 --image "/실제/생성결과.png"
-python3 "$SKILL/scripts/comic.py" check --run "$RUN" --phase images
+python3 "$SKILL/scripts/comic.py" prepare --run "$RUN" --page "$PAGE" --stage review
+python3 "$SKILL/scripts/comic.py" record-review --run "$RUN" --report "$VISUAL_REPORT"
+python3 "$SKILL/scripts/comic.py" check --run "$RUN" --phase reviewed
 python3 "$SKILL/scripts/comic.py" build --run "$RUN"
 ```
 
-도구가 이미지를 인라인으로만 반환하면 지원되는 저장 경로를 확인한다. 파일을 확보할 수 없으면 해당 페이지 보류와 원인을 보고한다. 생성 실패 시 페이지당 수정 시도는 한 번으로 묶고, 계속 실패하면 다른 페이지를 진행한다.
-
-## 4. 내용과 그림 검토
-
-[검토 기준](references/review.md)을 읽는다. 재실행은 [이전 판정 대조](#재실행원본-변경)를 먼저 한다. 새 검토가 필요한 페이지에는 생성자와 다른 독립 검토 에이전트를 배정한다. 검토자는 원본·콘티의 내용과 **모든 실제 그림**의 구조·방향·개수·의미를 확인한다. 검토자도 대화 이력 없이 시작하며 생성자의 자기평가를 정답으로 전달하지 않는다. 관찰·판정은 전용 보고서에 남기고 메인에는 판정·수정할 컷·보고서 경로만 반환한다. 검토자 확보 불가 시 해당 페이지는 보류한다.
-
-```bash
-python3 "$SKILL/scripts/comic.py" fingerprints --run "$RUN" --page "$PAGE"
-python3 "$SKILL/scripts/comic.py" record-review --run "$RUN" --report "$RUN/workers/$PAGE/review.json"
-python3 "$SKILL/scripts/comic.py" check --run "$RUN" --phase reviewed
-```
-
-메인은 보고서의 실제 관찰과 독립 검토자 여부를 확인한 뒤 `record-review`를 순차 실행한다. CLI는 이미 수행된 검토를 확인하고 최초 보고서를 보존한다. 전체 이미지를 메인에서 다시 열지 않고, 검토자가 지적한 문제나 판정 충돌이 있는 컷을 확인한다. 대사만 바뀌어도 내용과 그림 검토 지문이 바뀐다. 장면·스타일·그림 의미가 달라져 프롬프트가 바뀐 그림은 현행 그림 검사를 따른다.
+검토자는 배정에 나온 `checks`만 판단한다. `art`는 실제 그림의 구조·방향·개수·연속성, `composition`은 실제 합성 화면에서 대사·범례·보충 표시와 그림이 맞는지 확인한다. 문구만 바뀌면 내용과 합성 화면을 다시 검토한다. 그림이나 참조가 바뀌면 해당 그림과 합성 화면도 다시 확인한다. `pending: 0`이면 현재 판정을 쓴다. `record-review`가 `stale`을 반환하면 보고서는 보존되며 현재 페이지를 다시 배정한다. 최신 실패는 해당 검토의 통과를 해제한다.
 
 ## 5. 브라우저
 
@@ -93,7 +80,7 @@ python3 "$SKILL/scripts/comic.py" check --run "$RUN" --phase browser
 python3 "$SKILL/scripts/comic.py" publish --run "$RUN"
 ```
 
-발행은 검증된 결과를 **로컬 파일**로 저장한다. 기존 HTML은 새 버전의 `previous.html`로 보존하고, 이미지·제작자료와 `review-evidence/`의 최초 독립 검토 보고서를 고유 버전 폴더에 둔다. `prompts.json`과 `workers/`의 작업 기록은 메인이 실제 `version` 폴더에 상대 경로를 유지해 추가 보존한다. 같은 결과를 재실행하면 중복 버전을 만들지 않는다. 발행 뒤 [정리노트 연결](references/note-links.md)대로 원본에 안내·링크를 자동 추가한다. 연결 실패는 발행 결과와 구분하고 `link-notes --run "$RUN"`으로 재시도한다. `publish --no-link`는 발행만 할 때 쓴다. 성공/보류 수는 `publish` 출력에 따른다. 전부 보류라면 빈 제작물을 발행하지 말고 원인과 실행 폴더만 보고한다.
+발행은 검증된 결과를 **로컬 파일**로 저장한다. 기존 HTML은 새 버전의 `previous.html`로 보존하고, 이미지·제작자료와 `review-evidence/`의 최초 독립 검토 보고서를 고유 버전 폴더에 둔다. 생성·검토 작업의 계측은 RUN의 `tasks/`에 남고, 발행 검토 증거는 버전 폴더에서 확인한다. 같은 결과를 재실행하면 중복 버전을 만들지 않는다. 발행 뒤 [정리노트 연결](references/note-links.md)대로 원본에 안내·링크를 자동 추가한다. 연결 실패는 발행 결과와 구분하고 `link-notes --run "$RUN"`으로 재시도한다. `publish --no-link`는 발행만 할 때 쓴다. 성공/보류 수는 `publish` 출력에 따른다. 전부 보류라면 빈 제작물을 발행하지 말고 원인과 실행 폴더만 보고한다.
 
 원본 연결까지 발행 전에 시험하려면 [선택형 발행 리허설](references/review.md#선택형-발행-리허설)을 사용한다. `rehearse`로 실제 최종 경로와 같은 격리본에서 4종 왕복을 확인하고, `publish --rehearsal`에 그 폴더를 넘겨 검사한 두 HTML을 반영한다. 후보나 실제 입력이 바뀌었으면 새 리허설이 필요하다.
 
@@ -131,7 +118,7 @@ python3 "$SKILL/scripts/comic.py" reuse-reviews --from "$PREVIOUS_RUN" --run "$N
 - 상태: `완료 N/N페이지` 또는 `일부 완료 N/N페이지, 보류 ID와 이유`. 원본 충실성 검토와 기계 검사를 구별한다.
 - 최종 HTML, 그림·제작자료 폴더, 원본 연결, 실행 폴더의 실제 경로.
 - 혼동 지점·사용한 비유·한계·설명형/대화형. 정리노트 연결 added/updated/unchanged/skipped와 이유, 실패 시 재시도 방법.
-- 포함·제외 페이지 수, 실제 컷 수, 재사용/신규 그림 수.
+- 포함·제외 페이지와 실제 컷 수. `run-stats --run "$RUN"`의 입력 분량, 이미지 호출 수, 단계별 배정·작업·회수 시간을 보고한다. `task_window_seconds`는 첫 작업 배정부터 마지막 결과 회수까지다. 전체 시간은 추출 시작부터 최종 브라우저 확인까지 따로 잰다. 작업 입력 글자 수는 실제 사용 토큰과 구분한다.
 - 내용·그림 검토에서 고친 내용, 생략한 주변 내용, 남은 불확실성.
 - 데스크톱·모바일 및 라이트·다크 확인 결과와 제약.
 

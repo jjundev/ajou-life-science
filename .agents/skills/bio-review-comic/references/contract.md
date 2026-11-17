@@ -3,11 +3,11 @@
 ## 파일과 원본 지문
 
 - `source.html`: 추출 당시 원본 바이트 스냅샷. 편집 금지.
-- `source.json`: 원본 경로, `sha256`(스냅샷 실제 바이트), `content_sha256`(검증된 만화 참조 블록만 제외한 원본), 토픽·근거·포함/제외 목록. 새 추출에는 `review_version: 1`이 기록된다. 편집 금지.
+- `source.json`: 원본 경로, `sha256`(스냅샷 실제 바이트), `content_sha256`(검증된 만화 참조 블록만 제외한 원본), 토픽·근거·포함/제외 목록. 새 추출에는 `review_version: 2`이 기록된다. 편집 금지.
 - `selection`: 기본 `[]`(전체 포함 페이지). 명시적 `extract --page ID` 샘플만 `[ID]`. 범위 밖은 보류가 아니라 제작 범위 제외다.
 - `storyboard.json`: 작성할 콘티. 원본과 동일한 `source_sha256`, `schema_version: 2`.
-- `prompts.json`, `images.json`: 프롬프트와 실제 등록 이미지 지문. `reusable`은 실제 검토를 대신하지 않는다.
-- `review.json`, `review-evidence/`, `checks/`: 내용·그림·브라우저 판정, 최초 독립 검토 보고서, 화면 증거. 새 계약의 페이지 기록은 `inputs`와 `origin`(`kind`, `report`, `sha256`)을 포함한다. 이전 계약의 발행 버전은 기존 기록 형식으로 확인할 수 있다.
+- `tasks/<id>/task.json`과 `result.json`: 페이지별 고정 작업 입력과 완료 기록. `images.json`: 실제 등록 그림의 경로, 파일 해시, 생성 지문, 배정 시각.
+- `review.json`, `review-evidence/`, `checks/`: 내용·그림·브라우저 판정, 최초 독립 검토 보고서, 화면 증거. 새 계약은 `content`, `art`, `composition`을 각각 지문과 증거에 묶는다. 검토 보고서와 해당 작업 입력은 증거 파일에 함께 보존한다. 판정 이력은 페이지·검토 종류·입력 지문으로 구분한다. 발행 버전의 `art-references.json`과 `resources/`에는 생성에 사용한 참조 파일과 지문이 남는다. 이전 계약의 발행 버전은 기존 기록 형식으로 확인할 수 있다.
 - `preview.html`, `publication.json`: 미리보기와 발행 결과.
 - `note-links-result.json`: 원본 연결 결과. 실패해도 발행한 만화를 삭제하지 않는다.
 - `browser_gate_version: 1`: 새 추출의 발행 조건. RUN의 `browser-preview.json`은 미리보기 보고서 경로와 지문을 기록한다. 발행 시 보고서와 4종 화면을 버전의 `checks/automatic-preview/`에 보존한다. 필드가 없는 RUN은 기존 발행 계약을 적용한다.
@@ -45,7 +45,7 @@ v1 실행은 직접 수정·발행하지 않고 새 RUN에서 `extract --reuse �
 - `summary`: `{text,evidence}`. 핵심 관계·조건을 독립적으로 이해할 수 있게 작성.
 - `source_dependencies`: `{topics: [다른 원본 토픽 ID] 또는 "all", files: [저장소 루트 기준 상대 경로]}`. 요약·용어·대사·그림의 실제 근거를 적는다. 다른 토픽을 쓰지 않으면 `topics: []`, 별도 파일이 없으면 `files: []`를 명시한다. 필드 자체가 없으면 관련 토픽 범위를 확인할 수 없어 원본 전체를 비교한다. 파일은 읽은 바이트로 확인한다.
 - `terms`: `[{term,text,evidence}]`, 필요 없으면 `[]`.
-- `panels`: 4~8개. 각 컷에 `scene`, `caption`, `alt`, `evidence`, `characters`, `dialogue`.
+- `panels`: 4~8개. 각 컷에 `scene`, `caption`, `alt`, `evidence`, `characters`, `dialogue`. 선택 항목은 `style_reference`와 `art_references`. `scene`은 실제로 보여야 하는 구조·방향·개수·조건을 포함한다.
   - `characters`: 그림에 실제 보이는 캐릭터 ID 목록. 사물 중심·확대·관찰 컷은 `[]`로 쓴다. 페이지 전체가 `[]`여도 된다. 이 경우 사람·얼굴·손·의인화한 사물을 생성하지 않는다.
   - `dialogue`: `[{speaker: 캐릭터ID, text: 대사}]`. 세부 관찰 컷은 `[]` 가능하나 페이지의 핵심 추론은 대사로 전달한다.
   - 화자는 페이지 cast에 등록되어야 한다. 그림 밖에서 말하는 등록 화자는 허용한다. 말풍선은 컷 내부 위쪽에서 DOM 순서대로 읽고 cast 순서에 따른 좌우 위치와 이름으로 구별한다. 화면 밖 화자의 꼬리는 컷 가장자리를 향하며 사물이 말하는 것처럼 연결하지 않는다.

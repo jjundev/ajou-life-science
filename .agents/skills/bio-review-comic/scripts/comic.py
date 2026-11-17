@@ -12,22 +12,23 @@ from comic_contract import BROWSER_GATE_VERSION, REVIEW_VERSION, assets_for, che
 from comic_render import build, publish
 from comic_reviews import page_fingerprints, record_review, reuse_reviews
 from comic_links import link_notes
+from comic_page import copy_art_reference_fallback, prepare_page, register_generation, run_stats
 from comic_source import digest, inventory, resolve
 
 
-def extract(repo, target, run, reuse=None, page=None):
+def extract(repo, target, run, reuse=None, page=None, *, review_version=REVIEW_VERSION):
     repo, run = Path(repo).resolve(), Path(run).resolve()
     if run.exists() and any(run.iterdir()):
         raise ValueError('실행 폴더에 이미 파일이 있습니다. 새 RUN을 사용하세요.')
     path = resolve(repo, target)
-    src = inventory(path, repo, selection=[page] if page else None, review_version=REVIEW_VERSION,
+    src = inventory(path, repo, selection=[page] if page else None, review_version=review_version,
                     browser_gate_version=BROWSER_GATE_VERSION)
     if run == path.parent or path.is_relative_to(run):
         raise ValueError('RUN은 원본 정리노트 폴더와 분리하세요.')
     book = {'schema_version': 2, 'characters': [], 'source_sha256': src['sha256'], 'title': f"생명과학 {src['range']} 학습만화", 'style': '생물 구조를 살린 학습만화. 밝은 종이색 배경과 절제된 파란 강조. 같은 대상의 모양·색 유지.', 'pages': []}
     for topic in src['topics']:
         if topic['include']:
-            book['pages'].append({'id': topic['id'], 'title': topic['title'], 'source_topic_sha256': topic['sha256'], 'status': 'draft', 'question': '', 'summary': {'text': '', 'evidence': []}, 'terms': [], 'panels': [], 'coverage': [], 'clarification': {}, 'analogy': {}, 'narrative': {}, 'note_link': {}})
+            book['pages'].append({'id': topic['id'], 'title': topic['title'], 'source_topic_sha256': topic['sha256'], 'status': 'draft', 'question': '', 'source_dependencies': {'topics': [], 'files': []}, 'summary': {'text': '', 'evidence': []}, 'terms': [], 'panels': [], 'coverage': [], 'clarification': {}, 'analogy': {}, 'narrative': {}, 'note_link': {}})
     run.mkdir(parents=True, exist_ok=True)
     write(run / 'source.json', src)
     shutil.copy2(path, run / 'source.html')
@@ -48,8 +49,10 @@ def extract(repo, target, run, reuse=None, page=None):
             if found and found.get('source_topic_sha256') == page['source_topic_sha256']:
                 book['pages'][i] = copy.deepcopy(found)
         old_assets = read(old / 'images.json')
+        if review_version == REVIEW_VERSION:
+            copy_art_reference_fallback(old, run)
         new_assets = {}
-        for job in jobs_for(src, book):
+        for job in jobs_for(src, book, run=run):
             item = old_assets.get(job['key'])
             if not item or item.get('prompt_sha256') != job['prompt_sha256']:
                 continue
@@ -69,7 +72,9 @@ def extract(repo, target, run, reuse=None, page=None):
 
 def prompts(run):
     run, src, book = validate_storyboard(run)
-    jobs = jobs_for(src, book)
+    if src.get('review_version') == REVIEW_VERSION:
+        raise ValueError('페이지별 prepare --stage generate를 사용하세요.')
+    jobs = jobs_for(src, book, run=run)
     reusable = assets_for(run, jobs, required=False)
     for job in jobs:
         job['reusable'] = job['key'] in reusable
@@ -81,7 +86,9 @@ def prompts(run):
 
 def register_image(run, page, panel, image):
     run, src, book = validate_storyboard(run)
-    job = next((j for j in jobs_for(src, book) if j['page'] == page and j['panel'] == panel), None)
+    if src.get('review_version') == REVIEW_VERSION:
+        raise ValueError('생성 지문을 담은 register-image --report가 필요합니다.')
+    job = next((j for j in jobs_for(src, book, run=run) if j['page'] == page and j['panel'] == panel), None)
     if not job:
         raise ValueError('대상 컷 없음')
     info = raster(image)
@@ -140,9 +147,18 @@ def main(argv=None):
     rehearsal.add_argument('--out', required=True, type=Path)
     register = commands.add_parser('register-image', help='이미지 도구가 반환한 실제 로컬 파일 등록')
     register.add_argument('--run', required=True, type=Path)
-    register.add_argument('--page', required=True)
-    register.add_argument('--panel', required=True, type=int)
-    register.add_argument('--image', required=True, type=Path)
+    register.add_argument('--page')
+    register.add_argument('--panel', type=int)
+    register.add_argument('--image', type=Path)
+    register.add_argument('--report', type=Path)
+    prepare = commands.add_parser('prepare', help='페이지별 고정 작업 입력 만들기')
+    prepare.add_argument('--run', required=True, type=Path)
+    prepare.add_argument('--page', required=True)
+    prepare.add_argument('--stage', required=True, choices=('content', 'generate', 'review'))
+    prepare.add_argument('--panel', type=int, action='append', help='생성 컷 지정. 반복해서 전달 가능')
+    prepare.add_argument('--redo', action='store_true', help='생성 입력이 같아도 실패한 실제 그림을 다시 생성')
+    stats = commands.add_parser('run-stats', help='단계별 작업 시간·입력량·생성 호출 수 확인')
+    stats.add_argument('--run', required=True, type=Path)
     args = parser.parse_args(argv)
     try:
         if args.command == 'extract':
@@ -151,7 +167,17 @@ def main(argv=None):
             result = prompts(args.run)
             result = {k: v for k, v in result.items() if k != 'jobs'} | {'file': str(args.run / 'prompts.json')}
         elif args.command == 'register-image':
-            result = register_image(args.run, args.page, args.panel, args.image)
+            legacy = (args.page, args.panel, args.image)
+            if args.report and not any(value is not None for value in legacy):
+                result = register_generation(args.run, args.report)
+            elif not args.report and all(value is not None for value in legacy):
+                result = register_image(args.run, *legacy)
+            else:
+                raise ValueError('--report 또는 --page/--panel/--image를 지정하세요.')
+        elif args.command == 'prepare':
+            result = prepare_page(args.run, args.page, args.stage, redo=args.redo, panels=args.panel)
+        elif args.command == 'run-stats':
+            result = run_stats(args.run)
         elif args.command == 'build':
             result = {'preview': str(build(args.run)), **check(args.run, 'images')}
         elif args.command == 'check':

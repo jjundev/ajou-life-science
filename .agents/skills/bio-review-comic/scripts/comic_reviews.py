@@ -4,11 +4,14 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from comic_contract import SKILL, assets_for, atomic_write, fingerprint, jobs_for, local, page_content, read, validate_storyboard
+from comic_contract import REVIEW_VERSION, SKILL, assets_for, atomic_write, fingerprint, jobs_for, local, page_content, read, validate_storyboard
 from comic_source import digest, existing
 
 
-def criteria_digest():
+def criteria_digest(version=REVIEW_VERSION):
+    if version == 1:
+        # Version 1 verdicts were issued under the criteria shipped with that contract.
+        return '8b38d8a23b3a58f087d408372347e698c8b42d2c262b9033b6f6e121d99babce'
     refs = SKILL / 'references'
     review = (refs / 'review.md').read_text(encoding='utf-8').split('\n## 브라우저 확인\n', 1)[0]
     agents = (refs / 'agents.md').read_text(encoding='utf-8').split('\n## 독립 검토자에게 전달할 작업\n', 1)[-1]
@@ -129,7 +132,7 @@ def preserve_report(run, raw):
 
 
 def page_images(run, src, book):
-    jobs = jobs_for(src, book)
+    jobs = jobs_for(src, book, run=run)
     assets = assets_for(run, jobs, required=False)
     images, missing = {}, set()
     for job in jobs:
@@ -149,15 +152,22 @@ def current_page_review(run, pid):
     images, missing = page_images(run, src, book)
     if page is None or pid in missing:
         raise ValueError(f'{pid}: 현재 콘티와 등록 그림을 준비해야 합니다.')
-    return run, page_review_inputs(src, book, page, images[pid], criteria_digest())
+    return run, page_review_inputs(src, book, page, images[pid], criteria_digest(src['review_version']))
 
 
 def page_fingerprints(run, pid):
+    if read(Path(run) / 'source.json').get('review_version') == REVIEW_VERSION:
+        from comic_page import page_state
+        _, _, _, _, _, _, checks = page_state(run, pid)
+        return {'pages': {pid: checks}}
     _, inputs = current_page_review(run, pid)
     return {'pages': {pid: review_fingerprints(inputs)}, 'review_inputs': {pid: inputs}}
 
 
 def record_review(run, worker_report):
+    if read(Path(run) / 'source.json').get('review_version') == REVIEW_VERSION:
+        from comic_page import record_page_review
+        return record_page_review(run, worker_report)
     raw = Path(worker_report).read_bytes()
     report = json.loads(raw)
     if not isinstance(report, dict):
@@ -212,6 +222,9 @@ def reuse_reviews(run, previous, *, dry_run=False):
     old, old_src, old_book = validate_storyboard(previous, historical=True, allow_draft=True)
     if old == run or Path(old_src['path']).resolve() != Path(src['path']).resolve():
         raise ValueError('이전 실행과 새 RUN은 같은 정리노트의 서로 다른 폴더여야 합니다.')
+    if src.get('review_version') == REVIEW_VERSION:
+        from comic_page import inherit_page_reviews
+        return inherit_page_reviews(run, src, book, old, old_src, dry_run=dry_run)
     data = review_data(run)
     old_data = review_data(old) if old_src.get('review_version') else {'pages': {}}
     images, missing = page_images(run, src, book)
@@ -219,7 +232,7 @@ def reuse_reviews(run, previous, *, dry_run=False):
     old_topics = {t['id']: t['sha256'] for t in old_src['topics']}
     new_topics = {t['id']: t['sha256'] for t in src['topics']}
     old_pages = {p['id']: p for p in old_book['pages']}
-    criteria = criteria_digest()
+    criteria = criteria_digest(src['review_version'])
     results = {}
     applied = False
     for page in book['pages']:

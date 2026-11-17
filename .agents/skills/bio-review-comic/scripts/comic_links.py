@@ -121,7 +121,7 @@ def update_note_links(run, record, *, dry_run, repair_fragments, track):
         target, note, pages = Path(record['html']), Path(src['path']), book['pages']
         if not target.is_file() or digest(target.read_bytes()) != record.get('html_sha256') or record.get('fingerprint') != state(run)['browser']:
             raise ValueError('발행한 만화가 없거나 변경됨. publish 후 연결하세요.')
-        for asset in assets_for(run, jobs_for(src, book)).values():
+        for asset in assets_for(run, jobs_for(src, book, run=run)).values():
             if raster(local(version, asset['file']))['sha256'] != asset['sha256']:
                 raise ValueError('발행 그림 변경: 다시 발행한 뒤 연결하세요.')
     from comic_render import validate_output

@@ -64,7 +64,7 @@ class ComicPipeline(unittest.TestCase):
         self.repo = Path(self.tmp.name) / 'repo'
         self.note = source(self.repo)
         self.run = Path(self.tmp.name) / 'run'
-        self.api.extract(self.repo, '1105', self.run)
+        self.api.extract(self.repo, '1105', self.run, review_version=1)
 
     def read(self, name):
         return json.loads((self.run / name).read_text())
@@ -134,6 +134,149 @@ class ComicPipeline(unittest.TestCase):
                      'held': [{'id': p['id'], 'reason': p['reason']} for p in inputs.pages if p['status'] == 'held']})
         self.write(PREVIEW_RECORD, {'report': str(path), 'sha256': digest(path.read_bytes())})
 
+    def page_flow_fixture(self):
+        self.run = Path(self.tmp.name) / 'page-flow'
+        self.api.extract(self.repo, '1105', self.run)
+        return self.ready()
+
+    def page_report(self, task, status='passed'):
+        snapshot = self.read(task['file'])
+        result = {'task': snapshot['id'], 'checks': {
+            kind: {'status': status, 'notes': ['Synthetic check'],
+                   'checked_panels': snapshot['panels']}
+            for kind in snapshot['checks']}}
+        self.write('page-worker.json', result)
+        return self.api.record_review(self.run, self.run / 'page-worker.json')
+
+    def page_art(self, task):
+        snapshot = self.read(task['file'])
+        art = png(Path(self.tmp.name) / 'test-page-art.png')
+        from comic_source import digest
+        rows = [{'panel': job['panel'], 'prompt_sha256': job['prompt_sha256'],
+                 'image': str(art), 'sha256': digest(art.read_bytes())}
+                for job in snapshot['jobs']]
+        self.write('generation.json', {'task': snapshot['id'], 'images': rows,
+                                      'image_calls': len(rows)})
+        return self.run / 'generation.json'
+
+    def test_page_generation_waits_for_content_but_not_other_drafts(self):
+        book = self.page_flow_fixture()
+        book['pages'][1]['status'] = 'draft'
+        self.write('storyboard.json', book)
+        pid = book['pages'][0]['id']
+        with self.assertRaisesRegex(ValueError, '내용'):
+            self.api.prepare_page(self.run, pid, 'generate')
+        content = self.api.prepare_page(self.run, pid, 'content')
+        packet = self.read(content['file'])
+        self.assertNotIn(book['pages'][1]['id'], packet['sources'])
+        view = Path(content['file']).parent / packet['preview']['file']
+        self.assertIn('data-planned-scene', view.read_text())
+        self.page_report(content)
+        task = self.api.prepare_page(self.run, pid, 'generate')
+        self.assertEqual(task['pending'], 4)
+        self.api.register_generation(self.run, self.page_art(task))
+        self.assertEqual(self.api.prepare_page(self.run, pid, 'generate')['pending'], 0)
+
+    def test_copy_edits_keep_art_and_stale_approval_cannot_win(self):
+        book = self.page_flow_fixture()
+        pid = book['pages'][0]['id']
+        self.page_report(self.api.prepare_page(self.run, pid, 'content'))
+        generation = self.api.prepare_page(self.run, pid, 'generate')
+        self.api.register_generation(self.run, self.page_art(generation))
+        self.page_report(self.api.prepare_page(self.run, pid, 'review'))
+        book['pages'][0]['analogy']['limit'] += ' 수정된 한계'
+        self.write('storyboard.json', book)
+        older = self.api.prepare_page(self.run, pid, 'content')
+        self.assertEqual(self.page_report(older)['status'], 'recorded')
+        self.assertEqual(self.api.prepare_page(self.run, pid, 'generate')['pending'], 0)
+        review = self.api.prepare_page(self.run, pid, 'review')
+        self.assertEqual(list(self.read(review['file'])['checks']), ['composition'])
+        newer = self.api.prepare_page(self.run, pid, 'content')
+        self.page_report(newer, 'failed')
+        self.assertEqual(self.page_report(older)['status'], 'stale')
+        with self.assertRaisesRegex(ValueError, '내용'):
+            self.api.prepare_page(self.run, pid, 'generate')
+
+    def test_snapshot_report_survives_a_concurrent_edit_and_old_art_is_rejected(self):
+        book = self.page_flow_fixture()
+        pid = book['pages'][0]['id']
+        content = self.api.prepare_page(self.run, pid, 'content')
+        self.page_report(content)
+        generation = self.api.prepare_page(self.run, pid, 'generate')
+        report = self.page_art(generation)
+        book['pages'][0]['panels'][0]['scene'] += ' 방향을 반대로 그린다.'
+        self.write('storyboard.json', book)
+        self.assertEqual(self.page_report(content)['status'], 'stale')
+        with self.assertRaisesRegex(ValueError, '지문'):
+            self.api.register_generation(self.run, report)
+        self.assertEqual(self.read('images.json'), {})
+        self.page_report(self.api.prepare_page(self.run, pid, 'content'))
+        self.assertEqual(self.api.prepare_page(self.run, pid, 'generate')['pending'], 4)
+
+    def test_delayed_failed_report_blocks_restored_input_and_inheritance(self):
+        book = self.page_flow_fixture()
+        pid = book['pages'][0]['id']
+        earlier_pass = self.api.prepare_page(self.run, pid, 'content')
+        self.page_report(earlier_pass)
+        failure = self.api.prepare_page(self.run, pid, 'content')
+        earlier_run = Path(self.tmp.name) / 'earlier-pass'
+        self.api.extract(self.repo, '1105', earlier_run, reuse=self.run)
+        self.api.reuse_reviews(earlier_run, self.run)
+        edited = copy.deepcopy(book)
+        edited['pages'][0]['panels'].pop()
+        self.write('storyboard.json', edited)
+        self.assertEqual(self.page_report(failure, 'failed')['status'], 'stale')
+        self.write('storyboard.json', book)
+        self.api.reuse_reviews(self.run, earlier_run)
+        with self.assertRaisesRegex(ValueError, '내용'):
+            self.api.prepare_page(self.run, pid, 'generate')
+        self.assertEqual(self.page_report(earlier_pass)['status'], 'stale')
+
+    def test_v2_publishes_with_frozen_style_and_continuity_references(self):
+        self.run = Path(self.tmp.name) / 'single-v2'
+        self.api.extract(self.repo, '1105', self.run, page='s0-miller')
+        book = self.ready()
+        pid = book['pages'][0]['id']
+        ref = png(self.repo / 'reference.png')
+        book['pages'][0]['panels'][0]['art_references'] = [{'path': ref.name, 'kind': 'continuity'}]
+        self.write('storyboard.json', book)
+        self.page_report(self.api.prepare_page(self.run, pid, 'content'))
+        task = self.api.prepare_page(self.run, pid, 'generate')
+        self.api.register_generation(self.run, self.page_art(task))
+        visual = self.api.prepare_page(self.run, pid, 'review')
+        self.assertEqual(len(self.read(visual['file'])['art_references'][f'{pid}/01']), 2)
+        self.page_report(visual)
+        self.api.build(self.run)
+        fp = self.api.fingerprints(self.run)
+        reports = self.read('review.json')
+        png(self.run / 'checks/fixture.png')
+        reports['browser'] = {'status': 'passed', 'fingerprint': fp['browser'], 'notes': ['Synthetic browser verdict'],
+                              'views': [{'width': w, 'height': h, 'theme': t, 'screenshot': 'checks/fixture.png'}
+                                        for w, h in ((1440, 900), (375, 812)) for t in ('light', 'dark')]}
+        self.write('review.json', reports)
+        self.preview_fixture()
+        version = Path(self.api.publish(self.run, link_notes=False)['version'])
+        ref.unlink()
+        self.assertEqual(self.api.check(version, 'reviewed')['ready'], 1)
+        resumed = Path(self.tmp.name) / 'resumed'
+        self.api.extract(self.repo, '1105', resumed, page=pid, reuse=version)
+        self.api.reuse_reviews(resumed, version)
+        self.assertEqual(self.api.prepare_page(resumed, pid, 'generate')['pending'], 0)
+
+    def test_source_diagram_changes_reopen_art_and_accept_relative_parent(self):
+        path = png(self.note.parent.parent / 'diagram.png')
+        self.note.write_text(self.note.read_text().replace('<p>유기물이', '<img src="../diagram.png"><p>유기물이', 1))
+        book = self.page_flow_fixture()
+        pid = book['pages'][0]['id']
+        self.page_report(self.api.prepare_page(self.run, pid, 'content'))
+        self.api.register_generation(self.run, self.page_art(self.api.prepare_page(self.run, pid, 'generate')))
+        self.page_report(self.api.prepare_page(self.run, pid, 'review'))
+        png(path, rgb=(1, 2, 3))
+        self.page_report(self.api.prepare_page(self.run, pid, 'content'))
+        self.assertEqual(self.api.prepare_page(self.run, pid, 'generate')['pending'], 0)
+        review = self.api.prepare_page(self.run, pid, 'review')
+        self.assertEqual(set(self.read(review['file'])['checks']), {'art', 'composition'})
+
     def test_inventory_covers_review_summary_and_excludes_future_and_links(self):
         src = self.read('source.json')
         self.assertEqual([(t['id'], t['include']) for t in src['topics']], [('s0-miller', True), ('s0-recap', True), ('s1-cheatsheet', True), ('s1-next', False), ('s1-links', False)])
@@ -151,7 +294,7 @@ class ComicPipeline(unittest.TestCase):
     def test_unknown_nonlearning_page_is_not_silently_excluded(self):
         self.note.write_text(self.note.read_text().replace('id="s1-links"', 'id="s1-custom"').replace('함께 보면 좋은 자료', '새로운 분류'))
         with self.assertRaisesRegex(ValueError, '근거|본문'):
-            self.api.extract(self.repo, '1105', self.run / 'unknown')
+            self.api.extract(self.repo, '1105', self.run / 'unknown', review_version=1)
 
     def test_source_drift_blocks_check_and_missing_source_blocks_build(self):
         self.ready()
@@ -267,18 +410,18 @@ class ComicPipeline(unittest.TestCase):
         self.assertTrue(Path(result['html']).is_file())
         self.assertNotIn('preview_report_sha256', result)
         new = Path(self.tmp.name) / 'new-with-legacy-inputs'
-        self.api.extract(self.repo, '1105', new, reuse=Path(result['version']))
+        self.api.extract(self.repo, '1105', new, reuse=Path(result['version']), review_version=1)
         self.assertEqual(json.loads((new / 'source.json').read_text())['browser_gate_version'], 1)
         self.assertFalse((new / 'browser-preview.json').exists())
 
     def test_extraction_is_non_destructive_and_reuses_only_unchanged_topics(self):
         self.ready(); self.images(); before = (self.run / 'storyboard.json').read_bytes()
         with self.assertRaisesRegex(ValueError, '이미'):
-            self.api.extract(self.repo, '1105', self.run)
+            self.api.extract(self.repo, '1105', self.run, review_version=1)
         self.assertEqual((self.run / 'storyboard.json').read_bytes(), before)
         self.note.write_text(self.note.read_text().replace('재료와 생명을 구별', '재료와 세포를 비교'))
         newer = Path(self.tmp.name) / 'newer'
-        self.api.extract(self.repo, '1105', newer, reuse=self.run)
+        self.api.extract(self.repo, '1105', newer, reuse=self.run, review_version=1)
         pages = json.loads((newer / 'storyboard.json').read_text())['pages']
         self.assertEqual([p['status'] for p in pages], ['ready', 'draft', 'ready'])
 
@@ -295,7 +438,7 @@ class ComicPipeline(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, '원본.*변경'):
             self.api.check(archive, 'reviewed')
         newer = Path(self.tmp.name) / 'newer'
-        self.api.extract(self.repo, '1105', newer, reuse=archive)
+        self.api.extract(self.repo, '1105', newer, reuse=archive, review_version=1)
         before = (newer / 'review.json').read_bytes()
         result = self.api.reuse_reviews(newer, archive, dry_run=True)['pages']
         self.assertEqual((newer / 'review.json').read_bytes(), before)
@@ -319,7 +462,7 @@ class ComicPipeline(unittest.TestCase):
         self.images()
         self.reviews()
         newer = Path(self.tmp.name) / 'newer'
-        self.api.extract(self.repo, '1105', newer, reuse=self.run)
+        self.api.extract(self.repo, '1105', newer, reuse=self.run, review_version=1)
         pages = self.api.reuse_reviews(newer, self.run)['pages']
         self.assertEqual(pages['s0-recap']['status'], 'held')
         self.assertEqual(self.api.check(newer, 'reviewed')['status'], 'partial')
@@ -339,7 +482,7 @@ class ComicPipeline(unittest.TestCase):
         self.images()
         self.reviews(browser=False)
         newer = Path(self.tmp.name) / 'newer'
-        self.api.extract(self.repo, '1105', newer, reuse=self.run)
+        self.api.extract(self.repo, '1105', newer, reuse=self.run, review_version=1)
         with patch('comic_reviews.criteria_digest', return_value='new criteria'):
             result = self.api.reuse_reviews(newer, self.run, dry_run=True)['pages']
             self.assertTrue(all(p['reasons'] == ['criteria_changed'] for p in result.values()))
@@ -362,7 +505,7 @@ class ComicPipeline(unittest.TestCase):
                                                  for kind, fp in values.items()} for pid, values in fingerprints.items()}})
         self.assertEqual(self.api.check(self.run, 'reviewed')['ready'], 3)
         newer = Path(self.tmp.name) / 'newer'
-        self.api.extract(self.repo, '1105', newer, reuse=self.run)
+        self.api.extract(self.repo, '1105', newer, reuse=self.run, review_version=1)
         result = self.api.reuse_reviews(newer, self.run)['pages']
         self.assertTrue(all(p['reasons'] == ['legacy_review'] for p in result.values()))
         self.assertEqual(json.loads((newer / 'review.json').read_text()), {'pages': {}})
@@ -473,7 +616,7 @@ class ComicPipeline(unittest.TestCase):
         self.assertEqual(self.api.check(self.run, 'browser')['status'], 'complete')
         self.assertFalse(self.api.link_notes(self.run)['changed'])
         newer = Path(self.tmp.name) / 'linked-new'
-        self.api.extract(self.repo, '1105', newer)
+        self.api.extract(self.repo, '1105', newer, review_version=1)
         extracted = json.loads((newer / 'source.json').read_text())
         self.assertEqual(extracted['content_sha256'], inventory['content_sha256'])
         self.assertEqual(extracted['topics'], inventory['topics'])
@@ -506,14 +649,14 @@ class ComicPipeline(unittest.TestCase):
 
     def test_explicit_single_page_scope_and_v1_reuse(self):
         run = Path(self.tmp.name) / 'sample'
-        self.api.extract(self.repo, '1105', run, page='s0-miller')
+        self.api.extract(self.repo, '1105', run, page='s0-miller', review_version=1)
         src = json.loads((run / 'source.json').read_text())
         self.assertEqual([t['id'] for t in src['topics'] if t['include']], ['s0-miller'])
         self.assertEqual(src['selection'], ['s0-miller'])
         old = self.read('storyboard.json'); old['schema_version'] = 1
         self.write('storyboard.json', old)
         new = Path(self.tmp.name) / 'v2'
-        self.api.extract(self.repo, '1105', new, reuse=self.run)
+        self.api.extract(self.repo, '1105', new, reuse=self.run, review_version=1)
         self.assertEqual(json.loads((new / 'storyboard.json').read_text())['schema_version'], 2)
 
     def test_one_character_explanation_and_silent_detail_panel(self):
@@ -531,7 +674,7 @@ class ComicPipeline(unittest.TestCase):
         raw = raw.replace(b'</h3>', b'</h3><a title="a target=original" rel="bookmark" target="_blank" href="manual.html">manual</a>', 1)
         self.note.write_bytes(raw)
         self.run = Path(self.tmp.name) / 'crlf'
-        self.api.extract(self.repo, '1105', self.run)
+        self.api.extract(self.repo, '1105', self.run, review_version=1)
         self.ready(); self.images(); self.api.build(self.run); self.reviews(); self.api.publish(self.run)
         from comic_links import strip_links
         self.assertEqual(strip_links(self.note.read_bytes().decode()).encode(), raw)
@@ -540,7 +683,7 @@ class ComicPipeline(unittest.TestCase):
     def test_hidden_anchor_is_skipped(self):
         self.note.write_text(self.note.read_text().replace('<div class="sum" hidden>', '<div id="hidden-summary" class="sum" hidden>', 1))
         self.run = Path(self.tmp.name) / 'hidden'
-        self.api.extract(self.repo, '1105', self.run)
+        self.api.extract(self.repo, '1105', self.run, review_version=1)
         book = self.ready(); book['pages'][0]['note_link']['anchor_id'] = 'hidden-summary'
         self.write('storyboard.json', book); self.images(); self.api.build(self.run); self.reviews()
         result = self.api.publish(self.run)

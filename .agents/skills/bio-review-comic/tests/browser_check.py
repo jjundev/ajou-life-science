@@ -51,7 +51,7 @@ def main():
         # Re-extract so the linked stylesheet is part of the source served in Chromium.
         previous = fixture.run
         fixture.run = previous.parent / 'with-css'
-        fixture.api.extract(fixture.repo, '1105', fixture.run)
+        fixture.api.extract(fixture.repo, '1105', fixture.run, review_version=1)
         book = fixture.ready(held=True)
         page = book['pages'][0]
         page['panels'] += [copy.deepcopy(page['panels'][0]) for _ in range(4)]

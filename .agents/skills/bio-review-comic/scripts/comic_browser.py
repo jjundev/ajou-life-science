@@ -77,7 +77,7 @@ def inputs_for(run, stage):
         status = 'invalid_managed_links'
     else:
         status = 'current' if content_sha256 == src['content_sha256'] else 'changed_since_publication'
-    assets = assets_for(work, jobs_for(src, book))
+    assets = assets_for(work, jobs_for(src, book, run=work))
     images = {key: local(work, item['file']) for key, item in assets.items()}
     return Inputs(repo, work, comic, note, book['pages'], files, images, status, note_link_error)
 

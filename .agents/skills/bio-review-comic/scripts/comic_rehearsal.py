@@ -103,7 +103,7 @@ def rehearse(run, out):
     if preview.read_bytes() != render(run, preview).encode('utf-8'):
         raise ValueError('preview.html 변경: build 후 다시 확인하세요.')
     fingerprint = state(run)['browser']
-    images = assets_for(run, jobs_for(src, book))
+    images = assets_for(run, jobs_for(src, book, run=run))
     version = version_for(run, comic, root, fingerprint, src, images)
     raw_note, old_comic = note.read_bytes(), file_hash(comic)
     raw_comic = render(run, comic, image_root=version).encode('utf-8')
@@ -231,7 +231,7 @@ def load_rehearsal(run, out):
                 or version.parent != root / 'versions' or not VERSION_ID.fullmatch(version.name)
                 or version.is_symlink()):
             raise ValueError('리허설 발행 경로 불일치')
-        images = assets_for(run, jobs_for(src, book))
+        images = assets_for(run, jobs_for(src, book, run=run))
         inputs = candidate_inputs(run, out, manifest, src, book, images)
         expected = report['input_hashes']
         if inputs.hashes() != expected or expected['files']['candidate'] != digest(manifest_raw):

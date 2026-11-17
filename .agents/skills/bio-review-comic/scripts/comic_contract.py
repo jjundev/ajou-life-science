@@ -12,7 +12,7 @@ from comic_source import compact, digest, existing
 SKILL = Path(__file__).resolve().parents[1]
 TEMPLATE = SKILL / 'assets' / 'comic-template.html'
 CSS = SKILL / 'assets' / 'comic.css'
-REVIEW_VERSION = 1
+REVIEW_VERSION = 2
 BROWSER_GATE_VERSION = 1
 
 
@@ -99,7 +99,7 @@ def load(run, *, historical=False):
     src, book = read(run / 'source.json'), read(run / 'storyboard.json')
     if src.get('schema_version') != 2 or book.get('schema_version') != 2:
         raise ValueError('v1 실행은 보존하고 새 RUN으로 extract --reuse 하세요(v2 계약).')
-    if src.get('review_version') not in (None, REVIEW_VERSION):
+    if src.get('review_version') not in (None, 1, REVIEW_VERSION):
         raise ValueError('지원하지 않는 검토 기록 버전')
     if 'browser_gate_version' in src and (type(src['browser_gate_version']) is not int or
                                           src['browser_gate_version'] != BROWSER_GATE_VERSION):
@@ -129,7 +129,7 @@ def load(run, *, historical=False):
     return run, src, book
 
 
-def validate_storyboard(run, *, historical=False, allow_draft=False):
+def validate_storyboard(run, *, historical=False, allow_draft=False, page_id=None):
     run, src, book = load(run, historical=historical)
     if not compact(book.get('style', '')):
         raise ValueError('공통 그림 스타일 없음')
@@ -144,8 +144,12 @@ def validate_storyboard(run, *, historical=False, allow_draft=False):
     pages = book.get('pages', [])
     if [p.get('id') for p in pages] != [t['id'] for t in expected]:
         raise ValueError('원본 페이지 순서·대응 누락 또는 중복')
+    if page_id is not None and page_id not in {p['id'] for p in pages}:
+        raise ValueError(f'{page_id}: 대상 페이지 없음')
     for page, topic in zip(pages, expected):
         pid = page['id']
+        if page_id is not None and pid != page_id:
+            continue
         if page.get('source_topic_sha256') != topic['sha256']:
             raise ValueError(f'{pid}: 원본 페이지 변경')
         if page.get('status') == 'held':
@@ -232,11 +236,18 @@ def validate_storyboard(run, *, historical=False, allow_draft=False):
     return run, src, book
 
 
-def jobs_for(src, book):
+def jobs_for(src, book, page_id=None, *, run=None):
+    if src.get('review_version') == REVIEW_VERSION:
+        from comic_page import reference_index
+        archived, fallback = reference_index(run)
     topics = {t['id']: t for t in src['topics']}
     jobs = []
     for page in book['pages']:
-        if page['status'] != 'ready':
+        if page['status'] != 'ready' or (page_id is not None and page['id'] != page_id):
+            continue
+        if src.get('review_version') == REVIEW_VERSION:
+            from comic_page import art_jobs
+            jobs.extend(art_jobs(src, book, page, archived, fallback))
             continue
         evidence = {e['id']: e for e in topics[page['id']]['evidence']}
         for n, panel in enumerate(page['panels'], 1):
@@ -288,20 +299,24 @@ def page_content(book, page):
                         'characters': [c for c in book.get('characters', []) if c['id'] in page['narrative']['cast']]})
 
 
-def state(run):
-    run, src, book = validate_storyboard(run)
-    jobs = jobs_for(src, book)
+def state(run, *, validated=None):
+    run, src, book = validated if validated is not None else validate_storyboard(run)
+    jobs = jobs_for(src, book, run=run)
     assets = assets_for(run, jobs)
     pages, review_inputs = {}, {}
     if src.get('review_version'):
         from comic_reviews import criteria_digest, page_review_inputs, review_fingerprints
-        criteria = criteria_digest()
+        criteria = criteria_digest(src['review_version'])
     for page in book['pages']:
         if page['status'] != 'ready':
             continue
         pid = page['id']
         images = {j['key']: assets[j['key']]['sha256'] for j in jobs if j['page'] == pid}
-        if src.get('review_version'):
+        if src.get('review_version') == REVIEW_VERSION:
+            from comic_page import input_fingerprints
+            pages[pid] = input_fingerprints(src, book, page, [j for j in jobs if j['page'] == pid], assets, criteria)
+            review_inputs[pid] = {'images': images}
+        elif src.get('review_version'):
             review_inputs[pid] = page_review_inputs(src, book, page, images, criteria)
             pages[pid] = review_fingerprints(review_inputs[pid])
         else:
@@ -320,13 +335,17 @@ def check(run, phase='storyboard'):
     run, src, book = validate_storyboard(run)
     if phase not in ('storyboard', 'images', 'reviewed', 'browser'):
         raise ValueError(f'알 수 없는 검사 단계: {phase}')
-    if phase != 'storyboard':
-        assets_for(run, jobs_for(src, book))
+    if phase == 'images':
+        assets_for(run, jobs_for(src, book, run=run))
     if phase in ('reviewed', 'browser'):
-        expected = state(run)
+        expected = state(run, validated=(run, src, book))
         report = read(run / 'review.json') if (run / 'review.json').exists() else {}
         for pid, kinds in expected['pages'].items():
             page_review = report.get('pages', {}).get(pid, {})
+            if src.get('review_version') == REVIEW_VERSION:
+                from comic_page import require_reviews
+                require_reviews(run, pid, page_review, kinds)
+                continue
             if src.get('review_version'):
                 from comic_reviews import verified_report
                 verified_report(run, pid, page_review, expected['review_inputs'][pid])

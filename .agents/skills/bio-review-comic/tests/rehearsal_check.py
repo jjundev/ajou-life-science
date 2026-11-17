@@ -28,7 +28,7 @@ def main():
         css.write_text('article { color: inherit; }')
         f.note.write_bytes(original.replace(b'</head>', b'<link rel="stylesheet" href="note.css"></head>'))
         f.run = Path(f.tmp.name) / 'with-css'
-        f.api.extract(f.repo, '1105', f.run)
+        f.api.extract(f.repo, '1105', f.run, review_version=1)
         f.ready(held=True)
         f.images()
         f.api.build(f.run)
