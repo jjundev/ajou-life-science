@@ -36,7 +36,18 @@ def label(node, attr):
 def snapshot(node):
     if isinstance(node, str):
         return node
-    return [node.tag, sorted(node.attrs.items()), [snapshot(n) for n in node.children]]
+    attrs = node.attrs
+    content = [snapshot(n) for n in node.children]
+    # Hash the lesson connection in its legacy form so removing the display
+    # label and list marker does not invalidate saved answers.
+    if node.tag in ('li', 'p') and attrs.get('class') == 'lesson-connection':
+        attrs = {key: value for key, value in attrs.items() if key != 'class'}
+        prefix = '수업과의 연결: '
+        if content and isinstance(content[0], str):
+            content[0] = prefix + content[0]
+        else:
+            content.insert(0, prefix)
+    return [node.tag, sorted(attrs.items()), content]
 
 
 def load_overrides():
