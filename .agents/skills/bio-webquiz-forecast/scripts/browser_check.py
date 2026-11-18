@@ -142,6 +142,9 @@ def check_practice(run: Run, url: str, ids: list[str]) -> dict:
             checked += 1
     run.expect(page.locator(".review-unsure").count() == len(ids), "연습형: 애매함 표시 버튼 수")
     run.expect(page.locator('button:has-text("복기")').count() >= 1, "연습형: 복기 프롬프트 버튼 없음")
+    run.expect(page.locator("#panel-right .solution ol > li").evaluate_all(
+        "items => items.every(item => getComputedStyle(item).listStyleType === 'none')"),
+        "연습형 해설: 자동 목록 번호가 보임")
     run.no_overflow("연습형")
     run.step("연습형: 새로고침", lambda: page.reload(wait_until="domcontentloaded"))
     run.expect(page.locator(".review-choice[data-selected='true']").count() == 0, "연습형: 새로고침 뒤 선택 남음")

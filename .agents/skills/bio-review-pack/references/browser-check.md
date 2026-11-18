@@ -80,6 +80,9 @@ const textNodes = Array.from(document.querySelectorAll('main *, #panel-right *')
 `resize_window`(`preset: "mobile"`, `colorScheme: "dark"`) → 새로고침 → `clientWidth > 0` 확인 → 위 스크립트 재실행(`hScroll: []`) → 스크린샷으로 그림·위젯 글자가 보이는지 확인 → 상단 바의 테마 버튼(`#theme-toggle`)을 눌러 `document.body` 배경색이 바뀌고 `aria-label`이 반대 모드로 바뀌는지 확인한 뒤 `localStorage.removeItem('od-theme')`로 지운다 → `preset: "desktop"`, `colorScheme: "light"`로 되돌린다.
 
 ## 복습문제
+
+답을 선택한 뒤 오른쪽 패널의 추가 해설을 열어 자동 목록 번호와 번호용 들여쓰기가 없는지 확인한다. 진술 라벨과 수업과의 연결은 그대로 보여야 한다. 카드의 `ol.steps`는 채점과 보기별 설명 연결에 쓰므로 유지한다.
+
 ### 선택·채점 필수 확인
 
 - 추가 해설이 있는 문항은 중앙에 짧은 판정만 표시되고, 긴 추가 설명은 오른쪽 패널에 한 번만 표시되는지 확인한다.

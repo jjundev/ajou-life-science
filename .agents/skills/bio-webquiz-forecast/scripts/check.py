@@ -106,11 +106,6 @@ def check(html_path: Path | str) -> list[str]:
     return _check(html_path, strict=False)[0]
 
 
-def _matches_exam(actual: str, rendered: str) -> bool:
-    # Previously published exams may lack the panel-only style.
-    return actual == rendered or actual == rendered.replace(build.EXAM_SOLUTION_STYLE, "", 1)
-
-
 def _check(html_path: Path | str, *, strict: bool) -> tuple[list[str], bool]:
     html_path = Path(html_path).resolve()
     m = build.HTML_VERSION_RE.search(html_path.name)
@@ -133,9 +128,9 @@ def _check(html_path: Path | str, *, strict: bool) -> tuple[list[str], bool]:
         exam = html_path.with_name(names['exam'])
         if exam.is_file():
             actual = exam.read_text(encoding='utf-8')
-            current = _matches_exam(actual, build.render_exam(src))
-            legacy_layout = not current and _matches_exam(actual, build.render_exam(src, legacy_sections=True))
-            if not current and not legacy_layout:
+            current = build.render_exam(src)
+            legacy_layout = actual != current and actual == build.render_exam(src, legacy_sections=True)
+            if actual != current and not legacy_layout:
                 probs.append('[stale] 시험형: 원본으로 다시 빌드한 결과와 다름')
             # The legacy exception covers empty authored sections. Cards and links still have to match.
             probs.extend(check_layout(actual, expected_sections(pack, include_empty=legacy_layout)))
