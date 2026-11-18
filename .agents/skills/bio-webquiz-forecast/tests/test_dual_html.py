@@ -100,6 +100,13 @@ class TestDualHtml(unittest.TestCase):
                 self.assertEqual(page.locator('#exam-scorecard td').count(), 15)
                 self.assertTrue(page.locator('.presentation-links').is_visible())
                 self.assertTrue(page.evaluate('document.documentElement.scrollWidth <= innerWidth'))
+                page.locator('#results-list a[href="#p1"]').click()
+                steps = page.locator('#exam-aid .solution ol.steps')
+                self.assertTrue(steps.is_visible())
+                self.assertTrue(steps.locator('li').first.inner_text().startswith('A.'))
+                self.assertEqual(steps.locator('li').evaluate_all(
+                    'items => items.map(item => getComputedStyle(item).listStyleType)'),
+                    ['none'] * steps.locator('li').count())
                 page.reload()
                 self.assertTrue(page.locator('.presentation-links').is_hidden())
                 self.assertTrue(page.locator('#exam-results').is_hidden())

@@ -25,6 +25,11 @@ import exam_presentations
 PACK = ".pack"  # 장 폴더의 숨김 소스 폴더(해설 부속 파일도 여기에 둔다)
 VERSION_RE = re.compile(r"v(\d+)")
 HTML_VERSION_RE = re.compile(r"_v(\d+)\.html$")
+EXAM_SOLUTION_STYLE = """<style id="webquiz-exam-solution-style">
+  #exam-aid .solution ol.steps { list-style: none; padding-inline-start: 0; }
+  #exam-aid .solution ol.steps > li.lesson-connection { margin-inline-start: 0; }
+</style>
+"""
 
 
 class BuildError(RuntimeError):
@@ -75,6 +80,7 @@ def render_exam(src: Path, *, legacy_sections: bool = False) -> str:
         m["problems"] = graded
         m["parts"] = [part for part in m["parts"] if part["id"] in graded_parts]
     exam = exam_presentations.web_exam(_render_review(src, m), m)
+    exam = _once(exam, "</head>", EXAM_SOLUTION_STYLE + "</head>")
     return exam_presentations.decorate(exam, m, 'exam', exam_presentations.set_hash(src))
 
 

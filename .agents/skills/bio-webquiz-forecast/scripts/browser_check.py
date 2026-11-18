@@ -185,6 +185,21 @@ def check_exam(run: Run, url: str, sections: dict[str, list[str]], answers: dict
         first = rows.first.inner_text()
         run.expect(all(word in first for word in ("내 답", "정답")), "시험형: 결과 행에 내 답·정답 없음")
     run.no_overflow("시험형 결과")
+
+    def check_solution():
+        rows.first.get_by_role("link").click()
+        steps = page.locator("#exam-aid .solution ol.steps")
+        steps.wait_for(state="visible")
+        items = steps.locator(":scope > li")
+        run.expect(any(text.lstrip().startswith("A.") for text in items.all_inner_texts()),
+                   "시험형 해설: A. 보기 라벨 없음")
+        run.expect(items.evaluate_all(
+            "items => items.length > 0 && items.every(item => getComputedStyle(item).listStyleType === 'none')"),
+            "시험형 해설: 자동 목록 번호가 보임")
+        run.no_overflow("시험형 해설")
+
+    if row_count:
+        run.step("시험형: 제출 후 해설 패널", check_solution)
     run.step("시험형: 새로고침", lambda: page.reload(wait_until="domcontentloaded"))
     run.expect(page.locator("input:checked").count() == 0, "시험형: 새로고침 뒤 답 남음")
     run.expect(page.locator("#exam-results").is_hidden(), "시험형: 새로고침 뒤 결과 노출")
