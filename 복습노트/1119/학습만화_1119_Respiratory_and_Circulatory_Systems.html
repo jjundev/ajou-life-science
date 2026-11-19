@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>생명과학 1119 학습만화</title>
+  <meta name="description" content="1119 수업 학습만화. 13페이지 · 페이지마다 4~8컷">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('od-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']})"></script>
+  <style>
+    /* ---------- 토큰 ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #b54708; --prof: #6941c6; --supp: #067647; --danger: #d92d20;
+      --scroll: #c9d0db; --scroll-hover: #9aa3b2;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --fs-title: clamp(28px, 6vw, 36px); --fs-h3: clamp(26px, 5.4vw, 32px); --fs-layer: 19px; --fs-lead: 22px; --fs-body: 17px; --fs-sub: 15px; --fs-small: 14px; --fs-label: 13px; --fs-fig: 12px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+      --radius: 8px; --measure: 680px; --tap: 48px; --btn-min: 160px;
+      --dur: 220ms; --dur-exit: 150ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+      /* 예전 조각이 참조할 수 있는 이름 */
+      --surface-2: var(--surface); --accent-soft: var(--surface); --warn-soft: var(--surface);
+      --prof-soft: var(--surface); --supp-soft: var(--surface); --eli5: var(--accent-ink); --eli5-soft: var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+        --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+        --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+        --scroll: #3f414b; --scroll-hover: #5b5e6a;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+      --scroll: #3f414b; --scroll-hover: #5b5e6a;
+    }
+
+    /* ---------- 기본 ---------- */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent-ink); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+
+    /* ---------- 상단 바 ---------- */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s2) var(--s4); display: flex; align-items: center; gap: var(--s3); min-height: 56px; }
+    .brand { flex: 1 1 auto; min-width: 0; font-size: var(--fs-body); font-weight: 700; white-space: nowrap; }
+    .text-btn { flex: none; min-height: 44px; min-width: 44px; padding: 0 var(--s3); border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); font: 600 var(--fs-small)/1 var(--font); cursor: pointer; }
+    .bar { height: 2px; background: var(--line); overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+
+    /* ---------- 본문 ---------- */
+    main { flex: 1 0 auto; width: 100%; max-width: var(--measure); margin: 0 auto; padding: var(--s6) var(--s5) var(--s7); }
+    .hero h1 { font-size: var(--fs-title); line-height: 1.3; margin: 0 0 var(--s3); letter-spacing: -0.02em; }
+    .hero p { color: var(--ink-2); margin: 0; }
+    section { margin-top: var(--s7); }
+    section > h2 { font-size: 22px; line-height: 1.4; margin: 0 0 var(--s4); }
+    .topic { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .topic h3 { margin: 0 0 var(--s2); font-size: var(--fs-h3); font-weight: 800; line-height: 1.3; letter-spacing: -0.02em; }
+    .tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+    .tag { font-size: var(--fs-label); line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+
+    /* 레이어: 배경 없이 라벨과 구분선으로 나눈다 */
+    .layer { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .layer.eli5 { margin-top: 0; padding-top: 0; border-top: 0; }
+    .layer > :first-child { margin-top: 0; }
+    .layer > :last-child { margin-bottom: 0; }
+    .layer-title { display: block; font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; color: var(--ink); margin-bottom: var(--s3); }
+    .layer.eli5 .layer-title { color: var(--accent-ink); }
+    .layer.eli5 .lead { font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; letter-spacing: -0.01em; margin: 0 0 var(--s4); }
+    /* 정확히 말하면: 본문 크기 그대로, 굵은 첫머리만 진하게 */
+    .layer.formal b { font-weight: 700; color: var(--ink); }
+    /* 교수님 말씀 · 주의: 보조 정보는 한 단계 작게 */
+    .layer.prof, .layer.warn, .layer.listen { font-size: var(--fs-sub); line-height: 1.7; }
+    .layer.prof blockquote { font-size: var(--fs-sub); }
+    .layer.prof .layer-title { color: var(--prof); }
+    .layer.warn, .layer.listen { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn .layer-title { color: var(--warn); font-size: var(--fs-body); }
+    .layer.listen .layer-title { color: var(--accent-ink); font-size: var(--fs-body); }
+    .layer.supp .badge.supp { margin-bottom: var(--s2); }
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
+    .badge.supp { color: var(--supp); }
+    .badge.exam { color: var(--warn); margin-right: var(--s1); }
+    blockquote { margin: var(--s3) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
+    ol.steps { padding-left: 1.4em; }
+    ol.steps li { margin: var(--s2) 0; }
+
+    /* 그림 · 수식 · 표 */
+    .figure { margin: var(--s4) 0; text-align: center; }
+    .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
+    .figure img { max-width: 100%; height: auto; }
+    .figure figcaption { font-size: var(--fs-small); color: var(--ink-2); margin-top: var(--s1); }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: var(--s1) 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+    th, td { border-bottom: 1px solid var(--line); padding: var(--s2); text-align: left; vertical-align: top; }
+    th { color: var(--ink-2); font-weight: 600; }
+    td:first-child, th:first-child { min-width: 6em; }
+
+    /* 위젯 */
+    .widget { background: var(--surface); border-radius: var(--radius); padding: var(--s4); margin: var(--s5) 0; }
+    .widget h4 { margin: 0 0 var(--s1); font-size: var(--fs-layer); line-height: 1.4; }
+    .widget-help { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s3); }
+    .controls { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--s2); font-size: var(--fs-small); }
+    .controls label { display: flex; align-items: center; gap: var(--s2); min-height: 44px; }
+    .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .widget svg { width: 100%; height: auto; background: var(--bg); border-radius: var(--radius); }
+    .readout { font-size: var(--fs-small); margin-top: var(--s2); }
+    .legend { font-size: var(--fs-label); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .sw { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: var(--s1); border-radius: 2px; }
+    .sw.truth { background: var(--ink-2); } .sw.fit { background: var(--accent); } .sw.train { background: var(--accent); height: 10px; width: 10px; border-radius: 50%; }
+    .sw.test { background: var(--warn); height: 10px; width: 10px; border-radius: 50%; } .sw.like { background: var(--accent); } .sw.prior { background: var(--prof); } .sw.post { background: var(--supp); }
+    .axis { stroke: var(--line); stroke-width: 1.5; }
+    .tick { fill: var(--ink-2); font-size: 11px; }
+    .plot-truth { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .plot-fit { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+    .pt-train { fill: var(--accent); }
+    .pt-test { fill: var(--warn); }
+    .plot-like { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .plot-prior { fill: none; stroke: var(--prof); stroke-width: 2; stroke-dasharray: 6 4; }
+    .plot-post { fill: none; stroke: var(--supp); stroke-width: 3; }
+    .mark-ml { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .mark-map { stroke: var(--supp); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 2; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 2.5; }
+    .fig-danger { stroke: var(--danger); fill: none; stroke-width: 2.5; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: 13px; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-fig); font-family: inherit; }
+
+    footer { width: 100%; max-width: var(--measure); margin: 0 auto; padding: 0 var(--s5) var(--s6); color: var(--ink-2); font-size: var(--fs-small); }
+
+    /* ---------- 하단 이동 바 ---------- */
+    .pager { position: sticky; bottom: 0; z-index: 10; background: var(--bg); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .pager-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s3) var(--s4); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); }
+    .pager-count { font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; min-width: 4em; }
+    .btn { min-height: var(--tap); min-width: var(--btn-min); padding: 0 var(--s6); border-radius: var(--radius); border: 0; font: 700 var(--fs-body)/1 var(--font); cursor: pointer; white-space: nowrap;
+      transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+    .btn-ghost { justify-self: start; background: var(--surface); color: var(--ink); }
+    .btn-primary { justify-self: end; background: var(--btn-bg); color: var(--on-btn); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    @media (hover: hover) {
+      .text-btn:hover, .btn-ghost:not(:disabled):hover { background: var(--line); }
+      .btn-primary:not(:disabled):hover { box-shadow: inset 0 0 0 100px rgba(0, 0, 0, .14); }
+    }
+
+    /* ---------- 목차 시트 ---------- */
+    .sheet { width: min(100%, var(--measure)); max-width: 100%; max-height: 80dvh; margin: auto auto 0; padding: 0; border: 0;
+      border-radius: 16px 16px 0 0; background: var(--bg); color: var(--ink); }
+    .sheet::backdrop { background: rgba(0, 0, 0, .4); }
+    .sheet-inner { padding: var(--s4) var(--s5) calc(var(--s5) + env(safe-area-inset-bottom)); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s2); }
+    .sheet-head h2 { margin: 0; font-size: var(--fs-lead); }
+    .toc { display: flex; flex-direction: column; }
+    .toc > a, .toc-group > a { display: block; padding: var(--s3) 0 var(--s1); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); text-decoration: none; }
+    .toc-list { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+    .toc-list a { display: flex; align-items: center; gap: var(--s3); min-height: var(--tap); padding: var(--s2) var(--s3); margin: 0 calc(-1 * var(--s3));
+      border-radius: var(--radius); color: var(--ink); text-decoration: none; line-height: 1.4; }
+    .toc-list a[aria-current="true"] { background: var(--surface); font-weight: 700; color: var(--accent-ink); }
+    .toc-list .toc-title { flex: 1 1 0; min-width: 0; }
+    @media (hover: hover) { .toc-list a:hover { background: var(--surface); } }
+
+    /* ---------- 한 화면에 하나씩 (JS가 켤 때만) ---------- */
+    html:not(.js) .pager, html:not(.js) #toc-open { display: none; }
+    html:not(.js) .sheet { display: block; position: static; width: 100%; max-height: none; margin: 0 auto; border-radius: 0; border-bottom: 1px solid var(--line); }
+    html:not(.js) .sheet-close { display: none; }
+    .js main > .hero:not(.is-current), .js main > section:not(.is-on), .js .screen:not(.is-current) { display: none; }
+    .js main > section { margin-top: 0; }
+    .js main > section > h2 { font-size: var(--fs-small); font-weight: 600; color: var(--accent-ink); margin: 0 0 var(--s2); }
+    .js .topic { padding: 0; border-top: 0; }
+    .js .hero { padding-top: 12vh; }
+    .js footer { display: none; }
+    .js body.at-end footer { display: block; }
+    .screen.enter-next { animation: enter-next var(--dur) var(--ease-out); }
+    .screen.enter-prev { animation: enter-prev var(--dur) var(--ease-out); }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .screen.enter-next, .screen.enter-prev { animation: none; }
+      .bar > span, .btn { transition: none; }
+    }
+    @media (max-width: 480px) {
+      main { padding: var(--s5) var(--s4) var(--s6); }
+      footer { padding: 0 var(--s4) var(--s5); }
+      .btn { min-width: 120px; padding: 0 var(--s5); }
+    }
+    @media print {
+      .topbar, .pager, .sheet { display: none !important; }
+      .js main > .hero, .js main > section, .js .screen, .js footer { display: block !important; }
+    }
+
+    /* ---------- 좌우 패널 (drawer) ---------- */
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    html { height: 100%; } body { height: 100%; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
+    .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
+    .panel-toggle svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-toggle .strip { fill: transparent; stroke: none; transition: fill 150ms ease-out; }
+    .panel-toggle[aria-expanded="true"] { color: var(--accent-ink); }
+    .panel-toggle[aria-expanded="true"] .strip { fill: currentColor; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .i-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .theme-toggle .i-sun { display: block; }
+      :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
+    }
+
+    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
+    .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
+    .content { grid-column: 2; }
+    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
+    .content::-webkit-scrollbar, .panel-inner::-webkit-scrollbar { width: 8px; }
+    .content::-webkit-scrollbar-track, .panel-inner::-webkit-scrollbar-track { background: transparent; }
+    .content::-webkit-scrollbar-thumb, .panel-inner::-webkit-scrollbar-thumb { background: var(--scroll); border-radius: 8px; border: 2px solid var(--bg); }
+    .content::-webkit-scrollbar-thumb:hover, .panel-inner::-webkit-scrollbar-thumb:hover { background: var(--scroll-hover); }
+    @supports (scrollbar-color: auto) { .content, .panel-inner { scrollbar-width: thin; scrollbar-color: var(--scroll) transparent; } }
+    .panel-resize { display: none; }
+    .panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 44px; margin-bottom: var(--s2); }
+    .panel-head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-lead); line-height: 1.4; }
+    .panel-sub { margin: 0 0 var(--s4); font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; }
+    .panel-empty { margin: 0; color: var(--ink-2); }
+    .panel-label { display: block; margin: var(--s5) 0 var(--s2); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+
+    /* 진행 상태 */
+    .panel-meta { margin: 0 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .panel-meta b { color: var(--ink); }
+    .progress { height: 4px; margin-bottom: var(--s3); border-radius: 2px; background: var(--line); overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+    .panel .toc-list a { margin: 0 calc(-1 * var(--s2)); padding: var(--s2); font-size: var(--fs-panel); }
+    .toc-mark { flex: none; display: block; width: 20px; height: 20px; color: var(--ink-2); }
+    .toc-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .toc-mark.is-done { color: var(--accent-ink); }
+
+    /* 복습문제: 원문 · 힌트 · 풀이 */
+    .aid details:last-of-type { border-bottom: 1px solid var(--line); }
+    .aid details.original > summary { font-size: var(--fs-panel); }
+    .solved-btn { display: flex; align-items: center; justify-content: center; gap: var(--s2); width: 100%; min-height: var(--tap); margin-top: var(--s5); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .solved-btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
+
+    /* 정리노트: 페이지 요약 */
+    .sum-supp { margin-top: var(--s4); }
+    .sum-lead { margin: 0; font-size: var(--fs-body); font-weight: 700; line-height: 1.6; }
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+    .eq-list li:first-child { padding-top: 0; }
+    .eq-name { display: block; font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+    .eq-list .katex-display { margin: var(--s1) 0 0; text-align: left; }
+    .eq-list .katex-display > .katex { text-align: left; }
+    .terms { margin: 0; }
+    .terms dt { font-size: var(--fs-panel); font-weight: 700; margin-top: var(--s4); }
+    .terms dt:first-child { margin-top: 0; }
+    .terms dd { margin: var(--s1) 0 0; font-size: var(--fs-sub); line-height: 1.6; color: var(--ink-2); }
+    .flow { margin: 0; padding-left: 1.4em; font-size: var(--fs-sub); }
+    .flow li { margin: var(--s2) 0; }
+
+    @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
+
+    /* 넓은 화면: 본문 옆에 붙는 패널 */
+    @media (min-width: 1024px) {
+      .layout { --l: var(--panel-l-user, var(--panel-l)); }
+      .layout[data-left="closed"] { --l: 0px; }
+      .panel-left { width: var(--l); }
+      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
+      .panel-left .panel-resize { right: 0; }
+      .panel-right .panel-resize { left: 0; }
+      .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
+      .panel-left .panel-resize::after { right: 0; }
+      .panel-right .panel-resize::after { left: 0; }
+      .panel-resize:focus-visible { outline: none; }
+      .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
+      @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
+      body.is-resizing { cursor: col-resize; user-select: none; }
+      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
+      .scrim, .panel-close { display: none; }
+    }
+    @keyframes panel-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 좁은 화면: 가장자리에서 밀려 나오는 drawer */
+    @media (max-width: 1023.98px) {
+      .panel { position: fixed; top: 0; bottom: 0; z-index: 40; visibility: hidden;
+        transition: transform var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .panel-left { left: 0; width: min(var(--drawer-l), 88vw); transform: translateX(-100%); }
+      .panel-right { right: 0; width: min(var(--drawer-r), 88vw); transform: translateX(100%); }
+      .panel.is-open { visibility: visible; transform: none; transition: transform var(--dur) var(--ease-out); }
+      .panel-inner { padding-top: calc(var(--s3) + env(safe-area-inset-top)); padding-bottom: calc(var(--s6) + env(safe-area-inset-bottom)); }
+      .scrim { position: fixed; inset: 0; z-index: 35; background: var(--scrim); opacity: 0; visibility: hidden;
+        transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
+      html:not(.js) .panel-left { display: none; }
+    }
+    @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
+      .panel.is-shown { animation: none; }
+      .panel-resize::after { transition: none; }
+    }
+    @media print {
+      body { display: block; height: auto; overflow: visible; }
+      .layout { display: block; }
+      .content { overflow: visible; }
+      .panel, .scrim { display: none !important; }
+    }
+  </style>
+<style id="comic-style">
+/* Extends the note shell; its tokens and behavior remain the visual authority. */
+.comic-question { margin: var(--s3) 0 var(--s5); font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; }
+.comic-strip { display: grid; gap: var(--s6); list-style: none; margin: 0; padding: 0; }
+.comic-panel { min-width: 0; }
+.comic-panel figure { margin: 0; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.comic-scene { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; position: relative; isolation: isolate; background: #faf8f2; color: #162438; }
+.comic-panel img { grid-column: 1; grid-row: 1 / 3; align-self: end; display: block; width: 100%; height: auto; background: #faf8f2; }
+.comic-art-space { grid-column: 1; grid-row: 2; width: 100%; pointer-events: none; }
+.comic-balloon-layer { grid-column: 1; grid-row: 1; z-index: 1; display: flex; flex-direction: column; gap: var(--s3); padding: var(--s4) var(--s5); min-width: 0; }
+.comic-panel figcaption { padding: var(--s4); background: var(--bg); }
+.comic-number { display: block; margin-bottom: var(--s2); font-size: var(--fs-label); font-weight: 700; color: var(--ink-2); }
+.comic-caption { margin: 0; line-height: 1.7; }
+.comic-dialogue { position: relative; width: fit-content; max-width: 88%; margin: 0; padding: var(--s3) var(--s4); border: 1.5px solid #566477; border-radius: 18px; background: #fffefb; color: #162438; font-size: var(--fs-body); line-height: 1.6; box-shadow: 0 2px 0 #1624380d; }
+.comic-voice-left { align-self: flex-start; border-bottom-left-radius: 4px; }
+.comic-voice-right { align-self: flex-end; border-bottom-right-radius: 4px; background: #f0f5fc; }
+.comic-dialogue::after { content: ''; position: absolute; top: 18px; width: 10px; height: 10px; background: inherit; border: solid #566477; transform: rotate(45deg); }
+.comic-voice-left::after { left: -6px; border-width: 0 0 1.5px 1.5px; }
+.comic-voice-right::after { right: -6px; border-width: 1.5px 1.5px 0 0; }
+.comic-speaker { display: block; margin-bottom: var(--s1); font-size: var(--fs-label); font-weight: 700; color: #1b64da; }
+@media (max-width: 480px) {
+  .comic-balloon-layer { padding: var(--s3) var(--s4); gap: var(--s2); }
+  .comic-dialogue { max-width: 94%; padding: var(--s2) var(--s3); }
+}
+.comic-source { margin: var(--s6) 0 0; }
+.comic-source a { display: inline-flex; align-items: center; min-height: var(--tap); }
+.comic-panel .badge { display: block; width: fit-content; max-width: 100%; white-space: normal; margin: 0 0 var(--s2); }
+.sum > .badge { white-space: normal; margin-bottom: var(--s2); }
+@media print {
+  .comic-panel { break-inside: avoid; }
+  .comic-source { display: none; }
+}
+.comic-analogy, .comic-limit { margin: var(--s4) 0 0; padding-top: var(--s3); border-top: 1px solid var(--line); font-size: var(--fs-small); line-height: 1.7; color: var(--ink-2); }
+.comic-analogy strong, .comic-limit strong { display: block; margin-bottom: var(--s1); color: var(--ink); }
+
+</style>
+</head>
+<body data-screens="article.topic" data-panels="note" data-range="1119">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <strong class="brand">학습만화</strong>
+      <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>요약</span></button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
+  </header>
+  <div class="layout" data-left="open" data-right="closed">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
+      <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-left-title">목차</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-meta">읽은 토픽 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <nav class="toc" aria-label="목차"><a href="#comic-section-1">1. 기도와 폐의 환기</a><a href="#comic-section-2">2. 호흡 조절과 기체 운반</a><a href="#comic-section-3">3. 혈액과 순환 경로</a><a href="#comic-section-4">4. 심장 주기와 혈관</a><a href="#comic-section-5">요약 · 예고</a></nav>
+      </div>
+    </aside>
+    <div class="content">
+  <main>
+    <div class="hero">
+      <h1>생명과학 1119 학습만화</h1>
+      <p>13페이지 · 페이지마다 4~8컷. 그림과 대사를 따라 읽고 원본 정리노트에서 확인해요.</p>
+    </div>
+<section id="comic-section-1"><h2>1. 기도와 폐의 환기</h2><article class="topic" id="s0-recap"><h3>지난 수업 복습</h3><p class="comic-question">들이마신 공기는 어디까지 가고, 산소는 어디에서 혈액으로 넘어갈까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>공기가 들어온 길 어디에서나 혈액과 만나나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>갈라지는 통로와 그 끝의 창구를 나누어 보자.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-recap/01-7b83e98475f0c3bb4ebfee390a752f95bf11654c2eb225c4c8ae55c541d781a4.png" alt="입구 한 곳에서 나온 통로가 갈라져 벽의 여러 창구에 닿는 역 지도." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">역과 창구를 떠올려 봐요. 입구에서 갈림길을 따라가면 다른 쪽과 무언가를 주고받는 곳에 닿아요.</p><p class="comic-analogy"><strong>비유 연결</strong> 갈림길을 따라 도착하는 여러 창구 → 기도의 작은 갈래 끝에서 공기가 폐포에 도착하는 경로 · 창구의 앞뒤에서 건네는 물건 → 폐포 공기와 모세혈관 사이의 기체 교환</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>기관에서 길이 갈라지고, 가장 가는 가지 끝에서 폐포를 만나요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-recap/02-7769a1705872ed4e8bf64ba8c87adee4eec1d8b4ece91c7321f4c4d1f6960984.png" alt="코와 입 뒤의 길이 합쳐져 기관으로 이어지고, 기관지가 두 갈래로 갈라져 더 가는 가지 끝의 폐포에 닿는 모습." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">공기가 가는 길은 코나 입 → 인두 → 후두 → 기관 → 기관지 → 세기관지 → 폐포예요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>창구에 닿은 공기 전체가 혈관으로 들어가나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>폐포와 혈액은 얇은 경계로 나뉘고, 그 사이를 기체 분자가 확산해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-recap/03-175edd0ddeb555cf794731677eb8b7bd9d2d8490a417e995d3f780938f2e3225.png" alt="얇은 경계를 사이에 둔 둥근 폐포와 모세혈관 사이의 서로 반대 방향 기체 이동." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">폐포의 공기와 모세혈관 혈액 사이에서는 기체가 얇은 장벽을 지나 단순확산해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 공기 덩어리가 혈관으로 들어가는 것은 아니에요. 장벽을 사이에 두고 기체 분자가 단순확산해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>창구가 여러 개라 면적이 넓고, 창구 앞뒤 사이는 가까운 셈이군요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-recap/04-a58c2540b25b0f45992db468bffe3867c95ded0bd2ed5c10f308ec378db974e7.png" alt="여러 폐포의 표면을 둘러싼 모세혈관과 얇은 경계를 확대해 비교한 모습." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">많은 폐포는 교환 면적을 넓히고, 얇은 장벽은 확산 거리를 짧게 해요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1119_Respiratory_and_Circulatory_Systems.html#s0-recap" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">코나 입에서 들어온 공기는 인두·후두·기관·기관지·세기관지를 지나 폐포에 닿아요. 기체는 넓고 얇은 폐포 경계에서 모세혈관 혈액과 확산으로 교환돼요.</p><p class="panel-label">용어</p><dl class="terms"><dt>기관과 기관지</dt><dd>한 기관에서 좌우 기관지가 갈라지고, 더 가는 세기관지가 폐포까지 이어져요.</dd><dt>폐포</dt><dd>많은 폐포가 교환 면적을 늘리고, 얇은 장벽이 기체가 지나는 거리를 줄여요.</dd></dl></div></article><article class="topic" id="s0-airway"><h3>기도의 구조와 방어</h3><p class="comic-question">공기는 폐포 쪽으로 들어가는데 점액은 왜 목 쪽으로 갈까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>먼지를 붙잡는 것과 움직이는 것은 같은 건가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>끈끈한 천 아래에 솔을 두면 두 역할이 따로 보여.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-airway/01-1e68d6517ec5349bc502882ab1c8d8974f108ed0c0f4f199c6c8d6cced8a716b.png" alt="먼지가 붙은 끈끈한 천과 그 아래에서 왼쪽으로 함께 기울어진 여러 솔." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">천은 먼지를 붙잡고, 솔은 그 천을 한쪽으로 밀어요.</p><p class="comic-analogy"><strong>비유 연결</strong> 먼지가 달라붙는 끈끈한 천 → 이물질을 붙잡는 점액 · 천을 같은 방향으로 미는 작은 솔 → 이물질이 붙은 점액을 인두 쪽으로 보내는 섬모</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>들이마신 공기부터 따라가 볼까? 갈래 끝은 폐포야.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-airway/02-3b218a833785a08c5737f8ba0ff5d0f75290111d7cb8bc088cf8131c9464e5f4.png" alt="코털에 걸린 일부 큰 입자와, 인두·후두·기관·기관지에서 폐포 쪽으로 이어지는 공기길." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">코털이 이물질 일부를 거르고, 공기는 코나 입에서 인두·후두·기관·기관지·세기관지를 지나 폐포로 가요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>통로가 찌그러지면 공기도 지나가기 어렵겠네요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-airway/03-b64a06f6d6d3f010fb6a4ef242cd0a0837441d1e9a42be5aaa06ae31d530a98c.png" alt="가운데 공기 통로를 바깥에서 받치며 뒤가 열린 C자 기관 연골." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">기관 바깥쪽의 말발굽 모양 연골이 통로를 열린 상태로 지탱해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>들이마신 공기를 따라 점액도 폐포 쪽으로 갈까요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>섬모는 이물질이 붙은 점액을 반대로, 인두 쪽으로 움직여.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-airway/04-439b8e79ce841e8fdfe37d08e45285c6fbaee5365743ad60dd348cf195f03421.png" alt="기도 안쪽에서 공기는 폐포 쪽으로, 먼지가 붙은 점액은 섬모 위에서 반대쪽인 인두로 움직이는 확대도." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">점액은 먼지·미생물을 포획해 깊은 침투를 줄여요. 섬모가 이 점액을 인두 쪽으로 옮기면 기침이나 삼킴으로 제거할 수 있어요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 실제로는 액체 점액층 아래에서 미세한 섬모가 움직여요. 이 방어를 지나 일부 작은 입자는 더 깊이 들어갈 수 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>섬모가 약해져도, 점액이 너무 끈끈해도 청소가 어려워지겠네요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-airway/05-e8e27db7df709d0f424d9898c5015453d3b4c2191056e14a23c4e4ff0141ca1f.png" alt="섬모 움직임이 약해진 경우와 점액이 두껍고 끈끈하게 쌓인 경우를 비교한 기도 벽." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">흡연은 섬모 기능을 약화시켜요. 낭포성 섬유증에서는 끈끈한 점액이 잘 제거되지 않아 감염되기 쉬워져요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>작은 먼지는 전부 혈액까지 갈까요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>아주 작은 입자의 일부만 가능해. 이곳에선 넓고 얇은 경계를 두고 기체가 단순확산해.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-airway/06-c8851ea6cc224484ae18e967a827b2a7da1ecfe5aec69f0d73127e8923ff9517.png" alt="많은 폐포와 가까운 모세혈관. 아주 작은 입자의 일부만 혈액까지 닿을 수 있음을 보여 주는 경계 확대." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><p class="comic-caption">PM₂.₅는 공기역학적 지름이 2.5 μm 이하예요. 일부가 폐포 깊숙이 도달하고, 그중 아주 작은 입자 일부가 혈액에 들어갈 수 있어요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1119_Respiratory_and_Circulatory_Systems.html#s0-airway" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">기관의 연골은 통로를 열어 두고, 점액은 먼지·미생물을 붙잡아요. 섬모가 점액을 인두 쪽으로 보내면 기침이나 삼킴으로 제거돼요. 폐포에서는 넓고 얇은 경계를 사이에 두고 기체가 단순확산해요.</p><p class="panel-label">용어</p><dl class="terms"><dt>말발굽 모양 연골</dt><dd>기관 통로가 열린 상태를 유지하게 지탱해요.</dd><dt>점액·섬모</dt><dd>점액은 먼지나 미생물을 붙잡고 섬모는 그 점액을 인두 쪽으로 옮겨요.</dd><dt>흡연·낭포성 섬유증</dt><dd>흡연으로 섬모 기능이 약해지거나 낭포성 섬유증으로 점액이 더 끈끈해지면 청소가 어려워져요.</dd><dt>초미세먼지(PM₂.₅)</dt><dd>공기역학적 지름이 2.5 μm 이하예요. 일부가 폐포 깊숙이 닿으며 그중 아주 작은 일부만 혈액에 들어갈 수 있어요.</dd></dl></div></article><article class="topic" id="s0-ventilation"><h3>흉막과 들숨·날숨</h3><p class="comic-question">들이마신 공기가 폐를 펴는 걸까, 폐가 먼저 펴지면서 공기가 들어오는 걸까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>당긴 직후에는 왜 공기가 열린 끝으로 들어올까요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>공간이 커질 때 통 속 압력이 바깥보다 낮아져.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-ventilation/01-c3c7efbab66228fc7f29aaa9705692add5fe6d04c9902d5d1cbeeeece6a00a0c.png" alt="주사기의 손잡이를 당기면 열린 끝에서 통 안으로, 밀면 통에서 바깥으로 공기가 이동하는 모형." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">열린 주사기 통 속 공간이 커지면서 공기가 들어오고, 공간이 작아지면서 공기가 나가요.</p><p class="comic-analogy"><strong>비유 연결</strong> 주사기 내부 공간의 크기 변화 → 폐 부피의 변화 · 열린 끝을 통해 드나드는 공기 → 폐포 내압과 대기압 차에 따라 기도를 통해 드나드는 공기</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>폐에도 주사기 같은 손잡이가 있나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>폐 표면은 흉막을 사이에 두고 흉벽 움직임을 따라가요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-ventilation/02-a025477b56b81618c57f7eb7b17c57889c508e3b292bd1935300cb15c02dbdbc.png" alt="흉벽 안쪽과 폐 표면에 붙은 두 장의 얇은 흉막과 그 사이 액체층 확대." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">폐 표면과 흉벽 안쪽을 두 흉막이 각각 덮어요. 사이의 흉막강에는 소량의 액체가 있어요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 주사기는 피스톤이 통 안을 직접 움직여요. 폐는 가슴 근육과 두 흉막이 있는 구조를 따라 펴져요. 개구리의 양압 호흡은 입에서 공기를 밀어 넣는 방식이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>들이쉴 땐 횡격막과 외늑간근이 먼저 수축해.</p><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그러면 폐가 커진 뒤에 공기가 들어오는군요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-ventilation/03-efb8f81a5890c55f8b449be99c310ff72d7de74590f98b47e3dbebb4d159e2be.png" alt="낮아져 평평해진 횡격막, 올라간 갈비뼈, 커진 폐와 기관으로 들어오는 공기 화살표." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">횡격막과 외늑간근이 수축하면 횡격막은 내려가고 갈비뼈는 올라가요. 흉강이 넓어져 폐가 흉벽을 따라 팽창해요. 폐포압이 잠시 대기압보다 낮아져 공기가 들어와요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>조용히 내쉴 때에도 힘을 줘서 밀어내나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>들이쉴 때 쓰던 근육이 풀리면 횡격막이 올라가고 갈비뼈는 내려와.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-ventilation/04-ef413ebf84d46ad95c2e74f0fab602268ec8624c8cb1af803591fb7e38613c06.png" alt="위로 둥글게 올라간 횡격막, 내려간 갈비뼈, 작아진 폐와 바깥으로 나가는 공기 화살표." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">조용한 날숨에서는 흡기에 쓰인 근육이 이완돼요. 폐가 탄성으로 줄어들면 폐포 내압이 대기압보다 높아져 공기가 나가요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>폐포 안과 흉막 사이의 압력차도 따로 봐야겠네요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-ventilation/05-25c7245a2fed2d25e8ae6f7923cd7fb489510dacf025b52208200f7244dfacc3.png" alt="정상에서 폐 표면이 흉벽 가까이에 놓이고 그 사이에 두 흉막과 얇은 액체층이 보이는 모습." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">정상적인 조용한 호흡에서 폐포압이 흉막강압보다 높아 폐가 펴진 상태를 유지해요. 공기가 드나드는 방향은 대기압과 폐포압의 차이로 정해져요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>흉막강에 공기가 더 들어오면 폐가 더 펴질까요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>그 공기는 폐 바깥에 있어. 흉막강 압력이 오르면서 폐는 오히려 접힐 수 있어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-ventilation/06-c4f3b100950f0ded93ae29e4a86a874e65f96085d38cc8d8dc9cf5983c3dd355.png" alt="정상과 기흉을 나란히 본 모습. 기흉에서는 흉벽과 폐 사이에 공기가 들어온 공간이 넓고 폐가 줄어들어 있음." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><p class="comic-caption">기흉에서는 흉막강 압력이 올라가 폐를 펴는 압력차가 줄어요. 폐가 부분적으로 또는 크게 접힐 수 있어요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1119_Respiratory_and_Circulatory_Systems.html#s0-ventilation" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">들이쉴 때 흡기 근육의 수축으로 폐 부피가 먼저 커져 폐포 내압이 대기압보다 낮아져요. 조용히 내쉴 때 근육이 이완되고 폐가 탄성으로 되줄어 폐포 내압이 대기압보다 높아져요. 정상 호흡에서 흉막강 압력은 이 폐포 내압보다 낮아요.</p><p class="panel-label">용어</p><dl class="terms"><dt>흉막과 흉막강</dt><dd>폐 표면과 흉벽 안쪽을 덮는 두 흉막 사이의 좁은 공간에 소량의 액체가 들어 있어요.</dd><dt>음압 호흡</dt><dd>들이쉴 때 폐포 내압이 대기압보다 낮아져 공기가 폐로 들어와요.</dd><dt>기흉</dt><dd>흉막강으로 공기가 새어 들어오면 흉막강 압력이 올라가고 폐가 펼쳐지는 데 필요한 압력차가 줄어요.</dd></dl></div></article><article class="topic" id="s0-volumes"><h3>1회 호흡량·폐활량·잔기량</h3><p class="comic-question">숨을 끝까지 내쉰 뒤, 나간 양과 남은 양은 어떻게 구별할까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>꼭지로 더는 물이 안 나오면 물통은 빈 건가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>꼭지보다 낮은 곳을 봐. 물이 아직 남았지.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-volumes/01-71a2828a48ee6895466ef64070db833687cdcb3cd9e8b65e91413feecfd74883.png" alt="꼭지 아래까지 물이 빠지고 나서도 통 바닥에 띠처럼 남은 물과 컵에 받아 놓은 물." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">물통을 똑바로 두고 꼭지로 따라 내면, 컵에 나온 물과 통 안에 아직 남은 물을 따로 볼 수 있어요.</p><p class="comic-analogy"><strong>비유 연결</strong> 가득 든 물통에서 컵으로 빠져나온 전체 물의 양 → 최대로 들이쉰 뒤 최대로 내쉴 수 있는 공기량인 폐활량 · 그 뒤에도 통에 남아 있는 물 → 최대로 내쉰 뒤에도 폐에 남아 있는 공기량인 잔기량</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>먼저 평소 호흡에서 한 번에 움직인 공기의 양을 재 봐.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-volumes/02-b3226d8ce2d1f41b4d205ceb94f837f4aa56461f546f5d60fea06c45cb0ab32b.png" alt="평소 들숨 직후의 폐와 평소 날숨 직후의 폐. 부피 차이가 작고 두 폐 모두 펴져 있음." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">평소 한 번의 들숨이나 날숨에 드나든 양이 1회 호흡량이에요. 활동량이 늘어 숨이 깊어지면 보통 커져요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>폐활량을 재려면 먼저 최대한 들이쉬고, 얼마나 내보낼 수 있는지 보는 거군요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-volumes/03-4816a038746a75db56380255f33226d137e8b03c0d0198af0f7e12d49b0e1032.png" alt="최대로 들이쉰 뒤의 큰 폐와 최대로 내쉰 직후의 작은 폐." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">폐활량은 최대로 들이쉰 뒤 최대로 내보낼 수 있는 공기량이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>나간 공기는 폐활량, 가장 많이 내쉬고도 남은 공기는 잔기량이네요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-volumes/04-4acb2cf491c77b5997ef372d256eb1895f50014a9a8a490b886009102c5cd393.png" alt="최대로 내쉰 뒤에도 폐포 안에 공기가 남아 있는 폐 확대도." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">평소 날숨을 마쳐도 더 내쉴 수 있는 공기가 있어요. 최대로 내쉰 뒤에도 남은 양을 잔기량이라고 해요. 폐활량의 범위는 최대 들숨부터 최대 날숨까지예요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 물통 그림은 나간 양과 남은 양을 비교하는 비유예요. 실제 폐에 물처럼 고인 공기층이나 꼭지가 있는 것은 아니에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>다음에 들이쉬면 새 공기가 남은 공기와 만나겠네요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>응. 폐포에 남은 공기가 모세혈관과 기체를 주고받을 수 있어.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-volumes/05-f0affbf735ca5ea0bb8ba6e6d6750f9fb6f1f797f11592632b33ebe3f5b9da11.png" alt="하나의 폐포에서 새로 들어온 공기와 먼저 남아 있던 공기가 섞이고, 폐포 바깥에 모세혈관이 맞닿은 모습." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">사람은 같은 통로로 들이쉬고 내쉬어요. 환기와 혈류가 정상적으로 유지되면 들숨과 날숨 사이에도 기체 교환이 이어져요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>새의 폐를 지나는 공기 흐름은 한 방향이야. 공기주머니가 그 흐름을 도와.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s0-volumes/06-f97db7a428c5ce656504a33e589e335b72f8d538f868d59b03ef2a3a29dce584.png" alt="사람의 같은 통로를 드나드는 양방향 공기 흐름과 새의 폐를 지나는 한 방향 흐름 비교." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><p class="comic-caption">새에서는 공기주머니가 폐를 지나는 한 방향 공기 흐름을 유지하는 데 도움을 줘요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1119_Respiratory_and_Circulatory_Systems.html#s0-volumes" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">1회 호흡량은 평소 한 번의 들숨이나 날숨에 이동한 양이에요. 폐활량은 최대 들숨 뒤 최대로 내쉴 수 있는 양이고, 잔기량은 최대 날숨 후에도 폐에 남은 양이에요.</p><p class="panel-label">용어</p><dl class="terms"><dt>1회 호흡량</dt><dd>몸을 더 움직여 숨이 깊어지면 보통 한 번에 더 많은 공기가 드나들어요.</dd><dt>폐활량</dt><dd>최대 들숨 부피와 최대 날숨 직후의 부피 사이의 차이에요.</dd><dt>잔기량</dt><dd>최대로 내쉰 직후에도 폐 안에 남은 공기의 양이에요.</dd></dl></div></article></section>
+<section id="comic-section-2"><h2>2. 호흡 조절과 기체 운반</h2><article class="topic" id="s1-control"><h3>호흡 중추와 화학수용체</h3><p class="comic-question">숨을 참으면 몸은 무엇을 감지해 호흡을 재촉할까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>숨을 더 쉬라는 신호는 산소가 조금만 줄어도 오나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>평소에는 CO₂가 만든 pH 변화에 민감해요. 먼저 감지기가 어디를 읽는지 봐요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s1-control/01-0d13c31a02bb6d3843b9d9037edd4c51445642b2cb873b49f7529907e099c57a.png" alt="서로 다른 상자에 달린 감지기 두 개가 하나의 환풍기 조절기에 연결돼 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">서로 다른 곳을 읽는 감지기 둘이 한 조절기로 신호를 보내는 모형이에요.</p><p class="comic-analogy"><strong>비유 연결</strong> 각기 다른 곳에 놓인 감지기 → 뇌척수액을 읽는 중추 수용체와 동맥혈을 읽는 말초 수용체 · 조절기에 신호가 도착해 환풍이 세짐 → 연수에 전달된 자극으로 호흡이 더 빠르고 깊어짐</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 환풍기 비유는 감지·조절의 흐름을 보여 줘요. 실제 센서는 서로 다른 체액의 화학 상태에 반응하고 뇌간은 호흡근을 조절해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>연수 쪽 감지기도 동맥혈을 직접 읽나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>연수 부근은 뇌척수액 pH를 읽어요. 동맥혈을 읽는 감지기는 혈관 쪽에 있어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s1-control/02-211eb6dff4737d019a3cf7ea0bee272bcd7aadafe1fd9333552c7a2bdff630f6.png" alt="뇌간 옆의 체액 감지 자리와 목동맥 분기·대동맥궁의 혈액 감지 자리를 나누어 보여 준다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">중추 화학수용체는 연수 부근의 뇌척수액 pH 변화에 반응해요. 목동맥소체와 대동맥소체는 동맥혈 pH·CO₂·O₂ 상태를 감지해 연수에 신호를 보내요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>CO₂가 늘면 H⁺가 늘어요. 그래서 pH는 내려가요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s1-control/03-86f2fb1f57a10ba7098c1a0f5f6be7d9a612633de657d68fcfb6ff17a09d8f46.png" alt="같은 물 높이에서 입자가 늘어난 오른쪽의 표시가 왼쪽보다 낮게 놓여 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">CO₂ + H₂O ⇄ H₂CO₃ ⇄ H⁺ + HCO₃⁻. 혈액의 CO₂가 늘면 동맥혈과 뇌척수액에서 H⁺가 늘어 pH가 낮아져요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>pH가 내려간 뒤에는요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>뇌간의 조절로 더 자주, 깊게 쉬면서 CO₂를 더 많이 내보내요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s1-control/04-a4f74785cf7955ae1b594e932925ddfc2b20c1925233ecfa9030d13938e64401.png" alt="뇌간에서 가슴의 호흡근으로 신호가 이어지고 기도에서는 호흡 흐름이 커진다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">연수가 기본 호흡 리듬과 횡격막·늑간근을 조절하고, 뇌교는 리듬 전환을 조정해요. 숨이 빨라지고 깊어져 CO₂ 배출이 늘면 pH가 회복되는 쪽으로 바뀌고, 호흡을 촉진하던 자극이 약해져요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>산소는 호흡에 어떤 때 영향을 크게 주나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>동맥혈 O₂ 분압이 크게 떨어지면 말초 감지기의 신호가 중요해져요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s1-control/05-c8d42e34a2677ecad2954441f55c7f233ac79cb9ad23c7c9a6cf374d4027ae48.png" alt="기도 속에 CO₂가 쌓이는 경우와 빠져나가는 경우가 있고, 동맥 쪽에는 산소가 크게 줄어든 별도 장면이 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">숨을 참으면 CO₂가 쌓이고, 지나치게 빠르고 깊게 쉬면 CO₂가 줄 수 있어요. 운동 중에는 보통 호흡이 더 빠르고 깊어져요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1119_Respiratory_and_Circulatory_Systems.html#s1-control" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">CO₂ 증가로 H⁺가 늘어 pH가 낮아지면 호흡이 빨라지고 깊어져 CO₂ 배출이 늘어요. 중추는 뇌척수액, 말초는 동맥혈의 상태를 감지해요. CO₂ 배출이 늘어 pH가 회복되면 호흡을 촉진하던 자극이 약해져요.</p><p class="panel-label">용어</p><dl class="terms"><dt>호흡 리듬</dt><dd>연수는 기본 리듬을 만들고 호흡근을 조절해요. 뇌교는 리듬 전환을 조정해요.</dd><dt>심한 O₂ 저하</dt><dd>동맥혈 O₂ 분압이 크게 떨어지면 말초 수용체의 환기 자극이 중요해져요.</dd></dl></div></article><article class="topic" id="s1-oxygen"><h3>헤모글로빈과 산소 운반</h3><p class="comic-question">분압을 고정했는데도 헤모글로빈이 산소를 더 쉽게 놓는 까닭은 무엇일까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>포화도 25%는 헤모글로빈 네 분자 중 하나가 찼다는 뜻인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>전체 결합 자리 네 개 중 한 개가 찼다는 뜻이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s1-oxygen/01-f05cdf2e373053759d227ff4e3dca698006a22d43c3a3001880b8b4fbbbd57fb.png" alt="좌석 네 개 중 맨 왼쪽 한 자리에만 표식이 놓여 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">포화도는 전체 결합 자리 중 O₂가 차지한 자리의 비율이에요. 자리가 네 개이고 한 자리만 차 있으면 25%예요.</p><p class="comic-analogy"><strong>비유 연결</strong> 좌석 네 개 중 한 곳이 차 있음 → 결합 자리의 4분의 1이 차 있으면 산소 포화도는 25%예요. · 한 좌석의 점유 여부 → 헴의 철 하나에 산소 분자 하나가 결합해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>같은 분자 안에서 첫 산소가 붙으면 나머지 자리에도 더 쉽게 붙어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s1-oxygen/02-85ed2ca18bca769d0d0c5dd9670160932e029345409c3b3ffdfa1e6ac85363d4.png" alt="헤모글로빈을 이루는 네 부분마다 헴 자리가 하나 있고 그중 하나에만 산소 분자가 붙어 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">헤모글로빈 한 분자의 폴리펩티드는 네 개예요. 각 헴의 철 하나에 O₂ 한 분자가 결합해 최대 네 분자를 붙잡아요. 첫 결합으로 구조가 바뀌어 다음 결합이 쉬워져요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 좌석은 점유율의 분모를 보여 줘요. 좌석과 달리 한 헤모글로빈 안의 산소 결합 자리들은 서로 영향을 줘요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>폐에서는 산소가 곧장 적혈구로 들어가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>폐포를 나와 먼저 혈장으로 확산하고, 적혈구에서 헤모글로빈에 붙어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s1-oxygen/03-a960d5bcb92389843b28268ab366940a32612b8b84eddfe6089512e557992d65.png" alt="폐포의 공기에서 나온 산소가 얇은 벽과 혈장을 지나 적혈구로 들어간다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">O₂는 폐포에서 혈장으로 확산해 적혈구의 헤모글로빈에 가역적으로 결합해요. 물에 잘 녹지 않는 O₂를 더 많이 운반할 수 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>조직으로 가서 분압이 낮아지면 곡선도 같이 움직여요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>pH가 같다면 점만 같은 곡선 위에서 왼쪽으로 이동해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s1-oxygen/04-56d7a76005d61d59939639a715092dffbc922a69f3d6e6031f075d2e8f96a47b.png" alt="한 S자 곡선 위에서 가파른 중간 위치와 오른쪽 평탄한 높은 위치에 점이 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">가로축은 O₂ 분압, 세로축은 O₂ 포화도예요. 폐에서는 높은 분압의 평탄부에 있고, 산소를 소비하는 조직에선 낮은 분압의 가파른 구간에서 O₂를 내놓아요. 같은 pH에서 분압만 바뀌면 같은 곡선 위에서 점이 움직여요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>활동하는 조직에서 pH까지 낮아지면요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>같은 산소 분압에서는 낮은 pH 쪽의 포화도가 더 낮아요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s1-oxygen/05-53df6700b782c0347868f23acc925757dd9d2c6d60b6498a3a4c142bed8fffb6.png" alt="활동하는 근육과 모세혈관 사이에서 산소는 조직으로, 이산화탄소는 혈액으로 향한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">활동 조직에서 CO₂ 생성이 늘면 H⁺가 증가하고 pH가 낮아져요. 낮은 pH에서는 헤모글로빈의 산소 친화도가 낮아져요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>두 곡선에서 점은 어디에 놓고 비교해요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>같은 분압에 세로선을 세워요. pH 7.2에서 점이 더 낮게 보여요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s1-oxygen/06-db0232ed06355054a0f27c7bf318ce20cfbce9f20e05b8330fc91056a3f40f89.png" alt="오른쪽으로 이동한 S자 곡선과 원래 곡선을 같은 세로 기준선에서 비교하면 오른쪽 곡선의 점이 더 낮다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><p class="comic-caption">분압을 30 mmHg로 고정하면 모형에서 pH 7.4는 50%, pH 7.2는 32%예요. 처음 포화도와 Hb 양이 같다면 낮은 pH에서 자리 100개당 산소 18분자를 더 내놓아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="7">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>이번에는 50% 높이를 고정하면요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>pH가 낮은 쪽이 같은 높이에 닿으려면 분압이 더 높아야 해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s1-oxygen/07-f1eb07d49174bffa9b155a7b104acdf92185680bd0ae80bab3ed47a8706a16a0.png" alt="같은 높이의 막대 틀 두 쌍에서 오른쪽 쌍은 둘 다 거의 차 있고 왼쪽 쌍은 채운 높이 차가 더 크다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">7컷</span><p class="comic-caption">같은 높이인 50% 포화도에 닿으려면 pH 7.4에서는 30 mmHg, pH 7.2에서는 40 mmHg가 필요해요. 이게 오른쪽 이동이에요. 그림 속 막대는 40 mmHg의 68%·50%와 95 mmHg의 96%·91%를 비교해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="8">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그럼 98.5%라는 수도 자리의 점유율인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>이 수치의 분모는 혈액이 싣고 있는 산소 전체예요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s1-oxygen/08-2b3b39c062c24652328586817850f71dec520f512bc6302a9c843396e0e55b6d.png" alt="적혈구 안 헤모글로빈에 산소가 결합해 있고 혈장에도 녹아 있는 산소가 보인다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">8컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">강의노트 기준 산소의 약 98.5%는 헤모글로빈에 결합하고 약 1.5%는 혈장에 녹아요. 그림의 입자 수는 비율을 재현하지 않아요. 출처는 강의노트 13장 p2와 교재 13장 p.295예요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1119_Respiratory_and_Circulatory_Systems.html#s1-oxygen" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">폐의 높은 O₂ 분압에서는 헤모글로빈이 산소를 잘 붙잡아요. 조직에서는 낮은 O₂ 분압이 산소 방출을 돕고, 같은 분압이라면 낮은 pH에서 포화도가 더 낮아요.</p><p class="panel-label">용어</p><dl class="terms"><dt>분압과 포화도</dt><dd>분압은 혼합 기체나 용액에서 O₂에 해당하는 부분압이에요. 포화도는 전체 결합 자리의 점유율이에요.</dd><dt>헴과 협동 결합</dt><dd>폴리펩티드마다 헴 하나가 있고, 헴의 철 하나마다 O₂ 한 분자가 붙어요. 첫 결합 뒤에는 다음 결합이 쉬워져요.</dd><dt>운반 비율과 포화도</dt><dd><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>강의노트 기준 혈액 속 산소 약 98.5%는 헤모글로빈에 결합하고 1.5%는 혈장에 녹아요. 이 비율의 분모는 혈액 속 전체 산소량이에요.</dd></dl></div></article><article class="topic" id="s1-carbon"><h3>이산화탄소의 운반</h3><p class="comic-question">조직에서 생긴 CO₂는 어떤 모습으로 폐까지 가고, 무엇이 날숨으로 나갈까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>조직에서 나온 CO₂는 계속 기체 모습으로 폐까지 가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>대부분은 형태가 달라져요. 중계 우편의 포장 전후를 먼저 봐요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s1-carbon/01-5086f4b4b11debe89ddd9472f01aeba40361ff1b8feb7770254aaf494d311d68.png" alt="왼쪽의 소포가 가운데에서 운반 상자에 들고 오른쪽에서 상자 밖으로 다시 나타난다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">보낼 곳과 받을 곳 사이에 운반 형태가 달라지는 중계 우편이에요.</p><p class="comic-analogy"><strong>비유 연결</strong> 보내는 곳에서 운반용으로 포장을 바꿈 → 조직 쪽 적혈구에서 CO₂가 중탄산 이온으로 바뀌어요. · 도착점의 전달 직전 포장을 풂 → 폐 쪽에서 HCO₃⁻가 반응해 CO₂가 재생성돼요.</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>조직 쪽에서 출발한 CO₂는 혈장을 지나 적혈구 안으로 들어가요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s1-carbon/02-1586057b12a694410d4c070c10597d888fb55abd335cdcc977ac734fb889b5b8.png" alt="조직 쪽의 CO₂ 입자가 모세혈관 벽을 넘어 혈장과 적혈구로 들어간다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">조직에서 생긴 CO₂가 분압이 낮은 혈장으로, 이어서 적혈구로 확산해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 우편의 내용물은 포장 안에 남지만, 실제 CO₂는 물과 반응해 HCO₃⁻와 H⁺로 바뀌었다가 폐에서 다시 생성돼요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>혈장으로 나오는 것도 CO₂예요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>이 경로에서는 적혈구 안에서 만들어진 HCO₃⁻가 나와요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s1-carbon/03-cef1f6b36a881d13a09951639ef52e9bcb6bfda1abf5a2cc1da70993554186db.png" alt="적혈구 안에서 생긴 중탄산 이온을 나타낸 고리만 적혈구 밖 혈장으로 이동한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">적혈구에서 CO₂ + H₂O ⇄ H₂CO₃ ⇄ H⁺ + HCO₃⁻의 정반응이 우세해요. 탄산무수화효소는 CO₂와 물 사이의 반응을 빠르게 해요. HCO₃⁻는 혈장으로 나가요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>나머지 일부는 혈장에 녹거나 헤모글로빈에 붙은 CO₂로 가요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s1-carbon/04-3b88795e30592827d3a5adf5b7b62edb0243aed4e954fbccc99fea66431a4500.png" alt="혈장에 녹은 CO₂, 적혈구 단백질에 붙은 CO₂, 혈장 속 중탄산 이온 예시가 나뉘어 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">혈액에서 운반되는 세 형태는 용해 CO₂, 헤모글로빈에 결합한 CO₂, HCO₃⁻예요. 대부분은 HCO₃⁻ 형태예요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>폐포로 나가는 것도 HCO₃⁻라고 생각했어요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>폐에서는 HCO₃⁻가 다시 CO₂로 바뀌어요. 날숨으로 나가는 건 CO₂예요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s1-carbon/05-84d4df8db3c7e22b2523923412bafc65771c77d2b9f073b9d8dc4a22b834d6fd.png" alt="혈장의 중탄산 이온이 적혈구 안으로 돌아가고, 다시 만들어진 이산화탄소가 폐포 쪽으로 나간다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">폐 모세혈관의 CO₂가 폐포로 빠져나가 혈액에 녹은 CO₂가 줄면, 역반응이 우세해져요. 혈장의 HCO₃⁻가 적혈구로 들어와 H⁺와 반응해 CO₂와 물이 돼요. 같은 효소가 반응을 빠르게 하고 새로 생긴 CO₂도 폐포로 확산해요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1119_Respiratory_and_Circulatory_Systems.html#s1-carbon" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">조직에서 나온 CO₂는 적혈구에서 주로 중탄산 이온으로 바뀌어 혈장으로 나와요. 폐에서는 적혈구에서 다시 CO₂가 되어 폐포로 확산해요.</p><p class="panel-label">용어</p><dl class="terms"><dt>세 가지 형태</dt><dd>혈장에 녹은 CO₂, 헤모글로빈에 붙은 CO₂, 가장 많은 중탄산 이온이에요.</dd><dt>탄산무수화효소</dt><dd>조직과 폐의 적혈구에 같은 효소가 있어요. 효소는 가역 반응을 빠르게 하고, 주위 조건이 우세 방향을 정해요.</dd></dl></div></article></section>
+<section id="comic-section-3"><h2>3. 혈액과 순환 경로</h2><article class="topic" id="s2-circuits"><h3>심장의 네 방과 두 순환</h3><p class="comic-question">폐에 가는 혈관이 왜 폐동맥이고, 폐에서 돌아오면 어느 방에 먼저 닿을까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>폐로 가는 길과 온몸으로 가는 길은 별개인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>혈액이 두 경로를 차례로 거쳐 다시 출발점으로 돌아와요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s2-circuits/01-900cebb4abbff8727b9240647d44758727aeaaa9369df3e459519b0d8d8e2a42.png" alt="밴 한 대가 짐을 싣는 곳과 나누는 곳을 지나는 한쪽 방향의 순환 노선이다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">짐을 받는 정류장과 배달하는 정류장이 한 바퀴에 이어진 노선이에요.</p><p class="comic-analogy"><strong>비유 연결</strong> 짐을 받는 정류장 → 폐 모세혈관에서 O₂를 받고 CO₂를 내보내요. · 짐을 전달하는 정류장 → 전신 모세혈관에서 조직에 O₂와 영양분을 주고 CO₂·노폐물을 받아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>심방에서 같은 쪽 심실로 내려가고, 심실에서 심장 밖으로 나가요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s2-circuits/02-cd18b317dc2bd6cba287e99dcd91200b644725bf97321c4a39a6d4f0bae46dcf.png" alt="두 위쪽 방에서 같은 편의 두 아래쪽 방으로 각각 이어지는 네 방의 심장 단면이다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">심장은 폐에서 산소를 받은 혈액을 혈관을 따라 전신에 보내는 펌프예요. 심방 두 개는 돌아오는 혈액을 받고, 심실 두 개는 동맥으로 밀어내요. 정면에서 몸의 오른쪽은 보는 사람의 왼쪽이에요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 노선은 거치는 순서를 보여 줘요. 혈액은 모세혈관의 얇은 벽 너머로 물질을 교환하고 심실의 수축에 의해 움직여요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>폐에서 돌아와 처음 만나는 방은 우심방인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>폐정맥을 따라가 보세요. 좌심방으로 들어와요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s2-circuits/03-c49b26ed46f928d4b0301a39096aa3b92842af29be0352fb6b81de0297f9cb60.png" alt="폐로 나간 혈액은 폐 모세혈관에서 기체를 교환한 뒤 반대쪽 심방에 도착한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">폐순환은 우심실 → 폐동맥 → 폐 모세혈관 → 폐정맥 → 좌심방이에요. 폐에서 혈액이 O₂를 받고 CO₂를 내보내요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그다음 좌심방으로 들어온 혈액은 어디로 가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>좌심실을 거쳐 온몸으로 나가고, 우심방으로 돌아와요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s2-circuits/04-3978c22cb88537690d0af878209fd5adcd3efb850512c12a35ae227ef7022a36.png" alt="심실에서 출발한 혈액이 온몸의 모세혈관에서 물질을 교환하고 다시 심방에 도착한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">체순환은 좌심실 → 대동맥·동맥 → 전신 모세혈관 → 정맥·대정맥 → 우심방이에요. 조직에 O₂와 영양분을 주고 CO₂와 노폐물을 받아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>산소가 적어도 심장에서 나가면 동맥이군요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>맞아요. 폐 쪽에서는 산소량과 이름이 엇갈려 보여요. 심장을 기준으로 방향을 읽으세요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s2-circuits/05-a59022aa5ab2a6d3daf39f5b4fdd8b0e233e78b47ee8ecb38cc45ddfa425e50e.png" alt="심장에서 폐로 향하는 화살표와 폐에서 심장으로 돌아오는 화살표가 각각 그려져 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">심장을 기준으로 나가는 혈관이 동맥, 들어오는 혈관이 정맥이에요. 폐동맥의 혈액은 O₂가 상대적으로 적고 폐정맥은 상대적으로 많아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>온몸으로 보내는 좌심실은 네 방 중 벽이 가장 두꺼워요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s2-circuits/06-e8cf3bcd9f7c2575cce47a7710d0b9f036093b1de4f20b410f212bb82a042bbd.png" alt="좌심실 벽이 두꺼운 심장 단면과 대동맥 뿌리에서 심장 근육 쪽으로 이어지는 관상동맥 예시다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">심방은 대체로 심실보다 작고 벽이 얇아요. 좌심실 벽이 가장 두껍고, 대동맥에서 갈라진 관상동맥은 심근에 혈액을 공급해요. 상대정맥과 하대정맥은 위쪽과 아래쪽에서 돌아온 혈액을 우심방에 보내요. 출처는 강의노트 13장 p4와 교재 13장 p.300–301이에요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1119_Respiratory_and_Circulatory_Systems.html#s2-circuits" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">폐순환은 우심실에서 폐동맥·폐 모세혈관·폐정맥을 거쳐 좌심방으로, 체순환은 좌심실에서 대동맥·전신 혈관·대정맥을 거쳐 우심방으로 이어져요. 혈관 이름은 심장 기준 흐름 방향으로 구별해요.</p><p class="panel-label">용어</p><dl class="terms"><dt>두 심방과 두 심실</dt><dd>심방은 들어오는 혈액을 받고 심실은 혈액을 내보내요.</dd><dt>심장 벽·관상동맥·대정맥</dt><dd><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>좌심실의 벽이 가장 두꺼워요. 대동맥에서 분기한 관상동맥은 심근에 혈액을 공급해요. 상대정맥은 몸 위쪽, 하대정맥은 아래쪽의 혈액을 우심방으로 보내요.</dd></dl></div></article><article class="topic" id="s2-blood"><h3>혈액의 조성과 기능</h3><p class="comic-question">혈장에 녹은 단백질은 원심분리하면 어느 층에 있을까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>피를 국물과 건더기로 나눠 볼 수 있나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>혈장에 녹아 이동하는 것부터 찾아봐요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s2-blood/01-165daf002ae367969f6412d1451de72c755db5fab62be53acb0a1ac147fbcffb.png" alt="맑은 국물과 건더기, 옆의 소금 접시" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">국물에 녹은 소금은 눈에 잘 안 보여도 국물과 함께 움직여요.</p><p class="comic-analogy"><strong>비유 연결</strong> 소금이 녹은 국물 → 혈장은 물질이 녹아 이동하는 액체예요. · 국물에 떠 있는 건더기 → 혈액에는 적혈구·백혈구와 혈소판 같은 유형 성분이 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>돌린 뒤 세 층이 나타났어요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>가운데의 아주 얇은 줄도 한 층이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s2-blood/02-0e6b79967a25d8fb039acc9cdb72aac22eeda9db2de47b4930bcc4ed3e8ce4be.png" alt="원심분리 시험관에 맑은 위층, 얇은 중간층, 붉은 아래층" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">위는 혈장, 가운데 얇은 층은 백혈구와 혈소판, 아래는 적혈구예요. 백혈구는 방어, 혈소판은 지혈, 적혈구는 헤모글로빈으로 산소를 운반해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 국물은 액체와 건더기를 구별하는 비유예요. 혈액의 세 층은 원심분리했을 때 보여요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>단백질은 건더기 층에만 있을 줄 알았어요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>혈장에도 녹아요. 산소를 붙잡는 철은 적혈구의 헤모글로빈에 있어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s2-blood/03-f45d85e2c32c0c1a67a6ef773f8610141d12d67e07b344e44f72104e4bf5c4e2.png" alt="왼쪽의 혈장 속 단백질과 오른쪽의 적혈구 속 헤모글로빈 비교" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">혈장은 대부분 물이며 포도당·아미노산·이온·호르몬·비타민·녹은 기체·단백질을 담아요. 혈액은 산소·영양분을 공급하고 CO₂·노폐물도 옮겨요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>여기서 적혈구를 하나씩 세나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>같은 모양의 관에서는 전체 높이 중 적혈구층 높이의 비율을 봐요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s2-blood/04-318c00f7db2803464b423bfa05af47eb5963906d6a7cb962eeb4f24f54fa0770.png" alt="총 높이가 같고 적혈구층 높이가 다른 두 시험관" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">적혈구 용적률 = 적혈구 부피 ÷ 전체 혈액 부피. 용적률이 낮으면 같은 부피의 혈액이 실을 수 있는 산소가 줄 수 있어 빈혈의 단서가 돼요. 지나치게 높으면 점도가 커져요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>혈장의 피브리노겐은 언제 쓰여요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>상처에서 혈병을 만드는 데 쓰여요. 특정 응고인자에 이상이 있는 유전 질환이 혈우병이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s2-blood/05-a7d934b0fcc8c84ceb8cd2aa7acf7ff60610e48b4f5fddb0e60d676f330f3622.png" alt="손상된 혈관 벽의 혈소판 마개와 피브린 섬유 그물" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">혈액 세포는 골수에서 생겨요. 보충 개념으로 혈소판은 골수 유래 세포 조각이며, 피브리노겐이 불용성 피브린 섬유로 바뀌어 혈병 형성에 쓰여요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1119_Respiratory_and_Circulatory_Systems.html#s2-blood" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">혈장은 물질을 녹여 운반해요. 원심분리하면 위에 혈장, 얇은 가운데에 백혈구·혈소판, 아래에 적혈구가 모여요. 적혈구 용적률은 전체 혈액 부피 중 적혈구 부피의 비율이에요.</p><p class="panel-label">용어</p><dl class="terms"><dt>혈장 단백질</dt><dd>알부민·글로불린·피브리노겐은 혈장에 있어요. 면역글로불린은 항체예요.</dd><dt>조혈과 제거</dt><dd><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>성인은 주로 적색골수에서 혈액 세포를 만들어요. B세포는 백혈구의 일종이고 가장 많은 혈액 세포는 적혈구예요. 산소 공급이 부족하면 신장의 EPO가 골수 적혈구 생성을 촉진해요. 노화 적혈구는 비장·간·골수의 대식세포가 제거해요.</dd><dt>혈액의 추가 기능</dt><dd><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>순환은 호르몬·항체를 운반하고 열을 전달해 체온 조절을 도와요.</dd></dl></div></article></section>
+<section id="comic-section-4"><h2>4. 심장 주기와 혈관</h2><article class="topic" id="s3-cycle"><h3>압력차와 심장 판막</h3><p class="comic-question">심실이 수축을 시작하면 왜 출구 판막부터 바로 열리지 않을까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>문을 열라는 신호가 따로 와요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>문 양옆에서 미는 힘을 비교해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s3-cycle/01-551eb303caf8043797547d12030d6966ed684a40a80d8c154d2cf16748448ea4.png" alt="수면 높이 차가 반대인 두 경우에 열리고 닫히는 한 방향 문" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">앞뒤 압력이 뒤바뀌면 한 방향 문이 닫혀 역류를 막아요.</p><p class="comic-analogy"><strong>비유 연결</strong> 물기둥 양옆 높이 차 → 판막 앞뒤의 압력차 · 반대쪽 압력이 더 높을 때 제자리로 닫히는 경첩문 → 판막이 닫혀 혈액의 역류를 막음</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>심실에 피를 먼저 채우는군요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>이때 심방에서 심실 쪽으로 흘러요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s3-cycle/02-ac1c2f256425f2adc6dc5f92209d7a7e08cac8dfc10e50429ef4b6915d694738.png" alt="심방, 심실, 동맥 중 앞쪽 판막만 열려 심실로 흐르는 모형" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">심방 압력 &gt; 심실 압력이면 방실판막이 열려 심실이 채워져요. 마지막에는 심방 수축이 충전을 도와요. 그림은 좌우 두 쌍 중 한쪽만 보여요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 모형의 양옆 수면 높이는 압력차를 비교하는 장치예요. 심장에서는 근육의 수축·이완과 혈액이 판막 주변의 압력을 바꿔요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>심실이 조이기 시작했어요. 이제 출구가 열려요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>먼저 입구가 닫혀요. 아직 출구 앞 압력이 부족해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s3-cycle/03-cd30cb97da1148f0581b60cd0e47748cbb762aa2428d8e93aa3c8982eb8f43f9.png" alt="초기 수축에 들어간 중앙 심실의 양옆 판막이 모두 닫힌 모습" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">심방압 &lt; 심실압 &lt; 동맥압이면 두 판막이 모두 닫혀요. 먼저 닫히는 방실판막이 심방 쪽 역류를 막고 첫 심장음이 나요. 이때 심실로 들어오거나 나가는 혈액이 없어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>출구가 열리는 순간은 심실 압력이 동맥 압력을 넘어설 때네요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s3-cycle/04-7fbf99f923c629c39dd9b9904e32218481c3e6805f3a5e9f46146bf86956c26f.png" alt="심실 입구는 닫히고 출구는 열려 동맥 쪽으로 향하는 혈류" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">심실 압력 &gt; 동맥 압력이 되면 반월판막이 열려 혈액이 대동맥 또는 폐동맥으로 나가요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>두 번째 소리는 출구가 닫히는 순간이군요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>맞아요. 이후 심방 쪽 압력이 더 높아지면 다시 채워져요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s3-cycle/05-ebf2a2ee37bde16d126ae1af6d5644f294ec68f5a712966e12266012d9211bf8.png" alt="이완을 시작한 중앙 심실 오른쪽 출구 판막이 막은 상태" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">이완 초기에 심실압이 동맥압보다 낮아지면 반월판막이 닫혀 두 번째 심장음이 나요. 심실압이 아직 심방압보다 높으면 두 판막이 모두 닫혀 있어요. 심실압이 심방압보다 더 낮아지면 방실판막이 열려 다시 채워져요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1119_Respiratory_and_Circulatory_Systems.html#s3-cycle" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">두 판막은 각자의 앞뒤 압력차에 반응해요. 심실 수축 초기에 방실판막이 닫힌 뒤 심실 압력이 동맥보다 높아져야 반월판막이 열려요. 심실 이완 초기에 반월판막이 닫혀요. 두 닫힘이 차례로 첫째·둘째 심장음을 만들어요.</p><p class="panel-label">용어</p><dl class="terms"><dt>방실판막</dt><dd>좌·우 각각 심방과 심실 사이에 하나씩 있어요. 닫히면 심실에서 심방으로 역류하기 어렵고 첫 심장음이 나요.</dd><dt>반월판막</dt><dd>대동맥과 폐동맥으로 나가는 곳에 하나씩 있어요. 닫히면 동맥에서 심실로 역류하기 어렵고 두 번째 심장음이 나요.</dd></dl></div></article><article class="topic" id="s3-pacemaker"><h3>심장 박동의 시작과 심전도</h3><p class="comic-question">정상 박동을 시작하는 지점과 심전도를 재는 위치는 어떻게 다를까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>박자를 기록하는 녹음기가 소리도 만들어 내나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>녹음기는 스피커에서 나온 소리를 받아요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s3-pacemaker/01-f26e6d60300aff36edff43396d1482e709766b1c32f2dd5468bced4ec63846be.png" alt="왼쪽 스피커에서 나온 소리 물결을 오른쪽 녹음기가 받는 모습" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">박자음이 나오는 곳과 그 변화를 받는 곳은 따로 있어요.</p><p class="comic-analogy"><strong>비유 연결</strong> 박자음을 처음 만드는 스피커 → 박동 신호를 먼저 만드는 동방결절 · 박자음을 받아 기록하는 옆 녹음기 → 피부 전극에서 심장 전기 활동의 전압차를 기록</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그럼 정상 박동의 첫 신호는 어디서 나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>우심방에 있는 동방결절에서 시작해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s3-pacemaker/02-32893e125a8eb22212582b506debebe21e1ca312e1f090c5252e650ddfd48aba.png" alt="그림 왼쪽의 우심방 위쪽 가장자리에 하나의 동방결절 표지" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">동방결절은 우심방에 있어요. 박동원세포가 스스로 막전압을 바꾸어 활동전위를 만들므로 바깥 운동 뉴런이 매번 명령할 필요가 없어요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 녹음기는 소리를 받아요. 실제 심전도의 피부 전극은 심장 전기 활동에 따른 전압차를 재요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>방실결절은 첫 박자를 만드는 곳인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>이미 시작된 신호가 심실 쪽으로 전달되기 전 잠시 지연되는 곳이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s3-pacemaker/03-d63d7a9206f798dff8094ce04fd3ba4ebad6bba98572634769a09cdc5b043fbb.png" alt="위쪽 두 심방에 퍼진 전기 신호와 심방 아래 중앙에 있는 지연 지점" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">전기 변화는 심근세포 사이를 통해 양쪽 심방으로 퍼져 심방이 먼저 수축해요. 방실결절에서 신호가 잠시 늦어져 심방이 심실을 채울 시간을 벌어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>심방이 먼저 수축할 시간이 생기고, 다음에 신호가 심실로 퍼지네요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s3-pacemaker/04-707a6c952211463354bb96de83f9e5ad3ac63f1cfb986be799707a1eada007fc.png" alt="심방과 심실 사이에서 아래로 내려가 양쪽 심실벽으로 갈라지는 전도 섬유" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">방실결절 이후 전도 섬유와 푸르키네 섬유를 통해 심실에 신호가 퍼져 심실이 수축해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>이 파형은 박동 소리를 그린 거예요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>시간에 따른 전압차예요. 파형과 간격에서 리듬과 전달 상태를 읽어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s3-pacemaker/05-6553f373753cde10bd7055981130b336a5c6546e13f68d3abdeb11cc440d9538.png" alt="피부 표면 전극과 그 전압차 파형을 보여 주는 모니터" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">심전도는 피부 전극에서 잰 전압차를 시간에 따라 그린 기록이에요. 인공 심박동기는 필요할 때 전기 자극을 주어 박동을 도와요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1119_Respiratory_and_Circulatory_Systems.html#s3-pacemaker" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">정상 박동은 우심방 동방결절에서 시작해 양쪽 심방으로 퍼져요. 방실결절에서 잠깐 지연된 후 전도 섬유·푸르키네 섬유를 거쳐 심실에 퍼져요. 심전도는 이 전기 활동을 피부의 전압차로 기록해요.</p><p class="panel-label">용어</p><dl class="terms"><dt>박동원세포</dt><dd>스스로 막전압이 변해 활동전위를 만들어요. 동방결절은 정상 박동의 시작점이에요.</dd><dt>전도 순서</dt><dd>심방 수축이 먼저 일어나고 방실결절을 거쳐 심실 수축이 이어져요.</dd><dt>심전도(ECG)</dt><dd>파형 모양과 간격은 박동 리듬과 전기 신호 전달을 판단할 단서를 줘요.</dd></dl></div></article><article class="topic" id="s3-vessels"><h3>혈관의 구조와 모세혈관의 혈류</h3><p class="comic-question">모세혈관 한 가닥은 가느다란데 왜 혈액은 그곳의 혈관망에서 느리게 흐를까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>가느다란 길을 보면 혈액이 더 빨리 갈 것 같아요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>혈액이 건너는 길을 한 가닥만 보고 있나요?</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s3-vessels/01-e6fc6d468ac9ca930f073f1e2b0b6b600d44ee6276804f53f082fe019ea58406.png" alt="동맥에서 가는 모세혈관 여러 줄로 퍼졌다가 정맥으로 다시 모이는 혈관망" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">동맥 → 세동맥 → 모세혈관 → 세정맥 → 정맥. 동맥은 심장에서 조직 쪽으로 보내고 모세혈관에서 교환한 뒤 정맥이 혈액을 모아 돌려보내요.</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>오른쪽은 작은 원 하나만 재면 되나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>흐름과 직각인 같은 단계를 잘라, 열린 원 전체를 더해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s3-vessels/02-8b2f28e8052b0accd57857c40df58f5b3bb569703443fe8cd0044e627353ee36.png" alt="큰 입구 하나와 작은 입구 아홉 개의 단면 비교" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">오른쪽의 작은 입구 9개를 더하면, 한 입구의 지름이 작아도 면적의 합은 더 커질 수 있어요. 통로 사이 빈틈은 더하지 않아요.</p><p class="comic-analogy"><strong>비유 연결</strong> 나란한 작은 물길의 잘린 입구 면적을 합침 → 병렬 모세혈관의 총 단면적 · 같은 시간에 같은 물의 양을 통과시킬 때 전체 입구가 넓은 쪽의 이동 거리가 짧음 → 같은 유량에서 총 단면적이 크면 평균 유속이 작음</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>두 경우 모두 1초에 같은 부피가 지나가면요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>지나갈 면적이 넓은 곳에서는 1초 동안 전진하는 평균 거리가 짧아요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s3-vessels/03-e8a7d7c8a7a841363a883286a1dac5a1a4a0f21d4eb133d8d2db635411591784.png" alt="같은 물 부피가 좁은 통로에서는 긴 구간, 넓은 통로에서는 짧은 구간에 해당하는 비교" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">안정적으로 순환할 때 혈액이 계속 쌓이지 않으므로 각 단계의 평균 총유량이 같아요. 가지 유량을 더한 값이 10 mL/s일 때, 총 단면적 2 cm²에서는 5 cm/s, 10 cm²에서는 1 cm/s예요. 평균 유속 = 평균 총유량 ÷ 총 단면적.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 물길 모형은 같은 유량에서 단면적과 속도를 비교하는 데 써요. 실제 혈관에서는 저항과 혈관의 수축 상태가 유량에도 영향을 줘요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>모세혈관망에서는 느리게 지나서 조직과 교환할 시간이 늘겠네요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s3-vessels/04-9c6099195460729a85f37b73402f8b24e5513d66f82388924f9a8c8a5e0951bc.png" alt="내피 한 겹의 벽 근처에서 작은 물질을 교환하며 적혈구가 한 줄로 지나는 모세혈관" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">느린 평균 혈류와 얇은 벽이 기체·영양분·노폐물 교환에 유리해요. 보충으로 좁은 혈관에서 적혈구는 대개 한 줄로 지나가고 대부분의 혈장 단백질과 함께 정상 혈관 안에 머물러요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>같은 혈관인데 벽은 어떻게 달라요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>동맥의 평활근·탄성 조직이 높은 압력을 견뎌요. 늘어난 벽은 되튀면서 혈액을 앞으로 밀어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s3-vessels/05-024ccacf480e7b51c614855fc518dbe52cad8dfead9a54a0e219eafb799fd14e.png" alt="두꺼운 동맥벽, 얇은 모세혈관벽, 동맥보다 얇은 정맥벽과 늘어났다 되튀는 동맥 모형" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">혈압은 혈액이 벽에 가하는 압력이에요. 혈류가 저항을 받아 동맥에서 높고 모세혈관에서 낮으며 정맥에서 더 낮아요. 일부 정맥에는 역류를 막는 판막이 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>가는 혈관망이라고 모두 같은 조건인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>세동맥·앞 괄약근이 이완하면 그 망의 혈류가 늘어요. 뇌에서는 내피가 촘촘히 연결돼 교환이 제한돼요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s3-vessels/06-7007b917a4dc8872dc8d65c8c5b255b699151296e569fbb36078ed6eedda7b38.png" alt="세동맥 입구의 이완 모형과 세포 사이가 촘촘한 뇌 모세혈관 비교" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">동맥벽은 안부터 내피, 평활근·탄성 섬유층, 콜라겐과 엘라스틴이 든 결합조직층이에요. 일반 조직에서는 작은 물질이 확산하고 압력차로 물과 작은 용질이 함께 움직이기도 해요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1119_Respiratory_and_Circulatory_Systems.html#s3-vessels" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">심장에서 나온 혈액은 동맥에서 모세혈관망으로 퍼지고 정맥으로 모여 돌아와요. 모세혈관 한 가닥의 지름은 작지만 총 단면적은 가장 커요. 같은 유량이면 평균 유속이 낮아 교환 시간이 늘어요.</p><p class="panel-label">용어</p><dl class="terms"><dt>혈압</dt><dd>혈액이 벽에 가하는 압력이며, 저항을 받는 혈류의 하류로 갈수록 낮아져요.</dd><dt>총 단면적</dt><dd>같은 단계에 있는 혈관 단면을 흐름에 수직으로 잘라 모두 합한 값이에요.</dd><dt>교환의 조건</dt><dd><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>모세혈관은 내피 한 겹이에요. 작은 물질의 확산과 압력 차에 의한 물·작은 용질의 대량이동이 일어나요. 한 혈관과 병렬망 전체의 저항은 별개예요. 뇌 내피의 밀착연접은 교환을 제한해요.</dd></dl></div></article></section>
+<section id="comic-section-5"><h2>요약 · 예고</h2><article class="topic" id="s4-cheatsheet"><h3>한눈에 다시 보기</h3><p class="comic-question">공기와 혈액의 길을 한 번 따라가면 무엇이 바뀌고 무엇으로 구별할 수 있을까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>공기를 따라가 볼게요. 먼지도 폐포까지 따라가나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>기도에서는 점액이 먼지를 붙잡아요. 폐포에선 기체를 교환하고요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s4-cheatsheet/01-a54deb32e61682c407dfd33506de66c09b817d38949617910facb6ff4354eac2.png" alt="인두 쪽으로 올라가는 점액과 모세혈관에 붙은 폐포" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">점액이 이물질을 잡고 섬모가 인두 쪽으로 옮겨요. 기체는 얇고 넓은 폐포 벽을 사이에 두고 각각의 분압차를 따라 확산해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>최대한 내쉬면 폐에 있던 양을 다 뺀 건가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>그때도 잔기량은 남아요. 평소 한 번 드나드는 양이 1회 호흡량, 최대 들숨 뒤 내쉰 양이 폐활량이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s4-cheatsheet/02-b564bfe543d2fa61059730e188e4026288e5f8752c122a1e6bddfdf5b2ae8fa5.png" alt="왼쪽 들숨의 내려간 횡격막과 오른쪽 조용한 날숨의 올라간 횡격막" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">횡격막과 외늑간근 수축 → 폐 부피 증가 → 폐포압 하강. 공기는 대기와 폐포 사이의 압력차를 따라 움직여요. 조용한 날숨에는 근육 이완과 폐의 탄성 되튐으로 공기가 나가요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>몸에 CO₂가 쌓이면 숨은 어떻게 달라져요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>pH가 내려가고 호흡이 더 빠르고 깊어져요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s4-cheatsheet/03-057e6dd7f8e506031bd92cc7fc2f4a949278e6a9e71858f6c419d4147aa04ad3.png" alt="뇌간 부근의 감지 위치와 목동맥 갈림길 및 대동맥활의 감지 위치" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">중추 수용체는 뇌척수액 pH를, 말초 수용체는 동맥혈 pH와 기체 상태를 감지해요. pH가 낮아져 환기가 늘면 CO₂ 배출이 늘고 호흡을 촉진하던 자극이 약해져요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>같은 분압에서는 어느 쪽의 결합 자리가 더 많이 비나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>pH가 낮은 쪽을 비교해 봐요. 같은 분압에서 더 적은 자리가 차 있어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s4-cheatsheet/04-7f2de65f876e9eb6fb68a069dd7ce805acfa7ce2e3e6ed45f743e3da880440b1.png" alt="결합한 산소가 상대적으로 많은 헤모글로빈과 상대적으로 적은 헤모글로빈" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">산소는 주로 적혈구의 헤모글로빈에 결합해 운반돼요. 같은 산소 분압에서 낮은 pH의 포화도가 더 낮아요. 처음 포화도와 헤모글로빈 양이 같으면 낮은 pH에서 더 많은 산소를 내놓아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>폐포로 나갈 때도 중탄산 이온인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>폐에서는 CO₂가 다시 만들어져 기체로 나가요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s4-cheatsheet/05-3c97d99f00c7506d74557c02f27c1b4e537681e4cc0b9015e316ff4818b3ca01.png" alt="조직 모세혈관의 혈장 속 운반 형태와, 벽을 사이에 둔 폐포 공기 및 모세혈관 양쪽의 이산화탄소 표지." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">조직의 CO₂는 주로 HCO₃⁻로 바뀌어 혈장으로 운반돼요. 폐에서 CO₂가 폐포로 빠져 혈액의 CO₂가 줄면, HCO₃⁻에서 다시 만들어진 CO₂도 폐포로 확산해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>폐로 가는 혈액은 산소가 적은데 왜 동맥이에요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>심장에서 나가는 길이 동맥, 심장으로 돌아오는 길이 정맥이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s4-cheatsheet/06-721c6e966e2179e034165364e65b4163efaf0a9e1c046bb84b3452657d954c59.png" alt="심장과 폐 및 조직 모형 곁에 혈장·얇은 중간층·적혈구층이 분리된 시험관" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><p class="comic-caption">혈액은 심장이 만드는 압력차를 따라 움직여요. 폐순환은 우심실 → 폐 → 좌심방, 체순환은 좌심실 → 온몸 → 우심방이에요. 혈장은 용해 물질을 나르고, 적혈구는 산소 운반, 백혈구는 방어, 혈소판은 지혈을 도와요.</p></figcaption></figure></li><li class="comic-panel" data-panel="7">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>심전도에서 판막 닫히는 소리를 읽나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>피부 전극은 심장의 전기 활동을 기록해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s4-cheatsheet/07-c7e825a602e73985afe2ad2192087830fc4971e10b32101bb39ab5601d072557.png" alt="심장 내부의 닫힌 판막과 피부 전극으로 기록한 파형" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">7컷</span><p class="comic-caption">심방압 &lt; 심실압 &lt; 동맥압이면 두 판막이 닫혀요. 이완 중 심실압이 심방압보다 낮아지면 방실판막이 열려요. 동방결절에서 시작한 신호는 방실결절에서 잠깐 늦어져 심방이 심실을 채울 시간을 벌어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="8">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>가느다란 길이니까 단면적도 작겠죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>한 가닥씩 재고 모두 더해요. 유량이 같다면 합친 단면적이 넓을수록 평균 속도는 줄어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1119_Respiratory_and_Circulatory_Systems/versions/20261119T060848-a11b0acc/images/s4-cheatsheet/08-ae44a5ada6de37c05dba9c44aabd2decacc053763f5d573b58996ba09c9e4cc9.png" alt="한 수로가 다섯 물길로 갈라졌다가 합쳐지며 관찰선이 가운데 물길 모두를 가로지르는 모형" width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">8컷</span><p class="comic-caption">순환이 안정적이면 각 단계에서 평균 총유량이 같아요. 병렬 모세혈관은 총 단면적이 가장 커서 평균 유속이 가장 작고, 그만큼 물질을 교환할 시간이 늘어요.</p><p class="comic-analogy"><strong>비유 연결</strong> 한 가닥 폭 대신 한 지점의 나란한 물길 단면적을 모두 합한다. → 모세혈관 한 가닥은 좁지만 같은 단계의 병렬 모세혈관 단면적을 모두 더하면 가장 크다. · 같은 부피가 같은 시간에 지나갈 때 단면적이 더 큰 곳에서 평균 속도가 더 낮다. → 같은 유량에서 모세혈관의 유속이 낮아 교환 시간이 길어진다.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 수로 모형은 유량·단면적·평균 유속의 관계를 보여 줘요. 실제 물질 교환은 얇은 모세혈관 벽을 사이에 두고 일어나요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1119_Respiratory_and_Circulatory_Systems.html#s4-cheatsheet" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">기도의 점액과 섬모는 이물질을 처리하고 폐포에서는 기체가 확산해요. 폐와 온몸은 우심실→폐→좌심방, 좌심실→온몸→우심방의 두 순환으로 이어져요. 판막은 압력차에 따라 열리고 닫히며, 같은 유량에서 병렬 모세혈관의 총 단면적이 커 혈액의 평균 속도가 작아요.</p><p class="panel-label">용어</p><dl class="terms"><dt>들숨과 조용한 날숨</dt><dd>들숨은 근육 수축→부피 증가→폐포압 감소→공기 유입. 조용한 날숨은 근육 이완과 폐의 탄성 되튐으로 이어져요.</dd><dt>호흡 부피</dt><dd>평소 한 번 오가는 양은 1회 호흡량, 최대 들숨 뒤 최대한 내보낸 양은 폐활량, 최대로 내쉰 뒤에도 남은 양은 잔기량이에요.</dd><dt>두 기체의 운반</dt><dd>산소는 주로 적혈구의 헤모글로빈에 결합하고, 조직에서 생긴 CO₂는 주로 중탄산 이온으로 혈장을 따라 이동한 뒤 폐에서 다시 CO₂가 돼요.</dd><dt>심전도</dt><dd>피부 전극으로 기록한 심장의 전기 활동이에요.</dd><dt>이동을 일으키는 차이</dt><dd>공기는 대기와 폐포 사이의 압력차, O₂와 CO₂는 각각의 분압차, 혈액은 심장이 만드는 혈압차를 따라 이동해요.</dd><dt>혈장 단백질</dt><dd>혈장에 알부민·면역글로불린·피브리노겐이 녹아 있어요.</dd></dl></div></article></section>
+  </main>
+  <footer>정리노트의 수업 내용을 바탕으로 만든 학습만화</footer>
+    </div>
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="panel-right-title">
+      <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-right-title">페이지 요약</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-empty" id="sum-empty">페이지를 넘기면 그 페이지의 핵심 식과 용어가 여기에 나옵니다.</p>
+        <div class="sums" id="sum-for"></div>
+      </div>
+    </aside>
+  </div>
+  <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
+  <nav class="pager" aria-label="화면 이동">
+    <div class="pager-inner">
+      <button class="btn btn-ghost" id="pager-prev" type="button">이전</button>
+      <span class="pager-count" id="pager-count"></span>
+      <button class="btn btn-primary" id="pager-next" type="button">시작하기</button>
+    </div>
+  </nav>
+  <p class="sr-only" id="pager-status" aria-live="polite"></p>
+
+  <script id="theme-ui">
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const sysDark = matchMedia('(prefers-color-scheme: dark)');
+      const KEY = 'od-theme';
+      const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+      function label() {
+        const next = isDark() ? '라이트 모드로 전환' : '다크 모드로 전환';
+        btn.setAttribute('aria-label', next);
+        btn.title = next;
+      }
+      btn.addEventListener('click', () => {
+        const t = isDark() ? 'light' : 'dark';
+        // 시스템 설정과 같아지면 저장을 지워 다시 시스템을 따른다
+        if ((t === 'dark') === sysDark.matches) { delete root.dataset.theme; try { localStorage.removeItem(KEY); } catch (e) {} }
+        else { root.dataset.theme = t; try { localStorage.setItem(KEY, t); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+        label();
+      });
+      sysDark.addEventListener('change', label);
+      window.addEventListener('storage', (e) => {
+        if (e.key !== KEY) return;
+        if (e.newValue === 'light' || e.newValue === 'dark') root.dataset.theme = e.newValue; else delete root.dataset.theme;
+        label();
+      });
+      label();
+    })();
+  </script>
+  <script id="panels-ui">
+    (function () {
+      const body = document.body;
+      const layout = document.querySelector('.layout');
+      const kind = body.dataset.panels;
+      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const scrim = document.getElementById('panel-scrim');
+      const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
+      const wideMq = matchMedia('(min-width: 1024px)');
+      const roomyMq = matchMedia('(min-width: 1280px)');
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      // 푼 기록은 탭(세션) 단위로만 유지: 뒤로가기·새로고침엔 남고, 창을 닫고 다시 열면 초기화
+      const tabStore = {
+        get(k, d) { try { const v = sessionStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      const PREF = 'od-panels:' + kind;
+      // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
+      const RANGE = body.dataset.range || '';
+      const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+      const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+      let overlay = null;
+
+      // ---------- 열고 닫기 ----------
+      function docked() {
+        const pref = store.get(PREF, {});
+        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+      }
+      function sync() {
+        const wide = wideMq.matches;
+        const d = docked();
+        ['left', 'right'].forEach((side) => {
+          const open = wide ? d[side] : overlay === side;
+          const p = panels[side];
+          layout.dataset[side] = open ? 'open' : 'closed';
+          p.classList.toggle('is-open', !wide && open);
+          p.inert = !open;
+          if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
+          toggles[side].setAttribute('aria-expanded', String(open));
+        });
+        const drawer = !wide && overlay !== null;
+        scrim.classList.toggle('is-on', drawer);
+        body.classList.toggle('drawer-open', drawer);
+        blockers.forEach((el) => { el.inert = drawer; });
+      }
+      function openDrawer(side) {
+        overlay = side;
+        sync();
+        requestAnimationFrame(() => panels[side].querySelector('[data-panel-close]').focus());
+      }
+      function closeDrawer(refocus) {
+        if (overlay === null) return;
+        const side = overlay;
+        overlay = null;
+        sync();
+        if (refocus) toggles[side].focus();
+      }
+      function toggle(side) {
+        if (wideMq.matches) {
+          const d = docked();
+          d[side] = !d[side];
+          store.set(PREF, d);
+          sync();
+          if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+        } else if (overlay === side) closeDrawer(true);
+        else openDrawer(side);
+      }
+
+      toggles.left.addEventListener('click', () => toggle('left'));
+      toggles.right.addEventListener('click', () => toggle('right'));
+      scrim.addEventListener('click', () => closeDrawer(true));
+      document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
+      panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
+
+      // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      function applyWidths() {
+        const w = store.get(PREF + ':w', {});
+        ['left', 'right'].forEach((side) => {
+          if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
+          else layout.style.removeProperty(WIDTH[side].prop);
+        });
+      }
+      function maxFor(side) {
+        const other = side === 'left' ? panels.right : panels.left;
+        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
+      }
+      function setWidth(side, px, save) {
+        const v = Math.round(Math.min(Math.max(px, WIDTH[side].min), maxFor(side)));
+        layout.style.setProperty(WIDTH[side].prop, v + 'px');
+        panels[side].querySelector('.panel-resize').setAttribute('aria-valuenow', String(v));
+        if (save) { const w = store.get(PREF + ':w', {}); w[side] = v; store.set(PREF + ':w', w); }
+      }
+      function resetWidth(side) {
+        const w = store.get(PREF + ':w', {});
+        delete w[side];
+        store.set(PREF + ':w', w);
+        layout.style.removeProperty(WIDTH[side].prop);
+      }
+      document.querySelectorAll('.panel-resize').forEach((handle) => {
+        const side = handle.dataset.side;
+        const dir = side === 'left' ? 1 : -1;
+        handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
+        handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
+        handle.addEventListener('pointerdown', (e) => {
+          if (!wideMq.matches || e.button !== 0) return;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startW = panels[side].getBoundingClientRect().width;
+          handle.setPointerCapture(e.pointerId);
+          body.classList.add('is-resizing');
+          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const up = () => {
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', up);
+            handle.removeEventListener('pointercancel', up);
+            body.classList.remove('is-resizing');
+            setWidth(side, panels[side].getBoundingClientRect().width, true);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', up);
+          handle.addEventListener('pointercancel', up);
+        });
+        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('keydown', (e) => {
+          const step = e.shiftKey ? 64 : 16;
+          const cur = panels[side].getBoundingClientRect().width;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+        });
+      });
+      applyWidths();
+      const onMq = () => { overlay = null; sync(); };
+      wideMq.addEventListener('change', onMq);
+      roomyMq.addEventListener('change', onMq);
+
+      // ---------- 목차의 진행 표시 ----------
+      const progressN = document.getElementById('progress-n');
+      const progressBar = document.getElementById('progress-bar');
+      const progressTotal = document.getElementById('progress-total');
+      function markToc(done, total, doneLabel) {
+        panels.left.querySelectorAll('.toc-list a').forEach((a) => {
+          const id = decodeURIComponent(a.getAttribute('href').slice(1));
+          let mark = a.querySelector('.toc-mark');
+          if (!mark) {
+            mark = document.createElement('span');
+            mark.className = 'toc-mark';
+            mark.setAttribute('aria-hidden', 'true');
+            const state = document.createElement('span');
+            state.className = 'sr-only toc-state';
+            a.append(mark, state);
+          }
+          const isDone = done.has(id);
+          mark.classList.toggle('is-done', isDone);
+          mark.innerHTML = isDone ? ICON_DONE : ICON_TODO;
+          a.querySelector('.toc-state').textContent = isDone ? ' (' + doneLabel + ')' : '';
+        });
+        progressN.textContent = String(done.size);
+        progressTotal.textContent = String(total);
+        progressBar.style.transform = 'scaleX(' + (total ? done.size / total : 0) + ')';
+      }
+      function revealCurrent() {
+        const link = panels.left.querySelector('.toc-list a[aria-current="true"]');
+        if (link && layout.dataset.left === 'open') link.scrollIntoView({ block: 'nearest' });
+      }
+
+      // ---------- 복습문제: 오른쪽 = 원문 · 힌트 · 풀이 ----------
+      function setupReview() {
+        const KEY = 'od-review-solved:' + RANGE;
+        const cards = Array.from(document.querySelectorAll('main article.card'));
+        const aids = panels.right.querySelector('.aids');
+        const empty = panels.right.querySelector('.panel-empty');
+        const btn = document.getElementById('solved-btn');
+        const groups = {};
+        const solved = new Set(tabStore.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        cards.forEach((card) => {
+          const g = document.createElement('div');
+          g.className = 'aid';
+          g.hidden = true;
+          card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
+          aids.appendChild(g);
+          groups[card.id] = g;
+        });
+        let curId = null;
+        function paintBtn() {
+          const on = solved.has(curId);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.innerHTML = (on ? ICON_DONE : ICON_TODO) + '<span>' + (on ? '푼 문제 · 표시 해제' : '푼 문제로 표시') + '</span>';
+        }
+        btn.addEventListener('click', () => {
+          if (!curId) return;
+          if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
+          tabStore.set(KEY, Array.from(solved));
+          paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          curId = s.matches('article.card') ? s.id : null;
+          Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
+          empty.hidden = Boolean(curId);
+          btn.hidden = !curId;
+          if (curId) paintBtn();
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(solved, cards.length, '푼 문제');
+          revealCurrent();
+        });
+      }
+
+      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
+      function setupNote() {
+        const KEY = 'od-comic-read:' + RANGE;
+        const topics = Array.from(document.querySelectorAll('main article.topic'));
+        const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
+        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
+        const box = panels.right.querySelector('.sums');
+        const sums = {};
+        topics.forEach((t) => {
+          const el = t.querySelector(':scope > .sum');
+          if (!el) return;
+          el.hidden = true;
+          box.appendChild(el);
+          sums[t.id] = el;
+        });
+        const empty = document.getElementById('sum-empty');
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          const key = s.matches('article.topic') ? s.id : 'intro';
+          Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
+          empty.hidden = Boolean(sums[key]);
+          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(read, topics.length, '읽음');
+          revealCurrent();
+        });
+      }
+
+      if (kind === 'review') setupReview();
+      if (kind === 'note') setupNote();
+      sync();
+    })();
+  </script>
+  <script id="pager-ui">
+    (function () {
+      const root = document.documentElement;
+      const main = document.querySelector('main');
+      const hero = main.querySelector('.hero');
+      const screens = [hero].concat(Array.from(main.querySelectorAll(document.body.dataset.screens)));
+      if (screens.length < 2) { root.classList.remove('js'); return; }
+      screens.forEach((s) => s.classList.add('screen'));
+
+      const last = screens.length - 1;
+      const prevBtn = document.getElementById('pager-prev');
+      const nextBtn = document.getElementById('pager-next');
+      const count = document.getElementById('pager-count');
+      const bar = document.getElementById('pager-bar');
+      const status = document.getElementById('pager-status');
+      const toc = document.querySelector('#panel-left .toc');
+      const scroller = document.querySelector('.content');
+      const titleOf = (s) => ((s.querySelector('h3') || s.querySelector('h1') || {}).textContent || '').trim();
+      let cur = -1;
+
+      // 목차: 섹션 링크 아래에 화면(토픽·카드) 목록을 붙인다
+      const tocLinks = [];
+      Array.from(toc.querySelectorAll(':scope > a')).forEach((a) => {
+        const sec = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+        const group = document.createElement('div');
+        group.className = 'toc-group';
+        a.replaceWith(group);
+        group.appendChild(a);
+        if (!sec) return;
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        screens.forEach((s, i) => {
+          if (!sec.contains(s)) return;
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#' + s.id;
+          link.innerHTML = '<span class="toc-title"></span>';
+          link.firstChild.textContent = titleOf(s);
+          li.appendChild(link);
+          list.appendChild(li);
+          tocLinks[i] = link;
+        });
+        group.appendChild(list);
+      });
+
+      function indexFor(hash) {
+        const id = decodeURIComponent((hash || '').replace(/^#/, ''));
+        const el = id && document.getElementById(id);
+        if (!el || !main.contains(el)) return { i: 0 };
+        const i = screens.findIndex((s) => s.contains(el) || el.contains(s));
+        return { i: Math.max(i, 0), target: i >= 0 && screens[i].contains(el) && screens[i] !== el ? el : null };
+      }
+
+      function render(i, target) {
+        const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
+        if (i !== cur) {
+          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
+          main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
+          const s = screens[i];
+          const sec = s.closest('section');
+          if (sec) sec.classList.add('is-on');
+          s.classList.add('is-current');
+          if (dir) { s.classList.remove('enter-next', 'enter-prev'); void s.offsetWidth; s.classList.add(dir); }
+          cur = i;
+          document.body.classList.toggle('at-end', i === last);
+          prevBtn.disabled = i === 0;
+          nextBtn.textContent = i === 0 ? '시작하기' : i === last ? '처음으로' : '다음';
+          count.textContent = i === 0 ? '' : i + ' / ' + last;
+          bar.style.transform = 'scaleX(' + (i / last) + ')';
+          status.textContent = i === 0 ? titleOf(s) : i + ' / ' + last + ', ' + titleOf(s);
+          tocLinks.forEach((link, k) => link && link.setAttribute('aria-current', String(k === i)));
+          document.dispatchEvent(new CustomEvent('od:screen', { detail: { index: i, screen: s } }));
+        }
+        if (target) target.scrollIntoView({ block: 'start' });
+        else scroller.scrollTo(0, 0);
+      }
+
+      function go(i) {
+        i = Math.min(Math.max(i, 0), last);
+        if (i === cur) return;
+        const url = i === 0 ? location.pathname + location.search : '#' + screens[i].id;
+        history.pushState(null, '', url);
+        render(i);
+      }
+
+      prevBtn.addEventListener('click', () => go(cur - 1));
+      nextBtn.addEventListener('click', () => go(cur === last ? 0 : cur + 1));
+      const fromUrl = () => { const r = indexFor(location.hash); render(r.i, r.target); };
+      window.addEventListener('hashchange', fromUrl);
+      window.addEventListener('popstate', fromUrl);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+
+      // 좌우로 밀어서 넘기기 (가로로 스크롤되는 영역은 제외)
+      let sx = 0, sy = 0, skip = true;
+      main.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (skip) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 64 && Math.abs(dx) > 2 * Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      fromUrl();
+    })();
+  </script>
+</body>
+</html>
