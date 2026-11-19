@@ -193,7 +193,7 @@ python3 "$SKILL/scripts/check_html.py" --manifest "$RUN/manifest.json" --note "$
 
 ### 6. 리뷰
 - **본문–요약 전수 대조:** `references/content-rules.md`의 같은 이름 절과 `references/review-prompt.md`를 따른다. 일반 본문·교수님 강조·보충의 핵심 주장마다 대응하는 요약 문장을 `RUN/summary-audit.md`에 기록한다. 개념·인과·성립 조건·오개념 구분의 누락을 수정·재검토하며, 생략 가능한 비유·반복은 이유를 남긴다. 본문이나 요약을 수정하면 해당 행도 다시 대조한다. 최종 감사표를 재조립으로 `.pack/summary-audit.md`에 보존한다. 용어 설명을 읽기 전 첫 문장만 따로 읽고 대상·핵심 관계·비교 대상의 누락을 검토한다. 학습 토픽별 `첫 문장 검토` 행(핵심 관계·차이 / 실제 첫 문장 / 판정과 이유)을 기존 감사표에 추가하고 수정 후 재검토한다. 구조·문장 반복 검사 통과와 첫 문장·전체 요약 의미 검토 완료를 구별해 보고한다.
-- **본문 밀도 검토:** `references/review-prompt.md`의 같은 이름 절대로 펼쳐진 본문의 중복, 문단으로 풀린 비교·과정, warn 표에 빠진 혼동 지점, 접힘에 묻힌 강조 발언을 토픽마다 확인해 섹션 작성자에게 되돌린다.
+- **본문 밀도 검토:** `references/review-prompt.md`의 같은 이름 절대로 펼쳐진 본문의 중복, 문단으로 풀린 비교·과정, warn 표에 빠진 혼동 지점, 접힘에 묻힌 강조 발언을 토픽마다 확인한다. 추론이 막히기 쉬운 토픽은 본문과 그림으로 대표 질문에 답해 보고, 빠진 전제는 기존 `findings-body.tsv`에 적어 섹션 작성자에게 되돌린다.
 - 카드 검사와 별도로 `references/review-prompt.md`의 **본문 피드백 검토**를 수행한다. `RUN/note-feedback-audit.md`의 전체 ID를 본문 문장과 대조하고, 누락은 섹션을 고쳐 재조립·재검사한다. 완료 후 최종 감사표를 `.pack/`에 저장한다. 원본 채점 미확인은 그대로 유지한다.
 - 브리프는 `references/review-prompt.md`에 있고 리뷰어가 읽는다. 세 리뷰어를 한 메시지에서 병렬로 띄운다. 위 본문–요약 전수 대조·본문 밀도 검토·본문 피드백 검토는 메인이 직접 하지 않고 본문 감사 리뷰어가 한다.
   - **블라인드 풀이 검사**: `references/review-prompt.md`의 "블라인드 풀이 검사" 스니펫으로 `RUN/work/blind-<range>.md`를 만든 뒤 리뷰어 1명에게 정리노트와 이 사본만 준다. 답은 `RUN/work/reports/blind.tsv`에 쓰인다.
@@ -205,7 +205,7 @@ python3 "$SKILL/scripts/check_html.py" --manifest "$RUN/manifest.json" --note "$
 - 독립 수준·최소 풀이 단계를 설계표와 대조한다. 원문 분류는 재검토하고 생성 변형은 수정/교체하거나 목표 차이를 보고한다(`references/review-prompt.md`). 이 검토는 기존 최대 2회 한도에 포함한다.
 - 일반 리뷰의 Critical과 Important는 모두, Minor는 쉬운 것만 고친다.
 - 담당 작성자별로 **한 번에 모아서** 수정을 요청한다. 수정은 한 번만 한다. 요청은 "`RUN/work/fixes/<담당>.txt`를 읽고 모두 고친 뒤 영수증만 보고" 한 줄이다. 작성자는 자기 `rows-<sid>.tsv`를 통째로 다시 쓰므로 메인은 `audit-merge`만 다시 실행한다.
-- 수정 후 4~5단계를 다시 하고, 블라인드 사본을 다시 만들어 틀렸던 문항만 다시 검사한다(`IDS`). 반영하지 않은 항목은 `RUN/work/reports/unapplied.tsv`와 `fixed-*.tsv`의 건수로 보고서에 적는다(critical·important가 남았을 때만 id를 적는다).
+- 수정 후 4~5단계를 다시 하고, 블라인드 사본을 다시 만들어 틀렸던 문항만 다시 검사한다(`IDS`). 본문 감사 리뷰어는 추론 결함이 있던 토픽을 같은 대표 질문으로 다시 확인한다. `RUN/work/reports/unapplied.tsv`·`fixed-*.tsv`와 본문 감사 재검토 영수증을 확인하고 미해결 건수를 보고서에 적는다(critical·important가 남았을 때만 id를 적는다).
 
 ### 7. 브라우저 검증
 - 브라우저 검증 에이전트 1명이 `references/browser-check.md`대로 한다(브리프는 그 파일 맨 위). 메인은 영수증만 받고 스크린샷을 열지 않는다. 결함은 `findings-browser.tsv`에 쓰이므로 `pack_run.py fixes`로 나눈다.

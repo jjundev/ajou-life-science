@@ -68,7 +68,7 @@ p4	근거 없음	—	보기 (3)의 방추사 부착 위치가 노트에 없음	�
 ---
 생명과학 복습팩 정리노트의 본문 감사 리뷰를 한다. 조각과 HTML은 수정하지 않는다.
 
-- 읽기: `<SKILL>/references/review-prompt.md`의 「본문 피드백 검토」, 「본문–요약 전수 대조」, 「본문 밀도 검토」 세 절, `<SKILL>/references/report-contract.md`, `<SKILL>/references/content-rules.md`의 「내용 유형별 형식」과 「페이지 요약」, `<SKILL>/references/note-feedback.md`
+- 읽기: `<SKILL>/references/review-prompt.md`의 「본문 피드백 검토」, 「본문–요약 전수 대조」, 「본문 밀도 검토」 세 절, `<SKILL>/references/report-contract.md`, `<SKILL>/references/content-rules.md`의 「어려운 개념에 한정한 동기·인과 설명」, 「내용 유형별 형식」, 「페이지 요약」, `<SKILL>/references/note-feedback.md`
 - 대상: 정리노트 `<RUN>/repo/복습노트/<range>/<정리노트 html>`
 - 근거: `<RUN>/summary-audit.md`(작성자 감사행을 합친 표), `<RUN>/note-feedback-audit.md`, `<RUN>/summaries/stt-*.md`, `<RUN>/slides.txt`, `<RUN>/manifest.json`, 해당 장 `<RUN>/repo/웹과제/<N>장/note-feedback.md`와 연결된 raw 원본
 - 출력: `<RUN>/work/reports/findings-body.tsv`(심각도 · id · 문제 · 고칠 내용). 첫 문장 검토 행과 감사표에서 빠진 핵심은 `<RUN>/work/reports/rows-review.tsv`에 감사행 형식으로 더한다(작성자의 `rows-<sid>.tsv`는 고치지 않는다). 피드백 ID별 판정은 `<RUN>/work/reports/notes-feedback-review.tsv`(피드백 ID · 상태 · 근거 토픽·본문 문장 · 빠진 판별 기준/보류 이유)에 쓴다.
@@ -103,7 +103,11 @@ p4	근거 없음	—	보기 (3)의 방추사 부착 위치가 노트에 없음	�
 - 시험 언급·강조 발언·판별 기준·동기·인과 설명이 `details` 안에만 있는가.
 - 표 칸이 조건을 잃었는가(예: "항상"이 아닌 것을 한정어 없이 적음).
 
-결함은 토픽 id와 고칠 내용을 `findings-body.tsv`에 적어 섹션 작성자에게 한 번에 되돌리고, 수정 후 본문–요약 전수 대조의 해당 행도 다시 본다. 기존 최대 2회 한도에 포함한다. 이 검토는 길이를 줄이려고 사실을 빼는 일이 아니다. 빠진 사실이 생기면 접힘으로 옮긴다.
+「어려운 개념에 한정한 동기·인과 설명」에 따라 비교 대상이나 고정 조건이 바뀌는 곳, 관측값을 해석하는 곳, 중간 상태로 다음 상태를 판단하는 곳에서 추론이 막히기 쉬운 토픽을 고른다.
+- 토픽마다 대표 질문 하나를 만든다. 근거 자료를 펼치기 전에 해당 토픽의 펼쳐진 본문·그림과 직접 연결된 선행 토픽을 읽고, 어느 문장이나 표시로 답을 유도할 수 있는지 확인한다. 주어진 근거로 유도할 수 있으면 통과다. 단순 정의·명칭·목록은 이 질문 검사의 적용 대상에서 제외한다.
+- 답에 필요한 전제가 접힌 설명이나 별도 인터랙티브에만 있거나 본문에서 빠졌으면, 강의노트·STT·교재로 보강 근거와 수업 범위를 확인한다. `findings-body.tsv`의 기존 네 칸을 사용한다. `문제` 칸에 대표 질문과 빠진 전제를, `고칠 내용` 칸에 보강할 최소 내용과 본문의 위치를 쓴다.
+
+결함은 토픽 id와 고칠 내용을 `findings-body.tsv`에 적어 섹션 작성자에게 한 번에 되돌린다. 수정 후에는 그 파일의 `문제` 칸에서 대표 질문을 가져와 다시 답하고 본문–요약 전수 대조의 해당 행도 다시 본다. 영수증의 `수`에는 해결·미해결 건수, `결함`에는 남은 `critical`·`important`의 토픽 id와 빠진 전제를 적는다. 기존 최대 2회 한도에 포함한다. 중복을 정리할 때 판단에 필요한 전제는 펼쳐 둔다. 선택적으로 읽는 부연은 접힘에 둔다.
 
 ## 일반 리뷰
 
