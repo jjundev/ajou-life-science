@@ -250,7 +250,7 @@ python3 "$SKILL/scripts/html2md.py" "$REPO/복습노트/<range>/<정리노트>.h
 
 실행 폴더 경로(`RUN`)도 적는다. 수정이 필요하면 조각을 고쳐 4단계부터 다시 돌리면 된다. 커밋 제안 전에 `git status`로 `*.zip`이 섞이지 않았는지 확인한다.
 
-`references/webquiz-style.md` 1절에 없는 장의 `웹과제/<N>장/questions.json`이 있으면 그 파일 5절대로 세어 보고서 끝에 "webquiz-style.md 갱신 제안"을 적는다. 같은 range의 팩을 다시 만들면 기존 카드 번호를 유지한다(새 문항은 기존 최대 번호 다음부터). `references/interactive-overrides.json`의 애매함 공지와 `복습노트/<range>/.assets/풀이기록/`이 카드 id로 문항을 가리키기 때문이다. 번호가 바뀌었다면 overrides 키를 새 번호에 맞게 고치고, 예전 풀이기록은 git 기록의 예전 HTML 기준이라고 보고서에 적는다. 끝나면 `.assets/풀이기록/`이 그대로인지 확인한다.
+장별 웹과제 관찰의 갱신 제안은 [공통 출제 기준 5절](references/webquiz-style.md#5-갱신)을 따른다. 같은 range의 팩을 다시 만들면 기존 카드 번호를 유지한다(새 문항은 기존 최대 번호 다음부터). `references/interactive-overrides.json`의 애매함 공지와 `복습노트/<range>/.assets/풀이기록/`이 카드 id로 문항을 가리키기 때문이다. 번호가 바뀌었다면 overrides 키를 새 번호에 맞게 고치고, 예전 풀이기록은 git 기록의 예전 HTML 기준이라고 보고서에 적는다. 끝나면 `.assets/풀이기록/`이 그대로인지 확인한다.
 
 **장 마감** (이번 범위에서 한 장이 끝났을 때만 — 요약의 끊긴 지점이 장 끝이거나 다음 장으로 넘어갔을 때):
 장 마감 에이전트 1명(opus)이 그 장을 다룬 모든 회차(`복습노트/*/`)를 모아 다음을 검토하고 `복습노트/<range>/.assets/장마감_<range>_<N>장.md`에 쓴다. 에이전트의 보고는 영수증(파일 경로, 재분류 4종의 수, 범위 확인 여부)이고 보고서에는 그 요약만 싣는다. 에이전트에게는 이 절의 1~6과 `RUN`, `SKILL`, `range`, 장 번호를 넘긴다.
