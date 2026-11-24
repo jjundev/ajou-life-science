@@ -162,9 +162,14 @@ def web_exam(practice, pack):
         choices = next(problem.find_all(lambda n:'choices' in n.classes))
         options = [n for n in choices.children if getattr(n,'tag',None) == 'li']
         labels = 'ABCDE'[:len(options)]
-        inputs = '<fieldset><legend>답 선택</legend>' + ''.join(
-            f'<label><input type="radio" name="{id_}" value="{letter}"> ' + inner(option) + '</label>'
-            for letter,option in zip(labels,options)) + '</fieldset>'
+        radios = []
+        for letter, option in zip(labels, options):
+            content = inner(option)
+            # KaTeX also inserts markup into text with math delimiters after load.
+            if content.count('$') >= 2 or any(not isinstance(child, str) for child in option.children):
+                content = f'<span class="exam-choice-text">{content}</span>'
+            radios.append(f'<label><input type="radio" name="{id_}" value="{letter}"> {content}</label>')
+        inputs = '<fieldset><legend>답 선택</legend>' + ''.join(radios) + '</fieldset>'
         solution = next(node.find_all(lambda n:'solution' in n.classes))
         steps = next(solution.find_all(lambda n:'steps' in n.classes))
         answer = next(solution.find_all(lambda n:'answer' in n.classes))

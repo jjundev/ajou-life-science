@@ -68,6 +68,7 @@ python "$SKILL/scripts/blind_ledger.py" status "$SRC" "$RUN/blind-ledger.json"
 python "$SKILL/scripts/browser_check.py" "$REPO/웹과제예상/<N>장/복습문제_<N>장_웹과제예상_v<K>.html" --out "$RUN/browser.json" --shots "$RUN/browser-shots"
 ```
 시험형은 브라우저가 만든 목차의 섹션별 문항 링크와 순서를 `pack.json`의 채점 문항과 대조한다.
+시험형의 모든 객관식 보기를 순회해 아래첨자·위첨자·기울임·수식 등이 들어간 문장이 라디오 버튼 옆의 단일 텍스트 요소 안에 있는지 검사한다. 실패 기록의 문항과 보기 번호를 보고 생성기의 보기 마크업을 확인한다.
 
 연습형에서 답을 선택하고 시험형에서 전체 제출한 뒤 오른쪽 해설 패널에 자동 목록 번호와 번호용 들여쓰기가 없는지 확인한다. `A.`~`E.` 보기 라벨, `ㄱ.` 등 진술 라벨과 수업과의 연결은 보존한다. 카드 원본의 `ol.steps`를 유지하고 [공통 복습문제 템플릿](../bio-review-pack/assets/review-template.html)의 패널 스타일을 사용한다.
 

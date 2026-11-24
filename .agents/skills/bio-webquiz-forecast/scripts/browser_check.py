@@ -171,6 +171,19 @@ def check_exam(run: Run, url: str, sections: dict[str, list[str]], answers: dict
     for n, cid in enumerate(ids):
         def one(cid=cid, n=n):
             run.go(cid)
+            split_options = page.locator(f"#{cid} .exam-input label:has(> input[type=radio])").evaluate_all("""
+                labels => labels.flatMap(label => {
+                    const radio = label.querySelector(':scope > input[type=radio]');
+                    const content = [...label.children].filter(child => child !== radio);
+                    if (content.length === 0) return [];
+                    const looseText = [...label.childNodes].some(node =>
+                        node.nodeType === Node.TEXT_NODE && node.textContent.trim());
+                    return content.length === 1 && content[0].matches('span.exam-choice-text') && !looseText
+                        ? [] : [radio.value];
+                })
+            """)
+            for option in split_options:
+                run.expect(False, f"{cid}: {option} 보기의 인라인 서식이 문장과 분리됨")
             letter = answers.get(cid, "A") if n % 2 == 0 else ("B" if answers.get(cid) != "B" else "C")
             page.locator(f"#{cid} input[type=radio][value='{letter}']").check()
             if n + 1 < len(ids):
