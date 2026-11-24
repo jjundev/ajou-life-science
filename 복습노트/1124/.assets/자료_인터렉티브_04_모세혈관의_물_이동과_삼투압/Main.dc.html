@@ -257,10 +257,14 @@ body{margin:0}
 <div class="panel-head"><h2>설명</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
 
 <!-- SLOT:right -->
+<div class="sec">
+<h3 class="sec-title">교과서 모형과 실제 물 이동</h3>
+<p class="sub">두 보기 모두 혈압과 혈액 삼투압만 비교하는 교과서 모형이에요. 실제로 대부분의 조직에서는 평상시 모세혈관 정맥 쪽에서도 소량의 물이 바깥으로 여과되고, 여과된 물은 주로 림프관을 거쳐 혈액으로 돌아가요.</p>
+</div>
 <sc-if value="{{is.capillary}}" hint-placeholder-val="{{ true }}">
 <div>
 <div class="sec">
-<h3 class="sec-title">모세혈관 압력 (상대값)</h3>
+<h3 class="sec-title">모형의 모세혈관 압력 (상대값)</h3>
 <div class="tiles">
 <div class="tile"><b style="color: {{legend.bp}}">40</b><span>동맥 쪽 혈압</span></div>
 <div class="tile"><b style="color: {{legend.bp}}">20</b><span>정맥 쪽 혈압</span></div>
@@ -269,7 +273,7 @@ body{margin:0}
 </div>
 </div>
 <div class="sec" aria-live="polite">
-<h3 class="sec-title">지금 일어나는 일</h3>
+<h3 class="sec-title">모형 속 물 이동</h3>
 <div class="events">
 <sc-for list="{{capEvents}}" as="e" hint-placeholder-count="2">
 <div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
@@ -293,12 +297,12 @@ body{margin:0}
 <sc-if value="{{is.edema}}" hint-placeholder-val="{{ false }}">
 <div>
 <div class="sec">
-<h3 class="sec-title">현재 조건 수치</h3>
+<h3 class="sec-title">모형의 조건 수치</h3>
 <div class="tiles">
 <div class="tile"><b style="color: {{legend.bp}}">{{edema.bpRange}}</b><span>동맥 → 정맥 혈압</span></div>
 <div class="tile"><b style="color: {{legend.osm}}">{{edema.osmP}}</b><span>혈액 삼투압</span></div>
 <div class="tile"><b class="num">{{edema.flowPair}}</b><span>나감 / 들어옴 (상대값)</span></div>
-<div class="tile"><b style="color: {{edema.statusColor}}">{{edema.status}}</b><span>조직 상태</span></div>
+<div class="tile"><b style="color: {{edema.statusColor}}">{{edema.status}}</b><span>모형의 판정</span></div>
 </div>
 </div>
 <div class="sec" aria-live="polite">
@@ -316,9 +320,9 @@ body{margin:0}
 <div><span class="sw" style="background: {{legend.osm}}"></span>삼투압 선</div>
 <div><span class="sw" style="background: {{legend.waterOut}}"></span>나가는 화살표</div>
 <div><span class="sw" style="background: {{legend.waterIn}}"></span>들어오는 화살표</div>
-<div><span class="sw ball" style="background: {{legend.waterOut}}"></span>조직에 남은 물</div>
+<div><span class="sw ball" style="background: {{legend.waterOut}}"></span>세포 사이에 남은 물</div>
 </div>
-<p class="sub">5개 대표 지점(동맥 쪽부터 5씩 감소)의 상대값이에요. 림프관 회수는 따로 넣지 않았어요.</p>
+<p class="sub">혈압이 5씩 낮아지는 5개 지점의 이론값을 비교해요. 여기서 쓰는 물 이동의 합계와 부종 판정은 림프관의 회수량을 생략한 모형 값이에요.</p>
 </div>
 </div>
 </sc-if>
@@ -345,32 +349,32 @@ class Component extends DCLogic {
     const capPhase = (f) => {
       if (f < 2.5) return '동맥 쪽: 물이 나감';
       if (f < 5.0) return '중간 지점: 힘 균형';
-      if (f < 7.5) return '정맥 쪽: 물이 들어옴';
-      return '혈청 단백질과 여분 회수';
+      if (f < 7.5) return '정맥 쪽: 모형에서 흡수';
+      return '혈청 단백질과 림프 회수';
     };
     return {
       MODES: [
         { key: 'capillary', label: '3D 흐름', cam: { yaw: -0.32, pitch: 0.24, zoom: 1 }, fit: [13.2, 8.2], D: 36,
           autoSpin: false, rotatable: true,
           playback: { fmax: 10, rate: 1.0, label: (f) => capPhase(f) + ' · ' + f.toFixed(1) + ' / 10' },
-          canvasLabel: (f) => '동맥 쪽(혈압 40)에서 정맥 쪽(혈압 20)으로 이어지는 3D 모세혈관 단면과 물 이동. 지금 ' + capPhase(f) + ' 단계예요. 끌어서 회전할 수 있어요.' },
+          canvasLabel: (f) => '동맥 쪽(혈압 40)에서 정맥 쪽(혈압 20)으로 이어지는 교과서 모형의 3D 모세혈관 단면과 물 이동. 지금 ' + capPhase(f) + ' 단계예요. 끌어서 회전할 수 있어요.' },
         { key: 'edema', label: '조건·부종 비교', cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [13.2, 9.2], D: 60,
           autoSpin: false, rotatable: false, playback: null,
           canvasLabel: () => {
             const artP = (this.state && this.state.artP) || 40;
             const osmP = (this.state && this.state.osmP) || 30;
-            return '동맥 쪽 혈압 ' + artP + ', 정맥 쪽 혈압 ' + (artP - 20) + ', 혈액 삼투압 ' + osmP + ' 조건에서 5개 지점의 물 이동과 조직 부종을 비교하는 도식이에요.';
+            return '동맥 쪽 혈압 ' + artP + ', 정맥 쪽 혈압 ' + (artP - 20) + ', 혈액 삼투압 ' + osmP + ' 조건에서 5개 지점의 물 이동과 부종 가능성을 비교하는 교과서 모형이에요.';
           } }
       ],
       STEPS: [
         { mode: 'capillary', f: 1.6, phase: '동맥 쪽: 물이 나감', c: '#E67E22', title: '동맥 쪽: 물이 나감', who: '혈압(40) > 삼투압(30)',
-          text: '동맥 쪽은 혈압(40)이 혈액 삼투압(30)보다 커서, 물이 내피세포 틈을 통해 조직 쪽으로 밀려 나가요. 일반 모세혈관은 혈액뇌장벽과 달리 내피세포 사이에 약간의 틈이 있어요.' },
+          text: '이 모형에서 동맥 쪽 혈압(40)이 혈액 삼투압(30)보다 커서 물이 조직 쪽으로 이동해요.' },
         { mode: 'capillary', f: 3.8, phase: '중간 지점: 힘 균형', c: '#7C4CC4', title: '중간 지점: 힘 균형', who: '혈압(30) = 삼투압(30)',
-          text: '혈액이 모세혈관을 따라 흐르며 혈압이 떨어져, 중간 지점에서 혈액 삼투압(30)과 크기가 같아져요. 밖으로 미는 혈압과 안으로 당기는 삼투압이 균형을 이뤄요.' },
-        { mode: 'capillary', f: 6.4, phase: '정맥 쪽: 물이 들어옴', c: '#1D8FE1', title: '정맥 쪽: 물이 들어옴', who: '혈압(20) < 삼투압(30)',
-          text: '정맥 쪽은 혈압이 20으로 낮아지고 혈액 속 혈청 단백질이 삼투압(30)을 유지해요. 그래서 조직의 물이 내피세포 틈을 통해 혈관 속으로 끌려 들어와요.' },
-        { mode: 'capillary', f: 9.0, phase: '혈청 단백질과 여분 회수', c: '#1B9E77', title: '혈청 단백질과 여분 회수', who: '혈청 단백질 · 림프관',
-          text: '대부분의 혈청 단백질은 모세혈관 틈을 쉽게 빠져나가지 못해 삼투압을 지켜요(교과서 보충). 정맥 쪽으로 다 돌아오지 못하고 조직에 남은 여분의 물은 림프관이 모아 혈액으로 돌려보내요.' }
+          text: '이 모형에서 혈압은 모세혈관을 따라 낮아져 중간 지점에서 혈액 삼투압(30)과 같아져요. 밖으로 미는 혈압과 안으로 당기는 삼투압이 균형을 이뤄요.' },
+        { mode: 'capillary', f: 6.4, phase: '정맥 쪽: 모형에서 흡수', c: '#1D8FE1', title: '정맥 쪽: 모형에서 흡수', who: '혈압(20) < 삼투압(30)',
+          text: '이 모형에서는 정맥 쪽 혈압(20)이 혈액 삼투압(30)보다 낮아 조직의 물이 혈관으로 들어와요. 실제로 대부분의 조직은 평상시 여과된 물을 주로 림프관으로 돌려보내요.' },
+        { mode: 'capillary', f: 9.0, phase: '혈청 단백질과 림프 회수', c: '#1B9E77', title: '혈청 단백질과 림프 회수', who: '혈청 단백질 · 림프관',
+          text: '혈청 단백질은 혈액의 삼투압을 만드는 데 기여해요(교과서 보충). 실제로 대부분의 조직에서 여과된 물은 주로 림프관에 모여 혈액으로 돌아가요.' }
       ],
       MISTAKES: {
         capillary: [
@@ -379,9 +383,9 @@ class Component extends DCLogic {
           { title: '모세혈관 틈 ≠ 혈액뇌장벽', text: '일반 모세혈관은 내피세포 사이에 약간의 틈이 있어 물이 드나들지만, 혈액뇌장벽은 내피세포가 빈틈없이 맞붙어 있어요.' }
         ],
         edema: [
-          { title: '기아성 부종 = 삼투압 감소 ≠ 혈압 상승', text: '오래 굶으면 혈청 단백질이 줄어 혈액 삼투압이 낮아져서 부어요. 혈압이 올라서가 아니에요. 기아성 부종 프리셋에서 혈압이 40 그대로임을 확인해 보세요.' },
-          { title: '굶주릴 때 정맥 쪽 = 들어옴 → 나감', text: '정맥 쪽 혈압 20은 평소(삼투압 30)엔 작지만, 굶주림(삼투압 14)엔 더 커져 정맥 쪽에서도 물이 빠져나가요.' },
-          { title: '혈압은 감소, 삼투압은 일정', text: '동맥에서 정맥으로 흐를수록 혈압은 낮아지지만, 혈액 삼투압은 모세혈관 안에서 거의 비슷하게 유지돼요.' }
+          { title: '기아성 부종 = 삼투압 감소 ≠ 혈압 상승', text: '오래 굶어 혈청 단백질이 줄면 혈액 삼투압이 낮아져 부종이 생기기 쉬워요. 기아성 부종 조건에서 혈압은 40 그대로예요.' },
+          { title: '모형의 정맥 쪽 방향 변화', text: '이 모형의 정상 조건에서는 20 < 30이라 정맥 쪽으로 물이 들어오고, 기아성 부종 조건에서는 20 > 14라 물이 조직 쪽으로 나가요.' },
+          { title: '모형에서 쓰는 압력 조건', text: '각 조건에서 혈압은 동맥 쪽에서 정맥 쪽으로 낮아지고, 혈액 삼투압은 일정하다고 가정해요.' }
         ]
       },
       TOGGLES: {
@@ -578,7 +582,7 @@ class Component extends DCLogic {
         }
         I.push({ k: 1, p: [-1.4, ly + lR, lz], q: [4.2, ly + lR, lz], w: 0.075, c: pal.lymph, rod: true, a: aLym * 0.85 });
         I.push({ k: 1, p: [-1.4, ly - lR, lz], q: [4.2, ly - lR, lz], w: 0.075, c: pal.lymph, rod: true, a: aLym * 0.85 });
-        // Excess water droplets entering lymphatic blind end and flowing right
+        // Tissue fluid enters the lymphatic capillary and flows right.
         arrow([-2.25, -1.65, 0.32], [-1.48, ly + 0.05, lz + 0.05], 0.065, pal.lymph, aLym);
         arrow([0.2, ly, lz], [1.4, ly, lz], 0.065, pal.lymph, aLym);
         arrow([2.4, ly, lz], [3.6, ly, lz], 0.065, pal.lymph, aLym);
@@ -616,7 +620,7 @@ class Component extends DCLogic {
           if (st.proteins) O.push({ p: [0.8, cy + 0.20, -0.28], text: '혈청 단백질 (삼투압 30)', c: pal.osm, dx: -14, dy: -22, lead: true });
         } else {
           if (st.proteins) O.push({ p: [-0.15, cy - 0.55, 0.15], text: '혈청 단백질 (안에 남음)', c: pal.osm, dx: -16, dy: -24, lead: true });
-          if (st.lymph) O.push({ p: [1.5, -2.25, 0.20], text: '림프관 (여분 물 회수)', c: pal.lymph, dx: 12, dy: 24, lead: true });
+          if (st.lymph) O.push({ p: [1.5, -2.25, 0.20], text: '림프관 (조직액 회수)', c: pal.lymph, dx: 12, dy: 24, lead: true });
         }
         if (ph !== 4 && st.lymph) {
           O.push({ p: [2.6, -2.25, 0.20], text: '림프관', c: pal.lymph, dx: 18, dy: 22, a: 0.78 });
@@ -721,10 +725,9 @@ class Component extends DCLogic {
     I.push({ k: 1, p: [4.8, poolTop, 0], q: [4.8, poolBot, 0], w: 0.06, c: pal.tissue, flat: true });
     I.push({ k: 1, p: [-4.8, poolBot, 0], q: [4.8, poolBot, 0], w: 0.06, c: pal.tissue, flat: true });
 
-    // Tissue cells swelling slightly when edema builds up
-    const cellR = 0.34 + (netOut > 0 ? Math.min(0.14, (netOut / 80) * 0.14) : 0);
+    // Cell size stays fixed while fluid accumulates between cells.
     for (let i = 0; i < 5; i++) {
-      I.push({ k: 5, p: [xs[i], -3.10, 0], r: cellR, c: netOut > 8 ? pal.waterOut : pal.tissue, focus: netOut >= 40, a: 0.55 });
+      I.push({ k: 5, p: [xs[i], -3.10, 0], r: 0.34, c: pal.tissue, a: 0.55 });
     }
 
     // Water fill bands & remaining water droplets inside tissue space
@@ -743,7 +746,7 @@ class Component extends DCLogic {
 
     // Labels (<= 5 chips on screen)
     if (st.labels) {
-      const statusTxt = netOut > 8 ? '조직 부종 (남은 물 +' + netOut + ')' : (netOut < -8 ? '흡수 우세 (순흡수 ' + (-netOut) + ')' : '물 이동 균형');
+      const statusTxt = netOut > 8 ? '부종 가능 (순유출 +' + netOut + ')' : (netOut < -8 ? '흡수 우세 (순흡수 ' + (-netOut) + ')' : '물 이동 균형');
       const headerY = Math.max(3.45, yP(artP) + 0.55);
       O.push({ p: [-4.2, headerY, 0], text: '동맥 혈압 ' + artP, c: pal.bp, dx: 0, dy: -8 });
       O.push({ p: [0, headerY, 0], text: '삼투압 ' + osmP, c: pal.osm, dx: 0, dy: -8 });
@@ -782,15 +785,15 @@ class Component extends DCLogic {
       zone = '들어옴 (20 < 30)';
       zoneColor = this.textTone(pal.waterIn);
       capEvents = [
-        { c: pal.osm, text: '정맥 쪽 혈압(20)보다 혈액 삼투압(30)이 더 커요.' },
-        { c: pal.waterIn, text: '조직 쪽 물이 내피세포 틈을 지나 혈관 속으로 끌려 들어와요.' }
+        { c: pal.osm, text: '모형에서 정맥 쪽 혈압(20)보다 혈액 삼투압(30)이 더 커요.' },
+        { c: pal.waterIn, text: '이 두 압력만 비교하면 조직의 물이 혈관으로 들어오는 방향이에요.' }
       ];
     } else {
       zone = '단백질 · 림프 회수';
       zoneColor = this.textTone(pal.lymph);
       capEvents = [
         { c: pal.osm, text: '대부분의 혈청 단백질은 틈을 빠져나가지 못해 삼투압을 지켜요(교과서 보충).' },
-        { c: pal.lymph, text: '정맥으로 다 돌아오지 못한 여분의 물은 림프관이 모아 혈액으로 돌려보내요.' }
+        { c: pal.lymph, text: '실제 조직에서 여과된 물이 혈액으로 돌아가는 주된 경로는 림프관이에요.' }
       ];
     }
 
@@ -804,7 +807,7 @@ class Component extends DCLogic {
     }
     const netOut = outSum - inSum;
     let status = '균형', statusColor = this.textTone(pal.lymph);
-    if (netOut > 8) { status = '부종 (물 남음)'; statusColor = this.textTone(pal.waterOut); }
+    if (netOut > 8) { status = '부종 가능'; statusColor = this.textTone(pal.waterOut); }
     else if (netOut < -8) { status = '흡수 우세'; statusColor = this.textTone(pal.waterIn); }
 
     const edemaEvents = [];
@@ -820,7 +823,7 @@ class Component extends DCLogic {
       edemaEvents.push({ c: pal.bp, text: '동맥 쪽(' + artP + ' > ' + osmP + ')은 물이 나가고, 정맥 쪽(' + venP + ' < ' + osmP + ')은 물이 들어와요.' });
     }
     if (netOut > 8) {
-      edemaEvents.push({ c: pal.waterOut, text: '나가는 물(' + outSum + ')이 들어오는 물(' + inSum + ')보다 많아 조직에 물이 남아 부어요.' });
+      edemaEvents.push({ c: pal.waterOut, text: '나가는 물(' + outSum + ')이 들어오는 물(' + inSum + ')보다 많아요. 실제로 여과량이 림프관의 회수량을 넘으면 조직이 부을 수 있어요.' });
     } else if (netOut < -8) {
       edemaEvents.push({ c: pal.waterIn, text: '들어오는 물(' + inSum + ')이 나가는 물(' + outSum + ')보다 많아 혈관 쪽으로 더 많이 흡수돼요.' });
     } else {
@@ -830,7 +833,7 @@ class Component extends DCLogic {
     const presetDefs = [
       { num: 1, title: '평소', sub: '혈압 40 · 삼투압 30', artP: 40, osmP: 30, c: pal.lymph },
       { num: 2, title: '기아성 부종 (오래 굶주림)', sub: '혈압 40 · 삼투압 14', artP: 40, osmP: 14, c: pal.waterOut },
-      { num: 3, title: '혈액 용질 농도 높음', sub: '혈압 40 · 삼투압 38', artP: 40, osmP: 38, c: pal.waterIn }
+      { num: 3, title: '혈액 삼투압 높음', sub: '혈압 40 · 삼투압 38', artP: 40, osmP: 38, c: pal.waterIn }
     ];
     const presets = presetDefs.map((p) => ({
       num: p.num, title: p.title, sub: p.sub, c: p.c,
