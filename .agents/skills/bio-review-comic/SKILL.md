@@ -48,6 +48,8 @@ python3 "$SKILL/scripts/comic.py" extract --repo "$REPO" --target "1105" --run "
 
 [콘티·검토 기준](references/review.md)과 [작업자 계약](references/agents.md)을 사용한다. 콘티가 준비된 페이지부터 고정 입력을 만들고, 콘티 작성자와 다른 검토자가 **그림 생성 전에** 고정 미리보기의 대사·캡션·그림 계획에서 읽히는 단서를 원본의 조건·예외와 대조한다. 실패하면 콘티를 수정해 다시 배정한다.
 
+**메인은 배정과 등록을 맡고, 최초 생성과 재생성의 이미지 도구 호출은 모두 생성 담당이 맡는다.** 대기 작업이 있으면 생성 슬롯 1개를 우선 확보한다. 슬롯이 차 있으면 [생성 대기열](references/agents.md#생성-대기열)에 작업을 두고 콘티 준비·검토 배정·결과 등록을 진행한다. 할 수 있는 일이 끝나면 슬롯이 빌 때까지 기다린다. 일정이 빠듯하거나 담당·도구가 실패해도 같은 역할 분담을 적용한다. 대체 담당을 확보할 수 없거나 실패를 해결할 수 없으면 해당 페이지만 사유와 함께 보류한다.
+
 ```bash
 python3 "$SKILL/scripts/comic.py" prepare --run "$RUN" --page "$PAGE" --stage content
 python3 "$SKILL/scripts/comic.py" record-review --run "$RUN" --report "$CONTENT_REPORT"
@@ -55,7 +57,7 @@ python3 "$SKILL/scripts/comic.py" prepare --run "$RUN" --page "$PAGE" --stage ge
 python3 "$SKILL/scripts/comic.py" register-image --run "$RUN" --report "$GENERATION_REPORT"
 ```
 
-현재 내용 통과 판정이 있는 페이지부터 그림을 만든다. [이미지 제작](references/images.md)에 따라 생성 작업자에게 배정 출력의 `file`만 전달한다. 이미지 호출에는 컷에서 실제로 그릴 장면과 고정 참조만 넘긴다. `pending: 0`이면 등록된 그림을 재사용한다. 이미지 호출·파일 확보가 실패하면 성공한 컷을 먼저 등록한다. 실제 그림 검토에서 떨어진 컷은 `prepare --stage generate --redo --panel 컷번호`로 재배정한다. 페이지별 수정 시도를 묶고 해결할 수 없으면 이유를 적어 보류한다.
+[이미지 제작](references/images.md)에 따라 실제 배정 시점에 페이지별 `prepare --stage generate`를 실행하고 생성 담당에게 출력의 `file`을 전달한다. 이미지 호출에는 컷에서 실제로 그릴 장면과 고정 참조만 넘긴다. `pending: 0`이면 등록된 그림을 재사용한다. 부분 실패와 그림 검토 반려는 [생성 대기열](references/agents.md#생성-대기열)의 컷별 재배정 절차를 따른다.
 
 ## 4. 실제 그림과 합성 화면
 
