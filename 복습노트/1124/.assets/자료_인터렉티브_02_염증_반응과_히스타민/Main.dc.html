@@ -1,0 +1,1524 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>염증 반응과 히스타민</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+.app{--radius:8px;--tap:48px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--dur:220ms;--dur-exit:150ms;--ease-out:cubic-bezier(.2,.8,.2,1);--scrim:rgba(0,0,0,.4);
+  position:fixed;inset:0;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;box-sizing:border-box;
+  background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;font-size:16px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.app *,.app *::before,.app *::after{box-sizing:border-box}
+.app button{font-family:inherit;color:inherit}
+.app :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.num{font-variant-numeric:tabular-nums}
+
+.topbar{display:flex;align-items:center;gap:var(--s2);min-height:56px;padding:var(--s2) var(--s3);background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:17px;font-weight:700;white-space:nowrap}
+.text-btn{flex:none;min-height:44px;min-width:44px;padding:0 var(--s3);border:0;border-radius:var(--radius);background:transparent;color:var(--ink);font:600 14px/1 'Pretendard',system-ui,sans-serif;cursor:pointer}
+.panel-toggle{display:inline-flex;align-items:center;gap:var(--s1);padding:0 var(--s2)}
+.panel-toggle svg,.theme-toggle svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.panel-toggle .strip{fill:transparent;stroke:none;transition:fill 150ms ease-out}
+.panel-toggle[aria-expanded="true"]{color:var(--accent-ink)}
+.panel-toggle[aria-expanded="true"] .strip{fill:currentColor}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;padding:0}
+.seg{flex:none;display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.seg button{min-height:40px;padding:0 var(--s3);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+.layout{display:grid;grid-template-columns:auto minmax(320px,1fr) auto;min-height:0}
+.panel{position:relative;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--bg);color:var(--ink)}
+.panel-left{grid-column:1;width:clamp(260px,20vw,320px);border-right:1px solid var(--line)}
+.panel-right{grid-column:3;width:clamp(320px,24vw,400px);border-left:1px solid var(--line)}
+.panel-inner{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--s4) var(--s4) var(--s6)}
+.panel-inner::-webkit-scrollbar{width:8px}
+.panel-inner::-webkit-scrollbar-track{background:transparent}
+.panel-inner::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:8px;border:2px solid var(--bg)}
+.panel-inner::-webkit-scrollbar-thumb:hover{background:var(--scroll-hover)}
+@supports (scrollbar-color:auto){.panel-inner{scrollbar-width:thin;scrollbar-color:var(--scroll) transparent}}
+.panel-head{display:flex;align-items:center;gap:var(--s2);min-height:44px;margin-bottom:var(--s2)}
+.panel-head h2{flex:1 1 0;min-width:0;margin:0;font-size:22px;line-height:1.4}
+.stage{grid-column:2;position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--bg)}
+.scrim{display:none}
+.panel-resize{display:none}
+
+.sec{margin-top:var(--s5);padding-top:var(--s5);border-top:1px solid var(--line)}
+.panel-head + .sec,.panel-head + div > .sec:first-child{margin-top:0;padding-top:0;border-top:0}
+.sec-title{display:block;margin:0 0 var(--s3);font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-0.01em}
+.sub{margin:var(--s3) 0 0;font-size:14px;line-height:1.6;color:var(--ink-2)}
+
+.opt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.btn{display:flex;align-items:center;gap:var(--s2);width:100%;min-height:var(--tap);padding:0 var(--s3);border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font-size:14px;font-weight:600;line-height:1.3;text-align:left;cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.btn .box{flex:none;width:12px;height:12px;border-radius:3px;border:1.5px solid currentColor}
+.btn[aria-pressed="true"] .box{background:currentColor}
+.steps{display:flex;flex-direction:column;gap:var(--s2)}
+.steps .btn{padding:var(--s2) var(--s3);gap:var(--s3)}
+.step-num{flex:none;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid;font-size:12px;font-weight:700;color:var(--ink)}
+.step-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.step-txt b{font-size:15px;font-weight:700}
+.step-txt span{font-size:13px;font-weight:500;color:var(--ink-2)}
+.detail{margin-top:var(--s3);padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+
+
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.tiles.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tile{padding:var(--s3);border-radius:var(--radius);background:var(--surface)}
+.tile b{display:block;font-size:20px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}
+.tile span{display:block;font-size:13px;line-height:1.4;color:var(--ink-2)}
+.events{display:flex;flex-direction:column;gap:var(--s2)}
+.event{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.6}
+.dot{flex:none;width:10px;height:10px;margin-top:7px;border-radius:50%}
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2) var(--s3);font-size:13px;color:var(--ink-2)}
+.legend div{display:flex;align-items:center;gap:var(--s2)}
+.sw{flex:none;width:16px;height:6px;border-radius:3px}
+.sw.ball{width:12px;height:12px;border-radius:50%}
+.sec.warn{border-top:0;padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+.warn .sec-title{color:var(--warn);font-size:17px}
+.mistake{margin-top:var(--s3)}
+.mistake b{display:block;font-weight:700}
+.mistake span{color:var(--ink-2)}
+
+.canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.canvas.is-fixed{cursor:default}
+.view-btns{position:absolute;top:var(--s3);right:var(--s3);display:flex;gap:6px}
+.icon-btn{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);cursor:pointer}
+.icon-btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.icon-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.float{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius)}
+.hover-card{position:absolute;left:var(--s3);bottom:var(--s3);display:flex;flex-direction:column;gap:2px;padding:var(--s3) var(--s4);pointer-events:none}
+.hover-card .k{font-size:13px;color:var(--ink-2)}
+.hover-card .v{font-size:18px;font-weight:700}
+.playbar{position:absolute;left:var(--s3);right:var(--s3);bottom:var(--s3);display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3)}
+.play{flex:none;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--radius);background:var(--btn-bg);color:var(--on-btn) !important;cursor:pointer}
+.play svg{width:18px;height:18px;fill:currentColor}
+.scrub{flex:1 1 200px;min-width:160px;display:flex;flex-direction:column;gap:2px}
+.scrub span{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.scrub input{width:100%;height:24px;margin:0;accent-color:var(--accent)}
+.speeds{display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.speeds button{min-width:48px;height:40px;padding:0 var(--s2);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
+.speeds button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+@media (hover:hover){.btn:hover,.icon-btn:hover{background:var(--surface)}.text-btn:hover{background:var(--surface)}}
+@media (min-width:1024px){
+  .panel-head{display:none}
+  .layout{--pl:var(--pl-user,clamp(260px,20vw,320px));--pr:var(--pr-user,clamp(320px,24vw,400px))}
+  .panel{width:0;border-width:0;visibility:hidden;transition:width var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left.is-open{width:var(--pl)}
+  .panel-right.is-open{width:var(--pr)}
+  .panel.is-open{visibility:visible;border-width:1px;transition:width var(--dur) var(--ease-out)}
+  .panel-left .panel-inner{width:var(--pl)}
+  .panel-right .panel-inner{width:var(--pr);align-self:flex-end}
+  .layout.is-resizing .panel{transition:none}
+  .layout.is-resizing{cursor:col-resize;user-select:none}
+  .panel-resize{display:block;position:absolute;top:0;bottom:0;z-index:2;width:12px;padding:0;border:0;background:transparent;cursor:col-resize;touch-action:none}
+  .panel-left .panel-resize{right:0}
+  .panel-right .panel-resize{left:0}
+  .panel-resize::after{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--accent);opacity:0;transition:opacity 150ms ease-out}
+  .panel-left .panel-resize::after{right:0}
+  .panel-right .panel-resize::after{left:0}
+  .panel-resize:focus-visible{outline:none}
+  .panel-resize:focus-visible::after,.is-resizing .panel-resize:active::after{opacity:1}
+  @media (hover:hover){.panel-resize:hover::after{opacity:1}}
+}
+@media (max-width: 1023.98px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .stage{grid-column:1}
+  .panel{position:fixed;top:0;bottom:0;z-index:40;visibility:hidden;transition:transform var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left{left:0;width:min(304px,88vw);transform:translateX(-100%)}
+  .panel-right{right:0;width:min(360px,88vw);transform:translateX(100%)}
+  .panel.is-open{visibility:visible;transform:none;transition:transform var(--dur) var(--ease-out)}
+  .panel-inner{padding-top:calc(var(--s3) + env(safe-area-inset-top));padding-bottom:calc(var(--s6) + env(safe-area-inset-bottom))}
+  .scrim{display:block;position:fixed;inset:0;z-index:35;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .scrim.is-on{opacity:1;visibility:visible;transition:opacity var(--dur) var(--ease-out)}
+}
+@media (max-width:640px){.brand{display:none}.topbar{justify-content:space-between}}
+@media (max-width:480px){.panel-toggle span{display:none}.seg button{padding:0 var(--s2)}}
+@media (prefers-reduced-motion:reduce){.panel,.panel.is-open,.scrim,.scrim.is-on,.panel-toggle .strip,.panel-resize::after{transition:none}}
+</style>
+</helmet>
+<div class="app" onKeyDown="{{onKey}}" style="--bg: {{th.bg}}; --surface: {{th.surface}}; --ink: {{th.ink}}; --ink-2: {{th.ink2}}; --line: {{th.line}}; --accent: {{th.accent}}; --accent-ink: {{th.accentInk}}; --btn-bg: {{th.btnBg}}; --on-btn: {{th.onBtn}}; --warn: {{th.warn}}; --prof: {{th.prof}}; --supp: {{th.supp}}; --danger: {{th.danger}}; --scroll: {{th.scroll}}; --scroll-hover: {{th.scrollHover}}">
+<header class="topbar">
+<button class="text-btn panel-toggle" type="button" aria-label="조작 패널" aria-expanded="{{leftExpanded}}" onClick="{{toggleLeft}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M9 4v16"></path></svg><span>조작</span></button>
+<strong class="brand">염증 반응과 히스타민</strong>
+<sc-if value="{{hasModes}}" hint-placeholder-val="{{ true }}">
+<div class="seg" role="group" aria-label="보기 선택">
+<sc-for list="{{modes}}" as="md" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{md.pressed}}" onClick="{{md.pick}}">{{md.label}}</button>
+</sc-for>
+</div>
+</sc-if>
+<button class="text-btn theme-toggle" type="button" aria-label="{{themeLabel}}" title="{{themeLabel}}" onClick="{{toggleTheme}}">
+<sc-if value="{{isDark}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+<sc-if value="{{isLight}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></sc-if>
+</button>
+<button class="text-btn panel-toggle" type="button" aria-label="설명 패널" aria-expanded="{{rightExpanded}}" onClick="{{toggleRight}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M15 4v16"></path></svg><span>설명</span></button>
+</header>
+
+<div class="layout {{layoutCls}}" style="{{layoutStyle}}">
+<aside class="panel panel-left {{leftCls}}" aria-label="조작">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="220" aria-valuemax="480" aria-valuenow="{{leftWNow}}" ref="{{leftHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>조작</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<sc-if value="{{hasToggles}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">보기 옵션</h3>
+<div class="opt">
+<sc-for list="{{toggles}}" as="t" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{t.pressed}}" onClick="{{t.toggle}}"><span class="box" aria-hidden="true"></span>{{t.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<!-- SLOT:left -->
+<sc-if value="{{is.histamine}}" hint-placeholder-val="{{ false }}">
+<div class="sec">
+<h3 class="sec-title">히스타민 작용 조절</h3>
+<div class="steps">
+<button class="btn" type="button" aria-pressed="{{hCtrl.dilatePressed}}" onClick="{{hCtrl.toggleDilate}}"><span class="box" aria-hidden="true"></span><span class="step-txt"><b>혈관 확장</b><span>{{hCtrl.dilateSub}}</span></span></button>
+<button class="btn" type="button" aria-pressed="{{hCtrl.permPressed}}" onClick="{{hCtrl.togglePerm}}"><span class="box" aria-hidden="true"></span><span class="step-txt"><b>벽 투과성 증가</b><span>{{hCtrl.permSub}}</span></span></button>
+</div>
+<div class="detail" aria-live="polite"><b>{{hCtrl.comboTitle}}</b> — {{hCtrl.comboDesc}}</div>
+<p class="sub">두 버튼을 따로 켜고 끄며 4가지 조합(평소 · 확장만 · 투과성만 · 둘 다 켜짐)을 비교해 보세요.</p>
+</div>
+</sc-if>
+<!-- /SLOT:left -->
+
+<sc-if value="{{hasSteps}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">단계</h3>
+<div class="steps">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}"><span class="step-num num" style="border-color: {{s.c}}">{{s.num}}</span><span class="step-txt"><b>{{s.title}}</b><span>{{s.who}}</span></span></button>
+</sc-for>
+</div>
+<sc-if value="{{hasStep}}" hint-placeholder-val="{{ false }}">
+<div class="detail" aria-live="polite">{{stepDetail}}</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</aside>
+
+<section class="stage" aria-label="모형 보기">
+<canvas class="canvas {{canvasCls}}" ref="{{canvasRef}}" role="img" aria-label="{{canvasLabel}}"></canvas>
+<div class="view-btns">
+<button class="icon-btn" type="button" aria-label="확대" onClick="{{zoomIn}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="축소" onClick="{{zoomOut}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="시점 처음으로" onClick="{{resetView}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v5h5"></path></svg></button>
+</div>
+
+<sc-if value="{{hasPlayback}}" hint-placeholder-val="{{ false }}">
+<div class="playbar float">
+<button class="play" type="button" aria-label="{{playLabel}}" onClick="{{togglePlay}}">
+<sc-if value="{{isPlaying}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></sc-if>
+<sc-if value="{{notPlaying}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5l12 7-12 7z"></path></svg></sc-if>
+</button>
+<label class="scrub">
+<span>{{fLabel}}</span>
+<input type="range" min="0" max="{{fMax10}}" step="1" value="{{fInt}}" onChange="{{onScrub}}">
+</label>
+<div class="speeds" role="group" aria-label="재생 속도">
+<sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{sp.pressed}}" onClick="{{sp.pick}}">{{sp.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</section>
+
+<aside class="panel panel-right {{rightCls}}" aria-label="설명">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="280" aria-valuemax="720" aria-valuenow="{{rightWNow}}" ref="{{rightHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>설명</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<!-- SLOT:right -->
+<sc-if value="{{is.process}}" hint-placeholder-val="{{ true }}">
+<div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{pEvents}}" as="e" hint-placeholder-count="2">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">상처 부위 상태</h3>
+<div class="tiles">
+<div class="tile"><b style="color: {{pStats.vesselC}}">{{pStats.vessel}}</b><span>혈관 지름</span></div>
+<div class="tile"><b style="color: {{pStats.gapC}}">{{pStats.gap}}</b><span>벽 틈(투과성)</span></div>
+<div class="tile"><b style="color: {{pStats.neutroC}}">{{pStats.neutro}}</b><span>조직 내 호중구</span></div>
+<div class="tile"><b style="color: {{pStats.bactC}}">{{pStats.bact}}</b><span>남은 세균</span></div>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw" style="background: {{legend.bacteria}}"></span>세균 (병원체)</div>
+<div><span class="sw ball" style="background: {{legend.macro}}"></span>대식세포</div>
+<div><span class="sw ball" style="background: {{legend.mast}}"></span>비만세포</div>
+<div><span class="sw ball" style="background: {{legend.cytokine}}"></span>사이토카인</div>
+<div><span class="sw ball" style="background: {{legend.histamine}}"></span>히스타민</div>
+<div><span class="sw ball" style="background: {{legend.neutro}}"></span>호중구 (백혈구)</div>
+<div><span class="sw ball" style="background: {{legend.rbc}}"></span>적혈구</div>
+<div><span class="sw ball" style="background: {{legend.water}}"></span>혈장 물</div>
+</div>
+<p class="sub">1124 정리노트 · 강의노트 14장 p1 기준. 대표 세포 몇 개와 입자로 단순화했어요.</p>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{is.histamine}}" hint-placeholder-val="{{ false }}">
+<div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">조합별 결과 비교</h3>
+<div class="tiles">
+<div class="tile"><b style="color: {{hStats.redC}}">{{hStats.red}}</b><span>빨개짐(혈류·적혈구)</span></div>
+<div class="tile"><b style="color: {{hStats.swellC}}">{{hStats.swell}}</b><span>부음(물 유출)</span></div>
+<div class="tile"><b style="color: {{hStats.entryC}}">{{hStats.entry}}</b><span>호중구 조직 진입</span></div>
+<div class="tile"><b>{{hStats.summary}}</b><span>상태 요약</span></div>
+</div>
+</div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 혈관에서 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{hEvents}}" as="e" hint-placeholder-count="2">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw" style="background: {{legend.vessel}}"></span>혈관벽 내피세포</div>
+<div><span class="sw ball" style="background: {{legend.rbc}}"></span>적혈구 (혈관 안)</div>
+<div><span class="sw ball" style="background: {{legend.neutro}}"></span>호중구 (백혈구)</div>
+<div><span class="sw ball" style="background: {{legend.water}}"></span>혈장 물</div>
+</div>
+<p class="sub">확장은 지나가는 양을, 투과성은 벽을 넘어 들어가는 양을 늘려요.</p>
+</div>
+</div>
+</sc-if>
+<!-- /SLOT:right -->
+
+<div class="sec warn">
+<h3 class="sec-title">꼭 기억해요</h3>
+<sc-for list="{{mistakes}}" as="m" hint-placeholder-count="3">
+<div class="mistake"><b>{{m.title}}</b><span>{{m.text}}</span></div>
+</sc-for>
+</div>
+</div>
+</aside>
+</div>
+<div class="scrim {{scrimCls}}" aria-hidden="true" onClick="{{closePanels}}"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  // ================= 주제 훅: 주제마다 바꾸는 곳은 이 네 메서드뿐이에요 =================
+  // 계약은 bio-interactive/references/scene-api.md에 있어요.
+
+  topic() {
+    const phaseName = (f) => (f < 2 ? '세균 침입'
+      : f < 4 ? '식세포 작용'
+        : f < 6 ? '신호 분비'
+          : f < 8 ? '혈관 확장·투과성 증가'
+            : f < 10 ? '호중구의 이동'
+              : '세균 파괴');
+    return {
+      MODES: [
+        { key: 'process', label: '염증 과정', cam: { yaw: -0.22, pitch: 0.24, zoom: 1 }, fit: [14.4, 10.4], D: 44,
+          autoSpin: false, rotatable: true,
+          playback: { fmax: 12, rate: 1.0, label: (f) => phaseName(f) + ' · ' + f.toFixed(1) + ' / 12' },
+          canvasLabel: (f) => '상처 난 피부·조직·혈관의 3D 단면에서 염증 반응이 진행 중이에요. 지금은 ' + phaseName(f) + ' 단계예요. 끌어서 회전할 수 있어요.' },
+        { key: 'histamine', label: '히스타민 비교', cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [14.0, 9.6], D: 50,
+          autoSpin: false, rotatable: false, playback: null,
+          canvasLabel: () => {
+            const st = this.state || {};
+            const d = !!st.dilate, p = !!st.perm;
+            if (d && p) return '히스타민의 혈관 확장과 벽 투과성 증가가 모두 켜진 상태예요. 적혈구가 많이 지나가 빨개지고, 혈장 물이 나와 부으며, 호중구가 틈으로 조직에 들어가요.';
+            if (d) return '혈관 확장만 켜진 상태예요. 적혈구가 많이 지나가 빨개지지만, 벽 틈이 좁아 물과 호중구가 빠져나오지 못해요.';
+            if (p) return '벽 투과성 증가만 켜진 상태예요. 혈장 물이 빠져나와 붓지만, 혈관이 좁아 빨개짐 변화가 없고 호중구 유입이 적어요.';
+            return '평소 혈관 상태예요. 혈관이 좁고 벽 틈이 닫혀 있어 적혈구와 호중구가 혈관 안을 지나가기만 해요.';
+          } }
+      ],
+      BACT: [
+        // 대식세포 표적 (0, 1)
+        { s: [-0.35, 3.05, 0.15], e: [-1.18, 1.25, 0.18], ang: 0.45, by: 'macro', tEat: 2.0, tKill: 3.35 },
+        { s: [-0.05, 2.95, -0.05], e: [-1.42, 1.52, 0.04], ang: -0.35, by: 'macro', tEat: 2.2, tKill: 3.85 },
+        // 호중구 표적 (2..6): 각 호중구가 실제 도달한 뒤에 파괴됨
+        { s: [0.10, 3.10, 0.22], e: [0.65, 1.55, 0.16], ang: 0.28, by: 'nA', tEat: 10.30, tKill: 10.90 },
+        { s: [0.35, 2.90, -0.18], e: [1.18, 1.48, 0.08], ang: -0.42, by: 'nA', tEat: 10.75, tKill: 11.35 },
+        { s: [-0.18, 2.85, 0.08], e: [1.95, 1.66, -0.12], ang: 0.55, by: 'nB', tEat: 10.65, tKill: 11.25 },
+        { s: [0.48, 3.15, 0.12], e: [2.52, 1.42, -0.05], ang: -0.22, by: 'nB', tEat: 11.15, tKill: 11.75 },
+        { s: [0.22, 3.25, -0.10], e: [0.92, 1.95, -0.12], ang: 0.15, by: 'nC', tEat: 11.30, tKill: 11.90 }
+      ],
+      STEPS: [
+        { mode: 'process', f: 1.4, phase: '세균 침입', c: '#5C9E28', title: '세균 침입', who: '병원체(세균)',
+          text: '피부는 첫 번째 방어선이지만 상처로 찢어지면 그 틈으로 세균이 몸속 조직에 들어와요. 장벽을 통과한 세균을 막기 위해 선천면역이 곧바로 시작돼요.' },
+        { mode: 'process', f: 3.4, phase: '식세포 작용', c: '#7C4DDB', title: '식세포 작용', who: '대식세포',
+          text: '상처 주위의 대식세포가 침입한 세균을 막으로 둘러싸 세포 안으로 삼켜요. 이어서 세포 안의 리소좀이 합쳐져 세균을 분해해요.' },
+        { mode: 'process', f: 5.4, phase: '신호 분비', c: '#E85D04', title: '신호 분비', who: '대식세포·비만세포',
+          text: '대식세포는 먹고 끝내지 않고 사이토카인을, 비만세포는 히스타민을 분비해요. 두 신호 물질이 혈관 쪽으로 퍼져 다른 면역세포를 불러와요.' },
+        { mode: 'process', f: 7.4, phase: '혈관 확장·투과성 증가', c: '#D92D20', title: '혈관 확장·투과성 증가', who: '히스타민',
+          text: '히스타민이 혈관을 넓혀 적혈구가 많이 지나가게 하고(빨개짐), 혈관벽 틈을 넓혀 혈장 성분(물)이 조직으로 빠져나오게 해요(부음).' },
+        { mode: 'process', f: 9.4, phase: '호중구의 이동', c: '#2274D8', title: '호중구의 이동', who: '호중구(백혈구)',
+          text: '혈관 안을 굴러가던 호중구가 혈관벽 단백질에 붙잡힌 뒤 넓어진 틈을 빠져나와 상처로 이동해요. 적혈구는 빠져나오지 않고 혈관 안에 남아요.' },
+        { mode: 'process', f: 11.4, phase: '세균 파괴', c: '#0E9AA7', title: '세균 파괴', who: '호중구',
+          text: '상처 조직에 도착한 호중구가 남아 있던 세균을 삼켜 파괴해요. 이렇게 염증 반응은 침입한 세균을 빠르고 비특이적으로 막아 내요.' }
+      ],
+      MISTAKES: {
+        process: [
+          { title: '대식세포 ≠ 먹고 끝', text: '대식세포는 세균을 삼켜 리소좀으로 분해할 뿐 아니라 사이토카인 신호로 다른 면역세포도 불러요. 2·3단계를 이어서 보세요.' },
+          { title: '히스타민 = 비만세포 ≠ 대식세포', text: '히스타민을 분비하는 세포는 비만세포이고, 대식세포는 사이토카인을 내요. 3단계에서 두 신호가 어느 세포에서 나오는지 확인하세요.' },
+          { title: '빠져나오는 혈구 = 백혈구 ≠ 적혈구', text: '혈관벽 틈으로 조직에 들어가는 것은 호중구 같은 백혈구뿐이에요. 5단계에서 적혈구가 혈관 안에 남는 모습을 보세요.' }
+        ],
+        histamine: [
+          { title: '빨개짐 = 혈관 확장 ≠ 적혈구 유출', text: '상처가 빨개지는 까닭은 적혈구가 나와서가 아니라 혈관이 넓어져 적혈구가 많이 지나가기 때문이에요. ‘혈관 확장’만 켜 보세요.' },
+          { title: '부음 = 투과성 증가', text: '혈관벽 투과성이 높아져 혈장 성분(물)이 조직으로 빠져나와 부어요. ‘벽 투과성 증가’를 켜고 끌 때 물방울 변화를 비교하세요.' },
+          { title: '백혈구 진입 = 확장 + 투과성', text: '혈관만 넓어지면 호중구가 지나가기만 해요. 투과성도 함께 높아져야 벽을 넘어 조직으로 들어와요.' }
+        ]
+      },
+      TOGGLES: {
+        process: [['labels', '이름표'], ['signals', '신호·물'], ['skin', '피부층'], ['flow', '이동 화살표']],
+        histamine: [['labels', '이름표'], ['flow', '이동 화살표']]
+      },
+      PAL: {
+        light: {
+          bg: '#ffffff', labelBg: '#f7f8fa', ink: '#111111', ring: '#111111', blobAlpha: 0.30,
+          skin: '#DBA17A', skinEdge: '#B5633F', guide: '#C6CEDB',
+          vessel: '#C96F6F', vesselNuc: '#8F3E3E', vesselBack: '#DFB0B0', adhesion: '#4963D1',
+          bacteria: '#5A9E24', bacteriaTail: '#3F7317',
+          macro: '#7C4DDB', macroNuc: '#4F28A3', lyso: '#D93B85',
+          mast: '#D9821E', mastNuc: '#94530A',
+          cytokine: '#0D99A6', histamine: '#E85D04',
+          neutro: '#2274D8', neutroNuc: '#14498F',
+          rbc: '#D92D20', rbcCore: '#8F1912',
+          water: '#3CA4F0', swell: '#5CB7F5', arrow: '#647082'
+        },
+        dark: {
+          bg: '#17171c', labelBg: '#212128', ink: '#f2f4f6', ring: '#f2f4f6', blobAlpha: 0.42,
+          skin: '#C98F67', skinEdge: '#E89672', guide: '#434857',
+          vessel: '#DE8585', vesselNuc: '#A84E4E', vesselBack: '#5C3A3D', adhesion: '#7D97FF',
+          bacteria: '#8CE04A', bacteriaTail: '#67B52C',
+          macro: '#A580FF', macroNuc: '#6E4BC4', lyso: '#FF73B5',
+          mast: '#F5AA4C', mastNuc: '#B8721E',
+          cytokine: '#49D8E6', histamine: '#FF8C3B',
+          neutro: '#5EA9FF', neutroNuc: '#2F6EC2',
+          rbc: '#FF6157', rbcCore: '#B52D24',
+          water: '#6EC2FF', swell: '#5EB4F2', arrow: '#9CA6B8'
+        }
+      }
+    };
+  }
+
+  // 장면 만들기: I(그리기 항목)와 O(라벨)에 push만 해요. 진행값은 this.sim.f를 써요.
+  buildScene(mode, I, O) {
+    const pal = this.pal(), st = this.state;
+
+    const addRbc = (cx, cy, cz, tilt, sc, a) => {
+      const s = sc || 1, al = a == null ? 1 : a;
+      const rRing = 0.145 * s, rBall = 0.105 * s;
+      const ct = Math.cos(tilt), sn = Math.sin(tilt);
+      for (let k = 0; k < 6; k++) {
+        const th = k * Math.PI / 3;
+        const lx = rRing * Math.cos(th), ly = rRing * Math.sin(th) * 0.72;
+        const px = cx + lx * ct - ly * sn, py = cy + lx * sn + ly * ct;
+        const pz = cz + rRing * Math.sin(th) * 0.35;
+        I.push({ k: 0, p: [px, py, pz], r: rBall, c: pal.rbc, a: al });
+      }
+      I.push({ k: 0, p: [cx, cy, cz], r: 0.085 * s, c: pal.rbcCore, flat: true, a: al });
+    };
+
+    const addBact = (cx, cy, cz, ang, sc, a) => {
+      const al = a == null ? 1 : a;
+      if (al < 0.02) return;
+      const s = sc || 1, half = 0.16 * s;
+      const dx = Math.cos(ang) * half, dy = Math.sin(ang) * half;
+      I.push({ k: 1, p: [cx - dx, cy - dy, cz], q: [cx + dx, cy + dy, cz], w: 0.13 * s, c: pal.bacteria, rod: true, a: al });
+      I.push({ k: 1, p: [cx - dx, cy - dy, cz], q: [cx - dx * 2.1, cy - dy * 2.1 + 0.04 * s, cz], w: 0.025 * s, c: pal.bacteriaTail, a: al * 0.8 });
+    };
+
+    const addNeutro = (cx, cy, cz, sq, foc, a) => {
+      const al = a == null ? 1 : a;
+      if (al < 0.02) return;
+      if (sq > 0.05) {
+        const d = 0.24 * sq, r = 0.45;
+        I.push({ k: 5, p: [cx, cy + d, cz], r: r, c: pal.neutro, focus: !!foc, a: al });
+        I.push({ k: 5, p: [cx, cy - d, cz], r: r * 0.94, c: pal.neutro, focus: !!foc, a: al });
+      } else {
+        I.push({ k: 5, p: [cx, cy, cz], r: 0.50, c: pal.neutro, focus: !!foc, a: al });
+      }
+      const n1 = [cx - 0.12, cy + 0.08 + 0.08 * sq, cz + 0.04];
+      const n2 = [cx + 0.11, cy + 0.02, cz - 0.03];
+      const n3 = [cx - 0.03, cy - 0.13 - 0.08 * sq, cz + 0.02];
+      I.push({ k: 1, p: n1, q: n2, w: 0.045, c: pal.neutroNuc, a: al });
+      I.push({ k: 1, p: n2, q: n3, w: 0.045, c: pal.neutroNuc, a: al });
+      I.push({ k: 0, p: n1, r: 0.105, c: pal.neutroNuc, a: al });
+      I.push({ k: 0, p: n2, r: 0.105, c: pal.neutroNuc, a: al });
+      I.push({ k: 0, p: n3, r: 0.10, c: pal.neutroNuc, a: al });
+    };
+
+    const addAdhesion = (x, y, z, a) => {
+      if (a < 0.03) return;
+      I.push({ k: 1, p: [x, y, z], q: [x, y - 0.22, z], w: 0.055, c: pal.adhesion, a: a });
+      I.push({ k: 0, p: [x, y - 0.24, z], r: 0.085, c: pal.adhesion, a: a });
+    };
+
+    if (mode === 'process') {
+      const f = this.sim.f;
+      const dil = this.sm((f - 6.0) / 1.4);
+      const perm = this.sm((f - 6.2) / 1.4);
+      const swell = this.sm((f - 6.6) / 2.2);
+      const cyV = -2.25;
+      const rv = 0.66 + 0.44 * dil;
+      const yTopW = cyV + rv;
+      const yBotW = cyV - rv;
+
+      // 3D tissue box subtle corner guides so depth reads cleanly on rotation
+      const gx = 5.1, gz = 1.05;
+      I.push({ k: 1, p: [-gx, 2.3, -gz], q: [gx, 2.3, -gz], w: 0.03, c: pal.guide, flat: true, a: 0.35 });
+      I.push({ k: 1, p: [-gx, -3.4, -gz], q: [gx, -3.4, -gz], w: 0.03, c: pal.guide, flat: true, a: 0.35 });
+      I.push({ k: 1, p: [-gx, 2.3, -gz], q: [-gx, -3.4, -gz], w: 0.03, c: pal.guide, flat: true, a: 0.35 });
+      I.push({ k: 1, p: [gx, 2.3, -gz], q: [gx, -3.4, -gz], w: 0.03, c: pal.guide, flat: true, a: 0.35 });
+
+      // 1. Upper Skin Epidermis Layer (3D slab with central torn wound gap + swelling arch)
+      if (st.skin) {
+        const zRows = [-0.72, 0, 0.72];
+        const xCols = [-4.6, -3.7, -2.8, -1.95, 1.85, 2.75, 3.65, 4.55];
+        for (const z of zRows) {
+          for (const x of xCols) {
+            const lift = 0.36 * swell * Math.exp(-(x * x) / 14);
+            const y0 = 2.65 + lift;
+            const isRim = Math.abs(x + 1.95) < 0.2 || Math.abs(x - 1.85) < 0.2;
+            const c = isRim ? pal.skinEdge : pal.skin;
+            I.push({ k: 1, p: [x - 0.34, y0, z], q: [x + 0.34, y0, z], w: 0.42, c: c, rod: true });
+            I.push({ k: 0, p: [x, y0 + 0.02, z + 0.04], r: 0.075, c: pal.skinEdge, a: 0.65 });
+          }
+          // Torn wound flap edges dipping slightly into wound gap
+          const liftL = 0.34 * swell;
+          I.push({ k: 1, p: [-1.52, 2.58 + liftL, z], q: [-1.10, 2.16 + liftL * 0.6, z], w: 0.28, c: pal.skinEdge, rod: true });
+          I.push({ k: 1, p: [1.42, 2.58 + liftL, z], q: [1.02, 2.18 + liftL * 0.6, z], w: 0.28, c: pal.skinEdge, rod: true });
+        }
+      } else {
+        I.push({ k: 1, p: [-4.9, 2.5, 0], q: [-1.1, 2.5, 0], w: 0.04, c: pal.skinEdge, flat: true, a: 0.45 });
+        I.push({ k: 1, p: [1.0, 2.5, 0], q: [4.9, 2.5, 0], w: 0.04, c: pal.skinEdge, flat: true, a: 0.45 });
+      }
+
+      // Soft swelling aura in tissue when water leaks out
+      if (swell > 0.05 && st.signals) {
+        I.push({ k: 5, p: [-0.2, 0.9, -0.35], r: 1.55 * swell, c: pal.swell, a: 0.22 * swell });
+        I.push({ k: 5, p: [1.8, 0.6, -0.25], r: 1.35 * swell, c: pal.swell, a: 0.20 * swell });
+      }
+
+      // 2. Blood Vessel (3D tubular cutaway with expanding radius and opening upper gaps)
+      // Back semicircular ribs for clear 3D cylinder feel
+      const ribX = [-4.6, -2.7, -0.8, 1.1, 3.0, 4.6];
+      for (const rx of ribX) {
+        for (let s = 0; s < 5; s++) {
+          const a1 = -Math.PI / 2 + s * Math.PI / 5;
+          const a2 = -Math.PI / 2 + (s + 1) * Math.PI / 5;
+          const p1 = [rx, cyV + rv * Math.sin(a1), -rv * 0.85 * Math.cos(a1)];
+          const p2 = [rx, cyV + rv * Math.sin(a2), -rv * 0.85 * Math.cos(a2)];
+          I.push({ k: 1, p: p1, q: p2, w: 0.07, c: pal.vesselBack, a: 0.42 });
+        }
+      }
+
+      // Endothelial cells along top and bottom walls (3 depth rows for 3D wall thickness)
+      const wallZ = [-0.55, 0, 0.48];
+      const segN = 8, segX0 = -4.8, segStep = 1.2;
+      for (let i = 0; i < segN; i++) {
+        const cx = segX0 + (i + 0.5) * segStep;
+        const isGapZone = i >= 3 && i <= 6;
+        const halfTop = isGapZone ? (0.56 - 0.23 * perm) : 0.56;
+        const halfBot = 0.57;
+        for (const wz of wallZ) {
+          I.push({ k: 1, p: [cx - halfTop, yTopW, wz], q: [cx + halfTop, yTopW, wz], w: 0.22, c: pal.vessel, rod: true });
+          I.push({ k: 1, p: [cx - halfBot, yBotW, wz], q: [cx + halfBot, yBotW, wz], w: 0.22, c: pal.vessel, rod: true });
+          if (wz === 0) {
+            I.push({ k: 0, p: [cx, yTopW, 0.06], r: 0.055, c: pal.vesselNuc });
+            I.push({ k: 0, p: [cx, yBotW, 0.06], r: 0.055, c: pal.vesselNuc });
+          }
+        }
+      }
+
+      // Wall adhesion proteins attached to inner surface of endothelial cells (i=3..6), just upstream of gaps (0.0, 1.2, 2.4)
+      const adhA = this.sm((f - 5.2) / 1.4);
+      addAdhesion(-0.35, yTopW - 0.08, 0.05, adhA);
+      addAdhesion(0.85, yTopW - 0.08, 0.08, adhA);
+      addAdhesion(2.05, yTopW - 0.08, -0.05, adhA);
+      addAdhesion(3.00, yTopW - 0.08, 0.06, adhA);
+
+      // 3. Red Blood Cells (always stay strictly inside the vessel; count increases with dilation)
+      const baseRbc = [
+        { ox: 0.2, lane: -0.25, z: 0.10, tilt: 0.25 },
+        { ox: 2.7, lane: 0.18, z: -0.18, tilt: -0.30 },
+        { ox: 5.3, lane: -0.15, z: 0.22, tilt: 0.15 },
+        { ox: 7.9, lane: 0.12, z: -0.08, tilt: -0.22 }
+      ];
+      const extraRbc = [
+        { ox: 1.1, lane: 0.42, z: 0.25, tilt: 0.40 },
+        { ox: 2.1, lane: -0.45, z: -0.22, tilt: -0.18 },
+        { ox: 3.9, lane: -0.38, z: 0.14, tilt: 0.32 },
+        { ox: 4.8, lane: 0.36, z: -0.25, tilt: -0.35 },
+        { ox: 6.4, lane: -0.42, z: 0.05, tilt: 0.20 },
+        { ox: 8.8, lane: 0.35, z: 0.20, tilt: -0.25 }
+      ];
+      const flowShift = f * 0.62;
+      for (const r of baseRbc) {
+        const x = ((r.ox + flowShift) % 9.2) - 4.6;
+        const y = cyV + r.lane * (rv - 0.22);
+        addRbc(x, y, r.z, r.tilt + f * 0.12, 1.0, 1);
+      }
+      if (dil > 0.03) {
+        for (const r of extraRbc) {
+          const x = ((r.ox + flowShift * 1.12) % 9.2) - 4.6;
+          const y = cyV + r.lane * (rv - 0.25);
+          addRbc(x, y, r.z, r.tilt - f * 0.1, 0.96, dil);
+        }
+      }
+
+      // 4. Macrophage (left-center tissue) with phagocytosis & lysosome digestion
+      const mPos = [-2.15, 0.88, 0.12];
+      const reachT = this.sm((f - 2.0) / 0.8) * (1 - 0.45 * this.sm((f - 3.0) / 0.8));
+      const lysoT = this.sm((f - 2.7) / 0.8);
+      const macroFocus = f >= 2.0 && f < 6.0;
+      // Macrophage body & pseudopods
+      I.push({ k: 5, p: mPos, r: 0.90, c: pal.macro, focus: macroFocus });
+      I.push({ k: 5, p: [mPos[0] - 0.55, mPos[1] + 0.38, mPos[2] - 0.1], r: 0.42, c: pal.macro });
+      I.push({ k: 5, p: [mPos[0] - 0.48, mPos[1] - 0.42, mPos[2] + 0.12], r: 0.40, c: pal.macro });
+      // Two pseudopods wrapping around invading bacteria during step 2
+      I.push({ k: 5, p: [mPos[0] + 0.62 + 0.26 * reachT, mPos[1] + 0.46 - 0.12 * reachT, mPos[2] + 0.08], r: 0.36, c: pal.macro });
+      I.push({ k: 5, p: [mPos[0] + 0.64 + 0.26 * reachT, mPos[1] - 0.12 + 0.14 * reachT, mPos[2] + 0.05], r: 0.35, c: pal.macro });
+      // Kidney nucleus
+      I.push({ k: 0, p: [mPos[0] - 0.22, mPos[1] + 0.12, mPos[2] - 0.05], r: 0.24, c: pal.macroNuc });
+      I.push({ k: 0, p: [mPos[0] - 0.28, mPos[1] - 0.12, mPos[2] - 0.05], r: 0.22, c: pal.macroNuc });
+      // Lysosomes fusing onto the engulfed bacterium inside macrophage
+      const lysoStart = [[mPos[0] - 0.12, mPos[1] - 0.42, mPos[2] + 0.18], [mPos[0] + 0.05, mPos[1] - 0.48, mPos[2] - 0.12]];
+      const phagTarget = [mPos[0] + 0.34, mPos[1] + 0.18, mPos[2] + 0.08];
+      const l1 = this.lerp(lysoStart[0], [phagTarget[0] - 0.14, phagTarget[1] - 0.12, phagTarget[2] + 0.06], lysoT);
+      const l2 = this.lerp(lysoStart[1], [phagTarget[0] + 0.16, phagTarget[1] - 0.14, phagTarget[2] - 0.04], lysoT);
+      I.push({ k: 0, p: l1, r: 0.13, c: pal.lyso });
+      I.push({ k: 0, p: l2, r: 0.12, c: pal.lyso });
+      // Digestion vesicle outline during step 2
+      if (f >= 2.5 && f < 4.4) {
+        const va = this.sm((f - 2.5) / 0.4) * (1 - this.sm((f - 3.9) / 0.5));
+        I.push({ k: 5, p: phagTarget, r: 0.30, c: pal.lyso, a: va * 0.65 });
+      }
+
+      // 5. Mast Cell (center tissue) releasing histamine granules
+      const mastPos = [0.25, 0.28, -0.32];
+      const mastRel = this.sm((f - 4.0) / 1.8);
+      const mastFocus = f >= 4.0 && f < 6.4;
+      I.push({ k: 5, p: mastPos, r: 0.68, c: pal.mast, focus: mastFocus });
+      I.push({ k: 0, p: [mastPos[0] - 0.08, mastPos[1] + 0.06, mastPos[2] - 0.04], r: 0.23, c: pal.mastNuc });
+      const granOffsets = [
+        [-0.28, -0.22, 0.16], [0.25, -0.18, 0.14], [0.28, 0.18, -0.12],
+        [-0.22, 0.26, 0.12], [0.05, -0.32, 0.10], [0.20, 0.02, 0.22]
+      ];
+      for (let i = 0; i < granOffsets.length; i++) {
+        const g = granOffsets[i];
+        const keep = i < 3 ? 1 : (1 - 0.55 * mastRel);
+        I.push({ k: 0, p: [mastPos[0] + g[0], mastPos[1] + g[1], mastPos[2] + g[2]], r: 0.085, c: pal.histamine, a: keep });
+      }
+
+      // 6. Neutrophils (3 neutrophils: roll inside vessel -> catch on endothelial adhesion protein -> squeeze through adjacent open gap -> destroy bacteria)
+      const moveNeutro = (tStart, xAdh, xGap, midPos, finalPos, tShift) => {
+        let pos, sq = 0, foc = false;
+        if (f < tStart) {
+          const tRoll = this.sm(f / tStart);
+          pos = [-4.6 + (xAdh - 0.45 + 4.6) * tRoll, cyV + 0.14 * Math.sin(f * 0.8), 0.1];
+        } else if (f < tStart + 0.7) {
+          // Catching onto endothelial wall adhesion protein
+          const tCatch = this.sm((f - tStart) / 0.7);
+          pos = this.lerp([xAdh - 0.45, cyV + 0.14, 0.1], [xAdh, yTopW - 0.42, 0.08], tCatch);
+          foc = true;
+        } else if (f < tStart + 1.0) {
+          // Sliding from adhesion protein to the adjacent widened endothelial gap
+          const tEdge = this.sm((f - (tStart + 0.7)) / 0.3);
+          pos = this.lerp([xAdh, yTopW - 0.42, 0.08], [xGap, yTopW - 0.40, 0.08], tEdge);
+          foc = true;
+        } else if (f < tStart + 2.0) {
+          // Squeezing vertically through the actual open endothelial gap (0.0, 1.2, or 2.4)
+          const tSq = this.sm((f - (tStart + 1.0)) / 1.0);
+          pos = [xGap, yTopW - 0.40 + tSq * 1.18, 0.08];
+          sq = Math.sin(tSq * Math.PI);
+          foc = true;
+        } else if (f < tShift) {
+          const tMig1 = this.sm((f - (tStart + 2.0)) / Math.max(0.2, tShift - (tStart + 2.0)));
+          pos = this.lerp([xGap, yTopW + 0.78, 0.08], midPos, tMig1);
+          foc = f >= 10.0;
+        } else {
+          const tMig2 = this.sm((f - tShift) / 0.45);
+          pos = this.lerp(midPos, finalPos, tMig2);
+          foc = f >= 10.0;
+        }
+        return { pos, sq, foc };
+      };
+
+      const nA = moveNeutro(7.4, 0.85, 1.2, [0.75, 1.54, 0.14], [1.14, 1.48, 0.09], 10.55);
+      const nB = moveNeutro(7.9, 2.05, 2.4, [2.02, 1.64, -0.10], [2.46, 1.44, -0.06], 10.95);
+      const nC = moveNeutro(8.4, -0.35, 0.0, [0.92, 1.95, -0.12], [0.92, 1.95, -0.12], 11.25);
+
+      // 7. Invading Bacteria (shared topic.BACT so right panel count matches canvas exactly)
+      const bactSpecs = this.T.BACT;
+      const nMap = { nA: nA.pos, nB: nB.pos, nC: nC.pos };
+      for (let i = 0; i < bactSpecs.length; i++) {
+        const b = bactSpecs[i];
+        const enterT = this.sm((f - i * 0.12) / 1.15);
+        let pos = this.lerp(b.s, b.e, enterT);
+        let sc = 1, al = this.sm((f - i * 0.08) / 0.35);
+        if (b.by === 'macro' && f > b.tEat) {
+          const pull = this.sm((f - b.tEat) / 0.75);
+          pos = this.lerp(pos, phagTarget, pull);
+          const die = this.sm((f - (b.tKill - 0.55)) / 0.55);
+          sc = 1 - 0.65 * die;
+          al = al * (1 - die);
+        } else if (b.by !== 'macro' && f > b.tEat) {
+          const pull = this.sm((f - b.tEat) / 0.45);
+          pos = this.lerp(pos, nMap[b.by], pull);
+          const die = this.sm((f - (b.tKill - 0.55)) / 0.55);
+          sc = 1 - 0.65 * die;
+          al = al * (1 - die);
+        }
+        addBact(pos[0], pos[1], pos[2], b.ang, sc, al);
+      }
+
+      // 8. Signal Particles (Cytokine from macrophage, Histamine from mast cell) & Plasma Water
+      if (st.signals) {
+        // Cytokines from macrophage radiating toward vessel wall & tissue (f >= 4.0)
+        if (f >= 4.0) {
+          const cyT = this.sm((f - 4.0) / 1.5);
+          const cyFade = 1 - 0.55 * this.sm((f - 9.8) / 1.8);
+          const cyTargets = [
+            [-1.55, -0.45, 0.25], [-0.85, -0.82, 0.12], [-0.25, -0.95, 0.28],
+            [-1.05, 0.15, -0.22], [-0.45, 0.72, 0.32], [0.55, -0.88, 0.18],
+            [1.35, -0.95, 0.05]
+          ];
+          for (let i = 0; i < cyTargets.length; i++) {
+            const p = this.lerp(mPos, cyTargets[i], this.sm((f - 4.0 - i * 0.12) / 1.2));
+            const a = cyT * cyFade * 0.92;
+            if (a > 0.04) I.push({ k: 0, p: p, r: 0.085, c: pal.cytokine, a: a });
+          }
+        }
+        // Histamine granules streaming from mast cell to vessel wall (f >= 4.1)
+        if (f >= 4.1) {
+          const hiT = this.sm((f - 4.1) / 1.4);
+          const hiFade = 1 - 0.50 * this.sm((f - 9.5) / 2.0);
+          const hiTargets = [
+            [-0.45, yTopW + 0.12, -0.15], [0.15, yTopW + 0.08, -0.25], [0.75, yTopW + 0.12, -0.05],
+            [1.35, yTopW + 0.10, -0.22], [1.95, yTopW + 0.14, 0.12], [0.45, -0.45, -0.12],
+            [-0.10, -0.38, 0.18], [1.10, -0.42, -0.18]
+          ];
+          for (let i = 0; i < hiTargets.length; i++) {
+            const p = this.lerp(mastPos, hiTargets[i], this.sm((f - 4.1 - i * 0.10) / 1.1));
+            const a = hiT * hiFade * 0.95;
+            if (a > 0.04) I.push({ k: 0, p: p, r: 0.095, c: pal.histamine, a: a });
+          }
+        }
+        // Plasma water oozing upward through the actual widened endothelial gaps (x = 0.0, 1.2, 2.4)
+        if (f >= 6.3) {
+          const wGaps = [0.0, 1.2, 2.4];
+          for (let g = 0; g < wGaps.length; g++) {
+            for (let k = 0; k < 4; k++) {
+              const wt = this.sm((f - 6.3 - g * 0.14 - k * 0.28) / 1.5);
+              if (wt <= 0.02) continue;
+              const wx = wGaps[g] + ((k % 2 ? 1 : -1) * 0.14) * wt;
+              const wy = yTopW - 0.12 + wt * (1.15 + k * 0.30);
+              const wz = (k - 1.5) * 0.18;
+              I.push({ k: 0, p: [wx, wy, wz], r: 0.095, c: pal.water, a: 0.78 * wt });
+            }
+          }
+        }
+      }
+
+      addNeutro(nA.pos[0], nA.pos[1], nA.pos[2], nA.sq, nA.foc, 1);
+      addNeutro(nB.pos[0], nB.pos[1], nB.pos[2], nB.sq, nB.foc, this.sm((f - 3.5) / 1.0));
+      addNeutro(nC.pos[0], nC.pos[1], nC.pos[2], nC.sq, nC.foc, this.sm((f - 6.2) / 1.0));
+
+      // 9. Optional movement arrows (st.flow)
+      if (st.flow) {
+        // Blood flow arrow inside vessel
+        I.push({ k: 1, p: [-4.4, cyV, 0.45], q: [-3.1, cyV, 0.45], w: 0.045, c: pal.arrow, a: 0.7 });
+        I.push({ k: 4, p: [-3.7, cyV, 0.45], q: [-3.0, cyV, 0.45], c: pal.arrow, a: 0.85 });
+        if (f < 2.2) {
+          I.push({ k: 1, p: [0.0, 3.05, 0.3], q: [0.0, 2.05, 0.3], w: 0.05, c: pal.bacteria, a: 0.85 });
+          I.push({ k: 4, p: [0.0, 2.55, 0.3], q: [0.0, 2.00, 0.3], c: pal.bacteria, a: 0.95 });
+        }
+        if (f >= 4.0 && f < 6.4) {
+          I.push({ k: 1, p: [0.25, -0.35, 0.2], q: [0.25, -1.25, 0.2], w: 0.05, c: pal.histamine, a: 0.85 });
+          I.push({ k: 4, p: [0.25, -0.75, 0.2], q: [0.25, -1.30, 0.2], c: pal.histamine, a: 0.95 });
+        }
+        if (f >= 8.0 && f < 10.6) {
+          I.push({ k: 1, p: [2.4, yTopW - 0.3, 0.35], q: [2.4, yTopW + 0.95, 0.35], w: 0.05, c: pal.neutro, a: 0.85 });
+          I.push({ k: 4, p: [2.4, yTopW + 0.3, 0.35], q: [2.4, yTopW + 1.00, 0.35], c: pal.neutro, a: 0.95 });
+        }
+      }
+
+      // 10. Context-aware non-overlapping labels (max 5 per phase)
+      if (st.labels) {
+        if (f < 2.0) {
+          O.push({ p: [0.0, 2.55, 0], text: '피부 상처 틈', c: pal.skinEdge, dy: -26, lead: true });
+          O.push({ p: [0.65, 1.55, 0.16], text: '침입 세균', c: pal.bacteria, dx: 48, dy: -16, lead: true });
+          O.push({ p: mPos, text: '대식세포', c: pal.macro, dx: -38, dy: -26, lead: true });
+          O.push({ p: mastPos, text: '비만세포', c: pal.mast, dx: 52, dy: 12, lead: true });
+          O.push({ p: [-1.2, cyV, 0], text: '혈관 (적혈구)', c: pal.rbc, dx: -10, dy: 34, lead: true });
+        } else if (f < 4.0) {
+          O.push({ p: mPos, text: '대식세포 (식세포 작용)', c: pal.macro, dx: -12, dy: -42, lead: true });
+          O.push({ p: l1, text: '리소좀 분해', c: pal.lyso, dx: -44, dy: 36, lead: true });
+          O.push({ p: [1.95, 1.66, 0], text: '침입 세균', c: pal.bacteria, dx: 36, dy: -22, lead: true });
+          O.push({ p: mastPos, text: '비만세포', c: pal.mast, dx: 54, dy: 8, lead: true });
+          O.push({ p: [0, cyV, 0], text: '혈관', c: pal.vessel, dy: 32, lead: true });
+        } else if (f < 6.0) {
+          O.push({ p: mPos, text: '대식세포', c: pal.macro, dx: -36, dy: -32, lead: true });
+          O.push({ p: [-1.0, -0.4, 0.2], text: '사이토카인', c: pal.cytokine, dx: -52, dy: 14, lead: true });
+          O.push({ p: mastPos, text: '비만세포', c: pal.mast, dx: 52, dy: -24, lead: true });
+          O.push({ p: [0.6, -0.6, 0], text: '히스타민', c: pal.histamine, dx: 58, dy: 6, lead: true });
+          O.push({ p: [0.6, yTopW, 0], text: '혈관벽 내피세포', c: pal.vessel, dx: 0, dy: 38, lead: true });
+        } else if (f < 8.0) {
+          O.push({ p: [-0.2, 2.75, 0], text: '부어오른 조직', c: pal.swell, dx: -24, dy: -26, lead: true });
+          O.push({ p: [1.2, yTopW + 0.65, 0], text: '혈장 물 유출 (부음)', c: pal.water, dx: 64, dy: -22, lead: true });
+          O.push({ p: [0.0, yTopW, 0], text: '넓어진 벽 틈', c: pal.vessel, dx: -68, dy: -16, lead: true });
+          O.push({ p: [1.5, cyV, 0], text: '확장된 혈관 · 적혈구 ↑ (빨개짐)', c: pal.rbc, dx: 0, dy: 42, lead: true });
+        } else if (f < 10.0) {
+          O.push({ p: [1.95, 1.66, 0], text: '침입 세균', c: pal.bacteria, dx: 42, dy: -24, lead: true });
+          O.push({ p: [nB.pos[0], nB.pos[1], nB.pos[2]], text: '호중구 틈 통과', c: pal.neutro, dx: 60, dy: -8, lead: true });
+          O.push({ p: [-0.35, yTopW - 0.24, 0], text: '혈관벽 부착 단백질', c: pal.adhesion, dx: -68, dy: -16, lead: true });
+          O.push({ p: [-2.0, cyV, 0], text: '적혈구 (혈관 안에 남음)', c: pal.rbc, dx: -8, dy: 42, lead: true });
+        } else {
+          O.push({ p: nA.pos, text: '호중구 (세균 파괴)', c: pal.neutro, dx: 38, dy: -34, lead: true });
+          O.push({ p: mPos, text: '대식세포', c: pal.macro, dx: -44, dy: -26, lead: true });
+          O.push({ p: [0.0, 0.35, 0], text: '혈장 물 (부음)', c: pal.water, dx: -56, dy: 8, lead: true });
+          O.push({ p: [0.4, cyV, 0], text: '적혈구 (혈관 안에 남음)', c: pal.rbc, dx: 0, dy: 40, lead: true });
+        }
+      }
+      return;
+    }
+
+    // ================= Mode 2: histamine (히스타민 비교, 2D 평면 4조합 비교) =================
+    const d = !!st.dilate, p = !!st.perm;
+    const cyV = -1.45;
+    const rv = d ? 1.24 : 0.72;
+    const yTopW = cyV + rv;
+    const yBotW = cyV - rv;
+
+    // 1. Skin surface at top (domes upward clearly when permeability lets plasma water out)
+    const skinXs = [-4.6, -3.7, -2.8, -1.9, -1.0, 1.0, 1.9, 2.8, 3.7, 4.6];
+    for (const x of skinXs) {
+      const lift = p ? (d ? 0.56 : 0.40) * Math.exp(-(x * x) / 13) : 0;
+      const y = 2.45 + lift;
+      const isRim = Math.abs(Math.abs(x) - 1.0) < 0.15;
+      I.push({ k: 1, p: [x - 0.36, y, 0], q: [x + 0.36, y, 0], w: 0.36, c: isRim ? pal.skinEdge : pal.skin, rod: true });
+    }
+    // Redness visual when vessel dilates: stays inside dilated vessel lumen + faint skin flush (never in tissue as RBC leak)
+    if (d) {
+      I.push({ k: 5, p: [-2.2, cyV, 0], r: 1.02, c: pal.rbc, a: 0.15 });
+      I.push({ k: 5, p: [0.0, cyV, 0], r: 1.08, c: pal.rbc, a: 0.16 });
+      I.push({ k: 5, p: [2.2, cyV, 0], r: 1.02, c: pal.rbc, a: 0.15 });
+      I.push({ k: 1, p: [-3.8, 2.45 + (p ? 0.25 : 0), 0], q: [-1.1, 2.45 + (p ? 0.50 : 0), 0], w: 0.18, c: pal.rbc, a: 0.28 });
+      I.push({ k: 1, p: [1.1, 2.45 + (p ? 0.50 : 0), 0], q: [3.8, 2.45 + (p ? 0.25 : 0), 0], w: 0.18, c: pal.rbc, a: 0.28 });
+    }
+    // Swelling pools in tissue when permeability is ON
+    if (p) {
+      I.push({ k: 5, p: [-1.2, 1.05, 0], r: d ? 1.30 : 1.02, c: pal.swell, a: 0.24 });
+      I.push({ k: 5, p: [1.2, 1.05, 0], r: d ? 1.30 : 1.02, c: pal.swell, a: 0.24 });
+    }
+
+    // Target bacteria near wound at top
+    addBact(-0.45, 1.85, 0, 0.25, 0.95, 1);
+    addBact(0.25, 2.02, 0, -0.30, 0.95, 1);
+    addBact(0.90, 1.78, 0, 0.18, 0.95, 1);
+
+    // 2. Vessel Endothelial Wall (centers: -4.2,-3.0,-1.8,-0.6,0.6,1.8,3.0,4.2 -> open gaps at x = -1.2, 0.0, +1.2)
+    const segN = 8, segX0 = -4.8, segStep = 1.2;
+    for (let i = 0; i < segN; i++) {
+      const cx = segX0 + (i + 0.5) * segStep;
+      const isGapZone = i >= 2 && i <= 5;
+      const halfTop = (p && isGapZone) ? 0.32 : 0.57;
+      I.push({ k: 1, p: [cx - halfTop, yTopW, 0], q: [cx + halfTop, yTopW, 0], w: 0.24, c: pal.vessel, rod: true });
+      I.push({ k: 1, p: [cx - 0.57, yBotW, 0], q: [cx + 0.57, yBotW, 0], w: 0.24, c: pal.vessel, rod: true });
+      I.push({ k: 0, p: [cx, yTopW, 0], r: 0.055, c: pal.vesselNuc });
+      I.push({ k: 0, p: [cx, yBotW, 0], r: 0.055, c: pal.vesselNuc });
+    }
+
+    // Adhesion proteins attached to inner surface of endothelial cells (upstream of gaps -1.2, 0.0, +1.2)
+    const adhPts = [-1.56, -0.36, 0.84, 1.80];
+    for (const ax of adhPts) addAdhesion(ax, yTopW - 0.08, 0, p ? 0.95 : 0.35);
+
+    // 3. Red Blood Cells (strictly inside vessel lumen; 4 if narrow, 10 if dilated)
+    const rbcNarrow = [
+      [-3.7, cyV + 0.14], [-1.5, cyV - 0.16], [1.1, cyV + 0.12], [3.6, cyV - 0.14]
+    ];
+    const rbcWideExtra = [
+      [-4.1, cyV - 0.52], [-2.5, cyV + 0.48], [-0.4, cyV - 0.54],
+      [0.4, cyV + 0.46], [2.4, cyV - 0.48], [4.1, cyV + 0.44]
+    ];
+    for (let i = 0; i < rbcNarrow.length; i++) {
+      addRbc(rbcNarrow[i][0], rbcNarrow[i][1], 0, i % 2 ? 0.25 : -0.25, 1.0, 1);
+    }
+    if (d) {
+      for (let i = 0; i < rbcWideExtra.length; i++) {
+        addRbc(rbcWideExtra[i][0], rbcWideExtra[i][1], 0, i % 2 ? -0.32 : 0.32, 0.98, 1);
+      }
+    }
+
+    // 4. Plasma Water (leaks upward strictly through the actual open gaps x = -1.2, 0.0, +1.2 ONLY when p is true)
+    if (p) {
+      const gapXs = [-1.2, 0.0, 1.2];
+      const count = d ? 4 : 3;
+      for (let g = 0; g < gapXs.length; g++) {
+        for (let k = 0; k < count; k++) {
+          const wx = gapXs[g] + (k % 2 ? 0.12 : -0.12);
+          const wy = yTopW + 0.18 + k * 0.42;
+          I.push({ k: 0, p: [wx, wy, 0], r: 0.10, c: pal.water, a: 0.85 });
+        }
+      }
+    }
+
+    // 5. Neutrophils across the 4 combinations (exiting strictly through open gaps -1.2, 0.0, +1.2)
+    if (!d && !p) {
+      // Normal: 2 neutrophils simply passing inside narrow vessel
+      addNeutro(-2.6, cyV - 0.06, 0, 0, false, 1);
+      addNeutro(2.3, cyV + 0.05, 0, 0, false, 1);
+    } else if (d && !p) {
+      // Dilation ONLY: many neutrophils arrive in wide vessel, but CANNOT exit closed wall
+      addNeutro(-3.1, cyV + 0.35, 0, 0, false, 1);
+      addNeutro(-0.8, yTopW - 0.52, 0, 0, true, 1);
+      addNeutro(1.1, yTopW - 0.52, 0, 0, true, 1);
+      addNeutro(2.9, cyV - 0.28, 0, 0, false, 1);
+    } else if (!d && p) {
+      // Permeability ONLY: wall open, but narrow vessel brings few neutrophils (only 1 squeezes out at gap x = 0.0)
+      addNeutro(-3.1, cyV + 0.02, 0, 0, false, 1);
+      addNeutro(0.0, yTopW + 0.14, 0, 0.85, true, 1);
+    } else {
+      // BOTH ON: abundant flow + open gaps -> multiple neutrophils squeeze out through gaps -1.2, 0.0, +1.2
+      addNeutro(-3.3, cyV + 0.22, 0, 0, false, 1);
+      addNeutro(-1.2, yTopW + 0.65, 0, 0.28, true, 1);
+      addNeutro(0.0, yTopW + 1.32, 0, 0, true, 1);
+      addNeutro(1.2, yTopW + 0.12, 0, 0.90, true, 1);
+    }
+
+    // 6. Optional arrows & vessel diameter indicator (st.flow)
+    if (st.flow) {
+      // Vessel diameter bracket on left
+      const bx = -5.25;
+      I.push({ k: 1, p: [bx, yBotW, 0], q: [bx, yTopW, 0], w: 0.05, c: pal.vessel });
+      I.push({ k: 1, p: [bx - 0.15, yTopW, 0], q: [bx + 0.15, yTopW, 0], w: 0.05, c: pal.vessel });
+      I.push({ k: 1, p: [bx - 0.15, yBotW, 0], q: [bx + 0.15, yBotW, 0], w: 0.05, c: pal.vessel });
+      I.push({ k: 3, p: [bx, yTopW + 0.35, 0], text: d ? '넓음' : '보통', size: 0.45, c: pal.ink });
+
+      // Blood flow arrow
+      I.push({ k: 1, p: [-4.4, cyV, 0], q: [-3.1, cyV, 0], w: 0.045, c: pal.arrow, a: 0.75 });
+      I.push({ k: 4, p: [-3.7, cyV, 0], q: [-3.0, cyV, 0], c: pal.arrow, a: 0.9 });
+
+      if (p) {
+        // Water & neutrophil upward exit arrows strictly through open gaps (-1.2 and +1.2/0.0)
+        I.push({ k: 1, p: [-1.2, yTopW - 0.2, 0], q: [-1.2, yTopW + 0.95, 0], w: 0.045, c: pal.water });
+        I.push({ k: 4, p: [-1.2, yTopW + 0.4, 0], q: [-1.2, yTopW + 1.0, 0], c: pal.water });
+        const nx = d ? 1.2 : 0.0;
+        I.push({ k: 1, p: [nx, yTopW - 0.3, 0], q: [nx, yTopW + 1.0, 0], w: 0.045, c: pal.neutro });
+        I.push({ k: 4, p: [nx, yTopW + 0.4, 0], q: [nx, yTopW + 1.05, 0], c: pal.neutro });
+      } else if (d) {
+        // Closed wall: neutrophils pass horizontally along the wall instead of exiting
+        I.push({ k: 1, p: [-0.2, yTopW - 0.48, 0], q: [0.6, yTopW - 0.48, 0], w: 0.045, c: pal.neutro });
+        I.push({ k: 4, p: [0.2, yTopW - 0.48, 0], q: [0.65, yTopW - 0.48, 0], c: pal.neutro });
+      }
+    }
+
+    // 7. Labels in histamine mode (4 crisp non-overlapping labels)
+    if (st.labels) {
+      const topTxt = (d && p) ? '빨개짐 + 부음'
+        : d ? '빨개짐 (부음 없음)'
+          : p ? '부음 (빨개짐 없음)'
+            : '평소 피부·조직';
+      const topC = (d && p) ? pal.rbc : d ? pal.rbc : p ? pal.water : pal.skinEdge;
+      O.push({ p: [0.0, p ? 2.95 : 2.55, 0], text: topTxt, c: topC, dy: -22, lead: true });
+
+      if (p) {
+        O.push({ p: [-1.2, yTopW + 0.80, 0], text: '혈장 물 유출 (부음)', c: pal.water, dx: -52, dy: -22, lead: true });
+        O.push({ p: [d ? 1.2 : 0.0, yTopW + 0.32, 0], text: d ? '호중구 활발히 진입' : '호중구 소수 진입', c: pal.neutro, dx: 64, dy: -8, lead: true });
+      } else {
+        O.push({ p: [-1.8, yTopW, 0], text: '벽 틈 닫힘 (차단)', c: pal.vessel, dx: -36, dy: -38, lead: true });
+        O.push({ p: [d ? 1.1 : 2.3, yTopW - 0.52, 0], text: d ? '호중구 통과 못함' : '호중구 (지나감)', c: pal.neutro, dx: 52, dy: -4, lead: true });
+      }
+      O.push({ p: [0.2, yBotW, 0], text: d ? '적혈구 많이 통과 (빨개짐 · 혈관 안)' : '적혈구 (혈관 안에만)', c: pal.rbc, dy: 28, lead: true });
+    }
+  }
+
+  // 주제 전용 상태(보기 옵션 키 등). 공통 상태에 합쳐져요.
+  extraState() {
+    return { labels: true, signals: true, skin: true, flow: true, dilate: true, perm: true };
+  }
+
+  // 주제 전용 마크업 값. renderVals() 결과에 합쳐져요.
+  extraVals(st) {
+    const pal = this.pal(), f = st.f;
+    const tc = (hex) => this.textTone(hex);
+
+    // Process mode live stats synced directly to buildScene geometry
+    const vesselWide = f >= 6.4;
+    const gapOpen = f >= 6.6;
+    const neutroIn = [7.4, 7.9, 8.4].filter((ts) => f >= ts + 1.35).length;
+    const bactLeft = this.T.BACT.filter((b, i) => {
+      const enterA = this.sm((f - i * 0.08) / 0.35);
+      const die = f > b.tEat ? this.sm((f - (b.tKill - 0.55)) / 0.55) : 0;
+      return enterA * (1 - die) >= 0.02;
+    }).length;
+
+    let pEvents;
+    if (f < 2.0) {
+      pEvents = [
+        { c: pal.bacteria, text: '찢어진 피부 상처 틈으로 세균이 조직에 침입해요.' },
+        { c: pal.macro, text: '상처 주위의 대식세포가 침입을 감지하고, 상처 부위의 비만세포가 활성화돼요.' }
+      ];
+    } else if (f < 4.0) {
+      pEvents = [
+        { c: pal.macro, text: '대식세포가 세균을 막으로 둘러싸 삼켜요(식세포 작용).' },
+        { c: pal.lyso, text: '세포 안의 리소좀이 삼킨 세균을 분해해요.' }
+      ];
+    } else if (f < 6.0) {
+      pEvents = [
+        { c: pal.cytokine, text: '대식세포가 사이토카인을 분비해 도움을 불러요.' },
+        { c: pal.histamine, text: '비만세포가 혈관 쪽으로 히스타민을 분비해요.' }
+      ];
+    } else if (f < 8.0) {
+      pEvents = [
+        { c: pal.rbc, text: '히스타민이 혈관을 넓혀 적혈구가 많이 지나가요(빨개짐).' },
+        { c: pal.water, text: '벽 투과성이 높아져 혈장 성분(물)이 나와 부어요.' }
+      ];
+    } else if (f < 10.0) {
+      pEvents = [
+        { c: pal.neutro, text: '호중구가 혈관벽 단백질에 붙잡힌 뒤 틈으로 빠져나와요.' },
+        { c: pal.rbc, text: '적혈구는 빠져나오지 않고 혈관 안을 지나가기만 해요.' }
+      ];
+    } else {
+      pEvents = [
+        { c: pal.neutro, text: '상처 조직에 도착한 호중구가 남은 세균을 삼켜 파괴해요.' },
+        { c: pal.bacteria, text: bactLeft === 0 ? '침입한 세균이 모두 제거됐어요.' : '남은 세균을 빠르게 줄이고 있어요.' }
+      ];
+    }
+
+    // Histamine comparison mode 4 combinations
+    const d = !!st.dilate, p = !!st.perm;
+    const hCtrl = {
+      dilatePressed: d ? 'true' : 'false',
+      permPressed: p ? 'true' : 'false',
+      dilateSub: d ? '켜짐 · 혈관이 넓어짐' : '꺼짐 · 평소 지름',
+      permSub: p ? '켜짐 · 내피세포 틈 열림' : '꺼짐 · 벽 틈 닫힘',
+      toggleDilate: () => this.setState({ dilate: !this.state.dilate }),
+      togglePerm: () => this.setState({ perm: !this.state.perm }),
+      comboTitle: (d && p) ? '둘 다 켜짐 (실제 염증)'
+        : d ? '혈관 확장만 켜짐'
+          : p ? '투과성 증가만 켜짐'
+            : '평소 (둘 다 꺼짐)',
+      comboDesc: (d && p) ? '적혈구·백혈구가 많이 지나가고 틈도 열려 빨개짐, 부음, 호중구 진입이 모두 일어나요.'
+        : d ? '혈관이 넓어져 빨개지지만, 틈이 닫혀 물과 호중구가 조직으로 못 들어가요.'
+          : p ? '틈이 열려 물이 새어 붓지만, 혈관이 좁아 빨개짐 변화가 없고 호중구 유입이 적어요.'
+            : '혈관이 좁고 벽 틈이 닫혀 있어 적혈구와 호중구가 지나가기만 해요.'
+    };
+
+    const hStats = (d && p)
+      ? { red: '강함 ↑', redC: tc(pal.rbc), swell: '심하게 부음 ↑', swellC: tc(pal.water), entry: '활발 ↑', entryC: tc(pal.neutro), summary: '둘 다 켜짐' }
+      : d
+        ? { red: '강함 ↑', redC: tc(pal.rbc), swell: '없음', swellC: tc(pal.arrow), entry: '막힘 (지나감)', entryC: tc(pal.arrow), summary: '확장만' }
+        : p
+          ? { red: '변화 없음', redC: tc(pal.arrow), swell: '부어오름 ↑', swellC: tc(pal.water), entry: '적음 (소수)', entryC: tc(pal.neutro), summary: '투과성만' }
+          : { red: '변화 없음', redC: tc(pal.arrow), swell: '없음', swellC: tc(pal.arrow), entry: '없음', entryC: tc(pal.arrow), summary: '평소' };
+
+    const hEvents = (d && p)
+      ? [
+          { c: pal.rbc, text: '넓어진 혈관에 적혈구가 많이 지나가 상처가 빨개져요.' },
+          { c: pal.water, text: '넓어진 벽 틈으로 혈장 성분(물)이 나와 조직이 부어요.' },
+          { c: pal.neutro, text: '많이 도착한 호중구가 벽 틈을 빠져나와 세균으로 가요.' }
+        ]
+      : d
+        ? [
+            { c: pal.rbc, text: '혈관이 넓어져 적혈구가 많이 지나가므로 빨개져요.' },
+            { c: pal.neutro, text: '호중구도 많이 지나가지만 틈이 닫혀 조직으로 못 들어가요.' },
+            { c: pal.water, text: '혈장 물도 빠져나오지 않아 붓지 않아요.' }
+          ]
+        : p
+          ? [
+              { c: pal.water, text: '벽 틈이 열려 혈장 물이 빠져나오므로 조직이 부어요.' },
+              { c: pal.rbc, text: '혈관이 넓어지지 않아 적혈구 통과량이 평소와 같고 빨개지지 않아요.' },
+              { c: pal.neutro, text: '호중구가 나갈 틈은 있지만 지나가는 수 자체가 적어요.' }
+            ]
+          : [
+              { c: pal.vessel, text: '히스타민이 작용하기 전이라 혈관이 좁고 벽 틈이 닫혀 있어요.' },
+              { c: pal.rbc, text: '적혈구와 호중구가 모두 혈관 안을 지나가기만 해요.' }
+            ];
+
+    return {
+      pEvents: pEvents,
+      pStats: {
+        vessel: vesselWide ? '확장됨 ↑' : '보통',
+        vesselC: tc(vesselWide ? pal.rbc : pal.arrow),
+        gap: gapOpen ? '넓어짐 ↑' : '좁음',
+        gapC: tc(gapOpen ? pal.water : pal.arrow),
+        neutro: neutroIn + '개',
+        neutroC: tc(neutroIn > 0 ? pal.neutro : pal.arrow),
+        bact: bactLeft + '마리',
+        bactC: tc(bactLeft > 0 ? pal.bacteria : pal.cytokine)
+      },
+      hCtrl: hCtrl,
+      hStats: hStats,
+      hEvents: hEvents,
+      legend: {
+        bacteria: pal.bacteria,
+        macro: pal.macro,
+        mast: pal.mast,
+        cytokine: pal.cytokine,
+        histamine: pal.histamine,
+        neutro: pal.neutro,
+        rbc: pal.rbc,
+        water: pal.water,
+        vessel: pal.vessel
+      }
+    };
+  }
+
+  // ================= 공통 셸: 아래는 주제와 무관해요. 고치지 않아요 =================
+  constructor(...args) {
+    super(...args);
+    let reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    let narrow = false;
+    try { narrow = window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) {}
+    let saved = null;
+    try { saved = window.localStorage.getItem('od-theme'); } catch (e) {}
+    const PANEL_W = { left: { min: 220, max: 480 }, right: { min: 280, max: 720 } };
+    let widths = {};
+    try { widths = JSON.parse(window.localStorage.getItem('interactive-panel-w')) || {}; } catch (e) {}
+    const okW = (side) => { const v = widths[side]; return typeof v === 'number' && v >= PANEL_W[side].min && v <= PANEL_W[side].max ? v : null; };
+    this.T = this.topic();
+    this.state = Object.assign({
+      mode: this.T.MODES[0].key, f: 0, playing: false, speed: 1, step: -1, spin: !reduce,
+      theme: (saved === 'light' || saved === 'dark') ? saved : (this.systemDark() ? 'dark' : 'light'),
+      // leftOpen/rightOpen: docked panels on wide screens; drawer: the one open drawer on narrow screens
+      leftOpen: true, rightOpen: true, drawer: null, narrow: narrow,
+      // leftW/rightW: user-set docked widths in px (null = default); resizing: a handle is being dragged
+      leftW: okW('left'), rightW: okW('right'), resizing: false
+    }, this.extraState());
+    this.reduceMotion = reduce;
+    this.K = {
+      PANEL_W: PANEL_W, PANEL_W_KEY: 'interactive-panel-w', PANEL_DEFAULT: { left: 320, right: 400 },
+      THEMES: {
+        light: { bg: '#ffffff', surface: '#f7f8fa', ink: '#111111', ink2: '#6b7280', line: '#d9dee7', accent: '#1677ff', accentInk: '#1b64da', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#b54708', prof: '#6941c6', supp: '#067647', danger: '#d92d20', scroll: '#c9d0db', scrollHover: '#9aa3b2' },
+        dark: { bg: '#17171c', surface: '#212128', ink: '#f2f4f6', ink2: '#a3abb8', line: '#34353d', accent: '#3182f6', accentInk: '#6ea4ff', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#f5a15c', prof: '#b69cff', supp: '#5fd39a', danger: '#ff6b61', scroll: '#3f414b', scrollHover: '#5b5e6a' }
+      }
+    };
+    this.cam = Object.assign({}, this.modeDef().cam);
+    this.sim = { f: 0, cx: 0 };
+    this.pointer = { x: -1, y: -1, inside: false, drag: false, lx: 0, ly: 0 };
+    this.colorCache = {};
+    this._tick = (t) => this.tick(t);
+    this._canvasRef = (el) => this.attachCanvas(el);
+    this.handles = {};
+    this._handleRefL = (el) => this.attachHandle('left', el);
+    this._handleRefR = (el) => this.attachHandle('right', el);
+  }
+
+  componentWillUnmount() {
+    this.attachCanvas(null);
+    this.attachHandle('left', null);
+    this.attachHandle('right', null);
+  }
+
+  modeDef(key) {
+    const k = key || this.state.mode;
+    return this.T.MODES.find((m) => m.key === k) || this.T.MODES[0];
+  }
+  systemDark() {
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; }
+  }
+  isNarrow() {
+    try { return window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) { return false; }
+  }
+  syncBreakpoint() { this.setState({ narrow: this.isNarrow(), drawer: null }); }
+  // In drawer mode only one panel is open at a time.
+  togglePanel(side) {
+    const st = this.state;
+    if (st.narrow) this.setState({ drawer: st.drawer === side ? null : side });
+    else if (side === 'left') this.setState({ leftOpen: !st.leftOpen });
+    else this.setState({ rightOpen: !st.rightOpen });
+  }
+  // Docked panel width: the canvas column always keeps at least 400px.
+  panelMax(side) {
+    const lim = this.K.PANEL_W[side], other = side === 'left' ? 'right' : 'left', st = this.state;
+    const h = this.handles[other];
+    const otherOpen = other === 'left' ? st.leftOpen : st.rightOpen;
+    const otherW = !otherOpen ? 0 : h ? h.el.parentElement.getBoundingClientRect().width
+      : (st[other + 'W'] || this.K.PANEL_DEFAULT[other]);
+    return Math.max(lim.min, Math.min(lim.max, (window.innerWidth || 1440) - otherW - 400));
+  }
+  setPanelWidth(side, px, save) {
+    const v = Math.round(Math.min(Math.max(px, this.K.PANEL_W[side].min), this.panelMax(side)));
+    this.setState({ [side + 'W']: v });
+    if (save) this.savePanelWidths(side, v);
+  }
+  resetPanelWidth(side) {
+    this.setState({ [side + 'W']: null });
+    this.savePanelWidths(side, null);
+  }
+  savePanelWidths(side, v) {
+    try {
+      const key = this.K.PANEL_W_KEY;
+      let w = {};
+      try { w = JSON.parse(window.localStorage.getItem(key)) || {}; } catch (e) {}
+      if (v == null) delete w[side]; else w[side] = v;
+      window.localStorage.setItem(key, JSON.stringify(w));
+    } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ }
+  }
+  // Re-fit user widths when the window shrinks (not saved).
+  refitPanels() {
+    ['left', 'right'].forEach((side) => {
+      const w = this.state[side + 'W'];
+      if (w != null && w > this.panelMax(side)) this.setPanelWidth(side, w, false);
+    });
+  }
+  attachHandle(side, el) {
+    const old = this.handles[side];
+    if (old && old.el === el) return;
+    if (old) {
+      Object.keys(old.on).forEach((ev) => old.el.removeEventListener(ev, old.on[ev]));
+      delete this.handles[side];
+      if (!Object.keys(this.handles).length) window.removeEventListener('resize', this._refit);
+    }
+    if (!el) return;
+    const dir = side === 'left' ? 1 : -1;
+    const width = () => el.parentElement.getBoundingClientRect().width;
+    let drag = null;
+    const on = {
+      pointerdown: (e) => {
+        if (this.state.narrow || e.button !== 0) return;
+        e.preventDefault();
+        drag = { x: e.clientX, w: width() };
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        this.setState({ resizing: true });
+      },
+      pointermove: (e) => { if (drag) this.setPanelWidth(side, drag.w + dir * (e.clientX - drag.x), false); },
+      pointerup: () => {
+        if (!drag) return;
+        drag = null;
+        this.setState({ resizing: false });
+        this.setPanelWidth(side, width(), true);
+      },
+      dblclick: () => this.resetPanelWidth(side),
+      keydown: (e) => {
+        const step = e.shiftKey ? 64 : 16;
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          e.preventDefault(); e.stopPropagation();
+          this.setPanelWidth(side, width() + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+        } else if (e.key === 'Home') { e.preventDefault(); e.stopPropagation(); this.resetPanelWidth(side); }
+      }
+    };
+    on.pointercancel = on.pointerup;
+    Object.keys(on).forEach((ev) => el.addEventListener(ev, on[ev]));
+    if (!Object.keys(this.handles).length) {
+      this._refit = this._refit || (() => this.refitPanels());
+      window.addEventListener('resize', this._refit);
+    }
+    this.handles[side] = { el: el, on: on };
+  }
+  textTone(hex) { return this.state.theme === 'light' ? this.mix(hex, '#000000', 0.4) : hex; }
+  pal() { return this.T.PAL[this.state.theme] || this.T.PAL.dark; }
+  setTheme(t) {
+    this.setState({ theme: t });
+    try {
+      if ((t === 'dark') === this.systemDark()) window.localStorage.removeItem('od-theme');
+      else window.localStorage.setItem('od-theme', t);
+    } catch (e) {}
+  }
+
+  attachCanvas(el) {
+    if (this.canvas === el) return;
+    if (this.canvas) {
+      const c = this.canvas;
+      c.removeEventListener('pointerdown', this._pd);
+      c.removeEventListener('pointermove', this._pm);
+      c.removeEventListener('pointerup', this._pu);
+      c.removeEventListener('pointercancel', this._pu);
+      c.removeEventListener('pointerleave', this._pl);
+      cancelAnimationFrame(this.raf);
+      try { this._mq.removeEventListener('change', this._mqH); } catch (err) {}
+    }
+    this.canvas = el || null;
+    if (!el) return;
+    this.ctx = el.getContext('2d');
+    const p = this.pointer;
+    this._pd = (e) => {
+      if (!this.modeDef().rotatable) return;
+      p.drag = true; p.lx = e.clientX; p.ly = e.clientY;
+      try { el.setPointerCapture(e.pointerId); } catch (err) {}
+      el.style.cursor = 'grabbing';
+    };
+    this._pm = (e) => {
+      const r = el.getBoundingClientRect();
+      p.x = e.clientX - r.left; p.y = e.clientY - r.top; p.inside = true;
+      if (p.drag && this.modeDef().rotatable) {
+        this.cam.yaw += (e.clientX - p.lx) * 0.008;
+        this.cam.pitch = Math.max(-1.45, Math.min(1.45, this.cam.pitch + (e.clientY - p.ly) * 0.008));
+        p.lx = e.clientX; p.ly = e.clientY;
+      }
+    };
+    this._pu = () => { p.drag = false; el.style.cursor = ''; };
+    this._pl = () => { p.inside = false; };
+    el.addEventListener('pointerdown', this._pd);
+    el.addEventListener('pointermove', this._pm);
+    el.addEventListener('pointerup', this._pu);
+    el.addEventListener('pointercancel', this._pu);
+    el.addEventListener('pointerleave', this._pl);
+    try {
+      this._mq = window.matchMedia('(max-width: 1023.98px)');
+      this._mqH = () => this.syncBreakpoint();
+      this._mq.addEventListener('change', this._mqH);
+    } catch (err) {}
+    this.last = 0;
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  tick(t) {
+    if (!this.canvas) return;
+    const dt = this.last ? Math.min(0.05, (t - this.last) / 1000) : 0;
+    this.last = t;
+    const st = this.state, m = this.modeDef(), pb = m.playback;
+    if (m.autoSpin && st.spin && !this.pointer.drag) this.cam.yaw += dt * 0.3;
+    if (pb && st.playing) {
+      this.sim.f = Math.min(pb.fmax, this.sim.f + dt * pb.rate * st.speed);
+      if (this.sim.f >= pb.fmax) this.setState({ playing: false, f: this.sim.f });
+      else if (t - (this.lastPush || 0) > 120) { this.lastPush = t; this.setState({ f: this.sim.f }); }
+    }
+    // a broken scene keeps the page alive but is reported once for the browser check
+    try { this.draw(dt, t); } catch (err) { if (!this.drawErr) { this.drawErr = true; console.error(err); } }
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  // ---------- math helpers (장면에서 써도 돼요) ----------
+  lerp(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+  sm(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+  rgb(hex) { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  mix(hex, to, amt) {
+    const a = this.rgb(hex), b = this.rgb(to);
+    return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * amt) + ',' + Math.round(a[1] + (b[1] - a[1]) * amt) + ',' + Math.round(a[2] + (b[2] - a[2]) * amt) + ')';
+  }
+  rgba(hex, al) { const a = this.rgb(hex); return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + al + ')'; }
+  shades(hex) {
+    let s = this.colorCache[hex];
+    if (!s) { s = { hi: this.mix(hex, '#FFFFFF', 0.55), mid: hex, lo: this.mix(hex, '#000000', 0.55) }; this.colorCache[hex] = s; }
+    return s;
+  }
+  proj(p, V) {
+    const x = p[0] - V.cx, y = p[1], z = p[2];
+    const x1 = x * V.cy + z * V.sy, z1 = -x * V.sy + z * V.cy;
+    const y2 = y * V.cp - z1 * V.sp, z2 = y * V.sp + z1 * V.cp;
+    const s = V.F / Math.max(2, V.D - z2);
+    return [V.ox + x1 * s, V.oy - y2 * s, z2, s];
+  }
+
+  // ---------- drawing ----------
+  draw(dt, now) {
+    const el = this.canvas, ctx = this.ctx, st = this.state, m = this.modeDef();
+    const dpr = window.devicePixelRatio || 1;
+    const W = el.clientWidth, H = el.clientHeight;
+    if (!W || !H) return;
+    if (el.width !== Math.round(W * dpr) || el.height !== Math.round(H * dpr)) { el.width = Math.round(W * dpr); el.height = Math.round(H * dpr); }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const pal = this.pal();
+    ctx.fillStyle = pal.bg; ctx.fillRect(0, 0, W, H);
+
+    const I = [], O = [];
+    this.buildScene(st.mode, I, O);
+    const scale = Math.min(W / m.fit[0], H / m.fit[1]), D = m.D, z = this.cam.zoom;
+    const V = {
+      cx: this.sim.cx, cy: Math.cos(this.cam.yaw), sy: Math.sin(this.cam.yaw), cp: Math.cos(this.cam.pitch), sp: Math.sin(this.cam.pitch),
+      F: scale * z * D, D: D, ox: W / 2, oy: H / 2 - (m.playback ? 20 : 0)
+    };
+    let zmin = Infinity, zmax = -Infinity;
+    for (const it of I) {
+      it.A = this.proj(it.p, V);
+      if (it.q) { it.B = this.proj(it.q, V); it.z = (it.A[2] + it.B[2]) / 2; } else it.z = it.A[2];
+      if (it.z < zmin) zmin = it.z;
+      if (it.z > zmax) zmax = it.z;
+    }
+    I.sort((a, b) => a.z - b.z);
+    // depth fog; a flat scene (all items at one depth) is drawn without it
+    const span = zmax - zmin;
+    for (const it of I) {
+      const fog = span < 0.01 ? 1 : 0.42 + 0.58 * ((it.z - zmin) / span);
+      ctx.globalAlpha = Math.max(0, (it.a == null ? 1 : it.a) * fog);
+      if (ctx.globalAlpha < 0.01) continue;
+      const x = it.A[0], y = it.A[1], s = it.A[3];
+      if (it.k === 0) {
+        const R = it.r * s;
+        if (R < 0.4) continue;
+        if (it.flat) { ctx.fillStyle = it.c; ctx.beginPath(); ctx.arc(x, y, Math.max(1.3, R), 0, 6.2832); ctx.fill(); }
+        else {
+          const sh = this.shades(it.c);
+          const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+          g.addColorStop(0, sh.hi); g.addColorStop(0.5, sh.mid); g.addColorStop(1, sh.lo);
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        }
+      } else if (it.k === 1) {
+        const lw = Math.max(1, it.w * (s + it.B[3]) / 2);
+        ctx.lineCap = it.flat ? 'butt' : 'round';
+        if (it.rod) {
+          ctx.strokeStyle = this.shades(it.c).lo; ctx.lineWidth = lw + 2;
+          ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+        }
+        ctx.strokeStyle = it.c; ctx.lineWidth = lw;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+      } else if (it.k === 3) {
+        const fs = Math.max(8, Math.min(14, it.size * s / (scale * z) * 1.05));
+        ctx.font = '700 ' + fs + 'px "Pretendard", system-ui, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = it.c; ctx.fillText(it.text, x, y + 0.5);
+      } else if (it.k === 4) {
+        const ang = Math.atan2(it.B[1] - y, it.B[0] - x), mx = (x + it.B[0]) / 2, my = (y + it.B[1]) / 2, r = 6;
+        ctx.fillStyle = it.c; ctx.beginPath();
+        ctx.moveTo(mx + Math.cos(ang) * r, my + Math.sin(ang) * r);
+        ctx.lineTo(mx + Math.cos(ang + 2.5) * r, my + Math.sin(ang + 2.5) * r);
+        ctx.lineTo(mx + Math.cos(ang - 2.5) * r, my + Math.sin(ang - 2.5) * r);
+        ctx.closePath(); ctx.fill();
+      } else if (it.k === 5) {
+        // lit translucent sphere, highlight up-left like the solid spheres
+        const R = it.r * s, ba = pal.blobAlpha == null ? 0.3 : pal.blobAlpha;
+        const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+        g.addColorStop(0, 'rgba(255,255,255,0.55)'); g.addColorStop(0.3, this.rgba(it.c, Math.min(1, ba + 0.15))); g.addColorStop(1, this.rgba(it.c, 0.18));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        ctx.strokeStyle = it.c; ctx.lineWidth = it.focus ? 3 : 1.5; ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+    for (const o of O) this.drawOverlay(o, V, now);
+  }
+
+  drawOverlay(o, V, now) {
+    const ctx = this.ctx, A = this.proj(o.p, V), pal = this.pal();
+    if (o.t === 'ring') {
+      const r = Math.max(6, 0.32 * A[3]) * (1 + (this.reduceMotion ? 0 : 0.15 * Math.sin((now || 0) / 160)));
+      ctx.globalAlpha = 1; ctx.strokeStyle = pal.ring; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(A[0], A[1], r, 0, 6.2832); ctx.stroke();
+      ctx.font = '600 11px "Pretendard", system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = pal.ring; ctx.fillText(o.text, A[0], A[1] + r + 10);
+      return;
+    }
+    const size = o.size || 12, x = A[0] + (o.dx || 0), y = A[1] + (o.dy || 0);
+    ctx.font = '600 ' + size + 'px "Pretendard", system-ui, sans-serif';
+    const tw = ctx.measureText(o.text).width, w = tw + 14, h = size + 10;
+    ctx.globalAlpha = o.a == null ? 1 : o.a;
+    if (o.lead) {
+      ctx.strokeStyle = this.rgba(o.c, 0.6); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(x, y); ctx.stroke();
+    }
+    ctx.fillStyle = pal.labelBg;
+    ctx.strokeStyle = this.rgba(o.c, 0.55); ctx.lineWidth = 1;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x - w / 2, y - h / 2, w, h, 6); else ctx.rect(x - w / 2, y - h / 2, w, h);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = pal.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(o.text, x, y + 0.5);
+    ctx.globalAlpha = 1;
+  }
+
+  setMode(mode) {
+    this.cam = Object.assign({}, this.modeDef(mode).cam);
+    this.sim.f = 0;
+    this.pointer.drag = false;
+    this.setState({ mode: mode, f: 0, playing: false, step: -1 });
+  }
+
+  pickStep(i) {
+    const s = (this.T.STEPS || [])[i];
+    if (!s) return;
+    if (s.mode !== this.state.mode) this.setMode(s.mode);
+    if (s.f != null) this.sim.f = s.f;
+    this.setState({ f: this.sim.f, playing: false, step: i });
+    this.revealStepDetail();
+  }
+
+  // Scroll the left panel so the step text under the list shows, keeping the pressed button in view.
+  revealStepDetail() {
+    if (typeof document === 'undefined') return;
+    requestAnimationFrame(() => {
+      const box = document.querySelector('.panel-left .panel-inner'), d = box && box.querySelector('.detail');
+      if (!d) return;
+      const pad = 16, b = box.getBoundingClientRect();
+      let dy = d.getBoundingClientRect().bottom + pad - b.bottom;
+      const btn = d.parentElement.querySelector('.steps [aria-pressed="true"]');
+      if (btn) dy = Math.min(dy, btn.getBoundingClientRect().top - pad - b.top);
+      if (dy <= 0) return;
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      box.scrollTo({ top: box.scrollTop + dy, behavior: reduce ? 'auto' : 'smooth' });
+    });
+  }
+
+  renderVals() {
+    const st = this.state, T = this.T, m = this.modeDef(), pb = m.playback;
+    const tg = T.TOGGLES ? (Array.isArray(T.TOGGLES) ? T.TOGGLES : (T.TOGGLES[st.mode] || [])) : [];
+    const togDefs = tg.concat(m.autoSpin ? [['spin', '자동 회전']] : []);
+    const toggles = togDefs.map((d) => ({
+      label: d[1], pressed: st[d[0]] ? 'true' : 'false',
+      toggle: () => { const o = {}; o[d[0]] = !st[d[0]]; this.setState(o); }
+    }));
+    const STEPS = T.STEPS || [];
+    const steps = STEPS.map((s, i) => ({ s: s, i: i })).filter((x) => x.s.mode === st.mode).map((x, k) => ({
+      num: k + 1, title: x.s.title, who: x.s.who, c: x.s.c, pressed: st.step === x.i ? 'true' : 'false',
+      pick: () => this.pickStep(x.i)
+    }));
+    const speeds = [0.5, 1, 2].map((v) => ({
+      label: v + '×', pressed: st.speed === v ? 'true' : 'false',
+      pick: () => this.setState({ speed: v })
+    }));
+    const is = {};
+    T.MODES.forEach((d) => { is[d.key] = d.key === st.mode; });
+    const f = st.f;
+    const isDark = st.theme === 'dark';
+    const leftOn = st.narrow ? st.drawer === 'left' : st.leftOpen, rightOn = st.narrow ? st.drawer === 'right' : st.rightOpen;
+    return Object.assign({
+      th: this.K.THEMES[st.theme], isDark: isDark, isLight: !isDark,
+      themeLabel: isDark ? '라이트 모드로 전환' : '다크 모드로 전환',
+      toggleTheme: () => this.setTheme(isDark ? 'light' : 'dark'),
+      canvasRef: this._canvasRef, canvasCls: m.rotatable ? '' : 'is-fixed',
+      hasModes: T.MODES.length > 1, is: is,
+      modes: T.MODES.map((d) => ({ label: d.label, pressed: d.key === st.mode ? 'true' : 'false', pick: () => { if (d.key !== this.state.mode) this.setMode(d.key); } })),
+      leftCls: leftOn ? 'is-open' : '', rightCls: rightOn ? 'is-open' : '',
+      leftExpanded: leftOn ? 'true' : 'false', rightExpanded: rightOn ? 'true' : 'false',
+      scrimCls: (st.narrow && st.drawer) ? 'is-on' : '',
+      toggleLeft: () => this.togglePanel('left'),
+      toggleRight: () => this.togglePanel('right'),
+      closePanels: () => this.setState({ drawer: null }),
+      layoutStyle: ((st.leftW ? '--pl-user: ' + st.leftW + 'px; ' : '') + (st.rightW ? '--pr-user: ' + st.rightW + 'px;' : '')).trim(),
+      layoutCls: st.resizing ? 'is-resizing' : '',
+      leftWNow: st.leftW ? String(st.leftW) : '', rightWNow: st.rightW ? String(st.rightW) : '',
+      leftHandleRef: this._handleRefL, rightHandleRef: this._handleRefR,
+      onKey: (e) => { if (e.key === 'Escape' && this.state.narrow && this.state.drawer) this.setState({ drawer: null }); },
+      hasToggles: toggles.length > 0, toggles: toggles,
+      hasSteps: steps.length > 0, steps: steps,
+      hasStep: st.step >= 0 && st.step < STEPS.length, stepDetail: st.step >= 0 && STEPS[st.step] ? STEPS[st.step].text : '',
+      mistakes: (T.MISTAKES && T.MISTAKES[st.mode]) || [],
+      canvasLabel: m.canvasLabel(f),
+      zoomIn: () => { this.cam.zoom = Math.min(3, this.cam.zoom * 1.2); },
+      zoomOut: () => { this.cam.zoom = Math.max(0.5, this.cam.zoom / 1.2); },
+      resetView: () => { this.cam = Object.assign({}, m.cam); },
+      hasPlayback: !!pb, isPlaying: st.playing, notPlaying: !st.playing, playLabel: st.playing ? '일시정지' : '재생',
+      togglePlay: () => {
+        if (!pb) return;
+        if (!st.playing && this.sim.f >= pb.fmax) this.sim.f = 0;
+        this.setState({ playing: !st.playing, step: -1, f: this.sim.f });
+      },
+      fInt: Math.round(f * 10), fLabel: pb ? pb.label(f) : '', fMax10: pb ? Math.round(pb.fmax * 10) : 0,
+      onScrub: (e) => { const v = Number(e.target.value) / 10; this.sim.f = v; this.setState({ f: v, playing: false, step: -1 }); },
+      speeds: speeds
+    }, this.extraVals(st));
+  }
+}
+</script>
+</body>
+</html>

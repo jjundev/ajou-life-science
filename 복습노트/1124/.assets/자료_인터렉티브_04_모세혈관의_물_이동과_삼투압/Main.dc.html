@@ -1,0 +1,1300 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>모세혈관 물 이동과 삼투압</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+.app{--radius:8px;--tap:48px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--dur:220ms;--dur-exit:150ms;--ease-out:cubic-bezier(.2,.8,.2,1);--scrim:rgba(0,0,0,.4);
+  position:fixed;inset:0;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;box-sizing:border-box;
+  background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;font-size:16px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.app *,.app *::before,.app *::after{box-sizing:border-box}
+.app button{font-family:inherit;color:inherit}
+.app :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.num{font-variant-numeric:tabular-nums}
+
+.topbar{display:flex;align-items:center;gap:var(--s2);min-height:56px;padding:var(--s2) var(--s3);background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:17px;font-weight:700;white-space:nowrap}
+.text-btn{flex:none;min-height:44px;min-width:44px;padding:0 var(--s3);border:0;border-radius:var(--radius);background:transparent;color:var(--ink);font:600 14px/1 'Pretendard',system-ui,sans-serif;cursor:pointer}
+.panel-toggle{display:inline-flex;align-items:center;gap:var(--s1);padding:0 var(--s2)}
+.panel-toggle svg,.theme-toggle svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.panel-toggle .strip{fill:transparent;stroke:none;transition:fill 150ms ease-out}
+.panel-toggle[aria-expanded="true"]{color:var(--accent-ink)}
+.panel-toggle[aria-expanded="true"] .strip{fill:currentColor}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;padding:0}
+.seg{flex:none;display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.seg button{min-height:40px;padding:0 var(--s3);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+.layout{display:grid;grid-template-columns:auto minmax(320px,1fr) auto;min-height:0}
+.panel{position:relative;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--bg);color:var(--ink)}
+.panel-left{grid-column:1;width:clamp(260px,20vw,320px);border-right:1px solid var(--line)}
+.panel-right{grid-column:3;width:clamp(320px,24vw,400px);border-left:1px solid var(--line)}
+.panel-inner{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--s4) var(--s4) var(--s6)}
+.panel-inner::-webkit-scrollbar{width:8px}
+.panel-inner::-webkit-scrollbar-track{background:transparent}
+.panel-inner::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:8px;border:2px solid var(--bg)}
+.panel-inner::-webkit-scrollbar-thumb:hover{background:var(--scroll-hover)}
+@supports (scrollbar-color:auto){.panel-inner{scrollbar-width:thin;scrollbar-color:var(--scroll) transparent}}
+.panel-head{display:flex;align-items:center;gap:var(--s2);min-height:44px;margin-bottom:var(--s2)}
+.panel-head h2{flex:1 1 0;min-width:0;margin:0;font-size:22px;line-height:1.4}
+.stage{grid-column:2;position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--bg)}
+.scrim{display:none}
+.panel-resize{display:none}
+
+.sec{margin-top:var(--s5);padding-top:var(--s5);border-top:1px solid var(--line)}
+.panel-head + .sec,.panel-head + div > .sec:first-child{margin-top:0;padding-top:0;border-top:0}
+.sec-title{display:block;margin:0 0 var(--s3);font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-0.01em}
+.sub{margin:var(--s3) 0 0;font-size:14px;line-height:1.6;color:var(--ink-2)}
+
+.opt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.btn{display:flex;align-items:center;gap:var(--s2);width:100%;min-height:var(--tap);padding:0 var(--s3);border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font-size:14px;font-weight:600;line-height:1.3;text-align:left;cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.btn .box{flex:none;width:12px;height:12px;border-radius:3px;border:1.5px solid currentColor}
+.btn[aria-pressed="true"] .box{background:currentColor}
+.steps{display:flex;flex-direction:column;gap:var(--s2)}
+.steps .btn{padding:var(--s2) var(--s3);gap:var(--s3)}
+.step-num{flex:none;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid;font-size:12px;font-weight:700;color:var(--ink)}
+.step-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.step-txt b{font-size:15px;font-weight:700}
+.step-txt span{font-size:13px;font-weight:500;color:var(--ink-2)}
+.detail{margin-top:var(--s3);padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+
+
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.tiles.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tile{padding:var(--s3);border-radius:var(--radius);background:var(--surface)}
+.tile b{display:block;font-size:20px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}
+.tile span{display:block;font-size:13px;line-height:1.4;color:var(--ink-2)}
+.events{display:flex;flex-direction:column;gap:var(--s2)}
+.event{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.6}
+.dot{flex:none;width:10px;height:10px;margin-top:7px;border-radius:50%}
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2) var(--s3);font-size:13px;color:var(--ink-2)}
+.legend div{display:flex;align-items:center;gap:var(--s2)}
+.sw{flex:none;width:16px;height:6px;border-radius:3px}
+.sw.ball{width:12px;height:12px;border-radius:50%}
+.sec.warn{border-top:0;padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+.warn .sec-title{color:var(--warn);font-size:17px}
+.mistake{margin-top:var(--s3)}
+.mistake b{display:block;font-weight:700}
+.mistake span{color:var(--ink-2)}
+
+.canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.canvas.is-fixed{cursor:default}
+.view-btns{position:absolute;top:var(--s3);right:var(--s3);display:flex;gap:6px}
+.icon-btn{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);cursor:pointer}
+.icon-btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.icon-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.float{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius)}
+.hover-card{position:absolute;left:var(--s3);bottom:var(--s3);display:flex;flex-direction:column;gap:2px;padding:var(--s3) var(--s4);pointer-events:none}
+.hover-card .k{font-size:13px;color:var(--ink-2)}
+.hover-card .v{font-size:18px;font-weight:700}
+.playbar{position:absolute;left:var(--s3);right:var(--s3);bottom:var(--s3);display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3)}
+.play{flex:none;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--radius);background:var(--btn-bg);color:var(--on-btn) !important;cursor:pointer}
+.play svg{width:18px;height:18px;fill:currentColor}
+.scrub{flex:1 1 200px;min-width:160px;display:flex;flex-direction:column;gap:2px}
+.scrub span{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.scrub input{width:100%;height:24px;margin:0;accent-color:var(--accent)}
+.speeds{display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.speeds button{min-width:48px;height:40px;padding:0 var(--s2);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
+.speeds button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+@media (hover:hover){.btn:hover,.icon-btn:hover{background:var(--surface)}.text-btn:hover{background:var(--surface)}}
+@media (min-width:1024px){
+  .panel-head{display:none}
+  .layout{--pl:var(--pl-user,clamp(260px,20vw,320px));--pr:var(--pr-user,clamp(320px,24vw,400px))}
+  .panel{width:0;border-width:0;visibility:hidden;transition:width var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left.is-open{width:var(--pl)}
+  .panel-right.is-open{width:var(--pr)}
+  .panel.is-open{visibility:visible;border-width:1px;transition:width var(--dur) var(--ease-out)}
+  .panel-left .panel-inner{width:var(--pl)}
+  .panel-right .panel-inner{width:var(--pr);align-self:flex-end}
+  .layout.is-resizing .panel{transition:none}
+  .layout.is-resizing{cursor:col-resize;user-select:none}
+  .panel-resize{display:block;position:absolute;top:0;bottom:0;z-index:2;width:12px;padding:0;border:0;background:transparent;cursor:col-resize;touch-action:none}
+  .panel-left .panel-resize{right:0}
+  .panel-right .panel-resize{left:0}
+  .panel-resize::after{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--accent);opacity:0;transition:opacity 150ms ease-out}
+  .panel-left .panel-resize::after{right:0}
+  .panel-right .panel-resize::after{left:0}
+  .panel-resize:focus-visible{outline:none}
+  .panel-resize:focus-visible::after,.is-resizing .panel-resize:active::after{opacity:1}
+  @media (hover:hover){.panel-resize:hover::after{opacity:1}}
+}
+@media (max-width: 1023.98px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .stage{grid-column:1}
+  .panel{position:fixed;top:0;bottom:0;z-index:40;visibility:hidden;transition:transform var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left{left:0;width:min(304px,88vw);transform:translateX(-100%)}
+  .panel-right{right:0;width:min(360px,88vw);transform:translateX(100%)}
+  .panel.is-open{visibility:visible;transform:none;transition:transform var(--dur) var(--ease-out)}
+  .panel-inner{padding-top:calc(var(--s3) + env(safe-area-inset-top));padding-bottom:calc(var(--s6) + env(safe-area-inset-bottom))}
+  .scrim{display:block;position:fixed;inset:0;z-index:35;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .scrim.is-on{opacity:1;visibility:visible;transition:opacity var(--dur) var(--ease-out)}
+}
+@media (max-width:640px){.brand{display:none}.topbar{justify-content:space-between}}
+@media (max-width:480px){.panel-toggle span{display:none}.seg button{padding:0 var(--s2)}}
+@media (prefers-reduced-motion:reduce){.panel,.panel.is-open,.scrim,.scrim.is-on,.panel-toggle .strip,.panel-resize::after{transition:none}}
+</style>
+</helmet>
+<div class="app" onKeyDown="{{onKey}}" style="--bg: {{th.bg}}; --surface: {{th.surface}}; --ink: {{th.ink}}; --ink-2: {{th.ink2}}; --line: {{th.line}}; --accent: {{th.accent}}; --accent-ink: {{th.accentInk}}; --btn-bg: {{th.btnBg}}; --on-btn: {{th.onBtn}}; --warn: {{th.warn}}; --prof: {{th.prof}}; --supp: {{th.supp}}; --danger: {{th.danger}}; --scroll: {{th.scroll}}; --scroll-hover: {{th.scrollHover}}">
+<header class="topbar">
+<button class="text-btn panel-toggle" type="button" aria-label="조작 패널" aria-expanded="{{leftExpanded}}" onClick="{{toggleLeft}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M9 4v16"></path></svg><span>조작</span></button>
+<strong class="brand">모세혈관 물 이동과 삼투압</strong>
+<sc-if value="{{hasModes}}" hint-placeholder-val="{{ true }}">
+<div class="seg" role="group" aria-label="보기 선택">
+<sc-for list="{{modes}}" as="md" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{md.pressed}}" onClick="{{md.pick}}">{{md.label}}</button>
+</sc-for>
+</div>
+</sc-if>
+<button class="text-btn theme-toggle" type="button" aria-label="{{themeLabel}}" title="{{themeLabel}}" onClick="{{toggleTheme}}">
+<sc-if value="{{isDark}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+<sc-if value="{{isLight}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></sc-if>
+</button>
+<button class="text-btn panel-toggle" type="button" aria-label="설명 패널" aria-expanded="{{rightExpanded}}" onClick="{{toggleRight}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M15 4v16"></path></svg><span>설명</span></button>
+</header>
+
+<div class="layout {{layoutCls}}" style="{{layoutStyle}}">
+<aside class="panel panel-left {{leftCls}}" aria-label="조작">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="220" aria-valuemax="480" aria-valuenow="{{leftWNow}}" ref="{{leftHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>조작</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<sc-if value="{{hasToggles}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">보기 옵션</h3>
+<div class="opt">
+<sc-for list="{{toggles}}" as="t" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{t.pressed}}" onClick="{{t.toggle}}"><span class="box" aria-hidden="true"></span>{{t.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<!-- SLOT:left -->
+<sc-if value="{{is.edema}}" hint-placeholder-val="{{ false }}">
+<div>
+<div class="sec">
+<h3 class="sec-title">상황 고르기</h3>
+<div class="steps">
+<sc-for list="{{presets}}" as="pr" hint-placeholder-count="3">
+<button class="btn" type="button" aria-pressed="{{pr.pressed}}" onClick="{{pr.pick}}"><span class="step-num num" style="border-color: {{pr.c}}">{{pr.num}}</span><span class="step-txt"><b>{{pr.title}}</b><span>{{pr.sub}}</span></span></button>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">혈액 삼투압 · <span class="num">{{edema.osmP}}</span></h3>
+<div class="opt">
+<button class="btn" type="button" onClick="{{edema.osmDown}}">−2 낮추기</button>
+<button class="btn" type="button" onClick="{{edema.osmUp}}">+2 높이기</button>
+</div>
+<p class="sub">혈청 단백질 농도가 줄면 삼투압이 낮아져요 (10–46).</p>
+</div>
+<div class="sec">
+<h3 class="sec-title">동맥 쪽 혈압 · <span class="num">{{edema.artP}}</span></h3>
+<div class="opt">
+<button class="btn" type="button" onClick="{{edema.bpDown}}">−2 낮추기</button>
+<button class="btn" type="button" onClick="{{edema.bpUp}}">+2 높이기</button>
+</div>
+<p class="sub">정맥 쪽 혈압은 동맥 쪽보다 20 낮아요 (현재 {{edema.venP}}).</p>
+</div>
+</div>
+</sc-if>
+<!-- /SLOT:left -->
+
+<sc-if value="{{hasSteps}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">단계</h3>
+<div class="steps">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}"><span class="step-num num" style="border-color: {{s.c}}">{{s.num}}</span><span class="step-txt"><b>{{s.title}}</b><span>{{s.who}}</span></span></button>
+</sc-for>
+</div>
+<sc-if value="{{hasStep}}" hint-placeholder-val="{{ false }}">
+<div class="detail" aria-live="polite">{{stepDetail}}</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</aside>
+
+<section class="stage" aria-label="모형 보기">
+<canvas class="canvas {{canvasCls}}" ref="{{canvasRef}}" role="img" aria-label="{{canvasLabel}}"></canvas>
+<div class="view-btns">
+<button class="icon-btn" type="button" aria-label="확대" onClick="{{zoomIn}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="축소" onClick="{{zoomOut}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="시점 처음으로" onClick="{{resetView}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v5h5"></path></svg></button>
+</div>
+
+<sc-if value="{{hasPlayback}}" hint-placeholder-val="{{ false }}">
+<div class="playbar float">
+<button class="play" type="button" aria-label="{{playLabel}}" onClick="{{togglePlay}}">
+<sc-if value="{{isPlaying}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></sc-if>
+<sc-if value="{{notPlaying}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5l12 7-12 7z"></path></svg></sc-if>
+</button>
+<label class="scrub">
+<span>{{fLabel}}</span>
+<input type="range" min="0" max="{{fMax10}}" step="1" value="{{fInt}}" onChange="{{onScrub}}">
+</label>
+<div class="speeds" role="group" aria-label="재생 속도">
+<sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{sp.pressed}}" onClick="{{sp.pick}}">{{sp.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</section>
+
+<aside class="panel panel-right {{rightCls}}" aria-label="설명">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="280" aria-valuemax="720" aria-valuenow="{{rightWNow}}" ref="{{rightHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>설명</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<!-- SLOT:right -->
+<sc-if value="{{is.capillary}}" hint-placeholder-val="{{ true }}">
+<div>
+<div class="sec">
+<h3 class="sec-title">모세혈관 압력 (상대값)</h3>
+<div class="tiles">
+<div class="tile"><b style="color: {{legend.bp}}">40</b><span>동맥 쪽 혈압</span></div>
+<div class="tile"><b style="color: {{legend.bp}}">20</b><span>정맥 쪽 혈압</span></div>
+<div class="tile"><b style="color: {{legend.osm}}">30</b><span>혈액 삼투압 (일정)</span></div>
+<div class="tile"><b style="color: {{cap.zoneColor}}">{{cap.zone}}</b><span>현재 구역 판정</span></div>
+</div>
+</div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{capEvents}}" as="e" hint-placeholder-count="2">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw" style="background: {{legend.wall}}"></span>내피세포 벽·틈</div>
+<div><span class="sw ball" style="background: {{legend.osm}}"></span>혈청 단백질</div>
+<div><span class="sw ball" style="background: {{legend.waterOut}}"></span>나가는 물</div>
+<div><span class="sw ball" style="background: {{legend.waterIn}}"></span>들어오는 물</div>
+<div><span class="sw ball" style="background: {{legend.rbc}}"></span>적혈구</div>
+<div><span class="sw" style="background: {{legend.lymph}}"></span>림프관</div>
+</div>
+<p class="sub">압력 수치(40·30·20)와 혈관·림프관·입자 크기는 보기 쉽게 단순화했어요. 혈청 단백질이 틈을 쉽게 빠져나가지 못한다는 점은 (교과서 보충)이에요.</p>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{is.edema}}" hint-placeholder-val="{{ false }}">
+<div>
+<div class="sec">
+<h3 class="sec-title">현재 조건 수치</h3>
+<div class="tiles">
+<div class="tile"><b style="color: {{legend.bp}}">{{edema.bpRange}}</b><span>동맥 → 정맥 혈압</span></div>
+<div class="tile"><b style="color: {{legend.osm}}">{{edema.osmP}}</b><span>혈액 삼투압</span></div>
+<div class="tile"><b class="num">{{edema.flowPair}}</b><span>나감 / 들어옴 (상대값)</span></div>
+<div class="tile"><b style="color: {{edema.statusColor}}">{{edema.status}}</b><span>조직 상태</span></div>
+</div>
+</div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 조건 풀이</h3>
+<div class="events">
+<sc-for list="{{edemaEvents}}" as="e" hint-placeholder-count="2">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw" style="background: {{legend.bp}}"></span>혈압 막대</div>
+<div><span class="sw" style="background: {{legend.osm}}"></span>삼투압 선</div>
+<div><span class="sw" style="background: {{legend.waterOut}}"></span>나가는 화살표</div>
+<div><span class="sw" style="background: {{legend.waterIn}}"></span>들어오는 화살표</div>
+<div><span class="sw ball" style="background: {{legend.waterOut}}"></span>조직에 남은 물</div>
+</div>
+<p class="sub">5개 대표 지점(동맥 쪽부터 5씩 감소)의 상대값이에요. 림프관 회수는 따로 넣지 않았어요.</p>
+</div>
+</div>
+</sc-if>
+<!-- /SLOT:right -->
+
+<div class="sec warn">
+<h3 class="sec-title">꼭 기억해요</h3>
+<sc-for list="{{mistakes}}" as="m" hint-placeholder-count="3">
+<div class="mistake"><b>{{m.title}}</b><span>{{m.text}}</span></div>
+</sc-for>
+</div>
+</div>
+</aside>
+</div>
+<div class="scrim {{scrimCls}}" aria-hidden="true" onClick="{{closePanels}}"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  // ================= 주제 훅: 주제마다 바꾸는 곳은 이 네 메서드뿐이에요 =================
+  // 계약은 bio-interactive/references/scene-api.md에 있어요.
+
+  topic() {
+    const capPhase = (f) => {
+      if (f < 2.5) return '동맥 쪽: 물이 나감';
+      if (f < 5.0) return '중간 지점: 힘 균형';
+      if (f < 7.5) return '정맥 쪽: 물이 들어옴';
+      return '혈청 단백질과 여분 회수';
+    };
+    return {
+      MODES: [
+        { key: 'capillary', label: '3D 흐름', cam: { yaw: -0.32, pitch: 0.24, zoom: 1 }, fit: [13.2, 8.2], D: 36,
+          autoSpin: false, rotatable: true,
+          playback: { fmax: 10, rate: 1.0, label: (f) => capPhase(f) + ' · ' + f.toFixed(1) + ' / 10' },
+          canvasLabel: (f) => '동맥 쪽(혈압 40)에서 정맥 쪽(혈압 20)으로 이어지는 3D 모세혈관 단면과 물 이동. 지금 ' + capPhase(f) + ' 단계예요. 끌어서 회전할 수 있어요.' },
+        { key: 'edema', label: '조건·부종 비교', cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [13.2, 9.2], D: 60,
+          autoSpin: false, rotatable: false, playback: null,
+          canvasLabel: () => {
+            const artP = (this.state && this.state.artP) || 40;
+            const osmP = (this.state && this.state.osmP) || 30;
+            return '동맥 쪽 혈압 ' + artP + ', 정맥 쪽 혈압 ' + (artP - 20) + ', 혈액 삼투압 ' + osmP + ' 조건에서 5개 지점의 물 이동과 조직 부종을 비교하는 도식이에요.';
+          } }
+      ],
+      STEPS: [
+        { mode: 'capillary', f: 1.6, phase: '동맥 쪽: 물이 나감', c: '#E67E22', title: '동맥 쪽: 물이 나감', who: '혈압(40) > 삼투압(30)',
+          text: '동맥 쪽은 혈압(40)이 혈액 삼투압(30)보다 커서, 물이 내피세포 틈을 통해 조직 쪽으로 밀려 나가요. 일반 모세혈관은 혈액뇌장벽과 달리 내피세포 사이에 약간의 틈이 있어요.' },
+        { mode: 'capillary', f: 3.8, phase: '중간 지점: 힘 균형', c: '#7C4CC4', title: '중간 지점: 힘 균형', who: '혈압(30) = 삼투압(30)',
+          text: '혈액이 모세혈관을 따라 흐르며 혈압이 떨어져, 중간 지점에서 혈액 삼투압(30)과 크기가 같아져요. 밖으로 미는 혈압과 안으로 당기는 삼투압이 균형을 이뤄요.' },
+        { mode: 'capillary', f: 6.4, phase: '정맥 쪽: 물이 들어옴', c: '#1D8FE1', title: '정맥 쪽: 물이 들어옴', who: '혈압(20) < 삼투압(30)',
+          text: '정맥 쪽은 혈압이 20으로 낮아지고 혈액 속 혈청 단백질이 삼투압(30)을 유지해요. 그래서 조직의 물이 내피세포 틈을 통해 혈관 속으로 끌려 들어와요.' },
+        { mode: 'capillary', f: 9.0, phase: '혈청 단백질과 여분 회수', c: '#1B9E77', title: '혈청 단백질과 여분 회수', who: '혈청 단백질 · 림프관',
+          text: '대부분의 혈청 단백질은 모세혈관 틈을 쉽게 빠져나가지 못해 삼투압을 지켜요(교과서 보충). 정맥 쪽으로 다 돌아오지 못하고 조직에 남은 여분의 물은 림프관이 모아 혈액으로 돌려보내요.' }
+      ],
+      MISTAKES: {
+        capillary: [
+          { title: '혈압 > 삼투압 = 나감', text: '혈압은 물을 밖으로 미는 힘이라, 혈압이 삼투압보다 크면 물이 혈관에서 조직으로 나가요. 반대로 삼투압이 크면 혈관 속으로 들어와요.' },
+          { title: '혈청 단백질 = 혈관 안에 남음', text: '대부분의 혈청 단백질은 모세혈관 틈을 쉽게 빠져나가지 못해 혈액의 삼투압을 유지해요(교과서 보충). 혈관 안 보라색 구를 확인해 보세요.' },
+          { title: '모세혈관 틈 ≠ 혈액뇌장벽', text: '일반 모세혈관은 내피세포 사이에 약간의 틈이 있어 물이 드나들지만, 혈액뇌장벽은 내피세포가 빈틈없이 맞붙어 있어요.' }
+        ],
+        edema: [
+          { title: '기아성 부종 = 삼투압 감소 ≠ 혈압 상승', text: '오래 굶으면 혈청 단백질이 줄어 혈액 삼투압이 낮아져서 부어요. 혈압이 올라서가 아니에요. 기아성 부종 프리셋에서 혈압이 40 그대로임을 확인해 보세요.' },
+          { title: '굶주릴 때 정맥 쪽 = 들어옴 → 나감', text: '정맥 쪽 혈압 20은 평소(삼투압 30)엔 작지만, 굶주림(삼투압 14)엔 더 커져 정맥 쪽에서도 물이 빠져나가요.' },
+          { title: '혈압은 감소, 삼투압은 일정', text: '동맥에서 정맥으로 흐를수록 혈압은 낮아지지만, 혈액 삼투압은 모세혈관 안에서 거의 비슷하게 유지돼요.' }
+        ]
+      },
+      TOGGLES: {
+        capillary: [['labels', '이름표'], ['forces', '압력 화살표'], ['proteins', '혈청 단백질'], ['lymph', '림프관']],
+        edema: [['labels', '이름표'], ['nums', '지점별 수치']]
+      },
+      PAL: {
+        light: {
+          bg: '#ffffff', labelBg: '#f7f8fa', ink: '#111111', ring: '#111111', blobAlpha: 0.30,
+          wall: '#8A94A3', wallCell: '#A6B0BF', rbc: '#C83E4D', bp: '#DC4C3E', osm: '#7C4CC4',
+          waterOut: '#E67E22', waterIn: '#1D8FE1', lymph: '#1B9E77', tissue: '#CBD5E1', muted: '#6B7280'
+        },
+        dark: {
+          bg: '#17171c', labelBg: '#212128', ink: '#f2f4f6', ring: '#f2f4f6', blobAlpha: 0.42,
+          wall: '#98A3B3', wallCell: '#7D8798', rbc: '#EF6B78', bp: '#FF7B6E', osm: '#B48CF2',
+          waterOut: '#FFA94D', waterIn: '#5CB8FF', lymph: '#4DD6A8', tissue: '#434957', muted: '#A3ABB8'
+        }
+      }
+    };
+  }
+
+  // 장면 만들기: I(그리기 항목)와 O(라벨)에 push만 해요. 진행값은 this.sim.f를 써요.
+  buildScene(mode, I, O) {
+    const pal = this.pal(), st = this.state;
+    const arrow = (a, b, w, c, alpha) => {
+      const al = alpha == null ? 1 : alpha;
+      I.push({ k: 1, p: a, q: b, w: w, c: c, a: al });
+      I.push({ k: 4, p: this.lerp(a, b, 0.68), q: b, c: c, a: al });
+    };
+
+    if (mode === 'capillary') {
+      const f = this.sim.f;
+      const ph = f < 2.5 ? 1 : (f < 5.0 ? 2 : (f < 7.5 ? 3 : 4));
+      const aArt = ph === 1 ? 1.0 : (ph === 4 ? 0.80 : 0.48);
+      const aMid = ph === 2 ? 1.0 : (ph === 4 ? 0.55 : 0.34);
+      const aVen = ph === 3 ? 1.0 : (ph === 4 ? 0.85 : 0.34);
+      const aLym = ph === 4 ? 1.0 : 0.36;
+
+      const cy = 0.40, R = 1.15;
+      // 8 endothelial ring bands leaving visible intercellular slits between them
+      const ringXs = [-4.0, -2.9, -1.8, -0.7, 0.4, 1.5, 2.6, 3.7];
+      const slitXs = [-3.45, -2.35, -1.25, -0.15, 0.95, 2.05, 3.15];
+      const segs = 12;
+      for (let ri = 0; ri < ringXs.length; ri++) {
+        const rx = ringXs[ri];
+        for (let j = 0; j < segs; j++) {
+          const t0 = (j / segs) * Math.PI * 2;
+          const t1 = ((j + 1) / segs) * Math.PI * 2;
+          const tm = (t0 + t1) / 2;
+          const front = Math.sin(tm) > 0.35;
+          const p0 = [rx, cy + R * Math.cos(t0), R * Math.sin(t0)];
+          const p1 = [rx, cy + R * Math.cos(t1), R * Math.sin(t1)];
+          I.push({ k: 1, p: p0, q: p1, w: front ? 0.045 : 0.11, c: pal.wall, rod: !front, a: front ? 0.18 : 0.82 });
+          // Short axial endothelial cell tiles with slits between adjacent rings
+          if (!front && (j % 2 === 0)) {
+            const pL = [rx - 0.36, cy + R * Math.cos(tm), R * Math.sin(tm)];
+            const pR = [rx + 0.36, cy + R * Math.cos(tm), R * Math.sin(tm)];
+            I.push({ k: 1, p: pL, q: pR, w: 0.10, c: pal.wallCell, flat: true, a: 0.72 });
+          }
+        }
+        // Endothelial cell nucleus on back-top / back-bottom wall
+        const nAng = (ri % 2 === 0) ? -Math.PI * 0.35 : -Math.PI * 0.72;
+        I.push({ k: 0, p: [rx, cy + (R + 0.04) * Math.cos(nAng), (R + 0.04) * Math.sin(nAng)], r: 0.14, c: pal.wallCell, a: 0.85 });
+      }
+
+      // Subtle arterial-to-venous blood flow guide inside lumen
+      I.push({ k: 1, p: [-4.5, cy, -0.1], q: [4.5, cy, -0.1], w: 0.04, c: pal.wall, a: 0.28 });
+      I.push({ k: 4, p: [-2.6, cy, -0.1], q: [-1.8, cy, -0.1], c: pal.wall, a: 0.45 });
+      I.push({ k: 4, p: [1.8, cy, -0.1], q: [2.6, cy, -0.1], c: pal.wall, a: 0.45 });
+
+      // Red blood cells (5 biconcave 3D discs flowing left -> right)
+      for (let i = 0; i < 5; i++) {
+        const u = ((i / 5 + f * 0.08) % 1 + 1) % 1;
+        const bx = -4.2 + u * 8.4;
+        const by = cy + 0.14 * Math.sin(u * Math.PI * 4 + i);
+        const bz = 0.16 * Math.cos(u * Math.PI * 3 + i * 1.4);
+        const tilt = 0.45 + 0.3 * Math.sin(i * 1.7 + f * 0.4);
+        const ct = Math.cos(tilt), stt = Math.sin(tilt);
+        I.push({ k: 0, p: [bx, by, bz], r: 0.16, c: pal.rbc, a: 0.92 });
+        for (let k = 0; k < 6; k++) {
+          const ang = (k / 6) * Math.PI * 2;
+          const dx = 0.24 * Math.cos(ang) * stt;
+          const dy = 0.24 * Math.sin(ang);
+          const dz = 0.24 * Math.cos(ang) * ct;
+          I.push({ k: 0, p: [bx + dx, by + dy, bz + dz], r: 0.15, c: pal.rbc, a: 0.94 });
+        }
+      }
+
+      // Large serum proteins staying inside the capillary (maintain osmotic pressure ~30)
+      if (st.proteins) {
+        const pAlpha = ph === 4 ? 1.0 : (ph === 3 ? 0.92 : 0.78);
+        const protSpecs = [
+          [-3.5, 0.48, -0.25], [-2.5, -0.34, 0.30], [-1.5, 0.36, 0.28],
+          [-0.2, -0.45, 0.22], [0.8, 0.42, -0.28], [1.8, -0.30, 0.32],
+          [2.7, 0.46, 0.18], [3.5, -0.36, -0.22]
+        ];
+        for (let i = 0; i < protSpecs.length; i++) {
+          const s = protSpecs[i];
+          const drift = 0.18 * Math.sin(f * 0.9 + i * 1.3);
+          // Near bottom slit at x = -0.15, bounce gently inside wall to show it cannot pass through slit
+          let px = s[0] + drift, py = cy + s[1], pz = s[2];
+          if (i === 3 && ph === 4) {
+            const bounce = Math.abs(Math.sin(f * 2.2));
+            px = -0.15;
+            py = cy - 0.72 + bounce * 0.22;
+            pz = 0.15;
+          }
+          I.push({ k: 5, p: [px, py, pz], r: 0.31, c: pal.osm, focus: ph === 4 && (i === 3 || i === 5), a: pAlpha });
+          I.push({ k: 0, p: [px, py, pz], r: 0.16, c: pal.osm, a: pAlpha });
+        }
+      }
+
+      // Arterial outflow water & arrows (x = -3.45, -2.35, -1.25)
+      const artSlits = [-3.45, -2.35, -1.25];
+      for (let i = 0; i < artSlits.length; i++) {
+        const sx = artSlits[i];
+        const strength = 1.0 - i * 0.16;
+        // Outward arrows through bottom and top slits
+        arrow([sx, cy - R + 0.12, 0.2], [sx, cy - R - 0.92 * strength, 0.38], 0.085, pal.waterOut, aArt);
+        arrow([sx, cy + R - 0.10, -0.18], [sx, cy + R + 0.65 * strength, -0.32], 0.07, pal.waterOut, aArt * 0.75);
+        // Animated water droplets exiting through slits
+        for (let d = 0; d < 2; d++) {
+          const t = ((f * 0.55 + i * 0.29 + d * 0.5) % 1 + 1) % 1;
+          const wy = cy - (0.65 + t * (1.45 * strength));
+          const wz = 0.12 + t * 0.32;
+          I.push({ k: 0, p: [sx, wy, wz], r: 0.115, c: pal.waterOut, a: aArt * (1 - 0.35 * t) });
+          const wy2 = cy + (0.68 + t * (1.15 * strength));
+          I.push({ k: 0, p: [sx, wy2, -0.12 - t * 0.25], r: 0.10, c: pal.waterOut, a: aArt * 0.72 * (1 - 0.35 * t) });
+        }
+      }
+
+      // Middle force-balance zone (x = -0.15): BP 30 = OP 30
+      const mx = -0.15;
+      arrow([mx - 0.16, cy - R + 0.15, 0.22], [mx - 0.16, cy - R - 0.55, 0.30], 0.075, pal.bp, aMid);
+      arrow([mx + 0.16, cy - R - 0.55, 0.30], [mx + 0.16, cy - R + 0.15, 0.22], 0.075, pal.osm, aMid);
+      const osc = 0.14 * Math.sin(f * 3.0);
+      I.push({ k: 0, p: [mx, cy - R - 0.18 + osc, 0.26], r: 0.11, c: pal.muted, a: aMid });
+      if (ph === 2) {
+        I.push({ k: 3, p: [mx, cy - R - 0.85, 0.30], text: '30 = 30', size: 11, c: pal.ink, a: 0.95 });
+      }
+
+      // Venous inflow water & arrows (x = 0.95, 2.05, 3.15)
+      const venSlits = [0.95, 2.05, 3.15];
+      for (let i = 0; i < venSlits.length; i++) {
+        const sx = venSlits[i];
+        const strength = 0.68 + i * 0.16;
+        arrow([sx, cy - R - 0.92 * strength, 0.38], [sx, cy - R + 0.12, 0.20], 0.085, pal.waterIn, aVen);
+        arrow([sx, cy + R + 0.65 * strength, -0.32], [sx, cy + R - 0.10, -0.18], 0.07, pal.waterIn, aVen * 0.75);
+        for (let d = 0; d < 2; d++) {
+          const t = ((f * 0.55 + i * 0.31 + d * 0.5) % 1 + 1) % 1;
+          const wy = cy - (0.65 + (1 - t) * (1.45 * strength));
+          const wz = 0.12 + (1 - t) * 0.32;
+          I.push({ k: 0, p: [sx, wy, wz], r: 0.115, c: pal.waterIn, a: aVen * (0.65 + 0.35 * t) });
+          const wy2 = cy + (0.68 + (1 - t) * (1.15 * strength));
+          I.push({ k: 0, p: [sx, wy2, -0.12 - (1 - t) * 0.25], r: 0.10, c: pal.waterIn, a: aVen * 0.72 * (0.65 + 0.35 * t) });
+        }
+      }
+
+      // Top pressure-vs-osmotic mini indicators (toggled by st.forces)
+      if (st.forces) {
+        const pts = [
+          { x: -3.2, bp: 40, h: 0.88, a: aArt },
+          { x: -0.15, bp: 30, h: 0.66, a: aMid },
+          { x: 3.0, bp: 20, h: 0.44, a: aVen }
+        ];
+        const baseY = cy + R + 0.42;
+        for (let i = 0; i < pts.length; i++) {
+          const pt = pts[i];
+          const al = Math.max(0.55, pt.a);
+          // BP outward (up) arrow
+          arrow([pt.x - 0.22, baseY, 0], [pt.x - 0.22, baseY + pt.h, 0], 0.08, pal.bp, al);
+          // Osmotic inward (down) arrow (constant height 0.66)
+          arrow([pt.x + 0.22, baseY + 0.66, 0], [pt.x + 0.22, baseY, 0], 0.08, pal.osm, al);
+          I.push({ k: 3, p: [pt.x, baseY + 1.08, 0], text: '혈압 ' + pt.bp + ' / 삼투 30', size: 10, c: pal.ink, a: al });
+        }
+      }
+
+      // Lymphatic capillary below collecting excess interstitial fluid
+      if (st.lymph) {
+        const ly = -2.25, lz = 0.20, lR = 0.38;
+        // Blind-ended rounded tip at x = -1.45
+        I.push({ k: 5, p: [-1.45, ly, lz], r: lR, c: pal.lymph, focus: ph === 4, a: aLym });
+        for (let lx = -1.15; lx <= 4.15; lx += 0.75) {
+          for (let j = 0; j < 8; j++) {
+            const t0 = (j / 8) * Math.PI * 2, t1 = ((j + 1) / 8) * Math.PI * 2;
+            const front = Math.sin((t0 + t1) / 2) > 0.35;
+            I.push({
+              k: 1,
+              p: [lx, ly + lR * Math.cos(t0), lz + lR * Math.sin(t0)],
+              q: [lx, ly + lR * Math.cos(t1), lz + lR * Math.sin(t1)],
+              w: front ? 0.035 : 0.07, c: pal.lymph, rod: !front, a: front ? aLym * 0.25 : aLym * 0.82
+            });
+          }
+        }
+        I.push({ k: 1, p: [-1.4, ly + lR, lz], q: [4.2, ly + lR, lz], w: 0.075, c: pal.lymph, rod: true, a: aLym * 0.85 });
+        I.push({ k: 1, p: [-1.4, ly - lR, lz], q: [4.2, ly - lR, lz], w: 0.075, c: pal.lymph, rod: true, a: aLym * 0.85 });
+        // Excess water droplets entering lymphatic blind end and flowing right
+        arrow([-2.25, -1.65, 0.32], [-1.48, ly + 0.05, lz + 0.05], 0.065, pal.lymph, aLym);
+        arrow([0.2, ly, lz], [1.4, ly, lz], 0.065, pal.lymph, aLym);
+        arrow([2.4, ly, lz], [3.6, ly, lz], 0.065, pal.lymph, aLym);
+        for (let d = 0; d < 4; d++) {
+          const u = ((f * 0.45 + d * 0.25) % 1 + 1) % 1;
+          let dx, dy, dz;
+          if (u < 0.25) {
+            const k = u / 0.25;
+            dx = -2.45 + k * 1.05;
+            dy = -1.55 + k * (ly - (-1.55));
+            dz = 0.32 + k * (lz - 0.32);
+          } else {
+            const k = (u - 0.25) / 0.75;
+            dx = -1.40 + k * 5.5;
+            dy = ly + 0.08 * Math.sin(k * Math.PI * 4);
+            dz = lz;
+          }
+          I.push({ k: 0, p: [dx, dy, dz], r: 0.105, c: u < 0.2 ? pal.waterOut : pal.lymph, a: aLym });
+        }
+      }
+
+      // Labels (<= 5 chips on screen at any time, non-overlapping)
+      if (st.labels) {
+        const topY = st.forces ? cy + R + 1.55 : cy + R + 0.35;
+        O.push({ p: [-3.9, topY, 0], text: '동맥 쪽 (혈압 40)', c: pal.bp, dx: 8, dy: -16, lead: true });
+        O.push({ p: [3.9, topY, 0], text: '정맥 쪽 (혈압 20)', c: pal.waterIn, dx: -8, dy: -16, lead: true });
+        if (ph === 1) {
+          O.push({ p: [-2.35, cy - R - 0.85, 0.35], text: '물이 나감 (40 > 30)', c: pal.waterOut, dx: -4, dy: 24, lead: true });
+          O.push({ p: [-1.25, cy - R, 0.15], text: '내피세포 틈', c: pal.wall, dx: 26, dy: -14, lead: true });
+        } else if (ph === 2) {
+          O.push({ p: [-0.15, cy - R - 0.5, 0.30], text: '힘 균형 (30 = 30)', c: pal.osm, dx: 0, dy: 26, lead: true });
+          if (st.proteins) O.push({ p: [-0.2, cy - 0.15, 0.22], text: '혈청 단백질 (삼투압 30)', c: pal.osm, dx: 12, dy: -22, lead: true });
+        } else if (ph === 3) {
+          O.push({ p: [2.05, cy - R - 0.85, 0.35], text: '물이 들어옴 (20 < 30)', c: pal.waterIn, dx: 2, dy: 24, lead: true });
+          if (st.proteins) O.push({ p: [0.8, cy + 0.20, -0.28], text: '혈청 단백질 (삼투압 30)', c: pal.osm, dx: -14, dy: -22, lead: true });
+        } else {
+          if (st.proteins) O.push({ p: [-0.15, cy - 0.55, 0.15], text: '혈청 단백질 (안에 남음)', c: pal.osm, dx: -16, dy: -24, lead: true });
+          if (st.lymph) O.push({ p: [1.5, -2.25, 0.20], text: '림프관 (여분 물 회수)', c: pal.lymph, dx: 12, dy: 24, lead: true });
+        }
+        if (ph !== 4 && st.lymph) {
+          O.push({ p: [2.6, -2.25, 0.20], text: '림프관', c: pal.lymph, dx: 18, dy: 22, a: 0.78 });
+        }
+      }
+      return;
+    }
+
+    // ---------- edema mode: 5-station pressure vs osmotic comparison & tissue edema ----------
+    const artP = st.artP, osmP = st.osmP, venP = artP - 20;
+    const xs = [-3.8, -1.9, 0, 1.9, 3.8];
+    const bps = [artP, artP - 5, artP - 10, artP - 15, venP];
+
+    // 1. Top Pressure Chart (y from 0.95 to 3.25)
+    const yBase = 0.95;
+    const yP = (v) => yBase + v * 0.04;
+    // Reference grid lines (0, 20, 40)
+    I.push({ k: 1, p: [-4.8, yBase, 0], q: [4.8, yBase, 0], w: 0.045, c: pal.wall, flat: true, a: 0.75 });
+    I.push({ k: 1, p: [-4.8, yP(20), 0], q: [4.8, yP(20), 0], w: 0.025, c: pal.tissue, flat: true, a: 0.55 });
+    I.push({ k: 1, p: [-4.8, yP(40), 0], q: [4.8, yP(40), 0], w: 0.025, c: pal.tissue, flat: true, a: 0.55 });
+    if (st.nums) {
+      I.push({ k: 3, p: [-5.15, yP(20), 0], text: '20', size: 10, c: pal.muted });
+      I.push({ k: 3, p: [-5.15, yP(40), 0], text: '40', size: 10, c: pal.muted });
+    }
+
+    // Blood pressure bars at the 5 stations
+    let outSum = 0, inSum = 0;
+    for (let i = 0; i < 5; i++) {
+      const x = xs[i], bp = bps[i], topY = yP(bp);
+      const diff = bp - osmP;
+      if (diff > 0) outSum += diff;
+      else if (diff < 0) inSum += -diff;
+
+      I.push({ k: 1, p: [x, yBase, 0], q: [x, topY, 0], w: 0.44, c: pal.bp, flat: true, a: 0.82 });
+      if (st.nums) {
+        I.push({ k: 3, p: [x, topY + 0.24, 0], text: String(bp), size: 11, c: pal.bp });
+      }
+    }
+
+    // Constant Osmotic Pressure Line across all 5 stations
+    const yOsm = yP(osmP);
+    I.push({ k: 1, p: [-4.75, yOsm, 0], q: [4.75, yOsm, 0], w: 0.09, c: pal.osm, flat: true, a: 0.96 });
+    I.push({ k: 0, p: [-4.75, yOsm, 0], r: 0.11, c: pal.osm });
+    I.push({ k: 0, p: [4.75, yOsm, 0], r: 0.11, c: pal.osm });
+
+    // 2. Middle Capillary Strip with Endothelial Slits & Serum Proteins (y = -0.12)
+    const capTop = 0.22, capBot = -0.46, capMid = -0.12;
+    const segBounds = [[-4.8, -4.08], [-3.52, -2.18], [-1.62, -0.28], [0.28, 1.62], [2.18, 3.52], [4.08, 4.8]];
+    for (let s = 0; s < segBounds.length; s++) {
+      const a = segBounds[s][0], b = segBounds[s][1];
+      I.push({ k: 1, p: [a, capTop, 0], q: [b, capTop, 0], w: 0.09, c: pal.wall, rod: true });
+      I.push({ k: 1, p: [a, capBot, 0], q: [b, capBot, 0], w: 0.09, c: pal.wall, rod: true });
+    }
+    // Blood flow centerline arrow inside capillary
+    I.push({ k: 1, p: [-4.6, capMid, 0], q: [4.6, capMid, 0], w: 0.035, c: pal.wall, a: 0.35 });
+    I.push({ k: 4, p: [-3.2, capMid, 0], q: [-2.4, capMid, 0], c: pal.wall, a: 0.55 });
+    I.push({ k: 4, p: [2.4, capMid, 0], q: [3.2, capMid, 0], c: pal.wall, a: 0.55 });
+
+    // Serum proteins inside vessel — count scales visibly with osmotic pressure
+    const protCount = Math.max(2, Math.min(9, Math.round((osmP - 6) / 4)));
+    for (let p = 0; p < protCount; p++) {
+      const px = protCount === 1 ? 0 : -3.9 + (p / (protCount - 1)) * 7.8;
+      const py = capMid + (p % 2 === 0 ? 0.08 : -0.08);
+      I.push({ k: 5, p: [px, py, 0], r: 0.22, c: pal.osm, a: 0.88 });
+      I.push({ k: 0, p: [px, py, 0], r: 0.11, c: pal.osm });
+    }
+
+    // 3. Water Flow Arrows at each of the 5 slits (y = -0.58 to -2.12)
+    for (let i = 0; i < 5; i++) {
+      const x = xs[i], diff = bps[i] - osmP;
+      if (diff > 0) {
+        const len = 0.36 + Math.min(0.86, (diff / 28) * 0.86);
+        const w = 0.08 + Math.min(0.11, (diff / 28) * 0.11);
+        arrow([x, -0.58, 0], [x, -0.58 - len, 0], w, pal.waterOut, 0.96);
+        I.push({ k: 0, p: [x + 0.26, -0.74 - len * 0.45, 0], r: 0.095, c: pal.waterOut, a: 0.85 });
+        if (st.nums) I.push({ k: 3, p: [x, -2.08, 0], text: '↓ ' + diff, size: 11, c: pal.waterOut });
+      } else if (diff < 0) {
+        const mag = -diff;
+        const len = 0.36 + Math.min(0.86, (mag / 28) * 0.86);
+        const w = 0.08 + Math.min(0.11, (mag / 28) * 0.11);
+        arrow([x, -0.58 - len, 0], [x, -0.58, 0], w, pal.waterIn, 0.96);
+        I.push({ k: 0, p: [x - 0.26, -0.74 - len * 0.45, 0], r: 0.095, c: pal.waterIn, a: 0.85 });
+        if (st.nums) I.push({ k: 3, p: [x, -2.08, 0], text: '↑ ' + mag, size: 11, c: pal.waterIn });
+      } else {
+        I.push({ k: 1, p: [x - 0.22, -1.12, 0], q: [x + 0.22, -1.12, 0], w: 0.07, c: pal.muted, flat: true });
+        I.push({ k: 0, p: [x, -1.12, 0], r: 0.11, c: pal.muted });
+        if (st.nums) I.push({ k: 3, p: [x, -2.08, 0], text: '= 0', size: 11, c: pal.muted });
+      }
+    }
+
+    // 4. Tissue Space & Edema Water Pool (y = -2.35 to -3.65)
+    const netOut = outSum - inSum;
+    const poolBot = -3.62, poolTop = -2.36;
+    const fillFrac = netOut > 0
+      ? Math.min(1.0, 0.24 + (netOut / 82) * 0.76)
+      : (netOut === 0 ? 0.22 : Math.max(0.08, 0.22 + (netOut / 60) * 0.14));
+    const waterY = poolBot + fillFrac * (poolTop - poolBot);
+    const poolCol = netOut > 8 ? pal.waterOut : (netOut < -8 ? pal.waterIn : pal.muted);
+
+    // Tissue basin walls
+    I.push({ k: 1, p: [-4.8, poolTop, 0], q: [-4.8, poolBot, 0], w: 0.06, c: pal.tissue, flat: true });
+    I.push({ k: 1, p: [4.8, poolTop, 0], q: [4.8, poolBot, 0], w: 0.06, c: pal.tissue, flat: true });
+    I.push({ k: 1, p: [-4.8, poolBot, 0], q: [4.8, poolBot, 0], w: 0.06, c: pal.tissue, flat: true });
+
+    // Tissue cells swelling slightly when edema builds up
+    const cellR = 0.34 + (netOut > 0 ? Math.min(0.14, (netOut / 80) * 0.14) : 0);
+    for (let i = 0; i < 5; i++) {
+      I.push({ k: 5, p: [xs[i], -3.10, 0], r: cellR, c: netOut > 8 ? pal.waterOut : pal.tissue, focus: netOut >= 40, a: 0.55 });
+    }
+
+    // Water fill bands & remaining water droplets inside tissue space
+    const bandMid = (poolBot + waterY) / 2;
+    const bandH = Math.max(0.10, waterY - poolBot);
+    I.push({ k: 1, p: [-4.72, bandMid, 0], q: [4.72, bandMid, 0], w: bandH, c: poolCol, flat: true, a: netOut > 8 ? 0.24 : 0.14 });
+    I.push({ k: 1, p: [-4.75, waterY, 0], q: [4.75, waterY, 0], w: 0.065, c: poolCol, flat: true, a: 0.85 });
+
+    const dropCount = netOut > 0 ? Math.min(18, Math.max(4, Math.round(netOut / 4.5))) : (netOut === 0 ? 3 : 1);
+    for (let d = 0; d < dropCount; d++) {
+      const row = d % 2;
+      const dx = dropCount === 1 ? 0 : -4.1 + (d / (dropCount - 1)) * 8.2;
+      const dy = poolBot + 0.18 + (row === 0 ? 0.32 : 0.72) * Math.max(0.14, waterY - poolBot - 0.24);
+      I.push({ k: 0, p: [dx, dy, 0], r: 0.11, c: poolCol, a: netOut > 8 ? 0.92 : 0.65 });
+    }
+
+    // Labels (<= 5 chips on screen)
+    if (st.labels) {
+      const statusTxt = netOut > 8 ? '조직 부종 (남은 물 +' + netOut + ')' : (netOut < -8 ? '흡수 우세 (순흡수 ' + (-netOut) + ')' : '물 이동 균형');
+      const headerY = Math.max(3.45, yP(artP) + 0.55);
+      O.push({ p: [-4.2, headerY, 0], text: '동맥 혈압 ' + artP, c: pal.bp, dx: 0, dy: -8 });
+      O.push({ p: [0, headerY, 0], text: '삼투압 ' + osmP, c: pal.osm, dx: 0, dy: -8 });
+      O.push({ p: [4.2, headerY, 0], text: '정맥 혈압 ' + venP, c: pal.bp, dx: 0, dy: -8 });
+      O.push({ p: [0, (yBase + capTop) / 2, 0], text: '모세혈관 · 혈청 단백질', c: pal.wall, dx: 0, dy: 0 });
+      O.push({ p: [0, poolBot, 0], text: statusTxt, c: poolCol, dx: 0, dy: 18 });
+    }
+  }
+
+  // 주제 전용 상태(보기 옵션 키 등). 공통 상태에 합쳐져요.
+  extraState() {
+    return { labels: true, forces: true, proteins: true, lymph: true, nums: true, artP: 40, osmP: 30 };
+  }
+
+  // 주제 전용 마크업 값. renderVals() 결과에 합쳐져요.
+  extraVals(st) {
+    const pal = this.pal(), f = st.f;
+    const ph = f < 2.5 ? 1 : (f < 5.0 ? 2 : (f < 7.5 ? 3 : 4));
+
+    let zone = '나감 (40 > 30)', zoneColor = this.textTone(pal.waterOut), capEvents = [];
+    if (ph === 1) {
+      zone = '나감 (40 > 30)';
+      zoneColor = this.textTone(pal.waterOut);
+      capEvents = [
+        { c: pal.bp, text: '동맥 쪽 혈압(40)이 혈액 삼투압(30)보다 커요.' },
+        { c: pal.waterOut, text: '물이 내피세포 틈을 통해 조직 쪽으로 밀려 나가요.' }
+      ];
+    } else if (ph === 2) {
+      zone = '균형 (30 = 30)';
+      zoneColor = this.textTone(pal.osm);
+      capEvents = [
+        { c: pal.bp, text: '혈액이 흐르며 혈압이 30까지 낮아져요.' },
+        { c: pal.osm, text: '밖으로 미는 혈압과 안으로 당기는 삼투압이 같아져요.' }
+      ];
+    } else if (ph === 3) {
+      zone = '들어옴 (20 < 30)';
+      zoneColor = this.textTone(pal.waterIn);
+      capEvents = [
+        { c: pal.osm, text: '정맥 쪽 혈압(20)보다 혈액 삼투압(30)이 더 커요.' },
+        { c: pal.waterIn, text: '조직 쪽 물이 내피세포 틈을 지나 혈관 속으로 끌려 들어와요.' }
+      ];
+    } else {
+      zone = '단백질 · 림프 회수';
+      zoneColor = this.textTone(pal.lymph);
+      capEvents = [
+        { c: pal.osm, text: '대부분의 혈청 단백질은 틈을 빠져나가지 못해 삼투압을 지켜요(교과서 보충).' },
+        { c: pal.lymph, text: '정맥으로 다 돌아오지 못한 여분의 물은 림프관이 모아 혈액으로 돌려보내요.' }
+      ];
+    }
+
+    const artP = st.artP, osmP = st.osmP, venP = artP - 20;
+    const bps = [artP, artP - 5, artP - 10, artP - 15, venP];
+    let outSum = 0, inSum = 0;
+    for (let i = 0; i < 5; i++) {
+      const d = bps[i] - osmP;
+      if (d > 0) outSum += d;
+      else if (d < 0) inSum += -d;
+    }
+    const netOut = outSum - inSum;
+    let status = '균형', statusColor = this.textTone(pal.lymph);
+    if (netOut > 8) { status = '부종 (물 남음)'; statusColor = this.textTone(pal.waterOut); }
+    else if (netOut < -8) { status = '흡수 우세'; statusColor = this.textTone(pal.waterIn); }
+
+    const edemaEvents = [];
+    if (venP > osmP) {
+      edemaEvents.push({ c: pal.waterOut, text: '정맥 쪽 혈압(' + venP + ')까지 삼투압(' + osmP + ')보다 커서, 5개 지점 모두에서 물이 빠져나가요.' });
+    } else if (venP === osmP) {
+      edemaEvents.push({ c: pal.waterOut, text: '동맥 쪽(' + artP + ' > ' + osmP + ')부터 앞 네 지점은 물이 나가고, 정맥 쪽(' + venP + ' = ' + osmP + ')은 균형을 이뤄 물이 돌아오지 않아요.' });
+    } else if (artP < osmP) {
+      edemaEvents.push({ c: pal.waterIn, text: '동맥 쪽 혈압(' + artP + ')까지 삼투압(' + osmP + ')보다 작아서, 5개 지점 모두에서 물이 안으로 끌려 들어와요.' });
+    } else if (artP === osmP) {
+      edemaEvents.push({ c: pal.waterIn, text: '동맥 쪽(' + artP + ' = ' + osmP + ')은 균형이고, 뒤 네 지점과 정맥 쪽(' + venP + ' < ' + osmP + ')에서는 물이 안으로 끌려 들어와요.' });
+    } else {
+      edemaEvents.push({ c: pal.bp, text: '동맥 쪽(' + artP + ' > ' + osmP + ')은 물이 나가고, 정맥 쪽(' + venP + ' < ' + osmP + ')은 물이 들어와요.' });
+    }
+    if (netOut > 8) {
+      edemaEvents.push({ c: pal.waterOut, text: '나가는 물(' + outSum + ')이 들어오는 물(' + inSum + ')보다 많아 조직에 물이 남아 부어요.' });
+    } else if (netOut < -8) {
+      edemaEvents.push({ c: pal.waterIn, text: '들어오는 물(' + inSum + ')이 나가는 물(' + outSum + ')보다 많아 혈관 쪽으로 더 많이 흡수돼요.' });
+    } else {
+      edemaEvents.push({ c: pal.lymph, text: '나가는 물(' + outSum + ')과 들어오는 물(' + inSum + ')이 균형을 이뤄요.' });
+    }
+
+    const presetDefs = [
+      { num: 1, title: '평소', sub: '혈압 40 · 삼투압 30', artP: 40, osmP: 30, c: pal.lymph },
+      { num: 2, title: '기아성 부종 (오래 굶주림)', sub: '혈압 40 · 삼투압 14', artP: 40, osmP: 14, c: pal.waterOut },
+      { num: 3, title: '혈액 용질 농도 높음', sub: '혈압 40 · 삼투압 38', artP: 40, osmP: 38, c: pal.waterIn }
+    ];
+    const presets = presetDefs.map((p) => ({
+      num: p.num, title: p.title, sub: p.sub, c: p.c,
+      pressed: (st.artP === p.artP && st.osmP === p.osmP) ? 'true' : 'false',
+      pick: () => this.setState({ artP: p.artP, osmP: p.osmP })
+    }));
+
+    return {
+      legend: {
+        bp: pal.bp, osm: pal.osm, wall: pal.wall,
+        waterOut: pal.waterOut, waterIn: pal.waterIn, rbc: pal.rbc, lymph: pal.lymph
+      },
+      cap: { zone: zone, zoneColor: zoneColor },
+      capEvents: capEvents,
+      presets: presets,
+      edema: {
+        artP: artP, venP: venP, osmP: osmP,
+        bpRange: artP + ' → ' + venP,
+        flowPair: outSum + ' / ' + inSum,
+        status: status, statusColor: statusColor,
+        osmDown: () => this.setState({ osmP: Math.max(10, this.state.osmP - 2) }),
+        osmUp: () => this.setState({ osmP: Math.min(46, this.state.osmP + 2) }),
+        bpDown: () => this.setState({ artP: Math.max(26, this.state.artP - 2) }),
+        bpUp: () => this.setState({ artP: Math.min(56, this.state.artP + 2) })
+      },
+      edemaEvents: edemaEvents
+    };
+  }
+
+  // ================= 공통 셸: 아래는 주제와 무관해요. 고치지 않아요 =================
+  constructor(...args) {
+    super(...args);
+    let reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    let narrow = false;
+    try { narrow = window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) {}
+    let saved = null;
+    try { saved = window.localStorage.getItem('od-theme'); } catch (e) {}
+    const PANEL_W = { left: { min: 220, max: 480 }, right: { min: 280, max: 720 } };
+    let widths = {};
+    try { widths = JSON.parse(window.localStorage.getItem('interactive-panel-w')) || {}; } catch (e) {}
+    const okW = (side) => { const v = widths[side]; return typeof v === 'number' && v >= PANEL_W[side].min && v <= PANEL_W[side].max ? v : null; };
+    this.T = this.topic();
+    this.state = Object.assign({
+      mode: this.T.MODES[0].key, f: 0, playing: false, speed: 1, step: -1, spin: !reduce,
+      theme: (saved === 'light' || saved === 'dark') ? saved : (this.systemDark() ? 'dark' : 'light'),
+      // leftOpen/rightOpen: docked panels on wide screens; drawer: the one open drawer on narrow screens
+      leftOpen: true, rightOpen: true, drawer: null, narrow: narrow,
+      // leftW/rightW: user-set docked widths in px (null = default); resizing: a handle is being dragged
+      leftW: okW('left'), rightW: okW('right'), resizing: false
+    }, this.extraState());
+    this.reduceMotion = reduce;
+    this.K = {
+      PANEL_W: PANEL_W, PANEL_W_KEY: 'interactive-panel-w', PANEL_DEFAULT: { left: 320, right: 400 },
+      THEMES: {
+        light: { bg: '#ffffff', surface: '#f7f8fa', ink: '#111111', ink2: '#6b7280', line: '#d9dee7', accent: '#1677ff', accentInk: '#1b64da', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#b54708', prof: '#6941c6', supp: '#067647', danger: '#d92d20', scroll: '#c9d0db', scrollHover: '#9aa3b2' },
+        dark: { bg: '#17171c', surface: '#212128', ink: '#f2f4f6', ink2: '#a3abb8', line: '#34353d', accent: '#3182f6', accentInk: '#6ea4ff', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#f5a15c', prof: '#b69cff', supp: '#5fd39a', danger: '#ff6b61', scroll: '#3f414b', scrollHover: '#5b5e6a' }
+      }
+    };
+    this.cam = Object.assign({}, this.modeDef().cam);
+    this.sim = { f: 0, cx: 0 };
+    this.pointer = { x: -1, y: -1, inside: false, drag: false, lx: 0, ly: 0 };
+    this.colorCache = {};
+    this._tick = (t) => this.tick(t);
+    this._canvasRef = (el) => this.attachCanvas(el);
+    this.handles = {};
+    this._handleRefL = (el) => this.attachHandle('left', el);
+    this._handleRefR = (el) => this.attachHandle('right', el);
+  }
+
+  componentWillUnmount() {
+    this.attachCanvas(null);
+    this.attachHandle('left', null);
+    this.attachHandle('right', null);
+  }
+
+  modeDef(key) {
+    const k = key || this.state.mode;
+    return this.T.MODES.find((m) => m.key === k) || this.T.MODES[0];
+  }
+  systemDark() {
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; }
+  }
+  isNarrow() {
+    try { return window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) { return false; }
+  }
+  syncBreakpoint() { this.setState({ narrow: this.isNarrow(), drawer: null }); }
+  // In drawer mode only one panel is open at a time.
+  togglePanel(side) {
+    const st = this.state;
+    if (st.narrow) this.setState({ drawer: st.drawer === side ? null : side });
+    else if (side === 'left') this.setState({ leftOpen: !st.leftOpen });
+    else this.setState({ rightOpen: !st.rightOpen });
+  }
+  // Docked panel width: the canvas column always keeps at least 400px.
+  panelMax(side) {
+    const lim = this.K.PANEL_W[side], other = side === 'left' ? 'right' : 'left', st = this.state;
+    const h = this.handles[other];
+    const otherOpen = other === 'left' ? st.leftOpen : st.rightOpen;
+    const otherW = !otherOpen ? 0 : h ? h.el.parentElement.getBoundingClientRect().width
+      : (st[other + 'W'] || this.K.PANEL_DEFAULT[other]);
+    return Math.max(lim.min, Math.min(lim.max, (window.innerWidth || 1440) - otherW - 400));
+  }
+  setPanelWidth(side, px, save) {
+    const v = Math.round(Math.min(Math.max(px, this.K.PANEL_W[side].min), this.panelMax(side)));
+    this.setState({ [side + 'W']: v });
+    if (save) this.savePanelWidths(side, v);
+  }
+  resetPanelWidth(side) {
+    this.setState({ [side + 'W']: null });
+    this.savePanelWidths(side, null);
+  }
+  savePanelWidths(side, v) {
+    try {
+      const key = this.K.PANEL_W_KEY;
+      let w = {};
+      try { w = JSON.parse(window.localStorage.getItem(key)) || {}; } catch (e) {}
+      if (v == null) delete w[side]; else w[side] = v;
+      window.localStorage.setItem(key, JSON.stringify(w));
+    } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ }
+  }
+  // Re-fit user widths when the window shrinks (not saved).
+  refitPanels() {
+    ['left', 'right'].forEach((side) => {
+      const w = this.state[side + 'W'];
+      if (w != null && w > this.panelMax(side)) this.setPanelWidth(side, w, false);
+    });
+  }
+  attachHandle(side, el) {
+    const old = this.handles[side];
+    if (old && old.el === el) return;
+    if (old) {
+      Object.keys(old.on).forEach((ev) => old.el.removeEventListener(ev, old.on[ev]));
+      delete this.handles[side];
+      if (!Object.keys(this.handles).length) window.removeEventListener('resize', this._refit);
+    }
+    if (!el) return;
+    const dir = side === 'left' ? 1 : -1;
+    const width = () => el.parentElement.getBoundingClientRect().width;
+    let drag = null;
+    const on = {
+      pointerdown: (e) => {
+        if (this.state.narrow || e.button !== 0) return;
+        e.preventDefault();
+        drag = { x: e.clientX, w: width() };
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        this.setState({ resizing: true });
+      },
+      pointermove: (e) => { if (drag) this.setPanelWidth(side, drag.w + dir * (e.clientX - drag.x), false); },
+      pointerup: () => {
+        if (!drag) return;
+        drag = null;
+        this.setState({ resizing: false });
+        this.setPanelWidth(side, width(), true);
+      },
+      dblclick: () => this.resetPanelWidth(side),
+      keydown: (e) => {
+        const step = e.shiftKey ? 64 : 16;
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          e.preventDefault(); e.stopPropagation();
+          this.setPanelWidth(side, width() + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+        } else if (e.key === 'Home') { e.preventDefault(); e.stopPropagation(); this.resetPanelWidth(side); }
+      }
+    };
+    on.pointercancel = on.pointerup;
+    Object.keys(on).forEach((ev) => el.addEventListener(ev, on[ev]));
+    if (!Object.keys(this.handles).length) {
+      this._refit = this._refit || (() => this.refitPanels());
+      window.addEventListener('resize', this._refit);
+    }
+    this.handles[side] = { el: el, on: on };
+  }
+  textTone(hex) { return this.state.theme === 'light' ? this.mix(hex, '#000000', 0.4) : hex; }
+  pal() { return this.T.PAL[this.state.theme] || this.T.PAL.dark; }
+  setTheme(t) {
+    this.setState({ theme: t });
+    try {
+      if ((t === 'dark') === this.systemDark()) window.localStorage.removeItem('od-theme');
+      else window.localStorage.setItem('od-theme', t);
+    } catch (e) {}
+  }
+
+  attachCanvas(el) {
+    if (this.canvas === el) return;
+    if (this.canvas) {
+      const c = this.canvas;
+      c.removeEventListener('pointerdown', this._pd);
+      c.removeEventListener('pointermove', this._pm);
+      c.removeEventListener('pointerup', this._pu);
+      c.removeEventListener('pointercancel', this._pu);
+      c.removeEventListener('pointerleave', this._pl);
+      cancelAnimationFrame(this.raf);
+      try { this._mq.removeEventListener('change', this._mqH); } catch (err) {}
+    }
+    this.canvas = el || null;
+    if (!el) return;
+    this.ctx = el.getContext('2d');
+    const p = this.pointer;
+    this._pd = (e) => {
+      if (!this.modeDef().rotatable) return;
+      p.drag = true; p.lx = e.clientX; p.ly = e.clientY;
+      try { el.setPointerCapture(e.pointerId); } catch (err) {}
+      el.style.cursor = 'grabbing';
+    };
+    this._pm = (e) => {
+      const r = el.getBoundingClientRect();
+      p.x = e.clientX - r.left; p.y = e.clientY - r.top; p.inside = true;
+      if (p.drag && this.modeDef().rotatable) {
+        this.cam.yaw += (e.clientX - p.lx) * 0.008;
+        this.cam.pitch = Math.max(-1.45, Math.min(1.45, this.cam.pitch + (e.clientY - p.ly) * 0.008));
+        p.lx = e.clientX; p.ly = e.clientY;
+      }
+    };
+    this._pu = () => { p.drag = false; el.style.cursor = ''; };
+    this._pl = () => { p.inside = false; };
+    el.addEventListener('pointerdown', this._pd);
+    el.addEventListener('pointermove', this._pm);
+    el.addEventListener('pointerup', this._pu);
+    el.addEventListener('pointercancel', this._pu);
+    el.addEventListener('pointerleave', this._pl);
+    try {
+      this._mq = window.matchMedia('(max-width: 1023.98px)');
+      this._mqH = () => this.syncBreakpoint();
+      this._mq.addEventListener('change', this._mqH);
+    } catch (err) {}
+    this.last = 0;
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  tick(t) {
+    if (!this.canvas) return;
+    const dt = this.last ? Math.min(0.05, (t - this.last) / 1000) : 0;
+    this.last = t;
+    const st = this.state, m = this.modeDef(), pb = m.playback;
+    if (m.autoSpin && st.spin && !this.pointer.drag) this.cam.yaw += dt * 0.3;
+    if (pb && st.playing) {
+      this.sim.f = Math.min(pb.fmax, this.sim.f + dt * pb.rate * st.speed);
+      if (this.sim.f >= pb.fmax) this.setState({ playing: false, f: this.sim.f });
+      else if (t - (this.lastPush || 0) > 120) { this.lastPush = t; this.setState({ f: this.sim.f }); }
+    }
+    // a broken scene keeps the page alive but is reported once for the browser check
+    try { this.draw(dt, t); } catch (err) { if (!this.drawErr) { this.drawErr = true; console.error(err); } }
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  // ---------- math helpers (장면에서 써도 돼요) ----------
+  lerp(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+  sm(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+  rgb(hex) { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  mix(hex, to, amt) {
+    const a = this.rgb(hex), b = this.rgb(to);
+    return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * amt) + ',' + Math.round(a[1] + (b[1] - a[1]) * amt) + ',' + Math.round(a[2] + (b[2] - a[2]) * amt) + ')';
+  }
+  rgba(hex, al) { const a = this.rgb(hex); return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + al + ')'; }
+  shades(hex) {
+    let s = this.colorCache[hex];
+    if (!s) { s = { hi: this.mix(hex, '#FFFFFF', 0.55), mid: hex, lo: this.mix(hex, '#000000', 0.55) }; this.colorCache[hex] = s; }
+    return s;
+  }
+  proj(p, V) {
+    const x = p[0] - V.cx, y = p[1], z = p[2];
+    const x1 = x * V.cy + z * V.sy, z1 = -x * V.sy + z * V.cy;
+    const y2 = y * V.cp - z1 * V.sp, z2 = y * V.sp + z1 * V.cp;
+    const s = V.F / Math.max(2, V.D - z2);
+    return [V.ox + x1 * s, V.oy - y2 * s, z2, s];
+  }
+
+  // ---------- drawing ----------
+  draw(dt, now) {
+    const el = this.canvas, ctx = this.ctx, st = this.state, m = this.modeDef();
+    const dpr = window.devicePixelRatio || 1;
+    const W = el.clientWidth, H = el.clientHeight;
+    if (!W || !H) return;
+    if (el.width !== Math.round(W * dpr) || el.height !== Math.round(H * dpr)) { el.width = Math.round(W * dpr); el.height = Math.round(H * dpr); }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const pal = this.pal();
+    ctx.fillStyle = pal.bg; ctx.fillRect(0, 0, W, H);
+
+    const I = [], O = [];
+    this.buildScene(st.mode, I, O);
+    const scale = Math.min(W / m.fit[0], H / m.fit[1]), D = m.D, z = this.cam.zoom;
+    const V = {
+      cx: this.sim.cx, cy: Math.cos(this.cam.yaw), sy: Math.sin(this.cam.yaw), cp: Math.cos(this.cam.pitch), sp: Math.sin(this.cam.pitch),
+      F: scale * z * D, D: D, ox: W / 2, oy: H / 2 - (m.playback ? 20 : 0)
+    };
+    let zmin = Infinity, zmax = -Infinity;
+    for (const it of I) {
+      it.A = this.proj(it.p, V);
+      if (it.q) { it.B = this.proj(it.q, V); it.z = (it.A[2] + it.B[2]) / 2; } else it.z = it.A[2];
+      if (it.z < zmin) zmin = it.z;
+      if (it.z > zmax) zmax = it.z;
+    }
+    I.sort((a, b) => a.z - b.z);
+    // depth fog; a flat scene (all items at one depth) is drawn without it
+    const span = zmax - zmin;
+    for (const it of I) {
+      const fog = span < 0.01 ? 1 : 0.42 + 0.58 * ((it.z - zmin) / span);
+      ctx.globalAlpha = Math.max(0, (it.a == null ? 1 : it.a) * fog);
+      if (ctx.globalAlpha < 0.01) continue;
+      const x = it.A[0], y = it.A[1], s = it.A[3];
+      if (it.k === 0) {
+        const R = it.r * s;
+        if (R < 0.4) continue;
+        if (it.flat) { ctx.fillStyle = it.c; ctx.beginPath(); ctx.arc(x, y, Math.max(1.3, R), 0, 6.2832); ctx.fill(); }
+        else {
+          const sh = this.shades(it.c);
+          const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+          g.addColorStop(0, sh.hi); g.addColorStop(0.5, sh.mid); g.addColorStop(1, sh.lo);
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        }
+      } else if (it.k === 1) {
+        const lw = Math.max(1, it.w * (s + it.B[3]) / 2);
+        ctx.lineCap = it.flat ? 'butt' : 'round';
+        if (it.rod) {
+          ctx.strokeStyle = this.shades(it.c).lo; ctx.lineWidth = lw + 2;
+          ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+        }
+        ctx.strokeStyle = it.c; ctx.lineWidth = lw;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+      } else if (it.k === 3) {
+        const fs = Math.max(8, Math.min(14, it.size * s / (scale * z) * 1.05));
+        ctx.font = '700 ' + fs + 'px "Pretendard", system-ui, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = it.c; ctx.fillText(it.text, x, y + 0.5);
+      } else if (it.k === 4) {
+        const ang = Math.atan2(it.B[1] - y, it.B[0] - x), mx = (x + it.B[0]) / 2, my = (y + it.B[1]) / 2, r = 6;
+        ctx.fillStyle = it.c; ctx.beginPath();
+        ctx.moveTo(mx + Math.cos(ang) * r, my + Math.sin(ang) * r);
+        ctx.lineTo(mx + Math.cos(ang + 2.5) * r, my + Math.sin(ang + 2.5) * r);
+        ctx.lineTo(mx + Math.cos(ang - 2.5) * r, my + Math.sin(ang - 2.5) * r);
+        ctx.closePath(); ctx.fill();
+      } else if (it.k === 5) {
+        // lit translucent sphere, highlight up-left like the solid spheres
+        const R = it.r * s, ba = pal.blobAlpha == null ? 0.3 : pal.blobAlpha;
+        const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+        g.addColorStop(0, 'rgba(255,255,255,0.55)'); g.addColorStop(0.3, this.rgba(it.c, Math.min(1, ba + 0.15))); g.addColorStop(1, this.rgba(it.c, 0.18));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        ctx.strokeStyle = it.c; ctx.lineWidth = it.focus ? 3 : 1.5; ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+    for (const o of O) this.drawOverlay(o, V, now);
+  }
+
+  drawOverlay(o, V, now) {
+    const ctx = this.ctx, A = this.proj(o.p, V), pal = this.pal();
+    if (o.t === 'ring') {
+      const r = Math.max(6, 0.32 * A[3]) * (1 + (this.reduceMotion ? 0 : 0.15 * Math.sin((now || 0) / 160)));
+      ctx.globalAlpha = 1; ctx.strokeStyle = pal.ring; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(A[0], A[1], r, 0, 6.2832); ctx.stroke();
+      ctx.font = '600 11px "Pretendard", system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = pal.ring; ctx.fillText(o.text, A[0], A[1] + r + 10);
+      return;
+    }
+    const size = o.size || 12, x = A[0] + (o.dx || 0), y = A[1] + (o.dy || 0);
+    ctx.font = '600 ' + size + 'px "Pretendard", system-ui, sans-serif';
+    const tw = ctx.measureText(o.text).width, w = tw + 14, h = size + 10;
+    ctx.globalAlpha = o.a == null ? 1 : o.a;
+    if (o.lead) {
+      ctx.strokeStyle = this.rgba(o.c, 0.6); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(x, y); ctx.stroke();
+    }
+    ctx.fillStyle = pal.labelBg;
+    ctx.strokeStyle = this.rgba(o.c, 0.55); ctx.lineWidth = 1;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x - w / 2, y - h / 2, w, h, 6); else ctx.rect(x - w / 2, y - h / 2, w, h);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = pal.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(o.text, x, y + 0.5);
+    ctx.globalAlpha = 1;
+  }
+
+  setMode(mode) {
+    this.cam = Object.assign({}, this.modeDef(mode).cam);
+    this.sim.f = 0;
+    this.pointer.drag = false;
+    this.setState({ mode: mode, f: 0, playing: false, step: -1 });
+  }
+
+  pickStep(i) {
+    const s = (this.T.STEPS || [])[i];
+    if (!s) return;
+    if (s.mode !== this.state.mode) this.setMode(s.mode);
+    if (s.f != null) this.sim.f = s.f;
+    this.setState({ f: this.sim.f, playing: false, step: i });
+    this.revealStepDetail();
+  }
+
+  // Scroll the left panel so the step text under the list shows, keeping the pressed button in view.
+  revealStepDetail() {
+    if (typeof document === 'undefined') return;
+    requestAnimationFrame(() => {
+      const box = document.querySelector('.panel-left .panel-inner'), d = box && box.querySelector('.detail');
+      if (!d) return;
+      const pad = 16, b = box.getBoundingClientRect();
+      let dy = d.getBoundingClientRect().bottom + pad - b.bottom;
+      const btn = d.parentElement.querySelector('.steps [aria-pressed="true"]');
+      if (btn) dy = Math.min(dy, btn.getBoundingClientRect().top - pad - b.top);
+      if (dy <= 0) return;
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      box.scrollTo({ top: box.scrollTop + dy, behavior: reduce ? 'auto' : 'smooth' });
+    });
+  }
+
+  renderVals() {
+    const st = this.state, T = this.T, m = this.modeDef(), pb = m.playback;
+    const tg = T.TOGGLES ? (Array.isArray(T.TOGGLES) ? T.TOGGLES : (T.TOGGLES[st.mode] || [])) : [];
+    const togDefs = tg.concat(m.autoSpin ? [['spin', '자동 회전']] : []);
+    const toggles = togDefs.map((d) => ({
+      label: d[1], pressed: st[d[0]] ? 'true' : 'false',
+      toggle: () => { const o = {}; o[d[0]] = !st[d[0]]; this.setState(o); }
+    }));
+    const STEPS = T.STEPS || [];
+    const steps = STEPS.map((s, i) => ({ s: s, i: i })).filter((x) => x.s.mode === st.mode).map((x, k) => ({
+      num: k + 1, title: x.s.title, who: x.s.who, c: x.s.c, pressed: st.step === x.i ? 'true' : 'false',
+      pick: () => this.pickStep(x.i)
+    }));
+    const speeds = [0.5, 1, 2].map((v) => ({
+      label: v + '×', pressed: st.speed === v ? 'true' : 'false',
+      pick: () => this.setState({ speed: v })
+    }));
+    const is = {};
+    T.MODES.forEach((d) => { is[d.key] = d.key === st.mode; });
+    const f = st.f;
+    const isDark = st.theme === 'dark';
+    const leftOn = st.narrow ? st.drawer === 'left' : st.leftOpen, rightOn = st.narrow ? st.drawer === 'right' : st.rightOpen;
+    return Object.assign({
+      th: this.K.THEMES[st.theme], isDark: isDark, isLight: !isDark,
+      themeLabel: isDark ? '라이트 모드로 전환' : '다크 모드로 전환',
+      toggleTheme: () => this.setTheme(isDark ? 'light' : 'dark'),
+      canvasRef: this._canvasRef, canvasCls: m.rotatable ? '' : 'is-fixed',
+      hasModes: T.MODES.length > 1, is: is,
+      modes: T.MODES.map((d) => ({ label: d.label, pressed: d.key === st.mode ? 'true' : 'false', pick: () => { if (d.key !== this.state.mode) this.setMode(d.key); } })),
+      leftCls: leftOn ? 'is-open' : '', rightCls: rightOn ? 'is-open' : '',
+      leftExpanded: leftOn ? 'true' : 'false', rightExpanded: rightOn ? 'true' : 'false',
+      scrimCls: (st.narrow && st.drawer) ? 'is-on' : '',
+      toggleLeft: () => this.togglePanel('left'),
+      toggleRight: () => this.togglePanel('right'),
+      closePanels: () => this.setState({ drawer: null }),
+      layoutStyle: ((st.leftW ? '--pl-user: ' + st.leftW + 'px; ' : '') + (st.rightW ? '--pr-user: ' + st.rightW + 'px;' : '')).trim(),
+      layoutCls: st.resizing ? 'is-resizing' : '',
+      leftWNow: st.leftW ? String(st.leftW) : '', rightWNow: st.rightW ? String(st.rightW) : '',
+      leftHandleRef: this._handleRefL, rightHandleRef: this._handleRefR,
+      onKey: (e) => { if (e.key === 'Escape' && this.state.narrow && this.state.drawer) this.setState({ drawer: null }); },
+      hasToggles: toggles.length > 0, toggles: toggles,
+      hasSteps: steps.length > 0, steps: steps,
+      hasStep: st.step >= 0 && st.step < STEPS.length, stepDetail: st.step >= 0 && STEPS[st.step] ? STEPS[st.step].text : '',
+      mistakes: (T.MISTAKES && T.MISTAKES[st.mode]) || [],
+      canvasLabel: m.canvasLabel(f),
+      zoomIn: () => { this.cam.zoom = Math.min(3, this.cam.zoom * 1.2); },
+      zoomOut: () => { this.cam.zoom = Math.max(0.5, this.cam.zoom / 1.2); },
+      resetView: () => { this.cam = Object.assign({}, m.cam); },
+      hasPlayback: !!pb, isPlaying: st.playing, notPlaying: !st.playing, playLabel: st.playing ? '일시정지' : '재생',
+      togglePlay: () => {
+        if (!pb) return;
+        if (!st.playing && this.sim.f >= pb.fmax) this.sim.f = 0;
+        this.setState({ playing: !st.playing, step: -1, f: this.sim.f });
+      },
+      fInt: Math.round(f * 10), fLabel: pb ? pb.label(f) : '', fMax10: pb ? Math.round(pb.fmax * 10) : 0,
+      onScrub: (e) => { const v = Number(e.target.value) / 10; this.sim.f = v; this.setState({ f: v, playing: false, step: -1 }); },
+      speeds: speeds
+    }, this.extraVals(st));
+  }
+}
+</script>
+</body>
+</html>

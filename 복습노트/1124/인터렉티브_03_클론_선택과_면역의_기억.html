@@ -1,0 +1,1714 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>클론 선택과 면역 기억</title>
+<!-- 생성 파일: .assets/자료_인터렉티브_03_클론_선택과_면역의_기억/Main.dc.html을 고친 뒤 bio-interactive/scripts/build.cjs로 다시 만드세요. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+<style>
+body{margin:0}
+.app{--radius:8px;--tap:48px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--dur:220ms;--dur-exit:150ms;--ease-out:cubic-bezier(.2,.8,.2,1);--scrim:rgba(0,0,0,.4);
+  position:fixed;inset:0;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;box-sizing:border-box;
+  background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;font-size:16px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.app *,.app *::before,.app *::after{box-sizing:border-box}
+.app button{font-family:inherit;color:inherit}
+.app :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.num{font-variant-numeric:tabular-nums}
+
+.topbar{display:flex;align-items:center;gap:var(--s2);min-height:56px;padding:var(--s2) var(--s3);background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:17px;font-weight:700;white-space:nowrap}
+.text-btn{flex:none;min-height:44px;min-width:44px;padding:0 var(--s3);border:0;border-radius:var(--radius);background:transparent;color:var(--ink);font:600 14px/1 'Pretendard',system-ui,sans-serif;cursor:pointer}
+.panel-toggle{display:inline-flex;align-items:center;gap:var(--s1);padding:0 var(--s2)}
+.panel-toggle svg,.theme-toggle svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.panel-toggle .strip{fill:transparent;stroke:none;transition:fill 150ms ease-out}
+.panel-toggle[aria-expanded="true"]{color:var(--accent-ink)}
+.panel-toggle[aria-expanded="true"] .strip{fill:currentColor}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;padding:0}
+.seg{flex:none;display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.seg button{min-height:40px;padding:0 var(--s3);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+.layout{display:grid;grid-template-columns:auto minmax(320px,1fr) auto;min-height:0}
+.panel{position:relative;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--bg);color:var(--ink)}
+.panel-left{grid-column:1;width:clamp(260px,20vw,320px);border-right:1px solid var(--line)}
+.panel-right{grid-column:3;width:clamp(320px,24vw,400px);border-left:1px solid var(--line)}
+.panel-inner{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--s4) var(--s4) var(--s6)}
+.panel-inner::-webkit-scrollbar{width:8px}
+.panel-inner::-webkit-scrollbar-track{background:transparent}
+.panel-inner::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:8px;border:2px solid var(--bg)}
+.panel-inner::-webkit-scrollbar-thumb:hover{background:var(--scroll-hover)}
+@supports (scrollbar-color:auto){.panel-inner{scrollbar-width:thin;scrollbar-color:var(--scroll) transparent}}
+.panel-head{display:flex;align-items:center;gap:var(--s2);min-height:44px;margin-bottom:var(--s2)}
+.panel-head h2{flex:1 1 0;min-width:0;margin:0;font-size:22px;line-height:1.4}
+.stage{grid-column:2;position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--bg)}
+.scrim{display:none}
+.panel-resize{display:none}
+
+.sec{margin-top:var(--s5);padding-top:var(--s5);border-top:1px solid var(--line)}
+.panel-head + .sec,.panel-head + div > .sec:first-child{margin-top:0;padding-top:0;border-top:0}
+.sec-title{display:block;margin:0 0 var(--s3);font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-0.01em}
+.sub{margin:var(--s3) 0 0;font-size:14px;line-height:1.6;color:var(--ink-2)}
+
+.opt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.btn{display:flex;align-items:center;gap:var(--s2);width:100%;min-height:var(--tap);padding:0 var(--s3);border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font-size:14px;font-weight:600;line-height:1.3;text-align:left;cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.btn .box{flex:none;width:12px;height:12px;border-radius:3px;border:1.5px solid currentColor}
+.btn[aria-pressed="true"] .box{background:currentColor}
+.steps{display:flex;flex-direction:column;gap:var(--s2)}
+.steps .btn{padding:var(--s2) var(--s3);gap:var(--s3)}
+.step-num{flex:none;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid;font-size:12px;font-weight:700;color:var(--ink)}
+.step-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.step-txt b{font-size:15px;font-weight:700}
+.step-txt span{font-size:13px;font-weight:500;color:var(--ink-2)}
+.detail{margin-top:var(--s3);padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+
+
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.tiles.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tile{padding:var(--s3);border-radius:var(--radius);background:var(--surface)}
+.tile b{display:block;font-size:20px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}
+.tile span{display:block;font-size:13px;line-height:1.4;color:var(--ink-2)}
+.events{display:flex;flex-direction:column;gap:var(--s2)}
+.event{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.6}
+.dot{flex:none;width:10px;height:10px;margin-top:7px;border-radius:50%}
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2) var(--s3);font-size:13px;color:var(--ink-2)}
+.legend div{display:flex;align-items:center;gap:var(--s2)}
+.sw{flex:none;width:16px;height:6px;border-radius:3px}
+.sw.ball{width:12px;height:12px;border-radius:50%}
+.sec.warn{border-top:0;padding:var(--s4);border-radius:var(--radius);background:var(--surface);font-size:15px;line-height:1.7}
+.warn .sec-title{color:var(--warn);font-size:17px}
+.mistake{margin-top:var(--s3)}
+.mistake b{display:block;font-weight:700}
+.mistake span{color:var(--ink-2)}
+
+.canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.canvas.is-fixed{cursor:default}
+.view-btns{position:absolute;top:var(--s3);right:var(--s3);display:flex;gap:6px}
+.icon-btn{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);cursor:pointer}
+.icon-btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.icon-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.float{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius)}
+.hover-card{position:absolute;left:var(--s3);bottom:var(--s3);display:flex;flex-direction:column;gap:2px;padding:var(--s3) var(--s4);pointer-events:none}
+.hover-card .k{font-size:13px;color:var(--ink-2)}
+.hover-card .v{font-size:18px;font-weight:700}
+.playbar{position:absolute;left:var(--s3);right:var(--s3);bottom:var(--s3);display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3)}
+.play{flex:none;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--radius);background:var(--btn-bg);color:var(--on-btn) !important;cursor:pointer}
+.play svg{width:18px;height:18px;fill:currentColor}
+.scrub{flex:1 1 200px;min-width:160px;display:flex;flex-direction:column;gap:2px}
+.scrub span{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.scrub input{width:100%;height:24px;margin:0;accent-color:var(--accent)}
+.speeds{display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:var(--radius)}
+.speeds button{min-width:48px;height:40px;padding:0 var(--s2);border:0;border-radius:6px;background:transparent;color:var(--ink-2);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
+.speeds button[aria-pressed="true"]{background:var(--btn-bg);color:var(--on-btn)}
+
+@media (hover:hover){.btn:hover,.icon-btn:hover{background:var(--surface)}.text-btn:hover{background:var(--surface)}}
+@media (min-width:1024px){
+  .panel-head{display:none}
+  .layout{--pl:var(--pl-user,clamp(260px,20vw,320px));--pr:var(--pr-user,clamp(320px,24vw,400px))}
+  .panel{width:0;border-width:0;visibility:hidden;transition:width var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left.is-open{width:var(--pl)}
+  .panel-right.is-open{width:var(--pr)}
+  .panel.is-open{visibility:visible;border-width:1px;transition:width var(--dur) var(--ease-out)}
+  .panel-left .panel-inner{width:var(--pl)}
+  .panel-right .panel-inner{width:var(--pr);align-self:flex-end}
+  .layout.is-resizing .panel{transition:none}
+  .layout.is-resizing{cursor:col-resize;user-select:none}
+  .panel-resize{display:block;position:absolute;top:0;bottom:0;z-index:2;width:12px;padding:0;border:0;background:transparent;cursor:col-resize;touch-action:none}
+  .panel-left .panel-resize{right:0}
+  .panel-right .panel-resize{left:0}
+  .panel-resize::after{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--accent);opacity:0;transition:opacity 150ms ease-out}
+  .panel-left .panel-resize::after{right:0}
+  .panel-right .panel-resize::after{left:0}
+  .panel-resize:focus-visible{outline:none}
+  .panel-resize:focus-visible::after,.is-resizing .panel-resize:active::after{opacity:1}
+  @media (hover:hover){.panel-resize:hover::after{opacity:1}}
+}
+@media (max-width: 1023.98px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .stage{grid-column:1}
+  .panel{position:fixed;top:0;bottom:0;z-index:40;visibility:hidden;transition:transform var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .panel-left{left:0;width:min(304px,88vw);transform:translateX(-100%)}
+  .panel-right{right:0;width:min(360px,88vw);transform:translateX(100%)}
+  .panel.is-open{visibility:visible;transform:none;transition:transform var(--dur) var(--ease-out)}
+  .panel-inner{padding-top:calc(var(--s3) + env(safe-area-inset-top));padding-bottom:calc(var(--s6) + env(safe-area-inset-bottom))}
+  .scrim{display:block;position:fixed;inset:0;z-index:35;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity var(--dur-exit) ease-in,visibility 0s linear var(--dur-exit)}
+  .scrim.is-on{opacity:1;visibility:visible;transition:opacity var(--dur) var(--ease-out)}
+}
+@media (max-width:640px){.brand{display:none}.topbar{justify-content:space-between}}
+@media (max-width:480px){.panel-toggle span{display:none}.seg button{padding:0 var(--s2)}}
+@media (prefers-reduced-motion:reduce){.panel,.panel.is-open,.scrim,.scrim.is-on,.panel-toggle .strip,.panel-resize::after{transition:none}}
+</style>
+</head>
+<body>
+<div id="dc-root"></div>
+<template id="dc-template">
+<div class="app" onKeyDown="{{onKey}}" style="--bg: {{th.bg}}; --surface: {{th.surface}}; --ink: {{th.ink}}; --ink-2: {{th.ink2}}; --line: {{th.line}}; --accent: {{th.accent}}; --accent-ink: {{th.accentInk}}; --btn-bg: {{th.btnBg}}; --on-btn: {{th.onBtn}}; --warn: {{th.warn}}; --prof: {{th.prof}}; --supp: {{th.supp}}; --danger: {{th.danger}}; --scroll: {{th.scroll}}; --scroll-hover: {{th.scrollHover}}">
+<header class="topbar">
+<button class="text-btn panel-toggle" type="button" aria-label="조작 패널" aria-expanded="{{leftExpanded}}" onClick="{{toggleLeft}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M9 4v16"></path></svg><span>조작</span></button>
+<strong class="brand">클론 선택과 면역 기억</strong>
+<sc-if value="{{hasModes}}" hint-placeholder-val="{{ true }}">
+<div class="seg" role="group" aria-label="보기 선택">
+<sc-for list="{{modes}}" as="md" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{md.pressed}}" onClick="{{md.pick}}">{{md.label}}</button>
+</sc-for>
+</div>
+</sc-if>
+<button class="text-btn theme-toggle" type="button" aria-label="{{themeLabel}}" title="{{themeLabel}}" onClick="{{toggleTheme}}">
+<sc-if value="{{isDark}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+<sc-if value="{{isLight}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></sc-if>
+</button>
+<button class="text-btn panel-toggle" type="button" aria-label="설명 패널" aria-expanded="{{rightExpanded}}" onClick="{{toggleRight}}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"></rect><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M15 4v16"></path></svg><span>설명</span></button>
+</header>
+
+<div class="layout {{layoutCls}}" style="{{layoutStyle}}">
+<aside class="panel panel-left {{leftCls}}" aria-label="조작">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="220" aria-valuemax="480" aria-valuenow="{{leftWNow}}" ref="{{leftHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>조작</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<sc-if value="{{hasToggles}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">보기 옵션</h3>
+<div class="opt">
+<sc-for list="{{toggles}}" as="t" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{t.pressed}}" onClick="{{t.toggle}}"><span class="box" aria-hidden="true"></span>{{t.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<!-- SLOT:left -->
+<sc-if value="{{is.clonal}}" hint-placeholder-val="{{ true }}">
+<div>
+<div class="sec">
+<h3 class="sec-title">들어온 항원</h3>
+<div class="opt">
+<button class="btn" type="button" aria-pressed="{{agIsA}}" onClick="{{pickAgA}}"><span class="box" aria-hidden="true"></span>세모 항원 A</button>
+<button class="btn" type="button" aria-pressed="{{agIsB}}" onClick="{{pickAgB}}"><span class="box" aria-hidden="true"></span>네모 항원 B</button>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">도움 T세포 상태</h3>
+<div class="opt">
+<button class="btn" type="button" aria-pressed="{{htOn}}" onClick="{{pickHtOn}}"><span class="box" aria-hidden="true"></span>정상</button>
+<button class="btn" type="button" aria-pressed="{{htOff}}" onClick="{{pickHtOff}}"><span class="box" aria-hidden="true"></span>부족</button>
+</div>
+<p class="sub">{{clonalHint}}</p>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{is.memory}}" hint-placeholder-val="{{ false }}">
+<div class="sec">
+<h3 class="sec-title">노출 조건</h3>
+<div class="steps">
+<sc-for list="{{scenarios}}" as="sc" hint-placeholder-count="3">
+<button class="btn" type="button" aria-pressed="{{sc.pressed}}" onClick="{{sc.pick}}"><span class="box" aria-hidden="true"></span><span>{{sc.label}}</span></button>
+</sc-for>
+</div>
+<p class="sub">{{scenarioHint}}</p>
+</div>
+</sc-if>
+<!-- /SLOT:left -->
+
+<sc-if value="{{hasSteps}}" hint-placeholder-val="{{ true }}">
+<div class="sec">
+<h3 class="sec-title">단계</h3>
+<div class="steps">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="2">
+<button class="btn" type="button" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}"><span class="step-num num" style="border-color: {{s.c}}">{{s.num}}</span><span class="step-txt"><b>{{s.title}}</b><span>{{s.who}}</span></span></button>
+</sc-for>
+</div>
+<sc-if value="{{hasStep}}" hint-placeholder-val="{{ false }}">
+<div class="detail" aria-live="polite">{{stepDetail}}</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</aside>
+
+<section class="stage" aria-label="모형 보기">
+<canvas class="canvas {{canvasCls}}" ref="{{canvasRef}}" role="img" aria-label="{{canvasLabel}}"></canvas>
+<div class="view-btns">
+<button class="icon-btn" type="button" aria-label="확대" onClick="{{zoomIn}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="축소" onClick="{{zoomOut}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+<button class="icon-btn" type="button" aria-label="시점 처음으로" onClick="{{resetView}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v5h5"></path></svg></button>
+</div>
+
+<sc-if value="{{hasPlayback}}" hint-placeholder-val="{{ false }}">
+<div class="playbar float">
+<button class="play" type="button" aria-label="{{playLabel}}" onClick="{{togglePlay}}">
+<sc-if value="{{isPlaying}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></sc-if>
+<sc-if value="{{notPlaying}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5l12 7-12 7z"></path></svg></sc-if>
+</button>
+<label class="scrub">
+<span>{{fLabel}}</span>
+<input type="range" min="0" max="{{fMax10}}" step="1" value="{{fInt}}" onChange="{{onScrub}}">
+</label>
+<div class="speeds" role="group" aria-label="재생 속도">
+<sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{sp.pressed}}" onClick="{{sp.pick}}">{{sp.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</section>
+
+<aside class="panel panel-right {{rightCls}}" aria-label="설명">
+<div class="panel-resize" role="separator" aria-orientation="vertical" tabindex="0" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 기본 너비" aria-valuemin="280" aria-valuemax="720" aria-valuenow="{{rightWNow}}" ref="{{rightHandleRef}}"></div>
+<div class="panel-inner">
+<div class="panel-head"><h2>설명</h2><button class="text-btn" type="button" onClick="{{closePanels}}">닫기</button></div>
+
+<!-- SLOT:right -->
+<sc-if value="{{is.clonal}}" hint-placeholder-val="{{ true }}">
+<div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{events}}" as="e" hint-placeholder-count="2">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">클론 선택 현황</h3>
+<div class="tiles">
+<div class="tile"><b>{{cStats.clone}}</b><span>선택된 클론</span></div>
+<div class="tile"><b>{{cStats.helper}}</b><span>도움 T세포 상태</span></div>
+<div class="tile"><b>{{cStats.plasma}}</b><span>형질세포 수</span></div>
+<div class="tile"><b>{{cStats.memory}}</b><span>기억세포 수</span></div>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw ball" style="background: {{legend.agA}}"></span>항원 A (세모)</div>
+<div><span class="sw ball" style="background: {{legend.agB}}"></span>항원 B (네모)</div>
+<div><span class="sw ball" style="background: {{legend.bcell}}"></span>B세포</div>
+<div><span class="sw ball" style="background: {{legend.helper}}"></span>도움 T세포</div>
+<div><span class="sw ball" style="background: {{legend.plasma}}"></span>형질세포</div>
+<div><span class="sw ball" style="background: {{legend.memory}}"></span>기억세포</div>
+<div><span class="sw" style="background: {{legend.ab}}"></span>분비 항체</div>
+</div>
+<p class="sub">세포 수는 비교용 모형값이에요. 실제로는 한 항원의 여러 부위에 여러 클론이 선택될 수 있어요(교과서 보충).</p>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{is.memory}}" hint-placeholder-val="{{ false }}">
+<div>
+<div class="sec" aria-live="polite">
+<h3 class="sec-title">지금 일어나는 일</h3>
+<div class="events">
+<sc-for list="{{events}}" as="e" hint-placeholder-count="2">
+<div class="event"><span class="dot" style="background: {{e.c}}"></span><span>{{e.text}}</span></div>
+</sc-for>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">1차·2차 반응 비교</h3>
+<div class="tiles">
+<div class="tile"><b>{{mStats.start}}</b><span>출발 맞는 세포</span></div>
+<div class="tile"><b>{{mStats.peak}}</b><span>최고 항체량(모형값)</span></div>
+<div class="tile"><b>{{mStats.time}}</b><span>도달 시기(모형값)</span></div>
+<div class="tile"><b>{{mStats.ig}}</b><span>주된 항체형(교과서 보충)</span></div>
+</div>
+</div>
+<div class="sec">
+<h3 class="sec-title">범례</h3>
+<div class="legend">
+<div><span class="sw" style="background: {{legend.agA}}"></span>항원 A 항체량</div>
+<div><span class="sw" style="background: {{legend.agB}}"></span>항원 B 항체량</div>
+<div><span class="sw ball" style="background: {{legend.memory}}"></span>기억세포</div>
+<div><span class="sw ball" style="background: {{legend.plasma}}"></span>형질세포</div>
+</div>
+<p class="sub">항체량과 세포 수는 비교용 모형값이에요. 2차 반응은 1차보다 소량의 항원으로도 빠르게 일어나요(교과서 보충).</p>
+</div>
+</div>
+</sc-if>
+<!-- /SLOT:right -->
+
+<div class="sec warn">
+<h3 class="sec-title">꼭 기억해요</h3>
+<sc-for list="{{mistakes}}" as="m" hint-placeholder-count="3">
+<div class="mistake"><b>{{m.title}}</b><span>{{m.text}}</span></div>
+</sc-for>
+</div>
+</div>
+</aside>
+</div>
+<div class="scrim {{scrimCls}}" aria-hidden="true" onClick="{{closePanels}}"></div>
+</div>
+</template>
+<script>
+// Minimal x-dc runtime for opening the canvas component as a plain HTML page.
+// Supports what Main.dc.html uses: {{dotted.path}} holes in text and attributes,
+// event attributes (onClick, onKeyDown, onMouseEnter, onMouseLeave, onChange),
+// callback ref, <sc-if value> and <sc-for list as>.
+const DC_EVENTS = { onclick: 'click', onkeydown: 'keydown', onmouseenter: 'mouseenter', onmouseleave: 'mouseleave', onchange: 'input' };
+const DC_HOLE = /\{\{\s*([\w.$]+)\s*\}\}/g;
+let dcSchedule = () => {};
+
+class DCLogic {
+  constructor(props) { this.props = props || {}; this.state = {}; }
+  setState(u) {
+    this.state = Object.assign({}, this.state, typeof u === 'function' ? u(this.state) : u);
+    dcSchedule();
+  }
+}
+
+function dcGet(scope, path) {
+  let o = scope;
+  for (const k of path.split('.')) { if (o == null) return undefined; o = o[k]; }
+  return o;
+}
+function dcInterp(str, scope) {
+  return str.replace(DC_HOLE, (_, p) => { const v = dcGet(scope, p); return v == null ? '' : String(v); });
+}
+function dcSingle(str) {
+  const m = str.match(/^\s*\{\{\s*([\w.$]+)\s*\}\}\s*$/);
+  return m ? m[1] : null;
+}
+
+// Compiles one node in place; pushes updaters that take the current scope.
+function dcCompile(node, ups) {
+  if (node.nodeType === 3) {
+    if (!node.data.includes('{{')) return;
+    const src = node.data;
+    let last;
+    ups.push((s) => { const v = dcInterp(src, s); if (v !== last) { node.data = v; last = v; } });
+    return;
+  }
+  if (node.nodeType !== 1) return;
+  const tag = node.tagName.toLowerCase();
+  if (tag === 'sc-if' || tag === 'sc-for') { dcBlock(node, tag, ups); return; }
+  for (const a of [...node.attributes]) {
+    const name = a.name, val = a.value;
+    if (name.startsWith('hint-')) { node.removeAttribute(name); continue; }
+    if (!val.includes('{{')) continue;
+    node.removeAttribute(name);
+    if (DC_EVENTS[name]) {
+      const p = dcSingle(val);
+      let cur;
+      node.addEventListener(DC_EVENTS[name], (e) => { const f = dcGet(cur, p); if (typeof f === 'function') f(e); });
+      ups.push((s) => { cur = s; });
+    } else if (name === 'ref') {
+      const p = dcSingle(val);
+      let done = false;
+      ups.push((s) => { if (!done) { done = true; const f = dcGet(s, p); if (typeof f === 'function') f(node); } });
+    } else {
+      let last;
+      ups.push((s) => {
+        const v = dcInterp(val, s);
+        if (v === last) return;
+        last = v;
+        if (name === 'value' && 'value' in node) node.value = v; else node.setAttribute(name, v);
+      });
+    }
+  }
+  for (const c of [...node.childNodes]) dcCompile(c, ups);
+}
+
+function dcBlock(el, tag, ups) {
+  const anchor = document.createComment(tag);
+  el.parentNode.replaceChild(anchor, el);
+  const tpl = document.createDocumentFragment();
+  while (el.firstChild) tpl.appendChild(el.firstChild);
+  const make = () => {
+    const frag = tpl.cloneNode(true), u = [];
+    for (const c of [...frag.childNodes]) dcCompile(c, u);
+    return { frag: frag, nodes: [...frag.childNodes], u: u };
+  };
+  if (tag === 'sc-if') {
+    const p = dcSingle(el.getAttribute('value') || '');
+    let inst = null;
+    ups.push((s) => {
+      const on = !!dcGet(s, p);
+      if (!on) { if (inst) { inst.nodes.forEach((n) => n.remove()); inst = null; } return; }
+      if (!inst) { inst = make(); anchor.parentNode.insertBefore(inst.frag, anchor); }
+      inst.u.forEach((f) => f(s));
+    });
+  } else {
+    const p = dcSingle(el.getAttribute('list') || ''), as = el.getAttribute('as');
+    const insts = [];
+    ups.push((s) => {
+      const list = dcGet(s, p) || [];
+      while (insts.length > list.length) insts.pop().nodes.forEach((n) => n.remove());
+      while (insts.length < list.length) { const i = make(); anchor.parentNode.insertBefore(i.frag, anchor); insts.push(i); }
+      list.forEach((item, k) => { const sc = Object.create(s); sc[as] = item; insts[k].u.forEach((f) => f(sc)); });
+    });
+  }
+}
+
+function mountDC(Component) {
+  const comp = new Component({});
+  const frag = document.getElementById('dc-template').content.cloneNode(true), ups = [];
+  for (const c of [...frag.childNodes]) dcCompile(c, ups);
+  const root = document.getElementById('dc-root');
+  let pending = false;
+  const render = () => { pending = false; const v = comp.renderVals(); ups.forEach((f) => f(v)); };
+  dcSchedule = () => { if (!pending) { pending = true; queueMicrotask(render); } };
+  root.appendChild(frag);
+  render();
+  window.addEventListener('pagehide', () => { if (comp.componentWillUnmount) comp.componentWillUnmount(); });
+}
+class Component extends DCLogic {
+  // ================= 주제 훅: 주제마다 바꾸는 곳은 이 네 메서드뿐이에요 =================
+  // 계약은 bio-interactive/references/scene-api.md에 있어요.
+
+  topic() {
+    const clonalPhase = (f) => {
+      const htOk = !this.state || this.state.helperOk !== false;
+      if (f < 2) return '다양한 B세포 대기';
+      if (f < 4) return '맞는 클론 선택';
+      if (!htOk) {
+        if (f < 6) return '도움 T세포 부족(자극 없음)';
+        if (f < 8) return '증식·분화 정지';
+        return '항체 분비 거의 없음';
+      }
+      if (f < 6) return '도움 T세포 자극';
+      if (f < 8) return '클론 증식과 분화';
+      return '항체 분비와 기억';
+    };
+    const memoryPhase = (f) => {
+      const scen = (this.state && this.state.scenario) || 'both';
+      if (scen === 'first') {
+        if (f < 2.2) return '1차 노출 시작';
+        if (f < 5.0) return '1차 반응 봉우리';
+        return '재노출 없음 · 기억세포 대기';
+      }
+      if (scen === 'vaccine') {
+        if (f < 2.2) return '백신 1차 노출 시작';
+        if (f < 5.0) return '백신 1차 봉우리·기억 형성';
+        if (f < 7.2) return '실제 감염(2차 시작)';
+        return '2차 반응 폭발';
+      }
+      return f < 2.2 ? '1차 노출 시작'
+        : f < 5.0 ? '1차 반응 봉우리'
+        : f < 7.2 ? '재노출(2차 시작)'
+        : '2차 반응 폭발';
+    };
+    return {
+      MODES: [
+        {
+          key: 'clonal', label: '클론 선택',
+          cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [15.4, 9.2], D: 60,
+          autoSpin: false, rotatable: false,
+          playback: { fmax: 10, rate: 1.0, label: (f) => clonalPhase(f) + ' · ' + f.toFixed(1) + ' / 10' },
+          canvasLabel: (f) => {
+            const st = this.state || {};
+            const agNm = st.ag === 'B' ? '네모 항원 B' : '세모 항원 A';
+            const htNm = st.helperOk === false ? '도움 T세포 부족' : '도움 T세포 정상';
+            return agNm + ', ' + htNm + ' 조건의 클론 선택 도식. 현재 ' + clonalPhase(f) + ' 상태예요.';
+          }
+        },
+        {
+          key: 'memory', label: '1차·2차 반응',
+          cam: { yaw: 0, pitch: 0, zoom: 1 }, fit: [14.8, 9.0], D: 60,
+          autoSpin: false, rotatable: false,
+          playback: { fmax: 10, rate: 1.0, label: (f) => memoryPhase(f) + ' · ' + f.toFixed(1) + ' / 10' },
+          canvasLabel: (f) => {
+            const st = this.state || {};
+            const scNm = st.scenario === 'first' ? '항원 A 첫 노출'
+              : st.scenario === 'vaccine' ? '백신 접종 뒤 A 감염'
+              : '항원 A 재노출과 새 항원 B 동시 노출';
+            return scNm + ' 조건의 1차·2차 면역반응 항체량 그래프와 세포 현황. 현재 ' + memoryPhase(f) + ' 상태예요.';
+          }
+        }
+      ],
+      STEPS: [
+        {
+          mode: 'clonal', f: 0.8, phase: '다양한 B세포 대기', c: '#4F6D9A',
+          title: '다양한 B세포 대기', who: '미접촉 B세포들',
+          text: '골수에서 성숙을 마친 미접촉 B세포들이 서로 다른 모양의 항체를 세포막에 달고 항원보다 먼저 대기해요. 1~4번 B세포의 팔 끝 모양이 서로 다른 것을 확인해 보세요.'
+        },
+        {
+          mode: 'clonal', f: 3.1, phase: '맞는 클론 선택', c: '#2563EB',
+          title: '맞는 클론 선택', who: '항원·B세포',
+          text: '항원이 새 항체를 설계하게 하는 것이 아니라, 이미 있던 B세포 중 모양이 들어맞는 클론 1개만 선택돼요. 세모 항원 A는 1번, 네모 항원 B는 2번 B세포에 결합해요.'
+        },
+        {
+          mode: 'clonal', f: 5.2, phase: '도움 T세포 자극', c: '#D97706',
+          title: '도움 T세포 자극', who: '도움 T세포',
+          text: '같은 항원을 먼저 접한 도움 T세포가 여러 B세포 중 그 항원을 만난 B세포만 알아보고 자극해요. 도움 T세포가 부족하면 자극이 끊겨 증식과 분화가 멈춰요.'
+        },
+        {
+          mode: 'clonal', f: 7.3, phase: '클론 증식과 분화', c: '#0D9488',
+          title: '클론 증식과 분화', who: '선택된 B세포 클론',
+          text: '자극을 받은 선택된 클론만 유전적으로 동일하게 증식해 같은 모양의 항체를 만드는 집단을 이뤄요. 그중 일부는 형질세포로, 일부는 기억세포로 분화해요.'
+        },
+        {
+          mode: 'clonal', f: 9.5, phase: '항체 분비와 기억', c: '#7C3AED',
+          title: '항체 분비와 기억', who: '형질세포·기억세포',
+          text: '형질세포는 항체를 세포 밖 체액으로 대량 분비해 항원을 붙잡아요. 수명이 긴 기억세포는 몸에 남아 같은 항원이 다시 들어올 때를 대비해요.'
+        },
+        {
+          mode: 'memory', f: 1.1, phase: '1차 노출 시작', c: '#2563EB',
+          title: '1차 노출 시작', who: 'B세포 1클론',
+          text: '처음 만난 항원 A에 맞는 B세포가 적어 선택·증식·분화에 시간이 걸려요. 그래서 첫 노출 직후에는 항체량이 바로 오르지 않고 잠복기가 나타나요.'
+        },
+        {
+          mode: 'memory', f: 3.8, phase: '1차 반응 봉우리', c: '#0D9488',
+          title: '1차 반응 봉우리', who: '형질세포',
+          text: '약 2주째에 비교적 적은 항체(주로 IgM: 교과서 보충)가 만들어져 1차 봉우리를 이뤄요. 항원이 제거되면 활성화된 세포 대부분은 사라지고 기억세포가 남아요(교과서 보충).'
+        },
+        {
+          mode: 'memory', f: 6.1, phase: '재노출(2차 시작)', c: '#7C3AED',
+          title: '재노출(2차 시작)', who: '기억세포 다수',
+          text: '같은 항원 A가 다시 들어오면 이미 많이 남은 기억세포가 곧바로 빠르게 분열해요. 반면 처음 만난 항원 B는 맞는 B세포 1클론부터 천천히 시작해요.'
+        },
+        {
+          mode: 'memory', f: 8.8, phase: '2차 반응 폭발', c: '#E04F44',
+          title: '2차 반응 폭발', who: '형질세포',
+          text: '항원 A는 훨씬 빠르고 많은 항체(모형값 약 1.2주째 3배, 주로 IgG: 교과서 보충)를 내요. 함께 들어온 새 항원 B는 1차 반응처럼 느리고 적어 기억의 특이성을 보여 줘요.'
+        }
+      ],
+      MISTAKES: {
+        clonal: [
+          { title: '선택 ≠ 설계', text: '항원은 맞는 항체를 새로 설계하게 하지 않고, 이미 있던 4개 클론 중 모양이 맞는 것을 선택되게 해요. 왼쪽에서 항원을 바꿔 선택되는 클론을 확인해 보세요.' },
+          { title: '형질세포 ≠ 기억세포', text: '항체를 세포 밖으로 분비하는 것은 형질세포이고, 기억세포는 수명이 길어 재노출에 대비해요. 5단계의 위·아래 분화 경로를 따로 보세요.' },
+          { title: '증식 조건 = 항원 + 도움 T세포', text: '항원을 만난 B세포라도 같은 항원을 먼저 접한 도움 T세포의 자극이 있어야 증식·분화해요. 도움 T세포를 ‘부족’으로 바꿔 결과를 비교해 보세요.' }
+        ],
+        memory: [
+          { title: '재노출 = 더 빠르고 더 많이', text: '기억세포가 이미 많아 2차 반응은 1차보다 훨씬 빠르고 더 많은 항체를 만들어요. ‘1차 기준선’을 켜고 두 봉우리의 높이와 도달 속도를 비교해 보세요.' },
+          { title: '기억은 항원별 특이적', text: '항원 A의 기억세포는 A에만 빨리 반응하고, 처음 만난 항원 B에는 1차 반응처럼 느리고 적게 반응해요. ‘A 재노출 + 새 항원 B’ 조건에서 파란 선과 빨간 선을 나란히 보세요.' },
+          { title: '백신 = 기억세포 생성 ≠ 항체 주입', text: '백신은 항원이 들어 있어 기억세포를 미리 만들어 두는 것이 목적이에요(항원 주입: 교과서 보충). ‘백신 접종 뒤 A 감염’ 조건으로 확인해 보세요.' }
+        ]
+      },
+      TOGGLES: {
+        clonal: [['labels', '이름표'], ['receptors', '결합 모양 강조']],
+        memory: [['labels', '이름표'], ['compare', '1차 기준선']]
+      },
+      PAL: {
+        light: {
+          bg: '#ffffff', labelBg: '#f7f8fa', ink: '#111111', ring: '#111111', blobAlpha: 0.30,
+          agA: '#2563EB', agB: '#E04F44', clone3: '#7C5CE0', clone4: '#0D9488',
+          bcell: '#4F6D9A', helper: '#D97706', plasma: '#0D9488', memory: '#7C3AED',
+          ab: '#0284C7', muted: '#8A94A3', warn: '#D92D20'
+        },
+        dark: {
+          bg: '#17171c', labelBg: '#212128', ink: '#f2f4f6', ring: '#f2f4f6', blobAlpha: 0.42,
+          agA: '#60A5FA', agB: '#FF7B72', clone3: '#B69CFF', clone4: '#5EEAD4',
+          bcell: '#8BA4C7', helper: '#FBBF24', plasma: '#34D399', memory: '#C084FC',
+          ab: '#38BDF8', muted: '#94A3B8', warn: '#FF6B61'
+        }
+      }
+    };
+  }
+
+  // 장면 만들기: I(그리기 항목)와 O(라벨)에 push만 해요. 진행값은 this.sim.f를 써요.
+  buildScene(mode, I, O) {
+    const pal = this.pal(), st = this.state, f = this.sim.f;
+    const sm = (x) => this.sm(x);
+    const lerp = (a, b, t) => this.lerp(a, b, t);
+
+    // 공통 도형 도우미: 항원(세모 A / 네모 B), Y자 항체(4가지 끝 모양), 세포, 점선, 화살표
+    const drawAntigen = (p, kind, r, col, a) => {
+      if (a <= 0.02) return;
+      const w = Math.max(0.055, r * 0.34);
+      if (kind === 'A') {
+        const p1 = [p[0] - r * 0.95, p[1], 0];
+        const p2 = [p[0] + r * 0.85, p[1] + r * 0.9, 0];
+        const p3 = [p[0] + r * 0.85, p[1] - r * 0.9, 0];
+        I.push({ k: 1, p: p1, q: p2, w: w, c: col, a: a });
+        I.push({ k: 1, p: p2, q: p3, w: w, c: col, a: a });
+        I.push({ k: 1, p: p3, q: p1, w: w, c: col, a: a });
+        I.push({ k: 0, p: [p[0] + r * 0.25, p[1], 0], r: r * 0.45, c: col, a: a });
+      } else {
+        const h = r * 0.82;
+        const c1 = [p[0] - h, p[1] + h, 0], c2 = [p[0] + h, p[1] + h, 0];
+        const c3 = [p[0] + h, p[1] - h, 0], c4 = [p[0] - h, p[1] - h, 0];
+        I.push({ k: 1, p: c1, q: c2, w: w, c: col, a: a });
+        I.push({ k: 1, p: c2, q: c3, w: w, c: col, a: a });
+        I.push({ k: 1, p: c3, q: c4, w: w, c: col, a: a });
+        I.push({ k: 1, p: c4, q: c1, w: w, c: col, a: a });
+        I.push({ k: 0, p: p, r: r * 0.5, c: col, a: a });
+      }
+    };
+
+    const drawY = (base, ang, sc, col, shape, a, bold) => {
+      if (a <= 0.02) return;
+      const ca = Math.cos(ang), sa = Math.sin(ang);
+      const rot = (dx, dy) => [base[0] + (dx * ca - dy * sa) * sc, base[1] + (dx * sa + dy * ca) * sc, 0];
+      const stem = rot(0.42, 0);
+      const w = (bold ? 0.085 : 0.068) * sc;
+      I.push({ k: 1, p: base, q: stem, w: w * 1.15, c: col, a: a, rod: bold });
+      [-1, 1].forEach((sg) => {
+        const arm = rot(0.78, sg * 0.26);
+        I.push({ k: 1, p: stem, q: arm, w: w, c: col, a: a });
+        const tipScale = bold ? 1.25 : 1.0;
+        if (shape === 'tri') {
+          // 세모 홈 (V자 벌림)
+          const t1 = rot(0.78 + 0.17 * tipScale, sg * (0.26 + 0.11 * tipScale));
+          const t2 = rot(0.78 + 0.17 * tipScale, sg * (0.26 - 0.08 * tipScale));
+          I.push({ k: 1, p: arm, q: t1, w: w * 0.9, c: col, a: a });
+          I.push({ k: 1, p: arm, q: t2, w: w * 0.9, c: col, a: a });
+        } else if (shape === 'sq') {
+          // 네모 홈 (ㄷ자)
+          const b1 = rot(0.78, sg * (0.26 + 0.10 * tipScale));
+          const b2 = rot(0.78, sg * (0.26 - 0.08 * tipScale));
+          const f1 = rot(0.78 + 0.15 * tipScale, sg * (0.26 + 0.10 * tipScale));
+          const f2 = rot(0.78 + 0.15 * tipScale, sg * (0.26 - 0.08 * tipScale));
+          I.push({ k: 1, p: b1, q: b2, w: w * 0.85, c: col, a: a });
+          I.push({ k: 1, p: b1, q: f1, w: w * 0.85, c: col, a: a });
+          I.push({ k: 1, p: b2, q: f2, w: w * 0.85, c: col, a: a });
+        } else if (shape === 'cir') {
+          // 둥근 컵
+          I.push({ k: 0, p: rot(0.84, sg * 0.29), r: 0.085 * sc * tipScale, c: col, a: a });
+        } else {
+          // 납작 T자
+          const e1 = rot(0.81, sg * (0.26 + 0.11 * tipScale));
+          const e2 = rot(0.81, sg * (0.26 - 0.10 * tipScale));
+          I.push({ k: 1, p: e1, q: e2, w: w * 1.05, c: col, a: a, flat: true });
+        }
+      });
+    };
+
+    const drawCell = (p, r, col, opts) => {
+      const o = opts || {};
+      const a = o.a == null ? 1 : o.a;
+      if (a <= 0.02) return;
+      I.push({ k: 5, p: p, r: r, c: col, focus: !!o.focus, a: a });
+      I.push({ k: 0, p: [p[0] - r * 0.14, p[1] + r * 0.08, 0], r: r * 0.40, c: col, a: a * 0.72 });
+      if (o.memoryRing) {
+        const rr = r * 1.32, N = 12;
+        for (let k = 0; k < N; k++) {
+          const th = (k / N) * Math.PI * 2;
+          I.push({ k: 0, p: [p[0] + Math.cos(th) * rr, p[1] + Math.sin(th) * rr, 0], r: Math.max(0.028, r * 0.095), c: col, flat: true, a: a * 0.85 });
+        }
+      }
+      if (o.plasmaDots) {
+        for (let k = 0; k < 4; k++) {
+          const th = -0.7 + k * 0.45;
+          I.push({ k: 0, p: [p[0] + Math.cos(th) * r * 0.56, p[1] + Math.sin(th) * r * 0.56, 0], r: 0.05, c: pal.ab, flat: true, a: a * 0.9 });
+        }
+      }
+      if (o.tag) I.push({ k: 3, p: [p[0], p[1] - r * 0.02, 0], text: o.tag, size: o.tagSize || 11, c: pal.ink, a: a });
+    };
+
+    const drawDashed = (p, q, col, w, segs, a) => {
+      if (a <= 0.02) return;
+      for (let i = 0; i < segs; i += 2) {
+        const t0 = i / segs, t1 = Math.min(1, (i + 1) / segs);
+        I.push({ k: 1, p: lerp(p, q, t0), q: lerp(p, q, t1), w: w, c: col, flat: true, a: a });
+      }
+    };
+
+    const drawArrow = (p, q, col, w, a) => {
+      if (a <= 0.02) return;
+      I.push({ k: 1, p: p, q: q, w: w, c: col, a: a });
+      if (a > 0.25) I.push({ k: 4, p: p, q: q, c: col, a: a });
+    };
+
+    const drawCross = (p, r, col, a) => {
+      if (a <= 0.02) return;
+      I.push({ k: 1, p: [p[0] - r, p[1] - r, 0], q: [p[0] + r, p[1] + r, 0], w: 0.09, c: col, a: a });
+      I.push({ k: 1, p: [p[0] - r, p[1] + r, 0], q: [p[0] + r, p[1] - r, 0], w: 0.09, c: col, a: a });
+    };
+
+    if (mode === 'clonal') {
+      const isA = st.ag !== 'B';
+      const agKind = isA ? 'A' : 'B';
+      const agCol = isA ? pal.agA : pal.agB;
+      const selIdx = isA ? 0 : 1;
+      const selShape = isA ? 'tri' : 'sq';
+      const htOk = st.helperOk !== false;
+      const boldRec = !!st.receptors;
+
+      const clones = [
+        { id: '1', y: 2.25, shape: 'tri', col: pal.agA },
+        { id: '2', y: 0.75, shape: 'sq', col: pal.agB },
+        { id: '3', y: -0.75, shape: 'cir', col: pal.clone3 },
+        { id: '4', y: -2.25, shape: 'bar', col: pal.clone4 }
+      ];
+      const selY = clones[selIdx].y;
+      const dimT = sm((f - 2.1) / 0.7);
+      const dockT = sm((f - 2.0) / 0.9);
+      const htMoveT = sm((f - 4.0) / 0.9);
+      const stimT = sm((f - 4.7) / 0.7);
+      const prolifT = htOk ? sm((f - 6.0) / 0.9) : 0;
+      const diffT = htOk ? sm((f - 6.8) / 0.9) : 0;
+      const secT = htOk ? sm((f - 8.0) / 1.1) : 0;
+
+      // 1) 미접촉 B세포 4클론 (왼쪽 열 x = -5.5)
+      clones.forEach((cl, idx) => {
+        const isSel = idx === selIdx;
+        const a = isSel ? 1 : (1 - 0.65 * dimT);
+        const pos = [-5.5, cl.y, 0];
+        drawCell(pos, 0.50, isSel ? cl.col : pal.bcell, {
+          a: a,
+          focus: isSel && f >= 2.3,
+          tag: cl.id + '번',
+          tagSize: 10
+        });
+        drawY([-5.0, cl.y, 0], 0, 1.0, cl.col, cl.shape, a, boldRec && (isSel || f < 2.2));
+      });
+
+      // 2) 들어오는 항원 (1번 또는 2번 B세포의 두 팔 끝에 결합)
+      const approachT = sm((f - 0.1) / 1.4);
+      const waitTop = [-2.55, 0.35 + (isA ? 0.55 : -0.15), 0];
+      const waitBot = [-2.15, -0.35 + (isA ? 0.45 : -0.25), 0];
+      const preTop = lerp([-1.7, 0.4, 0], waitTop, approachT);
+      const preBot = lerp([-1.3, -0.4, 0], waitBot, approachT);
+      const dockTop = [-3.98, selY + 0.27, 0];
+      const dockBot = [-3.98, selY - 0.27, 0];
+      const agPosTop = lerp(preTop, dockTop, dockT);
+      const agPosBot = lerp(preBot, dockBot, dockT);
+      const agAlpha = sm(f / 0.35 + 0.35);
+      drawAntigen(agPosTop, agKind, 0.21, agCol, agAlpha);
+      drawAntigen(agPosBot, agKind, 0.18, agCol, agAlpha * 0.92);
+
+      // 선택 일치 고리 (2단계)
+      if (f >= 2.5 && f < 4.1) {
+        O.push({ t: 'ring', p: [-4.05, selY, 0], text: '모양 일치' });
+      }
+
+      // 3) 도움 T세포 (같은 항원을 먼저 접함)
+      const htStart = [-2.6, -2.35, 0];
+      const htTarget = [-2.95, selY - 1.32, 0];
+      const htPos = lerp(htStart, htTarget, htMoveT);
+      if (htOk) {
+        const htA = 0.45 + 0.55 * sm((f - 3.6) / 0.6);
+        drawCell(htPos, 0.48, pal.helper, { a: htA, focus: f >= 4.4 && f < 6.2, tag: 'TH', tagSize: 11 });
+        // 먼저 접한 같은 항원 표식
+        drawAntigen([htPos[0] - 0.48, htPos[1] + 0.34, 0], agKind, 0.13, agCol, htA);
+        // 자극 신호 (도움 T세포 → 선택된 B세포)
+        if (stimT > 0.02) {
+          const p0 = [htPos[0] - 0.38, htPos[1] + 0.38, 0];
+          const p1 = [-4.95, selY - 0.38, 0];
+          drawArrow(p0, p1, pal.helper, 0.06, stimT);
+          for (let s = 0; s < 3; s++) {
+            const u = ((f * 0.85 + s / 3) % 1);
+            I.push({ k: 0, p: lerp(p0, p1, u), r: 0.075, c: pal.helper, a: stimT });
+          }
+        }
+      } else {
+        // 도움 T세포 부족 표현: 빈 점선 원 + 차단 X
+        const lackA = 0.55 + 0.45 * sm((f - 3.6) / 0.6);
+        const N = 14, rr = 0.50;
+        for (let k = 0; k < N; k++) {
+          const th = (k / N) * Math.PI * 2;
+          I.push({ k: 0, p: [htPos[0] + Math.cos(th) * rr, htPos[1] + Math.sin(th) * rr, 0], r: 0.04, c: pal.warn, flat: true, a: lackA * 0.75 });
+        }
+        drawCross(htPos, 0.24, pal.warn, lackA);
+        if (f >= 4.4) {
+          drawDashed([-3.7, selY, 0], [-0.4, 0.15, 0], pal.warn, 0.055, 10, sm((f - 4.4) / 0.6) * 0.75);
+          drawCross([-1.7, (selY + 0.15) / 2, 0], 0.28, pal.warn, sm((f - 4.4) / 0.6));
+          I.push({ k: 3, p: [1.6, 0.15, 0], text: '자극 없음 · 증식과 분화 정지', size: 12, c: pal.warn, a: sm((f - 5.2) / 0.7) });
+          I.push({ k: 3, p: [1.6, -0.55, 0], text: '형질세포·분비 항체 거의 안 생김', size: 11, c: pal.muted, a: sm((f - 6.5) / 0.7) });
+        }
+      }
+
+      // 4) 클론 증식 (중앙 열 x = 0.4, 도움 T세포 정상일 때)
+      if (prolifT > 0.01) {
+        drawArrow([-3.55, selY, 0], [-0.55, 0.2, 0], agCol, 0.07, prolifT);
+        const kids = [
+          [0.10, 1.05, 0],
+          [0.95, 0.55, 0],
+          [0.05, -0.35, 0],
+          [0.95, -0.85, 0]
+        ];
+        kids.forEach((kp, idx) => {
+          const ka = sm((f - 6.0 - idx * 0.14) / 0.45);
+          if (ka <= 0.02) return;
+          const cur = lerp([-0.6, 0.2, 0], kp, ka);
+          drawCell(cur, 0.37, agCol, { a: ka, focus: f >= 6.4 && f < 7.6 });
+          drawY([cur[0] + 0.34, cur[1], 0], 0, 0.68, agCol, selShape, ka, boldRec);
+        });
+      }
+
+      // 5) 분화: 위 형질세포, 아래 기억세포
+      if (diffT > 0.01) {
+        // 위 갈래: 형질세포
+        drawArrow([1.45, 0.55, 0], [2.55, 1.65, 0], pal.plasma, 0.07, diffT);
+        const plasmas = [[3.15, 2.25, 0], [3.85, 1.70, 0], [3.15, 1.10, 0]];
+        plasmas.forEach((pp, idx) => {
+          const pa = sm((f - 6.8 - idx * 0.15) / 0.5);
+          drawCell(pp, 0.42, pal.plasma, { a: pa, plasmaDots: true, focus: f >= 8.0, tag: '형질', tagSize: 9 });
+        });
+
+        // 아래 갈래: 기억세포
+        drawArrow([1.45, -0.35, 0], [2.55, -1.55, 0], pal.memory, 0.07, diffT);
+        const mems = [[3.25, -1.55, 0], [4.35, -2.05, 0]];
+        mems.forEach((mp, idx) => {
+          const ma = sm((f - 6.9 - idx * 0.18) / 0.5);
+          drawCell(mp, 0.44, pal.memory, { a: ma, memoryRing: true, focus: f >= 8.2, tag: '기억', tagSize: 9 });
+          drawY([mp[0] + 0.42, mp[1] + 0.08, 0], 0.15, 0.72, agCol, selShape, ma, boldRec);
+        });
+        if (secT > 0.15) {
+          drawDashed([4.95, -2.05, 0], [6.35, -2.05, 0], pal.memory, 0.05, 8, secT * 0.8);
+          I.push({ k: 4, p: [5.95, -2.05, 0], q: [6.4, -2.05, 0], c: pal.memory, a: secT * 0.85 });
+          I.push({ k: 3, p: [5.65, -2.45, 0], text: '재노출 대비', size: 10, c: pal.memory, a: secT });
+        }
+      }
+
+      // 6) 분비 항체 (5단계: 형질세포 밖으로 대량 분비 + 체액 속 항원 결합)
+      if (secT > 0.01) {
+        const secreted = [
+          { base: [4.55, 2.55, 0], ang: 0.12, bind: false },
+          { base: [4.65, 1.80, 0], ang: -0.05, bind: false },
+          { base: [4.55, 1.05, 0], ang: -0.22, bind: false },
+          { base: [5.35, 2.65, 0], ang: 0.05, bind: true },
+          { base: [5.45, 1.75, 0], ang: 0.0, bind: true },
+          { base: [5.35, 0.85, 0], ang: -0.10, bind: true }
+        ];
+        secreted.forEach((sb, idx) => {
+          const sa = sm((f - 8.0 - idx * 0.12) / 0.55);
+          if (sa <= 0.02) return;
+          const p = lerp([4.05, 1.70, 0], sb.base, sa);
+          drawY(p, sb.ang, 0.78, pal.ab, selShape, sa, boldRec);
+          if (sb.bind && sa > 0.55) {
+            const ba = sm((sa - 0.55) / 0.45);
+            const ca = Math.cos(sb.ang), sa2 = Math.sin(sb.ang);
+            const agP = [p[0] + (0.88 * ca - 0.22 * sa2) * 0.78, p[1] + (0.88 * sa2 + 0.22 * ca) * 0.78, 0];
+            drawAntigen(agP, agKind, 0.15, agCol, ba);
+          }
+        });
+      }
+
+      // 라벨 칩 (화면당 최대 5~6개, 겹치지 않게 고정 위치)
+      if (st.labels) {
+        O.push({ p: [-5.5, 3.15, 0], text: '미접촉 B세포 4종', c: pal.bcell, dx: 18, dy: -6 });
+        if (f < 6.4) {
+          O.push({ p: agPosTop, text: isA ? '세모 항원 A' : '네모 항원 B', c: agCol, dx: 26, dy: -26, lead: true });
+        }
+        O.push({
+          p: htPos,
+          text: htOk ? (f >= 4.2 ? '도움 T세포 (자극)' : '도움 T세포') : '도움 T세포 부족',
+          c: htOk ? pal.helper : pal.warn,
+          dy: 32,
+          lead: true
+        });
+        if (htOk && f >= 6.2) {
+          O.push({ p: [0.5, 1.65, 0], text: '클론 증식', c: agCol, dy: -16 });
+        }
+        if (htOk && f >= 7.0) {
+          O.push({ p: [3.5, 2.85, 0], text: f >= 8.2 ? '형질세포 · 항체 분비' : '형질세포', c: pal.plasma, dy: -12 });
+          O.push({ p: [3.8, -2.70, 0], text: '기억세포 (수명 김)', c: pal.memory, dy: 14 });
+        }
+      }
+      return;
+    }
+
+    // ==================== 모드 2: 1차·2차 반응 (memory) ====================
+    const scen = st.scenario || 'both';
+    const hasSecond = scen !== 'first';
+    const hasB = scen === 'both';
+    const isVac = scen === 'vaccine';
+
+    // 항체량 모형 곡선 (1차: 2주째 1.0, 2차: 1.2주째 3.0)
+    const curve1 = (t) => {
+      if (t <= 0.55) return 0;
+      const u = (t - 0.55) / 1.45;
+      return u * u * u * Math.exp(3 * (1 - u));
+    };
+    const curve2 = (t) => {
+      if (t <= 0.15) return 0;
+      const u = (t - 0.15) / 1.05;
+      const v = u < 1
+        ? Math.pow(u, 2.2) * Math.exp(2.2 * (1 - u))
+        : 0.78 * Math.exp(-0.32 * (u - 1) * (u - 1)) + 0.22 * Math.exp(-0.25 * (u - 1));
+      return 3.0 * v;
+    };
+
+    // 그래프 좌표 변환
+    const y0 = -2.65, yScale = 1.05;
+    const gy = (val) => y0 + val * yScale;
+    const gx1 = (t) => -5.8 + t * 1.25; // t: 0~4주 → x: -5.8 ~ -0.8
+    const gx2 = (t) => 0.4 + t * 1.25;  // t: 0~4주 → x: +0.4 ~ +5.4
+    const t1Now = Math.max(0, Math.min(4.0, (f / 4.8) * 4.0));
+    const t2Now = Math.max(0, Math.min(4.0, ((f - 5.2) / 4.8) * 4.0));
+
+    // 위쪽 세포 현황 구역 구분선
+    I.push({ k: 1, p: [-6.1, 1.22, 0], q: [5.7, 1.22, 0], w: 0.03, c: pal.muted, flat: true, a: 0.35 });
+    I.push({ k: 3, p: [-5.2, 3.32, 0], text: '세포 현황', size: 11, c: pal.muted, a: 0.9 });
+
+    // 위쪽 왼쪽: 1차 노출 세포 현황
+    const p1Start = [-5.2, 2.32, 0];
+    drawCell(p1Start, 0.35, pal.agA, { a: 0.95, focus: f < 2.2, tag: '1번', tagSize: 9 });
+    drawY([-4.86, 2.32, 0], 0, 0.52, pal.agA, 'tri', 0.95, false);
+    drawAntigen([-4.28, 2.32, 0], 'A', 0.16, pal.agA, 0.95);
+    if (f >= 1.5) {
+      const a1 = sm((f - 1.5) / 0.7);
+      const fadePlasma1 = 1 - 0.65 * sm((f - 3.6) / 1.0);
+      drawArrow([-3.95, 2.32, 0], [-3.25, 2.65, 0], pal.plasma, 0.05, a1 * fadePlasma1);
+      [[-2.85, 2.85, 0], [-2.35, 2.65, 0], [-2.85, 2.40, 0]].forEach((pp) => {
+        drawCell(pp, 0.22, pal.plasma, { a: a1 * fadePlasma1 });
+      });
+      drawArrow([-3.95, 2.25, 0], [-2.35, 1.88, 0], pal.memory, 0.05, a1);
+      const memA = sm((f - 2.3) / 0.7);
+      [[-1.95, 1.88, 0], [-1.30, 1.88, 0]].forEach((mp) => {
+        drawCell(mp, 0.25, pal.memory, { a: memA, memoryRing: true, focus: f >= 3.4 && f < 5.5 });
+      });
+      I.push({ k: 3, p: [-2.8, 3.22, 0], text: '형질 6', size: 10, c: pal.plasma, a: a1 * fadePlasma1 });
+      I.push({ k: 3, p: [-1.62, 1.44, 0], text: '기억 2 남음', size: 10, c: pal.memory, a: memA });
+    }
+
+    // 위쪽 오른쪽: 2차/재노출 세포 현황 (f >= 5.0)
+    if (f >= 4.9) {
+      const a2 = sm((f - 4.9) / 0.6);
+      drawDashed([-0.85, 1.88, 0], [0.45, 2.55, 0], pal.memory, 0.045, 6, a2 * 0.75);
+      if (!hasSecond) {
+        [2.35, 3.25].forEach((mx) => drawCell([mx, 2.58, 0], 0.30, pal.memory, { a: a2, memoryRing: true }));
+        I.push({ k: 3, p: [2.80, 1.72, 0], text: '재노출 없음 · 기억세포 대기', size: 11, c: pal.muted, a: a2 });
+      } else {
+        // 항원 A 2차 반응 세포 행
+        const rowYA = hasB ? 2.78 : 2.35;
+        [[0.85, rowYA, 0], [1.45, rowYA, 0]].forEach((mp) => {
+          drawCell(mp, 0.23, pal.memory, { a: a2, memoryRing: true, focus: f >= 5.2 && f < 6.8 });
+        });
+        drawAntigen([1.95, rowYA, 0], 'A', 0.14, pal.agA, a2);
+        const burstA = sm((f - 5.4) / 0.8);
+        if (burstA > 0.02) {
+          drawArrow([2.2, rowYA, 0], [2.72, rowYA, 0], pal.agA, 0.055, burstA);
+          const pCoords = [
+            [3.00, rowYA + 0.21, 0], [3.43, rowYA + 0.21, 0], [3.86, rowYA + 0.21, 0],
+            [3.00, rowYA - 0.21, 0], [3.43, rowYA - 0.21, 0], [3.86, rowYA - 0.21, 0]
+          ];
+          pCoords.forEach((pp) => drawCell(pp, 0.18, pal.plasma, { a: burstA }));
+          const mCoords = [
+            [4.58, rowYA + 0.22, 0], [5.14, rowYA + 0.22, 0],
+            [4.58, rowYA - 0.22, 0], [5.14, rowYA - 0.22, 0]
+          ];
+          mCoords.forEach((mp) => {
+            drawCell(mp, 0.17, pal.memory, { a: burstA, memoryRing: true });
+          });
+          I.push({ k: 3, p: [3.6, rowYA + 0.54, 0], text: 'A: 형질 12 · 기억 4', size: 10, c: pal.agA, a: burstA });
+        }
+
+        // 항원 B 1차 반응 세포 행 (both 조건)
+        if (hasB) {
+          const rowYB = 1.66;
+          drawCell([0.95, rowYB, 0], 0.23, pal.agB, { a: a2, tag: '2', tagSize: 9 });
+          drawAntigen([1.55, rowYB, 0], 'B', 0.14, pal.agB, a2);
+          const slowB = sm((f - 6.6) / 0.9);
+          if (slowB > 0.02) {
+            drawArrow([1.85, rowYB, 0], [2.65, rowYB, 0], pal.agB, 0.05, slowB);
+            [[3.00, rowYB, 0], [3.46, rowYB, 0], [3.92, rowYB, 0]].forEach((pp) => {
+              drawCell(pp, 0.17, pal.plasma, { a: slowB });
+            });
+            [[4.60, rowYB, 0], [5.14, rowYB, 0]].forEach((mp) => {
+              drawCell(mp, 0.17, pal.memory, { a: slowB, memoryRing: true });
+            });
+            I.push({ k: 3, p: [3.6, rowYB - 0.30, 0], text: 'B: 형질 6 · 기억 2', size: 10, c: pal.agB, a: slowB });
+          } else {
+            I.push({ k: 3, p: [3.1, rowYB, 0], text: 'B: 첫 노출 잠복기', size: 10, c: pal.muted, a: a2 });
+          }
+        }
+      }
+    }
+
+    // 아래쪽 그래프 축
+    I.push({ k: 1, p: [-5.8, y0, 0], q: [-5.8, 0.92, 0], w: 0.055, c: pal.ink, flat: true, a: 0.85 });
+    I.push({ k: 4, p: [-5.8, 0.55, 0], q: [-5.8, 0.95, 0], c: pal.ink, a: 0.85 });
+    I.push({ k: 1, p: [-5.8, y0, 0], q: [-0.75, y0, 0], w: 0.055, c: pal.ink, flat: true, a: 0.85 });
+    I.push({ k: 1, p: [0.35, y0, 0], q: [5.55, y0, 0], w: 0.055, c: pal.ink, flat: true, a: 0.85 });
+    I.push({ k: 4, p: [5.1, y0, 0], q: [5.6, y0, 0], c: pal.ink, a: 0.85 });
+
+    // 시간 간격 표시 //
+    I.push({ k: 1, p: [-0.52, y0 - 0.18, 0], q: [-0.30, y0 + 0.18, 0], w: 0.05, c: pal.muted, flat: true });
+    I.push({ k: 1, p: [-0.12, y0 - 0.18, 0], q: [0.10, y0 + 0.18, 0], w: 0.05, c: pal.muted, flat: true });
+    I.push({ k: 3, p: [-0.20, y0 - 0.34, 0], text: '간격', size: 10, c: pal.muted });
+
+    // Y축 눈금 (1, 2, 3) & 보조선
+    [1, 2, 3].forEach((v) => {
+      const yy = gy(v);
+      I.push({ k: 1, p: [-5.92, yy, 0], q: [-5.78, yy, 0], w: 0.04, c: pal.muted, flat: true });
+      I.push({ k: 3, p: [-6.18, yy, 0], text: String(v), size: 10, c: pal.muted });
+    });
+    I.push({ k: 3, p: [-5.25, 0.92, 0], text: '항체량(모형값)', size: 10, c: pal.muted });
+
+    // 1차 기준선 토글 (val = 1.0 점선)
+    if (st.compare && f >= 2.2) {
+      drawDashed([-5.8, gy(1.0), 0], [5.4, gy(1.0), 0], pal.muted, 0.035, 36, 0.55);
+    }
+
+    // X축 눈금 (0~4주 양쪽)
+    for (let w = 0; w <= 4; w++) {
+      const x1 = gx1(w), x2 = gx2(w);
+      I.push({ k: 1, p: [x1, y0 - 0.09, 0], q: [x1, y0 + 0.05, 0], w: 0.04, c: pal.muted, flat: true });
+      I.push({ k: 3, p: [x1, y0 - 0.28, 0], text: w === 4 ? '4주' : String(w), size: 10, c: pal.muted });
+      I.push({ k: 1, p: [x2, y0 - 0.09, 0], q: [x2, y0 + 0.05, 0], w: 0.04, c: pal.muted, flat: true });
+      I.push({ k: 3, p: [x2, y0 - 0.28, 0], text: w === 4 ? '4주' : String(w), size: 10, c: pal.muted });
+    }
+
+    // 노출 시점 화살표 표시
+    I.push({ k: 4, p: [-5.8, y0 - 0.68, 0], q: [-5.8, y0 - 0.28, 0], c: pal.agA });
+    I.push({ k: 3, p: [-5.0, y0 - 0.65, 0], text: isVac ? '백신(항원 A)' : '항원 A 1차 노출', size: 10, c: pal.agA });
+    if (hasSecond) {
+      const aExp2 = f >= 4.8 ? 1 : 0.35;
+      I.push({ k: 4, p: [0.4, y0 - 0.68, 0], q: [0.4, y0 - 0.28, 0], c: pal.agA, a: aExp2 });
+      I.push({ k: 3, p: [1.65, y0 - 0.65, 0], text: hasB ? 'A 재노출 + B 1차' : '항원 A 감염', size: 10, c: pal.agA, a: aExp2 });
+    }
+
+    // 곡선 그리기 도우미
+    const drawCurve = (tMax, fn, xMap, col) => {
+      const steps = 48;
+      if (tMax <= 0.01) return;
+      let prev = [xMap(0), gy(fn(0)), 0];
+      for (let i = 1; i <= steps; i++) {
+        const t = (i / steps) * tMax;
+        const cur = [xMap(t), gy(fn(t)), 0];
+        I.push({ k: 1, p: prev, q: cur, w: 0.085, c: col });
+        prev = cur;
+      }
+      I.push({ k: 0, p: prev, r: 0.12, c: col });
+    };
+
+    // 1차 반응 곡선 (항원 A)
+    drawCurve(t1Now, curve1, gx1, pal.agA);
+
+    // 2차 구간 곡선
+    if (f > 5.2) {
+      if (hasSecond) {
+        drawCurve(t2Now, curve2, gx2, pal.agA);
+        if (hasB) drawCurve(t2Now, curve1, gx2, pal.agB);
+      } else {
+        drawDashed([0.4, y0 + 0.04, 0], [gx2(t2Now), y0 + 0.04, 0], pal.muted, 0.055, 16, 0.7);
+        I.push({ k: 0, p: [gx2(t2Now), y0 + 0.04, 0], r: 0.10, c: pal.muted });
+      }
+    }
+
+    // 라벨 칩 (최대 4~5개, 겹침 없음)
+    if (st.labels) {
+      if (f >= 2.2) {
+        const pk1 = Math.min(2.0, t1Now);
+        O.push({
+          p: [gx1(pk1), gy(curve1(pk1)), 0],
+          text: isVac ? '1차 반응 (백신)' : '1차 반응 A',
+          c: pal.agA,
+          dy: -24,
+          lead: true
+        });
+      }
+      if (f >= 6.0 && hasSecond) {
+        const pkT = Math.min(1.2, t2Now);
+        O.push({
+          p: [gx2(pkT), gy(curve2(pkT)), 0],
+          text: '2차 반응 A',
+          c: pal.agA,
+          dx: 56,
+          dy: 4,
+          lead: true
+        });
+      }
+      if (f >= 7.2 && hasB) {
+        const pkB = Math.min(2.0, t2Now);
+        O.push({
+          p: [gx2(pkB), gy(curve1(pkB)), 0],
+          text: '1차 반응 B (처음 만남)',
+          c: pal.agB,
+          dx: 48,
+          dy: -14,
+          lead: true
+        });
+      }
+    }
+  }
+
+  // 주제 전용 상태(보기 옵션 키 등). 공통 상태에 합쳐져요.
+  extraState() {
+    return {
+      labels: true,
+      receptors: true,
+      compare: true,
+      ag: 'A',
+      helperOk: true,
+      scenario: 'both'
+    };
+  }
+
+  // 주제 전용 마크업 값. renderVals() 결과에 합쳐져요.
+  extraVals(st) {
+    const pal = this.pal(), f = st.f;
+    const isA = st.ag !== 'B';
+    const htOk = st.helperOk !== false;
+    const scen = st.scenario || 'both';
+
+    // 왼쪽 슬롯: exposures 목록 (memory 모드)
+    const scenDefs = [
+      { key: 'first', label: '항원 A 첫 노출' },
+      { key: 'both', label: 'A 재노출 + 새 항원 B' },
+      { key: 'vaccine', label: '백신 접종 뒤 A 감염' }
+    ];
+    const scenarios = scenDefs.map((d) => ({
+      label: d.label,
+      pressed: scen === d.key ? 'true' : 'false',
+      pick: () => this.setState({ scenario: d.key })
+    }));
+
+    const clonalHint = htOk
+      ? '같은 항원을 먼저 접한 도움 T세포가 선택된 B세포를 자극해요.'
+      : '도움 T세포가 부족해 선택된 B세포가 증식·분화하지 못해요.';
+    const scenarioHint = scen === 'first'
+      ? '첫 노출 뒤 기억세포가 남아 대기하는 상태까지 살펴봐요.'
+      : scen === 'vaccine'
+        ? '백신(항원 A 주입: 교과서 보충)으로 기억세포를 만든 뒤 실제 감염에 맞서요.'
+        : '같은 날 들어와도 재노출된 A와 처음 만난 B의 반응 속도를 나란히 비교해요.';
+
+    // 오른쪽 패널: 지금 일어나는 일
+    let events = [];
+    if (st.mode === 'clonal') {
+      const agNm = isA ? '세모 항원 A' : '네모 항원 B';
+      const clNm = isA ? '1번 B세포' : '2번 B세포';
+      if (f < 2.0) {
+        events = [{ c: pal.bcell, text: '막 항체 모양이 서로 다른 4종 B세포가 항원보다 먼저 대기해요.' }];
+      } else if (f < 4.0) {
+        events = [{ c: isA ? pal.agA : pal.agB, text: agNm + '와 모양이 들어맞는 ' + clNm + ' 1개만 선택돼요.' }];
+      } else if (f < 6.0) {
+        events = htOk
+          ? [{ c: pal.helper, text: agNm + '를 먼저 접한 도움 T세포가 ' + clNm + '만 알아보고 자극해요.' }]
+          : [{ c: pal.warn, text: '도움 T세포가 부족해 ' + clNm + '에 자극이 전달되지 않아요.' }];
+      } else if (f < 8.0) {
+        events = htOk
+          ? [{ c: pal.plasma, text: '선택된 ' + clNm + '만 같은 클론으로 증식해 형질세포와 기억세포로 분화해요.' }]
+          : [{ c: pal.warn, text: '자극이 없어 클론 증식과 분화가 멈춰 있어요.' }];
+      } else {
+        events = htOk
+          ? [
+              { c: pal.ab, text: '형질세포가 같은 모양의 항체를 체액으로 대량 분비해 항원을 붙잡아요.' },
+              { c: pal.memory, text: '수명이 긴 기억세포가 남아 같은 항원의 재노출에 대비해요.' }
+            ]
+          : [{ c: pal.warn, text: '도움 T세포 부족으로 형질세포와 분비 항체가 거의 생기지 않았어요.' }];
+      }
+    } else {
+      if (f < 2.2) {
+        events = [{
+          c: pal.agA,
+          text: scen === 'vaccine'
+            ? '백신(항원 A: 교과서 보충)에 맞는 B세포 1클론을 찾아 증식을 시작해요.'
+            : '항원 A에 맞는 B세포 1클론이 적어 선택·증식에 시간이 걸려요.'
+        }];
+      } else if (f < 5.0) {
+        events = [
+          { c: pal.plasma, text: '약 2주째에 1차 반응 봉우리(주로 IgM: 교과서 보충)를 이뤄요.' },
+          { c: pal.memory, text: '항원이 제거된 뒤에도 수명이 긴 기억세포가 남아요.' }
+        ];
+      } else if (f < 7.2) {
+        if (scen === 'first') {
+          events = [{ c: pal.memory, text: '재노출이 없어 기억세포가 대기해요. 왼쪽에서 재노출 조건으로 바꿔 보세요.' }];
+        } else if (scen === 'vaccine') {
+          events = [{ c: pal.memory, text: '실제 항원 A가 감염되자 백신이 만든 기억세포가 즉시 빠르게 분열해요.' }];
+        } else {
+          events = [
+            { c: pal.agA, text: '항원 A는 남아 있던 기억세포 덕분에 곧바로 빠르게 치솟아요.' },
+            { c: pal.agB, text: '처음 만난 항원 B는 B세포 1클론부터 천천히 시작해요.' }
+          ];
+        }
+      } else {
+        if (scen === 'first') {
+          events = [{ c: pal.memory, text: '1차 반응만 완료됐어요. ‘A 재노출 + 새 항원 B’나 ‘백신’ 조건과 비교해 보세요.' }];
+        } else if (scen === 'vaccine') {
+          events = [{ c: pal.agA, text: '1차보다 훨씬 빠르고 많은 항체(모형값 약 1.2주째 3배, 주로 IgG: 교과서 보충)로 감염을 빠르게 막아요.' }];
+        } else {
+          events = [
+            { c: pal.agA, text: '항원 A는 1차보다 훨씬 빠르고 높은 2차 봉우리(모형값 약 1.2주째 3배, 주로 IgG: 교과서 보충)를 만들어요.' },
+            { c: pal.agB, text: '새 항원 B는 약 2주째 1차 반응처럼 느리고 적게 올라요.' }
+          ];
+        }
+      }
+    }
+
+    // 조건별 단계 상세 설명 보정 (셸을 건드리지 않고 stepDetail 덮어쓰기)
+    const STEPS = (this.T && this.T.STEPS) || [];
+    let stepDetail = (st.step >= 0 && STEPS[st.step]) ? STEPS[st.step].text : '';
+    if (st.step >= 0 && STEPS[st.step]) {
+      if (st.mode === 'clonal' && !htOk) {
+        if (st.step === 2) stepDetail = '도움 T세포가 부족하면 항원을 만난 B세포에 자극이 전달되지 못해요. 그래서 다음 단계의 클론 증식과 분화가 멈춰요.';
+        else if (st.step === 3) stepDetail = '도움 T세포의 자극이 없어 선택된 B세포가 증식·분화하지 못해요. 도움 T세포를 ‘정상’으로 바꿔 증식 집단이 생기는 모습과 비교해 보세요.';
+        else if (st.step === 4) stepDetail = '도움 T세포가 부족해 형질세포와 분비 항체가 거의 생기지 않고 기억세포도 만들어지지 않아요. ‘정상’ 조건과 비교해 보세요.';
+      } else if (st.mode === 'memory' && scen === 'first') {
+        if (st.step === 7) stepDetail = '현재 ‘항원 A 첫 노출’ 조건이라 재노출이 일어나지 않고, 1차 반응 뒤 남은 기억세포가 대기해요. 왼쪽에서 재노출이나 백신 조건으로 바꿔 2차 반응을 확인해 보세요.';
+        else if (st.step === 8) stepDetail = '재노출이 없어 오른쪽 구간에서 항체량이 오르지 않고 기억세포만 대기 상태로 남아요. ‘A 재노출 + 새 항원 B’나 ‘백신 접종 뒤 A 감염’ 조건으로 바꿔 비교해 보세요.';
+      } else if (st.mode === 'memory' && scen === 'vaccine') {
+        if (st.step === 5) stepDetail = '백신으로 들어온 항원 A(항원 주입: 교과서 보충)에 맞는 B세포가 적어 선택·증식·분화에 시간이 걸려요. 그래서 접종 직후에는 잠복기가 나타나요.';
+        else if (st.step === 6) stepDetail = '백신 접종 뒤 약 2주째에 비교적 적은 항체(주로 IgM: 교과서 보충)가 만들어져 1차 봉우리를 이뤄요. 항원이 제거되면 활성화된 세포 대부분은 사라지고 기억세포가 남아요(교과서 보충).';
+        else if (st.step === 7) stepDetail = '이후 실제 병원체의 항원 A가 감염되면, 백신으로 미리 만들어 둔 기억세포가 곧바로 빠르게 분열해 2차 반응을 시작해요.';
+        else if (st.step === 8) stepDetail = '백신이 남긴 기억세포 덕분에 1차보다 훨씬 빠르고 많은 항체(모형값 약 1.2주째 3배, 주로 IgG: 교과서 보충)를 만들어 실제 감염을 신속히 막아요.';
+      }
+    }
+
+    // 오른쪽 패널 숫자 타일
+    const cStats = {
+      clone: f < 2.0 ? '대기 중' : (isA ? '1번 B세포' : '2번 B세포'),
+      helper: htOk ? '정상' : '부족',
+      plasma: !htOk ? (f >= 6.8 ? '거의 없음' : '0개') : (f >= 7.0 ? '6개(모형)' : '0개'),
+      memory: !htOk ? '0개' : (f >= 7.0 ? '2개(모형)' : '0개')
+    };
+
+    const inSecond = f >= 5.0 && scen !== 'first';
+    const mStats = inSecond
+      ? {
+          start: scen === 'both' ? 'A 기억 2 · B 1클론' : '기억세포 2개',
+          peak: scen === 'both' ? 'A 3 · B 1' : '3 (1차의 3배)',
+          time: scen === 'both' ? 'A 1.2주 · B 2주' : '1.2주째',
+          ig: scen === 'both' ? 'A IgG · B IgM' : '주로 IgG'
+        }
+      : {
+          start: 'B세포 1클론',
+          peak: '1 (기준)',
+          time: '2주째',
+          ig: '주로 IgM'
+        };
+
+    return {
+      stepDetail: stepDetail,
+      agIsA: isA ? 'true' : 'false',
+      agIsB: isA ? 'false' : 'true',
+      pickAgA: () => this.setState({ ag: 'A' }),
+      pickAgB: () => this.setState({ ag: 'B' }),
+      htOn: htOk ? 'true' : 'false',
+      htOff: htOk ? 'false' : 'true',
+      pickHtOn: () => this.setState({ helperOk: true }),
+      pickHtOff: () => this.setState({ helperOk: false }),
+      clonalHint: clonalHint,
+      scenarios: scenarios,
+      scenarioHint: scenarioHint,
+      events: events,
+      cStats: cStats,
+      mStats: mStats,
+      legend: {
+        agA: pal.agA, agB: pal.agB, bcell: pal.bcell,
+        helper: pal.helper, plasma: pal.plasma, memory: pal.memory, ab: pal.ab
+      }
+    };
+  }
+
+  // ================= 공통 셸: 아래는 주제와 무관해요. 고치지 않아요 =================
+  constructor(...args) {
+    super(...args);
+    let reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    let narrow = false;
+    try { narrow = window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) {}
+    let saved = null;
+    try { saved = window.localStorage.getItem('od-theme'); } catch (e) {}
+    const PANEL_W = { left: { min: 220, max: 480 }, right: { min: 280, max: 720 } };
+    let widths = {};
+    try { widths = JSON.parse(window.localStorage.getItem('interactive-panel-w')) || {}; } catch (e) {}
+    const okW = (side) => { const v = widths[side]; return typeof v === 'number' && v >= PANEL_W[side].min && v <= PANEL_W[side].max ? v : null; };
+    this.T = this.topic();
+    this.state = Object.assign({
+      mode: this.T.MODES[0].key, f: 0, playing: false, speed: 1, step: -1, spin: !reduce,
+      theme: (saved === 'light' || saved === 'dark') ? saved : (this.systemDark() ? 'dark' : 'light'),
+      // leftOpen/rightOpen: docked panels on wide screens; drawer: the one open drawer on narrow screens
+      leftOpen: true, rightOpen: true, drawer: null, narrow: narrow,
+      // leftW/rightW: user-set docked widths in px (null = default); resizing: a handle is being dragged
+      leftW: okW('left'), rightW: okW('right'), resizing: false
+    }, this.extraState());
+    this.reduceMotion = reduce;
+    this.K = {
+      PANEL_W: PANEL_W, PANEL_W_KEY: 'interactive-panel-w', PANEL_DEFAULT: { left: 320, right: 400 },
+      THEMES: {
+        light: { bg: '#ffffff', surface: '#f7f8fa', ink: '#111111', ink2: '#6b7280', line: '#d9dee7', accent: '#1677ff', accentInk: '#1b64da', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#b54708', prof: '#6941c6', supp: '#067647', danger: '#d92d20', scroll: '#c9d0db', scrollHover: '#9aa3b2' },
+        dark: { bg: '#17171c', surface: '#212128', ink: '#f2f4f6', ink2: '#a3abb8', line: '#34353d', accent: '#3182f6', accentInk: '#6ea4ff', btnBg: '#1b64da', onBtn: '#ffffff', warn: '#f5a15c', prof: '#b69cff', supp: '#5fd39a', danger: '#ff6b61', scroll: '#3f414b', scrollHover: '#5b5e6a' }
+      }
+    };
+    this.cam = Object.assign({}, this.modeDef().cam);
+    this.sim = { f: 0, cx: 0 };
+    this.pointer = { x: -1, y: -1, inside: false, drag: false, lx: 0, ly: 0 };
+    this.colorCache = {};
+    this._tick = (t) => this.tick(t);
+    this._canvasRef = (el) => this.attachCanvas(el);
+    this.handles = {};
+    this._handleRefL = (el) => this.attachHandle('left', el);
+    this._handleRefR = (el) => this.attachHandle('right', el);
+  }
+
+  componentWillUnmount() {
+    this.attachCanvas(null);
+    this.attachHandle('left', null);
+    this.attachHandle('right', null);
+  }
+
+  modeDef(key) {
+    const k = key || this.state.mode;
+    return this.T.MODES.find((m) => m.key === k) || this.T.MODES[0];
+  }
+  systemDark() {
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; }
+  }
+  isNarrow() {
+    try { return window.matchMedia('(max-width: 1023.98px)').matches; } catch (e) { return false; }
+  }
+  syncBreakpoint() { this.setState({ narrow: this.isNarrow(), drawer: null }); }
+  // In drawer mode only one panel is open at a time.
+  togglePanel(side) {
+    const st = this.state;
+    if (st.narrow) this.setState({ drawer: st.drawer === side ? null : side });
+    else if (side === 'left') this.setState({ leftOpen: !st.leftOpen });
+    else this.setState({ rightOpen: !st.rightOpen });
+  }
+  // Docked panel width: the canvas column always keeps at least 400px.
+  panelMax(side) {
+    const lim = this.K.PANEL_W[side], other = side === 'left' ? 'right' : 'left', st = this.state;
+    const h = this.handles[other];
+    const otherOpen = other === 'left' ? st.leftOpen : st.rightOpen;
+    const otherW = !otherOpen ? 0 : h ? h.el.parentElement.getBoundingClientRect().width
+      : (st[other + 'W'] || this.K.PANEL_DEFAULT[other]);
+    return Math.max(lim.min, Math.min(lim.max, (window.innerWidth || 1440) - otherW - 400));
+  }
+  setPanelWidth(side, px, save) {
+    const v = Math.round(Math.min(Math.max(px, this.K.PANEL_W[side].min), this.panelMax(side)));
+    this.setState({ [side + 'W']: v });
+    if (save) this.savePanelWidths(side, v);
+  }
+  resetPanelWidth(side) {
+    this.setState({ [side + 'W']: null });
+    this.savePanelWidths(side, null);
+  }
+  savePanelWidths(side, v) {
+    try {
+      const key = this.K.PANEL_W_KEY;
+      let w = {};
+      try { w = JSON.parse(window.localStorage.getItem(key)) || {}; } catch (e) {}
+      if (v == null) delete w[side]; else w[side] = v;
+      window.localStorage.setItem(key, JSON.stringify(w));
+    } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ }
+  }
+  // Re-fit user widths when the window shrinks (not saved).
+  refitPanels() {
+    ['left', 'right'].forEach((side) => {
+      const w = this.state[side + 'W'];
+      if (w != null && w > this.panelMax(side)) this.setPanelWidth(side, w, false);
+    });
+  }
+  attachHandle(side, el) {
+    const old = this.handles[side];
+    if (old && old.el === el) return;
+    if (old) {
+      Object.keys(old.on).forEach((ev) => old.el.removeEventListener(ev, old.on[ev]));
+      delete this.handles[side];
+      if (!Object.keys(this.handles).length) window.removeEventListener('resize', this._refit);
+    }
+    if (!el) return;
+    const dir = side === 'left' ? 1 : -1;
+    const width = () => el.parentElement.getBoundingClientRect().width;
+    let drag = null;
+    const on = {
+      pointerdown: (e) => {
+        if (this.state.narrow || e.button !== 0) return;
+        e.preventDefault();
+        drag = { x: e.clientX, w: width() };
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        this.setState({ resizing: true });
+      },
+      pointermove: (e) => { if (drag) this.setPanelWidth(side, drag.w + dir * (e.clientX - drag.x), false); },
+      pointerup: () => {
+        if (!drag) return;
+        drag = null;
+        this.setState({ resizing: false });
+        this.setPanelWidth(side, width(), true);
+      },
+      dblclick: () => this.resetPanelWidth(side),
+      keydown: (e) => {
+        const step = e.shiftKey ? 64 : 16;
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          e.preventDefault(); e.stopPropagation();
+          this.setPanelWidth(side, width() + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+        } else if (e.key === 'Home') { e.preventDefault(); e.stopPropagation(); this.resetPanelWidth(side); }
+      }
+    };
+    on.pointercancel = on.pointerup;
+    Object.keys(on).forEach((ev) => el.addEventListener(ev, on[ev]));
+    if (!Object.keys(this.handles).length) {
+      this._refit = this._refit || (() => this.refitPanels());
+      window.addEventListener('resize', this._refit);
+    }
+    this.handles[side] = { el: el, on: on };
+  }
+  textTone(hex) { return this.state.theme === 'light' ? this.mix(hex, '#000000', 0.4) : hex; }
+  pal() { return this.T.PAL[this.state.theme] || this.T.PAL.dark; }
+  setTheme(t) {
+    this.setState({ theme: t });
+    try {
+      if ((t === 'dark') === this.systemDark()) window.localStorage.removeItem('od-theme');
+      else window.localStorage.setItem('od-theme', t);
+    } catch (e) {}
+  }
+
+  attachCanvas(el) {
+    if (this.canvas === el) return;
+    if (this.canvas) {
+      const c = this.canvas;
+      c.removeEventListener('pointerdown', this._pd);
+      c.removeEventListener('pointermove', this._pm);
+      c.removeEventListener('pointerup', this._pu);
+      c.removeEventListener('pointercancel', this._pu);
+      c.removeEventListener('pointerleave', this._pl);
+      cancelAnimationFrame(this.raf);
+      try { this._mq.removeEventListener('change', this._mqH); } catch (err) {}
+    }
+    this.canvas = el || null;
+    if (!el) return;
+    this.ctx = el.getContext('2d');
+    const p = this.pointer;
+    this._pd = (e) => {
+      if (!this.modeDef().rotatable) return;
+      p.drag = true; p.lx = e.clientX; p.ly = e.clientY;
+      try { el.setPointerCapture(e.pointerId); } catch (err) {}
+      el.style.cursor = 'grabbing';
+    };
+    this._pm = (e) => {
+      const r = el.getBoundingClientRect();
+      p.x = e.clientX - r.left; p.y = e.clientY - r.top; p.inside = true;
+      if (p.drag && this.modeDef().rotatable) {
+        this.cam.yaw += (e.clientX - p.lx) * 0.008;
+        this.cam.pitch = Math.max(-1.45, Math.min(1.45, this.cam.pitch + (e.clientY - p.ly) * 0.008));
+        p.lx = e.clientX; p.ly = e.clientY;
+      }
+    };
+    this._pu = () => { p.drag = false; el.style.cursor = ''; };
+    this._pl = () => { p.inside = false; };
+    el.addEventListener('pointerdown', this._pd);
+    el.addEventListener('pointermove', this._pm);
+    el.addEventListener('pointerup', this._pu);
+    el.addEventListener('pointercancel', this._pu);
+    el.addEventListener('pointerleave', this._pl);
+    try {
+      this._mq = window.matchMedia('(max-width: 1023.98px)');
+      this._mqH = () => this.syncBreakpoint();
+      this._mq.addEventListener('change', this._mqH);
+    } catch (err) {}
+    this.last = 0;
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  tick(t) {
+    if (!this.canvas) return;
+    const dt = this.last ? Math.min(0.05, (t - this.last) / 1000) : 0;
+    this.last = t;
+    const st = this.state, m = this.modeDef(), pb = m.playback;
+    if (m.autoSpin && st.spin && !this.pointer.drag) this.cam.yaw += dt * 0.3;
+    if (pb && st.playing) {
+      this.sim.f = Math.min(pb.fmax, this.sim.f + dt * pb.rate * st.speed);
+      if (this.sim.f >= pb.fmax) this.setState({ playing: false, f: this.sim.f });
+      else if (t - (this.lastPush || 0) > 120) { this.lastPush = t; this.setState({ f: this.sim.f }); }
+    }
+    // a broken scene keeps the page alive but is reported once for the browser check
+    try { this.draw(dt, t); } catch (err) { if (!this.drawErr) { this.drawErr = true; console.error(err); } }
+    this.raf = requestAnimationFrame(this._tick);
+  }
+
+  // ---------- math helpers (장면에서 써도 돼요) ----------
+  lerp(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+  sm(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+  rgb(hex) { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  mix(hex, to, amt) {
+    const a = this.rgb(hex), b = this.rgb(to);
+    return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * amt) + ',' + Math.round(a[1] + (b[1] - a[1]) * amt) + ',' + Math.round(a[2] + (b[2] - a[2]) * amt) + ')';
+  }
+  rgba(hex, al) { const a = this.rgb(hex); return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + al + ')'; }
+  shades(hex) {
+    let s = this.colorCache[hex];
+    if (!s) { s = { hi: this.mix(hex, '#FFFFFF', 0.55), mid: hex, lo: this.mix(hex, '#000000', 0.55) }; this.colorCache[hex] = s; }
+    return s;
+  }
+  proj(p, V) {
+    const x = p[0] - V.cx, y = p[1], z = p[2];
+    const x1 = x * V.cy + z * V.sy, z1 = -x * V.sy + z * V.cy;
+    const y2 = y * V.cp - z1 * V.sp, z2 = y * V.sp + z1 * V.cp;
+    const s = V.F / Math.max(2, V.D - z2);
+    return [V.ox + x1 * s, V.oy - y2 * s, z2, s];
+  }
+
+  // ---------- drawing ----------
+  draw(dt, now) {
+    const el = this.canvas, ctx = this.ctx, st = this.state, m = this.modeDef();
+    const dpr = window.devicePixelRatio || 1;
+    const W = el.clientWidth, H = el.clientHeight;
+    if (!W || !H) return;
+    if (el.width !== Math.round(W * dpr) || el.height !== Math.round(H * dpr)) { el.width = Math.round(W * dpr); el.height = Math.round(H * dpr); }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const pal = this.pal();
+    ctx.fillStyle = pal.bg; ctx.fillRect(0, 0, W, H);
+
+    const I = [], O = [];
+    this.buildScene(st.mode, I, O);
+    const scale = Math.min(W / m.fit[0], H / m.fit[1]), D = m.D, z = this.cam.zoom;
+    const V = {
+      cx: this.sim.cx, cy: Math.cos(this.cam.yaw), sy: Math.sin(this.cam.yaw), cp: Math.cos(this.cam.pitch), sp: Math.sin(this.cam.pitch),
+      F: scale * z * D, D: D, ox: W / 2, oy: H / 2 - (m.playback ? 20 : 0)
+    };
+    let zmin = Infinity, zmax = -Infinity;
+    for (const it of I) {
+      it.A = this.proj(it.p, V);
+      if (it.q) { it.B = this.proj(it.q, V); it.z = (it.A[2] + it.B[2]) / 2; } else it.z = it.A[2];
+      if (it.z < zmin) zmin = it.z;
+      if (it.z > zmax) zmax = it.z;
+    }
+    I.sort((a, b) => a.z - b.z);
+    // depth fog; a flat scene (all items at one depth) is drawn without it
+    const span = zmax - zmin;
+    for (const it of I) {
+      const fog = span < 0.01 ? 1 : 0.42 + 0.58 * ((it.z - zmin) / span);
+      ctx.globalAlpha = Math.max(0, (it.a == null ? 1 : it.a) * fog);
+      if (ctx.globalAlpha < 0.01) continue;
+      const x = it.A[0], y = it.A[1], s = it.A[3];
+      if (it.k === 0) {
+        const R = it.r * s;
+        if (R < 0.4) continue;
+        if (it.flat) { ctx.fillStyle = it.c; ctx.beginPath(); ctx.arc(x, y, Math.max(1.3, R), 0, 6.2832); ctx.fill(); }
+        else {
+          const sh = this.shades(it.c);
+          const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+          g.addColorStop(0, sh.hi); g.addColorStop(0.5, sh.mid); g.addColorStop(1, sh.lo);
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        }
+      } else if (it.k === 1) {
+        const lw = Math.max(1, it.w * (s + it.B[3]) / 2);
+        ctx.lineCap = it.flat ? 'butt' : 'round';
+        if (it.rod) {
+          ctx.strokeStyle = this.shades(it.c).lo; ctx.lineWidth = lw + 2;
+          ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+        }
+        ctx.strokeStyle = it.c; ctx.lineWidth = lw;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(it.B[0], it.B[1]); ctx.stroke();
+      } else if (it.k === 3) {
+        const fs = Math.max(8, Math.min(14, it.size * s / (scale * z) * 1.05));
+        ctx.font = '700 ' + fs + 'px "Pretendard", system-ui, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = it.c; ctx.fillText(it.text, x, y + 0.5);
+      } else if (it.k === 4) {
+        const ang = Math.atan2(it.B[1] - y, it.B[0] - x), mx = (x + it.B[0]) / 2, my = (y + it.B[1]) / 2, r = 6;
+        ctx.fillStyle = it.c; ctx.beginPath();
+        ctx.moveTo(mx + Math.cos(ang) * r, my + Math.sin(ang) * r);
+        ctx.lineTo(mx + Math.cos(ang + 2.5) * r, my + Math.sin(ang + 2.5) * r);
+        ctx.lineTo(mx + Math.cos(ang - 2.5) * r, my + Math.sin(ang - 2.5) * r);
+        ctx.closePath(); ctx.fill();
+      } else if (it.k === 5) {
+        // lit translucent sphere, highlight up-left like the solid spheres
+        const R = it.r * s, ba = pal.blobAlpha == null ? 0.3 : pal.blobAlpha;
+        const g = ctx.createRadialGradient(x - R * 0.35, y - R * 0.4, R * 0.1, x, y, R);
+        g.addColorStop(0, 'rgba(255,255,255,0.55)'); g.addColorStop(0.3, this.rgba(it.c, Math.min(1, ba + 0.15))); g.addColorStop(1, this.rgba(it.c, 0.18));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.2832); ctx.fill();
+        ctx.strokeStyle = it.c; ctx.lineWidth = it.focus ? 3 : 1.5; ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+    for (const o of O) this.drawOverlay(o, V, now);
+  }
+
+  drawOverlay(o, V, now) {
+    const ctx = this.ctx, A = this.proj(o.p, V), pal = this.pal();
+    if (o.t === 'ring') {
+      const r = Math.max(6, 0.32 * A[3]) * (1 + (this.reduceMotion ? 0 : 0.15 * Math.sin((now || 0) / 160)));
+      ctx.globalAlpha = 1; ctx.strokeStyle = pal.ring; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(A[0], A[1], r, 0, 6.2832); ctx.stroke();
+      ctx.font = '600 11px "Pretendard", system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = pal.ring; ctx.fillText(o.text, A[0], A[1] + r + 10);
+      return;
+    }
+    const size = o.size || 12, x = A[0] + (o.dx || 0), y = A[1] + (o.dy || 0);
+    ctx.font = '600 ' + size + 'px "Pretendard", system-ui, sans-serif';
+    const tw = ctx.measureText(o.text).width, w = tw + 14, h = size + 10;
+    ctx.globalAlpha = o.a == null ? 1 : o.a;
+    if (o.lead) {
+      ctx.strokeStyle = this.rgba(o.c, 0.6); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(x, y); ctx.stroke();
+    }
+    ctx.fillStyle = pal.labelBg;
+    ctx.strokeStyle = this.rgba(o.c, 0.55); ctx.lineWidth = 1;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x - w / 2, y - h / 2, w, h, 6); else ctx.rect(x - w / 2, y - h / 2, w, h);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = pal.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(o.text, x, y + 0.5);
+    ctx.globalAlpha = 1;
+  }
+
+  setMode(mode) {
+    this.cam = Object.assign({}, this.modeDef(mode).cam);
+    this.sim.f = 0;
+    this.pointer.drag = false;
+    this.setState({ mode: mode, f: 0, playing: false, step: -1 });
+  }
+
+  pickStep(i) {
+    const s = (this.T.STEPS || [])[i];
+    if (!s) return;
+    if (s.mode !== this.state.mode) this.setMode(s.mode);
+    if (s.f != null) this.sim.f = s.f;
+    this.setState({ f: this.sim.f, playing: false, step: i });
+    this.revealStepDetail();
+  }
+
+  // Scroll the left panel so the step text under the list shows, keeping the pressed button in view.
+  revealStepDetail() {
+    if (typeof document === 'undefined') return;
+    requestAnimationFrame(() => {
+      const box = document.querySelector('.panel-left .panel-inner'), d = box && box.querySelector('.detail');
+      if (!d) return;
+      const pad = 16, b = box.getBoundingClientRect();
+      let dy = d.getBoundingClientRect().bottom + pad - b.bottom;
+      const btn = d.parentElement.querySelector('.steps [aria-pressed="true"]');
+      if (btn) dy = Math.min(dy, btn.getBoundingClientRect().top - pad - b.top);
+      if (dy <= 0) return;
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      box.scrollTo({ top: box.scrollTop + dy, behavior: reduce ? 'auto' : 'smooth' });
+    });
+  }
+
+  renderVals() {
+    const st = this.state, T = this.T, m = this.modeDef(), pb = m.playback;
+    const tg = T.TOGGLES ? (Array.isArray(T.TOGGLES) ? T.TOGGLES : (T.TOGGLES[st.mode] || [])) : [];
+    const togDefs = tg.concat(m.autoSpin ? [['spin', '자동 회전']] : []);
+    const toggles = togDefs.map((d) => ({
+      label: d[1], pressed: st[d[0]] ? 'true' : 'false',
+      toggle: () => { const o = {}; o[d[0]] = !st[d[0]]; this.setState(o); }
+    }));
+    const STEPS = T.STEPS || [];
+    const steps = STEPS.map((s, i) => ({ s: s, i: i })).filter((x) => x.s.mode === st.mode).map((x, k) => ({
+      num: k + 1, title: x.s.title, who: x.s.who, c: x.s.c, pressed: st.step === x.i ? 'true' : 'false',
+      pick: () => this.pickStep(x.i)
+    }));
+    const speeds = [0.5, 1, 2].map((v) => ({
+      label: v + '×', pressed: st.speed === v ? 'true' : 'false',
+      pick: () => this.setState({ speed: v })
+    }));
+    const is = {};
+    T.MODES.forEach((d) => { is[d.key] = d.key === st.mode; });
+    const f = st.f;
+    const isDark = st.theme === 'dark';
+    const leftOn = st.narrow ? st.drawer === 'left' : st.leftOpen, rightOn = st.narrow ? st.drawer === 'right' : st.rightOpen;
+    return Object.assign({
+      th: this.K.THEMES[st.theme], isDark: isDark, isLight: !isDark,
+      themeLabel: isDark ? '라이트 모드로 전환' : '다크 모드로 전환',
+      toggleTheme: () => this.setTheme(isDark ? 'light' : 'dark'),
+      canvasRef: this._canvasRef, canvasCls: m.rotatable ? '' : 'is-fixed',
+      hasModes: T.MODES.length > 1, is: is,
+      modes: T.MODES.map((d) => ({ label: d.label, pressed: d.key === st.mode ? 'true' : 'false', pick: () => { if (d.key !== this.state.mode) this.setMode(d.key); } })),
+      leftCls: leftOn ? 'is-open' : '', rightCls: rightOn ? 'is-open' : '',
+      leftExpanded: leftOn ? 'true' : 'false', rightExpanded: rightOn ? 'true' : 'false',
+      scrimCls: (st.narrow && st.drawer) ? 'is-on' : '',
+      toggleLeft: () => this.togglePanel('left'),
+      toggleRight: () => this.togglePanel('right'),
+      closePanels: () => this.setState({ drawer: null }),
+      layoutStyle: ((st.leftW ? '--pl-user: ' + st.leftW + 'px; ' : '') + (st.rightW ? '--pr-user: ' + st.rightW + 'px;' : '')).trim(),
+      layoutCls: st.resizing ? 'is-resizing' : '',
+      leftWNow: st.leftW ? String(st.leftW) : '', rightWNow: st.rightW ? String(st.rightW) : '',
+      leftHandleRef: this._handleRefL, rightHandleRef: this._handleRefR,
+      onKey: (e) => { if (e.key === 'Escape' && this.state.narrow && this.state.drawer) this.setState({ drawer: null }); },
+      hasToggles: toggles.length > 0, toggles: toggles,
+      hasSteps: steps.length > 0, steps: steps,
+      hasStep: st.step >= 0 && st.step < STEPS.length, stepDetail: st.step >= 0 && STEPS[st.step] ? STEPS[st.step].text : '',
+      mistakes: (T.MISTAKES && T.MISTAKES[st.mode]) || [],
+      canvasLabel: m.canvasLabel(f),
+      zoomIn: () => { this.cam.zoom = Math.min(3, this.cam.zoom * 1.2); },
+      zoomOut: () => { this.cam.zoom = Math.max(0.5, this.cam.zoom / 1.2); },
+      resetView: () => { this.cam = Object.assign({}, m.cam); },
+      hasPlayback: !!pb, isPlaying: st.playing, notPlaying: !st.playing, playLabel: st.playing ? '일시정지' : '재생',
+      togglePlay: () => {
+        if (!pb) return;
+        if (!st.playing && this.sim.f >= pb.fmax) this.sim.f = 0;
+        this.setState({ playing: !st.playing, step: -1, f: this.sim.f });
+      },
+      fInt: Math.round(f * 10), fLabel: pb ? pb.label(f) : '', fMax10: pb ? Math.round(pb.fmax * 10) : 0,
+      onScrub: (e) => { const v = Number(e.target.value) / 10; this.sim.f = v; this.setState({ f: v, playing: false, step: -1 }); },
+      speeds: speeds
+    }, this.extraVals(st));
+  }
+}
+mountDC(Component);
+</script>
+</body>
+</html>
