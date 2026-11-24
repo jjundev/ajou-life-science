@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>생명과학 1124 학습만화</title>
+  <meta name="description" content="1124 수업 학습만화. 22페이지 · 페이지마다 4~8컷">
+  <script>document.documentElement.classList.add('js');try{const t=localStorage.getItem('od-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']})"></script>
+  <style>
+    /* ---------- 토큰 ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f7f8fa; --ink: #111111; --ink-2: #6b7280; --line: #d9dee7;
+      --accent: #1677ff; --accent-ink: #1b64da; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #b54708; --prof: #6941c6; --supp: #067647; --danger: #d92d20;
+      --scroll: #c9d0db; --scroll-hover: #9aa3b2;
+      --font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --fs-title: clamp(28px, 6vw, 36px); --fs-h3: clamp(26px, 5.4vw, 32px); --fs-layer: 19px; --fs-lead: 22px; --fs-body: 17px; --fs-sub: 15px; --fs-small: 14px; --fs-label: 13px; --fs-fig: 12px;
+      --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+      --radius: 8px; --measure: 680px; --tap: 48px; --btn-min: 160px;
+      --dur: 220ms; --dur-exit: 150ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+      /* 예전 조각이 참조할 수 있는 이름 */
+      --surface-2: var(--surface); --accent-soft: var(--surface); --warn-soft: var(--surface);
+      --prof-soft: var(--surface); --supp-soft: var(--surface); --eli5: var(--accent-ink); --eli5-soft: var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+        --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+        --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+        --scroll: #3f414b; --scroll-hover: #5b5e6a;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #17171c; --surface: #212128; --ink: #f2f4f6; --ink-2: #a3abb8; --line: #34353d;
+      --accent: #3182f6; --accent-ink: #6ea4ff; --btn-bg: #1b64da; --on-btn: #ffffff;
+      --warn: #f5a15c; --prof: #b69cff; --supp: #5fd39a; --danger: #ff6b61;
+      --scroll: #3f414b; --scroll-hover: #5b5e6a;
+    }
+
+    /* ---------- 기본 ---------- */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+      background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs-body); line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent-ink); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    [hidden] { display: none !important; }
+
+    /* ---------- 상단 바 ---------- */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s2) var(--s4); display: flex; align-items: center; gap: var(--s3); min-height: 56px; }
+    .brand { flex: 1 1 auto; min-width: 0; font-size: var(--fs-body); font-weight: 700; white-space: nowrap; }
+    .text-btn { flex: none; min-height: 44px; min-width: 44px; padding: 0 var(--s3); border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); font: 600 var(--fs-small)/1 var(--font); cursor: pointer; }
+    .bar { height: 2px; background: var(--line); overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+
+    /* ---------- 본문 ---------- */
+    main { flex: 1 0 auto; width: 100%; max-width: var(--measure); margin: 0 auto; padding: var(--s6) var(--s5) var(--s7); }
+    .hero h1 { font-size: var(--fs-title); line-height: 1.3; margin: 0 0 var(--s3); letter-spacing: -0.02em; }
+    .hero p { color: var(--ink-2); margin: 0; }
+    section { margin-top: var(--s7); }
+    section > h2 { font-size: 22px; line-height: 1.4; margin: 0 0 var(--s4); }
+    .topic { padding: var(--s6) 0; border-top: 1px solid var(--line); }
+    .topic h3 { margin: 0 0 var(--s2); font-size: var(--fs-h3); font-weight: 800; line-height: 1.3; letter-spacing: -0.02em; }
+    .tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+    .tag { font-size: var(--fs-label); line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+
+    /* 레이어: 배경 없이 라벨과 구분선으로 나눈다 */
+    .layer { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .layer.eli5 { margin-top: 0; padding-top: 0; border-top: 0; }
+    .layer > :first-child { margin-top: 0; }
+    .layer > :last-child { margin-bottom: 0; }
+    .layer-title { display: block; font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; color: var(--ink); margin-bottom: var(--s3); }
+    .layer.eli5 .layer-title { color: var(--accent-ink); }
+    .layer.eli5 .lead { font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; letter-spacing: -0.01em; margin: 0 0 var(--s4); }
+    /* 정확히 말하면: 본문 크기 그대로, 굵은 첫머리만 진하게 */
+    .layer.formal b { font-weight: 700; color: var(--ink); }
+    /* 교수님 말씀 · 주의: 보조 정보는 한 단계 작게 */
+    .layer.prof, .layer.warn, .layer.listen { font-size: var(--fs-sub); line-height: 1.7; }
+    .layer.prof blockquote { font-size: var(--fs-sub); }
+    .layer.prof .layer-title { color: var(--prof); }
+    .layer.warn, .layer.listen { background: var(--surface); border-top: 0; border-radius: var(--radius); padding: var(--s4); }
+    .layer.warn .layer-title { color: var(--warn); font-size: var(--fs-body); }
+    .layer.listen .layer-title { color: var(--accent-ink); font-size: var(--fs-body); }
+    .layer.supp .badge.supp { margin-bottom: var(--s2); }
+    .badge { display: inline-block; font-size: var(--fs-label); font-weight: 600; line-height: 1.5; padding: 2px var(--s2); border-radius: 6px; background: var(--surface); color: var(--ink-2); }
+    .badge.supp { color: var(--supp); }
+    .badge.exam { color: var(--warn); margin-right: var(--s1); }
+    blockquote { margin: var(--s3) 0; padding: 0 0 0 var(--s3); border-left: 2px solid var(--line); color: var(--ink-2); }
+    ol.steps { padding-left: 1.4em; }
+    ol.steps li { margin: var(--s2) 0; }
+
+    /* 그림 · 수식 · 표 */
+    .figure { margin: var(--s4) 0; text-align: center; }
+    .figure svg { width: 100%; height: auto; max-width: 560px; color: var(--ink); }
+    .figure img { max-width: 100%; height: auto; }
+    .figure figcaption { font-size: var(--fs-small); color: var(--ink-2); margin-top: var(--s1); }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: var(--s1) 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+    th, td { border-bottom: 1px solid var(--line); padding: var(--s2); text-align: left; vertical-align: top; }
+    th { color: var(--ink-2); font-weight: 600; }
+    td:first-child, th:first-child { min-width: 6em; }
+
+    /* 위젯 */
+    .widget { background: var(--surface); border-radius: var(--radius); padding: var(--s4); margin: var(--s5) 0; }
+    .widget h4 { margin: 0 0 var(--s1); font-size: var(--fs-layer); line-height: 1.4; }
+    .widget-help { font-size: var(--fs-small); color: var(--ink-2); margin: 0 0 var(--s3); }
+    .controls { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--s2); font-size: var(--fs-small); }
+    .controls label { display: flex; align-items: center; gap: var(--s2); min-height: 44px; }
+    .controls input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+    .widget svg { width: 100%; height: auto; background: var(--bg); border-radius: var(--radius); }
+    .readout { font-size: var(--fs-small); margin-top: var(--s2); }
+    .legend { font-size: var(--fs-label); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .sw { display: inline-block; width: 14px; height: 4px; vertical-align: middle; margin-right: var(--s1); border-radius: 2px; }
+    .sw.truth { background: var(--ink-2); } .sw.fit { background: var(--accent); } .sw.train { background: var(--accent); height: 10px; width: 10px; border-radius: 50%; }
+    .sw.test { background: var(--warn); height: 10px; width: 10px; border-radius: 50%; } .sw.like { background: var(--accent); } .sw.prior { background: var(--prof); } .sw.post { background: var(--supp); }
+    .axis { stroke: var(--line); stroke-width: 1.5; }
+    .tick { fill: var(--ink-2); font-size: 11px; }
+    .plot-truth { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .plot-fit { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+    .pt-train { fill: var(--accent); }
+    .pt-test { fill: var(--warn); }
+    .plot-like { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .plot-prior { fill: none; stroke: var(--prof); stroke-width: 2; stroke-dasharray: 6 4; }
+    .plot-post { fill: none; stroke: var(--supp); stroke-width: 3; }
+    .mark-ml { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .mark-map { stroke: var(--supp); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .fig-ink { stroke: currentColor; fill: none; stroke-width: 2; }
+    .fig-accent { stroke: var(--accent); fill: none; stroke-width: 2.5; }
+    .fig-danger { stroke: var(--danger); fill: none; stroke-width: 2.5; }
+    .fig-dot { fill: var(--accent); }
+    .fig-text { fill: currentColor; font-size: 13px; font-family: inherit; }
+    .fig-muted { fill: var(--ink-2); font-size: var(--fs-fig); font-family: inherit; }
+
+    footer { width: 100%; max-width: var(--measure); margin: 0 auto; padding: 0 var(--s5) var(--s6); color: var(--ink-2); font-size: var(--fs-small); }
+
+    /* ---------- 하단 이동 바 ---------- */
+    .pager { position: sticky; bottom: 0; z-index: 10; background: var(--bg); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .pager-inner { max-width: var(--measure); margin: 0 auto; padding: var(--s3) var(--s4); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); }
+    .pager-count { font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; min-width: 4em; }
+    .btn { min-height: var(--tap); min-width: var(--btn-min); padding: 0 var(--s6); border-radius: var(--radius); border: 0; font: 700 var(--fs-body)/1 var(--font); cursor: pointer; white-space: nowrap;
+      transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+    .btn-ghost { justify-self: start; background: var(--surface); color: var(--ink); }
+    .btn-primary { justify-self: end; background: var(--btn-bg); color: var(--on-btn); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    @media (hover: hover) {
+      .text-btn:hover, .btn-ghost:not(:disabled):hover { background: var(--line); }
+      .btn-primary:not(:disabled):hover { box-shadow: inset 0 0 0 100px rgba(0, 0, 0, .14); }
+    }
+
+    /* ---------- 목차 시트 ---------- */
+    .sheet { width: min(100%, var(--measure)); max-width: 100%; max-height: 80dvh; margin: auto auto 0; padding: 0; border: 0;
+      border-radius: 16px 16px 0 0; background: var(--bg); color: var(--ink); }
+    .sheet::backdrop { background: rgba(0, 0, 0, .4); }
+    .sheet-inner { padding: var(--s4) var(--s5) calc(var(--s5) + env(safe-area-inset-bottom)); }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s2); }
+    .sheet-head h2 { margin: 0; font-size: var(--fs-lead); }
+    .toc { display: flex; flex-direction: column; }
+    .toc > a, .toc-group > a { display: block; padding: var(--s3) 0 var(--s1); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); text-decoration: none; }
+    .toc-list { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+    .toc-list a { display: flex; align-items: center; gap: var(--s3); min-height: var(--tap); padding: var(--s2) var(--s3); margin: 0 calc(-1 * var(--s3));
+      border-radius: var(--radius); color: var(--ink); text-decoration: none; line-height: 1.4; }
+    .toc-list a[aria-current="true"] { background: var(--surface); font-weight: 700; color: var(--accent-ink); }
+    .toc-list .toc-title { flex: 1 1 0; min-width: 0; }
+    @media (hover: hover) { .toc-list a:hover { background: var(--surface); } }
+
+    /* ---------- 한 화면에 하나씩 (JS가 켤 때만) ---------- */
+    html:not(.js) .pager, html:not(.js) #toc-open { display: none; }
+    html:not(.js) .sheet { display: block; position: static; width: 100%; max-height: none; margin: 0 auto; border-radius: 0; border-bottom: 1px solid var(--line); }
+    html:not(.js) .sheet-close { display: none; }
+    .js main > .hero:not(.is-current), .js main > section:not(.is-on), .js .screen:not(.is-current) { display: none; }
+    .js main > section { margin-top: 0; }
+    .js main > section > h2 { font-size: var(--fs-small); font-weight: 600; color: var(--accent-ink); margin: 0 0 var(--s2); }
+    .js .topic { padding: 0; border-top: 0; }
+    .js .hero { padding-top: 12vh; }
+    .js footer { display: none; }
+    .js body.at-end footer { display: block; }
+    .screen.enter-next { animation: enter-next var(--dur) var(--ease-out); }
+    .screen.enter-prev { animation: enter-prev var(--dur) var(--ease-out); }
+    @keyframes enter-next { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes enter-prev { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .screen.enter-next, .screen.enter-prev { animation: none; }
+      .bar > span, .btn { transition: none; }
+    }
+    @media (max-width: 480px) {
+      main { padding: var(--s5) var(--s4) var(--s6); }
+      footer { padding: 0 var(--s4) var(--s5); }
+      .btn { min-width: 120px; padding: 0 var(--s5); }
+    }
+    @media print {
+      .topbar, .pager, .sheet { display: none !important; }
+      .js main > .hero, .js main > section, .js .screen, .js footer { display: block !important; }
+    }
+
+    /* ---------- 좌우 패널 (drawer) ---------- */
+    :root { --panel-l: clamp(240px, 18vw, 320px); --panel-r-min: 320px; --panel-r-max: 720px; --scrollbar: 16px; --drawer-l: 304px; --drawer-r: 360px; --fs-panel: 16px; --scrim: rgba(0, 0, 0, .4); }
+    html { height: 100%; } body { height: 100%; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+    .topbar-inner { max-width: none; padding: var(--s2) var(--s3); gap: var(--s2); }
+    .panel-toggle { display: inline-flex; align-items: center; gap: var(--s1); padding: 0 var(--s2); }
+    .panel-toggle svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-toggle .strip { fill: transparent; stroke: none; transition: fill 150ms ease-out; }
+    .panel-toggle[aria-expanded="true"] { color: var(--accent-ink); }
+    .panel-toggle[aria-expanded="true"] .strip { fill: currentColor; }
+    .theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .theme-toggle .i-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+    :root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .theme-toggle .i-sun { display: block; }
+      :root:not([data-theme="light"]) .theme-toggle .i-moon { display: none; }
+    }
+
+    .layout { display: grid; grid-template-columns: auto minmax(320px, 1fr) auto; min-height: 0; }
+    .content { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-padding-top: var(--s4); }
+    .panel { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-size: var(--fs-panel); line-height: 1.6; }
+    .panel-left { grid-column: 1; border-right: 1px solid var(--line); }
+    .content { grid-column: 2; }
+    .panel-right { grid-column: 3; border-left: 1px solid var(--line); }
+    .panel-inner { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--s4) var(--s4) var(--s6); }
+    .content::-webkit-scrollbar, .panel-inner::-webkit-scrollbar { width: 8px; }
+    .content::-webkit-scrollbar-track, .panel-inner::-webkit-scrollbar-track { background: transparent; }
+    .content::-webkit-scrollbar-thumb, .panel-inner::-webkit-scrollbar-thumb { background: var(--scroll); border-radius: 8px; border: 2px solid var(--bg); }
+    .content::-webkit-scrollbar-thumb:hover, .panel-inner::-webkit-scrollbar-thumb:hover { background: var(--scroll-hover); }
+    @supports (scrollbar-color: auto) { .content, .panel-inner { scrollbar-width: thin; scrollbar-color: var(--scroll) transparent; } }
+    .panel-resize { display: none; }
+    .panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 44px; margin-bottom: var(--s2); }
+    .panel-head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: var(--fs-lead); line-height: 1.4; }
+    .panel-sub { margin: 0 0 var(--s4); font-size: var(--fs-layer); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; }
+    .panel-empty { margin: 0; color: var(--ink-2); }
+    .panel-label { display: block; margin: var(--s5) 0 var(--s2); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+
+    /* 진행 상태 */
+    .panel-meta { margin: 0 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+    .panel-meta b { color: var(--ink); }
+    .progress { height: 4px; margin-bottom: var(--s3); border-radius: 2px; background: var(--line); overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur) var(--ease-out); }
+    .panel .toc-list a { margin: 0 calc(-1 * var(--s2)); padding: var(--s2); font-size: var(--fs-panel); }
+    .toc-mark { flex: none; display: block; width: 20px; height: 20px; color: var(--ink-2); }
+    .toc-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .toc-mark.is-done { color: var(--accent-ink); }
+
+    /* 복습문제: 원문 · 힌트 · 풀이 */
+    .aid details:last-of-type { border-bottom: 1px solid var(--line); }
+    .aid details.original > summary { font-size: var(--fs-panel); }
+    .solved-btn { display: flex; align-items: center; justify-content: center; gap: var(--s2); width: 100%; min-height: var(--tap); margin-top: var(--s5); padding: 0 var(--s4);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: 700 var(--fs-panel)/1.2 var(--font); cursor: pointer; }
+    .solved-btn svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .solved-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-ink); }
+
+    /* 정리노트: 페이지 요약 */
+    .sum-supp { margin-top: var(--s4); }
+    .sum-lead { margin: 0; font-size: var(--fs-body); font-weight: 700; line-height: 1.6; }
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+    .eq-list li:first-child { padding-top: 0; }
+    .eq-name { display: block; font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); }
+    .eq-list .katex-display { margin: var(--s1) 0 0; text-align: left; }
+    .eq-list .katex-display > .katex { text-align: left; }
+    .terms { margin: 0; }
+    .terms dt { font-size: var(--fs-panel); font-weight: 700; margin-top: var(--s4); }
+    .terms dt:first-child { margin-top: 0; }
+    .terms dd { margin: var(--s1) 0 0; font-size: var(--fs-sub); line-height: 1.6; color: var(--ink-2); }
+    .flow { margin: 0; padding-left: 1.4em; font-size: var(--fs-sub); }
+    .flow li { margin: var(--s2) 0; }
+
+    @media (hover: hover) { .solved-btn:hover { background: var(--surface); } }
+
+    /* 넓은 화면: 본문 옆에 붙는 패널 */
+    @media (min-width: 1024px) {
+      .layout { --l: var(--panel-l-user, var(--panel-l)); }
+      .layout[data-left="closed"] { --l: 0px; }
+      .panel-left { width: var(--l); }
+      /* 기본값: 왼쪽 패널과 본문 폭을 뺀 나머지를 오른쪽 패널이 차지 → 본문 옆 빈 여백이 생기지 않는다 */
+      .panel-right { width: var(--panel-r-user, clamp(var(--panel-r-min), calc(100vw - var(--l) - var(--measure) - var(--scrollbar)), var(--panel-r-max))); }
+      .panel-resize { display: block; position: absolute; top: 0; bottom: 0; z-index: 2; width: 12px; padding: 0; border: 0; background: transparent; cursor: col-resize; touch-action: none; }
+      .panel-left .panel-resize { right: 0; }
+      .panel-right .panel-resize { left: 0; }
+      .panel-resize::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 150ms ease-out; }
+      .panel-left .panel-resize::after { right: 0; }
+      .panel-right .panel-resize::after { left: 0; }
+      .panel-resize:focus-visible { outline: none; }
+      .panel-resize:focus-visible::after, .is-resizing .panel-resize:active::after { opacity: 1; }
+      @media (hover: hover) { .panel-resize:hover::after { opacity: 1; } }
+      body.is-resizing { cursor: col-resize; user-select: none; }
+      .layout[data-left="closed"] .panel-left, .layout[data-right="closed"] .panel-right { display: none; }
+      .panel.is-shown { animation: panel-fade var(--dur) var(--ease-out); }
+      .scrim, .panel-close { display: none; }
+    }
+    @keyframes panel-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 좁은 화면: 가장자리에서 밀려 나오는 drawer */
+    @media (max-width: 1023.98px) {
+      .panel { position: fixed; top: 0; bottom: 0; z-index: 40; visibility: hidden;
+        transition: transform var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .panel-left { left: 0; width: min(var(--drawer-l), 88vw); transform: translateX(-100%); }
+      .panel-right { right: 0; width: min(var(--drawer-r), 88vw); transform: translateX(100%); }
+      .panel.is-open { visibility: visible; transform: none; transition: transform var(--dur) var(--ease-out); }
+      .panel-inner { padding-top: calc(var(--s3) + env(safe-area-inset-top)); padding-bottom: calc(var(--s6) + env(safe-area-inset-bottom)); }
+      .scrim { position: fixed; inset: 0; z-index: 35; background: var(--scrim); opacity: 0; visibility: hidden;
+        transition: opacity var(--dur-exit) ease-in, visibility 0s linear var(--dur-exit); }
+      .scrim.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur) var(--ease-out); }
+      html:not(.js) .panel-left { display: none; }
+    }
+    @media (max-width: 480px) { .panel-toggle { padding: 0 var(--s1); } }
+    html:not(.js) .panel-toggle, html:not(.js) .panel-right, html:not(.js) .scrim { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .panel.is-open, .scrim, .scrim.is-on, .progress > span, .panel-toggle .strip { transition: none; }
+      .panel.is-shown { animation: none; }
+      .panel-resize::after { transition: none; }
+    }
+    @media print {
+      body { display: block; height: auto; overflow: visible; }
+      .layout { display: block; }
+      .content { overflow: visible; }
+      .panel, .scrim { display: none !important; }
+    }
+  </style>
+<style id="comic-style">
+/* Extends the note shell; its tokens and behavior remain the visual authority. */
+.comic-question { margin: var(--s3) 0 var(--s5); font-size: var(--fs-lead); font-weight: 700; line-height: 1.5; }
+.comic-strip { display: grid; gap: var(--s6); list-style: none; margin: 0; padding: 0; }
+.comic-panel { min-width: 0; }
+.comic-panel figure { margin: 0; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.comic-scene { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; position: relative; isolation: isolate; background: #faf8f2; color: #162438; }
+.comic-panel img { grid-column: 1; grid-row: 1 / 3; align-self: end; display: block; width: 100%; height: auto; background: #faf8f2; }
+.comic-art-space { grid-column: 1; grid-row: 2; width: 100%; pointer-events: none; }
+.comic-balloon-layer { grid-column: 1; grid-row: 1; z-index: 1; display: flex; flex-direction: column; gap: var(--s3); padding: var(--s4) var(--s5); min-width: 0; }
+.comic-panel figcaption { padding: var(--s4); background: var(--bg); }
+.comic-number { display: block; margin-bottom: var(--s2); font-size: var(--fs-label); font-weight: 700; color: var(--ink-2); }
+.comic-caption { margin: 0; line-height: 1.7; }
+.comic-dialogue { position: relative; width: fit-content; max-width: 88%; margin: 0; padding: var(--s3) var(--s4); border: 1.5px solid #566477; border-radius: 18px; background: #fffefb; color: #162438; font-size: var(--fs-body); line-height: 1.6; box-shadow: 0 2px 0 #1624380d; }
+.comic-voice-left { align-self: flex-start; border-bottom-left-radius: 4px; }
+.comic-voice-right { align-self: flex-end; border-bottom-right-radius: 4px; background: #f0f5fc; }
+.comic-dialogue::after { content: ''; position: absolute; top: 18px; width: 10px; height: 10px; background: inherit; border: solid #566477; transform: rotate(45deg); }
+.comic-voice-left::after { left: -6px; border-width: 0 0 1.5px 1.5px; }
+.comic-voice-right::after { right: -6px; border-width: 1.5px 1.5px 0 0; }
+.comic-speaker { display: block; margin-bottom: var(--s1); font-size: var(--fs-label); font-weight: 700; color: #1b64da; }
+@media (max-width: 480px) {
+  .comic-balloon-layer { padding: var(--s3) var(--s4); gap: var(--s2); }
+  .comic-dialogue { max-width: 94%; padding: var(--s2) var(--s3); }
+}
+.comic-source { margin: var(--s6) 0 0; }
+.comic-source a { display: inline-flex; align-items: center; min-height: var(--tap); }
+.comic-panel .badge { display: block; width: fit-content; max-width: 100%; white-space: normal; margin: 0 0 var(--s2); }
+.sum > .badge { white-space: normal; margin-bottom: var(--s2); }
+@media print {
+  .comic-panel { break-inside: avoid; }
+  .comic-source { display: none; }
+}
+.comic-analogy, .comic-limit { margin: var(--s4) 0 0; padding-top: var(--s3); border-top: 1px solid var(--line); font-size: var(--fs-small); line-height: 1.7; color: var(--ink-2); }
+.comic-analogy strong, .comic-limit strong { display: block; margin-bottom: var(--s1); color: var(--ink); }
+
+</style>
+</head>
+<body data-screens="article.topic" data-panels="note" data-range="1124">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="text-btn panel-toggle" id="toggle-left" type="button" aria-controls="panel-left" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="3" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>목차</span></button>
+      <strong class="brand">학습만화</strong>
+      <button class="text-btn theme-toggle" id="theme-toggle" type="button" aria-label="다크 모드로 전환" title="다크 모드로 전환"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="text-btn panel-toggle" id="toggle-right" type="button" aria-controls="panel-right" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="strip" x="15" y="4" width="6" height="16" rx="1"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg><span>요약</span></button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="pager-bar"></span></div>
+  </header>
+  <div class="layout" data-left="open" data-right="closed">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="panel-left-title">
+      <div class="panel-resize" data-side="left" role="separator" aria-orientation="vertical" aria-controls="panel-left" aria-label="왼쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-left-title">목차</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-meta">읽은 토픽 <b id="progress-n">0</b> / <span id="progress-total">0</span></p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <nav class="toc" aria-label="목차"><a href="#comic-section-1">1. [13장] 혈구와 혈관의 흐름</a><a href="#comic-section-2">2. [13장] 혈관 질환·혈압·림프계</a><a href="#comic-section-3">3. [14장] 방어선과 염증 반응</a><a href="#comic-section-4">4. [14장] 보체·인터페론·자연살생세포</a><a href="#comic-section-5">5. [14장] 림프구와 항체의 구조</a><a href="#comic-section-6">6. [14장] 클론 선택과 적응면역의 작동</a><a href="#comic-section-7">요약 · 예고</a></nav>
+      </div>
+    </aside>
+    <div class="content">
+  <main>
+    <div class="hero">
+      <h1>생명과학 1124 학습만화</h1>
+      <p>22페이지 · 페이지마다 4~8컷. 그림과 대사를 따라 읽고 원본 정리노트에서 확인해요.</p>
+    </div>
+<section id="comic-section-1"><h2>1. [13장] 혈구와 혈관의 흐름</h2><article class="topic" id="s0-recap"><h3>지난 수업 복습</h3><p class="comic-question">동맥과 모세혈관은 벽 두께와 혈류 속도가 왜 다를까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>심장에서 밀려 나온 피의 압력을 동맥은 어떻게 견뎌요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>단면을 봐요. 동맥벽이 두꺼워서 높은 압력을 견뎌요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-recap/01-ec1325aa3a8a651b0d5cd322dc978e81c6d37a8db40ae003d8150b3e019a3e14.png" alt="적혈구가 흐르는 동맥의 잘린 끝에 두꺼운 벽이 보인다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">동맥벽은 평활근과 결합조직으로 두껍게 이루어져요.</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>피가 들어오면 벽이 늘어나요. 벽이 되튕길 때 혈액은 앞쪽으로 더 밀려요.</p><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>벽의 두께에 더해, 늘어났다가 돌아오는 성질도 있군요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-recap/02-2f934891621966c190a615b8417b1de52f861551297b9f9d9c3fb8ab81daa056.png" alt="같은 동맥의 팽창 상태와 되튕김 상태를 왼쪽에서 오른쪽으로 비교한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">동맥벽의 엘라스틴이 탄성에 기여해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>가는 호스 하나는 좁은데, 다발 전체의 구멍을 더하면 넓어져요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>모세혈관도 하나씩 보면 좁아요. 여러 가닥의 총 단면적을 보면 혈류가 느려지는 이유가 보여요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-recap/03-7b280cfd7c864b930e605b86fd5d6a2f4c013df5cc49785e105b52efc6538534.png" alt="왼쪽의 호스 하나와 오른쪽의 나란한 가는 호스 다발." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">통로 한 개의 넓이와 여러 통로의 넓이를 합한 값을 구별해요.</p><p class="comic-analogy"><strong>비유 연결</strong> 나란히 놓인 모든 가는 호스의 열린 구멍 넓이의 합 → 지나는 모든 모세혈관의 총 단면적. 합이 커서 평균 혈류 속도가 낮아진다.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>나란한 통로가 많아 느리게 흐르고, 얇은 벽을 사이에 두고 물질이 오가는군요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-recap/04-9d5d82c5a967dab94dfc7f2810f6f457a9e73722c851aaa173c928c2c692a7ef.png" alt="적혈구는 모세혈관 안을 따라가고 작은 물질은 얇은 벽을 지나 인접 조직 쪽으로 간다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">느린 혈류는 물질을 교환할 시간을 늘려 줘요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 비유는 통로 넓이의 합을 보여 줘요. 물질이 오가는 실제 모세혈관의 얇은 내피와 동맥벽의 탄성은 혈관 그림에서 확인해요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s0-recap" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">동맥의 두껍고 탄력 있는 벽은 높은 압력을 견디고 되튕기며 혈액을 밀어요. 모세혈관은 얇은 벽과 넓은 총 단면적 덕분에 느린 혈류에서 물질을 교환해요.</p><p class="panel-label">용어</p><dl class="terms"><dt>엘라스틴</dt><dd>늘어났던 동맥벽이 원래 모양 쪽으로 되튕기게 하는 단백질이에요.</dd><dt>총 단면적</dt><dd>같은 구간을 나란히 지나는 모든 혈관의 통로 단면적을 합친 값이에요.</dd></dl></div></article><article class="topic" id="s0-bloodcells"><h3>혈구의 생성과 적혈구의 일생</h3><p class="comic-question">적혈구가 부족할 때 누가 알리고 누가 만들까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>적혈구가 부족하면 신장에서 적혈구까지 만들어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>공장이 물건을 만들고 관리실은 요청만 보내요. 몸에서도 두 역할이 나뉘어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-bloodcells/01-14da927654697c05cdf03ed2b05d00601e94c15e4f131bc69fb55d6246d34a5b.png" alt="왼쪽 관리실에서 오른쪽 생산 공장으로 요청이 간다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">신호를 보내는 곳과 생산하는 곳을 따로 표시했어요.</p><p class="comic-analogy"><strong>비유 연결</strong> 공장과 생산을 늘리라는 요청 → 골수와 신장이 분비한 적혈구생성소</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그럼 공장은 신장이 아니라 뼈 안에 있어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>네. 적혈구를 비롯한 혈구는 모두 골수에서 생겨요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-bloodcells/02-ca60df37e08971009f834c3302d7d519384c48924c810e7c49016b749269e370.png" alt="긴 뼈 내부의 골수와 적혈구, 백혈구, 혈소판." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">영상에서는 적혈구가 골수에서 약 5일 동안 자란다고 소개했어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>적혈구가 부족해 산소 공급이 모자라면 어떤 신호를 보내요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>신장은 적혈구생성소, EPO를 더 많이 분비해요. 신호를 받은 골수는 적혈구 생산을 늘려요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-bloodcells/03-62de2f7be06d845a28a766e79a514285314cf4707a963c86a3848c1d9a848015.png" alt="신장 쪽에서 작은 신호 점들이 골수 쪽으로 향한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">영상에서는 산소가 적은 고지대에 온 뒤 약 3주면 적혈구를 더 만든다고 소개했어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>골수에서 만든 적혈구는 어디에서 배달을 마쳐요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>모세혈관에서 산소를 내려놓아요. 수명이 다한 적혈구는 몸에서 제거돼요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-bloodcells/04-2331be647583aeb0ab93e11f85b623dd988c0bc090d0b83503a50da029600942.png" alt="동맥과 세동맥을 지나온 적혈구가 모세혈관에서 조직으로 산소를 보낸다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">적혈구는 골수에서 혈류에 들어가고, 모세혈관에서 조직에 산소를 건네요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>골수에서 새로 만드는 흐름과 오래된 것을 치우는 흐름이 균형을 이루네요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>왼쪽 영상은 약 석 달·골수의 보모세포, 오른쪽 강의노트는 약 120일·비장, 간, 골수의 대식세포를 설명해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-bloodcells/05-e05e8b49ae49022205d7ac9c45bb167f580bdbd7ac1242e6af3087fbfaddb718.png" alt="영상의 골수와 강의노트의 비장·간·골수, 낡은 적혈구를 둘러싼 대식세포." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">영상은 몸을 도는 적혈구 약 25조 개, 생성과 제거를 각각 분당 1억 5천만 개로 소개했어요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 실제 요청서는 없어요. 신장의 EPO가 혈액을 타고 골수에 작용하는 과정이에요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s0-bloodcells" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">몸이 산소를 충분히 공급받지 못하면 신장이 보낸 EPO가 골수의 적혈구 생성을 늘려요. 적혈구는 조직에 산소를 전달하고, 노화하면 제거돼요.</p><p class="panel-label">용어</p><dl class="terms"><dt>EPO</dt><dd>산소 공급이 부족할 때 신장이 분비해 골수의 적혈구 생성을 촉진하는 호르몬이에요.</dd></dl></div></article><article class="topic" id="s0-fluid"><h3>모세혈관의 물 이동과 삼투압</h3><p class="comic-question">물의 방향을 어디까지 압력 두 값으로 설명할 수 있을까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>호스에서 빠진 물은 어디로 가죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>물받이가 모아 별도 배수관으로 보내요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-fluid/01-6a08e5ffdcf912b97516a11e744985aa4901ca8d1e8b3b459731f0ea18bd96fb.png" alt="호스에서 나온 물을 받는 쟁반과 별도의 배수관." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">호스 벽의 틈과 물받이의 배수관은 서로 다른 길이에요.</p><p class="comic-analogy"><strong>비유 연결</strong> 호스 벽을 통해 나가는 물 → 모세혈관에서 조직 쪽으로 가는 체액 · 물받이의 별도 배수관 → 조직액을 회수하는 림프관</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>물과 단백질은 벽을 통과하는 정도가 달라요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-fluid/02-9b6697cfa139a3c88cea66f5f7177fe520558493eed195f8dd59921a6677065b.png" alt="작은 물 표시가 혈관벽 양쪽에 있고 큰 단백질 표시는 혈관 안에 있어요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">혈압은 물을 밖으로 밀고, 혈장 단백질이 만드는 교질삼투압은 물을 혈관 안쪽에 붙들어요. 혈액뇌장벽은 내피세포 사이의 통과를 제한해요. 대부분의 혈청 단백질이 혈관 안에 남는다는 설명은 1119 노트의 보충이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>오른쪽은 혈압이 더 작네요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>이 수업 모형에선 그쪽이 유입이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-fluid/03-c9e87ceaae3a4f9af43d242e5a95636eaa0d832404d713e5d09e118f6f34c719.png" alt="수업 모형에서 왼쪽 화살표는 혈관 밖, 오른쪽 화살표는 혈관 안을 향해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">다섯 지점의 가상 혈압은 40·35·30·25·20, 삼투압은 모두 30이에요. 화살표는 두 끝만 보여 줘요. 동맥 쪽은 40 &gt; 30으로 유출, 가운데는 30 = 30으로 순이동 0, 정맥 쪽은 20 &lt; 30으로 유입이에요. 다섯 지점을 합하면 유출·유입 각각 15예요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>혈압은 그대로인데요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>단백질이 줄어든 경우를 삼투압만 낮춰 비교한 거예요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-fluid/04-6944055e111350c879394f8f87ecceab5c48227d94440bc92e25519550dcbb67.png" alt="모형의 모세혈관 양쪽에서 화살표가 조직 쪽으로 향해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">오래 먹지 못해 혈청 단백질이 줄어든 상태를 가정해요. 혈압은 40·20에 두고 삼투압만 14로 낮추면 동맥 쪽 유출은 10에서 26으로 커지고, 정맥 쪽도 20 &gt; 14여서 유출로 바뀌어요. 다섯 지점의 합은 유출 80, 유입 0이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>실제 몸에서 조직액은요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>주로 림프계가 거둬 혈액으로 되돌려요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-fluid/05-f6ac4d70a3871721e39e29d1cb05260981e513a9af2fd9d3dd45fed4195572f6.png" alt="모세혈관에서 조직으로 나온 물방울과 아래쪽의 별도 림프관." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">실제 대부분의 정상 조직에서는 정맥 쪽에서도 조금씩 여과돼요. 조직액은 주로 림프관으로 돌아가며, 여과가 림프 회수량을 넘으면 조직이 부을 수 있어요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 호스는 힘과 이동 경로를 단순하게 보여 줘요. 압력 두 값을 비교하는 수업 모형에는 조직 쪽 압력과 림프 회수가 생략돼요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s0-fluid" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">수업 모형에서는 혈압이 크면 유출, 혈액 삼투압이 크면 유입이에요. 실제 대부분의 조직은 정맥 쪽도 조금씩 여과하고, 조직액은 주로 림프계가 회수해요. 혈청 단백질 감소로 늘어난 여과가 회수량을 넘으면 부을 수 있어요.</p><p class="panel-label">용어</p><dl class="terms"><dt>수업 모형</dt><dd>위젯은 혈압과 삼투압의 가상 상대값을 비교해요. 조직 쪽 압력과 림프 회수는 생략돼요.</dd><dt>교질삼투압</dt><dd>혈장 단백질이 물을 혈관 안쪽에 붙드는 방향으로 작용해요.</dd><dt>부종</dt><dd>늘어난 여과를 림프계가 다 회수하지 못하면 조직에 체액이 쌓여요.</dd></dl></div></article><article class="topic" id="s0-venous"><h3>정맥 환류와 판막</h3><p class="comic-question">다리 정맥의 두 판막 중 어느 쪽이 열릴까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>물을 밀어 올리는 건 문이에요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>가운데를 누르는 힘이 물을 밀어요. 문은 그 물이 한 방향으로만 가게 해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-venous/01-6d6588583894fd98f6b6c11c2d493890785ff49b1e0b2f0372d55cca7c8e2276.png" alt="중앙을 누른 튜브에서 위쪽 문은 열리고 아래쪽 문은 닫혀 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">누르는 부분이 압력을 만들고, 두 문은 흐름의 방향을 제한해요.</p><p class="comic-analogy"><strong>비유 연결</strong> 튜브를 가운데서 좁히는 압력과 한 방향 문 → 골격근의 압력 증가와 정맥 판막의 역류 방지</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>다리 정맥에서 가운데를 누르는 건 뭐예요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>혈관 바깥의 골격근이에요. 얇은 판막은 혈액에 밀려 열리며, 스스로 피를 밀지는 않아요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-venous/02-fc5a5d084f6c1210c8b7751142c8a6d8c53ecc3d490cc4f642aadf578005a28e.png" alt="심장 아래의 정맥을 골격근이 짜면 심장에 가까운 판막이 열린다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">정맥은 혈압이 낮고 서 있을 때는 중력을 거슬러야 해요. 골격근이 혈관을 조이면 압력이 올라 심장 쪽으로 피가 가요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>골격근이 힘을 빼면 이미 올라간 피가 다시 내려오나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>되돌아오려는 혈액이 문을 닫아요. 이때 막아 주는 쪽은 판막이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-venous/03-2c819f81be339cb33a609a528e7cbfcd478b4aaed9ea1559bdcfb69367656bb6.png" alt="근육이 이완돼도 심장 쪽 판막이 닫혀 혈액은 아래로 넘어가지 못한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">이완 시 돌아오려는 혈액은 심장 쪽 판막을 닫아 역류를 막아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>옆으로 그리니까 어느 판막이 열리는지 헷갈려요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>조인 곳에서 심장은 왼쪽에 있어요. 이 그림에서는 왼쪽 판막이 열려요. 심장 안에도 방실판막과 반월판막이 있어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-venous/04-461477fae5d8da65c3009c07065a04851463a13b7adc57e326be3c49582c366f.png" alt="가로로 놓인 정맥이 가운데에서 눌리고, 심장과 혈류 방향은 왼쪽이다. 아래 빈 표시 두 개는 판막의 후보 위치다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">그림에서는 판막의 후보 위치를 표시했어요. 왼쪽에 심장이 있을 때 조인 곳의 어느 쪽 판막이 열릴지 찾아요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 그림을 돌려 놓아도 방향 기준은 심장이에요. 판막의 상태는 위아래 모양보다 양쪽의 압력 차로 판단해요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s0-venous" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">정맥은 혈압이 낮고, 서 있을 때 다리 혈액은 중력을 거슬러 심장으로 향해요. 혈액을 밀어 올리는 힘은 골격근 수축에서 나와요. 조인 곳의 심장 쪽 판막은 열리고 반대쪽은 닫혀요.</p><p class="panel-label">용어</p><dl class="terms"><dt>정맥 판막</dt><dd>다리 정맥에서 역류를 막는 일방향 구조예요. 모세혈관과 일반 동맥의 벽에는 이런 판막이 없어요.</dd><dt>정맥압과 중력</dt><dd>정맥의 혈압은 낮아요. 서 있을 때 다리에서 나온 혈액은 중력을 거슬러 이동하며, 골격근 수축과 판막의 도움을 받아요. 오래 서 있으면 일부 상황에서 뇌로 가는 혈류가 줄어 쓰러질 수 있어요.</dd></dl></div></article><article class="topic" id="s0-distribution"><h3>평활근과 혈류 배분</h3><p class="comic-question">모세혈관에 근육이 없는데 그쪽 혈류는 어떻게 조절할까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>수축하면 밀어서 피가 더 세게 나가는 거 아니에요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>여기서는 통로가 좁아지는 일이 중요해요. 같은 조건이면 조인 호스로 물이 적게 가요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-distribution/01-cac0084bd4a926ce52f143bdc1cd4339456107cba32d527aa82feadbee68bad2.png" alt="같은 물통에서 물이 나오는 호스 두 개 중 조인 호스의 물줄기가 더 약하다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">같은 공급 조건에서 통로가 좁아지면 흐르는 양이 줄어요.</p><p class="comic-analogy"><strong>비유 연결</strong> 조인 호스의 좁아진 통로와 줄어든 물의 양 → 평활근이나 괄약근 수축에 따른 혈관 너비와 혈류 감소</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그 근육은 모세혈관 벽에 둘려 있어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>세동맥 벽에는 평활근이 있어요. 모세혈관은 입구의 괄약근까지만 보고, 그 뒤의 가는 벽에는 근육이 없어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-distribution/02-7373f275fccd0527b75c3daffc442aca0d66b4f886d86f4545de5392ce6dd131.png" alt="세동맥 벽의 연속된 근육과 모세혈관 입구의 근육 고리, 그 뒤의 얇은 모세혈관." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">세동맥은 소동맥, 평활근은 민무늬근으로도 나와요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>입구의 괄약근이 이완하면요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>통로가 넓어지고 그쪽에 혈액이 더 많이 흘러요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-distribution/03-42f01821a9714fc851c06c86630674c858023902872b100a60d6de0f40a84b17.png" alt="왼쪽의 좁게 조인 입구와 오른쪽의 이완한 입구를 비교한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">평활근은 의식적으로 움직일 수 없고 자율신경의 영향을 받아요. 두 장면에서는 근육 상태가 달라져요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그래서 손을 쓸 때와 밥을 먹고 쉴 때 피가 많이 가는 곳이 달라지네요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>네. 손을 쓰면 손 근육에, 식사 후 쉴 때는 소화관에 더 많이 가요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s0-distribution/04-53e8a36d5bca083a8bb67c78b3035269037cbef87b52cff8ef89056b9fedc7c5.png" alt="손을 쓰는 상황에는 손 근육, 식사 후 쉬는 상황에는 소화관 쪽 공급이 강조돼 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">필요한 쪽의 통로가 넓어지면 그쪽으로 혈액이 더 많이 가요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 호스를 누르는 클램프는 비유예요. 실제 혈류는 혈관벽이나 입구의 근육이 조절해요. 평활근은 의식적으로 움직일 수 없고 자율신경의 영향을 받아요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s0-distribution" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">세동맥의 벽과 모세혈관 입구에 있는 근육이 수축하면 통로가 좁아져 혈류가 줄어요. 이완하면 통로가 넓어져 혈류가 늘어요.</p><p class="panel-label">용어</p><dl class="terms"><dt>모세혈관 괄약근</dt><dd>모세혈관이 시작되는 곳에서 입구를 조이거나 풀어 혈류를 조절해요.</dd></dl></div></article></section>
+<section id="comic-section-2"><h2>2. [13장] 혈관 질환·혈압·림프계</h2><article class="topic" id="s1-cholesterol"><h3>콜레스테롤과 혈관 질환</h3><p class="comic-question">배달과 수거가 어떻게 혈관 이야기로 이어질까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>두 차가 같은 곳으로 가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>주황 배달차와 청록 수거차는 반대 방향이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s1-cholesterol/01-e9b382f5621f7e0cf3e6beb12b2f07e31ce1e91b69d68b8b7b5bbb0edbb9d86c.png" alt="위쪽 배달차는 오른쪽으로, 아래쪽 수거차는 왼쪽으로 향하고 길가에 상자가 있어요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">간은 출발·회수 창고, 세포는 배달처에 빗댔어요. 길가의 짐은 혈관 벽 쪽에 쌓이는 플라크에 대응해요.</p><p class="comic-analogy"><strong>비유 연결</strong> 간에서 세포로 가는 배달 → LDL의 콜레스테롤 공급 · 세포 쪽에서 간으로 돌아가는 회수 → HDL의 콜레스테롤 수거 · 통로 가장자리에 쌓인 짐 → 혈관 벽에서 자라 통로를 좁힐 수 있는 플라크</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>세포에 필요한 재료는 누가 가져다주죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>저밀도 지질단백질 LDL은 공급, 고밀도 지질단백질 HDL은 수거예요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s1-cholesterol/02-eb4b88fb9726cb6ec25a601041fcf0b70cae036c435a7c4c65094f9220ea03c2.png" alt="위쪽 주황 화살표는 간에서 세포로, 아래쪽 청록 화살표는 세포에서 간으로 향해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">콜레스테롤은 간에서 합성되고, 지질단백질에 실려 움직여요. 세포막 성분과 스테로이드 호르몬 재료예요. 수업의 혈액검사 비교에서는 LDL은 낮게, HDL은 높게 기억하고 HDL 대 LDL 비율을 강조했어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>혈관 그림에서 짐은 어디에 쌓이죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>벽이 두꺼워지며 피가 지날 자리가 좁아져요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s1-cholesterol/03-1a368911f02f7c9aa8285ec456fd5d45d6522a750de912f47b26c1c2ccbe93bc.png" alt="혈관 아래 벽에서 노란 플라크가 돌출되고 위쪽 통로로 적혈구가 지나요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">벽에 콜레스테롤이 쌓이고 면역세포의 염증 반응과 찌꺼기가 겹쳐 플라크가 생겨요. 플라크나 그 부위 혈전은 혈류를 막을 수 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>둘 다 혈류 차단이에요. 손상되는 곳이 뇌와 심장 근육으로 달라요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s1-cholesterol/04-318233f8f9eb94b0cc85cd1b59be2434be8cf2d9c2a06a72f536147e815b2402.png" alt="뇌 쪽과 심장 쪽의 혈관에 각각 혈류를 막는 부분이 표시돼요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">뇌 혈류 차단으로 뇌 조직이 손상되면 허혈성 뇌졸중, 심장 근육의 혈류 차단으로 근육이 손상되면 심근경색이에요. 표기는 뇌졸중이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>뇌졸중은 언제나 안이 막힌 건가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>뇌혈관이 터지거나 새는 출혈성도 있어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s1-cholesterol/05-d73c76d1ad9b7e659b09c0fb6510dd58c210385f253b3f4d16b8e6604dce5874.png" alt="왼쪽 혈관은 벽이 이어져 있고 안이 막혔고, 오른쪽은 벽의 틈으로 피가 새요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">뇌혈관의 출혈로 뇌가 손상될 수도 있어요. 막힘은 허혈성, 파열이나 누출은 출혈성 뇌졸중으로 구분해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 상자는 운반 방향을 보여 줘요. 실제 플라크는 혈관 벽에 염증 반응이 겹치며 자라고 혈전이 혈류를 막을 수도 있어요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s1-cholesterol" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">LDL은 콜레스테롤을 세포에 공급하고 HDL은 간으로 수거해요. 플라크나 혈전으로 혈류가 막혀 뇌가 손상되면 허혈성 뇌졸중, 심장 근육이 손상되면 심근경색이에요. 뇌혈관의 파열이나 누출로는 출혈성 뇌졸중이 생길 수 있어요.</p><p class="panel-label">용어</p><dl class="terms"><dt>LDL과 HDL</dt><dd>LDL은 세포에 공급하고 HDL은 남은 콜레스테롤을 간으로 거둬요.</dd><dt>플라크</dt><dd>혈관 벽에 콜레스테롤과 염증 관련 물질이 쌓인 부분이에요.</dd><dt>뇌졸중</dt><dd>혈류가 막혀 생기는 허혈성과 뇌혈관에서 피가 새어 생기는 출혈성을 구별해요.</dd><dt>심근경색</dt><dd>심장 근육에 가는 혈류가 막혀 그 근육이 손상돼요.</dd></dl></div></article><article class="topic" id="s1-pressure"><h3>혈압의 결정과 연수의 조절</h3><p class="comic-question">혈압이 갑자기 높아지면 연수는 어떤 방향으로 심장을 조절할까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>압력계가 펌프를 직접 돌려요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>압력계는 상태를 알리고, 관리실은 그 정보로 펌프를 조절해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s1-pressure/01-44ee6a4674439ae704257e319a554be0dc06014c383e6e38f9eff3884c131af5.png" alt="압력계에서 제어함으로, 제어함에서 펌프로 신호가 간다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">압력 감지와 펌프 조절은 다른 위치에서 이루어져요.</p><p class="comic-analogy"><strong>비유 연결</strong> 압력계, 관리실, 펌프 → 혈관의 압력수용체, 연수, 심장</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>혈압을 정하는 게 심장 힘 하나뿐이에요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>다른 요인이 같다면 혈액이 많거나, 심박출량이 많거나, 동맥이 더 수축할수록 혈압이 높아져요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s1-pressure/02-929a63295d71766c7ef15d56dcc2f682c97aedcc341797f4b3abb44a46a539a6.png" alt="혈액의 총량, 심장에서 나가는 양, 세동맥의 통로 너비를 나타낸 세 그림." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">혈압은 혈액이 혈관벽을 미는 압력이에요. 심박출량은 심실이 일정 시간 동안 내보내는 혈액량이에요. 혈관 수축은 주로 세동맥에서 조절돼요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>몸에는 압력계와 관리실 자리에 뭐가 있어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>혈관의 센서가 연수로 알리고, 연수는 자율신경계를 통해 심장의 박동 횟수와 강도를 조절해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s1-pressure/03-6f2a4fd7d5f2d86bec129ba21657b6f63905852bc7bf3866d48b83e3eb192735.png" alt="대동맥·목동맥에서 뇌간의 연수로, 연수에서 심장으로 화살표가 흐른다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">보충에서는 혈압을 감지하는 압력수용체와 심장까지 가는 자율신경 신호를 구별해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>압력이 높아졌다면 심장이 더 빨리 뛰어야 해요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>박동 횟수와 강도를 줄여 심박출량을 낮추면, 혈압도 정상 쪽으로 내려가요. 정상보다 낮을 때는 반대예요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s1-pressure/04-9cc32891efd967a30d235673bfd38e9d2b45b0f914b6be1f20774bead551eff4.png" alt="높은 압력은 심장 출력이 줄어드는 방향, 낮은 압력은 출력이 커지는 방향과 연결된다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">수업의 혈압·심박출량 관계로 높은 혈압의 조절 방향을 풀이했어요. 낮을 때의 반대 방향은 교재 보충이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>두 신호 모두 연수로 가면 똑같은 정보를 보내요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>압력수용체가 보내는 것은 압력 정보예요. 대동맥소체·경동맥소체는 CO₂·O₂를 감지하고, O₂ 정보도 심장 조절에 영향을 줄 수 있어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s1-pressure/05-608a772e6cd2d944169e8cf6a072557ec11887207f07c3b4ccfc201f454d94b7.png" alt="가스 농도를 감지하는 소체와 압력에 반응하는 혈관벽 센서가 모두 연수에 연결된다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">연수는 호흡과 심박수를 모두 조절해요. 교재 보충은 혈중 O₂에 따라서도 심박출량이 달라질 수 있다고 설명해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>관리실과 펌프만으로 혈압이 다 정해져요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>부신속질이 내는 에피네프린과 노르에피네프린도 관여해요. 에피네프린은 박동의 횟수와 강도를 늘릴 수 있어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s1-pressure/06-3ff7a19596bfb82822240bd409891477786e1c2187c1fee478592998cc2d5f53.png" alt="부신속질이 내보낸 신호가 심장과 지름이 달라진 세동맥으로 향한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">교재 예에서는 피부·장·신장 쪽은 수축, 심장·골격근·폐 쪽은 확장으로 설명해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 몸에는 숫자를 읽는 관리자가 없어요. 신경 신호가 오가고, 호르몬과 세동맥 지름도 실제 압력에 영향을 줘요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s1-pressure" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">대동맥·목동맥에서 연수로 압력 정보가 가고, 연수에서 심장으로 조절 신호가 가요. 압력이 올라가면 출력을 줄여 변화를 되돌리는 방향으로 작용해요.</p><p class="panel-label">용어</p><dl class="terms"><dt>혈압의 세 요인</dt><dd>각 요인을 하나씩 비교해요. 총 혈액량·심박출량이 늘거나 혈관이 수축하면, 나머지 조건이 같을 때 혈압이 올라가는 방향이에요.</dd><dt>호르몬 조절</dt><dd><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>부신속질의 에피네프린·노르에피네프린은 교감신경 작용을 강화해요. 부신겉질과 뇌하수체 후엽 호르몬도 관여해요.</dd></dl></div></article><article class="topic" id="s1-lymph"><h3>림프계와 림프절</h3><p class="comic-question">모세혈관 밖에 남은 액체는 어떤 길로 혈액에 돌아갈까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>빠져나온 물을 모으는 곳이 림프절이에요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>물은 관이 모아요. 관을 따라가다 만나는 검사 지점이 림프절이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s1-lymph/01-e7210e8a73994a27ed3dd023d6b7324cf31fa83f452f3d578d9db2b7497a0bec.png" alt="바닥에 고인 물이 아래 관으로 들어가고 관을 따라 검사 지점을 지난다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">배수관과 검사 지점은 림프관과 림프절의 역할을 나누어 볼 수 있는 비유예요.</p><p class="comic-analogy"><strong>비유 연결</strong> <span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>물을 모으는 관 → 조직액을 모아 정맥으로 보내는 림프관 · 흐르는 내용물을 검사하는 지점 → 림프절에서 림프를 살피는 면역세포</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>물은 조직에서 어느 길을 거쳐 돌아가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>가까운 림프모세관이 모은 조직액을 림프액이라고 해요. 림프관을 따라가 정맥혈에 합류해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s1-lymph/02-e5760bcad1f956138152a1131017f81f77c70f0bd51ec065189c6e738803f733.png" alt="세 그림에서 물이 모세혈관 바깥 조직, 림프관 안, 정맥 안을 차례로 지난다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">왼쪽부터 모세혈관에서 나온 물, 림프관으로 모인 림프액, 정맥혈로 돌아간 물이에요. 림프관의 일방판막은 역류를 막아요. 소장의 지방도 이 경로로 전달돼요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>림프모세관이 넓으면 벽도 여러 겹이에요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>두 관 모두 내피세포 한 겹이에요. 여기서 비교할 차이는 내부 지름이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s1-lymph/03-a48f640ada4540f302978de68130a5aab6b4a499cc058d4b442114e01cc6abbb.png" alt="작은 혈액 모세혈관과 조금 넓은 림프모세관 모두 벽이 한 겹이다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">두 관은 조직 안에서 가까이 있고, 림프모세관들이 모여 림프관이 돼요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>검사 지점에서 침입자 표시를 발견하면요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>림프절에 면역세포가 모여 부을 수 있어요. 림프절 안에서 확인하는 주체는 면역세포예요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s1-lymph/04-375bfb910c0eb504fc7e3a69bd66ce76aaf68a9d87dbb985056180ef2611805f.png" alt="콩 모양 림프절 안에 백혈구가 있고, 면역세포가 많이 모인 림프절은 부어 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">림프절이 붓고 아프면 그 림프절과 연결된 부위의 감염을 시사할 수 있어요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 림프절은 기계식 필터가 아니라 면역세포가 있는 기관이에요. 림프는 검사 지점을 거쳐 정맥혈로 합류해요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s1-lymph" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="sum-lead">모세혈관 밖에 있는 여유분의 조직액은 림프관으로 모여 림프액이 되고 정맥으로 돌아가요. 림프절에서는 면역세포가 흐르는 림프를 살펴요.</p><p class="panel-label">용어</p><dl class="terms"><dt>림프계 기관</dt><dd><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>림프절과 함께 비장·흉선·편도도 림프계의 방어에 관여해요.</dd></dl></div></article></section>
+<section id="comic-section-3"><h2>3. [14장] 방어선과 염증 반응</h2><article class="topic" id="s2-barrier"><h3>면역계와 첫 번째 방어선</h3><p class="comic-question">몸 안쪽의 기도와 위도 첫 번째 방어선일까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>몸에서 제일 먼저 막아 주는 건 피부만인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>조직에 들어가기 전에 어디에서 어떻게 막는지 찾아봐요. 모든 미생물이 병원체인 건 아니에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s2-barrier/01-fde26965f8b806bb0da182e3e90fb98d03fb1fd6ababa1ca37e9ea2b4d686b60.png" alt="성벽 바깥에 여러 모양의 구슬이 있고 문과 솔이 통과를 막는다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">질병을 일으킬 수 있는 세균·바이러스·균류·기생충 등을 병원체라고 불러요.</p><p class="comic-analogy"><strong>비유 연결</strong> 입구와 외벽에서 통과를 막기 → 피부·점막·분비물의 조직 침입 차단</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>온전한 피부와 상처가 난 피부에서 뭐가 달라요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>상처가 생기면 장벽에 틈이 열려, 거기로 세균이 조직에 들어올 수 있어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s2-barrier/02-84c943f83fe91510c0068d9cc7b10f1b7f077f65708603f31a4684495027d190.png" alt="온전한 피부에서는 병원체가 밖에 있고, 다른 쪽은 틈으로 들어온 모습." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">피부가 끊기는 상처는 장벽이 열리는 예예요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>기도와 위는 몸 안쪽에 있는데도 첫 번째예요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>외부와 이어진 표면에서 조직으로 들어오는 걸 막아요. 그래서 기도 점액과 섬모도, 위산도 첫 번째 방어선으로 묶어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s2-barrier/03-c1d000714428dbb65765370e269798e84896e63a1600bc9797cd1734bf00409c.png" alt="기도 점액층에 붙은 입자가 섬모와 나란히 이동하고, 위 안에는 위액이 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">기도에서는 점액이 가두고 섬모가 옮겨요. 위는 강한 산성 환경이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>침이나 눈물이 세균 벽을 약하게 하는 일과 대식세포가 세균을 삼키는 일이 같아요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>침과 눈물의 라이소자임은 들어오기 전에 작용해요. 대식세포와 염증은 이미 장벽을 넘은 뒤에 작용해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s2-barrier/04-241bd4a26ab7f7f76b79315e18989a46d4907193066b9f20b159f3e58a5400f4.png" alt="눈물 속 물질이 세균 벽에 작용하는 장면과 조직 안의 대식세포가 세균을 삼키는 장면." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">라이소자임은 세균의 세포벽을 분해하는 효소예요. 리소자임이라고도 하며 세포 속 소기관인 리소좀과 구별해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 몸에는 하나의 성벽만 둘러진 것이 아니에요. 기도와 위의 안쪽도 외부와 이어지는 표면이어서 각자 다른 방어가 작동해요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s2-barrier" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">첫 번째 방어선은 조직에 들어오기 전의 피부·점액과 섬모·위산·라이소자임이에요. 상처로 침입한 뒤에 대식세포가 삼키는 반응은 수업에서 두 번째 방어선으로 다뤄요.</p><p class="panel-label">용어</p><dl class="terms"><dt>첫 번째 방어선</dt><dd>피부와 점막 같은 장벽 및 그 표면의 화학적 방어를 말해요.</dd></dl></div></article><article class="topic" id="s2-two-systems"><h3>선천면역과 후천면역</h3><p class="comic-question">방어선이 다르면 언제, 무엇을 기준으로 반응할까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>상대를 골라내야만 방어할 수 있어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>여러 상대에 공통으로 작동하는 방어도 있고, 맞는 항원에만 결합하는 방어도 있어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s2-two-systems/01-b59da13ef01a38b7a3e7e119c3ec714549a166b15c3ef3b10cdceee740a51a65.png" alt="왼쪽 가로막이는 세 모양 모두를 막고 오른쪽 소켓에는 세모만 맞는다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">가로막이와 소켓은 특정 모양을 고르는지 비교하기 위한 모형이에요.</p><p class="comic-analogy"><strong>비유 연결</strong> 공통 가로막이와 맞춤 소켓 → 수업에서 구분한 비특이적 방어와 항원에 맞는 적응면역</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>점액이 세균을 가두면 몇 번째예요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>첫 번째예요. 조직에 들어오기 전에 막고, 이때는 항원 모양을 하나 골라 기억하지 않아요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s2-two-systems/02-eb036bd36500cafda5ba5212836cdeee788086d0c3d4d24d496271e8bd0ba4c3.png" alt="기도의 점액층 바깥 면에 세균 모양의 입자가 붙어 있고, 아래에는 섬모와 기도 세포가 보인다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">피부, 점액·섬모, 위산, 라이소자임은 수업의 첫 번째 방어선이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>상처 틈을 통과하면 무엇이 먼저 반응해요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>선천면역이에요. 대식세포처럼 빠르게 반응하는 방어이며, 특정 항원 하나에 맞춘 기억을 남기는 방식과 달라요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s2-two-systems/03-cd295949e48e73008987f783342e9b703a69a2c0cc1783c777ae3241c14cfb32.png" alt="피부에 틈이 생겨 들어온 세균을 대식세포가 감싸고 신호를 내보낸다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">항미생물 펩티드, 염증, 보체, 인터페론, 자연살생세포를 수업에서 선천면역의 사례로 다뤄요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>B세포가 아무 모양에나 붙으면 특이적이라고 할 수 없겠네요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>맞아요. 적응면역은 맞는 항원을 구별하고, 나중에 같은 항원을 만나면 더 잘 반응할 기억을 남겨요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s2-two-systems/04-35979b5688985dc35fff33976b236a15bd2891041420013032dcacee5ca9261b.png" alt="세모 항원은 맞는 수용체가 있는 B세포에만 붙고, 그 모양을 인식하는 기억세포가 남는다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">이 수업에서는 척추동물만 이런 적응면역을 가진다고 배워요. 후천면역이라고도 하며 B세포·T세포·항체가 관여해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 첫 번째 방어선과 두 번째 방어선은 둘 다 비특이적이에요. 이 수업은 조직 침입 전인지 후인지로 둘을 나누어요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s2-two-systems" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">수업에서는 피부 같은 장벽을 첫 번째, 침입 뒤 빨리 작용하는 선천면역을 두 번째, 항원에 특이적으로 반응하고 기억하는 적응면역을 세 번째로 구분해요.</p><p class="panel-label">용어</p><dl class="terms"><dt>특이성과 기억</dt><dd>특이성은 결합할 항원을 구별하는 성질이에요. 기억은 같은 항원을 다시 만날 때의 반응에 영향을 줘요.</dd></dl></div></article><article class="topic" id="s2-peptide"><h3>항미생물 펩티드</h3><p class="comic-question">피부에서 나온 물질도 같은 방식으로 세균을 막을까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>피부는 세균이 지나가지 못하게 서 있는 벽인가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>피부 같은 상피는 장벽을 이루면서 방어 물질도 내보내요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s2-peptide/01-bef31ef4e241db34fc143e00472f9dc0400ebbd12bd01a25353614ac7c0ad5e2.png" alt="나란한 두 벽 중 오른쪽 벽의 표면에서만 작은 방울이 나온다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">벽이 막는 일과 벽에서 나온 물질이 하는 일을 나누어 보아요.</p><p class="comic-analogy"><strong>비유 연결</strong> 물체를 차단하는 벽과 암벽 표면에서 나오는 물질 → 장벽 자체의 물리적 차단과 상피 조직의 디펜신 분비</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>디펜신은 세균 한 종류의 모양만 기억해요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>여러 종류의 세균을 죽일 수 있는 선천면역의 항미생물 펩티드예요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s2-peptide/02-10e689acfb1099aa2f5269a18ee789c3b2b26ab0f88ccdd2d30b55c5fad3f548.png" alt="상피 표면에서 짧은 아미노산 사슬 모양이 밖으로 나온다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">펩티드는 아미노산이 이어진 사슬이에요. 미생물에 맞서는 짧은 펩티드 중 하나가 디펜신이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>상피 주변에서 작용하면 둘 다 라이소자임이에요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>디펜신은 항미생물 펩티드예요. 라이소자임은 세균의 세포벽을 분해하는 효소예요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s2-peptide/03-3c5b972a83fcb10fc0628d8315ce8b9359dc566016bb0049f4663d3ed48669c6.png" alt="상피에서 나온 디펜신과 눈물에 든 라이소자임을 나란히 보여 준다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">수업에서는 상피의 디펜신을 선천면역, 침·눈물의 라이소자임을 첫 번째 방어선으로 분류했어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>손등과 휴대전화 위에서 바이러스가 똑같이 오래 남았어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>교수님이 소개한 코로나19 바이러스 비교에서는 손등에서 더 빨리 활성을 잃었어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s2-peptide/04-d3174f666097929a81de322e6e6c20cbda5b95cd782de40db2eb777b62ffaab5.png" alt="손등과 휴대전화를 같은 관찰 시점에서 비교한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">수업에서는 손바닥의 RNA 분해 효소를 따로 언급했어요. 이 비교만으로 차이를 만든 물질을 디펜신으로 정할 수는 없어요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 실제로 상피에서 분비되는 디펜신은 물줄기가 아니라 아미노산이 이어진 짧은 분자예요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s2-peptide" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">디펜신은 상피에서 나오는 짧은 항미생물 펩티드예요. 수업은 디펜신을 선천면역에, 침·눈물의 라이소자임을 첫 번째 방어선에 넣었어요.</p><p class="panel-label">용어</p><dl class="terms"><dt>디펜신</dt><dd>상피에서 나와 여러 세균에 작용할 수 있는 항미생물 펩티드예요.</dd></dl></div></article><article class="topic" id="s2-inflammation"><h3>염증 반응</h3><p class="comic-question">혈관이 넓어지는 것과 백혈구가 벽을 넘어가는 것은 어떻게 다를까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>차가 많이 지나가면 전부 현장으로 들어갈까요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>들어가려면 길이 넓어지는 것과 별도로 건물 쪽 문을 지나야 해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s2-inflammation/01-5bd8a26b8927774519c5740f409d14b04a8e93d04c1201040ff4120adf5a63e4.png" alt="넓은 길에 더 많은 구조차가 지나고 열린 문을 통과한 차만 안으로 들어간다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">길을 지나는 차량 수와 문을 통해 현장으로 가는 차량 수는 서로 다른 관찰값이에요.</p><p class="comic-analogy"><strong>비유 연결</strong> 지나는 길의 폭과 건물에 들어가는 문의 열림 → 혈관의 확장과 벽을 가로지르는 물질·세포의 이동</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>상처 바로 옆에서는 누가 먼저 세균을 상대해요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>조직에 있던 대식세포가 먼저 먹기 시작해요. 동시에 주변에 도움도 요청해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s2-inflammation/02-be959123d0daae6ce6b89069f7624b97d52f67311d034c69166c2261872fc011.png" alt="상처를 지나온 세균을 대식세포가 세포막으로 둘러싸고 세포 안에서 분해한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">피부 아래의 대식세포가 세균을 삼키고 리소좀이 분해하는 과정을 식세포 작용이라고 해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>두 세포가 같은 신호를 내보내요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>대식세포는 사이토카인을, 비만세포는 히스타민을 내보내요. 여기서 혈관을 바꾸는 신호는 히스타민이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s2-inflammation/03-51cf3a7d2daa866bca050aad48dbd722eb4d1db503a07eb3659b0bdb1fa633b5.png" alt="대식세포의 파란 신호와 비만세포의 노란 신호가 구별되고 노란 점은 아래 혈관 쪽으로 간다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">사이토카인은 시토카인이라고도 써요. 케모카인과 히스타민도 신호 물질이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>상처가 빨개진 건 적혈구가 벽을 넘어서예요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>확장으로 더 많은 혈액이 혈관 안을 지나서 그래요. 지나가는 것과 벽을 통과하는 것을 구분해 봐요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s2-inflammation/04-9dfbad8a5342dc81924c9e29a4337348b72c2c9b1068a9033360676c2d103bbc.png" alt="좁은 혈관과 넓어진 혈관 모두 적혈구가 안에 있고 넓은 쪽에 지나가는 혈구가 많다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">혈관 확장으로 혈류가 늘면 붉어지고 열이 날 수 있어요. 적혈구는 혈관 안에 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>혈관이 넓어지면 호중구가 저절로 벽을 넘어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>호중구는 벽의 단백질에 붙어 밖으로 나가요. 투과성이 높아지면 물도 조직으로 빠져나와요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s2-inflammation/05-18c85c8bfe94e3d9b587da201845cbb310b85e5ef98c499316333902df4d0352.png" alt="호중구가 혈관벽에 붙어 조직으로 나오고 물도 밖에 모이며 적혈구는 안에 머문다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">혈관벽을 넘는 혈구는 백혈구예요. 조직에 혈장 성분이 쌓이면 부어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>상처 쪽까지 온 호중구의 일은 뭐예요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>대식세포와 호중구가 세균을 삼켜요. B세포·T세포·항체의 특이적 작용은 수업에서 적응면역으로 구분해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s2-inflammation/06-819471742884637d77e7f0a39db39ba4905e57cadff21d2c6639b791df1b56bb.png" alt="조직으로 나온 호중구가 세균을 감싸 삼킨다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><p class="comic-caption">보체는 구멍을 내는 단백질이고, 자연살생세포는 감염된 우리 세포나 암세포를 상대해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 실제 혈관에 문이나 차량은 없어요. 백혈구는 혈관벽 단백질에 붙어 빠져나오고, 적혈구는 혈관 안에 남아요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s2-inflammation" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">대식세포는 세균을 삼키고 다른 세포에 신호를 보내요. 비만세포가 내는 히스타민은 혈관을 넓히고 투과성을 높여 호중구의 유입을 도와요.</p><p class="panel-label">용어</p><dl class="terms"><dt>혈관 확장</dt><dd>혈관 안을 지나가는 혈구와 혈액의 양이 늘어 붉어져요.</dd><dt>투과성 증가</dt><dd>물과 백혈구가 조직 쪽으로 나오기 쉬워져요. 물이 모이면 부어요.</dd></dl></div></article></section>
+<section id="comic-section-4"><h2>4. [14장] 보체·인터페론·자연살생세포</h2><article class="topic" id="s3-complement"><h3>보체계와 막공격복합체</h3><p class="comic-question">항체로 붙잡은 세균은 왜 보체나 대식세포의 도움이 필요할까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>붙들린 세균은 그 자리에서 바로 죽어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>붙드는 것과 막에 구멍을 내는 것은 다른 작용이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s3-complement/01-b82016822c977d2184f62c1294330d8200e61460694dc3b4544973b709776348.png" alt="왼쪽은 붙들려도 막이 온전하고 오른쪽은 틈으로 물이 샌다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">붙드는 일과 표면 막을 손상시키는 일을 따로 비교해요.</p><p class="comic-analogy"><strong>비유 연결</strong> 집게로 고정하는 것과 표면에 구멍이 나는 것 → 항체 결합과 보체의 막공격복합체가 하는 일의 차이</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>항체가 맞는 항원에 붙어도 세균막은 남아 있네요.</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>네. 이 장면에서 항체는 세균을 붙잡고, 보체나 대식세포가 뒤이어 제거할 수 있어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s3-complement/02-f47460c711f052d8aa7aaee3a3d65aac2d2a4027110abe56b51ec0f1f4b09dff.png" alt="항체의 팔 끝이 세균 표면의 항원에 붙고 세균막은 온전하다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">항체는 맞는 항원에만 결합하는 적응면역 단백질이에요. 대식세포나 보체가 세균 제거를 맡을 수 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>누가 막에서 구멍을 만들어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>선천면역의 보체 단백질들이 막공격복합체로 모여 구멍을 만들어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s3-complement/03-6c6f5cdd9425443def92bfcfef304e1454330ce33af555238e4f11f8af940e7b.png" alt="보체 단백질이 세균막에 고리를 만들고 고리 가운데의 구멍을 지나 물질이 움직인다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">막공격복합체가 막에 구멍을 내면 해당 세균을 죽일 수 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>보체는 항체가 있어야만 움직여요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>보체는 병원체 표면의 공통 특징을 알아보고 활성화되기도 해요. 항체가 각자 모양이 맞는 항원에만 결합하는 특이성과 구별해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s3-complement/04-c2fc96b992072645845c076eb931420bdb75110bf7020d0353cee40bd794f403.png" alt="왼쪽은 항체의 두 팔 끝이 세균 쪽을 향하고 보체는 위쪽 줄기 쪽에 있다. 오른쪽은 항체 없이 보체가 세균 표면에 닿는다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">보충에서 보체가 항체 없이도 병원체 표면 분자를 인식해 활성화될 수 있다고 설명해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 실제 세균막에 바늘이 닿는 것이 아니에요. 여러 보체 단백질이 모여 막을 관통하는 복합체를 만들어요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s3-complement" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">항체는 맞는 항원에 결합해 세균을 붙들어요. 보체 단백질은 막공격복합체를 만들어 감수성 있는 세균의 막에 구멍을 낼 수 있어요.</p><p class="panel-label">용어</p><dl class="terms"><dt>막공격복합체</dt><dd>여러 보체 단백질이 모여 세균막을 관통하는 구멍을 만들어요.</dd><dt>보체와 항체</dt><dd><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>둘 다 단백질이에요. 보체는 선천면역이며 항체의 특이적 결합과 구별해요.</dd></dl></div></article><article class="topic" id="s3-interferon"><h3>인터페론</h3><p class="comic-question">인터페론을 내보낸 세포와 실제로 대비하는 세포는 같을까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>바이러스에 먼저 감염된 세포가 어떻게 이웃을 도와요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>이웃에게 경보 같은 신호를 보내요. 신호를 받고 대비하는 쪽은 이웃 세포예요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s3-interferon/01-c6eef51125bcff2d4d589ab8c837afe610d6bdb05be3777a12ffb6272133bfa9.png" alt="왼쪽 집이 신호를 보내고, 오른쪽 집 가운데 수신기가 있는 집이 받는다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">경보를 보낸 집은 감염 세포, 경보는 인터페론, 이웃 집의 수신기는 세포 표면 수용체에 해당해요.</p><p class="comic-analogy"><strong>비유 연결</strong> 경보를 발신한 집 → 바이러스에 감염된 세포 · 집 사이를 오가는 경보 → 감염 세포가 분비한 인터페론 · 이웃 집의 수신기 → 주변 세포 표면의 인터페론 수용체</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>작은 점이 밖으로 퍼져 가네요. 그 점이 바이러스예요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>그 점은 감염 세포가 분비한 인터페론이에요. 아직 감염되지 않은 옆 세포에 신호를 전해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s3-interferon/02-5ea7b4bec3805001b630826e22801404b4d6cb9b9695ecfa4b017e35c8e1d5b3.png" alt="바이러스에 감염된 왼쪽 세포에서 작은 인터페론 신호가 오른쪽으로 간다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">작은 겨자색 점은 신호 분자이고, 세포 안의 붉은 입자는 바이러스를 나타내요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>인터페론이 옆을 지나가기만 해도 다 준비해요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>수용체로 받은 세포에서 RNA 분해 효소 같은 물질을 만들어요. 바이러스가 오기 전에 준비하는 거예요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s3-interferon/03-8df95f86141f92a84724fe70044d5a680b7818a28b59a5b97d0764d98ae9caee.png" alt="왼쪽 세포만 막에 수용체가 있어 신호가 붙고 안에 대비 물질이 생겼다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">수용체가 없으면 이 신호를 받아 같은 준비를 시작할 수 없어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>직접 RNA를 분해하는 건 인터페론이에요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>RNA 바이러스가 들어오면 신호를 받은 세포가 만든 효소가 그 RNA를 분해할 수 있어요. 같은 항원을 기억하는 건 후천면역의 특징이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s3-interferon/04-9b9815cdb590362dfc0b68fcc3ebf36efd972d939abc95eadfba7aa6c80a3ee9.png" alt="신호를 받은 이웃 세포의 안쪽을 확대한 그림에서 효소 옆의 바이러스 RNA가 두 조각으로 나뉜다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">인터페론은 바이러스 방어의 선천면역 신호예요. 항체인 IgE나 상피의 디펜신과 구별해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 세포에 경보기나 의도가 있는 것은 아니에요. 수용체가 신호를 받으면 이웃 세포가 세포 안에 대비 물질을 만들어요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s3-interferon" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">감염 세포가 인터페론을 내보내면 수용체가 있는 주변 세포가 받아서 RNA 분해 효소 등을 미리 만들어요.</p><p class="panel-label">용어</p><dl class="terms"><dt>인터페론</dt><dd>감염 세포가 분비하고, 수용체가 있는 주변 세포가 받아 대비하는 신호 분자예요.</dd></dl></div></article><article class="topic" id="s3-nk"><h3>자연살생세포와 세포의 죽음</h3><p class="comic-question">구멍을 뚫었다는 단서만으로 보체와 자연살생세포를 구별할 수 있을까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>구멍이 나면 그 순간 표적이 터져요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>이 단원에서 보는 경우는 신호를 받은 표적이 자기 내부의 죽음 과정을 시작해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s3-nk/01-de402214a311403e7a527749a5c577733070f395025cb673150f6d03072b586b.png" alt="기계 옆의 키가 들어가자 기계 내부에서 종료 순서가 진행된다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">외부에서 시작을 알리는 것과 내부에서 종료 절차가 진행되는 것은 다른 단계예요.</p><p class="comic-analogy"><strong>비유 연결</strong> 외부에서 건넨 정지 신호와 내부에서 진행하는 종료 절차 → NK세포의 자살 유도 효소와 표적 스스로의 아포토시스</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>찾는 표적은 세균이 아니라 몸의 세포예요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>네. 감염된 숙주세포와 암세포가 대표 표적이에요. 항원 하나를 기억해 고르는 적응면역과는 다른 방식이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s3-nk/02-a5ebf6c31ed3bb0a825bb02eb12b3e8be9b5b74679e8d2c1275a005edd61efa7.png" alt="NK세포가 감염된 숙주세포와 비정상 숙주세포를 상대하고 세균은 따로 보인다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">자연살해세포라고도 하며, 혈액을 순환하는 림프구의 일종이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>퍼포린과 효소는 같은 일을 해요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>퍼포린은 표적 세포의 막에 구멍을 내요. 그 구멍을 통해 전달된 효소가 표적 세포 안에서 아포토시스를 유도해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s3-nk/03-58a3618c969ca89b45b1ed0e7386a0816f119038e64883fbcf8b6e56288b7c21.png" alt="두 세포가 맞닿아 있고, 오른쪽 확대 그림에서는 표적세포 막에 원통 모양의 구멍이 보인다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">효소는 단백질분해효소, 프로테아제의 한 종류예요. 강의노트 14장 p2 보충은 이온·분자 손실로도 표적이 파괴될 수 있는 경우를 설명해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>표적이 스스로 정해진 순서로 죽는 경우와 손상돼 죽는 경우의 이름은 뭐예요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>앞은 계획과 유전자 발현에 따른 아포토시스, 뒤는 손상에 따른 괴사예요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s3-nk/04-a617ff909f44db03a9c9d3abfc0b39ff20adfa428c9439278940f118bae146ee.png" alt="왼쪽은 막으로 둘러싸인 조각으로 정리되고 오른쪽은 손상으로 막이 깨진다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">타거나 굶거나 긁혀 손상된 세포의 죽음은 수업에서 괴사의 사례로 다뤘어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>구멍이라는 말이 나오면 이제 무엇을 먼저 볼까요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>누가 무엇에 구멍을 냈는지 봐요. 보체 단백질이 만드는 막공격복합체는 세균막에 구멍을 내 세균을 터뜨릴 수 있어요. 선천면역의 NK세포는 감염 세포나 암세포의 아포토시스를 유도해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s3-nk/05-e2731bdaef5032a9879f94f670ccb60ecd6fdd4336257d3fab2b7b11b7ff9769.png" alt="삼키는 식세포, 세균막에 구멍을 내는 보체, 감염세포를 상대하는 NK세포를 비교한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">히스타민을 내는 대표 사례는 비만세포예요. 세포독성 T세포도 감염 세포를 죽이지만 적응면역에 속해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 세포에 정지 단추나 의도가 있는 것은 아니에요. 표적의 세포 안에서 진행되는 죽음과 외부의 손상을 비교하기 위한 비유예요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s3-nk" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">자연살생세포는 암세포나 바이러스 감염 세포에 퍼포린으로 구멍을 내고 효소를 전달해 아포토시스를 유도해요.</p><p class="panel-label">용어</p><dl class="terms"><dt>아포토시스</dt><dd>표적의 세포 안에서 계획된 죽음 과정이 작동해요.</dd><dt>괴사</dt><dd>손상으로 죽는 경우예요.</dd></dl></div></article></section>
+<section id="comic-section-5"><h2>5. [14장] 림프구와 항체의 구조</h2><article class="topic" id="s4-lymphocytes"><h3>B세포와 T세포</h3><p class="comic-question">B세포와 T세포는 태어난 곳과 성숙한 곳이 어떻게 다를까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>T세포가 흉선에서 성숙하면 처음부터 흉선에 있었어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>출발지와 졸업하는 곳을 구분해 봐요. 두 학생은 같은 곳에서 시작해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s4-lymphocytes/01-ca769e30d32a6a51b04c2d5013d7fc84618c63041ecbc9d64f0045c09683958e.png" alt="가방 두 개가 한 학교에서 출발해 하나는 남고 하나는 다른 학교로 향한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">성숙 위치는 골수 bone marrow의 B, 흉선 thymus의 T와 연결해 기억할 수 있어요.</p><p class="comic-analogy"><strong>비유 연결</strong> 공통 출발 학교와 다른 졸업 학교 → 골수의 B·T세포 전구세포와 골수·흉선의 서로 다른 성숙 위치</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>성숙을 마치면 두 세포는 어디 가요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>림프절은 성숙한 뒤 가는 곳 중 하나예요. 흉선에서 성숙하는 T세포의 출발도 골수예요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s4-lymphocytes/02-506e0c3b1197bd7feb54bd588ae8358a85eca69d767b373edfab5ec6cac66278.png" alt="골수에서 나온 두 경로 중 하나가 골수에 남고 하나는 흉선으로 향한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">골수 줄기세포에서 시작해 B세포는 골수, T세포는 흉선에서 성숙해요. 흉선과 가슴샘은 같은 기관이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>B세포가 자라자마자 바로 항체를 모두 내보내요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>B세포가 활성화되어 형질세포로 분화하면 항체를 분비해요. 막에서 항원을 알아보는 수용체와 위치가 달라요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s4-lymphocytes/03-a82b7f5211e7b14472c395df4e890104ee820d762d98d8d35896ad431f611b67.png" alt="B세포 막에 같은 모양의 수용체가 있고 형질세포 주변에는 분비된 항체가 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">한 B세포 막의 BCR은 같은 항원 결합 모양을 반복해요. T세포 막에는 TCR이 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>T세포는 두 종류가 모두 감염 세포를 직접 죽여요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>도움 T세포는 다른 면역세포를 돕고, 세포독성 T세포는 바이러스에 감염된 세포를 죽여요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s4-lymphocytes/04-cbeabc3e61997bb04fe3a955e8a6697992937fbadcbf37d24fef3a022a3ece6e.png" alt="도움 T세포는 옆 세포에 신호를 보내고 세포독성 T세포는 감염 세포에 붙는다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">세포독성 T세포는 특이적인 적응면역 세포예요. 감염 세포를 죽이는 자연살생세포는 선천면역에 속해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 학교는 성숙하는 장소를 기억하기 위한 비유예요. 세포는 분화·성숙한 뒤 몸에서 면역 기능을 수행할 수 있어요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s4-lymphocytes" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="sum-lead">B세포와 T세포는 둘 다 적응면역을 맡는 림프구이며 골수에서 시작해요. B세포는 골수에서 성숙하고 T세포는 흉선에서 성숙한 뒤 림프기관 등으로 가요.</p><p class="panel-label">용어</p><dl class="terms"><dt>림프절</dt><dd><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>B세포와 T세포가 각자의 성숙 장소를 거친 뒤 갈 수 있는 림프기관이에요.</dd></dl></div></article><article class="topic" id="s4-antibody"><h3>항체의 구조와 다양성 문제</h3><p class="comic-question">Y자의 어느 부분이 항원을 정하고, 어느 부분이 클래스를 정할까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>한쪽은 다른 부품을 잡나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>두 끝이 같은 모양이라 같은 상대를 잡아요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s4-antibody/01-93361aaa038977a04c7e4474d48c6b1c159b52e59ea206d2a5ae57b40d3365c0.png" alt="집게 한 개의 양 끝에 같은 둥근 홈이 있고 각각 같은 모양 부품이 놓였어요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">한 도구의 두 홈처럼, 그림에 나온 한 항체의 두 결합 부위는 같은 모양이에요.</p><p class="comic-analogy"><strong>비유 연결</strong> 한 도구의 똑같이 생긴 두 집게 끝 → 한 항체에 있는 두 항원 결합 부위의 모양 · <span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>도구의 몸체 계열과 끝부분이 잡는 부품 → 무거운 사슬의 불변 영역으로 구분하는 클래스와 가변 영역이 정하는 특이성</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>팔 끝은 어느 사슬이 만들어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>한 팔에서 무거운 사슬과 가벼운 사슬이 함께 만들어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s4-antibody/02-bcbd576de1a5bb88189167d962d9458e227d740d4c6675a2d3b1d7f3eec24305.png" alt="파란 긴 사슬 두 개가 Y자 안쪽과 줄기를 만들고 짧은 청록 사슬 두 개가 팔 밖에 나란해요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">두 긴 무거운 사슬과 두 짧은 가벼운 사슬은 이황화결합으로 이어져요. 한쪽 팔 끝의 두 사슬 가변 영역이 함께 항원 결합 부위를 만들어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>항원 전체를 감싸나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>팔 끝은 모양이 맞는 부분인 에피톱에 붙어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s4-antibody/03-9db42fb04e75a4ba9404cccd3eb05d9d23c8b40c4e4e0be4176171ee4e84ea6f.png" alt="항원의 작은 돌출 부분이 파란 사슬과 청록 사슬 사이 홈에 맞아요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">항체는 항원에 특이적으로 붙는 단백질이에요. 항원은 미생물의 일부이거나 독소처럼 따로 존재할 수 있어요. 그중 항체에 실제로 닿는 곳은 에피톱이에요. DNA 염기서열이 아미노산 서열을, 그 서열이 접힌 결합 부위의 모양을 정하는 데 관여해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>같은 클래스면 서열도 전부 같나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>같은 클래스에서도 불변 영역에 차이가 있을 수 있어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s4-antibody/04-4a25fdce538d09ff236bb5052c0396a48f9f9c41e19b8c645b9ab9ca9724f70e.png" alt="두 Y 모형의 줄기 계열은 비슷하고, 각 모형의 양쪽 끝 모양은 다른 모형의 끝과 달라요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">이 두 항체는 같은 클래스로 그렸어요. 팔 끝 모양이 다르면 결합하는 항원도 다를 수 있어요. 클래스는 무거운 사슬의 불변 영역으로 구분해요. IgG에는 여러 하위클래스가 있고 같은 하위클래스 안에서도 유전적 변이로 서열 차이가 날 수 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>항체마다 유전자가 하나씩 필요할까요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>다양한 모양은 한정된 유전자 개수만으로 설명할 수 없어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s4-antibody/05-850a396861c4b0f2c6b67ef9d5785156b2c1275b7e129a69a8a964d49eaff4be.png" alt="작은 부품 상자 옆에 서로 다른 끝 모양을 한 조립 예시가 늘어서 있어요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">필요한 결합 모양이 너무 많아서 항체마다 유전자 하나씩 있다고 설명하기 어려워요. 이 문제는 「DNA 재배열과 항체의 다양성」에서 이어져요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 집게는 위치와 역할을 구별하는 비유예요. 같은 클래스에도 하위클래스와 유전적 변이가 있고, 항체는 여러 사슬이 접혀 만들어진 단백질이에요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s4-antibody" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="sum-lead">일반적인 Y자 항체에는 무거운 사슬 두 개와 가벼운 사슬 두 개가 있어요. 두 팔 끝은 같은 항원을 인식하고, 클래스는 무거운 사슬의 불변 영역으로 구분해요. 같은 클래스 안에도 불변 영역의 서열 차이가 있을 수 있어요.</p><p class="panel-label">용어</p><dl class="terms"><dt>가변 영역</dt><dd><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>두 사슬의 가변 영역이 한 팔 끝의 결합 부위를 이루고 특이성에 관여해요.</dd><dt>클래스</dt><dd>IgG·IgA·IgE·IgD·IgM. 무거운 사슬의 불변 영역으로 구분해요. 같은 클래스 안에도 서열 차이가 가능해요.</dd><dt>체액의 항체 · 보충</dt><dd><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>항체는 체액에 녹아 다니는 단백질이에요. 혈청에는 IgG가 가장 많고, 점막 분비물과 모유에는 IgA가 대표적이에요.</dd><dt>항원과 항체</dt><dd><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>항원은 적응면역을 유발하는 외래물질이에요. 항체(면역글로불린)는 모양이 맞는 항원의 일부에 결합하는 단백질이에요.</dd></dl></div></article></section>
+<section id="comic-section-6"><h2>6. [14장] 클론 선택과 적응면역의 작동</h2><article class="topic" id="s5-rearrangement"><h3>DNA 재배열과 항체의 다양성</h3><p class="comic-question">항원을 만나기 전에 B세포의 서로 다른 결합 모양은 어디서 생길까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>항체 모양마다 처음부터 다른 유전자가 한 개씩 있어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>같은 재료 상자에서도 조합을 달리하면 여러 모양을 만들 수 있어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s5-rearrangement/01-5235432088466be7e2d4c0f669ebcc9287f2ddf6764d7cb32345af94c1d8e41d.png" alt="같은 상자에 있던 조각으로 모양이 다른 세 조합을 만든다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">유전자 수만으로 항체 모양을 하나씩 정해 두는 문제를 풀기 위한 비유예요.</p><p class="comic-analogy"><strong>비유 연결</strong> 같은 재료를 다르게 골라 만든 결과 → 성숙하는 B세포의 항체 유전자 분절이 재배열되어 다양해짐 · 완성된 조립본을 복제 → 재배열 뒤에 해당 B세포가 분열하면 딸세포가 같은 서열을 물려받음</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>몸 밖에서 항원이 먼저 와서 모양을 정하나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>항원을 만나기 전에 골수에서 분절을 무작위로 골라 다시 이어요. 성숙한 B세포 하나가 갖는 결합 모양은 한 가지예요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s5-rearrangement/02-53444716b44604996ad5cb8b8c2a824b82a116c927e4952463f3183a7ba84ea8.png" alt="골수의 같은 시작 배열이 성숙 과정에서 달라지고 다른 결합 모양이 생긴다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">재배열을 마친 B세포가 골수를 나가요. 강의노트는 한 사람의 B세포 수용체 종류를 대략 1억으로 소개해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>어떤 두 세포의 항체 유전자 서열이 같아요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>한 B세포가 나뉘어 생긴 둘은 같은 서열을 물려받아요. 수업 모형에서 따로 재배열한 B세포끼리나 B세포와 근육세포를 비교하면 달라요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s5-rearrangement/03-8b6e0e43a5550985b1f30bf026dd4d6c893c3e3f03565fb69c2c2a9f2e32fd79.png" alt="딸세포 쌍, 따로 성숙한 B세포 쌍, B세포와 근육세포 쌍을 차례로 비교한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">같은 사람에서 재배열 뒤 추가 변화가 없다고 둔 수업 모형이에요. 항체 유전자를 뺀 나머지 서열은 같고, 근육세포는 항체를 만들지 않아요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>회색 간격은 DNA가 재배열될 때 없어져요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>고른 V와 J 사이의 DNA가 없어져 두 분절이 이어져요. J와 C 사이는 그때 남아 있다가 RNA 가공에서 빠져요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s5-rearrangement/04-69a8280a1c5803c062319bf21234e7804f57ce66c5e76703cee8f9b15ac4b0df.png" alt="V 하나와 J 하나가 이어지고, J와 C 사이의 간격은 RNA 가공 뒤 사라진다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><p class="comic-caption">위부터 재배열 전 DNA, 재배열 뒤 DNA, 가공된 RNA, 단백질 가벼운 사슬이에요. 노랑 V와 청록 J는 하나씩 고르고 남색 C는 유지해요. 사슬에서 V·J는 노랑 가변 영역, C는 남색 불변 영역이에요. 교재 예의 V 약 40개와 J 5개로 약 200가지 짝이 나와요. 그림은 일부만 표시해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>클래스가 다르면 어떤 항원에 붙는지도 꼭 바뀌어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>클래스와 결합 부위의 모양은 따로 비교해요. 결합 모양을 다양하게 갖추는 한 과정이 성숙 중 재배열이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s5-rearrangement/05-93a80cbb15a04cbf07b7b659ff8d19b9e0b1f788f41a60b3e2fe40aa1baeab39.png" alt="팔 끝의 모양이 같아도 줄기의 종류가 다른 항체와 별도로 T세포 수용체를 보여 준다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><span class="badge supp">보충 · 수업에서 다루지 않았어요</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">무거운 사슬과 T세포 수용체 유전자도 재배열을 거쳐요. 수업 보충은 첫 노출 반응에 주로 IgM, 같은 항원에 다시 노출되면 주로 IgG가 나오는 차례를 설명해요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 블록 만들기는 조각을 골라 여러 결과가 나오는 관계를 보여 줘요. 실제 분절은 DNA이고, 항원을 보기 전에 재배열돼요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s5-rearrangement" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">골수에서 성숙하는 B세포는 분절의 재배열로 항체의 모양을 다양하게 갖춰요. 항원을 만나기 전이며, 같은 B세포의 딸세포는 바뀐 서열을 물려받아요.</p><p class="panel-label">용어</p><dl class="terms"><dt>V·J·C</dt><dd><span class="badge supp">보충 · 수업에서 다루지 않았어요</span>가벼운 사슬 예에서 V와 J는 가변 영역, C는 불변 영역에 정보를 제공해요. 재배열된 DNA와 RNA 가공 결과를 구별해요.</dd></dl></div></article><article class="topic" id="s5-clonal"><h3>클론 선택과 면역의 기억</h3><p class="comic-question">같은 항원을 다시 만나면 왜 더 빨리 더 많은 항체가 생길까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>항원이 들어오면 그 모양을 보고 항체를 처음 설계해요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>모양은 이미 여러 가지 마련돼 있어요. 들어온 항원에 맞는 틀이 선택돼요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s5-clonal/01-3436c582b3df1f9e6fab7d90c11711219dff5b2b77185fc05b12dcbe6b246a0d.png" alt="미리 마련한 네 종류의 틀 중 세모 물체는 세모 틀에만 맞는다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">틀은 항원을 보기 전에 만들어져 있어요. 틀이 나타내는 것은 B세포 막 수용체의 결합 모양이에요.</p><p class="comic-analogy"><strong>비유 연결</strong> 미리 갖춘 틀에서 맞는 모양을 고르는 일 → 이미 서로 다른 수용체를 단 B세포의 선택 · 복제본 가운데 다음에 쓸 틀을 남겨두는 일 → 형질세포와 수명이 긴 기억세포로 분화</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>세모가 결합하면 네모 수용체를 가진 B세포도 증식해요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>결합한 B세포가 선택돼요. 이 수업에서 그리는 반응에는 도움 T세포의 자극도 필요해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s5-clonal/02-a47feffd9e3a99d76e60222d00174bd06a28097743cf9539f0e55c85c6387148.png" alt="미리 서로 다른 모양을 단 B세포 중 세모 항원에 맞는 세포가 선택되고 도움 T세포의 자극을 받는다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">수업 모형에서 세모는 1번, 네모는 2번을 선택해요. 증식과 분화에는 같은 항원을 접한 도움 T세포의 자극을 함께 다뤄요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>둘 다 같은 B세포에서 나왔는데 하는 일이 달라요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>먼저 같은 결합 모양을 가진 클론으로 증식해요. 그 뒤 형질세포는 항체를 내보내고 기억세포는 수명이 길어 같은 항원의 재노출에 대비해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s5-clonal/03-85c5ea5bccf8157ebe1cb0a445948ad4bbb76a9225e6974a88b4acab71059752.png" alt="선택된 B세포 한 개에서 위 형질세포와 아래 기억세포로 갈라지고, 항체와 기억세포에는 비어 있는 각진 V 결합 부위가 보여요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">위젯 첫 노출 모형은 한 B세포에서 형질세포 6개와 기억세포 2개가 나와요. 실제 컷의 세포 수는 순서를 나타내는 예예요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>첫 노출 뒤에는 항원을 없애도 기억세포가 남아요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>대부분의 활성화된 B·T세포는 사라져요. 수명이 긴 일부 기억 B·T세포는 림프계와 감염됐던 조직에 남아요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s5-clonal/04-551d8d1678bae7b41e5f2c4a393caf1059f1ba1b3d6c707e2f39e6c4100d5cf4.png" alt="V 결합 자리를 가진 기억세포 옆에 세모 항원이 다시 등장하고, 형질세포가 분비한 Y자 항체 양 끝에도 작은 V 홈이 있어요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">위젯의 세모 재노출은 기억세포 2개에서 시작해 형질세포 12개와 기억세포 4개가 나오는 모형이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>같은 날에 다른 항원도 들어오면 그것까지 2차 반응을 보여요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>첫 노출에는 맞는 B세포가 적어 증식과 분화에 시간이 걸려요. 같은 항원을 다시 만나면 기억세포가 이미 있어서 소량에도 더 빠르고 크게 반응해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s5-clonal/05-790137d07d0564d3ffc49a668a835282c4b168764885d7c68090b0275e1391a3.png" alt="왼쪽은 첫 항원의 낮고 늦은 봉우리, 오른쪽은 같은 항원의 높고 빠른 봉우리와 새 항원의 낮은 봉우리." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">위젯은 세모 첫 노출의 최고 항체량을 2주째 1, 같은 세모 재노출을 1.2주째 3으로 표시해요. 네모 첫 노출은 2주째 1이에요. 모두 모형값이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>백신 덕분에 반응이 빠른 건 넣은 항체가 남아서예요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>미리 항원 정보를 접해 기억세포가 생긴 덕분이에요. 기억은 항원에 따라 생겨요. 한 항원에 여러 결합 부위가 있으면 여러 클론이 반응할 수 있어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s5-clonal/06-c1f398b165d214c56bcd72932c7a78fa4a1dc97f085749c6892406467c863063.png" alt="항원을 미리 접한 뒤 기억세포가 남고, 오른쪽 모형에는 에피톱이 다른 두 부분이 보인다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">예방접종은 특정 항원에 대비하는 기억을 만들어요. 보충에서는 1차 반응이 주로 IgM, 2차 반응이 주로 IgG라고 했어요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 실제 항원과 결합하는 부위는 항원 전체보다 작을 수 있어요. 모형은 하나만 고르지만, 여러 에피톱을 지닌 항원에는 여러 클론이 각각 반응할 수 있어요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s5-clonal" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">항원에 맞는 수용체를 이미 지닌 B세포가 선택돼요. 같은 결합 모양을 공유하는 클론으로 먼저 증식해 형질세포와 기억세포가 돼요. 첫 노출에는 이 과정에 시간이 걸리고, 같은 항원에 재노출되면 이미 남아 있는 기억세포가 빠르게 반응해요.</p><p class="panel-label">용어</p><dl class="terms"><dt>1차·2차 면역 반응</dt><dd><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>1차는 처음 만난 항원이 새 B·T세포를 활성화해요. 2차는 같은 항원을 기억 B·T세포가 만나 더 빠르고 크게 반응해요.</dd><dt>면역기억</dt><dd><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span>수명이 긴 기억세포가 남는 현상이에요. 같은 항원을 다시 만나면 기억 B세포가 증식하고 형질세포로 분화할 수 있어요.</dd></dl></div></article><article class="topic" id="s5-effect"><h3>항체의 작용</h3><p class="comic-question">항체가 독소에 붙는 것과 세균 둘을 이어 놓는 것은 어떻게 다를까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>항체가 붙으면 붙잡힌 것이 전부 바로 죽어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>붙는 것만으로 일을 막는 경우와 여러 대상을 이어 움직임을 줄이는 경우가 있어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s5-effect/01-aa8562f4b0056423ba0ec3ab3cc34d21ff05ea23c2b6dfbde6663086c161a764.png" alt="왼쪽에서 클립이 한 물건의 끝을 가리고 오른쪽에서 클립 양끝이 물건 둘을 잇는다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">왼쪽은 작동을 가리는 일, 오른쪽은 둘을 잇는 일이에요.</p><p class="comic-analogy"><strong>비유 연결</strong> 클립이 가리는 장면과 두 물건을 잇는 장면 → 독소 작용을 막는 중화와 결합 부위 둘로 세균들을 잇는 응집</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>독성 분자에 붙어 작용을 못 하게 만드는 이름이 뭐예요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>중화예요. 항체가 독소를 붙들어 세포에 작용하는 것을 막아요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s5-effect/02-d93bfb17bcdec6293581a16c74f44345d9d7fd699c0f9ede59f7583bd18882d8.png" alt="Y자 항체 양쪽 팔 끝이 노란 독성 분자를 한 개씩 잡고 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">항체에 붙은 독성 분자는 다른 세포에 작용하기 어려워져요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>항체 하나가 어떻게 서로 다른 세균 둘을 이어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>양쪽 팔의 결합 부위가 각각 한 세균 표면의 맞는 항원에 붙어요. 여럿이 묶이는 이 작용을 응집이라고 해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s5-effect/03-e027ccde8ea971034a68c8d44b5f6f670ddad565fdc217c8195dc673b0c9b7e7.png" alt="항체 한 개의 왼쪽 팔 끝과 오른쪽 팔 끝이 서로 다른 두 세균을 연결한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">그림은 응집에서 두 세균이 엮이는 연결 하나를 확대한 것이에요. 결합 부위가 하나인 경우에는 세균 하나만 붙들 수 있어요. 바이러스도 응집될 수 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>그럼 실제 제거는 누가 해요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>대식세포는 삼키고, 보체는 막공격복합체로 막에 구멍을 내요. 자살 유도 효소는 자연살생세포를 설명할 때 나와요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s5-effect/04-42f195579741a8bebbbad8e76cae0a5fb505a51e2e22fa8d113d8ad60c210fee.png" alt="왼쪽 대식세포는 작은 세균을 감싸고, 오른쪽 세균의 막에는 보체가 만든 구멍이 보인다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="comic-caption">앞 컷처럼 항체가 붙은 세균은 식세포가 더 쉽게 삼켜요. 항원에 붙은 항체가 보체를 활성화하기도 해요. 오른쪽은 보체가 만든 구멍 주변의 막을 확대한 그림이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>체액의 항체가 세포 속 바이러스도 직접 죽여요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>그림의 막을 봐요. 분비된 항체는 체액에서 항원에 결합하고, 감염 세포를 죽이는 쪽은 세포독성 T세포예요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s5-effect/05-af4fbb9c9130416e4a6121aa71d8c82055de1e8a6e8843e811c8b01993196b14.png" alt="둥근 숙주세포 안에 바이러스가 있고, Y자 항체는 모두 세포막 밖 체액에 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">이미 감염된 세포에는 세포독성 T세포가 작용해요. 같은 항원에 다시 노출되면 남아 있는 기억세포가 더 빠르게 반응할 수 있어요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 클립은 비유예요. 실제 항체는 두 팔 끝의 항원 결합 부위로 특정 항원에 붙고, 연결된 세균의 제거를 다른 방어 기전에 도와줘요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s5-effect" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><span class="badge supp">보충 · 노트에 빠졌던 수업 내용</span><p class="sum-lead">항체는 독소를 붙들어 작용을 막거나 두 결합 부위로 세균들을 묶어요. 대식세포와 보체가 결합 이후의 제거를 맡을 수 있어요.</p><p class="panel-label">용어</p><dl class="terms"><dt>중화와 응집</dt><dd>중화에서는 독소의 작용이 막혀요. 응집에서는 결합 부위 두 곳이 다른 세균에 붙어 세균을 서로 연결해요.</dd></dl></div></article><article class="topic" id="s5-helper"><h3>항체매개면역·세포매개면역과 도움 T세포</h3><p class="comic-question">두 적응면역은 어디에 작용하고 도움 T세포는 어떤 B세포를 도울까?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>적응면역에서는 늘 항체를 풀어서 상대해요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>체액에 있는 항원에 결합하는 갈래와, 문제가 생긴 몸의 세포를 직접 상대하는 갈래가 있어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s5-helper/01-7f79b1bbb8d105a07dff7d852e55ca3ef8151fa7e4a33f2d02dd0bc0da057240.png" alt="왼쪽은 물속 도구가 떠 있는 물체를 붙잡고 오른쪽은 이동 장치가 한 물체에 직접 다가간다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">둘 다 항원 특이성과 기억을 갖는 적응면역에 해당하는 비유예요.</p><p class="comic-analogy"><strong>비유 연결</strong> 물속에서 물체를 붙잡는 도구와 현장에 직접 찾아가는 팀 → 체액에서 항체가 결합하는 방어와 감염·암세포에 세포독성 T세포가 작용하는 방어</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>체액성이라는 이름은 어디에서 왔어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>항체가 체액에 녹아서 그곳에서 맞는 항원에 붙기 때문이에요. 항체매개면역이라고도 해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s5-helper/02-a72859ce694687591692ff1d3d5f5803c9700f7246ed1b0fb9c519a8243955f8.png" alt="둥근 형질세포 밖으로 나온 Y자 항체가 체액의 세모 항원에 결합한다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">체액성 면역에는 B세포, 형질세포, B세포에서 나온 기억세포, 항체가 관여해요. 보체는 선천면역 단백질이지만 제거에 협력해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>이 갈래에서는 체액에 뜬 병원체를 T세포가 직접 잡아 죽여요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>표적은 바이러스에 감염된 몸의 세포나 암세포예요. 항체의 체액 작용과 장소와 대상이 달라요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s5-helper/03-296cc03561d5dbaa717cbe3118b2a9a94339a034077d66771b64baf5be336f22.png" alt="작은 세포독성 T세포가 바이러스 표식이 든 큰 숙주세포에 직접 닿아 있다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">세포매개면역에서는 세포독성 T세포가 직접 작용해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s5-helper/04-ead0c5f5f5e13af5417f69812b3a1200ffdd06a5e543df48221e0ec3d7d7d261.png" alt="네 B세포 가운데 네모 항원을 만난 한 세포만 같은 항원을 접한 도움 T세포의 자극을 받는다." width="1536" height="1024" loading="lazy" decoding="async"></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">네모는 같은 항원을 만났다는 표시예요. 도움 T세포는 그 항원을 먼저 접한 뒤 같은 항원을 만난 B세포만 자극해요. 자극받은 B세포가 증식해 형질세포와 기억세포로 분화해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>도움 T세포가 거의 없으면 항원을 만난 B세포는 충분히 늘어요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>수업에서 다룬 반응에서는 증식·분화가 잘 일어나지 않아 형질세포와 항체가 줄어요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s5-helper/05-19a1008dac841e41f59c346a25a806db259cacea09214e820cfc7f9a909b3a57.png" alt="도움 T세포가 적은 모형에서 항체가 줄고, 별도의 대식세포 작용은 이어진다." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">항체 반응이 약해져도 대식세포의 식세포 작용은 선천면역으로 따로 일어나요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 적응면역의 두 갈래를 보여 주는 비유예요. 실제 도움 T세포가 B세포를 알아보고 돕는 세부 과정은 다음 수업 범위예요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s5-helper" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">체액에서는 분비된 항체가 항원과 결합하고, 세포매개면역에서는 세포독성 T세포가 감염된 세포와 암세포를 죽여요. 수업 모형에서 도움 T세포는 같은 항원을 접한 B세포를 자극해요.</p><p class="panel-label">용어</p><dl class="terms"><dt>도움 T세포</dt><dd>수업 모형에서는 같은 항원을 먼저 접한 뒤 그 항원을 만난 B세포를 자극해요. 모든 B세포가 한꺼번에 증식하지 않아요.</dd></dl></div></article></section>
+<section id="comic-section-7"><h2>요약 · 예고</h2><article class="topic" id="s6-cheatsheet"><h3>한눈에 다시 보기</h3><p class="comic-question">순환과 면역을 다시 볼 때 어떤 방향과 조건을 확인할까요?</p><ol class="comic-strip" aria-label="순서대로 읽는 학습만화"><li class="comic-panel" data-panel="1">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>어디부터 다시 볼까요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>흐르는 길부터 본 뒤, 몸을 지키는 두 방식을 나눠 봐요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s6-cheatsheet/01-59847f01f8a4412545c175af039b2f6476d9c09abd5acb5de6c784d379f0581a.png" alt="정리함 세 칸에 각각 관, 방패, Y 모양 표지가 들어 있어요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">1컷</span><p class="comic-caption">왼쪽부터 순환, 선천 방어, 적응면역. 복습할 때는 각 칸의 작용 방향과 대상을 확인해요.</p><p class="comic-analogy"><strong>비유 연결</strong> 서랍별로 묶는 자료 → 혈액과 조직액의 흐름, 선천 방어, 항원을 구별하는 적응면역</p></figcaption></figure></li><li class="comic-panel" data-panel="2">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>실제 조직액을 거두는 길은요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>수업 모형의 압력 비교와 구분해요. 실제 회수는 주로 림프계예요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s6-cheatsheet/02-25cf6ed3f374d502c6f699565aabffa0d190f4602231d7c92642776863e0b891.png" alt="모세혈관 양쪽 아래의 물방울이 조직 쪽에 보이고, 별도 림프관 안에도 물방울과 흐름 화살표가 있어요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">2컷</span><p class="comic-caption">수업 모형에서 혈압은 동맥 쪽에서 정맥 쪽으로 낮아지고 혈액 삼투압은 일정해요. 혈압이 더 크면 유출, 혈액 삼투압이 더 크면 유입으로 계산해요. 실제 몸에서는 대부분의 조직에서 정맥 쪽까지 소량의 여과가 이어지고, 조직액은 림프관으로 들어가 혈액으로 돌아와요.</p></figcaption></figure></li><li class="comic-panel" data-panel="3">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>뇌혈관에 무슨 일이 일어났죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>막힌 그림과 피가 새는 그림에서 원인이 달라요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s6-cheatsheet/03-849d0f8dbe3f8bc373dc4f4bf7928b203f7e6a95e8ad73fe9f66b46f747257b2.png" alt="왼쪽 혈관은 안이 막혀 있고 오른쪽 혈관은 벽의 틈으로 피가 새요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">3컷</span><p class="comic-caption">LDL은 콜레스테롤을 세포로 공급하고 HDL은 간으로 수거해요. 혈관 벽의 침착물에 면역세포의 염증 반응과 찌꺼기가 겹쳐 플라크가 생겨요. 뇌혈류 차단으로 뇌가 손상되면 허혈성 뇌졸중, 뇌혈관이 터지거나 새면 출혈성 뇌졸중, 심장근육의 혈류 차단으로 근육이 손상되면 심근경색이에요.</p></figcaption></figure></li><li class="comic-panel" data-panel="4">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>구멍을 만드는 표적이 같나요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>보체는 세균 막, 자연살생세포는 암세포나 감염된 우리 세포를 상대해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s6-cheatsheet/04-681638f6db7382ccfd6a1f178b6666f81db89c8d0d8deabf3583730f42eac9ea.png" alt="장벽, 막에 만들어진 구멍, 표적 세포에 닿은 면역세포가 나란히 있어요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">4컷</span><p class="comic-caption">피부 등의 첫 장벽을 넘으면 선천면역이 먼저 작용해요. 수업 기준에서 선천면역은 항원 특이성과 면역 기억이 없고, 적응면역에는 둘 다 있어요. 그림 가운데에서 보체는 세균 막에 구멍을 만들어요. 오른쪽의 자연살생세포는 세균 대신 암세포나 감염된 숙주세포에 붙어 세포자살을 유도해요.</p></figcaption></figure></li><li class="comic-panel" data-panel="5">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>끝과 줄기 중 어느 쪽을 보죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>무엇을 붙드는지 볼 때는 끝, 클래스를 볼 때는 무거운 사슬의 불변 영역이에요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s6-cheatsheet/05-858f31fe6639356e6ea9dea2bab39de5789835236456b69e70d2fa307c017ae5.png" alt="Y자 두 개는 각각 양 끝이 똑같고, 서로 견주면 끝의 모양이 달라요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">5컷</span><p class="comic-caption">한 항체에는 긴 사슬 두 개와 짧은 사슬 두 개가 있어요. 한 분자의 두 팔 끝은 같은 모양이라 같은 항원에 붙어요. 그림 속 두 항체의 무거운 사슬 불변 영역은 같은 클래스를 나타내요. 가변 영역의 끝이 다르면 다른 항원에 붙을 수 있고, 같은 클래스 안에서도 불변 영역 서열에 차이가 날 수 있어요.</p></figcaption></figure></li><li class="comic-panel" data-panel="6">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>항원을 본 다음에 맞는 끝을 만들죠?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>맞는 모양을 이미 가진 B세포가 선택돼요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s6-cheatsheet/06-cf9e9588e4f3550b4a98cf883955d60ac1cacc5a1ed2523b3a56939460528fc4.png" alt="세 B세포 중 둥근 모양에 맞는 수용체를 가진 한 세포만 작은 항원에 연결돼요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">6컷</span><p class="comic-caption">B세포와 T세포는 골수에서 생기고, B세포는 골수에서 T세포는 흉선에서 성숙해요. 항원을 만나기 전에 B세포마다 항체 유전자 조각이 무작위로 재배열돼요. 서로 다른 수용체 중에서 항원에 맞는 모양을 막에 달고 있던 B세포가 선택돼요.</p></figcaption></figure></li><li class="comic-panel" data-panel="7">
+<figure><div class="comic-scene"><div class="comic-balloon-layer"><p class="comic-dialogue comic-voice-left" data-speaker="student" data-offscreen="true"><span class="comic-speaker">학생</span>서랍처럼 따로 일해요?</p><p class="comic-dialogue comic-voice-right" data-speaker="guide" data-offscreen="true"><span class="comic-speaker">안내자</span>역할은 달라도 도움 T세포와 B세포처럼 서로 이어서 일해요.</p></div><img src=".assets/%EC%9E%90%EB%A3%8C_%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1124_Respiratory_and_Circulatory_Systems_and_Immune_System/versions/20261124T075829-75f9d0cb/images/s6-cheatsheet/07-02e19733acea2a59c5178259f82ea29685c37b020a5439578ba81d01b57d079c.png" alt="두 면역세포가 맞닿고 오른쪽 아래에는 세포에서 떨어진 항체 두 개가 있어요." width="1536" height="1024" loading="lazy" decoding="async"><div class="comic-art-space" style="aspect-ratio:1536 / 655.36" aria-hidden="true"></div></div>
+<figcaption><span class="comic-number">7컷</span><p class="comic-caption">같은 항원을 먼저 접한 도움 T세포가 그 항원을 만난 B세포를 자극해요. 자극받은 B세포는 증식해 형질세포와 기억세포로 분화해요. 형질세포는 체액에 항체를 분비하고, 세포독성 T세포는 바이러스에 감염된 세포나 암세포를 직접 죽여요.</p><p class="comic-limit"><strong>여기까지의 비유예요</strong> 서랍은 복습할 개념을 묶는 데만 써요. 실제 몸에서는 림프계가 체액 회수와 면역에 함께 관여하고, 도움 T세포와 B세포처럼 다른 역할의 세포가 협력해요.</p></figcaption></figure></li></ol><p class="comic-source"><a href="%EC%A0%95%EB%A6%AC%EB%85%B8%ED%8A%B8_1124_Respiratory_and_Circulatory_Systems_and_Immune_System.html#s6-cheatsheet" target="_self">원본 정리노트 보기</a></p><div class="sum" hidden><p class="sum-lead">순환에서는 어디로 흐르는지, 면역에서는 언제 누구를 대상으로 어떻게 작용하는지 확인해요. 수업 모형과 실제 림프 회수, 두 뇌졸중 유형, 항체의 클래스와 특이성을 구분해요.</p><p class="panel-label">용어</p><dl class="terms"><dt>혈관이 맡는 일</dt><dd>두꺼운 동맥벽은 엘라스틴의 탄성으로 되튕겨 피를 밀어요. 모세혈관은 총 단면적이 넓어 혈류가 느리고 교환할 시간이 길어요. 정맥은 골격근 수축으로 피를 심장 쪽에 보내고 판막으로 역류를 막아요. 심장에도 판막이 있어요.</dd><dt>혈구와 혈류 조절</dt><dd>혈구는 골수에서 생겨요. 산소가 부족하거나 적혈구가 적을 때 적혈구생성소가 골수의 적혈구 생성을 늘려요. 모세혈관 자체에는 근육이 없고, 자율신경의 조절을 받는 세동맥 평활근과 입구 괄약근의 수축·이완에 따라 흐름이 줄거나 늘어요.</dd><dt>혈압과 림프절</dt><dd>혈압은 혈액량, 심박출량, 동맥 수축 정도의 영향을 받아요. 대동맥·목동맥에서 감지한 혈압을 연수가 받고, 연수는 심박 횟수·강도를 조절해요. 림프절에서 면역세포가 병원체를 만나 모이면 림프절이 부을 수 있어요.</dd><dt>부종</dt><dd>혈청 단백질이 줄어 교질삼투압이 낮아지면 여과가 늘 수 있어요. 여과량이 림프 회수량을 넘으면 체액이 쌓여 부어요.</dd><dt>콜레스테롤 검사와 질환</dt><dd>수업 비교는 LDL은 낮게, HDL은 높게 기억해요. 뇌혈관이 터지거나 새면 출혈성, 뇌혈류 차단으로 조직이 손상되면 허혈성 뇌졸중이에요.</dd><dt>장벽과 염증</dt><dd>피부·점액·섬모·위산·라이소자임이 첫 장벽이에요. 라이소자임은 세균 세포벽에, 상피의 디펜신은 여러 세균에 작용해요. 대식세포의 사이토카인은 면역세포를 부르고, 비만세포의 히스타민은 혈관을 넓혀 붉어지게 하고 투과성을 높여 혈장 성분이 새어 조직이 붓고 백혈구가 조직으로 나와요. 적혈구는 그대로 혈관 속을 지나요.</dd><dt>선천면역의 표적</dt><dd>감염 세포가 보낸 인터페론은 수용체가 있는 이웃 세포의 방어를 준비시켜요. 보체는 세균 막에 구멍을 만들고, 자연살생세포는 퍼포린과 효소로 감염 세포·암세포의 아포토시스를 유도해요. 대식세포·호중구는 표적을 삼켜요. 자살 과정이 아포토시스, 손상에 의한 세포 죽음이 괴사예요.</dd><dt>항체 다양성</dt><dd>DNA 서열은 아미노산 서열과 접힌 결합 부위 모양에 이어져요. 무궁무진한 항원에 필요한 모양을 한정된 유전자 수로는 설명하기 어려워요. 항원 접촉 전 재배열로 B세포의 항체 유전자 부분이 같은 사람의 다른 세포와 달라질 수 있어요. 가벼운 사슬의 V 하나와 J 하나를 골라 C와 잇는 것은 보충이에요.</dd><dt>항체의 작용과 기억</dt><dd>중화는 독소의 작용을 막는 것, 응집은 항체가 세균끼리 잇는 거예요. 대식세포와 보체가 실제 제거에 관여해요. 첫 노출보다 같은 항원 재노출에서 더 빠르고 많은 항체가 생겨요. 백신은 이런 기억을 준비해요.</dd></dl></div></article></section>
+  </main>
+  <footer>정리노트의 수업 내용을 바탕으로 만든 학습만화</footer>
+    </div>
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="panel-right-title">
+      <div class="panel-resize" data-side="right" role="separator" aria-orientation="vertical" aria-controls="panel-right" aria-label="오른쪽 패널 너비 조절. 좌우 화살표로 조절, Home으로 자동 너비" tabindex="0"></div>
+      <div class="panel-inner">
+        <div class="panel-head">
+          <h2 id="panel-right-title">페이지 요약</h2>
+          <button class="text-btn panel-close" type="button" data-panel-close>닫기</button>
+        </div>
+        <p class="panel-empty" id="sum-empty">페이지를 넘기면 그 페이지의 핵심 식과 용어가 여기에 나옵니다.</p>
+        <div class="sums" id="sum-for"></div>
+      </div>
+    </aside>
+  </div>
+  <div class="scrim" id="panel-scrim" aria-hidden="true"></div>
+  <nav class="pager" aria-label="화면 이동">
+    <div class="pager-inner">
+      <button class="btn btn-ghost" id="pager-prev" type="button">이전</button>
+      <span class="pager-count" id="pager-count"></span>
+      <button class="btn btn-primary" id="pager-next" type="button">시작하기</button>
+    </div>
+  </nav>
+  <p class="sr-only" id="pager-status" aria-live="polite"></p>
+
+  <script id="theme-ui">
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const sysDark = matchMedia('(prefers-color-scheme: dark)');
+      const KEY = 'od-theme';
+      const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+      function label() {
+        const next = isDark() ? '라이트 모드로 전환' : '다크 모드로 전환';
+        btn.setAttribute('aria-label', next);
+        btn.title = next;
+      }
+      btn.addEventListener('click', () => {
+        const t = isDark() ? 'light' : 'dark';
+        // 시스템 설정과 같아지면 저장을 지워 다시 시스템을 따른다
+        if ((t === 'dark') === sysDark.matches) { delete root.dataset.theme; try { localStorage.removeItem(KEY); } catch (e) {} }
+        else { root.dataset.theme = t; try { localStorage.setItem(KEY, t); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+        label();
+      });
+      sysDark.addEventListener('change', label);
+      window.addEventListener('storage', (e) => {
+        if (e.key !== KEY) return;
+        if (e.newValue === 'light' || e.newValue === 'dark') root.dataset.theme = e.newValue; else delete root.dataset.theme;
+        label();
+      });
+      label();
+    })();
+  </script>
+  <script id="panels-ui">
+    (function () {
+      const body = document.body;
+      const layout = document.querySelector('.layout');
+      const kind = body.dataset.panels;
+      const panels = { left: document.getElementById('panel-left'), right: document.getElementById('panel-right') };
+      const toggles = { left: document.getElementById('toggle-left'), right: document.getElementById('toggle-right') };
+      const scrim = document.getElementById('panel-scrim');
+      const blockers = [document.querySelector('.topbar'), document.querySelector('.content'), document.querySelector('.pager')];
+      const wideMq = matchMedia('(min-width: 1024px)');
+      const roomyMq = matchMedia('(min-width: 1280px)');
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      // 푼 기록은 탭(세션) 단위로만 유지: 뒤로가기·새로고침엔 남고, 창을 닫고 다시 열면 초기화
+      const tabStore = {
+        get(k, d) { try { const v = sessionStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장 불가: 이번 방문에만 유지 */ } }
+      };
+      const PREF = 'od-panels:' + kind;
+      // 팩마다 문제·토픽 id가 p1, s1-…로 겹치므로 진행 기록은 기간별로 나눈다
+      const RANGE = body.dataset.range || '';
+      const ICON_TODO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+      const ICON_DONE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>';
+      let overlay = null;
+
+      // ---------- 열고 닫기 ----------
+      function docked() {
+        const pref = store.get(PREF, {});
+        return { left: pref.left ?? true, right: pref.right ?? roomyMq.matches };
+      }
+      function sync() {
+        const wide = wideMq.matches;
+        const d = docked();
+        ['left', 'right'].forEach((side) => {
+          const open = wide ? d[side] : overlay === side;
+          const p = panels[side];
+          layout.dataset[side] = open ? 'open' : 'closed';
+          p.classList.toggle('is-open', !wide && open);
+          p.inert = !open;
+          if (!wide && open) { p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); }
+          else { p.removeAttribute('role'); p.removeAttribute('aria-modal'); }
+          toggles[side].setAttribute('aria-expanded', String(open));
+        });
+        const drawer = !wide && overlay !== null;
+        scrim.classList.toggle('is-on', drawer);
+        body.classList.toggle('drawer-open', drawer);
+        blockers.forEach((el) => { el.inert = drawer; });
+      }
+      function openDrawer(side) {
+        overlay = side;
+        sync();
+        requestAnimationFrame(() => panels[side].querySelector('[data-panel-close]').focus());
+      }
+      function closeDrawer(refocus) {
+        if (overlay === null) return;
+        const side = overlay;
+        overlay = null;
+        sync();
+        if (refocus) toggles[side].focus();
+      }
+      function toggle(side) {
+        if (wideMq.matches) {
+          const d = docked();
+          d[side] = !d[side];
+          store.set(PREF, d);
+          sync();
+          if (d[side]) { const p = panels[side]; p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+        } else if (overlay === side) closeDrawer(true);
+        else openDrawer(side);
+      }
+
+      toggles.left.addEventListener('click', () => toggle('left'));
+      toggles.right.addEventListener('click', () => toggle('right'));
+      scrim.addEventListener('click', () => closeDrawer(true));
+      document.querySelectorAll('[data-panel-close]').forEach((b) => b.addEventListener('click', () => closeDrawer(true)));
+      panels.left.addEventListener('click', (e) => { if (e.target.closest('.toc a')) closeDrawer(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay !== null) { e.preventDefault(); closeDrawer(true); } });
+
+      // ---------- 패널 너비: 기본은 화면 폭에 맞춰 자동, 경계를 끌면 직접 조절 ----------
+      const WIDTH = { left: { min: 220, max: 480, prop: '--panel-l-user' }, right: { min: 280, max: 720, prop: '--panel-r-user' } };
+      function applyWidths() {
+        const w = store.get(PREF + ':w', {});
+        ['left', 'right'].forEach((side) => {
+          if (w[side]) layout.style.setProperty(WIDTH[side].prop, w[side] + 'px');
+          else layout.style.removeProperty(WIDTH[side].prop);
+        });
+      }
+      function maxFor(side) {
+        const other = side === 'left' ? panels.right : panels.left;
+        const otherW = layout.dataset[side === 'left' ? 'right' : 'left'] === 'open' ? other.getBoundingClientRect().width : 0;
+        return Math.max(WIDTH[side].min, Math.min(WIDTH[side].max, window.innerWidth - otherW - 400));
+      }
+      function setWidth(side, px, save) {
+        const v = Math.round(Math.min(Math.max(px, WIDTH[side].min), maxFor(side)));
+        layout.style.setProperty(WIDTH[side].prop, v + 'px');
+        panels[side].querySelector('.panel-resize').setAttribute('aria-valuenow', String(v));
+        if (save) { const w = store.get(PREF + ':w', {}); w[side] = v; store.set(PREF + ':w', w); }
+      }
+      function resetWidth(side) {
+        const w = store.get(PREF + ':w', {});
+        delete w[side];
+        store.set(PREF + ':w', w);
+        layout.style.removeProperty(WIDTH[side].prop);
+      }
+      document.querySelectorAll('.panel-resize').forEach((handle) => {
+        const side = handle.dataset.side;
+        const dir = side === 'left' ? 1 : -1;
+        handle.setAttribute('aria-valuemin', String(WIDTH[side].min));
+        handle.setAttribute('aria-valuemax', String(WIDTH[side].max));
+        handle.addEventListener('pointerdown', (e) => {
+          if (!wideMq.matches || e.button !== 0) return;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startW = panels[side].getBoundingClientRect().width;
+          handle.setPointerCapture(e.pointerId);
+          body.classList.add('is-resizing');
+          const move = (ev) => setWidth(side, startW + dir * (ev.clientX - startX), false);
+          const up = () => {
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', up);
+            handle.removeEventListener('pointercancel', up);
+            body.classList.remove('is-resizing');
+            setWidth(side, panels[side].getBoundingClientRect().width, true);
+          };
+          handle.addEventListener('pointermove', move);
+          handle.addEventListener('pointerup', up);
+          handle.addEventListener('pointercancel', up);
+        });
+        handle.addEventListener('dblclick', () => resetWidth(side));
+        handle.addEventListener('keydown', (e) => {
+          const step = e.shiftKey ? 64 : 16;
+          const cur = panels[side].getBoundingClientRect().width;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            setWidth(side, cur + (e.key === 'ArrowRight' ? step : -step) * dir, true);
+          } else if (e.key === 'Home') { e.preventDefault(); resetWidth(side); }
+        });
+      });
+      applyWidths();
+      const onMq = () => { overlay = null; sync(); };
+      wideMq.addEventListener('change', onMq);
+      roomyMq.addEventListener('change', onMq);
+
+      // ---------- 목차의 진행 표시 ----------
+      const progressN = document.getElementById('progress-n');
+      const progressBar = document.getElementById('progress-bar');
+      const progressTotal = document.getElementById('progress-total');
+      function markToc(done, total, doneLabel) {
+        panels.left.querySelectorAll('.toc-list a').forEach((a) => {
+          const id = decodeURIComponent(a.getAttribute('href').slice(1));
+          let mark = a.querySelector('.toc-mark');
+          if (!mark) {
+            mark = document.createElement('span');
+            mark.className = 'toc-mark';
+            mark.setAttribute('aria-hidden', 'true');
+            const state = document.createElement('span');
+            state.className = 'sr-only toc-state';
+            a.append(mark, state);
+          }
+          const isDone = done.has(id);
+          mark.classList.toggle('is-done', isDone);
+          mark.innerHTML = isDone ? ICON_DONE : ICON_TODO;
+          a.querySelector('.toc-state').textContent = isDone ? ' (' + doneLabel + ')' : '';
+        });
+        progressN.textContent = String(done.size);
+        progressTotal.textContent = String(total);
+        progressBar.style.transform = 'scaleX(' + (total ? done.size / total : 0) + ')';
+      }
+      function revealCurrent() {
+        const link = panels.left.querySelector('.toc-list a[aria-current="true"]');
+        if (link && layout.dataset.left === 'open') link.scrollIntoView({ block: 'nearest' });
+      }
+
+      // ---------- 복습문제: 오른쪽 = 원문 · 힌트 · 풀이 ----------
+      function setupReview() {
+        const KEY = 'od-review-solved:' + RANGE;
+        const cards = Array.from(document.querySelectorAll('main article.card'));
+        const aids = panels.right.querySelector('.aids');
+        const empty = panels.right.querySelector('.panel-empty');
+        const btn = document.getElementById('solved-btn');
+        const groups = {};
+        const solved = new Set(tabStore.get(KEY, []).filter((id) => cards.some((c) => c.id === id)));
+        cards.forEach((card) => {
+          const g = document.createElement('div');
+          g.className = 'aid';
+          g.hidden = true;
+          card.querySelectorAll(':scope > details').forEach((d) => g.appendChild(d));
+          aids.appendChild(g);
+          groups[card.id] = g;
+        });
+        let curId = null;
+        function paintBtn() {
+          const on = solved.has(curId);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.innerHTML = (on ? ICON_DONE : ICON_TODO) + '<span>' + (on ? '푼 문제 · 표시 해제' : '푼 문제로 표시') + '</span>';
+        }
+        btn.addEventListener('click', () => {
+          if (!curId) return;
+          if (solved.has(curId)) solved.delete(curId); else solved.add(curId);
+          tabStore.set(KEY, Array.from(solved));
+          paintBtn();
+          markToc(solved, cards.length, '푼 문제');
+        });
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          curId = s.matches('article.card') ? s.id : null;
+          Object.keys(groups).forEach((id) => { groups[id].hidden = id !== curId; });
+          empty.hidden = Boolean(curId);
+          btn.hidden = !curId;
+          if (curId) paintBtn();
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(solved, cards.length, '푼 문제');
+          revealCurrent();
+        });
+      }
+
+      // ---------- 정리노트: 오른쪽 = 페이지(토픽)별 요약 ----------
+      function setupNote() {
+        const KEY = 'od-comic-read:' + RANGE;
+        const topics = Array.from(document.querySelectorAll('main article.topic'));
+        const read = new Set(store.get(KEY, []).filter((id) => topics.some((t) => t.id === id)));
+        // 조각의 <div class="sum" hidden> 을 오른쪽 패널로 옮긴다. 없으면 안내 문구만 보인다.
+        const box = panels.right.querySelector('.sums');
+        const sums = {};
+        topics.forEach((t) => {
+          const el = t.querySelector(':scope > .sum');
+          if (!el) return;
+          el.hidden = true;
+          box.appendChild(el);
+          sums[t.id] = el;
+        });
+        const empty = document.getElementById('sum-empty');
+        document.addEventListener('od:screen', (e) => {
+          const s = e.detail.screen;
+          const key = s.matches('article.topic') ? s.id : 'intro';
+          Object.keys(sums).forEach((id) => { sums[id].hidden = id !== key; });
+          empty.hidden = Boolean(sums[key]);
+          if (s.matches('article.topic') && !read.has(s.id)) { read.add(s.id); store.set(KEY, Array.from(read)); }
+          panels.right.querySelector('.panel-inner').scrollTop = 0;
+          markToc(read, topics.length, '읽음');
+          revealCurrent();
+        });
+      }
+
+      if (kind === 'review') setupReview();
+      if (kind === 'note') setupNote();
+      sync();
+    })();
+  </script>
+  <script id="pager-ui">
+    (function () {
+      const root = document.documentElement;
+      const main = document.querySelector('main');
+      const hero = main.querySelector('.hero');
+      const screens = [hero].concat(Array.from(main.querySelectorAll(document.body.dataset.screens)));
+      if (screens.length < 2) { root.classList.remove('js'); return; }
+      screens.forEach((s) => s.classList.add('screen'));
+
+      const last = screens.length - 1;
+      const prevBtn = document.getElementById('pager-prev');
+      const nextBtn = document.getElementById('pager-next');
+      const count = document.getElementById('pager-count');
+      const bar = document.getElementById('pager-bar');
+      const status = document.getElementById('pager-status');
+      const toc = document.querySelector('#panel-left .toc');
+      const scroller = document.querySelector('.content');
+      const titleOf = (s) => ((s.querySelector('h3') || s.querySelector('h1') || {}).textContent || '').trim();
+      let cur = -1;
+
+      // 목차: 섹션 링크 아래에 화면(토픽·카드) 목록을 붙인다
+      const tocLinks = [];
+      Array.from(toc.querySelectorAll(':scope > a')).forEach((a) => {
+        const sec = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+        const group = document.createElement('div');
+        group.className = 'toc-group';
+        a.replaceWith(group);
+        group.appendChild(a);
+        if (!sec) return;
+        const list = document.createElement('ol');
+        list.className = 'toc-list';
+        screens.forEach((s, i) => {
+          if (!sec.contains(s)) return;
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '#' + s.id;
+          link.innerHTML = '<span class="toc-title"></span>';
+          link.firstChild.textContent = titleOf(s);
+          li.appendChild(link);
+          list.appendChild(li);
+          tocLinks[i] = link;
+        });
+        group.appendChild(list);
+      });
+
+      function indexFor(hash) {
+        const id = decodeURIComponent((hash || '').replace(/^#/, ''));
+        const el = id && document.getElementById(id);
+        if (!el || !main.contains(el)) return { i: 0 };
+        const i = screens.findIndex((s) => s.contains(el) || el.contains(s));
+        return { i: Math.max(i, 0), target: i >= 0 && screens[i].contains(el) && screens[i] !== el ? el : null };
+      }
+
+      function render(i, target) {
+        const dir = cur < 0 ? '' : i > cur ? 'enter-next' : 'enter-prev';
+        if (i !== cur) {
+          if (cur >= 0) screens[cur].classList.remove('is-current', 'enter-next', 'enter-prev');
+          main.querySelectorAll(':scope > section.is-on').forEach((sec) => sec.classList.remove('is-on'));
+          const s = screens[i];
+          const sec = s.closest('section');
+          if (sec) sec.classList.add('is-on');
+          s.classList.add('is-current');
+          if (dir) { s.classList.remove('enter-next', 'enter-prev'); void s.offsetWidth; s.classList.add(dir); }
+          cur = i;
+          document.body.classList.toggle('at-end', i === last);
+          prevBtn.disabled = i === 0;
+          nextBtn.textContent = i === 0 ? '시작하기' : i === last ? '처음으로' : '다음';
+          count.textContent = i === 0 ? '' : i + ' / ' + last;
+          bar.style.transform = 'scaleX(' + (i / last) + ')';
+          status.textContent = i === 0 ? titleOf(s) : i + ' / ' + last + ', ' + titleOf(s);
+          tocLinks.forEach((link, k) => link && link.setAttribute('aria-current', String(k === i)));
+          document.dispatchEvent(new CustomEvent('od:screen', { detail: { index: i, screen: s } }));
+        }
+        if (target) target.scrollIntoView({ block: 'start' });
+        else scroller.scrollTo(0, 0);
+      }
+
+      function go(i) {
+        i = Math.min(Math.max(i, 0), last);
+        if (i === cur) return;
+        const url = i === 0 ? location.pathname + location.search : '#' + screens[i].id;
+        history.pushState(null, '', url);
+        render(i);
+      }
+
+      prevBtn.addEventListener('click', () => go(cur - 1));
+      nextBtn.addEventListener('click', () => go(cur === last ? 0 : cur + 1));
+      const fromUrl = () => { const r = indexFor(location.hash); render(r.i, r.target); };
+      window.addEventListener('hashchange', fromUrl);
+      window.addEventListener('popstate', fromUrl);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || document.body.classList.contains('drawer-open')) return;
+        if (e.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+      });
+
+      // 좌우로 밀어서 넘기기 (가로로 스크롤되는 영역은 제외)
+      let sx = 0, sy = 0, skip = true;
+      main.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        skip = e.touches.length > 1 || Boolean(e.target.closest('.widget, .katex-display, .table-wrap, svg, input, details'));
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (skip) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 64 && Math.abs(dx) > 2 * Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      fromUrl();
+    })();
+  </script>
+</body>
+</html>
