@@ -200,12 +200,13 @@ python3 "$SKILL/scripts/check_html.py" --manifest "$RUN/manifest.json" --note "$
   - **본문 감사 리뷰**: 리뷰어 1명(「본문 감사 리뷰」 브리프).
   - **일반 리뷰**: 리뷰어 1명.
 - 세 영수증을 받으면 `pack_run.py audit-merge` → `pack_run.py blind-check` → `pack_run.py fixes`를 차례로 실행한다. 메인은 결함 내용을 읽거나 옮겨 적지 않고 출력의 건수와 담당자 목록만 본다.
-- 블라인드 리뷰어의 답이 manifest `answer`와 다르거나 "근거 없음"이면(`blind-check` 출력), `anchor` 토픽의 섹션 작성자에게 빠진 사실을 가르치도록 되돌린다. 카드 풀이를 바꿔서 맞추지 않는다.
+- **문항 이의:** 답 일치 여부와 관계없이 카드 작성자가 받는다. 생성 변형은 이의의 근거를 검토하고, 타당하면 발문·조건·보기를 고쳐 다시 푼다. 재검사에서도 유일 정답을 확보하지 못한 변형은 아래 제외 절차를 적용한다. 원문 문항은 문항 감사 담당과 근거를 대조해 이의가 타당하면 `key-check.md`와 기존 모호성 표시·해설에 반영한다. 원문 발문과 보기는 보존하고, 일반 리뷰어가 원문과 표시를 대조해 처리 결과를 확인한다.
+- 문항 이의가 없는 답 불일치·"근거 없음"은 `anchor` 토픽의 섹션 작성자에게 빠진 사실을 가르치도록 되돌린다. 카드 풀이를 바꿔서 맞추지 않는다.
   - 변형 연습(partC)을 못 풀었으면 먼저 변형 자체를 본다. 정답이 하나가 아니거나 범위 밖이면 카드 작성자에게 고치게 하거나 manifest·`variants.md`에서 뺀다. 변형이 멀쩡할 때만 위처럼 섹션 작성자에게 되돌린다. 변형을 빼도 번호를 다시 매기지 않고 빈 번호로 둔다(추가 때처럼 `question-audit.md`가 아닌 `variants.md`에 사유를 적는다). 마지막 변형까지 빠지면 manifest `parts`에서 `partC`를 지우고 `review_intro`·`footer_review`의 변형 문구도 지운다.
 - 독립 수준·최소 풀이 단계를 설계표와 대조한다. 원문 분류는 재검토하고 생성 변형은 수정/교체하거나 목표 차이를 보고한다(`references/review-prompt.md`). 이 검토는 기존 최대 2회 한도에 포함한다.
 - 일반 리뷰의 Critical과 Important는 모두, Minor는 쉬운 것만 고친다.
 - 담당 작성자별로 **한 번에 모아서** 수정을 요청한다. 수정은 한 번만 한다. 요청은 "`RUN/work/fixes/<담당>.txt`를 읽고 모두 고친 뒤 영수증만 보고" 한 줄이다. 작성자는 자기 `rows-<sid>.tsv`를 통째로 다시 쓰므로 메인은 `audit-merge`만 다시 실행한다.
-- 수정 후 4~5단계를 다시 하고, 블라인드 사본을 다시 만들어 틀렸던 문항만 다시 검사한다(`IDS`). 본문 감사 리뷰어는 추론 결함이 있던 토픽을 같은 대표 질문으로 다시 확인한다. `RUN/work/reports/unapplied.tsv`·`fixed-*.tsv`와 본문 감사 재검토 영수증을 확인하고 미해결 건수를 보고서에 적는다(critical·important가 남았을 때만 id를 적는다).
+- 수정 후 4~5단계를 다시 하고, 답 불일치·근거 부족 문항과 이의가 제기된 생성 변형의 블라인드 사본을 다시 만들어 검사한다(`IDS`). 원문 이의는 위 일반 리뷰 절차로 확인한다. 재검사 사본에는 제외하거나 일반 리뷰로 넘긴 문항 외에 재검토 대상 ID를 모두 넣는다. 본문 감사 리뷰어는 추론 결함이 있던 토픽을 같은 대표 질문으로 다시 확인한다. `blind-results.md`의 각 회차와 `RUN/work/reports/unapplied.tsv`·`fixed-*.tsv`, 재검토 영수증을 대조해 미해결 건수를 보고한다(critical·important가 남았을 때만 id를 적는다).
 
 ### 7. 브라우저 검증
 - 브라우저 검증 에이전트 1명이 `references/browser-check.md`대로 한다(브리프는 그 파일 맨 위). 메인은 영수증만 받고 스크린샷을 열지 않는다. 결함은 `findings-browser.tsv`에 쓰이므로 `pack_run.py fixes`로 나눈다.
@@ -239,7 +240,7 @@ python3 "$SKILL/scripts/html2md.py" "$REPO/복습노트/<range>/<정리노트>.h
 - 문항: 포함 N (웹과제 w, 기출 x) · 변형 v (쌍둥이 t · 그림 g · 상황 s · ㄱㄴㄷ k · 부정형 n · 용어 r · 낯선참 u · 장섞기 c) · 이전 팩 N · 보류 N · 범위 밖 N — 분류표 RUN/question-audit.md, 변형 RUN/variants.md. 표 해석은 별도 집계. 목표보다 부족한 유형은 사유를 한 줄씩(의무 최소 0인 선택 유형은 0개 자체가 미해결은 아님)
 - 보류·범위 밖 문항: 번호와 사유를 한 줄씩(보고서만 읽어도 분류를 알 수 있게; RUN은 세션이 끝나면 사라질 수 있다)
 - 답안지 오류: 기출 3강 12 (인쇄 (2) → 판단 (3)) … (없으면 "없음")
-- 블라인드 검사: N/N 풀림 (고친 토픽: …)
+- 블라인드 검사: 답 일치 N/N · 문항 이의 N · 미해결 이의 N (고친 토픽: …). 재검사 건수와 제외·원문 주의 표시 결과를 함께 적는다. 이의 미기록이 있으면 건수를 밝힌다.
 - 본문 피드백: 대상 N · 본문 반영 N · 기존 설명 충분 N · 이전 노트 연결 N · 미학습 보류 N · 판독/근거 불확실 N — .pack/note-feedback-audit.md (피드백 미작성은 별도 보고)
 - 스킬이 정한 사항: slug, 섹션 구성, 위젯, 뺀 내용과 이유
 - 장 마감: N장 — 보류 재분류 요약 (장이 끝나지 않았으면 "해당 없음")
@@ -291,12 +292,12 @@ SKILL=…; REPO=…; RUN=…; python3 "$SKILL/scripts/augment.py" build "$REPO/�
 ```
 - 기존 카드의 id·part·source·answer가 바뀌었거나 카드가 사라졌으면 아무것도 쓰지 않고 멈춘다. 카드 본문 수정은 허용한다.
 - part 순서(A·B·C)로 정렬하고, 제목의 "N선"·안내의 문항 수·꼬리말의 `웹과제(N장)`을 맞춘다. `경고:` 줄이 나오면 그 문구를 `RUN/manifest.json`에서 직접 고치고 A3을 다시 한다(`base-ids.json`이 그대로라 다시 해도 된다).
-- 복습문제 HTML만 쓰고 `.pack/`에 기록을 남긴다(`log.md`에 augment 한 줄).
+- A4의 블라인드 검사와 재조립에는 팩의 임시 복제본을 사용한다. 검토를 마치면 같은 명령을 실제 팩에 한 번 실행해 복습문제 HTML과 `.pack/` 기록을 갱신한다(`log.md`에 augment 한 줄).
 
 **A4. 검사**
 - `python3 "$SKILL/scripts/check_html.py" --manifest "$RUN/manifest.json" --note … --review …` → `OK`. 복원 manifest라면 정리노트 쪽은 구조만 검사된다는 한계를 보고서에 적는다.
-- 블라인드 검사: `references/review-prompt.md` 스니펫을 `IDS=<새 id 쉼표 목록>`과 함께 돌려 **새 카드만** 사본을 만들고 6단계 규칙대로 검사한다(`mkdir -p "$RUN/work/reports"` 뒤 리뷰어가 `blind.tsv`를 쓰고 `pack_run.py blind-check`로 대조).
-- 브라우저: `references/browser-check.md`대로, 새 카드 하나 이상과 기존 카드 하나를 연다.
+- 블라인드 검사: `references/review-prompt.md` 스니펫을 `IDS=<새 id 쉼표 목록>`과 함께 돌려 **새 카드만** 사본을 만들고 6단계 규칙대로 검사한다(`mkdir -p "$RUN/work/reports"` 뒤 리뷰어가 `blind.tsv`를 쓰고 `pack_run.py blind-check`로 대조). 새 카드의 이의는 `pack_run.py fixes`로 배분하고 임시 복제본에 재조립해 재검사한다. 정리노트 근거가 부족해 보강 모드에서 해결할 수 없는 문항은 사유를 보고한다. 새 변형을 제외했다면 최종 조립물에서 해당 카드와 집계가 빠졌는지 확인한다.
+- 브라우저: 실제 팩에 최종 조립한 뒤 `references/browser-check.md`대로 새 카드 하나 이상(남아 있는 경우)과 기존 카드 하나를 연다.
 
 **A5. MD 변환**
 ```bash

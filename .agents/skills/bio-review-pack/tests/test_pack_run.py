@@ -89,6 +89,38 @@ class TestBlindCheck(PackRunCase):
         self.put("blind.tsv", [["p1", "3/2", "s1-mean", "", "", "1"], ["p2", "( 2 )", "s1-var", "", "", "1"]])
         out = pack_run.blind_check(self.run)
         self.assertEqual(len(out), 1)
+        self.assertIn("문항 이의 미기록 2", out[0])
+        self.assertFalse((self.reports / "findings-blind.tsv").exists())
+
+    def test_matching_answer_with_objection_goes_to_card_writer(self):
+        self.put("blind.tsv", [["p1", "3/2", "s1-mean", "", "합 → 나누기", "1", "조건이 빠져 2도 성립"]])
+        out = pack_run.blind_check(self.run)
+        self.assertIn("1/1 풀림", out[0])
+        self.assertIn("문항 이의 1", out[0])
+        pack_run.fixes(self.run)
+        path = self.run / "work" / "fixes" / "cards-p1.txt"
+        self.assertTrue(path.is_file())
+        self.assertIn("조건이 빠져 2도 성립", path.read_text(encoding="utf-8"))
+
+    def test_original_with_objection_and_mismatched_answer_has_one_card_finding(self):
+        self.put("blind.tsv", [["p2", "(3)", "s1-var", "", "", "1", "보기 (2)도 성립"]])
+        pack_run.blind_check(self.run)
+        findings = (self.reports / "findings-blind.tsv").read_text(encoding="utf-8").splitlines()
+        self.assertEqual(len(findings), 1)
+        self.assertTrue(findings[0].startswith("critical\tp2\t"))
+        self.assertIn("보기 (2)도 성립", findings[0])
+        self.assertIn("리뷰어 (3)", findings[0])
+        self.assertIn("key-check.md", findings[0])
+
+    def test_recheck_clears_resolved_objection(self):
+        self.put("blind.tsv", [["p1", "3/2", "s1-mean", "", "", "1", "2도 성립"]])
+        pack_run.blind_check(self.run)
+        self.assertTrue((self.reports / "findings-blind.tsv").is_file())
+
+        self.put("blind.tsv", [["p1", "3/2", "s1-mean", "", "", "1", "없음"]])
+        out = pack_run.blind_check(self.run)
+        self.assertIn("문항 이의 0", out[0])
+        self.assertIn("문항 이의 미기록 0", out[0])
         self.assertFalse((self.reports / "findings-blind.tsv").exists())
 
 

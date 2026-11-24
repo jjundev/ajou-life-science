@@ -24,7 +24,7 @@
 | `rows-<sid>.tsv` | 섹션 작성자 | 토픽 id · 본문의 핵심 주장 · 대응하는 요약 문장 · 판정·생략 이유 |
 | `feedback-<sid>.tsv` | 섹션 작성자 | 피드백 ID · 실제 토픽 id · 본문 문장 · 적용 상태(본문 반영 / 기존 설명 충분 / 이전 노트 연결 / 미학습 보류 / 판독·근거 불확실) |
 | `notes-<이름>.tsv` | 작성자(섹션·카드·감사) | id · 메모(넣지 않은 것과 이유, 못 가르친 사실, 카드별 한 줄 등) |
-| `blind.tsv` | 블라인드 리뷰어 | 문항 · 내 답 · 근거 토픽 · 빠진 사실 · 최소 풀이 단계 · 수준 |
+| `blind.tsv` | 블라인드 리뷰어 | 문항 · 내 답 · 근거 토픽 · 빠진 사실 · 최소 풀이 단계 · 수준 · 문항 이의(`없음` 또는 사유) |
 | `findings-<이름>.tsv` | 모든 검토자 | 심각도 · id · 문제 · 고칠 내용 |
 | `fixed-<담당>.tsv` | 수정한 작성자 | id · 한 일(또는 반영하지 않은 이유) |
 
@@ -47,7 +47,7 @@
   | `pack_run.py merge-problems --run RUN` | 문항 감사자의 `work/problems.json`을 manifest에 넣는다 |
   | `pack_run.py audit-merge --run RUN` | `rows-*.tsv` → `RUN/summary-audit.md`. 누락·수정 필요 행을 `findings-audit.tsv`로 낸다 |
   | `pack_run.py feedback-merge --run RUN` | `feedback-*.tsv` → `RUN/note-feedback-audit.md`의 「작성 후 적용 상태」 절 |
-  | `pack_run.py blind-check --run RUN` | `blind.tsv`를 manifest `answer`·`level`과 대조 → `RUN/blind-results.md`, `findings-blind.tsv` |
+  | `pack_run.py blind-check --run RUN` | 답·수준을 manifest와 대조하고 문항 이의를 별도 집계 → `RUN/blind-results.md`, `findings-blind.tsv`. 기존 6열 기록의 이의는 미기록으로 표시한다. |
   | `pack_run.py fixes --run RUN` | 모든 `findings-*.tsv`를 담당 작성자별 `RUN/work/fixes/<담당>.txt`로 나눈다 |
   | `pack_run.py status --run RUN` | 9단계 보고서에 쓸 집계 |
 - 수정 요청은 내용을 옮겨 적지 않는다. 담당 작성자에게 "`<RUN>/work/fixes/<담당>.txt`를 읽고 모두 고친 뒤 영수증만 보고" 한 줄을 보낸다. 담당은 섹션 id(`s2`) 또는 카드 묶음(`cards-p1`, `cards-p11`, …)이다.

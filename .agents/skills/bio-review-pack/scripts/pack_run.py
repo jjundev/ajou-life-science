@@ -10,7 +10,7 @@
   pack_run.py merge-problems --run RUN             문항 감사자의 work/problems.json 을 manifest 에 넣는다
   pack_run.py audit-merge   --run RUN              rows-*.tsv → RUN/summary-audit.md
   pack_run.py feedback-merge --run RUN             feedback-*.tsv → RUN/note-feedback-audit.md 의 적용 상태 절
-  pack_run.py blind-check   --run RUN              blind.tsv 와 manifest answer·level 대조 → RUN/blind-results.md
+  pack_run.py blind-check   --run RUN              blind.tsv 답·수준 대조 및 문항 이의 처리 → RUN/blind-results.md
   pack_run.py fixes         --run RUN              findings-*.tsv → 담당 작성자별 RUN/work/fixes/<담당>.txt
   pack_run.py status        --run RUN              보고서용 집계 한 화면
 """
@@ -245,33 +245,55 @@ def blind_check(run: Path) -> list[str]:
     path = run / REPORTS / "blind.tsv"
     if not path.is_file():
         raise RunError(f"블라인드 결과 없음: {path}")
-    got = {r[0]: r for r in read_tsv(path, 6)}
+    got = {r[0]: r for r in read_tsv(path, 7)}
     only = set(got)  # 재검사·보강에서는 사본에 넣은 문항만 대조한다
-    wrong, level_diff, findings, table = [], [], [], []
+    wrong_count = objection_count = unrecorded_count = 0
+    issues, level_diff, findings, table = [], [], [], []
     problems = [p for p in m["problems"] if p["id"] in only]
     for p in problems:
         r = got[p["id"]]
+        pid = p["id"]
         ok = norm_answer(r[1]) == norm_answer(str(p["answer"]))
         level = r[5].strip()
-        level_ok = level == str(p.get("level"))
-        table.append(f"| {p['id']} | {cell(r[1])} | {p['answer']} | {'일치' if ok else '불일치'} | {cell(r[2])} | {cell(r[3])} | {cell(r[4])} | {level} | {p.get('level')} |")
+        objection = "" if r[6] == "없음" else r[6]
+        unrecorded_count += not r[6]
+        result = "일치" if ok else "불일치"
+        table.append(f"| {pid} | {cell(r[1])} | {p['answer']} | {result} | {cell(r[2])} | {cell(r[3])} | {cell(r[4])} | {level} | {p.get('level')} | {cell(r[6] or '미기록')} |")
+        detail = []
         if not ok:
-            wrong.append(f"- {p['id']} ({p['source']}, anchor {p['anchor']}): 리뷰어 {r[1]} / manifest {p['answer']} — {r[3] or '빠진 사실 미기재'}")
-            target = p["id"] if p.get("variant") else p["anchor"]
-            fix = ("변형이 유일 정답·범위 안인지 먼저 확인하고, 멀쩡하면 anchor 토픽에 빠진 사실을 가르친다" if p.get("variant")
-                   else "빠진 사실을 본문이나 보충 레이어에 가르친다(카드 풀이를 바꿔 맞추지 않는다)")
-            findings.append(["critical", target, f"블라인드 {p['id']} 못 풂: {r[3] or r[1]}", fix])
-        if not level_ok:
-            level_diff.append(f"{p['id']}({'변형' if p.get('variant') else '원문'} 설계 {p.get('level')}→독립 {level or '?'})")
+            wrong_count += 1
+            detail.append(f"리뷰어 {r[1]} / manifest {p['answer']} — {r[3] or '빠진 사실 미기재'}")
+        if objection:
+            objection_count += 1
+            detail.append(f"문항 이의: {objection}")
+        if detail:
+            reason = " · ".join(detail)
+            issues.append(f"- {pid} ({p['source']}, anchor {p['anchor']}): {reason}")
+            if objection:
+                target = pid
+                fix = ("변형의 발문·조건·보기를 검토해 정답을 하나로 고치고 다시 풀이한다" if p.get("variant")
+                       else "원문 발문·보기는 보존한다. 근거를 문항 감사 담당과 대조하고, 이의가 타당하면 key-check.md와 카드의 채점 주의·해설에 반영한다")
+            elif p.get("variant"):
+                target = pid
+                fix = "변형이 유일 정답·범위 안인지 먼저 확인하고, 멀쩡하면 anchor 토픽에 빠진 사실을 가르친다"
+            else:
+                target = p["anchor"]
+                fix = "빠진 사실을 본문이나 보충 레이어에 가르친다(카드 풀이를 바꿔 맞추지 않는다)"
+            findings.append(["critical", target, f"블라인드 {pid}: {reason}", fix])
+        if level != str(p.get("level")):
+            level_diff.append(f"{pid}({'변형' if p.get('variant') else '원문'} 설계 {p.get('level')}→독립 {level or '?'})")
     unknown = sorted(only - {p["id"] for p in m["problems"]})
-    head = f"정리노트만으로 {len(problems) - len(wrong)}/{len(problems)} 풀림 · 불일치·근거 없음 {len(wrong)} · 수준 불일치 {len(level_diff)}"
+    head = (f"정리노트만으로 {len(problems) - wrong_count}/{len(problems)} 풀림(답 일치) · "
+            f"불일치·근거 없음 {wrong_count} · 문항 이의 {objection_count} · "
+            f"문항 이의 미기록 {unrecorded_count} · 수준 불일치 {len(level_diff)}")
     text = [f"# {m['range']} 블라인드 풀이 검사", "", head, "",
-            "| 문항 | 리뷰어 답 | manifest | 대조 | 근거 토픽 | 빠진 사실 | 최소 풀이 단계 | 독립 수준 | 설계 수준 |", "|---|---|---|---|---|---|---|---|---|"]
+            "| 문항 | 리뷰어 답 | manifest | 대조 | 근거 토픽 | 빠진 사실 | 최소 풀이 단계 | 독립 수준 | 설계 수준 | 문항 이의 |",
+            "|---|---|---|---|---|---|---|---|---|---|"]
     out_path = run / "blind-results.md"
     previous = out_path.read_text(encoding="utf-8").rstrip("\n") + "\n\n" if out_path.is_file() else ""
     out_path.write_text(previous + "\n".join(text + table) + "\n", encoding="utf-8")
     write_findings(run, "blind", findings)
-    out = [f"blind-results.md: {head}"] + wrong
+    out = [f"blind-results.md: {head}"] + issues
     if level_diff:
         out.append("수준 불일치: " + ", ".join(level_diff))
     if unknown:
