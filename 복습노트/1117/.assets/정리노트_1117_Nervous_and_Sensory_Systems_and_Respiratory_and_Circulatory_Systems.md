@@ -56,6 +56,8 @@
 
 자세한 내용은 [1112 정리노트의 시험 직전 한눈에](../../1112/정리노트_1112_Nervous_and_Sensory_Systems.html#s5-cheatsheet)에서 다시 볼 수 있어요.
 
+[뉴런 안과 시냅스에서 신호를 전하는 방식](../%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s0-recap)을 만화에서 따라가 보세요.
+
 **페이지 요약**
 
 지난 수업에서는 뉴런이 활동전위를 만들고, 수초가 있으면 도약전도로 전하며, 시냅스에서 신경전달물질을 분비해 다음 세포로 넘긴다는 것을 배웠어요.
@@ -109,6 +111,8 @@
 | 연결 대상 | 골격근(skeletal muscle) | 심장·장 같은 기관 |
 | 의식적 조절 | 수의적(마음대로 움직임) | 불수의적(involuntary) |
 | 하위 구분 | 없음 | 교감신경계 + 부교감신경계([교감신경과 부교감신경](#s0-autonomic)) |
+
+[구심·원심과 체성·자율을 가르는 순서](../%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s0-divisions)을 만화에서 따라가 보세요.
 
 **꼭 기억해요**
 
@@ -174,6 +178,8 @@
 4. 당장 급하지 않은 소화는 뒤로 미룸
 
 자율신경계가 신경계 전체에서 어디에 속하는지는 [중추·말초, 구심·원심, 체성·자율](#s0-divisions)에서 볼 수 있어요.
+
+[심장과 소화가 상황에 따라 달라지는 모습](../%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s0-autonomic)을 만화에서 따라가 보세요.
 
 **꼭 기억해요**
 
@@ -343,6 +349,10 @@
 
 강의노트는 회색질을 회백질이라고 써요. 같은 조직이에요.
 
+[손을 떼는 경로와 뇌가 뜨거움을 아는 경로](../%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s1-spinal-reflex)을 만화에서 따라가 보세요.
+
+척수 안에서 어느 운동뉴런이 흥분하고 어느 쪽이 억제되는지 [척수 회수 반사 모형](../%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_04_%EC%B2%99%EC%88%98_%ED%9A%8C%EC%88%98_%EB%B0%98%EC%82%AC.html)에서 따라가 보세요.
+
 **꼭 기억해요**
 
 | 묻는 것 | 틀리기 쉬운 답 | 맞는 답 |
@@ -400,6 +410,8 @@
 *기둥이 살아 있으면 스스로 숨을 쉴 수 있어요.*
 
 **정확히 말하면**
+
+**보충: 소뇌**는 뇌교 뒤쪽에 있어요. 감각 정보를 통합해 몸의 움직임을 조정하고 운동 기술의 학습에 관여해요. (강의노트 12장 p.4, 교재 271쪽)
 
 **뇌간(뇌줄기, brain stem)** = 척수 바로 위에서 아래부터 연수–뇌교–중뇌가 기둥처럼 이어진 부분
 
@@ -492,6 +504,12 @@
 *조절실 밑에는 작은 혹이 매달려 있어요.*
 
 **정확히 말하면**
+
+**사이뇌**에는 시상과 시상하부가 포함돼요. 단면에서 화살표 끝과 영역 전체를 묶는 괄호를 구별해 보세요.
+
+![뇌 단면 모식도. 시상 아래 시상하부가 있고 둘은 사이뇌에 속합니다. 뇌교 아래는 연수, 뇌교 뒤는 소뇌입니다.](figures_1117/fig-1117-brain-section.svg)
+
+*교재 271쪽 그림 12.11·12.12를 바탕으로 재구성한 모식도입니다.*
 
 | 비교 기준 | 시상(thalamus) | 시상하부(hypothalamus) | 뇌하수체(pituitary gland) |
 |---|---|---|---|
@@ -588,6 +606,8 @@
 
 **정확히 말하면**
 
+**변연계**는 편도체와 해마 등 여러 뇌 구조가 정서와 기억에 함께 관여하는 기능적 신경망이에요. [체성감각을 처리하는 두정엽](#s3-lobes)은 대뇌겉질의 한 엽이에요. (교재 272쪽)
+
 **변연계(limbic system)** = 감정의 뇌(포유류의 뇌). 두려움·분노·공격성·기쁨·공포·만족·희열·충동에 관여
 
 수업에서 변연계로 든 부위는 시상, 시상하부, 기저핵(basal ganglia), 후각엽, 편도체, 해마예요. 교수님이 설명한 뇌의 세 층 모형에서 생존의 뇌(뇌간)와 인간의 뇌(대뇌) 사이에 있는 층이에요([뇌간: 중뇌·뇌교·연수](#s2-brainstem)). 시상·시상하부의 기능은 [시상·시상하부와 망상체](#s2-thalamus)에서 확인해요.
@@ -625,6 +645,8 @@
 2. 장기기억이 형성되지 않음
 3. 저장된 것 자체가 없음
 4. 최면으로도 되살릴 수 없음
+
+[편도체가 관여하는 정서와 해마가 관여하는 기억 형성](../%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s2-limbic)을 만화에서 따라가 보세요.
 
 **꼭 기억해요**
 
@@ -715,6 +737,8 @@
 | 위치 | 전두엽 | 두정엽과 측두엽에 걸침 |
 | 기능 | 언어 표현(입을 움직이는 근육 조절) | 언어 이해 |
 | 손상 시 말 | 의미는 통하지만 매우 느리고 더듬음 | 빠르고 유창하지만 의미 없음 |
+
+[유창성과 의미를 따로 관찰하는 방법](../%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s3-lobes)을 만화에서 따라가 보세요.
 
 **꼭 기억해요**
 
@@ -895,6 +919,8 @@
 
 **심전도(electrocardiogram, ECG)** = 심장에서 오는 전기 신호의 기록, 응급실에서 붙이는 것
 
+[어느 시야에서 본 정보를 어느 손으로 고를 수 있는지](../%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s3-hemispheres)을 만화에서 따라가 보세요.
+
 **꼭 기억해요**
 
 | 묻는 것 | 틀리기 쉬운 답 | 맞는 답 |
@@ -977,6 +1003,8 @@
 **다섯 가지 맛** = 짠맛, 단맛, 쓴맛, 신맛, 감칠맛(조미료 MSG의 맛), 모두 화학 수용기가 감지
 
 감칠맛은 일본말로 우마미(umami)라고 해요. 강의노트의 'nocireceptor'는 철자 오기이고, 통각 수용기의 영어 이름은 nociceptor예요.
+
+[다섯 감각수용기의 자극과 매운맛의 판별 기준](../%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s4-receptors)을 만화에서 따라가 보세요.
 
 **꼭 기억해요**
 
@@ -1092,6 +1120,10 @@
 | 높은 음·큰 소리(음높이 9, 크기 5) | 앞부분(타원창에서 8% 지점) | 12개, 하나하나의 크기는 같음 | 크기만 키우면 위치는 그대로, 같은 크기의 활동전위가 더 자주 |
 
 나이가 들면 앞부분 모세포부터 손상돼 높은 음부터 못 듣게 돼요(노화성 난청). 교수님은 20대라면 17,000Hz 정도까지 들려야 한다고 했어요.
+
+[음높이의 반응 위치와 소리 크기의 활동전위 빈도](../%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s4-hearing)을 만화에서 따라가 보세요.
+
+고막의 떨림이 청각 신경의 활동전위로 바뀌는 순서를 [청각 신호 모형](../%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_01_%EC%86%8C%EB%A6%AC%EC%99%80_%EC%B2%AD%EA%B0%81_%EC%8B%A0%ED%98%B8.html)에서 따라가 보세요.
 
 **꼭 기억해요**
 
@@ -1210,6 +1242,10 @@
 
 볼록렌즈나 오목렌즈 안경으로 상이 망막에 정확히 맺히게 조절해요.
 
+[빛의 양을 조절하는 동공과 초점을 맞추는 수정체](../%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s5-eye)을 만화에서 따라가 보세요.
+
+물체 거리와 수정체 두께를 따로 바꾸며 상이 맺히는 위치를 [눈의 초점 조절 모형](../%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_02_%EB%88%88%EC%9D%98_%EC%B4%88%EC%A0%90_%EC%A1%B0%EC%A0%88.html)에서 비교해 보세요.
+
 **꼭 기억해요**
 
 | 묻는 것 | 틀리기 쉬운 답 | 맞는 답 |
@@ -1289,6 +1325,8 @@
 3. 채널이 열리는 정도 변화
 4. 신경전달물질 분비량 변화
 5. 그 차이를 인식해 시각 형성
+
+[간상세포와 원추세포의 감도·색 판별·분비 변화](../%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s5-photoreceptors)을 만화에서 따라가 보세요.
 
 **꼭 기억해요**
 
@@ -1372,6 +1410,8 @@
 | 맹점 | 있음 | 없음 |
 
 그래서 사람 눈과 문어·오징어 눈은 서로 독립적으로 진화했다고 추측해요.
+
+[중심오목·주변 망막·맹점의 광수용기 배치](../%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s5-retina)을 만화에서 따라가 보세요.
 
 **꼭 기억해요**
 
@@ -1459,6 +1499,8 @@
 
 최종 전자수용체가 전자전달계 끝에서 하는 일은 [0910 전자전달계: 전자가 산소까지 층층이](../../0910/정리노트_0910_Cells_and_Cellular_Respiration.html#s5-etc)에서 다시 볼 수 있어요.
 
+[폐에서 산소를 받아 세포에서 사용하는 과정](../%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s6-why-breathe)을 만화에서 따라가 보세요.
+
 **꼭 기억해요**
 
 | 묻는 것 | 틀리기 쉬운 답 | 맞는 답 |
@@ -1528,6 +1570,10 @@
 4. 혈액
 
 CO₂는 이 길을 거꾸로 지나 혈액에서 폐포 안 공기로 나가요.
+
+[코와 입에서 폐포와 모세혈관까지 이어지는 길](../%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s6-airway)을 만화에서 따라가 보세요.
+
+세기관지 끝의 공기 주머니와 그 바깥을 감싸는 모세혈관망을 [폐포와 기체 확산 모형](../%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_03_%ED%8F%90%ED%8F%AC%EC%99%80_%EA%B8%B0%EC%B2%B4_%ED%99%95%EC%82%B0.html)에서 돌려 보세요.
 
 **꼭 기억해요**
 
@@ -1607,6 +1653,10 @@ CO₂는 이 길을 거꾸로 지나 혈액에서 폐포 안 공기로 나가요
 2. 모세혈관에서 물이 새어 폐에 물이 참
 3. 폐포와 모세혈관 사이 거리 증가
 4. 확산 속도 감소
+
+[높은 산과 폐렴에서 확산을 늦추는 서로 다른 요인](../%ED%95%99%EC%8A%B5%EB%A7%8C%ED%99%94_1117_Nervous_and_Sensory_Systems_and_Respiratory_and_Circulatory_Systems.html#s6-diffusion)을 만화에서 따라가 보세요.
+
+높은 산과 폐에 물이 찬 경우에 각각 무엇이 달라지는지 [폐포와 기체 확산 모형](../%EC%9D%B8%ED%84%B0%EB%A0%89%ED%8B%B0%EB%B8%8C_03_%ED%8F%90%ED%8F%AC%EC%99%80_%EA%B8%B0%EC%B2%B4_%ED%99%95%EC%82%B0.html)의 기체 교환 모드에서 비교해 보세요.
 
 **꼭 기억해요**
 
